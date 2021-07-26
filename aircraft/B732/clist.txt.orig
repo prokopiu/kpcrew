@@ -1,0 +1,363 @@
+# B737-200 Adv
+# Duncan White
+# 01 June 2014
+# Version 1.02
+
+sw_checklist:Introduction:Introduction
+sw_rcolsize:110
+sw_itemvoid:FlyJSim 732 TwinJet Check List
+sw_itemvoid:
+sw_itemvoid:This check list starts the 
+sw_itemvoid:aircraft using the APU.
+sw_itemvoid:
+sw_itemvoid:Altitudes are for examples only.
+sw_itemvoid: 
+sw_itemvoid:GPS navigation is used ie
+sw_itemvoid:CIVA, SimpleFMC, XFMC, UFMC.
+
+sw_checklist:Fuelling:Fuelling
+sw_rcolsize:110
+sw_itemvoid:Use the FlyJSim
+sw_itemvoid:Weight & Balance
+sw_itemvoid:Manager.
+sw_itemvoid:
+sw_item:Fuelling|COMPLETE
+
+sw_checklist:GPS Navigation:GPS Navigation
+sw_rcolsize:110
+sw_itemvoid:Use CIVA, SimpleFMC, XFMC or 
+sw_itemvoid:UFMC to enter your GPS flight
+sw_itemvoid:plan.
+sw_itemvoid:
+sw_item:GPS Flight Plan|LOADED
+sw_item:XSquawkBox|AS NEEDED
+sw_item:XAcars|AS NEEDED
+
+sw_checklist:APU Startup:APU Startup
+sw_rcolsize:110
+sw_itemvoid:<Quick Look View 2>
+sw_item:Park Brake|ON
+sw_itemvoid:<Quick Look View 8>
+sw_item:Battery|ON:sim/cockpit2/electrical/battery_on:1
+sw_item:Battery Guard|CLOSED
+sw_item:Galley|ON:FJS/732/Elec/GalleySwitch:!0
+sw_item:Standby Power Guard|CLOSED
+sw_itemvoid:<Quick Look View 7>
+sw_item:APU|START:FJS/732/Elec/APUStartSwitch:2
+sw_itemvoid:(Hold until exhaust temp
+sw_itemvoid: needle moves, release,
+sw_itemvoid: wait for APU GEN OFF BUS 
+sw_itemvoid: light to go blue.)
+sw_item:Bus Transfer APU GEN|BOTH ON
+
+sw_checklist:Before Start 1:Before Start 1
+sw_rcolsize:110
+sw_item:Equip Cooling|NORMAL
+sw_item:Emer Exit Lights Guard|CLOSED
+sw_item:No Smoking|ON
+sw_item:Fasten Belts|ON
+sw_item:Wiper|OFF
+sw_itemvoid:<Quick Look View 8>
+sw_item:Yaw Damper|ON
+sw_item:Window Heat|ALL 4 ON
+sw_itemvoid:<Quick Look View 7>
+sw_item:Wing Anti-Ice|OFF
+sw_item:Eng Anti-Ice 1 & 2|OFF
+sw_item:Grd Interconnect|CLOSE
+sw_item:Eng Hyd Pumps 1 & 2|ON
+sw_item:Elec Hyd Pumps 1 & 2|OFF
+
+sw_checklist:Before Start 2:Before Start 2
+sw_rcolsize:110
+sw_item:Ram Door Full Open|BOTH BLUE
+sw_item:Gasper Fan|AS NEEDED
+sw_item:L Pack|ON
+sw_item:R Pack|OFF
+sw_item:Isolation Valve|AUTO
+sw_item:Bleed 1 & 2|ON
+sw_item:Bleed APU|ON
+sw_item:Flt Alt|SET
+sw_item:Land Alt|SET
+sw_itemvoid:<Quick Look View 5>
+sw_item:Autopilot|DISENGAGE
+sw_item:Flt Dir|OFF
+sw_item:Alt Hold|OFF
+sw_item:Pitch Cmd|FULL CLOCKWISE
+
+sw_checklist:Before Start 3:Before Start 3
+sw_rcolsize:110
+sw_item:Master Caution|PUSH TO RESET
+sw_itemvoid:<Quick Look View 7>
+sw_item:Anti Collision Lights|ON
+sw_item:Logo Lights|AS NEEDED
+sw_itemvoid:<Quick Look View 2>
+sw_item:Engine Start Lever 1|CUTOFF
+sw_item:Engine Start Lever 2|CUTOFF
+
+sw_checklist:Push Back:Push Back
+sw_rcolsize:110
+sw_itemvoid:<Quick Look View 2>
+sw_item:Park Brake|OFF
+sw_itemvoid:<Quick Look View 7>
+sw_item:GRD CALL|PRESSED
+sw_item:FlyJSim Pushback|MANUAL/AUTO
+sw_itemvoid:<Quick Look View 2>
+sw_item:Park Brake|ON
+
+sw_checklist:Engine Start:Engine Start
+sw_rcolsize:110
+sw_itemvoid:<Quick Look View 7>
+sw_item:L Pack|OFF
+sw_item:R Pack|OFF
+sw_item:Fuel Pumps|ON
+sw_item:Engine Start 2|GRD
+sw_itemvoid:<Quick Look View 2>
+sw_item:Engine Start Lever 2 @ 20% N2|IDLE
+sw_itemvoid:<Quick Look View 7>
+sw_itemvoid:Wait until Engine Start 2
+sw_itemvoid:returns to the OFF position.
+sw_item:Engine Start 1|GRD
+sw_itemvoid:<Quick Look View 2>
+sw_item:Engine Start Lever 1 @ 20% N2|IDLE
+sw_itemvoid:<Quick Look View 7>
+sw_itemvoid:Wait until Engine Start 1
+sw_itemvoid:returns to the OFF position.
+
+sw_checklist:Before Taxi 1:Before Taxi 1
+sw_rcolsize:110
+sw_itemvoid:<Quick Look View 7>
+sw_item:Fuel Heat 1 & 2|AS NEEDED
+sw_item:Bus Transfer Gen 1 & 2|ON
+sw_itemvoid:<Quick Look View 8>
+sw_item:Pitot Static A & B|ON
+sw_item:Wing Anti-Ice|AS NEEDED
+sw_item:Eng Anti-Ice|AS NEEDED
+sw_itemvoid:<Quick Look View 7>
+sw_item:Hyd Pumps Elec 1 & 2|ON
+sw_item:L Pack|ON
+sw_item:R Pack|ON
+sw_item:Isolation Valve|AUTO
+sw_item:Bleed APU|OFF
+sw_item:APU|OFF
+sw_item:Engine Start 1 & 2|LOW IGN
+
+sw_checklist:Before Taxi 2:Before Taxi 2
+sw_rcolsize:110
+sw_itemvoid:<Quick Look View 7,8,9>
+sw_itemvoid:Check all yellow warning
+sw_itemvoid:indicator lights are gone.
+sw_item:Warning Indicators|OFF 
+sw_itemvoid:<Quick Look View 2>
+sw_item:Flaps|SET FOR TAKEOFF
+sw_itemvoid:<Shift 8>
+sw_item:Flight Controls|CHECK
+sw_item:Spoilers|TEST
+sw_itemvoid:<Quick Look View 4>
+sw_item:Altimeter/QNH|SET
+sw_itemvoid:<Quick Look View 7>
+sw_item:Taxi Lights|ON
+sw_item:Fuel Heat 1 & 2|OFF
+sw_itemvoid:<Quick Look View 3>
+sw_item:Transponder|SET & STBY
+
+sw_checklist:Taxi:Taxi
+sw_rcolsize:110
+sw_itemvoid:<Quick Look View 2>
+sw_item:Park Brake|OFF
+sw_item:Auto Brake|OFF
+sw_itemvoid:<Quick Look View 4>
+sw_itemvoid:Test Brakes during Taxi
+sw_item:Brakes|WORKING
+
+sw_checklist:Before Takeoff 1:Before Takeoff 1
+sw_rcolsize:110
+sw_itemvoid:<Quick Look View 2>
+sw_itemvoid:Click on green area
+sw_itemvoid:beside trim wheel.
+sw_item:Take Off Trim|SET
+sw_itemvoid:<Quick Look View 3>
+sw_item:Transponder|TA/RA
+
+sw_checklist:Before Takeoff 2:Before Takeoff 2
+sw_rcolsize:110
+sw_itemvoid:<Quick Look View 7>
+sw_item:Inboard Landing Lights|ON
+sw_item:Strobe, Position Lights|ON
+sw_item:Taxi Lights|OFF
+sw_itemvoid:<Quick Look View 5>
+sw_item:FD Heading|RUNWAY HEADING
+sw_item:FD Knob|HDG
+sw_itemvoid:<Quick Look View 1>
+sw_item:Set Altitude|10,000 Feet
+sw_item:Radar Range|40 NM
+sw_item:Radar|WX or WX/T or MAP
+sw_itemvoid:<Quick Look View 4>
+sw_itemvoid:(Airspeed Indicator Knob)
+sw_item:IAS (Orange Ind)|200 KNOTS
+sw_itemvoid:(Cheat - Shift W) 
+
+sw_checklist:Cleared For Take-Off:Cleared For Take-Off
+sw_rcolsize:110
+sw_itemvoid:(Check FlyJSim V card
+sw_itemvoid: for take-off V1, VR, V2)
+sw_item:Line Up|DONE
+sw_item:Throttles|1.4 EPR
+sw_itemvoid:(Stabilize)
+sw_item:Throttles|TAKE-OFF EPR
+sw_itemvoid:(Orange Marks EPR Guage)
+sw_itemvoid: 80 Kts call CHECK
+sw_itemvoid: V1 call V1
+sw_itemvoid: VR rotate 15 degrees pitch
+sw_item:Landing Gear|UP
+sw_itemvoid: V2 + 15-25 for initial climb
+sw_itemvoid:<Quick Look View 5>
+sw_item:AP - Engage AIL & ELEV|BOTH UP
+sw_item:AP - Knob OFF->IAS
+sw_item:AP - HDG SEL|DOWN (Automatic)
+
+sw_checklist:After Take-Off:After Take-Off
+sw_rcolsize:110
+sw_itemvoid:The Auto Pilot should be working!
+sw_item:Flaps|UP
+sw_itemvoid:<Quick Look View 4>
+sw_itemvoid:Increase Speed
+sw_item:IAS|250 KNOTS
+sw_itemvoid:Adjust FD Heading to follow
+sw_itemvoid:your GPS course.
+sw_itemvoid:<Quick Look View 1>
+sw_itemvoid:Radar shows GPS course.
+sw_itemvoid:<Quick Look View 5>
+sw_item:FD Heading|ADJUSTED
+sw_itemvoid:Once established on GPS course.
+sw_itemvoid:<Quick Look View 5>
+sw_item:AP - Knob|MAN->VOR LOC
+sw_item:GPS/NAV Switch|GPS
+sw_itemvoid:Plane follows GPS course now.
+
+sw_checklist:First Climb 10,000 Feet:First Climb 10,000 Feet
+sw_rcolsize:110
+sw_itemvoid:<Quick Look View 5>
+sw_itemvoid:Beeps at 9000 feet.
+sw_itemvoid:Beeps levelling out 10,000.
+sw_itemvoid:AP - Knob auto moves IAS->ALT HOLD
+sw_itemvoid:Adjust throttle to Maintain 250 knots.
+sw_item:Throttles|ADJUST
+sw_itemvoid:<Quick Look View 7>
+sw_item:Inboard Landing Lights|OFF
+sw_item:Fasten Belts|OFF
+sw_itemvoid:When at transition altitude.
+sw_item:Altimeter/QNH|STD
+
+sw_checklist:Climb 30,000 Feet:Climb 30,000 Feet
+sw_rcolsize:110
+sw_itemvoid:<Quick Look View 1>
+sw_item:Set Altitude|30,000
+sw_itemvoid:<Quick Look View 4>
+sw_item:IAS|280 KNOTS
+sw_itemvoid:<Quick Look View 5>
+sw_item:AP - Knob|ALT HOLD->OFF->IAS
+sw_item:Throttles|INCREASE
+sw_itemvoid:Beeps at 29,000 feet.
+sw_itemvoid:Beeps levelling out 30,000.
+sw_itemvoid:AP - Knob auto moves IAS->ALT HOLD
+sw_itemvoid:Adjust throttle to Maintain
+sw_itemvoid:desired cruise speed.
+sw_item:Throttles|ADJUST
+sw_itemvoid:Whistle sounds if overspeed!
+
+sw_checklist:Top Of Descent:Top Of Descent
+sw_rcolsize:110
+sw_itemvoid:<Quick Look View 1>
+sw_item:Set Altitude|3,000
+sw_itemvoid:<Quick Look View 5>
+sw_item:AP - Knob|ALT HOLD->OFF
+sw_item:FD - ALT Hold|ON
+sw_item:FD - Pitch CMD|DOWN 1 CLICK
+sw_itemvoid:Adjust throttle to maintain
+sw_itemvoid:desired descent speed.
+sw_itemvoid:Faster Descent ?
+sw_item:FD - Pitch CMD|DOWN 1 CLICK
+sw_item:Thottle|ADJUST/ZERO
+sw_itemvoid:Fastest Descent ???
+sw_item:FD - Pitch CMD|DOWN 1 CLICK
+sw_item:Thottle|ZERO
+sw_itemvoid:Speed brakes may be needed.
+sw_itemvoid:Can pitch up again to slow descent.
+
+sw_checklist:Level off 3,000 Feet:Level off 3,000 Feet
+sw_rcolsize:110
+sw_itemvoid:Passing Transition Altitude
+sw_item:Altimeter/QNH|SET
+sw_itemvoid:Passing 10,000 feet
+sw_item:Landing Lights|ON
+sw_item:Fasten Belts|ON
+sw_itemvoid:<Quick Look View 5>
+sw_itemvoid:Beeps at 4,000 feet.
+sw_itemvoid:Beeps levelling out 3,000.
+sw_itemvoid:Let speed fall to 185 while
+sw_itemvoid:adding flaps as follows
+sw_itemvoid:until flaps 30!
+sw_itemvoid: 1-230K   15-195K
+sw_itemvoid: 2-230K   25-190K
+sw_itemvoid: 5-225K   30-185K
+sw_itemvoid:10-210K   40-170K
+sw_item:Throttles|MAINTAIN 180 KNOTS
+
+sw_checklist:ILS Approach:ILS Approach
+sw_rcolsize:110
+sw_itemvoid:<Quick Look View 3>
+sw_item:NAV1|ILS FREQ
+sw_itemvoid:<Quick Look View 5>
+sw_itemvoid:Set a heading to intercept
+sw_itemvoid:the ILS glide path.
+sw_item:FD - HEADING|AS APPROPRIATE
+sw_item:AP - HDG SEL|DOWN
+sw_itemvoid:Activate approach mode
+sw_itemvoid:when plane is level
+sw_itemvoid:and heading towards
+sw_itemvoid:the ILS glide path.
+sw_item:AP - Knob|MAN->AUTO APP
+sw_item:GPS/NAV|NAV (Automatic)
+sw_itemvoid:ILS locks on and lines
+sw_itemvoid:you up with the runway.
+
+sw_checklist:Landing:Landing
+sw_rcolsize:110
+sw_item:Landing Gear|DOWN 3 GREENS
+sw_itemvoid:Check FlyJSim V Card  
+sw_item:Flaps|V Card Landing
+sw_item:Throttle|V Card Landing
+sw_item:Auto Brake|SET
+sw_item:Spoilers|ARMED (KEY 3)
+sw_item:AP - AIL & ELEV|DISENGAGE BOTH
+sw_itemvoid:(Cheat - Shift W)
+
+sw_checklist:After Landing:After Landing
+sw_rcolsize:110
+sw_item:Reverse Thrusters|OFF @ 60 KNOTS
+sw_item:Spoilers|RETRACT
+sw_item:Flaps|RETRACT
+sw_item:Auto Brake|OFF
+sw_itemvoid:<Quick Look View 7>
+sw_item:Taxi Lights|ON
+sw_item:Landing Lights|OFF
+sw_item:Logo Lights|AS NEEDED
+sw_item:Strobe|OFF
+sw_item:Position|OFF
+sw_item:Anti Collision|ON
+sw_itemvoid:<Quick Look View 3>
+sw_item:Transponder|STBY
+
+sw_checklist:Parking:Parking
+sw_rcolsize:110
+sw_item:Taxi Light|OFF
+sw_item:Park Brake|ON
+sw_itemvoid:<FlyJSim Options>
+sw_item:Connect Ground Power|SELECTED
+sw_item:Bus Transfer GRD PWR|ON
+sw_item:Engine Start 1 & 2|OFF
+sw_item:Engine Start Lever 1|CUTOFF
+sw_item:Engine Start Lever 2|CUTOFF
+sw_item:Seat Belts Signs|OFF
+sw_item:Anti Collision|OFF
+sw_item:Logo Lights|OFF
