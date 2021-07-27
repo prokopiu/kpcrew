@@ -1479,27 +1479,10 @@ ZC_PREFLIGHT_CHECKLIST = {
 	[0] = {["lefttext"] = "PREFLIGHT CHECKLIST", ["timerincr"] = 3,
 		["actions"] = function ()
 			speakNoText(0,"PREFLIGHT CHECKLIST")
+			-- concentrate easy items in initial item
 			if get_zc_config("easy") then
 				setchecklist(2)
-			end
-		end
-	},
-	[1] = {["lefttext"] = "OXYGEN -- TESTED, 100 %%", ["timerincr"] = 1,
-		["actions"] = function ()
-			speakNoText(0,"OXYGEN")
-		end
-	},
-	[2] = {["lefttext"] = "OXYGEN -- TESTED, 100 %%", ["timerincr"] = 999,
-		["actions"] = function ()
-			if get_zc_config("easy") then
-				speakNoText(0,"TESTED ONE HUNDRED PERCENT")
-				command_once("bgood/xchecklist/check_item")
-			end
-		end
-	},
-	[3] = {["lefttext"] = "NAVIGATION TRANSFER AND DISPLAY SWITCHES -- NORMAL, AUTO", ["timerincr"] = 3,
-		["actions"] = function ()
-			if get_zc_config("easy") then
+				-- Navigation switches
 				if get("laminar/B738/toggle_switch/vhf_nav_source") > 0 then
 					command_once("laminar/B738/toggle_switch/vhf_nav_source_lft")
 				end
@@ -1525,7 +1508,36 @@ ZC_PREFLIGHT_CHECKLIST = {
 				if get("laminar/B738/toggle_switch/dspl_ctrl_pnl") < 0 then
 					command_once("laminar/B738/toggle_switch/dspl_ctrl_pnl_right")
 				end
+				-- Window heat
+				set("laminar/B738/ice/window_heat_l_side_pos",1)
+				set("laminar/B738/ice/window_heat_l_fwd_pos",1)
+				set("laminar/B738/ice/window_heat_r_fwd_pos",1)
+				set("laminar/B738/ice/window_heat_r_side_pos",1)
+				-- Pressurization
+				set("laminar/B738/annunciator/altn_press",0)
+				-- Parking Brake
+				set("laminar/B738/parking_brake_pos",1)
+				-- fuel cutoff switches
+				set("laminar/B738/engine/mixture_ratio1",0)
+				set("laminar/B738/engine/mixture_ratio2",0)
 			end
+		end
+	},
+	[1] = {["lefttext"] = "OXYGEN -- TESTED, 100 %%", ["timerincr"] = 1,
+		["actions"] = function ()
+			speakNoText(0,"OXYGEN")
+		end
+	},
+	[2] = {["lefttext"] = "OXYGEN -- TESTED, 100 %%", ["timerincr"] = 999,
+		["actions"] = function ()
+			if get_zc_config("easy") then
+				speakNoText(0,"TESTED ONE HUNDRED PERCENT")
+				command_once("bgood/xchecklist/check_item")
+			end
+		end
+	},
+	[3] = {["lefttext"] = "NAVIGATION TRANSFER AND DISPLAY SWITCHES -- NORMAL, AUTO", ["timerincr"] = 3,
+		["actions"] = function ()
 			speakNoText(0,"NAVIGATION TRANSFER AND DISPLAY SWITCHES")
 		end
 	},
@@ -1540,12 +1552,6 @@ ZC_PREFLIGHT_CHECKLIST = {
 	[5] = {["lefttext"] = "WINDOW HEAT -- ON", ["timerincr"] = 2,
 		["actions"] = function ()
 			speakNoText(0,"WINDOW HEAT")
-			if get_zc_config("easy") then
-				set("laminar/B738/ice/window_heat_l_side_pos",1)
-				set("laminar/B738/ice/window_heat_l_fwd_pos",1)
-				set("laminar/B738/ice/window_heat_r_fwd_pos",1)
-				set("laminar/B738/ice/window_heat_r_side_pos",1)
-			end
 		end
 	},
 	[6] = {["lefttext"] = "WINDOW HEAT -- ON", ["timerincr"] = 2,
@@ -1559,9 +1565,6 @@ ZC_PREFLIGHT_CHECKLIST = {
 	[7] = {["lefttext"] = "PRESSURIZATION MODE SELECTOR -- AUTO", ["timerincr"] = 2,
 		["actions"] = function ()
 			speakNoText(0,"PRESSURIZATION MODE SELECTOR")
-			if get_zc_config("easy") then
-				set("laminar/B738/annunciator/altn_press",0)
-			end
 		end
 	},
 	[8] = {["lefttext"] = "PRESSURIZATION MODE SELECTOR -- AUTO", ["timerincr"] = 2,
@@ -1590,9 +1593,6 @@ ZC_PREFLIGHT_CHECKLIST = {
 	[11] = {["lefttext"] = "PARKING BRAKE -- SET", ["timerincr"] = 2,
 		["actions"] = function ()
 			speakNoText(0,"PARKING BRAKE")
-			if get_zc_config("easy") then
-				set("laminar/B738/parking_brake_pos",1)
-			end
 		end
 	},
 	[12] = {["lefttext"] = "PARKING BRAKE -- SET", ["timerincr"] = 997,
@@ -1606,10 +1606,6 @@ ZC_PREFLIGHT_CHECKLIST = {
 	[13] = {["lefttext"] = "ENGINE START LEVERS -- CUTOFF", ["timerincr"] = 2,
 		["actions"] = function ()
 			speakNoText(0,"ENGINE START LEVERS")
-			if get_zc_config("easy") then
-				set("laminar/B738/engine/mixture_ratio1",0)
-				set("laminar/B738/engine/mixture_ratio2",0)
-			end
 		end
 	},
 	[14] = {["lefttext"] = "ENGINE START LEVERS -- CUTOFF", ["timerincr"] = 997,
@@ -1926,17 +1922,31 @@ ZC_BEFORE_START_CHECKLIST = {
 			speakNoText(0,"BEFORE START CHECKLIST")
 			if get_zc_config("easy") then
 				setchecklist(3)
+				-- flight deck door
+				if get("laminar/B738/door/flt_dk_door_ratio") == 1 then
+					command_once("laminar/B738/toggle_switch/flt_dk_door_open")
+				end
+				-- fuel tanks
+				set("laminar/B738/fuel/fuel_tank_pos_lft1",1)
+				set("laminar/B738/fuel/fuel_tank_pos_lft2",1)
+				set("laminar/B738/fuel/fuel_tank_pos_rgt1",1)
+				set("laminar/B738/fuel/fuel_tank_pos_rgt2",1)
+				set("laminar/B738/air/isolation_valve_pos",1)
+				if get("laminar/B738/fuel/center_tank_kgs") >  100 then
+					set("laminar/B738/fuel/fuel_tank_pos_ctr1",1)
+					set("laminar/B738/fuel/fuel_tank_pos_ctr2",1)
+				end
+				-- seat belts
+				command_once("laminar/B738/toggle_switch/seatbelt_sign_dn")
+				command_once("laminar/B738/toggle_switch/seatbelt_sign_dn")
+				-- Beacon
+				command_once("sim/lights/beacon_lights_on")
 			end
 		end
 	},
 	[1] = {["lefttext"] = "FLIGHT DECK DOOR -- CLOSED AND LOCKED", ["timerincr"] = 1,
 		["actions"] = function ()
 			speakNoText(0,"FLIGHT DECK DOOR")
-			if get_zc_config("easy") then
-				if get("laminar/B738/door/flt_dk_door_ratio") == 1 then
-					command_once("laminar/B738/toggle_switch/flt_dk_door_open")
-				end
-			end
 		end
 	},
 	[2] = {["lefttext"] = "FLIGHT DECK DOOR -- CLOSED AND LOCKED", ["timerincr"] = 997,
@@ -1950,17 +1960,6 @@ ZC_BEFORE_START_CHECKLIST = {
 	[3] = {["lefttext"] = "FUEL -- ___ KGS PUMPS ON", ["timerincr"] = 5,
 		["actions"] = function ()
 			speakNoText(0,"FUEL")
-			if get_zc_config("easy") then
-				set("laminar/B738/fuel/fuel_tank_pos_lft1",1)
-				set("laminar/B738/fuel/fuel_tank_pos_lft2",1)
-				set("laminar/B738/fuel/fuel_tank_pos_rgt1",1)
-				set("laminar/B738/fuel/fuel_tank_pos_rgt2",1)
-				set("laminar/B738/air/isolation_valve_pos",1)
-				if get("laminar/B738/fuel/center_tank_kgs") >  100 then
-					set("laminar/B738/fuel/fuel_tank_pos_ctr1",1)
-					set("laminar/B738/fuel/fuel_tank_pos_ctr2",1)
-				end
-			end
 			gLeftText = string.format("FUEL -- %i KGS PUMPS ON",get("laminar/B738/fuel/total_tank_kgs"))
 		end
 	},
@@ -1976,10 +1975,6 @@ ZC_BEFORE_START_CHECKLIST = {
 	[5] = {["lefttext"] = "PASSENGER SIGNS -- ON", ["timerincr"] = 2,
 		["actions"] = function ()
 			speakNoText(0,"PASSENGER SIGNS")
-			if get_zc_config("easy") then
-				command_once("laminar/B738/toggle_switch/seatbelt_sign_dn")
-				command_once("laminar/B738/toggle_switch/seatbelt_sign_dn")
-			end
 		end
 	},
 	[6] = {["lefttext"] = "PASSENGER SIGNS -- ON", ["timerincr"] = 997,
@@ -2078,9 +2073,6 @@ ZC_BEFORE_START_CHECKLIST = {
 	[19] = {["lefttext"] = "ANTI COLLISION LIGHT -- ON", ["timerincr"] = 3,
 		["actions"] = function ()
 			speakNoText(0,"ANTI COLLISION LIGHT")
-			if get_zc_config("easy") then
-				command_once("sim/lights/beacon_lights_on")
-			end
 		end
 	},
 	[20] = {["lefttext"] = "ANTI COLLISION LIGHT -- ON", ["timerincr"] = 997,
@@ -2363,16 +2355,31 @@ ZC_BEFORE_TAXI_CHECKLIST = {
 			speakNoText(0,"BEFORE TAXI CHECKLIST")
 			if get_zc_config("easy") then
 				setchecklist(4)
+				-- generator
+				command_once("laminar/B738/toggle_switch/gen2_dn")
+				command_once("laminar/B738/toggle_switch/gen1_dn")
+				-- Probe heat
+				set("laminar/B738/toggle_switch/capt_probes_pos",1)
+				set("laminar/B738/toggle_switch/fo_probes_pos",1)
+				-- isolation valve
+				set("laminar/B738/air/isolation_valve_pos",1)
+				-- engine starters
+				if get("laminar/B738/engine/starter1_pos") == 1 then
+					command_once("laminar/B738/knob/eng1_start_right")
+				end
+				if get("laminar/B738/engine/starter2_pos") == 1 then
+					command_once("laminar/B738/knob/eng2_start_right")
+				end
+				-- autobrake
+				while get("laminar/B738/autobrake/autobrake_pos") > 0 do
+					command_once("laminar/B738/knob/autobrake_dn")
+				end
 			end
 		end
 	},
 	[1] = {["lefttext"] = "GENERATORS -- ON", ["timerincr"] = 2,
 		["actions"] = function ()
 			speakNoText(0,"GENERATORS")
-			if get_zc_config("easy") then
-				command_once("laminar/B738/toggle_switch/gen2_dn")
-				command_once("laminar/B738/toggle_switch/gen1_dn")
-			end
 		end
 	},
 	[2] = {["lefttext"] = "GENERATORS -- ON", ["timerincr"] = 997,
@@ -2386,10 +2393,6 @@ ZC_BEFORE_TAXI_CHECKLIST = {
 	[3] = {["lefttext"] = "PROBE HEAT -- ON", ["timerincr"] = 2,
 		["actions"] = function ()
 			speakNoText(0,"PROBE HEAT")
-			if get_zc_config("easy") then
-				set("laminar/B738/toggle_switch/capt_probes_pos",1)
-				set("laminar/B738/toggle_switch/fo_probes_pos",1)
-			end
 		end
 	},
 	[4] = {["lefttext"] = "PROBE HEAT -- ON", ["timerincr"] = 997,
@@ -2416,9 +2419,6 @@ ZC_BEFORE_TAXI_CHECKLIST = {
 	[7] = {["lefttext"] = "ISOLATION VALVE -- AUTO", ["timerincr"] = 2,
 		["actions"] = function ()
 			speakNoText(0,"ISOLATION VALVE")
-			if get_zc_config("easy") then
-				set("laminar/B738/air/isolation_valve_pos",1)
-			end
 		end
 	},
 	[8] = {["lefttext"] = "ISOLATION VALVE -- AUTO", ["timerincr"] = 997,
@@ -2432,14 +2432,6 @@ ZC_BEFORE_TAXI_CHECKLIST = {
 	[9] = {["lefttext"] = "ENGINE START SWITCHES -- CONT", ["timerincr"] = 1,
 		["actions"] = function ()
 			speakNoText(0,"ENGINE START SWITCHES")
-			if get_zc_config("easy") then
-				if get("laminar/B738/engine/starter1_pos") == 1 then
-					command_once("laminar/B738/knob/eng1_start_right")
-				end
-				if get("laminar/B738/engine/starter2_pos") == 1 then
-					command_once("laminar/B738/knob/eng2_start_right")
-				end
-			end
 		end
 	},
 	[10] = {["lefttext"] = "ENGINE START SWITCHES -- CONT", ["timerincr"] = 997,
@@ -2466,11 +2458,6 @@ ZC_BEFORE_TAXI_CHECKLIST = {
 	[13] = {["lefttext"] = "AUTOBRAKE -- RTO", ["timerincr"] = 2,
 		["actions"] = function ()
 			speakNoText(0,"AUTOBRAKE")
-			if get_zc_config("easy") then
-				while get("laminar/B738/autobrake/autobrake_pos") > 0 do
-					command_once("laminar/B738/knob/autobrake_dn")
-				end
-			end
 		end
 	},
 	[14] = {["lefttext"] = "AUTOBRAKE -- RTO", ["timerincr"] = 997,
@@ -2858,6 +2845,16 @@ ZC_AFTER_TAKEOFF_CHECKLIST = {
 			speakNoText(0,"AFTER TAKE OFF CHECKLIST")
 			if get_zc_config("easy") then
 				setchecklist(6)
+				-- Bleeds
+				set("laminar/B738/toggle_switch/bleed_air_1_pos",1)
+				set("laminar/B738/toggle_switch/bleed_air_2_pos",1)
+				-- Packs
+				set("laminar/B738/air/l_pack_pos",1)
+				set("laminar/B738/air/r_pack_pos",1)
+				-- Landing gear
+				command_once("sim/flight_controls/landing_gear_up")
+				-- Flaps
+				command_once("laminar/B738/push_button/flaps_0")
 			end
 			ZC_BACKGROUND_PROCS["80KTS"].status = 0
 			ZC_BACKGROUND_PROCS["GEARUP"].status = 0
@@ -2866,10 +2863,6 @@ ZC_AFTER_TAKEOFF_CHECKLIST = {
 	[1] = {["lefttext"] = "ENGINE BLEEDS -- ON", ["timerincr"] = 2,
 		["actions"] = function ()
 			speakNoText(0,"ENGINE BLEEDS")
-			if get_zc_config("easy") then
-				set("laminar/B738/toggle_switch/bleed_air_1_pos",1)
-				set("laminar/B738/toggle_switch/bleed_air_2_pos",1)
-			end
 		end
 	},
 	[2] = {["lefttext"] = "ENGINE BLEEDS -- ON", ["timerincr"] = 997,
@@ -2883,10 +2876,6 @@ ZC_AFTER_TAKEOFF_CHECKLIST = {
 	[3] = {["lefttext"] = "PACKS -- AUTO", ["timerincr"] = 2,
 		["actions"] = function ()
 			speakNoText(0,"PACKS")
-			if get_zc_config("easy") then
-				set("laminar/B738/air/l_pack_pos",1)
-				set("laminar/B738/air/r_pack_pos",1)
-			end
 		end
 	},
 	[4] = {["lefttext"] = "PACKS -- AUTO", ["timerincr"] = 997,
@@ -2900,9 +2889,6 @@ ZC_AFTER_TAKEOFF_CHECKLIST = {
 	[5] = {["lefttext"] = "LANDING GEAR -- UP AND OFF", ["timerincr"] = 2,
 		["actions"] = function ()
 			speakNoText(0,"LANDING GEAR")
-			if get_zc_config("easy") then
-				command_once("sim/flight_controls/landing_gear_up")
-			end
 		end
 	},
 	[6] = {["lefttext"] = "LANDING GEAR -- UP AND OFF", ["timerincr"] = 997,
@@ -2916,9 +2902,6 @@ ZC_AFTER_TAKEOFF_CHECKLIST = {
 	[7] = {["lefttext"] = "FLAPS -- UP NO LIGHTS", ["timerincr"] = 2,
 		["actions"] = function ()
 			speakNoText(0,"FLAPS")
-			if get_zc_config("easy") then
-				command_once("laminar/B738/push_button/flaps_0")
-			end
 		end
 	},
 	[8] = {["lefttext"] = "FLAPS -- UP NO LIGHTS", ["timerincr"] = 997,
@@ -3066,6 +3049,14 @@ ZC_DESCENT_CHECKLIST = {
 			speakNoText(0,"DESCENT CHECKLIST")
 			if get_zc_config("easy") then
 				setchecklist(7)
+				-- autobrake
+				while get("laminar/B738/autobrake/autobrake_pos") < get_zc_brief_app("autobrake") do
+					command_once("laminar/B738/knob/autobrake_up")
+				end
+				-- Switch MFD to ENG
+				if get("laminar/B738/systems/lowerDU_page2") == 0 then
+					command_once("laminar/B738/LDU_control/push_button/MFD_ENG")
+				end
 			end
 			ZC_BACKGROUND_PROCS["TRANSALT"].status = 0
 			ZC_BACKGROUND_PROCS["TENTHOUSANDUP"].status = 0
@@ -3103,11 +3094,6 @@ ZC_DESCENT_CHECKLIST = {
 	[5] = {["lefttext"] = "AUTOBRAKE -- ___", ["timerincr"] = 1,
 		["actions"] = function ()
 			speakNoText(0,"AUTOBRAKE")
-			if get_zc_config("easy") then
-				while get("laminar/B738/autobrake/autobrake_pos") < get_zc_brief_app("autobrake") do
-					command_once("laminar/B738/knob/autobrake_up")
-				end
-			end
 			gLeftText = string.format("AUTOBRAKE %i",get("laminar/B738/autobrake/autobrake_pos"))
 		end
 	},
@@ -3157,11 +3143,6 @@ ZC_DESCENT_CHECKLIST = {
 	[12] = {["lefttext"] = "DESCENT CHECKLIST COMPLETED", ["timerincr"] = 2,
 		["actions"] = function ()
 			speakNoText(0,"DESCENT CHECKLIST COMPLETED")		
-			if get_zc_config("easy") then
-				if get("laminar/B738/systems/lowerDU_page2") == 0 then
-					command_once("laminar/B738/LDU_control/push_button/MFD_ENG")
-				end
-			end
 		end
 	},
 	[13] = {["lefttext"] = "DESCENT CHECKLIST COMPLETED", ["timerincr"] = -1,
@@ -3375,6 +3356,15 @@ ZC_LANDING_CHECKLIST = {
 			speakNoText(0,"LANDING CHECKLIST")
 			if get_zc_config("easy") then
 				setchecklist(9)
+				-- starter cont
+				if get("laminar/B738/engine/starter1_pos") == 1 then
+					command_once("laminar/B738/knob/eng1_start_right")
+				end
+				if get("laminar/B738/engine/starter2_pos") == 1 then
+					command_once("laminar/B738/knob/eng2_start_right")
+				end
+				-- Gear
+				command_once("laminar/B738/push_button/gear_down")
 			end
 		end
 	},
@@ -3394,14 +3384,6 @@ ZC_LANDING_CHECKLIST = {
 	[3] = {["lefttext"] = "ENGINE START SWITCHES -- CONTINUOUS", ["timerincr"] = 2,
 		["actions"] = function ()
 			speakNoText(0,"ENGINE START SWITCHES")
-			if get_zc_config("easy") then
-				if get("laminar/B738/engine/starter1_pos") == 1 then
-					command_once("laminar/B738/knob/eng1_start_right")
-				end
-				if get("laminar/B738/engine/starter2_pos") == 1 then
-					command_once("laminar/B738/knob/eng2_start_right")
-				end
-			end
 		end
 	},
 	[4] = {["lefttext"] = "ENGINE START SWITCHES -- CONTINUOUS", ["timerincr"] = 997,
@@ -3428,9 +3410,6 @@ ZC_LANDING_CHECKLIST = {
 	[7] = {["lefttext"] = "LANDING GEAR -- DOWN", ["timerincr"] = 2,
 		["actions"] = function ()
 			speakNoText(0,"LANDING GEAR")
-			if get_zc_config("easy") then
-				command_once("laminar/B738/push_button/gear_down")
-			end
 		end
 	},
 	[8] = {["lefttext"] = "LANDING GEAR -- DOWN", ["timerincr"] = 997,
@@ -4405,7 +4384,7 @@ function zc_get_procedure()
 	incnt=incnt+1
 	if lProcIndex == incnt then
 		lActiveProc = ZC_SECURE_CHECKLIST
-		lNameActiveProc = incnt.." SECURE CHECKLIST"
+		lNameActiveProc = incnt.." SECURE CHECKLIST - OPTIONAL"
 		lChecklistMode = 1
 	end
 	lNoProcs=incnt
