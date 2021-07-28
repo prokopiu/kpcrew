@@ -3307,38 +3307,65 @@ ZC_LANDING_PROC = {
 			set("laminar/B738/autopilot/mcp_alt_dial", get("laminar/B738/fms/missed_app_alt"))
 		end
 	},
-	[17] = {["lefttext"] = "AUTOPILOT -- OFF", ["timerincr"] = 1,
+	[17] = {["lefttext"] = "PROCEDURE FINISHED", ["timerincr"] = 1,
+		["actions"] = function ()
+			gLeftText = "LANDING PROCEDURE FINISHED"
+		end
+	}, 	
+	[18] = {["lefttext"] = "PROCEDURE FINISHED", ["timerincr"] = -1,
+		["actions"] = function ()
+			gLeftText = "LANDING PROCEDURE FINISHED"
+		end
+	}
+}
+
+ZC_FINAL_PROC = {
+	[0] = {["lefttext"] = "ON FINAL", ["timerincr"] = 3,
+		["actions"] = function ()
+			gLeftText = "ON FINAL"
+		end
+	},
+	[1] = {["lefttext"] = "CLEARED FOR LANDING?", ["timerincr"] = 1,
+		["actions"] = function ()
+			gLeftText = "CLEARED FOR LANDING?"
+		end
+	},
+	[2] = {["lefttext"] = "CLEARED FOR LANDING?", ["timerincr"] = 997,
+		["actions"] = function ()
+			gLeftText = "CLEARED"
+		end
+	},
+	[3] = {["lefttext"] = "AUTOPILOT -- OFF", ["timerincr"] = 1,
 		["actions"] = function ()
 			gLeftText = "AUTOPILOT OFF"
 		end
 	},
-	[18] = {["lefttext"] = "AUTOPILOT -- OFF", ["timerincr"] = 997,
+	[4] = {["lefttext"] = "AUTOPILOT -- OFF", ["timerincr"] = 997,
 		["actions"] = function ()
 			gLeftText = "SET OFF"
 			command_once("laminar/B738/autopilot/disconnect_button")
 		end
 	},
-	[19] = {["lefttext"] = "AUTOTHROTTLE -- OFF", ["timerincr"] = 1,
+	[5] = {["lefttext"] = "AUTOTHROTTLE -- OFF", ["timerincr"] = 1,
 		["actions"] = function ()
 			gLeftText = "AUTOTHROTTLE OFF"
 			command_once("laminar/B738/autopilot/disconnect_button")
 		end
 	},
-	[20] = {["lefttext"] = "AUTOTHROTTLE -- OFF", ["timerincr"] = 997,
+	[6] = {["lefttext"] = "AUTOTHROTTLE -- OFF", ["timerincr"] = 997,
 		["actions"] = function ()
 			gLeftText = "SET OFF"
 			command_once("laminar/B738/autopilot/left_at_dis_press")
 		end
 	},
-	[21] = {["lefttext"] = "PROCEDURE FINISHED", ["timerincr"] = 1,
+	[17] = {["lefttext"] = "PROCEDURE FINISHED", ["timerincr"] = 1,
 		["actions"] = function ()
-			gLeftText = "LANDING PROCEDURE FINISHED - HAPPY LANDING"
-			command_once("laminar/B738/autopilot/left_at_dis_press")
+			gLeftText = "HAPPY LANDING"
 		end
 	}, 	
-	[22] = {["lefttext"] = "PROCEDURE FINISHED", ["timerincr"] = -1,
+	[18] = {["lefttext"] = "PROCEDURE FINISHED", ["timerincr"] = -1,
 		["actions"] = function ()
-			gLeftText = "LANDING PROCEDURE FINISHED - HAPPY LANDING"
+			gLeftText = "HAPPY LANDING"
 		end
 	}
 }
@@ -3349,7 +3376,7 @@ ZC_LANDING_PROC = {
 -- Speedbrake  . . . . . . . . . . . . . . . 		Armed
 -- Landing gear. . . . . . . . . . . . . . . 		Down
 -- Flaps . . . . . . . . . . . . . . . . . .		___, green light
-
+-- 2.1.0: changed to automatic
 ZC_LANDING_CHECKLIST = {
 	[0] = {["lefttext"] = "LANDING CHECKLIST", ["timerincr"] = 3,
 		["actions"] = function ()
@@ -3373,7 +3400,7 @@ ZC_LANDING_CHECKLIST = {
 			speakNoText(0,"CABIN")
 		end
 	},
-	[2] = {["lefttext"] = "CABIN -- SECURE", ["timerincr"] = 997,
+	[2] = {["lefttext"] = "CABIN -- SECURE", ["timerincr"] = 2,
 		["actions"] = function ()
 			if get_zc_config("easy") then
 				speakNoText(0,"SECURE")
@@ -3386,7 +3413,7 @@ ZC_LANDING_CHECKLIST = {
 			speakNoText(0,"ENGINE START SWITCHES")
 		end
 	},
-	[4] = {["lefttext"] = "ENGINE START SWITCHES -- CONTINUOUS", ["timerincr"] = 997,
+	[4] = {["lefttext"] = "ENGINE START SWITCHES -- CONTINUOUS", ["timerincr"] = 2,
 		["actions"] = function ()
 			if get_zc_config("easy") then
 				speakNoText(0,"CONTINUOUS")
@@ -3412,7 +3439,7 @@ ZC_LANDING_CHECKLIST = {
 			speakNoText(0,"LANDING GEAR")
 		end
 	},
-	[8] = {["lefttext"] = "LANDING GEAR -- DOWN", ["timerincr"] = 997,
+	[8] = {["lefttext"] = "LANDING GEAR -- DOWN", ["timerincr"] = 2,
 		["actions"] = function ()
 			if get_zc_config("easy") then
 				speakNoText(0,"DOWN")
@@ -3425,7 +3452,7 @@ ZC_LANDING_CHECKLIST = {
 			speakNoText(0,"FLAPS")
 		end
 	},
-	[10] = {["lefttext"] = "FLAPS -- FLAPS 15/30/40 GREEN LIGHT", ["timerincr"] = 999,
+	[10] = {["lefttext"] = "FLAPS -- FLAPS 15/30/40 GREEN LIGHT", ["timerincr"] = 3,
 		["actions"] = function ()
 			gLeftText = string.format("FLAPS %i GREEN LIGHT",get("laminar/B738/FMS/approach_flaps"))
 			if get_zc_config("easy") then
@@ -4216,7 +4243,7 @@ ZC_BACKGROUND_PROCS = {
 }
 
 -- defines the available procedures/checklists and in which sequence they appear in the menu
-lNoProcs = 27
+lNoProcs = 28
 function zc_get_procedure()
 
 	incnt=1
@@ -4356,6 +4383,12 @@ function zc_get_procedure()
 		lActiveProc = ZC_LANDING_CHECKLIST
 		lNameActiveProc = incnt.." LANDING CHECKLIST"
 		lChecklistMode = 1
+	end
+	incnt=incnt+1
+	if lProcIndex == incnt then
+		lActiveProc = ZC_FINAL_PROC
+		lNameActiveProc = incnt.." ON FINAL"
+		lChecklistMode = 0
 	end
 	incnt=incnt+1
 	if lProcIndex == incnt then
@@ -4544,12 +4577,20 @@ function xsp_taxilights_on()
 	command_once("laminar/B738/toggle_switch/taxi_light_brightness_pos_dn")
 end
 function xsp_landinglights_off()
-	command_once("laminar/B738/toggle_switch/taxi_light_brightness_pos_up")
-	command_once("laminar/B738/toggle_switch/taxi_light_brightness_pos_up")
+	command_once("laminar/B738/switch/land_lights_ret_left_up")
+	command_once("laminar/B738/switch/land_lights_ret_left_up")
+	command_once("laminar/B738/switch/land_lights_ret_right_up")
+	command_once("laminar/B738/switch/land_lights_ret_right_up")
+	command_once("laminar/B738/switch/land_lights_left_off")
+	command_once("laminar/B738/switch/land_lights_right_off")
 end
 function xsp_landinglights_on()
-	command_once("laminar/B738/toggle_switch/taxi_light_brightness_pos_dn")
-	command_once("laminar/B738/toggle_switch/taxi_light_brightness_pos_dn")
+	command_once("laminar/B738/switch/land_lights_ret_left_dn")
+	command_once("laminar/B738/switch/land_lights_ret_left_dn")
+	command_once("laminar/B738/switch/land_lights_ret_right_dn")
+	command_once("laminar/B738/switch/land_lights_ret_right_dn")
+	command_once("laminar/B738/switch/land_lights_left_on")
+	command_once("laminar/B738/switch/land_lights_right_on")
 end
 function xsp_winglights_off()
 	command_once("laminar/B738/switch/wing_light_off")
@@ -4571,6 +4612,7 @@ function xsp_toggle_std_both()
 	command_once("laminar/B738/EFIS_control/capt/push_button/std_press")
 	command_once("laminar/B738/EFIS_control/fo/push_button/std_press")
 end
+
 -- aircraft specific joystick/key commands
 create_command("kp/xsp/beacon_lights_switch_on",	"B738X Beacon Lights On",	"xsp_beaconlights_on()", "", "")
 create_command("kp/xsp/beacon_lights_switch_off",	"B738X Beacon Lights Off",	"xsp_beaconlights_off()", "", "")
