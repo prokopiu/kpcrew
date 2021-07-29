@@ -31,6 +31,9 @@ DEP_takeofthrust_list = B722:getTakeoffThrust()
 DEP_aice_list = B722:getAIce()
 DEP_bleeds_list = B722:getBleeds()
 
+-- overwrite approach types if necessary - "---" for unsupported
+APP_apptype_list = {"ILS CAT 1","VISUAL","---","VOR","NDB","---","TOUCH AND GO","CIRCLING"}
+
 local curralt_1000 = 0
 local curralt_10 = 0 
 local elapsed_time_visible = 0

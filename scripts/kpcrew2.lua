@@ -129,23 +129,36 @@ zc_flightinfo_wnd = 0 -- flight information window
 -- general options for briefings and flight information
 GEN_onoff_list = {"OFF","ON"}
 
+-- Noise Abatement departure Procedure
 DEP_nadp_list = {"NOT REQUIRED","1","2"}
+-- parking positin options
 DEP_gatestand_list = {"GATE (PUSH)","STAND (PUSH)", "STAND (NO PUSH)"}
+-- departure procedure types
 DEP_proctype_list = {"SID","VECTORS","TRACKING"}
+-- runway states
 DEP_rwystate_list = {"DRY","WET","CONTAMINATED"}
+-- departure packs mode
 DEP_packs_list = {"ON","ON APU","OFF"}
+-- forced return overweight or underweight
 DEP_forced_return = {"UNDERWEIGHT", "OVERWEIGHT"}
 
+-- arrival procedure type list 
 APP_proctype_list = {"STAR","VECTORS"}
+-- full list of approach types can be overwritten by aircraft
 APP_apptype_list = {"ILS CAT 1","VISUAL","ILS CAT 2 OR 3","VOR","NDB","RNAV","TOUCH AND GO","CIRCLING"}
+-- runway state arrival
 APP_rwystate_list = {"DRY","WET","CONTAMINATED"}
+-- A/ICE settings
 APP_aice_list = {"NOT REQUIRED","Engine Only","Engine and Wing"}
+-- Arrival packs mode
 APP_packs_list = {"ON","ON APU","OFF"}
+-- APU/GPU startup after landing
 APP_apu_list = {"APU delayed start","APU","GPU"}
 
 WX_Cloudcover_list = {"","FEW","SCT","BKN","OVC",""}
 
 -- generic aircraft class with aircraft specific options
+-- gets instantiated in active aircraft module
 Class_ACF = {}
 function Class_ACF:Create()
 	local this = 
@@ -283,7 +296,7 @@ function Class_ACF:Create()
 	return this
 end
 
--- internal configs and translated settings for display
+---- internal configs and translated settings for display
 
 -- get last configuration
 require "kpcrewconfig"
@@ -294,7 +307,6 @@ require "kpcrewconfig"
 function get_zc_config(key)
 	return ZC_CONFIG[key]
 end
-
 function set_zc_config(key, value)
 	ZC_CONFIG[key] = value
 end
@@ -303,7 +315,6 @@ end
 function get_zc_brief_gen(key)
 	return ZC_BRIEF_GEN[key]
 end
-
 function set_zc_brief_gen(key, value)
 	ZC_BRIEF_GEN[key] = value
 end
@@ -312,7 +323,6 @@ end
 function get_zc_brief_dep(key)
 	return ZC_BRIEF_DEP[key]
 end
-
 function set_zc_brief_dep(key, value)
 	ZC_BRIEF_DEP[key] = value
 end
@@ -321,7 +331,6 @@ end
 function get_zc_brief_app(key)
 	return ZC_BRIEF_APP[key]
 end
-
 function set_zc_brief_app(key, value)
 	ZC_BRIEF_APP[key] = value
 end
@@ -329,7 +338,8 @@ end
 -- initialize a new flight
 function initFlight()
 	ZC_CONFIG["acficao"] = PLANE_ICAO
-	-- JF BAE146 omits the ICAO
+	
+	-- Aircraft with no icao in aircraft.cfg need to be identfied individually
 	if (PLANE_TAILNUMBER == "N956OV") then	
 		ZC_CONFIG["acficao"] = "B146"
 	end
@@ -342,7 +352,10 @@ function initFlight()
 	if (PLANE_TAILNUMBER == "E175") then	
 		ZC_CONFIG["acficao"] = "E175"
 	end
+	
+	-- B738 knows, otherwise "---"
 	ZC_BRIEF_GEN["parkpos"] = zc_get_parking_stand() -- if available from aircraft module
+	
 	-- pull current airport from navaid index
 	next_airport_index = XPLMFindNavAid( nil, nil, LATITUDE, LONGITUDE, nil, xplm_Nav_Airport)
 	_, _, _, _, _, _, ZC_BRIEF_GEN["origin"], _ = XPLMGetNavAidInfo( next_airport_index )	
@@ -420,10 +433,10 @@ function newFlight()
 	ZC_BRIEF_APP["gaalt"] 		= 4900
 	ZC_BRIEF_APP["remarks"] = ""
 	ZC_BRIEF_APP["translvl"] = get_zc_config("translvlalt")
-
 end
 
--- Load plane specific definitions
+-- Load plane specific module from Modules folder
+
 -- Zibo B738
 if (PLANE_ICAO == "B738") then
 require "B738_kpcrew"
@@ -549,13 +562,15 @@ Your_Hangar_List = {
 }
 GENERAL_Acf = Your_Hangar_List[ZC_CONFIG["acficao"]]
 
+-- initialize a new flight
 initFlight()
 
--- ---------------------------------- ZC functions ---------------------------------------
+--- action buttons on main window
 
 -- actions when pressing the master button
 function zc_master_button()
 
+	-- initialize procedure modes
 	if lProcStatus < 0 then
 		lProcStep = 0
 		lProcTimer = 0 
@@ -565,6 +580,7 @@ function zc_master_button()
 	end
 
 	currStep = lActiveProc[lProcStep]
+	-- set delay for special steps
 	if lChecklistMode == 1 and currStep["timerincr"] == 999 then
 		currStep["timerincr"] = 5
 	end
@@ -634,7 +650,9 @@ function zc_coldanddark_button()
 	ZC_BACKGROUND_PROCS["OPENINFOWINDOW"].status = 1
 end
 
--- primary window, wndMode 1=float, 2=no window
+---- window system and related functions
+
+-- primary window, wndMode 1=float, 2=flat window
 function zc_init_primary_window (wndMode)
 	if (wndMode ~= 1 and wndMode ~= 2 and wndMode ~= 3) then	
 		wndMode = 1
@@ -679,7 +697,7 @@ function zc_init_depbrf_window ()
 	end
 end
 
--- appraoch briefing window
+-- approach briefing window
 function zc_init_appbrf_window ()
 	if zc_appbrf_wnd == 0 then
 		zc_appbrf_wnd = float_wnd_create(380, 800, 1, true)
@@ -690,11 +708,13 @@ function zc_init_appbrf_window ()
 	end
 end
 
+-- auxiliary roundîng function
 local function round(x)
 	return x>=0 and math.floor(x+0.5) or math.ceil(x-0.5)
 end
 
--- windows functions
+---- custom window/menu items
+
 -- input field text
 function zc_gui_in_text(lable, srcval, length, width)
 	imgui.SetColumnWidth(1, width)
@@ -792,7 +812,7 @@ function zc_gui_in_dropdown(lable, srcval, list)
 	return srcval
 end
 
--- input field com 1 frequency
+-- input field com frequency - set COM1 when pressing lable
 function zc_gui_in_freq(lable, srcval)
 	imgui.SetColumnWidth(1, 165)
 	if imgui.Button(lable .. ":") then
@@ -810,7 +830,7 @@ function zc_gui_in_freq(lable, srcval)
 	return srcval
 end
 
--- input field nav 1 frequency
+-- input field nav frequency - set NAV1 when pressing lable
 function zc_gui_nav_freq(lable, srcval)
 	imgui.SetColumnWidth(1, 165)
 	if imgui.Button(lable .. ":") then
@@ -828,7 +848,7 @@ function zc_gui_nav_freq(lable, srcval)
 	return srcval
 end
 
--- input field ndb frequency
+-- input field ndb frequency - set ADF1 when pressing lable
 function zc_gui_ndb_freq(lable, srcval)
 	imgui.SetColumnWidth(1, 165)
 	if imgui.Button(lable .. ":") then
@@ -856,6 +876,8 @@ function zc_gui_out_text(lable, srcval, color)
 	imgui.PopStyleColor()
 end
 
+---- ATIS related functions
+
 -- return QNH string
 function getQNHString()
 	local QNHstring = ""
@@ -867,18 +889,7 @@ function getQNHString()
 	return QNHstring
 end
 
--- build a long string by breaking it into chunks
-function zc_build_long_string(instring)
-	local nrcuts = string.len(instring)/20
-	local xpos = 1
-	local cutstring = ""
-	for i=1,nrcuts+1, 1 do
-		cutstring = cutstring .. string.sub(instring,(i-1)*20+1,i*20) .. "\n"
-	end
-	return cutstring
-end
-
--- build ATIS string
+-- build a makeshift ATIS string from XP11 weather - very simplistic
 function zc_build_atis_string()
 	
 	local ATISstring = string.format("%s %2.2i%2.2i%2.2iZ %3.3i%2.2iKT", ZC_BRIEF_GEN["origin"], get("sim/cockpit2/clock_timer/current_day")+1,get("sim/cockpit2/clock_timer/zulu_time_hours"),get("sim/cockpit2/clock_timer/zulu_time_minutes"),get("sim/weather/wind_direction_degt",0),get("sim/weather/wind_speed_kt",0))
@@ -939,21 +950,24 @@ function zc_build_atis_string()
 	return ATISstring
 end
 
--- flight information windows
+-- flight information window
 function zc_flightinfo_build()
 
 	-- Gui position parameter
 	local win_width = imgui.GetWindowWidth()
     local win_height = imgui.GetWindowHeight()
 
+	-- button to open departure window
 	if imgui.Button("DEPARTURE") then
 		ZC_BACKGROUND_PROCS["OPENDEPWINDOW"].status = 1
 	end
 	imgui.SameLine()
 	
+	-- button to open arrival window
 	if imgui.Button("ARRIVAL") then
 		ZC_BACKGROUND_PROCS["OPENAPPWINDOW"].status = 1
 	end
+	
 	imgui.Separator()
 	
 	-- Table
@@ -968,28 +982,29 @@ function zc_flightinfo_build()
 		weightunit = "LBS"
 	end
 	
-	-- Aircraft Type
+	-- Aircraft Type from ICAO field
 	zc_gui_out_text("Aircraft Type",ZC_CONFIG["acfname"] .. " (" .. ZC_CONFIG["acficao"] .. ")\n",0xFFFFFF00)
 	
-	-- fuel 
+	-- Fuel from aircraft specific function
 	zc_gui_out_text("Total Fuel",string.format("%6.6i",zc_get_total_fuel()) .. " " .. weightunit .."\n",0xFF21FF00)
 
-	-- gross weight
+	-- display gross weight in matching unit
 	zc_gui_out_text("Gross Weight/ZFW",string.format("%6.6i",zc_get_gross_weight()) .. " "..weightunit.." / " .. string.format("%6.6i",zc_get_zfw()) .. " " .. weightunit.."\n",0xFF21FF00)
 	
-	-- Call Sign	
+	-- Call Sign of aircraft
 	ZC_BRIEF_GEN["callsign"] = zc_gui_in_text("Callsign",ZC_BRIEF_GEN["callsign"],15,100)
 	imgui.Separator()
 
 	-- Origin airport icao
 	ZC_BRIEF_GEN["origin"] = zc_gui_in_text("Origin",ZC_BRIEF_GEN["origin"],5,80)
 	
+	-- Determine airport information from XP11
 	zc_gui_out_text("Airport Elevation",string.format("%6.0f",round(get("sim/cockpit2/autopilot/altitude_readout_preselector"))) .. " ft\n",0xFF21FF00)
 
 	-- Parking Position
 	ZC_BRIEF_GEN["parkpos"] = zc_gui_in_text("Parking Position",ZC_BRIEF_GEN["parkpos"],15,80)
 
-	-- ATIS
+	-- ATIS frequency
 	ZC_BRIEF_GEN["freqatis"] = zc_gui_in_freq("ATIS",ZC_BRIEF_GEN["freqatis"])
 
 	-- Clearance frequency
@@ -1031,22 +1046,40 @@ function zc_flightinfo_build()
 
 	imgui.Separator()
 
-	-- ATIS
+	-- ATIS generated string
 	zc_gui_out_text("ATIS",zc_build_atis_string(),0xFF21FF00)
---	zc_gui_out_text("Route",zc_build_long_string(zc_get_route()),0xFF21FF00)
 
 	imgui.Separator()
-	
+
+-- general configuration sections
+
 	zc_gui_out_text("Configuration","\n\n",0xFF21FF00)
-	-- Barometer Setting
+	
+	-- Barometer unit hpa/inhg
 	set_zc_config("qnhhpa",zc_gui_in_trb("Barometer", ZC_CONFIG["qnhhpa"], "HPa", "inHG"))
+	
+	-- initial heading on the glareshield/autopilot
 	set_zc_config("aphdg",zc_gui_in_int("A/P Initial Heading", ZC_CONFIG["aphdg"], 10,150))
+
+	-- initial speed on the glareshield/autopilot
 	set_zc_config("apspd",zc_gui_in_int("A/P Initial Speed", ZC_CONFIG["apspd"], 10,150))
+	
+	-- initial altitude on the glareshield/autopilot
 	set_zc_config("apalt",zc_gui_in_int("A/P Initial Altitude", ZC_CONFIG["apalt"], 10,150))
+
+	-- default transition altitude/level (e.g. 5000 Germanyy, 18000 US)
 	set_zc_config("translvlalt",zc_gui_in_int("Default Transition", ZC_CONFIG["translvlalt"], 1000,170))
+
+	-- powerup with APU or GPU
 	set_zc_config("apuinit",zc_gui_in_trb("Power-Up", ZC_CONFIG["apuinit"], "APU", "GPU"))
+	
+	-- Decision height or altitude
 	set_zc_config("dhda",zc_gui_in_trb("Minimums", ZC_CONFIG["dhda"], "RADIO", "BARO"))
+	
+	-- KG or lbs as units
 	set_zc_config("kglbs",zc_gui_in_trb("Weight Units", ZC_CONFIG["kglbs"], "KG", "LBS"))
+	
+	-- Easy mode or manual (not muh support outside procedures)
 	set_zc_config("easy",zc_gui_in_trb("Easy use", ZC_CONFIG["easy"], "EASY", "MANUAL"))
 
 	imgui.Separator()
@@ -1060,41 +1093,45 @@ end
 
 -- departure briefing window
 function zc_depbrf_build ()
+
 	-- Gui position parameter
 	local win_width = imgui.GetWindowWidth()
     local win_height = imgui.GetWindowHeight()
 	
-	-- Table
+	-- Table layout
 	imgui.Columns(2,"DEP_Briefing1",false)
 	imgui.SetColumnWidth(0, 150)
 	imgui.SetColumnWidth(1, 250)
 	
+	-- departure clearance string build from individual items
+	-- callsign
 	zc_gui_out_text("Clearance",ZC_BRIEF_GEN["callsign"].." "..ZC_CONFIG["acfname"].."\n\n",0xFF21FF00)
 
-	-- ATIS info
+	-- ATIS info enter ATIS letter as received
 	ZC_BRIEF_DEP["depatisinfo"] = zc_gui_in_text("ATIS Information",ZC_BRIEF_DEP["depatisinfo"],2,30)
 
-	-- Position
+	-- Parking Position on airport (stand or gate)
 	zc_gui_out_text("Stand",ZC_BRIEF_GEN["parkpos"].."\n",0xFF21FF00)
 
-	-- Destination
+	-- Destination taken from info window
 	zc_gui_out_text("Cleared to",ZC_BRIEF_GEN["dest"].."\n",0xFF21FF00)
 
-	-- Flight level
+	-- Flight level cruise altitude from ATC/flight planning
 	zc_gui_out_text("FL",(ZC_BRIEF_GEN["cruisealt"]/100).."\n",0xFF21FF00)
 
-	-- departure runway
+	-- departure runway designation
 	ZC_BRIEF_DEP["deprwy"] = zc_gui_in_text("Runway",ZC_BRIEF_DEP["deprwy"],6,60)
 
-	-- departure procedure
+	-- departure procedure name, or "VECTORS"
 	ZC_BRIEF_DEP["sid"] = zc_gui_in_text("Via",ZC_BRIEF_DEP["sid"],15,150)
 	
-	-- departure transition
+	-- departure transition name
 	ZC_BRIEF_DEP["sidtrans"] = zc_gui_in_text("Transition",ZC_BRIEF_DEP["sidtrans"],15,150)
 
-	-- Squawk
+	-- Squawk code as given from ATC
 	ZC_BRIEF_GEN["squawk"] = zc_gui_in_text("XPDR",ZC_BRIEF_GEN["squawk"],5,200)
 
+	-- transition altitude as published
 	ZC_BRIEF_DEP["transalt"] =  zc_gui_in_int("Transition Altitude", ZC_BRIEF_DEP["transalt"] ,100,170)
 
 	imgui.Separator()		
@@ -1120,36 +1157,38 @@ function zc_depbrf_build ()
 	-- departure type
 	ZC_BRIEF_DEP["deptype"] = zc_gui_in_dropdown("Departure Procedure",ZC_BRIEF_DEP["deptype"],DEP_proctype_list,90)
 
-	-- NADP
+	-- Noise Abatement Departure Position
 	ZC_BRIEF_DEP["depnadp"] = zc_gui_in_dropdown("NADP",ZC_BRIEF_DEP["depnadp"],DEP_nadp_list,90)
 
-	-- takeoff A/P modes
+	-- Takeoff A/P modes (aircraft specific)
 	ZC_BRIEF_DEP["lnavvnav"] = zc_gui_in_dropdown("Autopilot Mode",ZC_BRIEF_DEP["lnavvnav"],GENERAL_Acf:getDepApMode(),90)
 
 	imgui.Separator()
 
-	-- min t/o fuel
-	ZC_BRIEF_DEP["mintofuel"] = zc_gui_in_int("Minimum T/O Fuel",ZC_BRIEF_DEP["mintofuel"],100,170)
+	-- min t/o fuel in units (I put in the block fuel)
+	ZC_BRIEF_DEP["mintofuel"] = zc_gui_in_int("T/O Fuel",ZC_BRIEF_DEP["mintofuel"],100,170)
 
-	-- min t/o fuel
+	-- elevator trim setting
 	ZC_BRIEF_DEP["elevtrim"] = zc_gui_in_float("Elevator Trim",ZC_BRIEF_DEP["elevtrim"],100,170)
 
 	-- rwy condition
 	ZC_BRIEF_DEP["rwycond"] = zc_gui_in_dropdown("Runway Condition",ZC_BRIEF_DEP["rwycond"],DEP_rwystate_list,90)
 
+	-- Vspeeds either manual or by pressing aircraft data button
 	ZC_BRIEF_DEP["v1"] = zc_gui_in_int("V1",ZC_BRIEF_DEP["v1"],1,170)
 	ZC_BRIEF_DEP["vr"] = zc_gui_in_int("VR",ZC_BRIEF_DEP["vr"],1,170)
 	ZC_BRIEF_DEP["v2"] = zc_gui_in_int("V2",ZC_BRIEF_DEP["v2"],1,170)
 
 	zc_gui_out_text("\nGlareshield","\n",0xFF21FF00)
 
+	-- Glareshield setup, can also come from aircraft data button
 	ZC_BRIEF_GEN["glarecrs1"] = zc_gui_in_int("CRS1",ZC_BRIEF_GEN["glarecrs1"],10,170)
 	ZC_BRIEF_GEN["glarespd"] =  zc_gui_in_int("SPD", ZC_BRIEF_GEN["glarespd"] ,1,170)
 	ZC_BRIEF_GEN["glarehdg"] =  zc_gui_in_int("HDG", ZC_BRIEF_GEN["glarehdg"] ,10,170)
 	ZC_BRIEF_GEN["glarealt"] =  zc_gui_in_int("ALT", ZC_BRIEF_GEN["glarealt"] ,100,170)
 	ZC_BRIEF_GEN["glarecrs2"] = zc_gui_in_int("CRS2",ZC_BRIEF_GEN["glarecrs2"],10,170)
 
-	-- Request V Speeds, Trim and Flaps from Airplane from myLuaCopilot 
+	-- button pulls information from aircraft where available
 	imgui.PushStyleColor(imgui.constant.Col.Text, 0xFF21FF00)
 	imgui.PopStyleColor()
 	imgui.NextColumn()
@@ -1172,19 +1211,16 @@ function zc_depbrf_build ()
 			end
 		end
 	end
-		imgui.NextColumn()
+	imgui.NextColumn()
 		
+--	imgui.Separator()		
+
+-- remarks
+--	imgui.SetColumnWidth(1, win_width - 50)
+--	ZC_BRIEF_DEP["remarks"] = zc_gui_in_multiline("Remarks",ZC_BRIEF_DEP["remarks"],120,250)
+
 	imgui.Separator()		
 
-	-- remarks
-	imgui.SetColumnWidth(1, win_width - 50)
-	ZC_BRIEF_DEP["remarks"] = zc_gui_in_multiline("Remarks",ZC_BRIEF_DEP["remarks"],120,250)
-
-	imgui.Separator()		
-
-
-
-		-- end
 end
 
 -- approach briefing window
@@ -1195,63 +1231,101 @@ function zc_appbrf_build()
     local win_height = imgui.GetWindowHeight()
 	local win_height_floating = 0
 	
-	-- Table
+	-- Table layout
 	imgui.Columns(2,"APP_Briefing1",false)
 	imgui.SetColumnWidth(0, 150)
 	imgui.SetColumnWidth(1, 240)
 	
+	-- Clearance text area
 	zc_gui_out_text("Clearance",ZC_BRIEF_GEN["callsign"].." "..ZC_CONFIG["acfname"].."\n\n",0xFF21FF00)
 
-	-- ATIS info
+	-- ATIS info field - enter ATIS letter
 	ZC_BRIEF_APP["appatisinfo"] = zc_gui_in_text("ATIS Information",ZC_BRIEF_APP["appatisinfo"],2,30)
 
+	-- aircraft specific sections, B738 can pull the information from the FMS, alternativ manual entry
+	-- ICAO code of destination
 	if (PLANE_ICAO == "B738") then
-		zc_gui_out_text("Cleared to",zc_get_dest_icao().."\n",0xFF21FF00)
-		zc_gui_out_text("Runway",string.sub(zc_acf_getilsrwy(),1,3),0xFF21FF00)
-		zc_gui_out_text("Runway Elevation",string.format("%6.0f",round(zc_get_dest_runway_alt())) .. " ft\n",0xFF21FF00)
-		zc_gui_out_text("Runway Course",string.format("%3.0f",round(zc_get_dest_runway_crs())) .. " deg\n",0xFF21FF00)
-		zc_gui_out_text("Runway Length",string.format("%6.0f",round(zc_get_dest_runway_len())) .. " m\n",0xFF21FF00)
+		ZC_BRIEF_GEN["dest"] = zc_gui_in_text("Cleared to",zc_get_dest_icao().."\n",0xFF21FF00)
 	else
 		ZC_BRIEF_GEN["dest"] = zc_gui_in_text("Cleared to",ZC_BRIEF_GEN["dest"],6,150)
+	end
+	
+	-- departure runway designation
+	if (PLANE_ICAO == "B738") then
+		zc_gui_out_text("Runway",string.sub(zc_acf_getilsrwy(),1,3),0xFF21FF00)
+	else
 		dest_rwy = zc_gui_in_text("Runway Designation",dest_rwy,5,150)
+	end
+	
+	-- departure runway elevation
+	if (PLANE_ICAO == "B738") then
+		zc_gui_out_text("Runway Elevation",string.format("%6.0f",round(zc_get_dest_runway_alt())) .. " ft\n",0xFF21FF00)
+	else
 		dest_rwy_elev = zc_gui_in_int("Runway Elevation",dest_rwy_elev,100,170)
+	end
+	
+	-- departure runway course
+	if (PLANE_ICAO == "B738") then
+		zc_gui_out_text("Runway Course",string.format("%3.0f",round(zc_get_dest_runway_crs())) .. " deg\n",0xFF21FF00)
+	else
 		dest_rwy_crs = zc_gui_in_int("Runway Course",dest_rwy_crs,1,170)
+	end
+	
+	-- departure runway length
+	if (PLANE_ICAO == "B738") then
+		zc_gui_out_text("Runway Length",string.format("%6.0f",round(zc_get_dest_runway_len())) .. " m\n",0xFF21FF00)
+	else
 		dest_rwy_length = zc_gui_in_int("Runway Length",dest_rwy_length,100,170)
 	end
 	
 	imgui.Separator()		
 
+	-- ATC provided QNH
 	ZC_BRIEF_APP["appbaro"] = zc_gui_in_text("QNH",ZC_BRIEF_APP["appbaro"],10,150)
+	
+	-- Transition level at destination from ATC
 	ZC_BRIEF_APP["translvl"] = zc_gui_in_int("Transition Level",ZC_BRIEF_APP["translvl"],100,170)
+	
+	-- Arrival procedure type (depends on aircraft)
 	ZC_BRIEF_APP["arrtype"] = zc_gui_in_dropdown("Arrival Procedure",ZC_BRIEF_APP["arrtype"],APP_proctype_list,90)
-	-- arrival procedure
+	
+	-- arrival procedure name
 	ZC_BRIEF_APP["star"] = zc_gui_in_text("STAR",ZC_BRIEF_APP["star"],15,150)	
-	-- departure transition
+	
+	-- arrival transition name
 	ZC_BRIEF_APP["startrans"] = zc_gui_in_text("Transition",ZC_BRIEF_APP["startrans"],15,150)
+	
+	-- landing runway designation
 	ZC_BRIEF_APP["apprwy"] = zc_gui_in_text("Runway",ZC_BRIEF_APP["apprwy"],6,60)
 
+	-- approach procedure type (depends on aircraft)
 	ZC_BRIEF_APP["apptype"] = zc_gui_in_dropdown("Approach Procedure",ZC_BRIEF_APP["apptype"],APP_apptype_list,90)
 
+	-- for ILS approach add frequency fields
 	if (get_zc_brief_app("apptype") == 1 or get_zc_brief_app("apptype") == 3) then
 		ZC_BRIEF_APP["ilsfrq"] = zc_gui_nav_freq("ILS Frequeny",ZC_BRIEF_APP["ilsfrq"])
 		ZC_BRIEF_APP["ilscrs"] = zc_gui_in_int("ILS Course",ZC_BRIEF_APP["ilscrs"],10,170)
 	end
 
+	-- for VOR approach add NAV1 frequency fields
 	if (get_zc_brief_app("apptype") == 4) then
 		ZC_BRIEF_APP["vorfrq"] = zc_gui_nav_freq("VOR Frequeny",ZC_BRIEF_APP["vorfrq"])
 		ZC_BRIEF_APP["vorcrs"] = zc_gui_in_int("VOR Course",ZC_BRIEF_APP["vorcrs"],10,170)
 	end
 
+	-- for NDB approach add ADF frequency field
 	if (get_zc_brief_app("apptype") == 5) then
 		ZC_BRIEF_APP["ndbfrq"] = zc_gui_ndb_freq("NDB Frequeny",ZC_BRIEF_APP["ndbfrq"])
 	end
 
+	-- show decision altitude or height depending on configuration
 	if (ZC_CONFIG["dhda"]) then
 		ZC_BRIEF_APP["dh"] = zc_gui_in_int("DH",ZC_BRIEF_APP["dh"],1,170)
 	else
 		ZC_BRIEF_APP["da"] = zc_gui_in_int("DA",ZC_BRIEF_APP["da"],1,170)
 	end
 
+	-- Landing setting from aircraft: Flaps, A/BRK, RWY condition, Packs, A/ICE, APU
 	ZC_BRIEF_APP["ldgflaps"] = zc_gui_in_dropdown("Landing Flaps",ZC_BRIEF_APP["ldgflaps"],GENERAL_Acf:getAPP_Flaps(),90)
 	ZC_BRIEF_APP["autobrake"] = zc_gui_in_dropdown("Autobrake",ZC_BRIEF_APP["autobrake"],GENERAL_Acf:getAutobrake(),90)
 	ZC_BRIEF_APP["rwycond"] = zc_gui_in_dropdown("Runway Condition",ZC_BRIEF_APP["rwycond"],APP_rwystate_list,90)
@@ -1261,10 +1335,12 @@ function zc_appbrf_build()
 
 	imgui.Separator()		
 
+	-- Approach and reference speed. Set from config or by pressing aircraft data button
 	ZC_BRIEF_APP["vapp"] = zc_gui_in_int("Vapp",ZC_BRIEF_APP["vapp"],1,170)
 	ZC_BRIEF_APP["vref"] = zc_gui_in_int("Vref",ZC_BRIEF_APP["vref"],1,170)
 
 	imgui.Separator()
+
 	ZC_BRIEF_APP["gahdg"] = zc_gui_in_int("Go Around HDG",ZC_BRIEF_APP["gahdg"],1,170)
 	ZC_BRIEF_APP["gaalt"] = zc_gui_in_int("Go Around ALT",ZC_BRIEF_APP["gaalt"],1,170)
 
@@ -1280,11 +1356,11 @@ function zc_appbrf_build()
 		end
 	end
 
-	-- remarks
-	imgui.Separator()		
+-- remarks disabled as the field does not break lines
+--	imgui.Separator()		
 
-	imgui.SetColumnWidth(1, win_width - 50)
-	ZC_BRIEF_APP["remarks"] = zc_gui_in_multiline("Remarks",ZC_BRIEF_APP["remarks"],120,250)
+--	imgui.SetColumnWidth(1, win_width - 50)
+--	ZC_BRIEF_APP["remarks"] = zc_gui_in_multiline("Remarks",ZC_BRIEF_APP["remarks"],120,250)
 
 	imgui.Separator()		
 
@@ -1310,8 +1386,8 @@ function zc_primary_build()
 	if imgui.Button("S", 20, 20) then
 		zc_second_button()
 	end
+
 	-- PREV Button
-	
 	imgui.SameLine()
 	imgui.SetCursorPosX(520)
 	if imgui.Button("<", 20, 20) then
@@ -1373,12 +1449,18 @@ function zc_init_zibocrew()
 	zc_next_button()
 end
 
--- run procedure activity
+-- run active procedure's activities stepping through the individual items in the procedure array
 function zc_proc_activities()
 
 	-- procedure status 1 means running
 	if lProcStatus == 1 then
+		-- get active step
 		currStep = lActiveProc[lProcStep]
+		-- 999 = wait for action and then delay by 5 seconds until next step
+		-- 998 = wait for action and then delay by 2 sceonds until next step
+		-- 997 = wait for action and then delay by 1 sceonds until next step
+		-- 996 = skip this step
+		-- 0 < n < 996 execute the step and wait n seconds
 		if currStep ~= nil and lProcTimer == lActivityTimer and currStep["timerincr"] ~= 999 and currStep["timerincr"] ~= 998 and currStep["timerincr"] ~= 997 then
 			if currStep["timerincr"] ~= 996 then
 				gLeftText = currStep["lefttext"]
@@ -1410,6 +1492,8 @@ function zc_proc_activities()
 	end
 end
 
+-- scan through the background procedure array and execute the actions() 
+-- function for each that has a 1 in the status field
 function zc_proc_background()
 	for step in pairs(ZC_BACKGROUND_PROCS) do 
 		local stat = ZC_BACKGROUND_PROCS[step].status
@@ -1419,12 +1503,14 @@ function zc_proc_background()
 	end
 end
 
+-- reduce the preflight countdown every 10 seconds
 function zc_preflight_countdown()
 	if (gPreflightCounter > 0) then
 		gPreflightCounter = gPreflightCounter - 1
 	end
 end
 
+-- Write all config items to the kpcrewconfig.lua file
 function WriteConfig()
 	fileConfig = io.open(SCRIPT_DIRECTORY .. "..\\Modules\\kpcrewconfig.lua", "w+")
 
@@ -1526,9 +1612,9 @@ function WriteConfig()
 	fileConfig:write('	["remarks"] = "' .. ZC_BRIEF_APP["remarks"] .. '"\n')
 	fileConfig:write('}\n')
 	fileConfig:close()
-
 end
 
+-- display the preflight countdown bottom right of the screen for debug and testing
 function draw_preflight_timer()
     if gPreflightCounter <= 0 then
         return
@@ -1539,10 +1625,10 @@ end
 	
 -- in FlyWithLua menu
 add_macro("KPCrew Re-Start", "zc_init_zibocrew()")
-add_macro("KPCrew Window Open", "zc_init_primary_window()")
-add_macro("KPCrew Flight Info Open", "zc_init_flightinfo_window()")
-add_macro("KPCrew Departure Briefing", "zc_init_depbrf_window()")
-add_macro("KPCrew Approach Briefing", "zc_init_appbrf_window()")
+add_macro("KPCrew Open Master Window", "zc_init_primary_window()")
+add_macro("KPCrew Open Flight Info", "zc_init_flightinfo_window()")
+add_macro("KPCrew Open Departure Briefing", "zc_init_depbrf_window()")
+add_macro("KPCrew Open Approach Briefing", "zc_init_appbrf_window()")
 
 -- ---------------------------------- KPCrew commands ----------------------------------
 create_command("kp/crew/master_button",		"KPCrew Master Button",		"zc_master_button()", "", "")
@@ -1553,11 +1639,14 @@ create_command("kp/crew/info_window",		"KPCrew Information Window","zc_prev_butt
 create_command("kp/crew/depbrf_window",		"KPCrew Departure Window",  "zc_init_depbrf_window()", "", "")
 create_command("kp/crew/appbrf_window",		"KPCrew Approach Window",   "zc_init_appbrf_window()", "", "")
 
--- test
+-- open the flight information window on start
 zc_init_primary_window(ZC_CONFIG["wnd_primary_type"])
 
--- count time and check flight status
+-- monitor button input and execute current procedure
 do_often("zc_proc_activities()")
+-- Loop through background procedures and execute the ones which get activated
 do_often("zc_proc_background()")
+-- Preflight automatic, timed events get executed when the time is reached
 do_sometimes("zc_preflight_countdown()")
+-- count time and check flight status
 do_every_draw("draw_preflight_timer()")

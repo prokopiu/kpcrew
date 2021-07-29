@@ -31,6 +31,9 @@ DEP_takeofthrust_list = B738:getTakeoffThrust()
 DEP_aice_list = B738:getAIce()
 DEP_bleeds_list = B738:getBleeds()
 
+-- overwrite approach types if necessary - "---" for unsupported
+APP_apptype_list = {"ILS CAT 1","VISUAL","ILS CAT 2 OR 3","VOR","NDB","RNAV","TOUCH AND GO","CIRCLING"}
+
 -- Procedure definitions
 ZC_INIT_PROC = {
 	[0] = {["lefttext"] = "ZIBOCREW ".. ZC_VERSION .. " STARTED",["timerincr"] = -1,
