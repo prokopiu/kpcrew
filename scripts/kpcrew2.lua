@@ -8,7 +8,7 @@
 		* v2.1.0 - Easy Mode, Transitions, Preflight Events
 --]]
 
-ZC_VERSION = "2.1.0"
+ZC_VERSION = "2.1.0.1"
 
 -- stop if pre-reqs are not met
 if not SUPPORTS_FLOATING_WINDOWS then
@@ -1245,7 +1245,7 @@ function zc_appbrf_build()
 	-- aircraft specific sections, B738 can pull the information from the FMS, alternativ manual entry
 	-- ICAO code of destination
 	if (PLANE_ICAO == "B738") then
-		ZC_BRIEF_GEN["dest"] = zc_gui_in_text("Cleared to",zc_get_dest_icao().."\n",0xFF21FF00)
+		ZC_BRIEF_GEN["dest"] = zc_gui_in_text("Cleared to",zc_get_dest_icao(),6,150)
 	else
 		ZC_BRIEF_GEN["dest"] = zc_gui_in_text("Cleared to",ZC_BRIEF_GEN["dest"],6,150)
 	end

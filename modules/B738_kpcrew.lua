@@ -4,7 +4,7 @@
 	Changelog:
 		* v0.1- Initial version only control 
 		* v2.0 - new concept
-		* V2.1.0 - Easy mode speaks answer in checklist otherwise pilot does
+		* V2.1.0.1 - Easy mode speaks answer in checklist otherwise pilot does
 --]]
 
 -- Briefing / Aircraft specific details
@@ -1678,7 +1678,7 @@ ZC_DEPARTURE_BRIEFING = {
 	},
 	[6] = {["lefttext"] = "DEPARTURE BRIEFING", ["timerincr"] = 6,
 		["actions"] = function ()
-			speakNoText(0,"The departure will be via ".. get_zc_brief_dep("deptype").." "..convertNato(get_zc_brief_dep("sid")))
+			speakNoText(0,"The departure will be via ".. DEP_proctype_list[get_zc_brief_dep("deptype")].." "..convertNato(get_zc_brief_dep("sid")))
 		end
 	},
 	[7] = {["lefttext"] = "DEPARTURE BRIEFING", ["timerincr"] = 3,
@@ -1781,7 +1781,7 @@ ZC_DEPARTURE_BRIEFING = {
 			speakNoText(0,"no")
 		end
 	},	
-	[27] = {["lefttext"] = "DEPARTURE BRIEFING COMPLETED", ["timerincr"] = 2,
+	[27] = {["lefttext"] = "DEPARTURE BRIEFING COMPLETED", ["timerincr"] = 1,
 		["actions"] = function ()
 			speakNoText(0,"DEPARTURE BRIEFING COMPLETED")	
 		end
@@ -1817,7 +1817,7 @@ ZC_BEFORE_START_PROC = {
 			end
 		end
 	},
-	[3] = {["lefttext"] = "CAPT: SET STAB TRIM " .. (8.2 - get("laminar/B738/FMS/trim_calc")) * -0.117, ["timerincr"] = 5,
+	[3] = {["lefttext"] = "CAPT: SET STAB TRIM ", ["timerincr"] = 5,
 		["actions"] = function ()
 			set("sim/flightmodel2/controls/elevator_trim",(8.2 - get("laminar/B738/FMS/trim_calc")) * -0.117)
 		end
@@ -1960,7 +1960,7 @@ ZC_BEFORE_START_CHECKLIST = {
 			end
 		end
 	},
-	[3] = {["lefttext"] = "FUEL -- ___ KGS PUMPS ON", ["timerincr"] = 5,
+	[3] = {["lefttext"] = "FUEL -- ___ KGS PUMPS ON", ["timerincr"] = 4,
 		["actions"] = function ()
 			speakNoText(0,"FUEL")
 			gLeftText = string.format("FUEL -- %i KGS PUMPS ON",get("laminar/B738/fuel/total_tank_kgs"))
@@ -2151,7 +2151,7 @@ ZC_STARTENGINE_PROC = {
 	},
 	[5] = {["lefttext"] = "START ENGINE ONE", ["timerincr"] = 1,
 		["actions"] = function ()
-			speakNoText(0,"START ENGINE ONE")
+			gLeftText="START ENGINE ONE"
 		end
 	},
 	[6] = {["lefttext"] = "START ENGINE ONE", ["timerincr"] = 997,
@@ -2177,7 +2177,7 @@ ZC_STARTENGINE_PROC = {
 	},
 	[10] = {["lefttext"] = "TWO GOOD STARTS", ["timerincr"] = -1,
 		["actions"] = function ()
-			speakNoText(0,"we have two good starts")
+			gLeftText = "We have two good starts"
 		end
 	}
 }
@@ -2510,15 +2510,15 @@ ZC_BEFORE_TAXI_CHECKLIST = {
 			end
 		end
 	},
-	[21] = {["lefttext"] = "CLEAR LEFT", ["timerincr"] = 1,
+	[21] = {["lefttext"] = "CLEAR RIGHT", ["timerincr"] = 1,
 		["actions"] = function ()
-			speakNoText(0,"CLEAR LEFT")
+			speakNoText(0,"CLEAR RIGHT")
 		end
 	},
-	[22] = {["lefttext"] = "CLEAR RIGHT", ["timerincr"] = 997,
+	[22] = {["lefttext"] = "CLEAR LEFT", ["timerincr"] = 997,
 		["actions"] = function ()
 			if get_zc_config("easy") then
-				speakNoText(0,"CLEAR RIGHT")
+				speakNoText(0,"CLEAR LEFT")
 			end
 		end
 	},
@@ -3346,27 +3346,28 @@ ZC_FINAL_PROC = {
 	[4] = {["lefttext"] = "AUTOPILOT -- OFF", ["timerincr"] = 997,
 		["actions"] = function ()
 			gLeftText = "SET OFF"
-			command_once("laminar/B738/autopilot/disconnect_button")
+			command_once("laminar/B738/autopilot/capt_disco_press")
 		end
 	},
 	[5] = {["lefttext"] = "AUTOTHROTTLE -- OFF", ["timerincr"] = 1,
 		["actions"] = function ()
 			gLeftText = "AUTOTHROTTLE OFF"
-			command_once("laminar/B738/autopilot/disconnect_button")
+			command_once("laminar/B738/push_button/ap_light_pilot")
 		end
 	},
 	[6] = {["lefttext"] = "AUTOTHROTTLE -- OFF", ["timerincr"] = 997,
 		["actions"] = function ()
 			gLeftText = "SET OFF"
 			command_once("laminar/B738/autopilot/left_at_dis_press")
+			command_once("laminar/B738/push_button/ap_light_pilot")
 		end
 	},
-	[17] = {["lefttext"] = "PROCEDURE FINISHED", ["timerincr"] = 1,
+	[7] = {["lefttext"] = "PROCEDURE FINISHED", ["timerincr"] = 1,
 		["actions"] = function ()
 			gLeftText = "HAPPY LANDING"
 		end
 	}, 	
-	[18] = {["lefttext"] = "PROCEDURE FINISHED", ["timerincr"] = -1,
+	[8] = {["lefttext"] = "PROCEDURE FINISHED", ["timerincr"] = -1,
 		["actions"] = function ()
 			gLeftText = "HAPPY LANDING"
 		end
@@ -4391,7 +4392,7 @@ function zc_get_procedure()
 	if lProcIndex == incnt then
 		lActiveProc = ZC_FINAL_PROC
 		lNameActiveProc = incnt.." ON FINAL"
-		lChecklistMode = 0
+		lChecklistMode = 1
 	end
 	incnt=incnt+1
 	if lProcIndex == incnt then
