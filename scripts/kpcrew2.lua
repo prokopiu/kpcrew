@@ -1332,6 +1332,7 @@ function zc_appbrf_build()
 	ZC_BRIEF_APP["apppacks"] = zc_gui_in_dropdown("Packs",ZC_BRIEF_APP["apppacks"],GENERAL_Acf:getBleeds(),90)
 	ZC_BRIEF_APP["appaice"] = zc_gui_in_dropdown("Anti Ice",ZC_BRIEF_APP["appaice"],GENERAL_Acf:getAIce(),90)
 	ZC_BRIEF_APP["apu"] = zc_gui_in_dropdown("APU Start",ZC_BRIEF_APP["apu"],APP_apu_list,90)
+	ZC_BRIEF_DEP["depgatestand"] = zc_gui_in_dropdown("Gate/Stand",ZC_BRIEF_DEP["depgatestand"],DEP_gatestand_list,250)
 
 	imgui.Separator()		
 

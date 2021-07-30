@@ -60,6 +60,7 @@ ZC_COLD_AND_DARK = {
 			set("laminar/B738/toggle_switch/irs_left",0)
 			set("laminar/B738/toggle_switch/irs_right",0)
 			set("laminar/B738/toggle_switch/cockpit_dome_pos",0)
+			command_once("axp/commands/autoclose_all_doors")
 		end
 	}, 
 	[1] = {["lefttext"] = "OVERHEAD COLUMN 1", ["timerincr"] = 1,
@@ -128,6 +129,9 @@ ZC_COLD_AND_DARK = {
 		["actions"] = function ()
 			set("laminar/B738/toggle_switch/cab_util_pos",0)
 			set("laminar/B738/toggle_switch/ife_pass_seat_pos",0)
+			if get("737u/doors/L1") ~= 1 then
+				command_once("laminar/B738/door/fwd_L_toggle")
+			end
 		end
 	}, 
 	[6] = {["lefttext"] = "OVERHEAD COLUMN 2", ["timerincr"] = 1,
@@ -179,6 +183,9 @@ ZC_COLD_AND_DARK = {
 			command_once("laminar/B738/knob/left_wiper_dn")
 			command_once("laminar/B738/toggle_switch/gen2_dn")
 			command_once("laminar/B738/toggle_switch/gen1_dn")
+			if get("laminar/B738/airstairs_hide") == 1 and ZC_BRIEF_DEP["depgatestand"] > 1 then
+				command_once("laminar/B738/airstairs_toggle")
+			end
 		end
 	},                                                  
 	[11] = {["lefttext"] = "OVERHEAD COLUMN 3", ["timerincr"] = 1,
@@ -547,6 +554,9 @@ ZC_POWER_UP_PROC = {
 			set("laminar/B738/autopilot/mcp_speed_dial_kts_mach",get_zc_config("apspd"))
 			set("laminar/B738/autopilot/mcp_hdg_dial",get_zc_config("aphdg"))
 			set("laminar/B738/autopilot/mcp_alt_dial",get_zc_config("apalt"))
+			if get("laminar/B738/systems/lowerDU_page2") == 0 then
+				command_once("laminar/B738/LDU_control/push_button/MFD_SYS")
+			end
 			-- open flight information window
 			ZC_BACKGROUND_PROCS["OPENINFOWINDOW"].status=1
 		end
@@ -648,6 +658,9 @@ ZC_TURN_AROUND_STATE = {
 			if get_zc_config("apuinit") == false and get("laminar/B738/gpu_available") == 0 then
 				command_once("laminar/B738/tab/menu1")
 			end
+			if get("737u/doors/L1") ~= 1 then
+				command_once("laminar/B738/door/fwd_L_toggle")
+			end
 		end
 	},
 	[7] = {["lefttext"] = "GROUND POWER -- ON - OPTIONAL", ["timerincr"] = 1,
@@ -673,6 +686,15 @@ ZC_TURN_AROUND_STATE = {
 			command_once("laminar/B738/spring_toggle_switch/APU_start_pos_dn")
 			if get_zc_config("apuinit") then
 				command_begin("laminar/B738/spring_toggle_switch/APU_start_pos_dn")
+			end
+			if get("laminar/B738/airstairs_hide") == 1 and ZC_BRIEF_DEP["depgatestand"] > 1 then
+				command_once("laminar/B738/airstairs_toggle")
+			end
+			if get("737u/doors/aft_Cargo") == 0 then
+				command_once("laminar/B738/door/aft_cargo_toggle")
+			end
+			if get("737u/doors/Fwd_Cargo") == 0 then
+				command_once("laminar/B738/door/fwd_cargo_toggle")
 			end
 		end
 	}, 
@@ -904,6 +926,9 @@ ZC_TURN_AROUND_STATE = {
 			set("laminar/B738/autopilot/mcp_speed_dial_kts_mach",get_zc_config("apspd"))
 			set("laminar/B738/autopilot/mcp_hdg_dial",get_zc_config("aphdg"))
 			set("laminar/B738/autopilot/mcp_alt_dial",get_zc_config("apalt"))
+			if get("laminar/B738/systems/lowerDU_page2") == 0 then
+				command_once("laminar/B738/LDU_control/push_button/MFD_SYS")
+			end
 		end
 	}, 
 	[33] = {["lefttext"] = "PROCEDURE FINISHED", ["timerincr"] = -1,
@@ -1807,14 +1832,12 @@ ZC_BEFORE_START_PROC = {
 			end
 		end
 	},
-	[2] = {["lefttext"] = "CAPT: ARM LNAV & VNAV",["timerincr"] = 1,
+	[2] = {["lefttext"] = "CLOSE EXTERNAL DOORS",["timerincr"] = 1,
 		["actions"] = function ()
-			if get("laminar/B738/autopilot/lnav_pos") == 0 then
-				-- command_once("laminar/B738/autopilot/lnav_press")
+			if get("laminar/B738/airstairs_hide") ~= 1 then
+				command_once("laminar/B738/airstairs_toggle")
 			end
-			if get("laminar/B738/autopilot/vnav_pos") == 0 then
-				-- command_once("laminar/B738/autopilot/vnav_press")
-			end
+			command_once("axp/commands/autoclose_all_doors")
 		end
 	},
 	[3] = {["lefttext"] = "CAPT: SET STAB TRIM ", ["timerincr"] = 5,
@@ -1826,6 +1849,7 @@ ZC_BEFORE_START_PROC = {
 		["actions"] = function ()
 			set("sim/cockpit2/controls/rudder_trim",0)
 			set("sim/cockpit2/controls/aileron_trim",0)
+			command_once("axp/commands/autoclose_all_doors")
 		end
 	},
 	[5] = {["lefttext"] = "FO: SET FUEL PUMPS", ["timerincr"] = 1,
@@ -1896,6 +1920,12 @@ ZC_BEFORE_START_PROC = {
 	[15] = {["lefttext"] = "BEFORE START PROCEDURE COMPLETED", ["timerincr"] = 2,
 		["actions"] = function ()
 			speakNoText(0,"BEFORE START PROCEDURE COMPLETED")
+			if get("laminar/B738/systems/lowerDU_page2") ~= 0 then
+				command_once("laminar/B738/LDU_control/push_button/MFD_SYS")
+			end
+			if get("laminar/B738/systems/lowerDU_page") == 0 then
+				command_once("laminar/B738/LDU_control/push_button/MFD_ENG")
+			end
 		end
 	},
 	[16] = {["lefttext"] = "BEFORE START PROCEDURE COMPLETED", ["timerincr"] = -1,
@@ -2125,6 +2155,9 @@ ZC_STARTENGINE_PROC = {
 	[0] = {["lefttext"] = "START SEQUENCE IS TWO THEN ONE", ["timerincr"] = 3,
 		["actions"] = function ()
 			speakNoText(0,"START SEQUENCE IS TWO THEN ONE")
+			if get("laminar/B738/systems/lowerDU_page") == 0 then
+				command_once("laminar/B738/LDU_control/push_button/MFD_ENG")
+			end
 		end
 	},
 	[1] = {["lefttext"] = "AIR - BLEEDS - PACKS", ["timerincr"] = 1,
@@ -2186,6 +2219,9 @@ ZC_FLIGHT_CONTROLS_CHECK = {
 	[0] = {["lefttext"] = "FLIGHT CONTROLS CHECK", ["timerincr"] = 3,
 		["actions"] = function ()
 			speakNoText(0,"FLIGHT CONTROLS CHECK")
+			if get("laminar/B738/systems/lowerDU_page2") == 0 then
+				command_once("laminar/B738/LDU_control/push_button/MFD_SYS")
+			end
 		end
 	},
 	[1] = {["lefttext"] = "FULL LEFT - CENTER - FULL RIGHT - CENTER", ["timerincr"] = 997,
@@ -2666,7 +2702,12 @@ ZC_BEFORE_TAKEOFF_PROC = {
 			if get("laminar/B738/engine/starter2_pos") == 1 then
 				command_once("laminar/B738/knob/eng2_start_right")
 			end
-			command_once("laminar/B738/LDU_control/push_button/MFD_ENG")
+			if get("laminar/B738/systems/lowerDU_page") == 0 then
+				command_once("laminar/B738/LDU_control/push_button/MFD_ENG")
+			end
+			if get("laminar/B738/systems/lowerDU_page") == 1 then
+				command_once("laminar/B738/LDU_control/push_button/MFD_ENG")
+			end
 		end
 	},
 	[5] = {["lefttext"] = "PROCEDURE FINISHED", ["timerincr"] = -1,
@@ -3322,58 +3363,6 @@ ZC_LANDING_PROC = {
 	}
 }
 
-ZC_FINAL_PROC = {
-	[0] = {["lefttext"] = "ON FINAL", ["timerincr"] = 3,
-		["actions"] = function ()
-			gLeftText = "ON FINAL"
-		end
-	},
-	[1] = {["lefttext"] = "CLEARED FOR LANDING?", ["timerincr"] = 1,
-		["actions"] = function ()
-			gLeftText = "CLEARED FOR LANDING?"
-		end
-	},
-	[2] = {["lefttext"] = "CLEARED FOR LANDING?", ["timerincr"] = 997,
-		["actions"] = function ()
-			gLeftText = "CLEARED"
-		end
-	},
-	[3] = {["lefttext"] = "AUTOPILOT -- OFF", ["timerincr"] = 1,
-		["actions"] = function ()
-			gLeftText = "AUTOPILOT OFF"
-		end
-	},
-	[4] = {["lefttext"] = "AUTOPILOT -- OFF", ["timerincr"] = 997,
-		["actions"] = function ()
-			gLeftText = "SET OFF"
-			command_once("laminar/B738/autopilot/capt_disco_press")
-		end
-	},
-	[5] = {["lefttext"] = "AUTOTHROTTLE -- OFF", ["timerincr"] = 1,
-		["actions"] = function ()
-			gLeftText = "AUTOTHROTTLE OFF"
-			command_once("laminar/B738/push_button/ap_light_pilot")
-		end
-	},
-	[6] = {["lefttext"] = "AUTOTHROTTLE -- OFF", ["timerincr"] = 997,
-		["actions"] = function ()
-			gLeftText = "SET OFF"
-			command_once("laminar/B738/autopilot/left_at_dis_press")
-			command_once("laminar/B738/push_button/ap_light_pilot")
-		end
-	},
-	[7] = {["lefttext"] = "PROCEDURE FINISHED", ["timerincr"] = 1,
-		["actions"] = function ()
-			gLeftText = "HAPPY LANDING"
-		end
-	}, 	
-	[8] = {["lefttext"] = "PROCEDURE FINISHED", ["timerincr"] = -1,
-		["actions"] = function ()
-			gLeftText = "HAPPY LANDING"
-		end
-	}
-}
-
 -- LANDING
 -- Cabin . . . . . . . . . . . . . . . . . .		Secure
 -- ENGINE START switches . . . . . . . . . .		CONT
@@ -3473,6 +3462,58 @@ ZC_LANDING_CHECKLIST = {
 	[12] = {["lefttext"] = "LANDING CHECKLIST COMPLETED", ["timerincr"] = -1,
 		["actions"] = function ()
 			gLeftText = "LANDING CHECKLIST COMPLETED"
+		end
+	}
+}
+
+ZC_FINAL_PROC = {
+	[0] = {["lefttext"] = "ON FINAL", ["timerincr"] = 3,
+		["actions"] = function ()
+			gLeftText = "ON FINAL"
+		end
+	},
+	[1] = {["lefttext"] = "CLEARED FOR LANDING?", ["timerincr"] = 1,
+		["actions"] = function ()
+			gLeftText = "CLEARED FOR LANDING?"
+		end
+	},
+	[2] = {["lefttext"] = "CLEARED FOR LANDING?", ["timerincr"] = 997,
+		["actions"] = function ()
+			gLeftText = "CLEARED"
+		end
+	},
+	[3] = {["lefttext"] = "AUTOPILOT -- OFF", ["timerincr"] = 1,
+		["actions"] = function ()
+			gLeftText = "AUTOPILOT OFF"
+		end
+	},
+	[4] = {["lefttext"] = "AUTOPILOT -- OFF", ["timerincr"] = 997,
+		["actions"] = function ()
+			gLeftText = "SET OFF"
+			command_once("laminar/B738/autopilot/capt_disco_press")
+		end
+	},
+	[5] = {["lefttext"] = "AUTOTHROTTLE -- OFF", ["timerincr"] = 1,
+		["actions"] = function ()
+			gLeftText = "AUTOTHROTTLE OFF"
+			command_once("laminar/B738/push_button/ap_light_pilot")
+		end
+	},
+	[6] = {["lefttext"] = "AUTOTHROTTLE -- OFF", ["timerincr"] = 997,
+		["actions"] = function ()
+			gLeftText = "SET OFF"
+			command_once("laminar/B738/autopilot/left_at_dis_press")
+			command_once("laminar/B738/push_button/ap_light_pilot")
+		end
+	},
+	[7] = {["lefttext"] = "PROCEDURE FINISHED", ["timerincr"] = 1,
+		["actions"] = function ()
+			gLeftText = "HAPPY LANDING"
+		end
+	}, 	
+	[8] = {["lefttext"] = "PROCEDURE FINISHED", ["timerincr"] = -1,
+		["actions"] = function ()
+			gLeftText = "HAPPY LANDING"
 		end
 	}
 }
@@ -3693,13 +3734,30 @@ ZC_SHUTDOWN_PROC = {
 			set("sim/cockpit/radios/transponder_code", 2000)
 		end
 	},
-	[19] = {["lefttext"] = "FO: RESET ELAPSED TIME", ["timerincr"] = 1,
+	[19] = {["lefttext"] = "DOORS", ["timerincr"] = 1,
+		["actions"] = function ()
+			if get("laminar/B738/airstairs_hide") == 1 and ZC_BRIEF_DEP["depgatestand"] > 1 then
+				command_once("laminar/B738/airstairs_toggle")
+			end
+			if get("737u/doors/aft_Cargo") == 0 then
+				command_once("laminar/B738/door/aft_cargo_toggle")
+			end
+			if get("737u/doors/Fwd_Cargo") == 0 then
+				command_once("laminar/B738/door/fwd_cargo_toggle")
+			end
+			if get("737u/doors/L1") ~= 1 then
+				command_once("laminar/B738/door/fwd_L_toggle")
+			end
+		end
+	},
+	[20] = {["lefttext"] = "FO: RESET ELAPSED TIME", ["timerincr"] = 1,
 		["actions"] = function ()
 			command_once("laminar/B738/push_button/et_reset_capt")
 			command_once("laminar/B738/push_button/et_reset_fo")
+			command_once("laminar/B738/LDU_control/push_button/MFD_SYS")
 		end
 	},
-	[20] = {["lefttext"] = "SHUTDOWN FINISHED", ["timerincr"] = -1,
+	[21] = {["lefttext"] = "SHUTDOWN FINISHED", ["timerincr"] = -1,
 		["actions"] = function ()
 			gLeftText = "SHUTDOWN FINISHED"
 			speakNoText(0,"SHUTDOWN CHECKLIST")
