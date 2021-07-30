@@ -1977,26 +1977,13 @@ ZC_BEFORE_START_CHECKLIST = {
 			end
 		end
 	},
-	[1] = {["lefttext"] = "FLIGHT DECK DOOR -- CLOSED AND LOCKED", ["timerincr"] = 1,
-		["actions"] = function ()
-			speakNoText(0,"FLIGHT DECK DOOR")
-		end
-	},
-	[2] = {["lefttext"] = "FLIGHT DECK DOOR -- CLOSED AND LOCKED", ["timerincr"] = 997,
-		["actions"] = function ()
-			if get_zc_config("easy") then
-				speakNoText(0,"CLOSED AND LOCKED")
-				command_once("bgood/xchecklist/check_item")
-			end
-		end
-	},
-	[3] = {["lefttext"] = "FUEL -- ___ KGS PUMPS ON", ["timerincr"] = 4,
+	[1] = {["lefttext"] = "FUEL -- ___ KGS PUMPS ON", ["timerincr"] = 2,
 		["actions"] = function ()
 			speakNoText(0,"FUEL")
 			gLeftText = string.format("FUEL -- %i KGS PUMPS ON",get("laminar/B738/fuel/total_tank_kgs"))
 		end
 	},
-	[4] = {["lefttext"] = "FUEL -- ____ KGS PUMPS ON", ["timerincr"] = 999,
+	[2] = {["lefttext"] = "FUEL -- ____ KGS PUMPS ON", ["timerincr"] = 4,
 		["actions"] = function ()
 			gLeftText = string.format("FUEL -- %i KGS PUMPS ON",get("laminar/B738/fuel/total_tank_kgs"))
 			if get_zc_config("easy") then
@@ -2005,12 +1992,12 @@ ZC_BEFORE_START_CHECKLIST = {
 			end
 		end
 	},
-	[5] = {["lefttext"] = "PASSENGER SIGNS -- ON", ["timerincr"] = 2,
+	[3] = {["lefttext"] = "PASSENGER SIGNS -- ON", ["timerincr"] = 2,
 		["actions"] = function ()
 			speakNoText(0,"PASSENGER SIGNS")
 		end
 	},
-	[6] = {["lefttext"] = "PASSENGER SIGNS -- ON", ["timerincr"] = 997,
+	[4] = {["lefttext"] = "PASSENGER SIGNS -- ON", ["timerincr"] = 2,
 		["actions"] = function ()
 			if get_zc_config("easy") then
 				speakNoText(0,"ON")
@@ -2018,12 +2005,12 @@ ZC_BEFORE_START_CHECKLIST = {
 			end
 		end
 	},
-	[7] = {["lefttext"] = "WINDOWS -- LOCKED", ["timerincr"] = 2,
+	[5] = {["lefttext"] = "WINDOWS -- LOCKED", ["timerincr"] = 2,
 		["actions"] = function ()
 			speakNoText(0,"WINDOWS")
 		end
 	},
-	[8] = {["lefttext"] = "WINDOWS -- LOCKED", ["timerincr"] = 997,
+	[6] = {["lefttext"] = "WINDOWS -- LOCKED", ["timerincr"] = 997,
 		["actions"] = function ()
 			if get_zc_config("easy") then
 				speakNoText(0,"LOCKED")
@@ -2031,13 +2018,13 @@ ZC_BEFORE_START_CHECKLIST = {
 			end
 		end
 	},
-	[9] = {["lefttext"] = "MCP -- V2____, HEADING____, ALTITUDE___", ["timerincr"] = 1,
+	[7] = {["lefttext"] = "MCP -- V2____, HEADING____, ALTITUDE___", ["timerincr"] = 1,
 		["actions"] = function ()
 			speakNoText(0,"M C P")
 			gLeftText = string.format("MCP -- V2 %i, HEADING %i, ALTITUDE %i",get("laminar/B738/autopilot/mcp_speed_dial_kts2_fo"),get("laminar/B738/autopilot/mcp_hdg_dial"),get("laminar/B738/autopilot/mcp_alt_dial"))
 		end
 	},
-	[10] = {["lefttext"] = "MCP -- V2____, HEADING____, ALTITUDE___", ["timerincr"] = 999,
+	[8] = {["lefttext"] = "MCP -- V2____, HEADING____, ALTITUDE___", ["timerincr"] = 999,
 		["actions"] = function ()
 			gLeftText = string.format("MCP -- V2 %i, HEADING %i, ALTITUDE %i",get("laminar/B738/autopilot/mcp_speed_dial_kts2_fo"),get("laminar/B738/autopilot/mcp_hdg_dial"),get("laminar/B738/autopilot/mcp_alt_dial"))
 			if get_zc_config("easy") then
@@ -2046,13 +2033,13 @@ ZC_BEFORE_START_CHECKLIST = {
 			end
 		end
 	},
-	[11] = {["lefttext"] = "TAKEOFF SPEEDS -- V1____, VR____, V2___", ["timerincr"] = 1,
+	[9] = {["lefttext"] = "TAKEOFF SPEEDS -- V1____, VR____, V2___", ["timerincr"] = 1,
 		["actions"] = function ()
 			speakNoText(0,"TAKEOFF SPEEDS")
 			gLeftText = string.format("TAKEOFF SPEEDS -- V1 %i, VR %i, V2 %i",get("laminar/B738/FMS/v1"),get("laminar/B738/FMS/vr"),get("laminar/B738/FMS/v2"))
 		end
 	},
-	[12] = {["lefttext"] = "TAKEOFF SPEEDS -- V1____, VR____, V2___", ["timerincr"] = 999,
+	[10] = {["lefttext"] = "TAKEOFF SPEEDS -- V1____, VR____, V2___", ["timerincr"] = 999,
 		["actions"] = function ()
 			gLeftText = string.format("TAKEOFF SPEEDS -- V1 %i, VR %i, V2 %i",get("laminar/B738/FMS/v1"),get("laminar/B738/FMS/vr"),get("laminar/B738/FMS/v2"))
 			if get_zc_config("easy") then
@@ -2061,12 +2048,12 @@ ZC_BEFORE_START_CHECKLIST = {
 			end
 		end
 	},
-	[13] = {["lefttext"] = "CDU PREFLIGHT -- COMPLETED", ["timerincr"] = 2,
+	[11] = {["lefttext"] = "CDU PREFLIGHT -- COMPLETED", ["timerincr"] = 2,
 		["actions"] = function ()
 			speakNoText(0,"CDU PREFLIGHT")
 		end
 	},
-	[14] = {["lefttext"] = "CDU PREFLIGHT -- COMPLETED", ["timerincr"] = 997,
+	[12] = {["lefttext"] = "CDU PREFLIGHT -- COMPLETED", ["timerincr"] = 997,
 		["actions"] = function ()
 			if get_zc_config("easy") then
 				speakNoText(0,"COMPLETED")
@@ -2074,7 +2061,7 @@ ZC_BEFORE_START_CHECKLIST = {
 			end
 		end
 	},
-	[15] = {["lefttext"] = "RUDDER AND AILERON TRIM -- FREE AND ZERO", ["timerincr"] = 3,
+	[13] = {["lefttext"] = "RUDDER AND AILERON TRIM -- FREE AND ZERO", ["timerincr"] = 3,
 		["actions"] = function ()
 			speakNoText(0,"RUDDER AND AILERON TRIM")
 			if get_zc_config("easy") then
@@ -2082,7 +2069,7 @@ ZC_BEFORE_START_CHECKLIST = {
 			end
 		end
 	},
-	[16] = {["lefttext"] = "RUDDER AND AILERON TRIM -- FREE AND ZERO", ["timerincr"] = 997,
+	[14] = {["lefttext"] = "RUDDER AND AILERON TRIM -- FREE AND ZERO", ["timerincr"] = 997,
 		["actions"] = function ()
 			if get_zc_config("easy") then
 				speakNoText(0,"FREE AND ZERO")
@@ -2090,15 +2077,28 @@ ZC_BEFORE_START_CHECKLIST = {
 			end
 		end
 	},
-	[17] = {["lefttext"] = "TAXI AND TAKEOFF BRIEFING -- COMPLETED", ["timerincr"] = 3,
+	[15] = {["lefttext"] = "TAXI AND TAKEOFF BRIEFING -- COMPLETED", ["timerincr"] = 3,
 		["actions"] = function ()
 			speakNoText(0,"TAXI AND TAKEOFF BRIEFING")
 		end
 	},
-	[18] = {["lefttext"] = "TAXI AND TAKEOFF BRIEFING -- COMPLETED", ["timerincr"] = 997,
+	[16] = {["lefttext"] = "TAXI AND TAKEOFF BRIEFING -- COMPLETED", ["timerincr"] = 997,
 		["actions"] = function ()
 			if get_zc_config("easy") then
 				speakNoText(0,"COMPLETED")
+				command_once("bgood/xchecklist/check_item")
+			end
+		end
+	},
+	[17] = {["lefttext"] = "FLIGHT DECK DOOR -- CLOSED AND LOCKED", ["timerincr"] = 1,
+		["actions"] = function ()
+			speakNoText(0,"FLIGHT DECK DOOR")
+		end
+	},
+	[18] = {["lefttext"] = "FLIGHT DECK DOOR -- CLOSED AND LOCKED", ["timerincr"] = 2,
+		["actions"] = function ()
+			if get_zc_config("easy") then
+				speakNoText(0,"CLOSED AND LOCKED")
 				command_once("bgood/xchecklist/check_item")
 			end
 		end
@@ -2108,7 +2108,7 @@ ZC_BEFORE_START_CHECKLIST = {
 			speakNoText(0,"ANTI COLLISION LIGHT")
 		end
 	},
-	[20] = {["lefttext"] = "ANTI COLLISION LIGHT -- ON", ["timerincr"] = 997,
+	[20] = {["lefttext"] = "ANTI COLLISION LIGHT -- ON", ["timerincr"] = 2	,
 		["actions"] = function ()
 			if get_zc_config("easy") then
 				speakNoText(0,"ON")
@@ -2421,7 +2421,7 @@ ZC_BEFORE_TAXI_CHECKLIST = {
 			speakNoText(0,"GENERATORS")
 		end
 	},
-	[2] = {["lefttext"] = "GENERATORS -- ON", ["timerincr"] = 997,
+	[2] = {["lefttext"] = "GENERATORS -- ON", ["timerincr"] = 2,
 		["actions"] = function ()
 			if get_zc_config("easy") then
 				speakNoText(0,"ON")
@@ -2434,7 +2434,7 @@ ZC_BEFORE_TAXI_CHECKLIST = {
 			speakNoText(0,"PROBE HEAT")
 		end
 	},
-	[4] = {["lefttext"] = "PROBE HEAT -- ON", ["timerincr"] = 997,
+	[4] = {["lefttext"] = "PROBE HEAT -- ON", ["timerincr"] = 2,
 		["actions"] = function ()
 			if get_zc_config("easy") then
 				speakNoText(0,"ON")
@@ -2447,7 +2447,7 @@ ZC_BEFORE_TAXI_CHECKLIST = {
 			speakNoText(0,"ANTI-ICE")
 		end
 	},
-	[6] = {["lefttext"] = "ANTI-ICE -- AS REQUIRED", ["timerincr"] = 997,
+	[6] = {["lefttext"] = "ANTI-ICE -- AS REQUIRED", ["timerincr"] = 3,
 		["actions"] = function ()
 			if get_zc_config("easy") then
 				speakNoText(0,"AS REQUIRED")
@@ -2460,7 +2460,7 @@ ZC_BEFORE_TAXI_CHECKLIST = {
 			speakNoText(0,"ISOLATION VALVE")
 		end
 	},
-	[8] = {["lefttext"] = "ISOLATION VALVE -- AUTO", ["timerincr"] = 997,
+	[8] = {["lefttext"] = "ISOLATION VALVE -- AUTO", ["timerincr"] = 2,
 		["actions"] = function ()
 			if get_zc_config("easy") then
 				speakNoText(0,"AUTO")
@@ -2468,25 +2468,25 @@ ZC_BEFORE_TAXI_CHECKLIST = {
 			end
 		end
 	},
-	[9] = {["lefttext"] = "ENGINE START SWITCHES -- CONT", ["timerincr"] = 1,
+	[9] = {["lefttext"] = "ENGINE START LEVERS -- IDLE DETENT", ["timerincr"] = 1,
 		["actions"] = function ()
-			speakNoText(0,"ENGINE START SWITCHES")
+			speakNoText(0,"ENGINE START LEVERS")
 		end
 	},
-	[10] = {["lefttext"] = "ENGINE START SWITCHES -- CONT", ["timerincr"] = 997,
+	[10] = {["lefttext"] = "ENGINE START LEVERS -- IDLE DETENT", ["timerincr"] = 997,
 		["actions"] = function ()
 			if get_zc_config("easy") then
-				speakNoText(0,"CONTINOUS")
+				speakNoText(0,"IDLE DETENT")
 				command_once("bgood/xchecklist/check_item")
 			end
 		end
-	},
-	[11] = {["lefttext"] = "RECALL -- CHECKED", ["timerincr"] = 1,
+	},	
+	[11] = {["lefttext"] = "FLIGHT CONTROLS -- CHECKED", ["timerincr"] = 1,
 		["actions"] = function ()
-			speakNoText(0,"RECALL")
+			speakNoText(0,"FLIGHT CONTROLS")
 		end
 	},
-	[12] = {["lefttext"] = "RECALL -- CHECKED", ["timerincr"] = 997,
+	[12] = {["lefttext"] = "FLIGHT CONTROLS -- CHECKED", ["timerincr"] = 997,
 		["actions"] = function ()
 			if get_zc_config("easy") then
 				speakNoText(0,"CHECKED")
@@ -2499,7 +2499,7 @@ ZC_BEFORE_TAXI_CHECKLIST = {
 			speakNoText(0,"AUTOBRAKE")
 		end
 	},
-	[14] = {["lefttext"] = "AUTOBRAKE -- RTO", ["timerincr"] = 997,
+	[14] = {["lefttext"] = "AUTOBRAKE -- RTO", ["timerincr"] = 2,
 		["actions"] = function ()
 			if get_zc_config("easy") then
 				speakNoText(0,"R T O")
@@ -2507,25 +2507,12 @@ ZC_BEFORE_TAXI_CHECKLIST = {
 			end
 		end
 	},
-	[15] = {["lefttext"] = "ENGINE START LEVERS -- IDLE DETENT", ["timerincr"] = 1,
+	[15] = {["lefttext"] = "RECALL -- CHECKED", ["timerincr"] = 1,
 		["actions"] = function ()
-			speakNoText(0,"ENGINE START LEVERS")
+			speakNoText(0,"RECALL")
 		end
 	},
-	[16] = {["lefttext"] = "ENGINE START LEVERS -- IDLE DETENT", ["timerincr"] = 997,
-		["actions"] = function ()
-			if get_zc_config("easy") then
-				speakNoText(0,"IDLE DETENT")
-				command_once("bgood/xchecklist/check_item")
-			end
-		end
-	},	
-	[17] = {["lefttext"] = "FLIGHT CONTROLS -- CHECKED", ["timerincr"] = 1,
-		["actions"] = function ()
-			speakNoText(0,"FLIGHT CONTROLS")
-		end
-	},
-	[18] = {["lefttext"] = "FLIGHT CONTROLS -- CHECKED", ["timerincr"] = 997,
+	[16] = {["lefttext"] = "RECALL -- CHECKED", ["timerincr"] = 997,
 		["actions"] = function ()
 			if get_zc_config("easy") then
 				speakNoText(0,"CHECKED")
@@ -2533,15 +2520,28 @@ ZC_BEFORE_TAXI_CHECKLIST = {
 			end
 		end
 	},
-	[19] = {["lefttext"] = "DISPATCH CLEARANCE -- CHECKED", ["timerincr"] = 1,
+	[17] = {["lefttext"] = "ENGINE START SWITCHES -- CONT", ["timerincr"] = 1,
 		["actions"] = function ()
-			speakNoText(0,"DISPATCH CLEARANCE")
+			speakNoText(0,"ENGINE START SWITCHES")
 		end
 	},
-	[20] = {["lefttext"] = "DISPATCH CLEARANCE -- CHECKED", ["timerincr"] = 997,
+	[18] = {["lefttext"] = "ENGINE START SWITCHES -- CONT", ["timerincr"] = 997,
 		["actions"] = function ()
 			if get_zc_config("easy") then
-				speakNoText(0,"CHECKED")
+				speakNoText(0,"CONTINOUS")
+				command_once("bgood/xchecklist/check_item")
+			end
+		end
+	},
+	[19] = {["lefttext"] = "GROUND EQUIPMENT -- CLEAR", ["timerincr"] = 1,
+		["actions"] = function ()
+			speakNoText(0,"GROUND EQUIPMENT")
+		end
+	},
+	[20] = {["lefttext"] = "GROUND EQUIPMENT -- CLEAR", ["timerincr"] = 997,
+		["actions"] = function ()
+			if get_zc_config("easy") then
+				speakNoText(0,"CLEAR")
 				command_once("bgood/xchecklist/check_item")
 			end
 		end
@@ -2585,26 +2585,13 @@ ZC_BEFORE_TAKEOFF_CHECKLIST = {
 			end
 		end
 	},
-	[1] = {["lefttext"] = "TAKEOFF BRIEFING -- REVIEWED", ["timerincr"] = 1,
-		["actions"] = function ()
-			speakNoText(0,"TAKE OFF BRIEFING")
-		end
-	},
-	[2] = {["lefttext"] = "TAKEOFF BRIEFING -- REVIEWED", ["timerincr"] = 997,
-		["actions"] = function ()
-			if get_zc_config("easy") then
-				speakNoText(0,"REVIEWED")
-				command_once("bgood/xchecklist/check_item")
-			end
-		end
-	},
-	[3] = {["lefttext"] = "FLAPS -- FLAPS __ GREEN LIGHT", ["timerincr"] = 2,
+	[1] = {["lefttext"] = "FLAPS -- FLAPS __ GREEN LIGHT", ["timerincr"] = 2,
 		["actions"] = function ()
 			speakNoText(0,"FLAPS")
 			gLeftText = string.format("FLAPS %i GREEN LIGHT",get("laminar/B738/FMS/takeoff_flaps"))
 		end
 	},
-	[4] = {["lefttext"] = "FLAPS -- FLAPS __ GREEN LIGHT", ["timerincr"] = 999,
+	[2] = {["lefttext"] = "FLAPS -- FLAPS __ GREEN LIGHT", ["timerincr"] = 999,
 		["actions"] = function ()
 			gLeftText = string.format("FLAPS %i GREEN LIGHT",get("laminar/B738/FMS/takeoff_flaps"))
 			if get_zc_config("easy") then
@@ -2613,17 +2600,30 @@ ZC_BEFORE_TAKEOFF_CHECKLIST = {
 			end
 		end
 	},
-	[5] = {["lefttext"] = "STABILIZER TRIM -- __ UNITS", ["timerincr"] = 2,
+	[3] = {["lefttext"] = "STABILIZER TRIM -- __ UNITS", ["timerincr"] = 2,
 		["actions"] = function ()
 			speakNoText(0,"STABILIZER TRIM")
 			gLeftText = string.format("STABILIZER TRIM -- %.2f UNITS",get("laminar/B738/FMS/trim_calc"))
 		end
 	},
-	[6] = {["lefttext"] = "STABILIZER TRIM -- __ UNITS", ["timerincr"] = 999,
+	[4] = {["lefttext"] = "STABILIZER TRIM -- __ UNITS", ["timerincr"] = 999,
 		["actions"] = function ()
 			gLeftText = string.format("STABILIZER TRIM -- %.2f UNITS",get("laminar/B738/FMS/trim_calc"))
 			if get_zc_config("easy") then
 				speakNoText(0,string.format("%.2f units",get("laminar/B738/FMS/trim_calc")))
+				command_once("bgood/xchecklist/check_item")
+			end
+		end
+	},
+	[5] = {["lefttext"] = "TAKEOFF BRIEFING -- REVIEWED", ["timerincr"] = 1,
+		["actions"] = function ()
+			speakNoText(0,"TAKE OFF BRIEFING")
+		end
+	},
+	[6] = {["lefttext"] = "TAKEOFF BRIEFING -- REVIEWED", ["timerincr"] = 997,
+		["actions"] = function ()
+			if get_zc_config("easy") then
+				speakNoText(0,"REVIEWED")
 				command_once("bgood/xchecklist/check_item")
 			end
 		end
@@ -2909,7 +2909,7 @@ ZC_AFTER_TAKEOFF_CHECKLIST = {
 			speakNoText(0,"ENGINE BLEEDS")
 		end
 	},
-	[2] = {["lefttext"] = "ENGINE BLEEDS -- ON", ["timerincr"] = 997,
+	[2] = {["lefttext"] = "ENGINE BLEEDS -- ON", ["timerincr"] = 2,
 		["actions"] = function ()
 			if get_zc_config("easy") then
 				speakNoText(0,"ON")
@@ -2922,7 +2922,7 @@ ZC_AFTER_TAKEOFF_CHECKLIST = {
 			speakNoText(0,"PACKS")
 		end
 	},
-	[4] = {["lefttext"] = "PACKS -- AUTO", ["timerincr"] = 997,
+	[4] = {["lefttext"] = "PACKS -- AUTO", ["timerincr"] = 2,
 		["actions"] = function ()
 			if get_zc_config("easy") then
 				speakNoText(0,"AUTO")
@@ -2935,7 +2935,7 @@ ZC_AFTER_TAKEOFF_CHECKLIST = {
 			speakNoText(0,"LANDING GEAR")
 		end
 	},
-	[6] = {["lefttext"] = "LANDING GEAR -- UP AND OFF", ["timerincr"] = 997,
+	[6] = {["lefttext"] = "LANDING GEAR -- UP AND OFF", ["timerincr"] = 2,
 		["actions"] = function ()
 			if get_zc_config("easy") then
 				speakNoText(0,"UP AND OFF")
@@ -2948,7 +2948,7 @@ ZC_AFTER_TAKEOFF_CHECKLIST = {
 			speakNoText(0,"FLAPS")
 		end
 	},
-	[8] = {["lefttext"] = "FLAPS -- UP NO LIGHTS", ["timerincr"] = 997,
+	[8] = {["lefttext"] = "FLAPS -- UP NO LIGHTS", ["timerincr"] = 2,
 		["actions"] = function ()
 			if get_zc_config("easy") then
 				speakNoText(0,"UP NO LIGHTS")
@@ -3113,7 +3113,7 @@ ZC_DESCENT_CHECKLIST = {
 			speakNoText(0,"PRESSURIZATION")
 		end
 	},
-	[2] = {["lefttext"] = "PRESSURIZATION -- LAND ALT___", ["timerincr"] = 999,
+	[2] = {["lefttext"] = "PRESSURIZATION -- LAND ALT___", ["timerincr"] = 2,
 		["actions"] = function ()
 			gLeftText = string.format("landing altitude %i",get("laminar/B738/pressurization/knobs/landing_alt"))
 			if get_zc_config("easy") then
@@ -3127,7 +3127,7 @@ ZC_DESCENT_CHECKLIST = {
 			speakNoText(0,"RECALL")
 		end
 	},
-	[4] = {["lefttext"] = "RECALL -- CHECKED", ["timerincr"] = 997,
+	[4] = {["lefttext"] = "RECALL -- CHECKED", ["timerincr"] = 2,
 		["actions"] = function ()
 			if get_zc_config("easy") then
 				speakNoText(0,"CHECKED")
@@ -3141,7 +3141,7 @@ ZC_DESCENT_CHECKLIST = {
 			gLeftText = string.format("AUTOBRAKE %i",get("laminar/B738/autobrake/autobrake_pos"))
 		end
 	},
-	[6] = {["lefttext"] = "AUTOBRAKE -- ___", ["timerincr"] = 997,
+	[6] = {["lefttext"] = "AUTOBRAKE -- ___", ["timerincr"] = 3,
 		["actions"] = function ()
 			gLeftText = string.format("AUTOBRAKE %i",get("laminar/B738/autobrake/autobrake_pos"))
 			if get_zc_config("easy") then
