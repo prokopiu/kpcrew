@@ -107,17 +107,6 @@ sw_item:WINDOW HEAT|OFF
 sw_item:PACKS|OFF
 sw_itemvoid:SECURING AIRCRAFT COMPLETED
 
-
-
-
-
-
-
-
-
-
-
-
 # ====== REFERENCE AND INFORMATION
 
 sw_checklist:TECHNICAL DATA:TECHNICAL DATA
@@ -136,9 +125,10 @@ sw_itemvoid:MAX TAKEOFF WEIGHT: 79016 KG - 174200 LBS
 sw_itemvoid:MAX LANDING WEIGHT: 66361 KG - 146300 LBS
 sw_itemvoid:MAX FUEL CAPACITY: 20900 KG - 46077 LBS
 sw_itemvoid:FUEL FLOW PER HOUR: 2187 KG - 4825 LBS
+sw_item: CLOSE
 
 sw_checklist:TAKEOFF SPEEDS:TAKEOFF SPEEDS
-sw_show:sim/operation/failures/rel_fadec_7:98
+sw_show:sim/operation/failures/rel_fadec_7:91
 sw_rcolsize:100
 sw_itemvoid:ZIBO 737-800 Take-Off Speeds Flaps 5
 sw_itemvoid:
@@ -159,12 +149,12 @@ sw_itemvoid:
 sw_itemvoid:All speeds assume balanced field, nil slope,
 sw_itemvoid:flap 5, pa gt 5000ft, OAT lt 35C, nil wind, runway dry.
 sw_itemvoid:
-sw_itemvoid: Next see LANDING SPEEDS VREF
+sw_item: CLOSE
 
 sw_checklist:LANDING SPEEDS VREF:LANDING SPEEDS VREF
-sw_show:sim/operation/failures/rel_fadec_7:97
+sw_show:sim/operation/failures/rel_fadec_7:92
 sw_rcolsize:100
-sw_itemvoid:IXEG 737-300 Landing Speeds
+sw_itemvoid:ZIBO 737-800 Landing Speeds
 sw_itemvoid:
 sw_iteminfo:Landing Weight/1000kg|F40 F30 F15  
 sw_itemvoid:
@@ -177,5 +167,5 @@ sw_iteminfo:55|147 140 134
 sw_iteminfo:50|120 123 127
 sw_iteminfo:45|114 117 121
 sw_itemvoid:
-sw_itemvoid: Next see AUTOBRAKE AND FLAPS
+sw_item: CLOSE
 
