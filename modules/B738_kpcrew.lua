@@ -976,6 +976,7 @@ ZC_PRE_FLIGHT_PROC = {
 			gLeftText = "CAPT: CDU PREFLIGHT PROCEDURE"
 			command_once("FlyWithLua/AceLM/ShowHideMainWindow")
 			ZC_BACKGROUND_PROCS["OPENINFOWINDOW"].status=1
+			setchecklist(91)
 		end
 	}, 
 	[7] = {["lefttext"] = "CAPT: CDU PREFLIGHT PROCEDURE", ["timerincr"] = 997,
@@ -1670,6 +1671,7 @@ ZC_DEPARTURE_BRIEFING = {
 		["actions"] = function ()
 			gLeftText = "ARE YOU READY FOR THE TAKEOFF BRIEF?"
 			ZC_BACKGROUND_PROCS["OPENDEPWINDOW"].status=1
+			setchecklist(91)
 		end
 	},
 	[1] = {["lefttext"] = "DEPARTURE BRIEFING", ["timerincr"] = 1,
@@ -2982,6 +2984,7 @@ ZC_APPROACH_BRIEFING = {
 		["actions"] = function ()
 			gLeftText = "ARE YOU READY FOR THE APPROACH BRIEF?"
 			ZC_BACKGROUND_PROCS["OPENAPPWINDOW"].status=1
+			setchecklist(92)
 		end
 	},
 	[1] = {["lefttext"] = "APPROACH BRIEFING", ["timerincr"] = 1,
@@ -3260,6 +3263,18 @@ ZC_LANDING_PROC = {
 			ZC_BACKGROUND_PROCS["TRANSALT"].status = 0
 			ZC_BACKGROUND_PROCS["TRANSLVL"].status = 0
 			ZC_BACKGROUND_PROCS["TENTHOUSANDDN"].status = 0
+			setchecklist(92)
+			if (ZC_CONFIG["dhda"]) then
+				set("laminar/B738/EFIS_control/cpt/minimums",0)
+				set("laminar/B738/EFIS_control/fo/minimums",0)
+				set("laminar/B738/pfd/dh_pilot",get_zc_brief_app("dh"))
+				set("laminar/B738/pfd/dh_copilot",get_zc_brief_app("dh"))
+			else
+				set("laminar/B738/EFIS_control/cpt/minimums",1)
+				set("laminar/B738/EFIS_control/fo/minimums",1)
+				set("laminar/B738/pfd/dh_pilot",get_zc_brief_app("da"))
+				set("laminar/B738/pfd/dh_copilot",get_zc_brief_app("da"))
+			end
 		end
 	},
 	[1] = {["lefttext"] = "AT 210 KTS - FLAPS 1", ["timerincr"] = 1,
