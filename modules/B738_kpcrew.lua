@@ -30,6 +30,8 @@ DEP_bleeds_list = B738:getBleeds()
 -- overwrite approach types if necessary - "---" for unsupported
 APP_apptype_list = {"ILS CAT 1","VISUAL","ILS CAT 2 OR 3","VOR","NDB","RNAV","TOUCH AND GO","CIRCLING"}
 
+zibo_save_counter = 30
+
 -- Procedure definitions
 ZC_INIT_PROC = {
 	[0] = {["lefttext"] = "ZIBOCREW ".. ZC_VERSION .. " STARTED",["timerincr"] = -1,
@@ -976,7 +978,7 @@ ZC_PRE_FLIGHT_PROC = {
 			gLeftText = "CAPT: CDU PREFLIGHT PROCEDURE"
 			command_once("FlyWithLua/AceLM/ShowHideMainWindow")
 			ZC_BACKGROUND_PROCS["OPENINFOWINDOW"].status=1
-			setchecklist(91)
+			-- setchecklist(91)
 		end
 	}, 
 	[7] = {["lefttext"] = "CAPT: CDU PREFLIGHT PROCEDURE", ["timerincr"] = 997,
@@ -1806,7 +1808,7 @@ ZC_DEPARTURE_BRIEFING = {
 	},	
 	[27] = {["lefttext"] = "DEPARTURE BRIEFING COMPLETED", ["timerincr"] = 1,
 		["actions"] = function ()
-			speakNoText(0,"DEPARTURE BRIEFING COMPLETED")	
+			gLeftText="DEPARTURE BRIEFING COMPLETED"	
 		end
 	},
 	[28] = {["lefttext"] = "DEPARTURE BRIEFING COMPLETED", ["timerincr"] = -1,
@@ -2171,6 +2173,7 @@ ZC_STARTENGINE_PROC = {
 	},
 	[3] = {["lefttext"] = "START ENGINE TWO", ["timerincr"] = 997,
 		["actions"] = function ()
+			speakNoText(0,"starting engine 2")
 			command_once("laminar/B738/knob/eng2_start_left")
 		end
 	},
@@ -2187,6 +2190,7 @@ ZC_STARTENGINE_PROC = {
 	},
 	[6] = {["lefttext"] = "START ENGINE ONE", ["timerincr"] = 997,
 		["actions"] = function ()
+			speakNoText(0,"starting engine 1")
 			command_once("laminar/B738/knob/eng1_start_left")
 		end
 	},
@@ -2208,7 +2212,7 @@ ZC_STARTENGINE_PROC = {
 	},
 	[10] = {["lefttext"] = "TWO GOOD STARTS", ["timerincr"] = -1,
 		["actions"] = function ()
-			gLeftText = "We have two good starts"
+			gLeftText = "WE HAVE TWO GOOD STARTS"
 		end
 	}
 }
@@ -2217,75 +2221,81 @@ ZC_FLIGHT_CONTROLS_CHECK = {
 	[0] = {["lefttext"] = "FLIGHT CONTROLS CHECK", ["timerincr"] = 3,
 		["actions"] = function ()
 			speakNoText(0,"FLIGHT CONTROLS CHECK")
-			if get("laminar/B738/systems/lowerDU_page2") == 0 then
-				command_once("laminar/B738/LDU_control/push_button/MFD_SYS")
-			end
 		end
 	},
-	[1] = {["lefttext"] = "FULL LEFT - CENTER - FULL RIGHT - CENTER", ["timerincr"] = 997,
+	[1] = {["lefttext"] = "AILERON FULL LEFT - CENTER - FULL RIGHT - CENTER", ["timerincr"] = 997,
 		["actions"] = function ()
 			if get("laminar/B738/systems/lowerDU_page2") == 0 then
 				command_once("laminar/B738/LDU_control/push_button/MFD_SYS")
 			end
 		end
 	},
-	[2] = {["lefttext"] = "FULL LEFT - CENTER - FULL RIGHT - CENTER", ["timerincr"] = 2,
+	[2] = {["lefttext"] = "AILERON FULL LEFT", ["timerincr"] = 2,
 		["actions"] = function ()
 			speakNoText(0,"FULL LEFT")
 		end
 	},
-	[3] = {["lefttext"] = "FULL LEFT - CENTER - FULL RIGHT - CENTER", ["timerincr"] = 2,
+	[3] = {["lefttext"] = "AILERON CENTER", ["timerincr"] = 2,
 		["actions"] = function ()
 			speakNoText(0,"CENTER")
 		end
 	},
-	[4] = {["lefttext"] = "FULL LEFT - CENTER - FULL RIGHT - CENTER", ["timerincr"] = 2,
+	[4] = {["lefttext"] = "AILERON FULL RIGHT", ["timerincr"] = 2,
 		["actions"] = function ()
 			speakNoText(0,"FULL RIGHT")
 		end
 	},
-	[5] = {["lefttext"] = "FULL LEFT - CENTER - FULL RIGHT - CENTER", ["timerincr"] = 4,
+	[5] = {["lefttext"] = "AILERON CENTER", ["timerincr"] = 4,
 		["actions"] = function ()
 			speakNoText(0,"CENTER")
 		end
 	},
-	[6] = {["lefttext"] = "FULL UP - FULL DOWN - CENTER", ["timerincr"] = 2,
+	[6] = {["lefttext"] = "ELEVATOR FULL UP - FULL DOWN - CENTER", ["timerincr"] = 997,
+		["actions"] = function ()
+		end
+	},
+	[7] = {["lefttext"] = "ELEVATOR FULL UP", ["timerincr"] = 2,
 		["actions"] = function ()
 			speakNoText(0,"FULL UP")
 		end
 	},
-	[7] = {["lefttext"] = "FULL UP - FULL DOWN - CENTER", ["timerincr"] = 2,
+	[8] = {["lefttext"] = "ELEVATOR FULL DOWN", ["timerincr"] = 2,
 		["actions"] = function ()
 			speakNoText(0,"FULL DOWN")
 		end
 	},
-	[8] = {["lefttext"] = "FULL UP - FULL DOWN - CENTER", ["timerincr"] = 4,
+	[9] = {["lefttext"] = "ELEVATOR CENTER", ["timerincr"] = 4,
 		["actions"] = function ()
 			speakNoText(0,"CENTER")
 		end
 	},
-	[9] = {["lefttext"] = "RUDDER FULL LEFT - CENTER - FULL RIGHT - CENTER", ["timerincr"] = 2,
+	[10] = {["lefttext"] = "RUDDER FULL LEFT - CENTER - FULL RIGHT - CENTER", ["timerincr"] = 997,
+		["actions"] = function ()
+		end
+	},
+	[11] = {["lefttext"] = "RUDDER FULL LEFT", ["timerincr"] = 2,
 		["actions"] = function ()
 			speakNoText(0,"FULL LEFT")
 		end
 	},
-	[10] = {["lefttext"] = "RUDDER FULL LEFT - CENTER - FULL RIGHT - CENTER", ["timerincr"] = 2,
+	[12] = {["lefttext"] = "RUDDER CENTER", ["timerincr"] = 2,
 		["actions"] = function ()
 			speakNoText(0,"CENTER")
 		end
 	},
-	[11] = {["lefttext"] = "RUDDER FULL LEFT - CENTER - FULL RIGHT - CENTER", ["timerincr"] = 2,
+	[13] = {["lefttext"] = "RUDDER FULL RIGHT", ["timerincr"] = 2,
 		["actions"] = function ()
 			speakNoText(0,"FULL RIGHT")
 		end
 	},
-	[12] = {["lefttext"] = "RUDDER FULL LEFT - CENTER - FULL RIGHT - CENTER", ["timerincr"] = 2,
+	[14] = {["lefttext"] = "RUDDER CENTER", ["timerincr"] = 2,
 		["actions"] = function ()
 			speakNoText(0,"CENTER")
 		end
 	},
-	[13] = {["lefttext"] = "FLIGHT CONTROLS CHECKED", ["timerincr"] = -1,
+	[15] = {["lefttext"] = "FLIGHT CONTROLS CHECKED", ["timerincr"] = -1,
 		["actions"] = function ()
+			gLeftText="FLIGHT CONTROLS CHECKED"
 			speakNoText(0,"before taxi checklist please")
 			command_once("laminar/B738/LDU_control/push_button/MFD_SYS")
 		end
@@ -2719,7 +2729,7 @@ ZC_CLIMB_PROC = {
 	[0] = {["lefttext"] = "TAKEOFF AND CLIMB PROCEDURE", ["timerincr"] = 1,
 		["actions"] = function ()
 			gLeftText = "SET TAKEOFF THRUST"
-			if get("laminar/B738/autopilot/autothrottle_status") == 0 then
+			if get("laminar/B738/autopilot/autothrottle_arm_pos") == 0 then
 				command_once("laminar/B738/autopilot/autothrottle_arm_toggle")
 			end
 			if get("laminar/B738/autopilot/pfd_hdg_mode") == 0 then
@@ -2727,6 +2737,18 @@ ZC_CLIMB_PROC = {
 			end
 			if get("laminar/B738/EFIS/EFIS_wx_on") == 1 then
 				command_once("laminar/B738/EFIS_control/capt/push_button/wxr_press")
+			end
+			if get_zc_brief_dep("lnavvnav") and get("laminar/B738/autopilot/lnav_pos") == 0 then
+				command_once("laminar/B738/autopilot/lnav_press")
+			end
+			if get_zc_brief_dep("lnavvnav") == false and get("laminar/B738/autopilot/hdg_sel_status") == 0 then
+				command_once("laminar/B738/autopilot/hdg_sel_press")
+			end
+			if get_zc_brief_dep("lnavvnav") and get("laminar/B738/autopilot/vnav_pos") == 0 then
+				command_once("laminar/B738/autopilot/vnav_press")
+			end
+			if get_zc_brief_dep("lnavvnav") == false and get("laminar/B738/autopilot/lvl_chg_status") == 0 then
+				command_once("laminar/B738/autopilot/lvl_chg_press")
 			end
 			if get_zc_config("easy") then
 				ZC_BACKGROUND_PROCS["80KTS"].status = 1
@@ -2759,49 +2781,23 @@ ZC_CLIMB_PROC = {
 			end
 		end
 	},
-	[4] = {["lefttext"] = "SET AP MODES",["timerincr"] = 1,
-		["actions"] = function ()
-			gLeftText = "SET AP MODES"
-		end
-	},
-	[5] = {["lefttext"] = "SET AP MODES",["timerincr"] = 997,
-		["actions"] = function ()
-			speakNoText(0,"Autopilot modes")
-			if get_zc_brief_dep("lnavvnav") and get("laminar/B738/autopilot/lnav_pos") == 0 then
-				command_once("laminar/B738/autopilot/lnav_press")
-			end
-			if get_zc_brief_dep("lnavvnav") == false and get("laminar/B738/autopilot/hdg_sel_status") == 0 then
-				command_once("laminar/B738/autopilot/hdg_sel_press")
-			end
-		end
-	},
-	[6] = {["lefttext"] = "SET AP MODES",["timerincr"] = 1,
-		["actions"] = function ()
-			if get_zc_brief_dep("lnavvnav") and get("laminar/B738/autopilot/vnav_pos") == 0 then
-				command_once("laminar/B738/autopilot/vnav_press")
-			end
-			if get_zc_brief_dep("lnavvnav") == false and get("laminar/B738/autopilot/lvl_chg_status") == 0 then
-				command_once("laminar/B738/autopilot/lvl_chg_press")
-			end
-		end
-	},
-	[7] = {["lefttext"] = "SET CMD A",["timerincr"] = 1,
+	[4] = {["lefttext"] = "SET CMD A",["timerincr"] = 1,
 		["actions"] = function ()
 			gLeftText = "SET CMD A"
 		end
 	},
-	[8] = {["lefttext"] = "SET CMD A",["timerincr"] = 997,
+	[5] = {["lefttext"] = "SET CMD A",["timerincr"] = 997,
 		["actions"] = function ()
 			speakNoText(0,"COMMAND A")
 			command_once("laminar/B738/autopilot/cmd_a_press")
 		end
 	},
-	[9] = {["lefttext"] = "FLAPS 10",["timerincr"] = get("laminar/B738/flt_ctrls/flap_lever")/0.125==5 and 1 or 996,
+	[6] = {["lefttext"] = "FLAPS 10",["timerincr"] = get("laminar/B738/flt_ctrls/flap_lever")/0.125==5 and 1 or 996,
 		["actions"] = function ()
 			gLeftText = "FLAPS 10"
 		end
 	},
-	[10] = {["lefttext"] = "FLAPS 10",["timerincr"] = (get_zc_config("easy") == false and get("laminar/B738/flt_ctrls/flap_lever")/0.125==5) and 997 or 996,
+	[7] = {["lefttext"] = "FLAPS 10",["timerincr"] = (get_zc_config("easy") == false and get("laminar/B738/flt_ctrls/flap_lever")/0.125==5) and 997 or 996,
 		["actions"] = function ()
 			if get_zc_config("easy") == false then
 				speakNoText(0,"SPEED CHECK   FLAPS 10")
@@ -2809,45 +2805,45 @@ ZC_CLIMB_PROC = {
 			end
 		end
 	},
-	[11] = {["lefttext"] = "FLAPS 5",["timerincr"] = (get_zc_config("easy") == false and get("laminar/B738/flt_ctrls/flap_lever")/0.125>3) and 1 or 996,
+	[8] = {["lefttext"] = "FLAPS 5",["timerincr"] = (get_zc_config("easy") == false and get("laminar/B738/flt_ctrls/flap_lever")/0.125>3) and 1 or 996,
 		["actions"] = function ()
 			gLeftText = "FLAPS 5"
 		end
 	},
-	[12] = {["lefttext"] = "FLAPS 5",["timerincr"] = (get_zc_config("easy") == false and get("laminar/B738/flt_ctrls/flap_lever")/0.125>3) and 997 or 996,
+	[9] = {["lefttext"] = "FLAPS 5",["timerincr"] = (get_zc_config("easy") == false and get("laminar/B738/flt_ctrls/flap_lever")/0.125>3) and 997 or 996,
 		["actions"] = function ()
 			speakNoText(0,"SPEED CHECK   FLAPS 5")
 			command_once("laminar/B738/push_button/flaps_5")
 		end
 	},
-	[13] = {["lefttext"] = "FLAPS 1",["timerincr"] = (get_zc_config("easy") == false and get("laminar/B738/flt_ctrls/flap_lever")/0.125>=2) and 1 or 996,
+	[10] = {["lefttext"] = "FLAPS 1",["timerincr"] = (get_zc_config("easy") == false and get("laminar/B738/flt_ctrls/flap_lever")/0.125>=2) and 1 or 996,
 		["actions"] = function ()
 			gLeftText = "FLAPS 1"
 		end
 	},
-	[14] = {["lefttext"] = "FLAPS 1",["timerincr"] = (get_zc_config("easy") == false and get("laminar/B738/flt_ctrls/flap_lever")/0.125>=2) and 997 or 996,
+	[11] = {["lefttext"] = "FLAPS 1",["timerincr"] = (get_zc_config("easy") == false and get("laminar/B738/flt_ctrls/flap_lever")/0.125>=2) and 997 or 996,
 		["actions"] = function ()
 			speakNoText(0,"SPEED CHECK   FLAPS 1")
 			command_once("laminar/B738/push_button/flaps_1")
 		end
 	},
-	[15] = {["lefttext"] = "FLAPS UP",["timerincr"] = get_zc_config("easy") == false and 1 or 996,
+	[12] = {["lefttext"] = "FLAPS UP",["timerincr"] = get_zc_config("easy") == false and 1 or 996,
 		["actions"] = function ()
 			speakNoText(0,"FLAPS UP")
 		end
 	},
-	[16] = {["lefttext"] = "FLAPS UP",["timerincr"] = get_zc_config("easy") == false and 997 or 996,
+	[13] = {["lefttext"] = "FLAPS UP",["timerincr"] = get_zc_config("easy") == false and 997 or 996,
 		["actions"] = function ()
 			speakNoText(0,"SPEED CHECK   FLAPS UP")
 			command_once("laminar/B738/push_button/flaps_0")
 		end
 	},
-	[17] = {["lefttext"] = "GEAR OFF", ["timerincr"] = 1,
+	[14] = {["lefttext"] = "GEAR OFF", ["timerincr"] = 1,
 		["actions"] = function ()
 			command_once("laminar/B738/push_button/gear_off")
 		end
 	}, 
-	[18] = {["lefttext"] = "AFTER TAKEOFF ITEMS", ["timerincr"] = 1,
+	[15] = {["lefttext"] = "AFTER TAKEOFF ITEMS", ["timerincr"] = 1,
 		["actions"] = function ()
 			if get("laminar/B738/engine/starter1_pos") == 2 then
 				command_once("laminar/B738/knob/eng1_start_left")
@@ -2865,7 +2861,7 @@ ZC_CLIMB_PROC = {
 			command_once("laminar/B738/LDU_control/push_button/MFD_ENG")
 		end
 	},
-	[19] = {["lefttext"] = "PROCEDURE FINISHED", ["timerincr"] = -1,
+	[16] = {["lefttext"] = "PROCEDURE FINISHED", ["timerincr"] = -1,
 		["actions"] = function ()
 			ZC_BACKGROUND_PROCS["TRANSALT"].status = 1
 			ZC_BACKGROUND_PROCS["TENTHOUSANDUP"].status = 1
@@ -2984,7 +2980,7 @@ ZC_APPROACH_BRIEFING = {
 		["actions"] = function ()
 			gLeftText = "ARE YOU READY FOR THE APPROACH BRIEF?"
 			ZC_BACKGROUND_PROCS["OPENAPPWINDOW"].status=1
-			setchecklist(92)
+			-- setchecklist(92)
 		end
 	},
 	[1] = {["lefttext"] = "APPROACH BRIEFING", ["timerincr"] = 1,
@@ -4128,6 +4124,7 @@ ZC_BACKGROUND_PROCS = {
 			if get("sim/cockpit2/gauges/indicators/altitude_ft_pilot") > get("laminar/B738/FMS/fmc_trans_alt") then
 				speakNoText(0,"Transition altitude")
 				command_once("laminar/B738/EFIS_control/capt/push_button/std_press")
+				command_once("laminar/B738/EFIS_control/fo/push_button/std_press")
 				ZC_BACKGROUND_PROCS["TRANSALT"].status = 0
 			end
 		end
@@ -4138,6 +4135,7 @@ ZC_BACKGROUND_PROCS = {
 			if get("sim/cockpit2/gauges/indicators/altitude_ft_pilot") > get("laminar/B738/FMS/fmc_trans_lvl") then
 				speakNoText(0,"Transition level")
 				command_once("laminar/B738/EFIS_control/capt/push_button/std_press") 
+				command_once("laminar/B738/EFIS_control/fo/push_button/std_press") 
 				ZC_BACKGROUND_PROCS["TRANSLVL"].status = 0
 			end
 		end
@@ -4686,6 +4684,20 @@ function xsp_toggle_std_both()
 	command_once("laminar/B738/EFIS_control/fo/push_button/std_press")
 end
 
+-- ZIBO special regular save situation #8
+function zc_zibo_save()
+	zibo_save_counter = zibo_save_counter - 1
+	if zibo_save_counter <= 0 then
+		command_once("laminar/B738/tab/home")
+		command_once("laminar/B738/tab/menu8")
+		command_once("laminar/B738/tab/menu8")
+		command_once("laminar/B738/tab/right")
+		command_once("laminar/B738/tab/menu8")
+		command_once("laminar/B738/tab/home")
+		zibo_save_counter = 30
+	end
+end
+
 -- aircraft specific joystick/key commands
 create_command("kp/xsp/beacon_lights_switch_on",	"B738X Beacon Lights On",	"xsp_beaconlights_on()", "", "")
 create_command("kp/xsp/beacon_lights_switch_off",	"B738X Beacon Lights Off",	"xsp_beaconlights_off()", "", "")
@@ -4705,3 +4717,5 @@ create_command("kp/xsp/logo_lights_switch_on",		"B738X Logo Lights On",		"xsp_lo
 create_command("kp/xsp/logo_lights_switch_off",		"B738X Logo Lights Off",	"xsp_logolights_off()", "", "")
 create_command("kp/xsp/toggle_both_fd",				"B738X Toggle Both FD",		"xsp_toggle_fd_both()", "", "")
 create_command("kp/xsp/toggle_both_std",			"B738X Toggle Both STD",	"xsp_toggle_std_both()", "", "")
+
+do_sometimes("zc_zibo_save()")
