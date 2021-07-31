@@ -1,11 +1,6 @@
 ﻿--[[
-	*** KPCREW
-	Kosta Prokopiu, 2020
-	Changelog:
-		* v1.0	- Separate logic from definitions
-		* v1.1  - Add briefing menus and configuration
-		* v2.0  - Refactor to code directly
-		* v2.1.0 - Easy Mode, Transitions, Preflight Events
+	*** KPCREW 2.1.0.1.1
+	Kosta Prokopiu, July 2021
 --]]
 
 ZC_VERSION = "2.1.0.1"

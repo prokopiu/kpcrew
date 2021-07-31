@@ -1,10 +1,6 @@
 ﻿--[[
-	*** KPCREW for Zibo Mod/Ultimate 737/8/9
-	Kosta Prokopiu, 2020
-	Changelog:
-		* v0.1- Initial version only control 
-		* v2.0 - new concept
-		* V2.1.0.1 - Easy mode speaks answer in checklist otherwise pilot does
+	*** KPCREW for Zibo Mod 2.1.0.1.1
+	Kosta Prokopiu, July 2021
 --]]
 
 -- Briefing / Aircraft specific details

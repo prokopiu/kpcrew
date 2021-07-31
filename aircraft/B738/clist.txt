@@ -1,9 +1,9 @@
 ﻿#zibo 737-800 clist in combination with kpcrew lua
-#version 2.0 by Kosta Prokopiu
+#version 2.0.1.1 by Kosta Prokopiu
 sw_checklist:INTRO:INTRO
 sw_rcolsize:100
 sw_itemvoid:ZIBO 737-800 checklist for KPcrew
-sw_itemvoid: Version 2.1 by Kosta Prokopiu
+sw_itemvoid: Version 2.1.0.1 by Kosta Prokopiu
 sw_itemvoid:
 
 sw_checklist:PREFLIGHT CHECKLIST:PREFLIGHT CHECKLIST
@@ -43,7 +43,7 @@ sw_item:FLIGHT CONTROLS|CHECKED
 sw_item:AUTOBRAKE|RTO
 sw_item:RECALL|CHECKED
 sw_item:ENGINE START SWITCHES|CONT
-sw_item:DISPATCH CLEARANCE|CHECKED
+sw_item:GROUND EQUIPMENT|CLEAR
 sw_itemvoid:BEFORE TAXI CHECKLIST COMPLETED
 
 sw_checklist:BEFORE TAKEOFF CHECKLIST:BEFORE TAKEOFF CHECKLIST
