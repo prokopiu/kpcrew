@@ -1440,7 +1440,7 @@ ZC_PRE_FLIGHT_PROC = {
 	},
 	[77] = {["lefttext"] = "FO: FIRE TESTS", ["timerincr"] = 3,
 		["actions"] = function ()
-			command_end("laminar/B738/toggle_swit88ch/exting_test_rgt")
+			command_end("laminar/B738/toggle_switch/exting_test_rgt")
 			command_begin("laminar/B738/push_button/cargo_fire_test_push")
 		end
 	},
@@ -2882,7 +2882,7 @@ ZC_CLIMB_PROC = {
 -- Altimeters . . . . . . . . . . . . . . . . 		SET
 
 ZC_AFTER_TAKEOFF_CHECKLIST = {
-	[0] = {["lefttext"] = "AFTER TAKEOFF CHECKLIST", ["timerincr"] = 3,
+	[0] = {["lefttext"] = "AFTER TAKEOFF PROCEDURE & CHECKLIST", ["timerincr"] = 3,
 		["actions"] = function ()
 			speakNoText(0,"AFTER TAKE OFF CHECKLIST")
 			if get_zc_config("easy") then
@@ -3380,7 +3380,7 @@ ZC_LANDING_PROC = {
 -- Speedbrake  . . . . . . . . . . . . . . . 		Armed
 -- Landing gear. . . . . . . . . . . . . . . 		Down
 -- Flaps . . . . . . . . . . . . . . . . . .		___, green light
--- 2.1.0: changed to automatic
+
 ZC_LANDING_CHECKLIST = {
 	[0] = {["lefttext"] = "LANDING CHECKLIST", ["timerincr"] = 3,
 		["actions"] = function ()
@@ -3478,7 +3478,7 @@ ZC_LANDING_CHECKLIST = {
 }
 
 ZC_FINAL_PROC = {
-	[0] = {["lefttext"] = "ON FINAL", ["timerincr"] = 3,
+	[0] = {["lefttext"] = "ON FINAL", ["timerincr"] = 1,
 		["actions"] = function ()
 			gLeftText = "ON FINAL"
 		end
@@ -3498,7 +3498,7 @@ ZC_FINAL_PROC = {
 			gLeftText = "AUTOPILOT OFF"
 		end
 	},
-	[4] = {["lefttext"] = "AUTOPILOT -- OFF", ["timerincr"] = 997,
+	[4] = {["lefttext"] = "AUTOPILOT -- OFF", ["timerincr"] = 998,
 		["actions"] = function ()
 			gLeftText = "SET OFF"
 			command_once("laminar/B738/autopilot/capt_disco_press")
@@ -3507,14 +3507,14 @@ ZC_FINAL_PROC = {
 	[5] = {["lefttext"] = "AUTOTHROTTLE -- OFF", ["timerincr"] = 1,
 		["actions"] = function ()
 			gLeftText = "AUTOTHROTTLE OFF"
-			command_once("laminar/B738/push_button/ap_light_pilot")
+			command_begin("laminar/B738/autopilot/capt_disco_press")
 		end
 	},
 	[6] = {["lefttext"] = "AUTOTHROTTLE -- OFF", ["timerincr"] = 997,
 		["actions"] = function ()
 			gLeftText = "SET OFF"
 			command_once("laminar/B738/autopilot/left_at_dis_press")
-			command_once("laminar/B738/push_button/ap_light_pilot")
+			command_end("laminar/B738/autopilot/capt_disco_press")
 		end
 	},
 	[7] = {["lefttext"] = "PROCEDURE FINISHED", ["timerincr"] = 1,
@@ -4135,8 +4135,8 @@ ZC_BACKGROUND_PROCS = {
 	-- On reaching transition level during descend switch away from STD
 	["TRANSLVL"] = {["status"] = 0,
 		["actions"] = function ()
-			speakNoText(0,"Transition level")
 			if get("sim/cockpit2/gauges/indicators/altitude_ft_pilot") > get("laminar/B738/FMS/fmc_trans_lvl") then
+				speakNoText(0,"Transition level")
 				command_once("laminar/B738/EFIS_control/capt/push_button/std_press") 
 				ZC_BACKGROUND_PROCS["TRANSLVL"].status = 0
 			end
@@ -4424,7 +4424,7 @@ function zc_get_procedure()
 	incnt=incnt+1
 	if lProcIndex == incnt then
 		lActiveProc = ZC_AFTER_TAKEOFF_CHECKLIST
-		lNameActiveProc = incnt.." AFTER TAKEOFF CHECKLIST"
+		lNameActiveProc = incnt.." AFTER TAKEOFF PROCEDURE & CHECKLIST"
 		lChecklistMode = 1
 	end
 	incnt=incnt+1
