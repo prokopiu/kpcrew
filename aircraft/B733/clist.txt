@@ -1,0 +1,563 @@
+# ixeg 737-300 clist in combination with ixegcrew lua
+# Version 2.0 by Kosta Prokopiu
+#
+sw_checklist:INTRO:INTRO
+sw_rcolsize:100
+sw_itemvoid:IXEG 737-300 checklist for IXEGcrew/XFirstOfficer
+sw_itemvoid: Version 2.1 by Kosta Prokopiu
+sw_itemvoid: Aircraft by www.x-aviation.com
+sw_itemvoid:
+
+sw_checklist:SET COLD AND DARK:SET COLD AND DARK
+sw_show:ixeg/733/misc/flt_rec_ann:2
+sw_rcolsize:100
+sw_item:[CAPT] IXEG Menu / PREFLIGHT / Cold and Dark|Select
+sw_itemvoid:
+sw_itemvoid: Airplane will be set to cold and dark mode
+sw_itemvoid: NEXT - POWER UP PROCEDURE
+sw_itemvoid:
+
+sw_checklist:POWER UP:POWER UP
+sw_show:ixeg/733/misc/flt_rec_ann:3.0
+sw_item:[CAPT] IXEG Menu / Ground services / Connect Ground Power Unit|Select
+sw_iteminfo:Ground power|Connected:ixeg/733/electrical/gndpwr_ann:>0
+sw_itemvoid:=== Preparing aircraft for power up
+sw_iteminfo:Parking brake|Set:sim/cockpit2/controls/parking_brake_ratio:1.0
+sw_iteminfo:Left fuel control|Cutoff:ixeg/733/fuel/fuel_start_lever1_act:0
+sw_iteminfo:Right fuel control|Cutoff:ixeg/733/fuel/fuel_start_lever2_act:0
+sw_itemvoid:=== Powering up
+sw_iteminfo:Battery|On:sim/cockpit2/electrical/battery_on[0]:1
+sw_iteminfo:Battery guard|Closed:ixeg/733/electrical/batt_pwr_guard:0
+sw_iteminfo:Standby Power|Auto:ixeg/733/electrical/elec_stby_power_act:2
+sw_iteminfo:Standby Power guard|Closed:ixeg/733/electrical/stby_pwr_guard:0
+sw_iteminfo:Battery|Min 24V:sim/cockpit2/electrical/battery_voltage_actual_volts[0]:>23.9
+sw_iteminfo:Ground power|Available:(sim/cockpit/electrical/gpu_amps:>0.0)&&(sim/operation/failures/rel_ex_power_on:0)
+sw_itemvoid: NEXT - INITIAL FLIGHT DECK PREPARATION
+sw_itemvoid:
+
+sw_checklist:INITIAL FLIGHT DECK PREPARATION:INITIAL FLIGHT DECK PREPARATION
+sw_show:ixeg/733/misc/flt_rec_ann:4.0
+sw_iteminfo:Check battery switch|On:sim/cockpit2/electrical/battery_on[0]:1
+sw_itemvoid:Check Circuit Breakers -- ALL IN
+sw_itemvoid:=== UPPER OVERHEAD PANEL
+sw_iteminfo:Oxygen quantity|CHECK:ixeg/733/misc/ind_crew_oxygen:>10.0
+sw_iteminfo:IRS selector|NAV:(ixeg/733/irs/irs_left_mode_act:2)&&(ixeg/733/irs/irs_right_mode_act:2)
+sw_itemvoid:Verify that the ON DC lights illuminate then extinguish
+sw_itemvoid:Verify that the ALIGN lights are illuminated
+sw_itemvoid:=== MAIN OVERHEAD PANEL
+sw_iteminfo:Galley power|On:ixeg/733/electrical/elec_galley_on_act:1
+sw_iteminfo:Equip Cooling|Normal:ixeg/733/efis/efis_eq_supplyfan_act:0
+sw_iteminfo:Recirc fan|AUTO:ixeg/733/bleedair/bleedair_recirc_fan_act:1
+sw_itemvoid:=== MCP and FORWARD PANEL
+sw_item:[CAPT] Master lights and Dim|TEST:ixeg/733/caution/caution_lights_test:1
+sw_iteminfo:Engine oil quantity test|Perform:(ixeg/733/ecam/oil_q_test_act:1)&&(ixeg/733/ecam/eng1_oilq_needle_ind:30)&&(ixeg/733/ecam/eng2_oilq_needle_ind:30)
+sw_iteminfo:Engine 1 oil quantity|Sufficient:ixeg/733/ecam/eng1_oilq_needle_ind:>200
+sw_iteminfo:Engine 2 oil quantity|Sufficient:ixeg/733/ecam/eng2_oilq_needle_ind:>200
+sw_iteminfo:Landing Gear Lever|Down and green light:(ixeg/733/gear/gear_handle_act:1)&&(ixeg/733/gear/gear_left_green_ann:>1.0)&&(ixeg/733/gear/gear_right_green_ann:>1.0)&&(ixeg/733/gear/gear_nose_green_ann:>1.0)
+sw_iteminfo:Hydraulic quantity|Check:(ixeg/733/ecam/eng1_hydq_needle_ind:>110)&&(ixeg/733/ecam/eng2_hydq_needle_ind:>110)
+sw_itemvoid:=== THROTTLE QUADRANT
+sw_iteminfo:Flap lever|Up:ixeg/733/hydraulics/hyd_flap_lever_act:0.0
+sw_iteminfo:Parking brake|Set:ixeg/733/gear/parking_brake_ann:>1.0
+sw_itemvoid:=== LOWER CONSOLE
+sw_item:[CAPT] Fire warning|TEST:ixeg/733/firewarning/fire_warning_ann:>1.0
+sw_item:[CAPT] Cargo fire supp system|Test:ixeg/733/firewarning/fire_cargo_fwd_det_ann:>1.0
+sw_item:[CAPT] Master caution|RESET:ixeg/733/bleedair/caution_master_ann:0
+sw_itemvoid: NEXT - CDU PRE FLIGHT
+sw_itemvoid:
+
+sw_checklist:CDU PRE FLIGHT:CDU PRE FLIGHT
+sw_show:ixeg/733/misc/flt_rec_ann:8.0
+sw_rcolsize:100
+sw_item:IDENT page|Review
+sw_itemvoid:Confirm active dates and airplane model
+sw_item:POS INIT page|Set
+sw_itemvoid:Set position and reference airport
+sw_item:RTE page|SET
+sw_itemvoid:Set origin, destination and flight number
+sw_itemvoid:Enter route
+sw_item:DEP/ARR page|Enter departure and arrival routes
+sw_itemvoid:DEPARTURES page (DEP RWY and SID)
+sw_item:PERF INIT page|Enter
+sw_itemvoid:CAUTION: Do not enter the ZFW into the GW/CRZ CG box!
+sw_itemvoid:Verify that FUEL in CDU, from Dispatch, and fuel indicators agree!
+sw_itemvoid:As fuel reserves take about 20% of FUEL or 2 tons minimum
+sw_itemvoid:CI 40 standard, 0 for ECON, 200 minimum flight time
+sw_item:N1 LIMIT page|Enter
+sw_itemvoid:Set assumed temperature and thrust rating
+sw_item:TAKEOFF REF page|Enter
+sw_itemvoid:Enter the FLAPS (default 5), CG and get QRH speeds (Vspeeds)
+sw_item:Stab Trim to indicated value|SET
+sw_item:Speed Bugs|SET 80, V1, Vr, V2+20, V2+40
+sw_item:N1 Bugs|SET N1 Limit
+sw_itemvoid: NEXT - FLIGHT DECK SETUP CAPTAIN
+sw_itemvoid:
+
+sw_checklist:FLIGHT DECK SETUP CAPTAIN:FLIGHT DECK SETUP CAPTAIN
+sw_show:ixeg/733/misc/flt_rec_ann:5.0
+sw_itemvoid:=== Upper Overhead Panel
+sw_iteminfo:Oxygen panel switch safe/annunciator off|Check:(ixeg/733/misc/pax_oxy_on_ann:0)&&(ixeg/733/misc/pax_oxy_guard:0)
+sw_iteminfo:Low idle light|Off:ixeg/733/engine/low_idle_ann:0
+sw_iteminfo:Reverser lights|Off:(ixeg/733/engine/reverser1_fail_ann:0)&&(ixeg/733/engine/reverser2_fail_ann:0)
+sw_iteminfo:Service interphone switch|Off:ixeg/733/misc/service_iphone_act:0
+sw_itemvoid:=== Main Overhead Panel Left
+sw_iteminfo:Flight Controls A and B guard|Closed:(ixeg/733/hydraulics/flt_control_A_guard:0)&&(ixeg/733/hydraulics/flt_control_B_guard:0)
+sw_iteminfo:Spoiler A and B guard|Closed:(ixeg/733/hydraulics/spoiler_A_guard:0)&&(ixeg/733/hydraulics/spoiler_B_guard:0)
+sw_iteminfo:Yaw damper|On:ixeg/733/hydraulics/yaw_damper_act:1
+sw_iteminfo:Alternate Flaps guard|Closed:ixeg/733/hydraulics/alt_flaps_guard:0
+sw_iteminfo:Instrumental transfer Switches EFI IRS|Normal:(ixeg/733/misc/audio_obs_act:0)&&(ixeg/733/misc/efi_sel_act:0)&&(ixeg/733/irs/irs_source_act:0)
+sw_iteminfo:Fuel crossfeed valve|Closed:ixeg/733/fuel/fuel_xfeed_act:0
+sw_iteminfo:All Fuel Pumps|Off:(ixeg/733/fuel/fuel_1_aft_act:0)&&(ixeg/733/fuel/fuel_2_aft_act:0)&&(ixeg/733/fuel/fuel_1_fwd_act:0)&&(ixeg/733/fuel/fuel_2_fwd_act:0)&&(ixeg/733/fuel/fuel_ctr_left_act:0)&&(ixeg/733/fuel/fuel_ctr_right_act:0)
+sw_itemvoid:=== Main Overhead Second Panel
+sw_iteminfo:Right (AC) selector|GRD PWR:ixeg/733/electrical/elec_ac_display_sel_act:1
+sw_iteminfo:Left (DC) selector|BAT:ixeg/733/electrical/elec_dc_display_sel_act:2
+sw_iteminfo:Generator drives disconnect guards|Closed:(ixeg/733/electrical/gen1_disc_guard:0)&&(ixeg/733/electrical/gen2_disc_guard:0)
+sw_iteminfo:Bus transfer switch|Auto:ixeg/733/electrical/bus_xfr_guard:0
+sw_itemvoid:=== Main Overhead Panel Center
+sw_iteminfo:Equip Cooling|Normal:(ixeg/733/efis/efis_eq_supplyfan_act:0)&&(ixeg/733/efis/efis_eq_exhaustfan_act:0)
+sw_iteminfo:Emergency exit lights|Armed:ixeg/733/lighting/emer_exit_lts_act:1
+sw_iteminfo:Emergency exit lights guard|Closed:ixeg/733/electrical/emer_lights_guard:0
+sw_iteminfo:No smoking|On:ixeg/733/misc/smoking_act:2
+sw_iteminfo:Fasten belts|On:ixeg/733/misc/seatbelt_act:2
+sw_itemvoid:=== Main Overhead Fourth Panel
+sw_iteminfo:Window heat PWR Test|Test:ixeg/733/antiice/ai_winheat_test_act:1
+sw_iteminfo:Window heat|Test:ixeg/733/antiice/ai_winheat_test_act:-1
+sw_iteminfo:Window heat|All 4 on:(ixeg/733/antiice/ai_winheat_l_side_act:1)&&(ixeg/733/antiice/ai_winheat_l_fwd_act:1)&&(ixeg/733/antiice/ai_winheat_r_fwd_act:1)&&(ixeg/733/antiice/ai_winheat_r_side_act:1)
+sw_iteminfo:Pitot Static|Illuminated and off:(ixeg/733/antiice/ai_pitot_b_act:0)&&(ixeg/733/antiice/ai_pitot_a_act:0)
+sw_iteminfo:Wing anti-ice|Off:ixeg/733/antiice/ai_wing_anti_ice_act:0
+sw_iteminfo:Hydraulic Electrical Pump Switches|Off:(ixeg/733/hydraulics/hyd_elec2_act:0)&&(ixeg/733/hydraulics/hyd_elec1_act:0)
+sw_iteminfo:Voice recorder|Test:ixeg/733/misc/flt_rec_test_act:1
+sw_iteminfo:Engine start switches|OFF:(ixeg/733/engine/eng2_start_act:0)&&(ixeg/733/engine/eng1_start_act:0)
+sw_iteminfo:Engine ignition switch|Left or Right:ixeg/733/engine/ign_select_act:!0
+sw_itemvoid: NEXT - FLIGHT DECK SETUP CAPTAIN
+sw_itemvoid:
+
+sw_checklist:FLIGHT DECK SETUP CAPTAIN 2:FLIGHT DECK SETUP CAPTAIN 2
+sw_show:ixeg/733/misc/flt_rec_ann:6.0
+sw_itemvoid:=== Captain right-hand forward panel
+sw_iteminfo:Autoflight annunciator|Test:ixeg/733/caution/caution_prst_pt:!0
+sw_item:[CAPT]Fuel Quantity|Check and test:ixeg/733/fuel/fuel_test_mode:!0
+sw_itemvoid:=== Center forward panel
+sw_iteminfo:Fuel flow reset switch|Reset:ixeg/733/fuel/fuel_used_reset_act:!0
+sw_iteminfo:Engine instruments|Check:(ixeg/733/ecam/eng1_limit_pull_act:0)&&(ixeg/733/ecam/eng2_limit_pull_act:0)
+sw_iteminfo:Anti-skid switch|On:ixeg/733/hydraulics/anti_skid_act:1
+sw_iteminfo:Autobrake|RTO:ixeg/733/hydraulics/hyd_auto_brake_act:-1
+sw_itemvoid:=== Throttle quadrant
+sw_iteminfo:Speed brake|Retracted:sim/cockpit2/controls/speedbrake_ratio:0
+sw_iteminfo:[CAPT] Reversers|DOWN:(ixeg/733/engine/eng1_rev_angle:0)&&(ixeg/733/engine/eng2_rev_angle:0)
+sw_iteminfo:[CAPT] Flap lever and indicator|MATCH:(ixeg/733/hydraulics/hyd_flap_lever_act:0)&&(sim/aircraft/controls/acf_flap_cl:0)
+sw_iteminfo:Engine start levers|Cutoff:(ixeg/733/fuel/fuel_start_lever1_act:0)&&(ixeg/733/fuel/fuel_start_lever2_act:0)
+sw_itemvoid:=== Throttle quadrant
+sw_item:[CAPT] Radios|CHECK AND SET
+sw_iteminfo:Rudder and aileron trim|Zero:(sim/cockpit2/controls/rudder_trim:0)&&(sim/cockpit2/controls/aileron_trim:0)
+sw_iteminfo:Stabilizer trim override|Normal:(ixeg/733/hydraulics/stab_trim_ovrd_guard:0)
+sw_itemvoid: NEXT - FLIGHT DECK SETUP FO
+sw_itemvoid:
+
+sw_checklist:FLIGHT DECK SETUP FO:FLIGHT DECK SETUP FO
+sw_show:ixeg/733/misc/flt_rec_ann:7.0
+sw_itemvoid:=== Upper Overhead Panel
+sw_iteminfo:Flight recorder test|Test:ixeg/733/misc/flt_rec_act:1
+sw_iteminfo:Mach overspeed test 1|Test:ixeg/733/airspeed/clacker_test_01_act:1
+sw_iteminfo:Mach overspeed test 2|Test:ixeg/733/airspeed/clacker_test_02_act:1
+sw_iteminfo:Stall warning test 1|Test:ixeg/733/airspeed/stallwarn_test_01_act:1
+sw_iteminfo:Stall warning test 2|Test:ixeg/733/airspeed/stallwarn_test_02_act:1
+sw_itemvoid:=== Main Overhead
+sw_iteminfo:Air temp selector|Supply duct:ixeg/733/aircond/aircond_temp_sel_act:0
+sw_iteminfo:Duct overheat lights|Off:(ixeg/733/aircond/aircond_duct1_ovht_ann:0)&&(ixeg/733/aircond/aircond_duct2_ovht_ann:0)
+sw_iteminfo:Cabin air temp|AUTO NORMAL:(ixeg/733/aircond/aircond_cont_cabin_sel_act:-0.1|0.1)&&(ixeg/733/aircond/aircond_pass_cabin_sel_act:-0.1|0.1)
+sw_iteminfo:Engine bleed switches|ON:(ixeg/733/bleedair/bleedair_eng1_act:1)&&(ixeg/733/bleedair/bleedair_eng2_act:1)
+sw_iteminfo:Pressurization Mode Switch|GROUND:ixeg/733/pressurization/cabin_flt_grd_act:1
+sw_iteminfo:Pressurization Mode Selector|AUTO:ixeg/733/pressurization/cabin_mode_act:1
+sw_itemvoid:=== LIGHTS PANEL
+sw_iteminfo:All External Lights|Off:(ixeg/733/lighting/wheel_well_lt_act:0)&&(ixeg/733/lighting/wing_lt_act:0)&&(ixeg/733/lighting/anti_col_lt_act:0)&&(ixeg/733/lighting/position_lt_act:1)&&(ixeg/733/lighting/strobe_lt_act:0)&&(ixeg/733/lighting/logo_lt_act:0)&&(ixeg/733/lighting/taxi_lt_act:0)&&(ixeg/733/lighting/r_rwy_turnoff_act:0)&&(ixeg/733/lighting/l_rwy_turnoff_act:0)&&(sim/cockpit2/switches/landing_lights_switch[2]:0)&&(sim/cockpit2/switches/landing_lights_switch[3]:0)&&(sim/cockpit2/switches/landing_lights_switch[4]:0)&&(sim/cockpit2/switches/landing_lights_switch{5}:0)
+sw_iteminfo:Position light|ON:ixeg/733/lighting/position_lt_act:1
+sw_itemvoid:Logo wing & wheel lights|AS NEEDED
+sw_iteminfo:Engine Start|Left or Right:ixeg/733/engine/ign_select_act:!0
+sw_iteminfo:Wiper|OFF:ixeg/733/wiper/wiper_speed_act:0
+sw_iteminfo:Engine Hydraulic Pump Switches|On:(ixeg/733/hydraulics/hyd_eng1_act:1)&&(ixeg/733/hydraulics/hyd_eng2_act:1)
+sw_iteminfo:Eng anti-ice |Off:(ixeg/733/antiice/ai_eng1_act:0)&&( ixeg/733/antiice/ai_eng2_act:0)
+sw_iteminfo:Left pack|Off:ixeg/733/bleedair/bleedair_lpack_act:0
+sw_iteminfo:Right pack|Off:ixeg/733/bleedair/bleedair_rpack_act:0
+sw_itemvoid: NEXT - BEFORE START PROCEDURE
+sw_itemvoid:
+
+sw_checklist:BEFORE START:BEFORE START
+sw_show:ixeg/733/misc/flt_rec_ann:10.0
+sw_rcolsize:100
+sw_iteminfo:Left AFT fuel pump|ON:ixeg/733/fuel/fuel_1_aft_act:1
+sw_iteminfo:APU|ON and START for 3 sec:ixeg/733/apu/apu_start_switch_act:1
+sw_item:APU Ready|CHECK:ixeg/733/electrical/apu_off_ann:>1
+sw_iteminfo:APU generator left & right|ON BUS:ixeg/733/electrical/apu_off_ann:0
+sw_iteminfo:Equip Cooling|NORMAL:ixeg/733/efis/efis_eq_supplyfan_act:0
+sw_iteminfo:Emergency exit lights guard|CLOSED:ixeg/733/electrical/emer_lights_guard:0
+sw_iteminfo:No smoking|ON:ixeg/733/misc/smoking_act:2
+sw_iteminfo:Fasten belts|ON:ixeg/733/misc/seatbelt_act:2
+sw_iteminfo:Windshield WIPER selectors|PARK:ixeg/733/wiper/wiper_speed_act:0
+sw_iteminfo:Check Press Difference|APPROX ZERO:sim/cockpit/pressure/cabin_pressure_differential_psi:<0.01
+sw_iteminfo:Recirc fan|AUTO:ixeg/733/bleedair/bleedair_recirc_fan_act:1
+sw_iteminfo:Left and right pack|OFF:(ixeg/733/bleedair/bleedair_lpack_act:0)&&(ixeg/733/bleedair/bleedair_rpack_act:0)
+sw_iteminfo:Isolation valve|OPEN:ixeg/733/bleedair/bleedair_isovalve_act:2
+sw_iteminfo:Engine bleed left|ON:ixeg/733/bleedair/bleedair_eng1_act:1
+sw_iteminfo:Engine bleed right|ON:ixeg/733/bleedair/bleedair_eng2_act:1
+sw_iteminfo:APU bleed (after 1 minute of start)|ON:ixeg/733/bleedair/bleedair_apu_act:1
+sw_iteminfo:Pressurization Mode Switch|GROUND:ixeg/733/pressurization/cabin_flt_grd_act:1
+sw_iteminfo:Pressurization Mode Selector|AUTO:ixeg/733/pressurization/cabin_mode_act:1
+sw_iteminfo:Autobrake|RTO:ixeg/733/hydraulics/hyd_auto_brake_act:-1
+sw_iteminfo:Left Flight Director|ON:ixeg/733/MCP/mcp_plt_fd_act:1
+sw_iteminfo:Right Flight Director|ON:ixeg/733/MCP/mcp_cplt_fd_act:1
+sw_iteminfo:Transponder|SET and STBY:ixeg/733/xpdr/xpdr_stby_act:0
+sw_iteminfo:Door annunciators|ALL OFF:ixeg/733/caution/caution_doors_ann:0
+sw_iteminfo:Fuel pumps|ALL 4 ON:(ixeg/733/fuel/fuel_1_aft_act:1)&&(ixeg/733/fuel/fuel_2_aft_act:1)&&(ixeg/733/fuel/fuel_1_fwd_act:1)&&(ixeg/733/fuel/fuel_2_fwd_act:1)
+sw_item:[CAPT] Center fuel pumps required?|AS NEEDED
+sw_iteminfo:Electric Hydraulic pumps A & B|ON:(ixeg/733/hydraulics/hyd_elec2_act:1)&&(ixeg/733/hydraulics/hyd_elec1_act:1)
+sw_iteminfo:Anti collision lights|ON:ixeg/733/lighting/anti_col_lt_act:1
+sw_item:[CAPT] IXEG Menu / Ground services / Disconnect Ground Power Unit|Deselect
+sw_iteminfo:Ground power Unit|DISCONNECTED:ixeg/733/electrical/gndpwr_ann:0
+sw_itemvoid: NEXT - BEFORE START CHECKLIST
+sw_itemvoid:
+
+sw_checklist:BEFORE START CHECKLIST TO THE LINE:BEFORE START CHECKLIST TO THE LINE
+sw_show:ixeg/733/misc/flt_rec_ann:11.0
+sw_rcolsize:100
+sw_item:COCKPIT PREPARATION|COMPLETED
+sw_item:LIGHT TEST|CHECKED
+sw_item:OXYGEN & INTERPHONE|CHECKED
+sw_iteminfo:YAW DAMPER|ON:ixeg/733/hydraulics/yaw_damper_act:1
+sw_item:FUEL|_____LBS/KGS & PUMPS ON
+sw_iteminfo:GALLEY POWER|ON:ixeg/733/electrical/elec_galley_on_act:1
+sw_iteminfo:EMERGENCY EXIT LIGHTS|ARMED:ixeg/733/lighting/emer_exit_lts_act:1
+sw_iteminfo:PASSENGER SIGNS|ON:(ixeg/733/misc/smoking_act:2)&&(ixeg/733/misc/seatbelt_act:2)
+sw_iteminfo:WINDOW HEAT|ON:(ixeg/733/antiice/ai_winheat_l_side_act:1)&&(ixeg/733/antiice/ai_winheat_l_fwd_act:1)&&(ixeg/733/antiice/ai_winheat_r_fwd_act:1)&&(ixeg/733/antiice/ai_winheat_r_side_act:1)
+sw_iteminfo:HYDRAULICS|NORMAL:(ixeg/733/hydraulics/hyd_elec2_act:1)&&(ixeg/733/hydraulics/hyd_elec1_act:1)&&(ixeg/733/hydraulics/hyd_eng1_act:1)&&(ixeg/733/hydraulics/hyd_eng2_act:1)
+sw_item:AIR COND & PRESSURIZATION|SET
+sw_iteminfo:AUTOPILOTS|DISENGAGED:ixeg/733/RA/AFDS/autopilot_on:0
+sw_item:INSTRUMENTS|CHECKED
+sw_iteminfo:AUTOBRAKE|RTO:ixeg/733/hydraulics/hyd_auto_brake_act:-1
+sw_iteminfo:SPEED BRAKE|DOWN DETENT:sim/multiplayer/controls/speed_brake_request[0]:0
+sw_iteminfo:PARKING BRAKE|SET:sim/cockpit2/controls/parking_brake_ratio:1.0
+sw_item:STABILIZER TRIM|CHECKED
+sw_iteminfo:CUTOUT SWITCHES|NORMAL:(ixeg/733/fuel/fuel_start_lever1_act:0)&&(ixeg/733/fuel/fuel_start_lever2_act:0)
+sw_item:WHEEL WELL FIRE WARNING|CHECKED
+sw_item:RADIOS, RADAR & TRANSPONDER|SET
+sw_iteminfo:RUDDER & AILERON TRIM|FREE & ZERO:(sim/cockpit2/controls/rudder_trim:0)&&(sim/cockpit2/controls/aileron_trim:0)
+sw_item:FMC/CDU|SET
+sw_item:N1 & IAS BUGS|SET
+sw_itemvoid: NEXT - PUSHBACK
+sw_itemvoid:
+
+sw_checklist:PUSHBACK:PUSHBACK
+sw_show:ixeg/733/misc/flt_rec_ann:30.0
+sw_rcolsize:100
+sw_item:Plan Pushback|DONE
+sw_iteminfo:Parking brake|SET:sim/cockpit2/controls/parking_brake_ratio:1.0
+sw_item:Start Pushback|DONE
+sw_iteminfo:Parking brake|RELEASED:sim/cockpit2/controls/parking_brake_ratio:0
+sw_itemvoid: NEXT - BEFORE START CHECKLIST BELOW
+sw_itemvoid:
+
+sw_checklist:BEFORE START CHECKLIST BELOW THE LINE:BEFORE START CHECKLIST BELOW THE LINE
+sw_show:ixeg/733/misc/flt_rec_ann:12.0
+sw_rcolsize:100
+sw_item:DOORS|CLOSED:ixeg/733/caution/caution_doors_ann:0
+sw_item:AIR CONDITIONING PACKS|OFF AND AUTO:(ixeg/733/bleedair/bleedair_lpack_act:0)&&(ixeg/733/bleedair/bleedair_rpack_act:0)&&(ixeg/733/bleedair/bleedair_isovalve_act:1)
+sw_item:START PRESSURE|above 35 PSI:(ixeg/733/bleedair/bleedair_pressure_1_ind:>-35)&&(ixeg/733/bleedair/bleedair_pressure_2_ind:>-35)
+sw_item:ANTICOLLISION LIGHT|ON:ixeg/733/lighting/anti_col_lt_act:1
+sw_itemvoid: NEXT - START ENGINES
+sw_itemvoid:
+
+sw_checklist:START ENGINES:START ENGINES
+sw_show:ixeg/733/misc/flt_rec_ann:31.0
+sw_rcolsize:100
+sw_itemvoid:START SEQUENCE TWO THEN ONE
+sw_iteminfo:Start engine two|DONE:ixeg/733/engine/eng2_start_act:-1
+sw_iteminfo:N2 >23%|DONE:ixeg/733/ecam/eng2_n2_ind:>23
+sw_iteminfo:Start lever idle|DONE:ixeg/733/fuel/fuel_start_lever2_act:1
+sw_iteminfo:Starter|Cutout:ixeg/733/engine/eng2_start_act:0
+sw_iteminfo:Start engine one|DONE:ixeg/733/engine/eng1_start_act:-1
+sw_iteminfo:N2 >23%|DONE:ixeg/733/ecam/eng1_n2_ind:>23
+sw_iteminfo:Start lever idle|DONE:ixeg/733/fuel/fuel_start_lever1_act:1
+sw_iteminfo:Starter|Cutout:ixeg/733/engine/eng1_start_act:0
+sw_itemvoid: NEXT - AFTER START CHECKLIST
+sw_itemvoid:
+
+sw_checklist:AFTER START CHECKLIST:AFTER START CHECKLIST
+sw_show:ixeg/733/misc/flt_rec_ann:13.0
+sw_rcolsize:100
+sw_iteminfo:GENERATORS|ON:(sim/cockpit/electrical/generator_on[0]:1)&&(sim/cockpit/electrical/generator_on[1]:1)
+sw_iteminfo:PITOT STATIC HEAT|ON:(ixeg/733/antiice/ai_pitot_b_act:1)&&(ixeg/733/antiice/ai_pitot_a_act:1)
+sw_item:[CAPT]ANTI-ICE|AS REQUIRED
+sw_iteminfo:AIR COND & PRESS|PACKS ON, FLT:(ixeg/733/bleedair/bleedair_isovalve_act:1)&&(ixeg/733/bleedair/bleedair_eng1_act:1)&&(ixeg/733/bleedair/bleedair_eng2_act:1)&&(ixeg/733/bleedair/bleedair_apu_act:0)&&(ixeg/733/bleedair/bleedair_lpack_act:1)&&(ixeg/733/bleedair/bleedair_rpack_act:1)&&(ixeg/733/pressurization/cabin_flt_grd_act:0)
+sw_iteminfo:APU|OFF:ixeg/733/apu/apu_start_switch_act:-1
+sw_iteminfo:START LEVERS|IDLE DETENT:(ixeg/733/fuel/fuel_start_lever1_act:1)&&(ixeg/733/fuel/fuel_start_lever2_act:1)
+sw_itemvoid: NEXT - BEFORE TAXI PROCEDURE
+sw_itemvoid:
+
+sw_checklist:BEFORE TAXI PROCEDURE:BEFORE TAXI PROCEDURE
+sw_show:ixeg/733/misc/flt_rec_ann:14.0
+sw_iteminfo:HYDRAULICS|ON:(ixeg/733/hydraulics/hyd_elec2_act:1)&&(ixeg/733/hydraulics/hyd_elec1_act:1)&&(ixeg/733/hydraulics/hyd_eng1_act:1)&&(ixeg/733/hydraulics/hyd_eng2_act:1)
+sw_iteminfo:ENGINE START SWITCHES|CONT:(ixeg/733/engine/eng1_start_act:1)&&(ixeg/733/engine/eng2_start_act:1)
+sw_iteminfo:APU|OFF:ixeg/733/apu/apu_start_switch_act:-1
+sw_iteminfo:FLAPS|TAKEOFF:ixeg/733/hydraulics/hyd_flap_lever_act:>0
+sw_itemvoid:--- FLIGHT CONTROLS CHECK ---
+sw_iteminfo:Elevator|Full Up:ixeg/733/controls/yoke_pitch:>0.9
+sw_iteminfo:Elevator|Full Down:ixeg/733/controls/yoke_pitch:<-0.95
+sw_iteminfo:Elevator|Neutral:ixeg/733/controls/yoke_pitch:0
+sw_iteminfo:Aileron|Full Left:ixeg/733/controls/yoke_roll:<-0.9
+sw_iteminfo:Aileron|Full Right:ixeg/733/controls/yoke_roll:>0.9
+sw_iteminfo:Aileron|Neutral:ixeg/733/controls/yoke_roll:0
+sw_iteminfo:Rudder|Full Left:sim/flightmodel/controls/vstab2_rud1def:<-25.5
+sw_iteminfo:Rudder|Full Right:sim/flightmodel/controls/vstab2_rud1def:>25.5
+sw_iteminfo:Rudder|Neutral:(sim/flightmodel/controls/vstab2_rud1def:<1)&&(sim/flightmodel/controls/vstab2_rud1def:>-1)
+sw_itemvoid: NEXT - BEFORE TAKEOFF CHECKLIST
+sw_itemvoid:
+
+sw_checklist:BEFORE TAKEOFF CHECKLIST:BEFORE TAKEOFF CHECKLIST
+sw_show:ixeg/733/misc/flt_rec_ann:15.0
+sw_rcolsize:100
+sw_iteminfo:RECALL|CHECKED:ixeg/733/bleedair/caution_master_ann:0
+sw_item:FLIGHT CONTROLS|CHECKED
+sw_iteminfo:FLAPS|5 GREEN LIGHT:(ixeg/733/hydraulics/hyd_flap_lever_act:>0)&&(ixeg/733/le_devices/le_ext_main_ann:>1)
+sw_item:STABILIZER TRIM|_______, UNITS
+sw_iteminfo:COCKPIT DOOR|LOCKED:ixeg/733/misc/cockpit_door:0
+sw_item:TAKEOFF BRIEFING|REVIEWED
+sw_itemvoid:--------------------------------------
+sw_iteminfo:ENGINE START SWITCHES|CONT:(ixeg/733/engine/eng1_start_act:1)&&(ixeg/733/engine/eng2_start_act:1)
+sw_itemvoid: NEXT - BEFORE TAKEOFF PROCEDURE
+sw_itemvoid:
+
+sw_checklist:BEFORE TAKEOFF PROCEDURE:BEFORE TAKEOFF PROCEDURE
+sw_show:ixeg/733/misc/flt_rec_ann:32.0
+sw_iteminfo:Landing Lights|ON:(ixeg/733/lighting/r_inboard_ll_act:1)&&(ixeg/733/lighting/l_inboard_ll_act:1)&&(ixeg/733/lighting/r_outboard_ll_act:2)&&(ixeg/733/lighting/l_outboard_ll_act:2)
+sw_iteminfo:Strobes|ON:ixeg/733/lighting/position_lt_act:1
+sw_iteminfo:Position lights|ON:ixeg/733/lighting/strobe_lt_act:1
+sw_iteminfo:RWY turnoff lights|ON:(ixeg/733/lighting/l_rwy_turnoff_act:1)&&(ixeg/733/lighting/r_rwy_turnoff_act:1)
+sw_iteminfo:Taxi lights|OFF:ixeg/733/lighting/taxi_lt_act:0
+sw_iteminfo:Transponder|ON:(ixeg/733/xpdr/xpdr_stby_act:2)&&(ixeg/733/ehsi/ehsi_wxr_pt_act:1)
+sw_iteminfo:Engine start switches|CONTINOUS:(ixeg/733/engine/eng1_start_act:1)&&(ixeg/733/engine/eng2_start_act:1)
+sw_itemvoid: NEXT - AFTER TAKEOFF CHECKLIST
+sw_itemvoid:
+
+sw_checklist:TAKEOFF AND CLIMB PROCEDURE:TAKEOFF AND CLIMB PROCEDURE
+sw_show:ixeg/733/misc/flt_rec_ann:33.0
+sw_iteminfo:Weather Radar|ON:ixeg/733/wxr/wxr_onoff_act:1
+sw_iteminfo:Heading Select|ON:ixeg/733/MCP/mcp_hdg_select_act:1
+sw_iteminfo:Autothrottle|ARMED:ixeg/733/MCP/mcp_at_arm_act:1
+sw_iteminfo:Flight directors|ON:(ixeg/733/MCP/mcp_plt_fd_act:1)&&(ixeg/733/MCP/mcp_cplt_fd_act:1)
+sw_iteminfo:Takeoff thrust|SET:ixeg/733/MCP/mcp_toga_act:1
+sw_iteminfo:80 knots|REACHED:sim/flightmodel/position/indicated_airspeed:>79
+sw_iteminfo:V1|REACHED:ixeg/733/airspeed/IAS_pilot_knots_ind:>{ixeg/733/airspeed/IAS_pilot_bug1_ind}
+sw_iteminfo:VR|REACHED:ixeg/733/airspeed/IAS_pilot_knots_ind:>{ixeg/733/airspeed/IAS_pilot_bug2_ind}
+sw_iteminfo:GEAR|UP:ixeg/733/gear/gear_handle_act:1
+sw_iteminfo:LNAV|SET:ixeg/733/MCP/mcp_lnav_act:1
+sw_iteminfo:VNAV|SET:ixeg/733/MCP/mcp_vnav_act:1
+sw_iteminfo:CMD A|SET:ixeg/733/MCP/mcp_a_cmd_act:1
+sw_iteminfo:FLAPS|UP:ixeg/733/hydraulics/hyd_flap_lever_act:0
+sw_iteminfo:GEAR|OFF:ixeg/733/gear/gear_handle_act:0.5
+sw_iteminfo:ENGINE START SWITCHES|OFF:(ixeg/733/engine/eng1_start_act:0)&&(ixeg/733/engine/eng2_start_act:0)
+sw_iteminfo:AUTOBRAKE|OFF:ixeg/733/hydraulics/hyd_auto_brake_act:0
+sw_iteminfo:RWY TURNOFF LIGHTS|OFF:(ixeg/733/lighting/l_rwy_turnoff_act:0)&&(ixeg/733/lighting/r_rwy_turnoff_act:0)
+sw_iteminfo:OUTBOARD LANDING LIGHTS|OFF:(ixeg/733/lighting/r_outboard_ll_act:0)&&(ixeg/733/lighting/l_outboard_ll_act:0)
+sw_itemvoid: NEXT - AFTER TAKEOFF CHECKLIST
+sw_itemvoid:
+
+sw_checklist:AFTER TAKEOFF CHECKLIST:AFTER TAKEOFF CHECKLIST
+sw_show:ixeg/733/misc/flt_rec_ann:16.0
+sw_rcolsize:100
+sw_iteminfo:ENGINE BLEEDS|ON:(ixeg/733/bleedair/bleedair_eng1_act:1)&&(ixeg/733/bleedair/bleedair_eng2_act:1)
+sw_iteminfo:PACKS|AUTO:(ixeg/733/bleedair/bleedair_lpack_act:1)&&(ixeg/733/bleedair/bleedair_rpack_act:1)
+sw_iteminfo:LANDING GEAR|UP & OFF:ixeg/733/gear/gear_handle_act:0.5
+sw_iteminfo:FLAPS|UP, NO LIGHTS:ixeg/733/hydraulics/hyd_flap_lever_act:0
+sw_item:ALTIMETERS|SET
+sw_itemvoid: NEXT - DESCENT/APPROACH CHECKLIST
+sw_itemvoid:
+
+sw_checklist:DESCENT/APPROACH CHECKLIST:DESCENT/APPROACH CHECKLIST
+sw_show:ixeg/733/misc/flt_rec_ann:17.0
+sw_rcolsize:100
+sw_item:ANTI-ICE|AS REQUIRED
+sw_item:APPROACH BRIEFING|REVIEWED
+sw_item:AIR COND & PRESS|SET LANDING ALT_______
+sw_item:AUTOBRAKE|AS REQUIRED
+sw_item:LANDING DATA|VREF___, MINIMUMS____FT
+sw_item:ALTIMETER & INSTRUMENTS|SET & CHECKED
+sw_item:N1 & IAS BUGS|CHECKED & SET
+sw_itemvoid: NEXT - LANDING PROCEDURE
+sw_itemvoid:
+
+sw_checklist:LANDING PROCEDURE:LANDING PROCEDURE
+sw_show:ixeg/733/misc/flt_rec_ann:18.0
+sw_rcolsize:100
+sw_iteminfo:5 MILES BEFORE FAP - SPEED|210:sim/flightmodel/position/indicated_airspeed:208|212
+sw_iteminfo:FLAPS 1|SET:ixeg/733/hydraulics/hyd_flap_lever_act:0.125
+sw_iteminfo:3 MILES BEFORE FAP - SPEED|180:sim/flightmodel/position/indicated_airspeed:178|182
+sw_iteminfo:FLAPS 5|SET:ixeg/733/hydraulics/hyd_flap_lever_act:0.375
+sw_iteminfo:3 MILES BEFORE FAP - SPEED|170:sim/flightmodel/position/indicated_airspeed:168|172
+sw_iteminfo:FLAPS 10|SET:ixeg/733/hydraulics/hyd_flap_lever_act:0.5
+sw_iteminfo:On G/S alive - SPEED|160:sim/flightmodel/position/indicated_airspeed:158|162
+sw_iteminfo:Approach mode|ARMED:ixeg/733/MCP/mcp_app_ann:1
+sw_iteminfo:Landing Gear|DOWN 3 GREEN:sim/cockpit/switches/gear_handle_status:1
+sw_iteminfo:FLAPS 15|SET:ixeg/733/hydraulics/hyd_flap_lever_act:0.625
+sw_iteminfo:Speed Brakes|ARMED:sim/multiplayer/controls/speed_brake_request[0]:-0.5
+sw_itemvoid:On enter G/S - SET SPEED VREF+Wind Сorrection
+sw_iteminfo:FLAPS 30|SET:ixeg/733/hydraulics/hyd_flap_lever_act:>=0.875
+sw_item:Missed approach altitude|SET
+sw_itemvoid: NEXT - LANDING CHECKLIST
+sw_itemvoid:
+
+sw_checklist:LANDING CHECKLIST:LANDING CHECKLIST
+sw_show:ixeg/733/misc/flt_rec_ann:19.0
+sw_rcolsize:100
+sw_iteminfo:ENGINE START SWITCHES|CONT:(ixeg/733/engine/eng2_start_act:1)&&(ixeg/733/engine/eng1_start_act:1)
+sw_item:RECALL|CHECKED
+sw_iteminfo:SPEED BRAKE|ARMED, GREEN LIGHT:sim/multiplayer/controls/speed_brake_request[0]:-0.5
+sw_iteminfo:LANDING GEAR|DOWN, 3 GREEN:sim/cockpit/switches/gear_handle_status:1
+sw_iteminfo:Flaps|30/40 GREEN LIGHT:ixeg/733/hydraulics/hyd_flap_lever_act:>=0.875
+sw_itemvoid: NEXT - SHUTDOWN CHECKLIST
+sw_itemvoid:
+
+sw_checklist:SHUTDOWN CHECKLIST:SHUTDOWN CHECKLIST
+sw_show:ixeg/733/misc/flt_rec_ann:22.0
+sw_rcolsize:100
+sw_iteminfo:FUEL|PUMPS OFF:(ixeg/733/fuel/fuel_2_aft_act:0)&&(ixeg/733/fuel/fuel_1_aft_act:1)&&(ixeg/733/fuel/fuel_1_fwd_act:0)&&(ixeg/733/fuel/fuel_2_fwd_act:0)
+sw_iteminfo:ELECTRICAL|ON APU:(ixeg/733/electrical/elec_apu_gen1_onoff_act:1)&&(ixeg/733/electrical/elec_apu_gen2_onoff_act:1)
+sw_iteminfo:FASTEN SEATBELTS|OFF:ixeg/733/misc/seatbelt_act:0
+sw_iteminfo:WINDOW HEAT|OFF:(ixeg/733/antiice/ai_winheat_l_side_act:0)&&(ixeg/733/antiice/ai_winheat_l_fwd_act:0)&&(ixeg/733/antiice/ai_winheat_r_fwd_act:0)&&(ixeg/733/antiice/ai_winheat_r_side_act:0)
+sw_iteminfo:PITOT HEAT|OFF:(ixeg/733/antiice/ai_pitot_b_act:0)&&(ixeg/733/antiice/ai_pitot_a_act:0)
+sw_iteminfo:ANTI-ICE|OFF:(ixeg/733/antiice/ai_wing_anti_ice_act:0)&&(ixeg/733/antiice/ai_eng1_act:0)&&(ixeg/733/antiice/ai_eng2_act:0)
+sw_iteminfo:ELECTRIC HYDRAULIC PUMPS|OFF:(ixeg/733/hydraulics/hyd_elec2_act:0)&&(ixeg/733/hydraulics/hyd_elec1_act:0)
+sw_iteminfo:AIR COND & PRESS|1 PACK, BLEED ON, GRD:(ixeg/733/bleedair/bleedair_eng1_act:0)&&(ixeg/733/bleedair/bleedair_eng2_act:0)&&(ixeg/733/bleedair/bleedair_apu_act:1)
+sw_iteminfo:EXTERIOR LIGHTS|AS REQUIRED:(ixeg/733/lighting/wheel_well_lt_act:0)&&(ixeg/733/lighting/wing_lt_act:0)&&(ixeg/733/lighting/position_lt_act:1)&&(ixeg/733/lighting/strobe_lt_act:0)&&(ixeg/733/lighting/logo_lt_act:0)&&(ixeg/733/lighting/taxi_lt_act:0)&&(ixeg/733/lighting/r_rwy_turnoff_act:0)&&(ixeg/733/lighting/l_rwy_turnoff_act:0)&&(sim/cockpit2/switches/landing_lights_switch[2]:0)&&(sim/cockpit2/switches/landing_lights_switch[3]:0)&&(sim/cockpit2/switches/landing_lights_switch[4]:0)&&(sim/cockpit2/switches/landing_lights_switch{5}:0)
+sw_iteminfo:ANTICOLLISION LIGHTS|OFF:ixeg/733/lighting/anti_col_lt_act:0
+sw_iteminfo:SPEED BRAKE|DOWN DETENT:sim/multiplayer/controls/speed_brake_request[0]:0
+sw_iteminfo:FLAPS|UP, NO LIGHT:ixeg/733/hydraulics/hyd_flap_lever_act:0
+sw_iteminfo:PARKING BRAKE|ON:sim/cockpit2/controls/parking_brake_ratio:1
+sw_iteminfo:START LEVERS|CUTOFF:(ixeg/733/fuel/fuel_start_lever1_act:0)&&(ixeg/733/fuel/fuel_start_lever2_act:0)
+sw_iteminfo:WEATHER RADAR|OFF:(ixeg/733/ehsi/ehsi_wxr_pt_act:0)&&(ixeg/733/wxr/wxr_onoff_act:0)&&(ixeg/733/ehsi/ehsi_wxr_cpt_act:0)
+sw_iteminfo:TRANSPONDER|STBY:ixeg/733/xpdr/xpdr_stby_act:0
+sw_itemvoid: NEXT - SECURE CHECKLIST
+sw_itemvoid:
+
+sw_checklist:SECURE CHECKLIST:SECURE CHECKLIST
+sw_show:ixeg/733/misc/flt_rec_ann:23.0
+sw_rcolsize:100
+sw_iteminfo:IRS MODE SELECTORS|OFF:(ixeg/733/irs/irs_left_mode_act:0)&&(ixeg/733/irs/irs_right_mode_act:0)
+sw_iteminfo:EMERGENCY EXIT LIGHTS|OFF:ixeg/733/lighting/emer_exit_lts_act:0
+sw_iteminfo:AIR CONDITIONING PACKS|OFF:(ixeg/733/bleedair/bleedair_lpack_act:0)&&(ixeg/733/bleedair/bleedair_rpack_act:0)
+sw_item:APU/GROUND POWER|OFF:(ixeg/733/apu/apu_start_switch_act:-1)&&(ixeg/733/electrical/gndpwr_ann:0)
+sw_iteminfo:BATTERY|OFF:sim/cockpit2/electrical/battery_on[0]:0
+
+# ====== REFERENCE AND INFORMATION
+
+sw_checklist:TAKEOFF SPEEDS:TAKEOFF SPEEDS
+sw_show:ixeg/733/misc/flt_rec_ann:98.0
+sw_rcolsize:100
+sw_itemvoid:IXEG 737-300 Take-Off Speeds
+sw_itemvoid:
+sw_iteminfo:Take-off Weight/1000kg| V1  VR  V2
+sw_itemvoid:
+sw_iteminfo:65|154 155 160
+sw_iteminfo:60|147 148 154
+sw_iteminfo:55|140 141 148
+sw_iteminfo:50|133 133 141
+sw_iteminfo:45|123 123 133
+sw_iteminfo:40|114 114 126
+sw_iteminfo:35|104 104 117
+sw_itemvoid:
+sw_itemvoid:ISA Vmcg=111
+sw_itemvoid:
+sw_itemvoid:Typical wet V1= dry V1-10kts.
+sw_itemvoid:
+sw_itemvoid:All speeds assume balanced field, nil slope,
+sw_itemvoid:flap 5, pa gt 5000ft, OAT lt 35C, nil wind, runway dry.
+sw_itemvoid:
+sw_itemvoid: Next see LANDING SPEEDS VREF
+
+sw_checklist:LANDING SPEEDS VREF:LANDING SPEEDS VREF
+sw_show:ixeg/733/misc/flt_rec_ann:97.0
+sw_rcolsize:100
+sw_itemvoid:IXEG 737-300 Landing Speeds
+sw_itemvoid:
+sw_iteminfo:Landing Weight/1000kg|F40 F30 F15  
+sw_itemvoid:
+sw_iteminfo:65|152 153 165
+sw_iteminfo:60|145 147 158
+sw_iteminfo:55|138 141 151
+sw_iteminfo:50|131 134 144
+sw_iteminfo:45|123 127 136
+sw_iteminfo:40|115 119 128
+sw_iteminfo:35|107 111 119
+sw_itemvoid:
+sw_itemvoid: Next see AUTOBRAKE AND FLAPS
+
+sw_checklist:AUTOBRAKE AND FLAPS:AUTOBRAKE AND FLAPS
+sw_show:ixeg/733/misc/flt_rec_ann:96.0
+sw_rcolsize:150
+sw_itemvoid:IXEG 737-300 Recommended Auto brake & Flap settings for landing
+sw_itemvoid:
+sw_iteminfo:Runway Length ft|ABRK FLAPS  
+sw_itemvoid:
+sw_iteminfo:8,000 +	1     |   1   30
+sw_iteminfo:6,001 to 7,999|   2   30
+sw_iteminfo:5,001 to 6,000|   3   40
+sw_iteminfo:5,000 or less |MAX  40
+sw_itemvoid:
+sw_itemvoid: Next see LANDING FLAPS
+
+sw_checklist:LANDING FLAPS:LANDING FLAPS
+sw_show:ixeg/733/misc/flt_rec_ann:99.0
+sw_rcolsize:100
+sw_itemvoid:IXEG 737-300 Landing Flap-Speed Schedule
+sw_itemvoid:
+sw_iteminfo:Flap Position|Speed
+sw_itemvoid:
+sw_iteminfo:Flaps Up|210
+sw_iteminfo:Flaps  1|190
+sw_iteminfo:Flaps  5|180
+sw_iteminfo:Flaps 10|170
+sw_iteminfo:Flaps 15|150
+sw_iteminfo:Flaps 25|140
+sw_iteminfo:Flaps 30|Vapp
+sw_iteminfo:Flaps 40|Vapp
+sw_itemvoid:
+sw_itemvoid: Next see N1 AND PITCH ATTITUDE DEG UP
+
+sw_checklist:N1 AND PITCH ATTITUDE DEG UP:N1 AND PITCH ATTITUDE DEG UP
+sw_show:ixeg/733/misc/flt_rec_ann:94.0
+sw_rcolsize:150
+sw_iteminfo:Level flight|N1 ATT
+sw_iteminfo:250 kts|65 4.0
+sw_iteminfo:210 kts|60 6.0
+sw_iteminfo:Flap 1, 190 kts|60 6.0
+sw_iteminfo:Flap 5, 180 kts|62 7.0
+sw_iteminfo:Gear down, flap 15, 150kts|70 8.0
+sw_itemvoid:
+sw_iteminfo:Gear down on GS|N1 ATT
+sw_iteminfo:Flap 15, 150kts  |52 4.5
+sw_iteminfo:Flap 25, 140kts  |52 4.0
+sw_iteminfo:Flap 30, Vref + 5|55 2.5
+sw_iteminfo:Flap 40, Vref + 5|62 1.0
+
+sw_checklist:RULES OF THUMB:RULES OF THUMB
+sw_show:ixeg/733/misc/flt_rec_ann:95.0
+sw_rcolsize:150
+sw_itemvoid:IXEG 737-300 Rules of Thumb
+sw_itemvoid:
+sw_itemvoid:Approach Profile Planning:
+sw_itemvoid:Aim for 250kts, 10,000ft by 30nm out
+sw_itemvoid:Aim for 210kts, On ILS at 12nm
+sw_itemvoid:
+sw_itemvoid:Cruise N1:
+sw_itemvoid:N1 = (2 x Alt/1000) + 10
+sw_itemvoid:  e.g. at FL350 = 70+10 = 80% N1
+sw_itemvoid:FF = (IAS*10)/2 -200
+sw_itemvoid:  e.g. 250kts = (2500/2)-200 = 1050 kg/hr/engine
+sw_itemvoid:
+sw_itemvoid:Climb Speeds:
+sw_itemvoid:Use 250KIAS until 10,000ft then 280KIAS/M0.74
+sw_itemvoid:Best Angle = V2 + 80
+sw_itemvoid:Best Rate =  V2 + 120
+sw_itemvoid:
+
+
+
+
