@@ -4176,19 +4176,15 @@ ZC_BACKGROUND_PROCS = {
 	["FLAPSUPSCHED"] = {["status"] = 0,
 		["actions"] = function ()
 			if get("sim/flightmodel/position/y_agl") > 50 then
-				if get("laminar/B738/autopilot/airspeed") > 140.0 and get("laminar/B738/flt_ctrls/flap_lever")/0.125 == 5 then
-					speakNoText(0,"SPEED CHECK   FLAPS 10")
-					command_once("laminar/B738/push_button/flaps_10")
-				end
-				if get("laminar/B738/autopilot/airspeed") > 160.0 and get("laminar/B738/flt_ctrls/flap_lever")/0.125 > 3 then
+				if get("laminar/B738/autopilot/airspeed") > zc_acf_getV2()+ 15 and get("laminar/B738/flt_ctrls/flap_lever")/0.125 > 3 then
 					speakNoText(0,"SPEED CHECK   FLAPS 5")
 					command_once("laminar/B738/push_button/flaps_5")
 				end
-				if get("laminar/B738/autopilot/airspeed") > 170.0 and get("laminar/B738/flt_ctrls/flap_lever")/0.125 >= 2 then
+				if get("laminar/B738/autopilot/airspeed") > zc_acf_getV2()+ 30 and get("laminar/B738/flt_ctrls/flap_lever")/0.125 >= 2 then
 					speakNoText(0,"SPEED CHECK   FLAPS 1")
 					command_once("laminar/B738/push_button/flaps_1")
 				end
-				if get("laminar/B738/autopilot/airspeed") > 180.0 and get("laminar/B738/flt_ctrls/flap_lever")/0.125 >= 1 then
+				if get("laminar/B738/autopilot/airspeed") > 190.0 and get("laminar/B738/flt_ctrls/flap_lever")/0.125 >= 1 then
 					speakNoText(0,"SPEED CHECK   FLAPS UP")
 					command_once("laminar/B738/push_button/flaps_0")
 					ZC_BACKGROUND_PROCS["FLAPSUPSCHED"].status = 0
