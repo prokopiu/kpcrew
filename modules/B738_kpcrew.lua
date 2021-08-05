@@ -1,4 +1,4 @@
-﻿--[[
+--[[
 	*** KPCREW for Zibo Mod 2.1.0.1.1
 	Kosta Prokopiu, July 2021
 --]]
@@ -4618,7 +4618,7 @@ function zc_get_procedure()
 	lNoProcs=incnt
 end
 
--- aircraft specific functions 
+-- aircraft specific status functions 
 
 -- V1 - FMC must have been programmed
 function zc_acf_getV1()
@@ -4650,11 +4650,6 @@ function zc_acf_getLdgFlap()
 	return get("laminar/B738/FMS/approach_flaps")
 end
 
--- get parking stand
-function zc_get_parking_stand()
-	return get("laminar/B738/autogate_nearest_name")
-end
-
 -- get Vref from FMC
 function zc_acf_getVref()
 	return get("laminar/B738/FMS/vref")
@@ -4663,6 +4658,11 @@ end
 -- get Vapp
 function zc_acf_getVapp()
 	return zc_acf_getVref() + get("laminar/B738/FMS/approach_wind_corr")
+end
+
+-- get parking stand
+function zc_get_parking_stand()
+	return get("laminar/B738/autogate_nearest_name")
 end
 
 -- return total fuel loaded
@@ -4717,6 +4717,159 @@ end
 function zc_get_dest_runway_len()
 	return get("laminar/B738/fms/dest_runway_len")
 end
+
+-- get flaps position
+-- function zc_get_flap_position()
+
+-- function_get_abrk_setting()
+
+
+---- aircraft specific action functions
+--- Electric system
+-- function zc_acf_apu_start()
+-- function zc_acf_apu_stop()
+-- function zc_acf_apu_on_bus(onoff)
+-- function zc_acf_gpu_start()
+-- function zc_acf_gpu_stop()
+-- function zc_acf_gpu_on_bus(onoff)
+-- function zc_acf_batteries_onoff(onoff)
+
+--- Fuel system
+-- function zc_acf_fuel_pumps_onoff(pump,onoff)
+-- function zc_acf_fuel_xfeed_onoff(onoff)
+
+--- Hydraulic system
+-- function zc_acf_hyd_pumps_onoff(pump,onoff)
+-- function zc_acf_hyd_aux_pumps_onoff(pump,onoff)
+
+--- Engines
+-- function zc_acf_fuel_lever_set(lever,mode)
+-- function zc_acf_eng_starter_mode(starter,mode)
+
+--- Pressurisation & AIR
+-- function zc_acf_packs_both_onoff(onoff)
+-- function zc_acf_eng_bleeds_onoff(onoff)
+-- function zc_acf_crossbleed_isol_mode(mode)
+-- function zc_acf_apu_bleed_onoff(onoff)
+-- function zc_acf_temp_control(area,level)
+-- function zc_acf_recirc_fans_onoff(onoff)
+-- function zc_acf_set_landing_altitude(altitude)
+-- function zc_acf_set_flight_altitude(altitude)
+-- function zc_acf_airvalve_mode(mode)
+-- function zc_acf_trimair_onoff(onoff)
+
+--- A/ICE
+-- function zc_acf_window_heat_onoff(onoff)
+-- function zc_acf_wing_aice_onoff(onoff)
+-- function zc_acf_eng_aice_onoff(onoff)
+-- function zc_acf_probe_heat_onoff(onoff)
+
+--- Flight controls
+-- function zc_acf_flap_set(position)
+-- function zc_acf_speed_break_set(position)
+-- function zc_acf_parking_break_onoff(onoff)
+-- function zc_acf_abrk_mode(mode)
+-- function zc_acf_elev_trim_set(value)
+-- function zc_acf_aileron_trim_set(value)
+-- function zc_acf_rudder_trim_set(value)
+
+--- LIGHTS
+-- function zc_acf_cockpit_light_mode(mode)
+-- function zc_acf_light_strobe_mode(mode)
+-- function zc_acf_light_beacon_onoff(onoff)
+-- function zc_acf_light_wing_onoff(onoff)
+-- function zc_acf_light_nav_onoff(onoff)
+-- function zc_acf_light_logo_onoff(onoff)
+-- function zc_acf_light_rwyto_onoff(onoff)
+-- function zc_acf_light_taxi_mode(mode)
+-- function zc_acf_light_landing_mode(mode)
+-- function zc_acf_panel_brightness(value)
+-- function zc_acf_emer_lights_onoff(onoff)
+-- function zc_acf_light_test(onoff)
+-- function zc_acf_seatbelt_onoff(onoff)
+-- function zc_acf_no_smoking_onoff(onoff)
+
+--- Navigation & A/P & A/T & Radios
+-- function zc_acf_mcp_spd_set(spd)
+-- function zc_acf_mcp_alt_set(alt)
+-- function zc_acf_mcp_hdg_set(hdg)
+-- function zc_acf_mcp_crs_set(nav,hdg)
+-- function zc_acf_mcp_vs_set(vs)
+-- function zc_acf_mcp_cmda_onoff()
+-- function zc_acf_mcp_cmdb_onoff()
+-- function zc_acf_irs_onoff(onoff)
+-- function zc_acf_xpdr_mode(mode)
+-- function zc_acf_xpdr_code_set(code)
+-- function zc_acf_et_timer_reset()
+-- function zc_acf_ap_dis_bar_onoff(onoff)
+-- function zc_acf_mcp_alt_intv()
+-- function zc_acf_mcp_vsm_onoff(onoff)
+-- function zc_acf_mcp_althld_onoff(onoff)
+-- function zc_acf_mcp_lnav_onoff(onoff)
+-- function zc_acf_mcp_vnav_onoff(onoff)
+-- function zc_acf_mcp_vorloc_onoff(onoff)
+-- function zc_acf_mcp_hdgsel_onoff(onoff)
+-- function zc_acf_mcp_lvlchg_onoff(onoff)
+-- function zc_acf_mcp_spd_intv()
+-- function zc_acf_mcp_turnrate_set(value)
+-- function zc_acf_mcp_at_onoff(onoff)
+-- function zc_acf_mcp_n1_onoff(onoff)
+-- function zc_acf_mcp_spd_onoff(onoff)
+-- function zc_acf_mcp_ias_mach(mode)
+-- function zc_acf_mcp_ls_onoff(onoff)
+-- function zc_acf_mcp_100_1000(mode)
+-- function zc_acf_mcp_start_et()
+-- function zc_acf_mcp_stop_et()
+
+--- Tests
+-- function zc_acf_apu_firetest()
+-- function zc_acf_eng_firetests()
+-- function zc_acf_stall_warnings()
+-- function zc_acf_overspeed()
+
+
+--- Doors and external items
+-- function zc_acf_external_doors(openclose)
+-- function zc_acf_airstair_onoff(onoff)
+-- function zc_acf_cockpit_door(openclose)
+-- function zc_acf_wipers_mode(wiper,mode)
+
+--- EFIS
+-- function zc_acf_upper_efis_mode(mode)
+-- function zc_acf_lower_efis_mode(mode)
+-- function zc_acf_fpvfpa_onoff(onoff)
+-- function zc_acf_ft_meter(mode)
+-- function zc_acf_baro_std_set()
+-- function zc_acf_baro_set(value)
+-- function zc_acf_baro_sync()
+-- function zc_acf_baro_in_mb(mode)
+-- function zc_acf_set_dhda_mode(mode)
+-- function zc_acf_set_minimum(altitude)
+-- function zc_acf_mins_reset()
+-- function zc_acf_pfd_navselect1(mode)
+-- function zc_acf_pfd_navselect2(mode)
+-- function zc_acf_nd_map_mode(mode)
+-- function zc_acf_nd_map_rng(mode)
+-- function zc_acf_nd_wxr_onoff(onoff)
+-- function zc_acf_nd_sta_cstr_onoff(onoff)
+-- function zc_acf_nd_wpt_onoff(onoff)
+-- function zc_acf_nd_arpt_onoff(onoff)
+-- function zc_acf_nd_vord_onoff(onoff)
+-- function zc_acf_nd_ndb_onoff(onoff)
+-- function zc_acf_nd_data_onoff(onoff)
+-- function zc_acf_nd_pos_onoff(onoff)
+-- function zc_acf_nd_terr_onoff(onoff)
+-- function zc_acf_nd_trfc_onoff(onoff)
+-- function zc_acf_nd_ctr_onoff(onoff)
+-- function zc_acf_fd_onoff(fd,onoff)
+
+-- B738 specific action functions
+-- function zc_b738_navctr_panel_set(mode)
+-- function zc_b738_dispctr_panel_set(mode)
+-- function zc_b738_ac_pwr_selector(mode)
+-- function zc_b738_dc_pwr_selector(mode)
+-- function zc_b738_engine_start_src(mode)
+
 
 -- point to configuration file in modules folder
 filename = MODULES_DIRECTORY .. "B738crewconfig.lua"
