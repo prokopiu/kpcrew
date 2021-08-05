@@ -2180,6 +2180,12 @@ ZC_STARTENGINE_PROC = {
 	[4] = {["lefttext"] = "WAIT FOR N2 25", ["timerincr"] = 1,
 		["actions"] = function ()
 			ZC_BACKGROUND_PROCS["FUEL2IDLE"].status=1
+			ZC_BACKGROUND_PROCS["N1ROTATION2"].status=1
+			ZC_BACKGROUND_PROCS["N2ROTATION2"].status=1
+			ZC_BACKGROUND_PROCS["OILPRESSURE2"].status=1
+			ZC_BACKGROUND_PROCS["N1INCREASE2"].status=1
+			ZC_BACKGROUND_PROCS["EGTINCREASE2"].status=1
+			ZC_BACKGROUND_PROCS["N2INCREASE2"].status=1
 			ZC_BACKGROUND_PROCS["STARTERCUT2"].status=1
 		end
 	},
@@ -2197,6 +2203,12 @@ ZC_STARTENGINE_PROC = {
 	[7] = {["lefttext"] = "WAIT FOR N2 25", ["timerincr"] = 1,
 		["actions"] = function ()
 			ZC_BACKGROUND_PROCS["FUEL1IDLE"].status=1
+			ZC_BACKGROUND_PROCS["N1ROTATION1"].status=1
+			ZC_BACKGROUND_PROCS["N2ROTATION1"].status=1
+			ZC_BACKGROUND_PROCS["OILPRESSURE1"].status=1
+			ZC_BACKGROUND_PROCS["N1INCREASE1"].status=1
+			ZC_BACKGROUND_PROCS["EGTINCREASE1"].status=1
+			ZC_BACKGROUND_PROCS["N2INCREASE1"].status=1
 			ZC_BACKGROUND_PROCS["STARTERCUT1"].status=1
 		end
 	},
@@ -2213,6 +2225,22 @@ ZC_STARTENGINE_PROC = {
 	[10] = {["lefttext"] = "TWO GOOD STARTS", ["timerincr"] = -1,
 		["actions"] = function ()
 			gLeftText = "WE HAVE TWO GOOD STARTS"
+			ZC_BACKGROUND_PROCS["FUEL1IDLE"].status=0
+			ZC_BACKGROUND_PROCS["N1ROTATION1"].status=0
+			ZC_BACKGROUND_PROCS["N2ROTATION1"].status=0
+			ZC_BACKGROUND_PROCS["OILPRESSURE1"].status=0
+			ZC_BACKGROUND_PROCS["N1INCREASE1"].status=0
+			ZC_BACKGROUND_PROCS["EGTINCREASE1"].status=0
+			ZC_BACKGROUND_PROCS["N2INCREASE1"].status=0
+			ZC_BACKGROUND_PROCS["STARTERCUT1"].status=0
+			ZC_BACKGROUND_PROCS["FUEL2IDLE"].status=0
+			ZC_BACKGROUND_PROCS["N1ROTATION2"].status=0
+			ZC_BACKGROUND_PROCS["N2ROTATION2"].status=0
+			ZC_BACKGROUND_PROCS["OILPRESSURE2"].status=0
+			ZC_BACKGROUND_PROCS["N1INCREASE2"].status=0
+			ZC_BACKGROUND_PROCS["EGTINCREASE2"].status=0
+			ZC_BACKGROUND_PROCS["N2INCREASE2"].status=0
+			ZC_BACKGROUND_PROCS["STARTERCUT2"].status=0
 		end
 	}
 }
@@ -3175,7 +3203,7 @@ ZC_DESCENT_CHECKLIST = {
 	},
 	[11] = {["lefttext"] = "THROTTLE -- IDLE", ["timerincr"] = 2,
 		["actions"] = function ()
-			speakNoText(0,"THROTTLE TO IDLE FOR ZIBO")
+			speakNoText(0,"THROTTLE TO IDLE FOR Zee BO")
 			command_once("bgood/xchecklist/check_item")
 		end
 	},
@@ -4077,11 +4105,107 @@ ZC_BACKGROUND_PROCS = {
 			end
 		end
 	},
+	["N1ROTATION1"] = {["status"] = 0,
+		["actions"] = function ()
+			if get("laminar/B738/engine/indicators/N1_percent_1") > 0.5 then
+				speakNoText(0,"N 1 rotation")
+				ZC_BACKGROUND_PROCS["N1ROTATION1"].status = 0
+			end
+		end
+	},
+	["N1INCREASE1"] = {["status"] = 0,
+		["actions"] = function ()
+			if get("laminar/B738/engine/indicators/N1_percent_1") > 9 then
+				speakNoText(0,"N 1 increase")
+				ZC_BACKGROUND_PROCS["N1INCREASE1"].status = 0
+			end
+		end
+	},
+	["EGTINCREASE1"] = {["status"] = 0,
+		["actions"] = function ()
+			if get("laminar/B738/engine/eng1_egt") > 200 then
+				speakNoText(0,"e g t steadily increasing")
+				ZC_BACKGROUND_PROCS["EGTINCREASE1"].status = 0
+			end
+		end
+	},
+	["N2INCREASE1"] = {["status"] = 0,
+		["actions"] = function ()
+			if get("laminar/B738/engine/indicators/N2_percent_1") > 30 then
+				speakNoText(0,"N 2 increase")
+				ZC_BACKGROUND_PROCS["N2INCREASE1"].status = 0
+			end
+		end
+	},
+	["N2ROTATION1"] = {["status"] = 0,
+		["actions"] = function ()
+			if get("laminar/B738/engine/indicators/N2_percent_1") > 5 then
+				speakNoText(0,"N 2 rotation")
+				ZC_BACKGROUND_PROCS["N2ROTATION1"].status = 0
+			end
+		end
+	},
+	["OILPRESSURE1"] = {["status"] = 0,
+		["actions"] = function ()
+			if get("laminar/B738/engine/eng1_oil_press") > 3 then
+				speakNoText(0,"oil pressure")
+				ZC_BACKGROUND_PROCS["OILPRESSURE1"].status = 0
+			end
+		end
+	},
 	["FUEL2IDLE"] = {["status"] = 0,
 		["actions"] = function ()
 			if get("laminar/B738/engine/indicators/N2_percent_2") > 25.0 then
 				command_once("laminar/B738/engine/mixture2_idle")
 				ZC_BACKGROUND_PROCS["FUEL2IDLE"].status = 0
+			end
+		end
+	},
+	["N1ROTATION2"] = {["status"] = 0,
+		["actions"] = function ()
+			if get("laminar/B738/engine/indicators/N1_percent_2") > 0.5 then
+				speakNoText(0,"N 1 rotation")
+				ZC_BACKGROUND_PROCS["N1ROTATION2"].status = 0
+			end
+		end
+	},
+	["N1INCREASE2"] = {["status"] = 0,
+		["actions"] = function ()
+			if get("laminar/B738/engine/indicators/N1_percent_2") > 9 then
+				speakNoText(0,"N 1 increase")
+				ZC_BACKGROUND_PROCS["N1INCREASE2"].status = 0
+			end
+		end
+	},
+	["N2INCREASE2"] = {["status"] = 0,
+		["actions"] = function ()
+			if get("laminar/B738/engine/indicators/N2_percent_2") > 30 then
+				speakNoText(0,"N 2 increase")
+				ZC_BACKGROUND_PROCS["N2INCREASE2"].status = 0
+			end
+		end
+	},
+	["EGTINCREASE2"] = {["status"] = 0,
+		["actions"] = function ()
+			if get("laminar/B738/engine/eng2_egt") > 200 then
+				speakNoText(0,"e g t steadily increasing")
+				ZC_BACKGROUND_PROCS["EGTINCREASE2"].status = 0
+			end
+		end
+	},
+	["N2ROTATION2"] = {["status"] = 0,
+		["actions"] = function ()
+			if get("laminar/B738/engine/indicators/N2_percent_2") > 5 then
+				speakNoText(0,"N 2 rotation")
+				ZC_BACKGROUND_PROCS["N2ROTATION2"].status = 0
+			end
+		end
+	},
+	["OILPRESSURE2"] = {["status"] = 0,
+		["actions"] = function ()
+			if get("laminar/B738/engine/eng2_oil_press") > 3 then
+				speakNoText(0,"oil pressure")
+				ZC_BACKGROUND_PROCS["OILPRESSURE2"].status = 0
 			end
 		end
 	},
@@ -4176,15 +4300,19 @@ ZC_BACKGROUND_PROCS = {
 	["FLAPSUPSCHED"] = {["status"] = 0,
 		["actions"] = function ()
 			if get("sim/flightmodel/position/y_agl") > 50 then
-				if get("laminar/B738/autopilot/airspeed") > zc_acf_getV2()+ 15 and get("laminar/B738/flt_ctrls/flap_lever")/0.125 > 3 then
+				if get("laminar/B738/autopilot/airspeed") > 140.0 and get("laminar/B738/flt_ctrls/flap_lever")/0.125 == 5 then
+					speakNoText(0,"SPEED CHECK   FLAPS 10")
+					command_once("laminar/B738/push_button/flaps_10")
+				end
+				if get("laminar/B738/autopilot/airspeed") > 160.0 and get("laminar/B738/flt_ctrls/flap_lever")/0.125 > 3 then
 					speakNoText(0,"SPEED CHECK   FLAPS 5")
 					command_once("laminar/B738/push_button/flaps_5")
 				end
-				if get("laminar/B738/autopilot/airspeed") > zc_acf_getV2()+ 30 and get("laminar/B738/flt_ctrls/flap_lever")/0.125 >= 2 then
+				if get("laminar/B738/autopilot/airspeed") > 170.0 and get("laminar/B738/flt_ctrls/flap_lever")/0.125 >= 2 then
 					speakNoText(0,"SPEED CHECK   FLAPS 1")
 					command_once("laminar/B738/push_button/flaps_1")
 				end
-				if get("laminar/B738/autopilot/airspeed") > 190.0 and get("laminar/B738/flt_ctrls/flap_lever")/0.125 >= 1 then
+				if get("laminar/B738/autopilot/airspeed") > 180.0 and get("laminar/B738/flt_ctrls/flap_lever")/0.125 >= 1 then
 					speakNoText(0,"SPEED CHECK   FLAPS UP")
 					command_once("laminar/B738/push_button/flaps_0")
 					ZC_BACKGROUND_PROCS["FLAPSUPSCHED"].status = 0
