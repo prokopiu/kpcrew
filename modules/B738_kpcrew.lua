@@ -55,10 +55,9 @@ ZC_PREFLIGHT_START = {
 ZC_COLD_AND_DARK = {
 	[0] = {["lefttext"] = "OVERHEAD TOP", ["timerincr"] = 1,
 		["actions"] = function ()
-			set("laminar/B738/toggle_switch/irs_left",0)
-			set("laminar/B738/toggle_switch/irs_right",0)
-			set("laminar/B738/toggle_switch/cockpit_dome_pos",0)
-			command_once("axp/commands/autoclose_all_doors")
+			zc_acf_irs_mode(0,0)
+			zc_acf_external_doors(0,0)
+			zc_acf_cockpit_light_mode(0)
 		end
 	}, 
 	[1] = {["lefttext"] = "OVERHEAD COLUMN 1", ["timerincr"] = 1,
@@ -103,13 +102,8 @@ ZC_COLD_AND_DARK = {
 	}, 
 	[3] = {["lefttext"] = "OVERHEAD COLUMN 1", ["timerincr"] = 1,
 		["actions"] = function ()
-			set("laminar/B738/fuel/fuel_tank_pos_ctr1",0)
-			set("laminar/B738/fuel/fuel_tank_pos_ctr2",0)
-			set("laminar/B738/fuel/fuel_tank_pos_lft1",0)
-			set("laminar/B738/fuel/fuel_tank_pos_lft2",0)
-			set("laminar/B738/fuel/fuel_tank_pos_rgt1",0)
-			set("laminar/B738/fuel/fuel_tank_pos_rgt2",0)
-			set("laminar/B738/fuel/cross_feed_valve",0)
+			zc_acf_fuel_pumps_onoff(0,0)
+			zc_acf_fuel_xfeed_mode(0)
 		end
 	}, 		
 	[4] = {["lefttext"] = "OVERHEAD COLUMN 2", ["timerincr"] = 1,
@@ -127,9 +121,7 @@ ZC_COLD_AND_DARK = {
 		["actions"] = function ()
 			set("laminar/B738/toggle_switch/cab_util_pos",0)
 			set("laminar/B738/toggle_switch/ife_pass_seat_pos",0)
-			if get("737u/doors/L1") ~= 1 then
-				command_once("laminar/B738/door/fwd_L_toggle")
-			end
+			zc_acf_external_doors(1,1)
 		end
 	}, 
 	[6] = {["lefttext"] = "OVERHEAD COLUMN 2", ["timerincr"] = 1,
@@ -181,8 +173,8 @@ ZC_COLD_AND_DARK = {
 			command_once("laminar/B738/knob/left_wiper_dn")
 			command_once("laminar/B738/toggle_switch/gen2_dn")
 			command_once("laminar/B738/toggle_switch/gen1_dn")
-			if get("laminar/B738/airstairs_hide") == 1 and ZC_BRIEF_DEP["depgatestand"] > 1 then
-				command_once("laminar/B738/airstairs_toggle")
+			if ZC_BRIEF_DEP["depgatestand"] > 1 then
+				zc_acf_airstair_onoff(1)
 			end
 		end
 	},                                                  
@@ -468,37 +460,37 @@ ZC_POWER_UP_PROC = {
 	[16] = {["lefttext"] = "FO: CONFIGURE FUEL PUMPS", ["timerincr"] = 1,
 		["actions"] = function ()
 			command_end("laminar/B738/push_button/cargo_fire_test_push")
-			set("laminar/B738/fuel/fuel_tank_pos_ctr1",0)
+			zc_acf_fuel_pumps_onoff(5,0)
 		end
 	}, 
 	[17] = {["lefttext"] = "FO: CONFIGURE FUEL PUMPS", ["timerincr"] = 1,
 		["actions"] = function ()
-				set("laminar/B738/fuel/fuel_tank_pos_ctr2",0)
+			zc_acf_fuel_pumps_onoff(6,0)
 		end
 	}, 
 	[18] = {["lefttext"] = "FO: CONFIGURE FUEL PUMPS", ["timerincr"] = 1,
 		["actions"] = function ()
-			set("laminar/B738/fuel/fuel_tank_pos_lft1",0)
+			zc_acf_fuel_pumps_onoff(1,0)
 		end
 	}, 
 	[19] = {["lefttext"] = "FO: CONFIGURE FUEL PUMPS", ["timerincr"] = 1,
 		["actions"] = function ()
-			set("laminar/B738/fuel/fuel_tank_pos_lft2",0)
+			zc_acf_fuel_pumps_onoff(2,0)
 		end
 	}, 
 	[20] = {["lefttext"] = "FO: CONFIGURE FUEL PUMPS", ["timerincr"] = 1,
 		["actions"] = function ()
-			set("laminar/B738/fuel/fuel_tank_pos_rgt1",0)
+			zc_acf_fuel_pumps_onoff(3,0)
 		end
 	}, 
 	[21] = {["lefttext"] = "FO: CONFIGURE FUEL PUMPS", ["timerincr"] = 1,
 		["actions"] = function ()
-			set("laminar/B738/fuel/fuel_tank_pos_rgt2",0)
+			zc_acf_fuel_pumps_onoff(4,0)
 		end
 	}, 
 	[22] = {["lefttext"] = "FO: CONFIGURE FUEL PUMPS", ["timerincr"] = 1,
 		["actions"] = function ()
-			set("laminar/B738/fuel/cross_feed_valve",0)
+			zc_acf_fuel_xfeed_mode(0)
 		end
 	}, 
 	-- OTHER SETTINGS
@@ -519,32 +511,32 @@ ZC_POWER_UP_PROC = {
 	}, 
 	[25] = {["lefttext"] = "CAPT: IRSs OFF, WAIT, THEN ON", ["timerincr"] = 1,
 		["actions"] = function ()
-			set("laminar/B738/toggle_switch/irs_left",0)
+			zc_acf_irs_mode(1,0)
 		end
 	}, 
 	[26] = {["lefttext"] = "CAPT: IRSs OFF, WAIT, THEN ON", ["timerincr"] = 4,
 		["actions"] = function ()
-			set("laminar/B738/toggle_switch/irs_right",0)
+			zc_acf_irs_mode(2,0)
 		end
 	}, 
 	[27] = {["lefttext"] = "CAPT: IRSs OFF, WAIT, THEN ON", ["timerincr"] = 1,
 		["actions"] = function ()
-			command_once("laminar/B738/toggle_switch/irs_L_right")
+			zc_acf_irs_mode(1,1)
 		end
 	}, 
 	[28] = {["lefttext"] = "CAPT: IRSs OFF, WAIT, THEN ON", ["timerincr"] = 1,
 		["actions"] = function ()
-			command_once("laminar/B738/toggle_switch/irs_L_right")
+			zc_acf_irs_mode(1,2)
 		end
 	}, 
 	[29] = {["lefttext"] = "CAPT: IRSs OFF, WAIT, THEN ON", ["timerincr"] = 1,
 		["actions"] = function ()
-			command_once("laminar/B738/toggle_switch/irs_R_right")
+			zc_acf_irs_mode(2,1)
 		end
 	}, 
 	[30] = {["lefttext"] = "CAPT: IRSs OFF, WAIT, THEN ON", ["timerincr"] = 1,
 		["actions"] = function ()
-			command_once("laminar/B738/toggle_switch/irs_R_right")
+			zc_acf_irs_mode(2,2)
 		end
 	}, 
 	[31] = {["lefttext"] = "CAPT: MCP - IAS TO V2", ["timerincr"] = 1,
@@ -571,10 +563,9 @@ ZC_POWER_UP_PROC = {
 ZC_TURN_AROUND_STATE = {
 	[0] = {["lefttext"] = "OVERHEAD TOP", ["timerincr"] = 1,
 		["actions"] = function ()
-			set("laminar/B738/toggle_switch/irs_left",0)
-			set("laminar/B738/toggle_switch/irs_right",0)
-			set("laminar/B738/toggle_switch/cockpit_dome_pos",1)
-			command_once("axp/commands/autoclose_all_doors")
+			zc_acf_irs_mode(0,0)
+			zc_acf_external_doors(0,0)
+			zc_acf_cockpit_light_mode(1)
 			command_once("laminar/B738/tab/home")
 			command_once("laminar/B738/tab/right")				
 			command_once("laminar/B738/tab/menu2")				
@@ -623,13 +614,8 @@ ZC_TURN_AROUND_STATE = {
 	}, 
 	[3] = {["lefttext"] = "OVERHEAD COLUMN 1", ["timerincr"] = 1,
 		["actions"] = function ()
-			set("laminar/B738/fuel/fuel_tank_pos_ctr1",0)
-			set("laminar/B738/fuel/fuel_tank_pos_ctr2",0)
-			set("laminar/B738/fuel/fuel_tank_pos_lft1",0)
-			set("laminar/B738/fuel/fuel_tank_pos_lft2",0)
-			set("laminar/B738/fuel/fuel_tank_pos_rgt1",0)
-			set("laminar/B738/fuel/fuel_tank_pos_rgt2",0)
-			set("laminar/B738/fuel/cross_feed_valve",0)
+			zc_acf_fuel_pumps_onoff(0,0)
+			zc_acf_fuel_xfeed_mode(0)
 		end
 	}, 		
 	-- GROUND POWER ON
@@ -656,9 +642,7 @@ ZC_TURN_AROUND_STATE = {
 			if get_zc_config("apuinit") == false and get("laminar/B738/gpu_available") == 0 then
 				command_once("laminar/B738/tab/menu1")
 			end
-			if get("737u/doors/L1") ~= 1 then
-				command_once("laminar/B738/door/fwd_L_toggle")
-			end
+			zc_acf_external_doors(1,1)
 		end
 	},
 	[7] = {["lefttext"] = "GROUND POWER -- ON - OPTIONAL", ["timerincr"] = 1,
@@ -685,15 +669,11 @@ ZC_TURN_AROUND_STATE = {
 			if get_zc_config("apuinit") then
 				command_begin("laminar/B738/spring_toggle_switch/APU_start_pos_dn")
 			end
-			if get("laminar/B738/airstairs_hide") == 1 and ZC_BRIEF_DEP["depgatestand"] > 1 then
-				command_once("laminar/B738/airstairs_toggle")
+			if ZC_BRIEF_DEP["depgatestand"] > 1 then
+				zc_acf_airstair_onoff(1)
 			end
-			if get("737u/doors/aft_Cargo") == 0 then
-				command_once("laminar/B738/door/aft_cargo_toggle")
-			end
-			if get("737u/doors/Fwd_Cargo") == 0 then
-				command_once("laminar/B738/door/fwd_cargo_toggle")
-			end
+			zc_acf_external_doors(2,1)
+			zc_acf_external_doors(3,1)
 		end
 	}, 
 	[10] = {["lefttext"] = "APU START - OPTIONAL", ["timerincr"] = 1,
@@ -909,14 +889,12 @@ ZC_TURN_AROUND_STATE = {
 	},
 	[30] = {["lefttext"] = "IRSs ON", ["timerincr"] = 1,
 		["actions"] = function ()
-			command_once("laminar/B738/toggle_switch/irs_L_right")
-			command_once("laminar/B738/toggle_switch/irs_R_right")
+			zc_acf_irs_mode(0,1)
 		end
 	}, 
 	[31] = {["lefttext"] = "IRSs ON", ["timerincr"] = 1,
 		["actions"] = function ()
-			command_once("laminar/B738/toggle_switch/irs_L_right")
-			command_once("laminar/B738/toggle_switch/irs_R_right")
+			zc_acf_irs_mode(0,2)
 		end
 	}, 
 	[32] = {["lefttext"] = "CAPT: MCP - IAS TO V2", ["timerincr"] = 1,
@@ -945,7 +923,7 @@ ZC_PRE_FLIGHT_PROC = {
 	[1] = {["lefttext"] = "CAPT: SET UP COCKPIT LIGHTING AS REQD", ["timerincr"] = 1,
 		["actions"] = function ()
 			if get("sim/private/stats/skyc/sun_amb_b") == 0 then
-				set("laminar/B738/toggle_switch/cockpit_dome_pos",1)
+				zc_acf_cockpit_light_mode(1)
 			end
 		end
 	}, 
@@ -1324,37 +1302,37 @@ ZC_PRE_FLIGHT_PROC = {
 	}, 		
 	[57] = {["lefttext"] = "CAPT: FUEL PANEL SET", ["timerincr"] = 1,
 		["actions"] = function ()
-			set("laminar/B738/fuel/fuel_tank_pos_ctr1",0)
+			zc_acf_fuel_pumps_onoff(5,0)
 		end
 	}, 
 	[58] = {["lefttext"] = "CAPT: FUEL PANEL SET", ["timerincr"] = 1,
 		["actions"] = function ()
-			set("laminar/B738/fuel/fuel_tank_pos_ctr2",0)
+			zc_acf_fuel_pumps_onoff(6,0)
 		end
 	}, 
 	[59] = {["lefttext"] = "CAPT: FUEL PANEL SET", ["timerincr"] = 1,
 		["actions"] = function ()
-			set("laminar/B738/fuel/fuel_tank_pos_lft1",1)
+			zc_acf_fuel_pumps_onoff(1,0)
 		end
 	}, 
 	[60] = {["lefttext"] = "CAPT: FUEL PANEL SET", ["timerincr"] = 1,
 		["actions"] = function ()
-			set("laminar/B738/fuel/fuel_tank_pos_lft2",0)
+			zc_acf_fuel_pumps_onoff(2,0)
 		end
 	}, 
 	[61] = {["lefttext"] = "CAPT: FUEL PANEL SET", ["timerincr"] = 1,
 		["actions"] = function ()
-			set("laminar/B738/fuel/fuel_tank_pos_rgt1",0)
+			zc_acf_fuel_pumps_onoff(3,0)
 		end
 	}, 
 	[62] = {["lefttext"] = "CAPT: FUEL PANEL SET", ["timerincr"] = 1,
 		["actions"] = function ()
-			set("laminar/B738/fuel/fuel_tank_pos_rgt2",0)
+			zc_acf_fuel_pumps_onoff(4,0)
 		end
 	}, 
 	[63] = {["lefttext"] = "CAPT: FUEL PANEL SET", ["timerincr"] = 1,
 		["actions"] = function ()
-			set("laminar/B738/fuel/cross_feed_valve",0)
+			zc_acf_fuel_xfeed_mode(0)
 		end
 	}, 
 	[64] = {["lefttext"] = "FO: AUTOBRAKE RTO", ["timerincr"] = 1,
@@ -1834,10 +1812,8 @@ ZC_BEFORE_START_PROC = {
 	},
 	[2] = {["lefttext"] = "CLOSE EXTERNAL DOORS",["timerincr"] = 1,
 		["actions"] = function ()
-			if get("laminar/B738/airstairs_hide") ~= 1 then
-				command_once("laminar/B738/airstairs_toggle")
-			end
-			command_once("axp/commands/autoclose_all_doors")
+			zc_acf_airstair_onoff(0)
+			zc_acf_external_doors(0,0)
 		end
 	},
 	[3] = {["lefttext"] = "CAPT: SET STAB TRIM ", ["timerincr"] = 5,
@@ -1849,19 +1825,14 @@ ZC_BEFORE_START_PROC = {
 		["actions"] = function ()
 			set("sim/cockpit2/controls/rudder_trim",0)
 			set("sim/cockpit2/controls/aileron_trim",0)
-			command_once("axp/commands/autoclose_all_doors")
 		end
 	},
 	[5] = {["lefttext"] = "FO: SET FUEL PUMPS", ["timerincr"] = 1,
 		["actions"] = function ()
-			set("laminar/B738/fuel/fuel_tank_pos_lft1",1)
-			set("laminar/B738/fuel/fuel_tank_pos_lft2",1)
-			set("laminar/B738/fuel/fuel_tank_pos_rgt1",1)
-			set("laminar/B738/fuel/fuel_tank_pos_rgt2",1)
-			set("laminar/B738/air/isolation_valve_pos",1)
-			if get("laminar/B738/fuel/center_tank_kgs") >  100 then
-				set("laminar/B738/fuel/fuel_tank_pos_ctr1",1)
-				set("laminar/B738/fuel/fuel_tank_pos_ctr2",1)
+			zc_acf_fuel_pumps_onoff(0,1)
+			if get("laminar/B738/fuel/center_tank_kgs") <  100 then
+				zc_acf_fuel_pumps_onoff(5,0)
+				zc_acf_fuel_pumps_onoff(6,0)
 			end
 		end
 	},
@@ -1960,14 +1931,10 @@ ZC_BEFORE_START_CHECKLIST = {
 					command_once("laminar/B738/toggle_switch/flt_dk_door_open")
 				end
 				-- fuel tanks
-				set("laminar/B738/fuel/fuel_tank_pos_lft1",1)
-				set("laminar/B738/fuel/fuel_tank_pos_lft2",1)
-				set("laminar/B738/fuel/fuel_tank_pos_rgt1",1)
-				set("laminar/B738/fuel/fuel_tank_pos_rgt2",1)
-				set("laminar/B738/air/isolation_valve_pos",1)
-				if get("laminar/B738/fuel/center_tank_kgs") >  100 then
-					set("laminar/B738/fuel/fuel_tank_pos_ctr1",1)
-					set("laminar/B738/fuel/fuel_tank_pos_ctr2",1)
+				zc_acf_fuel_pumps_onoff(0,1)
+				if get("laminar/B738/fuel/center_tank_kgs") <  100 then
+					zc_acf_fuel_pumps_onoff(5,0)
+					zc_acf_fuel_pumps_onoff(6,0)
 				end
 				-- seat belts
 				command_once("laminar/B738/toggle_switch/seatbelt_sign_dn")
@@ -3696,32 +3663,32 @@ ZC_SHUTDOWN_PROC = {
 	},
 	[6] = {["lefttext"] = "FO: CONFIGURE FUEL PUMPS", ["timerincr"] = 1,
 		["actions"] = function ()
-			set("laminar/B738/fuel/fuel_tank_pos_ctr2",0)
+			zc_acf_fuel_pumps_onoff(5,0)
 		end
 	}, 
 	[7] = {["lefttext"] = "FO: CONFIGURE FUEL PUMPS", ["timerincr"] = 1,
 		["actions"] = function ()
-			set("laminar/B738/fuel/fuel_tank_pos_lft1",1)
+			zc_acf_fuel_pumps_onoff(1,1)
 		end
 	}, 
 	[8] = {["lefttext"] = "FO: CONFIGURE FUEL PUMPS", ["timerincr"] = 1,
 		["actions"] = function ()
-			set("laminar/B738/fuel/fuel_tank_pos_lft2",0)
+			zc_acf_fuel_pumps_onoff(2,0)
 		end
 	}, 
 	[9] = {["lefttext"] = "FO: CONFIGURE FUEL PUMPS", ["timerincr"] = 1,
 		["actions"] = function ()
-		set("laminar/B738/fuel/fuel_tank_pos_rgt1",0)
+			zc_acf_fuel_pumps_onoff(3,0)
 		end
 	}, 
 	[10] = {["lefttext"] = "FO: CONFIGURE FUEL PUMPS", ["timerincr"] = 1,
 		["actions"] = function ()
-			set("laminar/B738/fuel/fuel_tank_pos_rgt2",0)
+			zc_acf_fuel_pumps_onoff(4,0)
 		end
 	}, 
 	[11] = {["lefttext"] = "FO: CONFIGURE FUEL PUMPS", ["timerincr"] = 1,
 		["actions"] = function ()
-			set("laminar/B738/fuel/cross_feed_valve",0)
+			zc_acf_fuel_xfeed_mode(0)
 		end
 	}, 
 	[12] = {["lefttext"] = "FO: WING & ENGINE ANTIICE -- OFF", ["timerincr"] = 2,
@@ -3771,18 +3738,12 @@ ZC_SHUTDOWN_PROC = {
 	},
 	[19] = {["lefttext"] = "DOORS", ["timerincr"] = 1,
 		["actions"] = function ()
-			if get("laminar/B738/airstairs_hide") == 1 and ZC_BRIEF_DEP["depgatestand"] > 1 then
-				command_once("laminar/B738/airstairs_toggle")
+			if ZC_BRIEF_DEP["depgatestand"] > 1 then
+				zc_acf_airstair_onoff(1)
 			end
-			if get("737u/doors/aft_Cargo") == 0 then
-				command_once("laminar/B738/door/aft_cargo_toggle")
-			end
-			if get("737u/doors/Fwd_Cargo") == 0 then
-				command_once("laminar/B738/door/fwd_cargo_toggle")
-			end
-			if get("737u/doors/L1") ~= 1 then
-				command_once("laminar/B738/door/fwd_L_toggle")
-			end
+			zc_acf_external_doors(3,1)
+			zc_acf_external_doors(2,1)
+			zc_acf_external_doors(1,1)
 		end
 	},
 	[20] = {["lefttext"] = "FO: RESET ELAPSED TIME", ["timerincr"] = 1,
@@ -3940,8 +3901,7 @@ ZC_SECURING_AIRCRAFT_PROC = {
 	},
 	[3] = {["lefttext"] = "FO: IRS -- OFF", ["timerincr"] = 1,
 		["actions"] = function ()
-			set("laminar/B738/toggle_switch/irs_left",0)
-			set("laminar/B738/toggle_switch/irs_right",0)
+			zc_acf_irs_mode(0,0)
 		end
 	},
 	[4] = {["lefttext"] = "FO: EMERGENCY EXIT LIGHTS -- OFF", ["timerincr"] = 1,
@@ -4735,8 +4695,33 @@ end
 -- function zc_acf_batteries_onoff(onoff)
 
 --- Fuel system
--- function zc_acf_fuel_pumps_onoff(pump,onoff)
--- function zc_acf_fuel_xfeed_onoff(onoff)
+
+-- Fuel pumps 0=all, 1=lft1, 2=lft2, 3=rgt1, 4=rgt2, 5=ctr1, 6=ctr2
+function zc_acf_fuel_pumps_onoff(pump,onoff)
+	if (pump == 0 or pump == 1) then
+		set("laminar/B738/fuel/fuel_tank_pos_lft1",mode)
+	end
+	if (pump == 0 or pump == 2) then
+		set("laminar/B738/fuel/fuel_tank_pos_lft2",mode)
+	end
+	if (pump == 0 or pump == 3) then
+		set("laminar/B738/fuel/fuel_tank_pos_rgt1",mode)
+	end
+	if (pump == 0 or pump == 4) then
+		set("laminar/B738/fuel/fuel_tank_pos_rgt2",mode)
+	end
+	if (pump == 0 or pump == 5) then
+		set("laminar/B738/fuel/fuel_tank_pos_ctr1",mode)
+	end
+	if (pump == 0 or pump == 6) then
+		set("laminar/B738/fuel/fuel_tank_pos_ctr2",mode)
+	end
+end
+
+-- fuel cross feed 0=OFF 1=ON
+function zc_acf_fuel_xfeed_mode(mode)
+	set("laminar/B738/fuel/cross_feed_valve",mode)
+end
 
 --- Hydraulic system
 -- function zc_acf_hyd_pumps_onoff(pump,onoff)
@@ -4774,7 +4759,12 @@ end
 -- function zc_acf_rudder_trim_set(value)
 
 --- LIGHTS
--- function zc_acf_cockpit_light_mode(mode)
+
+-- dome lights 0=off, 1=on
+function zc_acf_cockpit_light_mode(mode)
+	set("laminar/B738/toggle_switch/cockpit_dome_pos",1)
+end
+
 -- function zc_acf_light_strobe_mode(mode)
 -- function zc_acf_light_beacon_onoff(onoff)
 -- function zc_acf_light_wing_onoff(onoff)
@@ -4797,7 +4787,17 @@ end
 -- function zc_acf_mcp_vs_set(vs)
 -- function zc_acf_mcp_cmda_onoff()
 -- function zc_acf_mcp_cmdb_onoff()
--- function zc_acf_irs_onoff(onoff)
+
+-- Set IRS switches 0=OFF, 1=ALIGN, 2=NAV, 3=ATT
+function zc_acf_irs_mode(unit,mode)
+	if (unit == 0 or unit == 1) then
+		set("laminar/B738/toggle_switch/irs_left",mode)
+	end
+	if (unit == 0 or unit == 2) then
+		set("laminar/B738/toggle_switch/irs_right",mode)
+	endif
+end
+
 -- function zc_acf_xpdr_mode(mode)
 -- function zc_acf_xpdr_code_set(code)
 -- function zc_acf_et_timer_reset()
@@ -4829,8 +4829,58 @@ end
 
 
 --- Doors and external items
--- function zc_acf_external_doors(openclose)
--- function zc_acf_airstair_onoff(onoff)
+
+-- door 0=ALL, 1=main, 2=cargof, 3=cargor 
+function zc_acf_external_doors(door,openclose)
+	if door == 0 or door == 1 then
+		if (openclose == 1) then
+			if get("737u/doors/L1") ~= 1 then
+				command_once("laminar/B738/door/fwd_L_toggle")
+			end
+		else
+			if get("737u/doors/L1") == 1 then
+				command_once("laminar/B738/door/fwd_L_toggle")
+			end
+		end
+	end
+	if door == 0 or door == 2 then
+		if (openclose == 1) then
+			if get("737u/doors/Fwd_Cargo") == 0 then
+				command_once("laminar/B738/door/fwd_cargo_toggle")
+			end			
+		else
+			if get("737u/doors/Fwd_Cargo") == 1 then
+				command_once("laminar/B738/door/fwd_cargo_toggle")
+			end			
+		end
+	end
+	if door == 0 or door == 3 then
+		if (openclose == 1) then
+			if get("737u/doors/aft_Cargo") == 0 then
+				command_once("laminar/B738/door/aft_cargo_toggle")
+			end
+		else
+			if get("737u/doors/aft_Cargo") == 1 then
+				command_once("laminar/B738/door/aft_cargo_toggle")
+			end
+		end
+	end
+
+end
+
+-- Airstair left forward
+function zc_acf_airstair_onoff(onoff)
+	if onoff == 1 then
+		if get("laminar/B738/airstairs_hide") == 1  then
+			command_once("laminar/B738/airstairs_toggle")
+		end
+	else
+		if get("laminar/B738/airstairs_hide") == 0  then
+			command_once("laminar/B738/airstairs_toggle")
+		end
+	end
+end	
+
 -- function zc_acf_cockpit_door(openclose)
 -- function zc_acf_wipers_mode(wiper,mode)
 
@@ -4896,10 +4946,10 @@ function xsp_beaconlights_on()
 	command_once("sim/lights/beacon_lights_on")
 end
 function xsp_domelight_on()
-	set("laminar/B738/toggle_switch/cockpit_dome_pos",1)
+	zc_acf_cockpit_light_mode(1)
 end
 function xsp_domelight_off()
-	set("laminar/B738/toggle_switch/cockpit_dome_pos",0)
+	zc_acf_cockpit_light_mode(0)
 end
 function xsp_navlight_on()
 	command_once("laminar/B738/toggle_switch/position_light_down")
@@ -4976,23 +5026,23 @@ function zc_zibo_save()
 end
 
 -- aircraft specific joystick/key commands
-create_command("kp/xsp/beacon_lights_switch_on",	"B738X Beacon Lights On",	"xsp_beaconlights_on()", "", "")
-create_command("kp/xsp/beacon_lights_switch_off",	"B738X Beacon Lights Off",	"xsp_beaconlights_off()", "", "")
-create_command("kp/xsp/dome_lights_switch_on",		"B738X Dome Lights On",		"xsp_domelight_on()", "", "")
-create_command("kp/xsp/dome_lights_switch_off",		"B738X Dome Lights Off",	"xsp_domelight_off()", "", "")
-create_command("kp/xsp/nav_lights_switch_on",		"B738X Position Lights On",	"xsp_navlight_on()", "", "")
-create_command("kp/xsp/nav_lights_switch_off",		"B738X Position Lights Off","xsp_navlight_off()", "", "")
-create_command("kp/xsp/strobe_lights_switch_on",	"B738X Strobe Lights On",	"xsp_strobelight_on()", "", "")
-create_command("kp/xsp/strobe_lights_switch_off",	"B738X Strobe Lights Off",	"xsp_strobelight_off()", "", "")
-create_command("kp/xsp/taxi_lights_switch_on",		"B738X Taxi Lights On",		"xsp_taxilights_on()", "", "")
-create_command("kp/xsp/taxi_lights_switch_off",		"B738X Taxi Lights Off",	"xsp_taxilights_off()", "", "")
-create_command("kp/xsp/landing_lights_switch_on",	"B738X Landing Lights On",	"xsp_landinglights_on()", "", "")
-create_command("kp/xsp/landing_lights_switch_off",	"B738X Landing Lights Off",	"xsp_landinglights_off()", "", "")
-create_command("kp/xsp/wing_lights_switch_on",		"B738X Wing Lights On",		"xsp_winglights_on()", "", "")
-create_command("kp/xsp/wing_lights_switch_off",		"B738X Wing Lights Off",	"xsp_winglights_off()", "", "")
-create_command("kp/xsp/logo_lights_switch_on",		"B738X Logo Lights On",		"xsp_logolights_on()", "", "")
-create_command("kp/xsp/logo_lights_switch_off",		"B738X Logo Lights Off",	"xsp_logolights_off()", "", "")
-create_command("kp/xsp/toggle_both_fd",				"B738X Toggle Both FD",		"xsp_toggle_fd_both()", "", "")
-create_command("kp/xsp/toggle_both_std",			"B738X Toggle Both STD",	"xsp_toggle_std_both()", "", "")
+create_command("kp/xsp/beacon_lights_switch_on",	"Beacon Lights On",	"xsp_beaconlights_on()", "", "")
+create_command("kp/xsp/beacon_lights_switch_off",	"Beacon Lights Off",	"xsp_beaconlights_off()", "", "")
+create_command("kp/xsp/dome_lights_switch_on",		"Dome Lights On",		"xsp_domelight_on()", "", "")
+create_command("kp/xsp/dome_lights_switch_off",		"Dome Lights Off",	"xsp_domelight_off()", "", "")
+create_command("kp/xsp/nav_lights_switch_on",		"Position Lights On",	"xsp_navlight_on()", "", "")
+create_command("kp/xsp/nav_lights_switch_off",		"Position Lights Off","xsp_navlight_off()", "", "")
+create_command("kp/xsp/strobe_lights_switch_on",	"Strobe Lights On",	"xsp_strobelight_on()", "", "")
+create_command("kp/xsp/strobe_lights_switch_off",	"Strobe Lights Off",	"xsp_strobelight_off()", "", "")
+create_command("kp/xsp/taxi_lights_switch_on",		"Taxi Lights On",		"xsp_taxilights_on()", "", "")
+create_command("kp/xsp/taxi_lights_switch_off",		"Taxi Lights Off",	"xsp_taxilights_off()", "", "")
+create_command("kp/xsp/landing_lights_switch_on",	"Landing Lights On",	"xsp_landinglights_on()", "", "")
+create_command("kp/xsp/landing_lights_switch_off",	"Landing Lights Off",	"xsp_landinglights_off()", "", "")
+create_command("kp/xsp/wing_lights_switch_on",		"Wing Lights On",		"xsp_winglights_on()", "", "")
+create_command("kp/xsp/wing_lights_switch_off",		"Wing Lights Off",	"xsp_winglights_off()", "", "")
+create_command("kp/xsp/logo_lights_switch_on",		"Logo Lights On",		"xsp_logolights_on()", "", "")
+create_command("kp/xsp/logo_lights_switch_off",		"Logo Lights Off",	"xsp_logolights_off()", "", "")
+create_command("kp/xsp/toggle_both_fd",				"Toggle Both FD",		"xsp_toggle_fd_both()", "", "")
+create_command("kp/xsp/toggle_both_std",			"Toggle Both STD",	"xsp_toggle_std_both()", "", "")
 
 do_sometimes("zc_zibo_save()")
