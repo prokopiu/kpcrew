@@ -247,7 +247,7 @@ ZC_COLD_AND_DARK = {
 			set("laminar/B738/air/isolation_valve_pos",2)
 			set("laminar/B738/toggle_switch/bleed_air_1_pos",0)
 			set("laminar/B738/toggle_switch/bleed_air_2_pos",0)
-			set("laminar/B738/toggle_switch/bleed_air_apu_pos",0)
+			zc_acf_apu_bleed_onoff(0)
 			set("sim/cockpit/pressure/max_allowable_altitude",0)
 			set("laminar/B738/pressurization/knobs/landing_alt",0)
 			command_once("laminar/B738/toggle_switch/air_valve_ctrl_left")
@@ -410,19 +410,14 @@ ZC_POWER_UP_PROC = {
 	-- APU ON
 	[9] = {["lefttext"] = "FO: APU START - OPTIONAL", ["timerincr"] = 5,
 		["actions"] = function ()
-			command_once("laminar/B738/spring_toggle_switch/APU_start_pos_dn")
 			if get_zc_config("apuinit") then
-				command_begin("laminar/B738/spring_toggle_switch/APU_start_pos_dn")
+				zc_acf_apu_activate()
 			end
 		end
 	}, 
 	[10] = {["lefttext"] = "FO: APU START - OPTIONAL", ["timerincr"] = 1,
 		["actions"] = function ()
-			if get_zc_config("apuinit") then
-				command_end("laminar/B738/spring_toggle_switch/APU_start_pos_dn")
-			end
-			-- background wait for APU generator
-			ZC_BACKGROUND_PROCS["APUBUSON"].status = 1
+			gLeftText = "----------- OBSOLETE REMOVE"
 		end
 	},
 	-- FIRE TESTS
@@ -665,9 +660,8 @@ ZC_TURN_AROUND_STATE = {
 	-- APU ON
 	[9] = {["lefttext"] = "APU START - OPTIONAL", ["timerincr"] = 4,
 		["actions"] = function ()
-			command_once("laminar/B738/spring_toggle_switch/APU_start_pos_dn")
 			if get_zc_config("apuinit") then
-				command_begin("laminar/B738/spring_toggle_switch/APU_start_pos_dn")
+				zc_acf_apu_activate()
 			end
 			if ZC_BRIEF_DEP["depgatestand"] > 1 then
 				zc_acf_airstair_onoff(1)
@@ -678,10 +672,7 @@ ZC_TURN_AROUND_STATE = {
 	}, 
 	[10] = {["lefttext"] = "APU START - OPTIONAL", ["timerincr"] = 1,
 		["actions"] = function ()
-			if get_zc_config("apuinit") then
-				command_end("laminar/B738/spring_toggle_switch/APU_start_pos_dn")
-			end
-			ZC_BACKGROUND_PROCS["APUBUSON"].status = 1
+			gLeftText = "------- OBSOLETE REMOVE"
 		end
 	},
 	[11] = {["lefttext"] = "OVERHEAD COLUMN 2", ["timerincr"] = 1,
@@ -807,7 +798,7 @@ ZC_TURN_AROUND_STATE = {
 			set("laminar/B738/air/isolation_valve_pos",1)
 			set("laminar/B738/toggle_switch/bleed_air_1_pos",0)
 			set("laminar/B738/toggle_switch/bleed_air_2_pos",0)
-			set("laminar/B738/toggle_switch/bleed_air_apu_pos",0)
+			zc_acf_apu_bleed_onoff(0)
 			set("sim/cockpit/pressure/max_allowable_altitude",0)
 			set("laminar/B738/pressurization/knobs/landing_alt",0)
 			command_once("laminar/B738/toggle_switch/air_valve_ctrl_left")
@@ -1113,14 +1104,13 @@ ZC_PRE_FLIGHT_PROC = {
 			set("laminar/B738/toggle_switch/cab_util_pos",1)
 		end
 	},
-	[31] = {["lefttext"] = "FO: IFE & GALLEY POWER", ["timerincr"] = 3,
+	[31] = {["lefttext"] = "FO: APU ON", ["timerincr"] = 3,
 		["actions"] = function ()
-			command_begin("laminar/B738/spring_toggle_switch/APU_start_pos_dn")
+			zc_acf_apu_activate()
 		end
 	}, 
 	[32] = {["lefttext"] = "FO: EMERGENCY EXIT LIGHTS ARMED", ["timerincr"] = 2,
 		["actions"] = function ()
-			command_end("laminar/B738/spring_toggle_switch/APU_start_pos_dn")
 			if get("laminar/B738/toggle_switch/emer_exit_lights") == 0 then
 				command_once("laminar/B738/toggle_switch/emer_exit_lights_dn")
 			end
@@ -1201,7 +1191,7 @@ ZC_PRE_FLIGHT_PROC = {
 		["actions"] = function ()
 			set("laminar/B738/toggle_switch/bleed_air_1_pos",1)
 			set("laminar/B738/toggle_switch/bleed_air_2_pos",1)
-			set("laminar/B738/toggle_switch/bleed_air_apu_pos",1)
+			zc_acf_apu_bleed_onoff(1)
 		end
 	}, 
 	[46] = {["lefttext"] = "FO: FLT ALT & LAND ALT SET", ["timerincr"] = 1,
@@ -1451,18 +1441,7 @@ ZC_PRE_FLIGHT_PROC = {
 			command_once("laminar/B738/switch/land_lights_ret_right_up")
 		end
 	}, 
-	[82] = {["lefttext"] = "CAPT: APU ON", ["timerincr"] = 2,
-		["actions"] = function ()
-			command_begin("laminar/B738/spring_toggle_switch/APU_start_pos_dn")
-		end
-	}, 
-	[83] = {["lefttext"] = "CAPT: APU SET", ["timerincr"] = 1,
-		["actions"] = function ()
-			command_end("laminar/B738/spring_toggle_switch/APU_start_pos_dn")
-			ZC_BACKGROUND_PROCS["APUBUSON"].status = 1
-		end
-	}, 
-	[84] = {["lefttext"] = "CAPT: APU SET", ["timerincr"] = -1,
+	[82] = {["lefttext"] = "CAPT: APU SET", ["timerincr"] = -1,
 		["actions"] = function ()
 			gLeftText = "PREFLIGHT PROCEDURE FINISHED"
 			speakNoText(0,"READY FOR PREFLIGHT CHECKLIST")
@@ -2322,7 +2301,7 @@ ZC_BEFORE_TAXI_PROC = {
 			set("laminar/B738/air/isolation_valve_pos",1)
 			set("laminar/B738/toggle_switch/bleed_air_1_pos",1)
 			set("laminar/B738/toggle_switch/bleed_air_2_pos",1)
-			set("laminar/B738/toggle_switch/bleed_air_apu_pos",0)
+			zc_acf_apu_bleed_onoff(0)
 			set("laminar/B738/air/l_pack_pos",1)
 			set("laminar/B738/air/r_pack_pos",1)
 		end
@@ -3711,7 +3690,7 @@ ZC_SHUTDOWN_PROC = {
 	},
 	[15] = {["lefttext"] = "FO: APU BLEED -- ON", ["timerincr"] = 1,
 		["actions"] = function ()
-			set("laminar/B738/toggle_switch/bleed_air_apu_pos",1)
+			zc_acf_apu_bleed_onoff(1)
 		end
 	},
 	[16] = {["lefttext"] = "FO: FLIGHT DIRECTORS -- OFF", ["timerincr"] = 1,
@@ -3927,7 +3906,7 @@ ZC_SECURING_AIRCRAFT_PROC = {
 	}, 
 	[7] = {["lefttext"] = "CAPT: APU -- OFF", ["timerincr"] = 15,
 		["actions"] = function ()
-			set("laminar/B738/toggle_switch/bleed_air_apu_pos",0)
+			zc_acf_apu_bleed_onoff(0)
 			command_once("laminar/B738/spring_toggle_switch/APU_start_pos_up")
 		end
 	}, 
@@ -4038,12 +4017,23 @@ ZC_SECURE_CHECKLIST = {
 
 -- Background procedures
 ZC_BACKGROUND_PROCS = {
+	-- hold down APU start switch for 5 seconds
+	["APUSTART"] = {["status"] = 0,
+		["actions"] = function ()
+			command_once("laminar/B738/spring_toggle_switch/APU_start_pos_dn")
+			command_begin("laminar/B738/spring_toggle_switch/APU_start_pos_dn")
+			if (get("sim/cockpit2/clock_timer/hobbs_time_seconds") % 7 == 0) then
+				command_end("laminar/B738/spring_toggle_switch/APU_start_pos_dn")
+				ZC_BACKGROUND_PROCS["APUSTART"].status = 0
+			end
+		end
+	},
 	-- Switches generators to APU when the blue APU light comes on
 	["APUBUSON"] = {["status"] = 0,
 		["actions"] = function ()
 			if get("laminar/B738/electrical/apu_bus_enable") == 1.0 then
-				command_once("laminar/B738/toggle_switch/apu_gen1_dn")
-				command_once("laminar/B738/toggle_switch/apu_gen2_dn")
+				zc_acf_apu_on_bus(0,1)
+				zc_acf_apu_bleed_onoff(1)
 				ZC_BACKGROUND_PROCS["APUBUSON"].status = 0
 			end
 		end
@@ -4680,15 +4670,50 @@ end
 
 -- get flaps position
 -- function zc_get_flap_position()
-
 -- function_get_abrk_setting()
 
 
----- aircraft specific action functions
---- Electric system
--- function zc_acf_apu_start()
--- function zc_acf_apu_stop()
--- function zc_acf_apu_on_bus(onoff)
+--------------------------------- aircraft specific action functions
+----------------- Electric system
+-- Start APU flows full
+
+-- Bring APU completely online
+function zc_acf_apu_activate()
+	if get("sim/cockpit/engine/APU_N1") < 0.1 then
+		zc_acf_apu_start()
+		ZC_BACKGROUND_PROCS["APUBUSON"].status = 1
+	end
+end
+
+function zc_acf_apu_start()
+	zc_acf_apu_stop()
+	ZC_BACKGROUND_PROCS["APUSTART"].status = 1
+end
+
+-- stop APU
+function zc_acf_apu_stop()
+	command_once("laminar/B738/spring_toggle_switch/APU_start_pos_up")
+	command_once("laminar/B738/spring_toggle_switch/APU_start_pos_up")	
+end
+
+-- APU on bus; bus 0=all, 1=left 2=right
+function zc_acf_apu_on_bus(bus, onoff)
+	if bus == 0 or bus == 1 then
+		if onoff == 1 then
+			command_once("laminar/B738/toggle_switch/apu_gen1_dn")
+		else
+			command_once("laminar/B738/toggle_switch/apu_gen1_up")
+		end
+	end
+	if bus == 0 or bus == 2 then
+		if onoff == 1 then
+			command_once("laminar/B738/toggle_switch/apu_gen2_dn")
+		else
+			command_once("laminar/B738/toggle_switch/apu_gen2_up")
+		end
+	end
+end
+
 -- function zc_acf_gpu_start()
 -- function zc_acf_gpu_stop()
 -- function zc_acf_gpu_on_bus(onoff)
@@ -4697,7 +4722,7 @@ end
 --- Fuel system
 
 -- Fuel pumps 0=all, 1=lft1, 2=lft2, 3=rgt1, 4=rgt2, 5=ctr1, 6=ctr2
-function zc_acf_fuel_pumps_onoff(pump,onoff)
+function zc_acf_fuel_pumps_onoff(pump,mode)
 	if (pump == 0 or pump == 1) then
 		set("laminar/B738/fuel/fuel_tank_pos_lft1",mode)
 	end
@@ -4735,7 +4760,12 @@ end
 -- function zc_acf_packs_both_onoff(onoff)
 -- function zc_acf_eng_bleeds_onoff(onoff)
 -- function zc_acf_crossbleed_isol_mode(mode)
--- function zc_acf_apu_bleed_onoff(onoff)
+
+-- APU Bleed air 0=OFF 1=ON
+function zc_acf_apu_bleed_onoff(onoff)
+	set("laminar/B738/toggle_switch/bleed_air_apu_pos",onoff)
+end
+
 -- function zc_acf_temp_control(area,level)
 -- function zc_acf_recirc_fans_onoff(onoff)
 -- function zc_acf_set_landing_altitude(altitude)
@@ -4762,7 +4792,7 @@ end
 
 -- dome lights 0=off, 1=on
 function zc_acf_cockpit_light_mode(mode)
-	set("laminar/B738/toggle_switch/cockpit_dome_pos",1)
+	set("laminar/B738/toggle_switch/cockpit_dome_pos",mode)
 end
 
 -- function zc_acf_light_strobe_mode(mode)
@@ -4795,7 +4825,7 @@ function zc_acf_irs_mode(unit,mode)
 	end
 	if (unit == 0 or unit == 2) then
 		set("laminar/B738/toggle_switch/irs_right",mode)
-	endif
+	end
 end
 
 -- function zc_acf_xpdr_mode(mode)
