@@ -108,13 +108,9 @@ ZC_COLD_AND_DARK = {
 	}, 		
 	[4] = {["lefttext"] = "OVERHEAD COLUMN 2", ["timerincr"] = 1,
 		["actions"] = function ()
-			if get("laminar/B738/button_switch/cover_position",2) == 0 then
-				command_once("laminar/B738/button_switch_cover02")
-			end
 			command_once("sim/electrical/APU_off")
 			command_once("sim/electrical/GPU_off")
-			command_once("sim/electrical/battery_1_off")
-			command_once("laminar/B738/push_button/batt_full_off")
+			zc_acf_batteries_onoff(0)
 		end
 	},     
 	[5] = {["lefttext"] = "OVERHEAD COLUMN 2", ["timerincr"] = 1,
@@ -168,11 +164,8 @@ ZC_COLD_AND_DARK = {
 	},                                                  
 	[10] = {["lefttext"] = "OVERHEAD COLUMN 2", ["timerincr"] = 1,
 		["actions"] = function ()
-			command_once("laminar/B738/knob/left_wiper_dn")
-			command_once("laminar/B738/knob/left_wiper_dn")
-			command_once("laminar/B738/knob/left_wiper_dn")
-			command_once("laminar/B738/toggle_switch/gen2_dn")
-			command_once("laminar/B738/toggle_switch/gen1_dn")
+			zc_acf_wipers_mode(0,0)
+			zc_acf_gen_on_bus(0,0)
 			if ZC_BRIEF_DEP["depgatestand"] > 1 then
 				zc_acf_airstair_onoff(1)
 			end
@@ -181,14 +174,9 @@ ZC_COLD_AND_DARK = {
 	[11] = {["lefttext"] = "OVERHEAD COLUMN 3", ["timerincr"] = 1,
 		["actions"] = function ()
 			set("laminar/B738/electric/panel_brightness",2,0)
-			if get("laminar/B738/button_switch/cover_position",9) == 0 then
-				command_once("laminar/B738/button_switch_cover09")
-			end
 			set("laminar/B738/toggle_switch/eq_cool_exhaust",0)
 			set("laminar/B738/toggle_switch/eq_cool_supply",0)
-			command_once("laminar/B738/push_button/emer_exit_full_off")
-			command_once("laminar/B738/toggle_switch/emer_exit_lights_up")
-			command_once("laminar/B738/toggle_switch/emer_exit_lights_up")
+			zc_acf_emer_lights_mode(0)
 		end
 	},                                                  
 	[12] = {["lefttext"] = "OVERHEAD COLUMN 3", ["timerincr"] = 1,
@@ -196,9 +184,6 @@ ZC_COLD_AND_DARK = {
 			command_once("laminar/B738/toggle_switch/seatbelt_sign_up")
 			command_once("laminar/B738/toggle_switch/seatbelt_sign_up")
 			command_once("laminar/B738/toggle_switch/no_smoking_up")
-			command_once("laminar/B738/knob/right_wiper_dn")
-			command_once("laminar/B738/knob/right_wiper_dn")
-			command_once("laminar/B738/knob/right_wiper_dn")
 		end
 	},                                                  
 	[13] = {["lefttext"] = "OVERHEAD COLUMN 4", ["timerincr"] = 1,
@@ -365,11 +350,7 @@ ZC_POWER_UP_PROC = {
 	-- BATTERY ON
 	[3] = {["lefttext"] = "CAPT: BATTERY -- ON",["timerincr"] = 2,
 		["actions"] = function ()
-			if get("laminar/B738/button_switch/cover_position",2) == 1 then
-				command_once("laminar/B738/button_switch_cover02")
-			end
-			command_once("sim/electrical/battery_1_on")
-			command_once("laminar/B738/switch/battery_dn")
+			zc_acf_batteries_onoff(1)
 		end
 	},
 	-- GROUND POWER ON
@@ -619,7 +600,7 @@ ZC_TURN_AROUND_STATE = {
 			if get("laminar/B738/button_switch/cover_position", 2) == 1 then
 				command_once("laminar/B738/button_switch_cover02")
 			end
-			command_once("sim/electrical/battery_1_on")
+			zc_acf_batteries_onoff(1)
 			if get_zc_config("apuinit") == false and get("laminar/B738/gpu_available") == 0 then
 				command_once("laminar/B738/tab/home")
 			end
@@ -718,28 +699,16 @@ ZC_TURN_AROUND_STATE = {
 	},                                                  
 	[16] = {["lefttext"] = "OVERHEAD COLUMN 2", ["timerincr"] = 1,
 		["actions"] = function ()
-			command_once("laminar/B738/knob/left_wiper_dn")
-			command_once("laminar/B738/knob/left_wiper_dn")
-			command_once("laminar/B738/knob/left_wiper_dn")
-			command_once("laminar/B738/toggle_switch/gen2_dn")
-			command_once("laminar/B738/toggle_switch/gen1_dn")
+			zc_acf_wipers_mode(0,0)
+			zc_acf_gen_on_bus(0,1)
 		end
 	},                                                  
 	[17] = {["lefttext"] = "OVERHEAD COLUMN 3", ["timerincr"] = 1,
 		["actions"] = function ()
 			set("laminar/B738/electric/panel_brightness",2,0)
-			if get("laminar/B738/button_switch/cover_position", 9) == 1 then
-				command_once("laminar/B738/button_switch_cover09")
-			end
 			set("laminar/B738/toggle_switch/eq_cool_exhaust",0)
 			set("laminar/B738/toggle_switch/eq_cool_supply",0)
-			command_once("laminar/B738/push_button/emer_exit_full_off")
-			if get("laminar/B738/toggle_switch/emer_exit_lights") == 0 then
-				command_once("laminar/B738/toggle_switch/emer_exit_lights_dn")
-			end
-			if get("laminar/B738/toggle_switch/emer_exit_lights") == 2 then
-				command_once("laminar/B738/toggle_switch/emer_exit_lights_up")
-			end
+			zc_acf_emer_lights_mode(1)
 		end
 	},                                                  
 	[18] = {["lefttext"] = "OVERHEAD COLUMN 3", ["timerincr"] = 1,
@@ -747,9 +716,6 @@ ZC_TURN_AROUND_STATE = {
 			command_once("laminar/B738/toggle_switch/seatbelt_sign_dn")
 			command_once("laminar/B738/toggle_switch/seatbelt_sign_dn")
 			command_once("laminar/B738/toggle_switch/no_smoking_dn")
-			command_once("laminar/B738/knob/right_wiper_dn")
-			command_once("laminar/B738/knob/right_wiper_dn")
-			command_once("laminar/B738/knob/right_wiper_dn")
 		end
 	},                                                  
 	[19] = {["lefttext"] = "OVERHEAD COLUMN 4", ["timerincr"] = 1,
@@ -1111,15 +1077,7 @@ ZC_PRE_FLIGHT_PROC = {
 	}, 
 	[32] = {["lefttext"] = "FO: EMERGENCY EXIT LIGHTS ARMED", ["timerincr"] = 2,
 		["actions"] = function ()
-			if get("laminar/B738/toggle_switch/emer_exit_lights") == 0 then
-				command_once("laminar/B738/toggle_switch/emer_exit_lights_dn")
-			end
-			if get("laminar/B738/toggle_switch/emer_exit_lights") == 2 then
-				command_once("laminar/B738/toggle_switch/emer_exit_lights_up")
-			end
-			if get("laminar/B738/button_switch/cover_position",9) > 0 then
-				command_once("laminar/B738/button_switch_cover09")
-			end
+			zc_acf_emer_lights_mode(1)
 		end
 	}, 
 	[33] = {["lefttext"] = "FO: CABIN SIGNS", ["timerincr"] = 1,
@@ -2286,8 +2244,7 @@ ZC_BEFORE_TAXI_PROC = {
 	},
 	[1] = {["lefttext"] = "FO: GENERATORS -- ON", ["timerincr"] = 1,
 		["actions"] = function ()
-			command_once("laminar/B738/toggle_switch/gen2_dn")
-			command_once("laminar/B738/toggle_switch/gen1_dn")
+			zc_acf_gen_on_bus(0,1)
 		end
 	},
 	[2] = {["lefttext"] = "FO: PROBE HEAT -- ON", ["timerincr"] = 1,
@@ -2377,8 +2334,7 @@ ZC_BEFORE_TAXI_CHECKLIST = {
 			if get_zc_config("easy") then
 				setchecklist(4)
 				-- generator
-				command_once("laminar/B738/toggle_switch/gen2_dn")
-				command_once("laminar/B738/toggle_switch/gen1_dn")
+				zc_acf_gen_on_bus(0,1)
 				-- Probe heat
 				set("laminar/B738/toggle_switch/capt_probes_pos",1)
 				set("laminar/B738/toggle_switch/fo_probes_pos",1)
@@ -3885,9 +3841,7 @@ ZC_SECURING_AIRCRAFT_PROC = {
 	},
 	[4] = {["lefttext"] = "FO: EMERGENCY EXIT LIGHTS -- OFF", ["timerincr"] = 1,
 		["actions"] = function ()
-			command_once("laminar/B738/push_button/emer_exit_full_off")
-			command_once("laminar/B738/toggle_switch/emer_exit_lights_up")
-			command_once("laminar/B738/toggle_switch/emer_exit_lights_up")
+			zc_acf_emer_lights_mode(0)
 		end
 	},
 	[5] = {["lefttext"] = "FO: WINDOW HEAT -- OFF", ["timerincr"] = 1,
@@ -3914,8 +3868,7 @@ ZC_SECURING_AIRCRAFT_PROC = {
 		["actions"] = function ()
 			command_once("sim/electrical/APU_off")
 			command_once("sim/electrical/GPU_off")
-			command_once("sim/electrical/battery_1_off")
-			command_once("laminar/B738/push_button/batt_full_off")
+			zc_acf_batteries_onoff(0)
 		end
 	}, 
 	[9] = {["lefttext"] = "CAPT: POSITION LIGHT -- OFF", ["timerincr"] = 1,
@@ -4716,8 +4669,42 @@ end
 
 -- function zc_acf_gpu_start()
 -- function zc_acf_gpu_stop()
--- function zc_acf_gpu_on_bus(onoff)
--- function zc_acf_batteries_onoff(onoff)
+
+-- GENerators 0=ALL,1=GEN1,2=GEN2; 0=OFF,1=ON Bus
+function zc_acf_gen_on_bus(gen, onoff)
+	if gen == 0 or gen == 1 then
+		if onoff == 1 then
+			command_once("laminar/B738/toggle_switch/gen1_dn")
+		else
+			command_once("laminar/B738/toggle_switch/gen1_up")
+		end
+	end
+	if gen == 0 or gen == 2 then
+		if onoff == 1 then
+			command_once("laminar/B738/toggle_switch/gen2_dn")
+		else
+			command_once("laminar/B738/toggle_switch/gen2_up")
+		end
+	end
+end
+
+-- Battery 0=OFF 1=ON	
+function zc_acf_batteries_onoff(onoff)
+
+	if onoff == 1 then
+		if get("laminar/B738/button_switch/cover_position",2) == 1 then
+			command_once("laminar/B738/button_switch_cover02")
+		end
+		command_once("sim/electrical/battery_1_on")
+		command_once("laminar/B738/switch/battery_dn")
+	else
+		if get("laminar/B738/button_switch/cover_position",2) == 0 then
+			command_once("laminar/B738/button_switch_cover02")
+		end
+		command_once("sim/electrical/battery_1_off")
+		command_once("laminar/B738/push_button/batt_full_off")
+	end
+end
 
 --- Fuel system
 
@@ -4804,7 +4791,38 @@ end
 -- function zc_acf_light_taxi_mode(mode)
 -- function zc_acf_light_landing_mode(mode)
 -- function zc_acf_panel_brightness(value)
--- function zc_acf_emer_lights_onoff(onoff)
+
+-- emergency lights 0=OFF,1=ARMED,2=ON
+function zc_acf_emer_lights_mode(mode)
+	if mode == 0 then 
+		command_once("laminar/B738/push_button/emer_exit_full_off")
+		command_once("laminar/B738/toggle_switch/emer_exit_lights_up")
+		command_once("laminar/B738/toggle_switch/emer_exit_lights_up")
+		if get("laminar/B738/button_switch/cover_position",9) == 0 then
+			command_once("laminar/B738/button_switch_cover09")
+		end
+	end
+	if mode == 1 then 
+		if get("laminar/B738/button_switch/cover_position", 9) == 1 then
+			command_once("laminar/B738/button_switch_cover09")
+		end
+		command_once("laminar/B738/push_button/emer_exit_full_off")
+		if get("laminar/B738/toggle_switch/emer_exit_lights") == 0 then
+			command_once("laminar/B738/toggle_switch/emer_exit_lights_dn")
+		end
+		if get("laminar/B738/toggle_switch/emer_exit_lights") == 2 then
+			command_once("laminar/B738/toggle_switch/emer_exit_lights_up")
+		end
+	end
+	if mode == 2 then 
+		if get("laminar/B738/button_switch/cover_position",9) == 0 then
+			command_once("laminar/B738/button_switch_cover09")
+		end
+		command_once("laminar/B738/toggle_switch/emer_exit_lights_dn")
+		command_once("laminar/B738/toggle_switch/emer_exit_lights_dn")
+	end
+end
+
 -- function zc_acf_light_test(onoff)
 -- function zc_acf_seatbelt_onoff(onoff)
 -- function zc_acf_no_smoking_onoff(onoff)
@@ -4912,7 +4930,37 @@ function zc_acf_airstair_onoff(onoff)
 end	
 
 -- function zc_acf_cockpit_door(openclose)
--- function zc_acf_wipers_mode(wiper,mode)
+-- Wipers 0=ALL;1=left,2=right; 0=park,1=int,2=low,3=high
+function zc_acf_wipers_mode(wiper,mode)
+	if wiper == 0 or wiper == 1 then
+		command_once("laminar/B738/knob/left_wiper_dn")
+		command_once("laminar/B738/knob/left_wiper_dn")
+		command_once("laminar/B738/knob/left_wiper_dn")
+		if mode == 1 then
+			command_once("laminar/B738/knob/left_wiper_up")
+		end
+		if mode > 1 then
+			command_once("laminar/B738/knob/left_wiper_up")
+		end
+		if mode > 2 then
+			command_once("laminar/B738/knob/left_wiper_up")
+		end
+	end
+	if wiper == 0 or wiper == 1 then
+		command_once("laminar/B738/knob/right_wiper_dn")
+		command_once("laminar/B738/knob/right_wiper_dn")
+		command_once("laminar/B738/knob/right_wiper_dn")
+		if mode == 1 then
+			command_once("laminar/B738/knob/right_wiper_up")
+		end
+		if mode > 1 then
+			command_once("laminar/B738/knob/right_wiper_up")
+		end
+		if mode > 2 then
+			command_once("laminar/B738/knob/right_wiper_up")
+		end
+	end
+end
 
 --- EFIS
 -- function zc_acf_upper_efis_mode(mode)
