@@ -247,8 +247,7 @@ ZC_COLD_AND_DARK = {
 			command_once("laminar/B738/switch/land_lights_ret_left_up")
 			command_once("laminar/B738/switch/land_lights_ret_right_up")
 			command_once("laminar/B738/switch/land_lights_ret_right_up")
-			command_once("laminar/B738/switch/rwy_light_left_off")
-			command_once("laminar/B738/switch/rwy_light_right_off")
+			zc_acf_light_rwyto_onoff(0)
 		end
 	},                     
 	[20] = {["lefttext"] = "LIGHTS", ["timerincr"] = 1,
@@ -273,17 +272,10 @@ ZC_COLD_AND_DARK = {
 	},                     
 	[22] = {["lefttext"] = "LIGHTS", ["timerincr"] = 1,
 		["actions"] = function ()
-			set("laminar/B738/switch/land_lights_left_pos",0)
-			set("laminar/B738/switch/land_lights_right_pos",0)
-			if get("laminar/B738/toggle_switch/position_light_pos") == 1 then
-				command_once("laminar/B738/toggle_switch/position_light_down")
-			end
-			if get("laminar/B738/toggle_switch/position_light_pos") == 0 then
-				command_once("laminar/B738/toggle_switch/position_light_down")
-			end
-			command_once("sim/lights/beacon_lights_off")
-			command_once("laminar/B738/switch/logo_light_off")
-			command_once("laminar/B738/toggle_switch/position_light_off")
+			zc_acf_light_rwyto_onoff(0)
+			zc_acf_light_nav_onoff(0)
+			zc_acf_light_beacon_onoff(0)
+			zc_acf_light_logo_onoff(0)
 		end
 	},
 	[23] = {["lefttext"] = "OTHER", ["timerincr"] = 1,
@@ -478,8 +470,7 @@ ZC_POWER_UP_PROC = {
 	}, 
 	[24] = {["lefttext"] = "FO: POSITION & WING LIGHTS", ["timerincr"] = 1,
 		["actions"] = function ()
-			command_once("laminar/B738/toggle_switch/position_light_down")
-			command_once("laminar/B738/toggle_switch/position_light_down")
+			zc_acf_light_nav_onoff(1)
 			if get("sim/private/stats/skyc/sun_amb_b") == 0 then
 				command_end("laminar/B738/switch/wing_light_on")
 			end
@@ -779,8 +770,7 @@ ZC_TURN_AROUND_STATE = {
 			command_once("laminar/B738/switch/land_lights_ret_left_up")
 			command_once("laminar/B738/switch/land_lights_ret_right_up")
 			command_once("laminar/B738/switch/land_lights_ret_right_up")
-			command_once("laminar/B738/switch/rwy_light_left_off")
-			command_once("laminar/B738/switch/rwy_light_right_off")
+			zc_acf_light_rwyto_onoff(0)
 		end
 	},                     
 	[26] = {["lefttext"] = "LIGHTS", ["timerincr"] = 1,
@@ -807,13 +797,9 @@ ZC_TURN_AROUND_STATE = {
 		["actions"] = function ()
 			set("laminar/B738/switch/land_lights_left_pos",0)
 			set("laminar/B738/switch/land_lights_right_pos",0)
-			if get("laminar/B738/toggle_switch/position_light_pos") == 1 then 
-				command_once("laminar/B738/toggle_switch/position_light_down")
-				command_once("laminar/B738/toggle_switch/position_light_down")
-			end
-			command_once("sim/lights/beacon_lights_off")
-			command_once("laminar/B738/switch/logo_light_off")
-			command_once("laminar/B738/toggle_switch/position_light_on")
+			zc_acf_light_nav_onoff(1)
+			zc_acf_light_beacon_onoff(0)
+			zc_acf_light_logo_onoff(0)
 		end
 	},
 	[29] = {["lefttext"] = "OTHER", ["timerincr"] = 1,
@@ -1168,7 +1154,7 @@ ZC_PRE_FLIGHT_PROC = {
 		["actions"] = function ()
 			if get("sim/private/stats/skyc/sun_amb_b") == 0 then
 				command_once("laminar/B738/switch/wing_light_on")
-				command_once("laminar/B738/switch/logo_light_on")
+				zc_acf_light_logo_onoff(1)
 			end
 		end
 	}, 
@@ -1333,13 +1319,12 @@ ZC_PRE_FLIGHT_PROC = {
 	}, 
 	[71] = {["lefttext"] = "CAPT: LIGHTING PANEL SET", ["timerincr"] = 1,
 		["actions"] = function ()
-			command_once("laminar/B738/toggle_switch/position_light_down")
-			command_once("laminar/B738/toggle_switch/position_light_down")
+			zc_acf_light_nav_onoff(1)
 		end
 	}, 
 	[72] = {["lefttext"] = "CAPT: LIGHTING PANEL SET", ["timerincr"] = 1,
 		["actions"] = function ()
-			command_once("sim/lights/beacon_lights_off")
+			zc_acf_light_beacon_onoff(0)
 		end
 	}, 
 	[73] = {["lefttext"] = "FO: FIRE TESTS", ["timerincr"] = 3,
@@ -1796,7 +1781,7 @@ ZC_BEFORE_START_PROC = {
 	},
 	[10] = {["lefttext"] = "FO: BEACON ON", ["timerincr"] = 1,
 		["actions"] = function ()
-			command_once("sim/lights/beacon_lights_on")
+			zc_acf_light_beacon_onoff(1)
 		end
 	}, 
 	[11] = {["lefttext"] = "VERIFY TAKEOFF SPEEDS", ["timerincr"] = 2,
@@ -1877,7 +1862,7 @@ ZC_BEFORE_START_CHECKLIST = {
 				command_once("laminar/B738/toggle_switch/seatbelt_sign_dn")
 				command_once("laminar/B738/toggle_switch/seatbelt_sign_dn")
 				-- Beacon
-				command_once("sim/lights/beacon_lights_on")
+				zc_acf_light_beacon_onoff(1)
 			end
 		end
 	},
@@ -2604,8 +2589,7 @@ ZC_BEFORE_TAKEOFF_PROC = {
 	},
 	[2] = {["lefttext"] = "STROBES -- ON", ["timerincr"] = 1,
 		["actions"] = function ()
-			command_once("laminar/B738/toggle_switch/position_light_up")
-			command_once("laminar/B738/toggle_switch/position_light_up")
+			zc_acf_light_strobe_mode(1)
 		end
 	},
 	[3] = {["lefttext"] = "TAXI LIGHTS -- OFF", ["timerincr"] = 1,
@@ -2613,8 +2597,7 @@ ZC_BEFORE_TAKEOFF_PROC = {
 			command_once("laminar/B738/toggle_switch/taxi_light_brightness_pos_up")
 			command_once("laminar/B738/toggle_switch/taxi_light_brightness_pos_up")
 			if get("sim/private/stats/skyc/sun_amb_b") == 0 then
-				command_once("laminar/B738/switch/rwy_light_left_on")
-				command_once("laminar/B738/switch/rwy_light_right_on")
+				zc_acf_light_rwyto_onoff(1)
 			end
 			command_once("laminar/B738/toggle_switch/seatbelt_sign_up")
 			command_once("laminar/B738/toggle_switch/seatbelt_sign_up")
@@ -2781,8 +2764,7 @@ ZC_CLIMB_PROC = {
 			if get("laminar/B738/engine/starter2_pos") == 2 then
 				command_once("laminar/B738/knob/eng2_start_left")
 			end
-			command_once("laminar/B738/switch/rwy_light_left_off")
-			command_once("laminar/B738/switch/rwy_light_right_off")
+			zc_acf_light_rwyto_onoff(0)
 			command_once("laminar/B738/switch/land_lights_ret_left_up")
 			command_once("laminar/B738/switch/land_lights_ret_left_up")
 			command_once("laminar/B738/switch/land_lights_ret_right_up")
@@ -3175,8 +3157,7 @@ ZC_LANDING_PROC = {
 		["actions"] = function ()
 			command_once("laminar/B738/toggle_switch/taxi_light_brightness_pos_up")
 			command_once("laminar/B738/toggle_switch/taxi_light_brightness_pos_up")
-			command_once("laminar/B738/switch/rwy_light_left_on")
-			command_once("laminar/B738/switch/rwy_light_right_on")
+			zc_acf_light_rwyto_onoff(1)
 			command_once("laminar/B738/toggle_switch/seatbelt_sign_up")
 			command_once("laminar/B738/toggle_switch/seatbelt_sign_up")
 			command_once("sim/lights/landing_lights_on")
@@ -3502,8 +3483,7 @@ ZC_AFTER_LANDING_PROC = {
 	},
 	[8] = {["lefttext"] = "FO: STROBES -- OFF", ["timerincr"] = 1,
 		["actions"] = function ()
-			command_once("laminar/B738/toggle_switch/position_light_dn")
-			command_once("laminar/B738/toggle_switch/position_light_dn")
+			zc_acf_light_nav_onoff(1)
 		end
 	},
 	[9] = {["lefttext"] = "FO: LANDING LIGHTS -- OFF", ["timerincr"] = 1,
@@ -3519,8 +3499,7 @@ ZC_AFTER_LANDING_PROC = {
 	},
 	[11] = {["lefttext"] = "FO: RWY TURNOFF LIGHTS -- OFF", ["timerincr"] = 1,
 		["actions"] = function ()
-			command_once("laminar/B738/switch/rwy_light_left_off")
-			command_once("laminar/B738/switch/rwy_light_right_off")
+			zc_acf_light_rwyto_onoff(0)
 		end
 	},
 	[12] = {["lefttext"] = "FO: ENGINE START SWITCHES -- AUTO", ["timerincr"] = 1,
@@ -3593,7 +3572,7 @@ ZC_SHUTDOWN_PROC = {
 	},
 	[5] = {["lefttext"] = "FO: BEACON -- OFF", ["timerincr"] = 1,
 		["actions"] = function ()
-			command_once("sim/lights/beacon_lights_off")
+			zc_acf_light_beacon_onoff(0)
 		end
 	},
 	[6] = {["lefttext"] = "FO: CONFIGURE FUEL PUMPS", ["timerincr"] = 1,
@@ -3873,12 +3852,7 @@ ZC_SECURING_AIRCRAFT_PROC = {
 	}, 
 	[9] = {["lefttext"] = "CAPT: POSITION LIGHT -- OFF", ["timerincr"] = 1,
 		["actions"] = function ()
-			if get("laminar/B738/toggle_switch/position_light_pos") == 1 then
-				command_once("laminar/B738/toggle_switch/position_light_down")
-			end
-			if get("laminar/B738/toggle_switch/position_light_pos") == 0 then
-				command_once("laminar/B738/toggle_switch/position_light_down")
-			end
+			zc_acf_light_nav_onoff(0)
 		end
 	}, 
 	[10] = {["lefttext"] = "SECURING FINISHED", ["timerincr"] = -1,
@@ -4782,12 +4756,68 @@ function zc_acf_cockpit_light_mode(mode)
 	set("laminar/B738/toggle_switch/cockpit_dome_pos",mode)
 end
 
--- function zc_acf_light_strobe_mode(mode)
--- function zc_acf_light_beacon_onoff(onoff)
+-- Strobe lighs 0=off 1=on with poslight 2=position light only
+function zc_acf_light_strobe_mode(mode)
+	if mode == 0 then
+		command_once("laminar/B738/toggle_switch/position_light_up")
+		command_once("laminar/B738/toggle_switch/position_light_up")
+		command_once("laminar/B738/toggle_switch/position_light_dn")
+	end
+	if mode == 1 then
+		command_once("laminar/B738/toggle_switch/position_light_up")
+		command_once("laminar/B738/toggle_switch/position_light_up")
+	end
+	if mode == 2 then
+		command_once("laminar/B738/toggle_switch/position_light_dn")
+		command_once("laminar/B738/toggle_switch/position_light_dn")
+	end
+end
+
+-- poslights combined with strobes 0=off, 1=on only, 2=+strobes
+function zc_acf_light_nav_onoff(mode)
+	if mode == 0 then
+		command_once("laminar/B738/toggle_switch/position_light_dn")
+		command_once("laminar/B738/toggle_switch/position_light_dn")
+		command_once("laminar/B738/toggle_switch/position_light_up")
+	end
+	if mode == 1 then
+		command_once("laminar/B738/toggle_switch/position_light_dn")
+		command_once("laminar/B738/toggle_switch/position_light_dn")
+	end
+	if mode == 2 then
+		command_once("laminar/B738/toggle_switch/position_light_dn")
+		command_once("laminar/B738/toggle_switch/position_light_dn")
+		command_once("laminar/B738/toggle_switch/position_light_up")
+		command_once("laminar/B738/toggle_switch/position_light_up")
+	end
+end
+
+-- Beacon lights 0=off 1=on
+function zc_acf_light_beacon_onoff(mode)
+	if mode == 1 then
+		command_once("sim/lights/beacon_lights_on")
+	else
+		command_once("sim/lights/beacon_lights_off")
+	end
+end
+
 -- function zc_acf_light_wing_onoff(onoff)
--- function zc_acf_light_nav_onoff(onoff)
--- function zc_acf_light_logo_onoff(onoff)
--- function zc_acf_light_rwyto_onoff(onoff)
+
+-- Logo lights 0=OFF 1=ON
+function zc_acf_light_logo_onoff(mode)
+	if mode == 1 then
+		command_once("laminar/B738/switch/logo_light_on")
+	else
+		command_once("laminar/B738/switch/logo_light_off")
+	end
+end
+
+-- RWY turnoff lights both 0=OFF 1=ON
+function zc_acf_light_rwyto_onoff(mode)
+	set("laminar/B738/switch/land_lights_left_pos",mode)
+	set("laminar/B738/switch/land_lights_right_pos",mode)
+end
+
 -- function zc_acf_light_taxi_mode(mode)
 -- function zc_acf_light_landing_mode(mode)
 -- function zc_acf_panel_brightness(value)
@@ -5018,10 +5048,10 @@ end
 
 -- Aircraft specific Joystick functions
 function xsp_beaconlights_off()
-	command_once("sim/lights/beacon_lights_off")
+	zc_acf_light_beacon_onoff(0)
 end
 function xsp_beaconlights_on()
-	command_once("sim/lights/beacon_lights_on")
+	zc_acf_light_beacon_onoff(1)
 end
 function xsp_domelight_on()
 	zc_acf_cockpit_light_mode(1)
@@ -5030,19 +5060,16 @@ function xsp_domelight_off()
 	zc_acf_cockpit_light_mode(0)
 end
 function xsp_navlight_on()
-	command_once("laminar/B738/toggle_switch/position_light_down")
-	command_once("laminar/B738/toggle_switch/position_light_down")
+	zc_acf_light_nav_onoff(1)
 end
 function xsp_navlight_off()
-	command_once("laminar/B738/toggle_switch/position_light_up")
+	zc_acf_light_nav_onoff(0)
 end
 function xsp_strobelight_on()
-	command_once("laminar/B738/toggle_switch/position_light_up")
-	command_once("laminar/B738/toggle_switch/position_light_up")
+	zc_acf_light_nav_onoff(2)
 end
 function xsp_strobelight_off()
-	command_once("laminar/B738/toggle_switch/position_light_dn")
-	command_once("laminar/B738/toggle_switch/position_light_dn")
+	zc_acf_light_nav_onoff(1)
 end
 function xsp_taxilights_off()
 	command_once("laminar/B738/toggle_switch/taxi_light_brightness_pos_up")
@@ -5075,10 +5102,10 @@ function xsp_winglights_on()
 	command_once("laminar/B738/switch/wing_light_on")
 end
 function xsp_logolights_off()
-	command_once("laminar/B738/switch/logo_light_off")
+	zc_acf_light_logo_onoff(0)
 end
 function xsp_logolights_on()
-	command_once("laminar/B738/switch/logo_light_on")
+	zc_acf_light_logo_onoff(1)
 end
 function xsp_toggle_fd_both()
 	command_once("laminar/B738/autopilot/flight_director_fo_toggle")
@@ -5124,3 +5151,4 @@ create_command("kp/xsp/toggle_both_fd",				"Toggle Both FD",		"xsp_toggle_fd_bot
 create_command("kp/xsp/toggle_both_std",			"Toggle Both STD",	"xsp_toggle_std_both()", "", "")
 
 do_sometimes("zc_zibo_save()")
+
