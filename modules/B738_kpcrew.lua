@@ -181,26 +181,20 @@ ZC_COLD_AND_DARK = {
 	},                                                  
 	[12] = {["lefttext"] = "OVERHEAD COLUMN 3", ["timerincr"] = 1,
 		["actions"] = function ()
-			command_once("laminar/B738/toggle_switch/seatbelt_sign_up")
-			command_once("laminar/B738/toggle_switch/seatbelt_sign_up")
-			command_once("laminar/B738/toggle_switch/no_smoking_up")
+			zc_acf_seatbelt_onoff(0)
+			zc_acf_no_smoking_onoff(0)
 		end
 	},                                                  
 	[13] = {["lefttext"] = "OVERHEAD COLUMN 4", ["timerincr"] = 1,
 		["actions"] = function ()
-			set("laminar/B738/ice/window_heat_l_side_pos",0)
-			set("laminar/B738/ice/window_heat_l_fwd_pos",0)
-			set("laminar/B738/ice/window_heat_r_fwd_pos",0)
-			set("laminar/B738/ice/window_heat_r_side_pos",0)
-			set("laminar/B738/toggle_switch/capt_probes_pos",0)
-			set("laminar/B738/toggle_switch/fo_probes_pos",0)
+			zc_acf_window_heat_onoff(0,0)
+			zc_acf_probe_heat_onoff(0,0)
 		end
 	},                                                  
 	[14] = {["lefttext"] = "OVERHEAD COLUMN 4", ["timerincr"] = 1,
 		["actions"] = function ()
-			set("laminar/B738/ice/wing_heat_pos",0)
-			set("laminar/B738/ice/eng1_heat_pos",0)
-			set("laminar/B738/ice/eng2_heat_pos",0)
+			zc_acf_wing_aice_onoff(0)
+			zc_acf_eng_aice_onoff(0,0)
 		end
 	},                                                  
 	[15] = {["lefttext"] = "OVERHEAD COLUMN 4", ["timerincr"] = 1,
@@ -241,12 +235,8 @@ ZC_COLD_AND_DARK = {
 	},     
 	[19] = {["lefttext"] = "LIGHTS", ["timerincr"] = 1,
 		["actions"] = function ()
-			command_once("laminar/B738/toggle_switch/taxi_light_brightness_pos_up")
-			command_once("laminar/B738/toggle_switch/taxi_light_brightness_pos_up")
-			command_once("laminar/B738/switch/land_lights_ret_left_up")
-			command_once("laminar/B738/switch/land_lights_ret_left_up")
-			command_once("laminar/B738/switch/land_lights_ret_right_up")
-			command_once("laminar/B738/switch/land_lights_ret_right_up")
+			zc_acf_light_taxi_mode(0)
+			zc_acf_light_landing_mode(0,0)
 			zc_acf_light_rwyto_onoff(0)
 		end
 	},                     
@@ -397,7 +387,7 @@ ZC_POWER_UP_PROC = {
 	[11] = {["lefttext"] = "FO: FIRE TESTS", ["timerincr"] = 3,
 		["actions"] = function ()
 			command_begin("laminar/B738/toggle_switch/fire_test_lft")
-			command_once("laminar/B738/switch/wing_light_on")
+			zc_acf_light_wing_onoff(1)
 		end
 	},
 	[12] = {["lefttext"] = "FO: FIRE TESTS", ["timerincr"] = 3,
@@ -472,7 +462,7 @@ ZC_POWER_UP_PROC = {
 		["actions"] = function ()
 			zc_acf_light_nav_onoff(1)
 			if get("sim/private/stats/skyc/sun_amb_b") == 0 then
-				command_end("laminar/B738/switch/wing_light_on")
+				zc_acf_light_wing_onoff(1)
 			end
 		end
 	}, 
@@ -588,9 +578,6 @@ ZC_TURN_AROUND_STATE = {
 	-- GROUND POWER ON
 	[4] = {["lefttext"] = "GROUND POWER -- ON - OPTIONAL",["timerincr"] = 1,
 		["actions"] = function ()
-			if get("laminar/B738/button_switch/cover_position", 2) == 1 then
-				command_once("laminar/B738/button_switch_cover02")
-			end
 			zc_acf_batteries_onoff(1)
 			if get_zc_config("apuinit") == false and get("laminar/B738/gpu_available") == 0 then
 				command_once("laminar/B738/tab/home")
@@ -704,26 +691,20 @@ ZC_TURN_AROUND_STATE = {
 	},                                                  
 	[18] = {["lefttext"] = "OVERHEAD COLUMN 3", ["timerincr"] = 1,
 		["actions"] = function ()
-			command_once("laminar/B738/toggle_switch/seatbelt_sign_dn")
-			command_once("laminar/B738/toggle_switch/seatbelt_sign_dn")
-			command_once("laminar/B738/toggle_switch/no_smoking_dn")
+			zc_acf_seatbelt_onoff(1)
+			zc_acf_no_smoking_onoff(1)
 		end
 	},                                                  
 	[19] = {["lefttext"] = "OVERHEAD COLUMN 4", ["timerincr"] = 1,
 		["actions"] = function ()
-			set("laminar/B738/ice/window_heat_l_side_pos",0)
-			set("laminar/B738/ice/window_heat_l_fwd_pos",0)
-			set("laminar/B738/ice/window_heat_r_fwd_pos",0)
-			set("laminar/B738/ice/window_heat_r_side_pos",0)
-			set("laminar/B738/toggle_switch/capt_probes_pos",0)
-			set("laminar/B738/toggle_switch/fo_probes_pos",0)
+			zc_acf_window_heat_onoff(0,0)
+			zc_acf_probe_heat_onoff(0,0)
 		end
 	},                                                  
 	[20] = {["lefttext"] = "OVERHEAD COLUMN 4", ["timerincr"] = 1,
 		["actions"] = function ()
-			set("laminar/B738/ice/wing_heat_pos",0)
-			set("laminar/B738/ice/eng1_heat_pos",0)
-			set("laminar/B738/ice/eng2_heat_pos",0)
+			zc_acf_wing_aice_onoff(0)
+			zc_acf_eng_aice_onoff(0,0)
 		end
 	},                                                  
 	[21] = {["lefttext"] = "OVERHEAD COLUMN 4", ["timerincr"] = 1,
@@ -764,12 +745,8 @@ ZC_TURN_AROUND_STATE = {
 	},     
 	[25] = {["lefttext"] = "LIGHTS", ["timerincr"] = 1,
 		["actions"] = function ()
-			command_once("laminar/B738/toggle_switch/taxi_light_brightness_pos_up")
-			command_once("laminar/B738/toggle_switch/taxi_light_brightness_pos_up")
-			command_once("laminar/B738/switch/land_lights_ret_left_up")
-			command_once("laminar/B738/switch/land_lights_ret_left_up")
-			command_once("laminar/B738/switch/land_lights_ret_right_up")
-			command_once("laminar/B738/switch/land_lights_ret_right_up")
+			zc_acf_light_taxi_mode(0)
+			zc_acf_light_landing_mode(0,0)
 			zc_acf_light_rwyto_onoff(0)
 		end
 	},                     
@@ -795,8 +772,6 @@ ZC_TURN_AROUND_STATE = {
 	},                     
 	[28] = {["lefttext"] = "LIGHTS", ["timerincr"] = 1,
 		["actions"] = function ()
-			set("laminar/B738/switch/land_lights_left_pos",0)
-			set("laminar/B738/switch/land_lights_right_pos",0)
 			zc_acf_light_nav_onoff(1)
 			zc_acf_light_beacon_onoff(0)
 			zc_acf_light_logo_onoff(0)
@@ -1068,29 +1043,28 @@ ZC_PRE_FLIGHT_PROC = {
 	}, 
 	[33] = {["lefttext"] = "FO: CABIN SIGNS", ["timerincr"] = 1,
 		["actions"] = function ()
-			command_once("laminar/B738/toggle_switch/seatbelt_sign_dn")
-			command_once("laminar/B738/toggle_switch/seatbelt_sign_dn")
-			command_once("laminar/B738/toggle_switch/no_smoking_dn")
+			zc_acf_seatbelt_onoff(1)
+			zc_acf_no_smoking_onoff(1)
 		end
 	},                                                  
 	[34] = {["lefttext"] = "FO: WINDOW HEAT ON", ["timerincr"] = 1,
 		["actions"] = function ()
-			set("laminar/B738/ice/window_heat_l_side_pos",1)
+			zc_acf_window_heat_onoff(1,1)
 		end
 	}, 
 	[35] = {["lefttext"] = "FO: WINDOW HEAT ON", ["timerincr"] = 1,
 		["actions"] = function ()
-			set("laminar/B738/ice/window_heat_l_fwd_pos",1)
+			zc_acf_window_heat_onoff(2,1)
 		end
 	}, 
 	[36] = {["lefttext"] = "FO: WINDOW HEAT ON", ["timerincr"] = 1,
 		["actions"] = function ()
-			set("laminar/B738/ice/window_heat_r_fwd_pos",1)
+			zc_acf_window_heat_onoff(3,1)
 		end
 	}, 
 	[37] = {["lefttext"] = "FO: WINDOW HEAT ON", ["timerincr"] = 1,
 		["actions"] = function ()
-			set("laminar/B738/ice/window_heat_r_side_pos",1)
+			zc_acf_window_heat_onoff(4,1)
 		end
 	}, 
 	[38] = {["lefttext"] = "FO: HYDRAULIC PANEL SET", ["timerincr"] = 1,
@@ -1153,7 +1127,7 @@ ZC_PRE_FLIGHT_PROC = {
 	[48] = {["lefttext"] = "FO: WHEEL & LOGO LIGHTS", ["timerincr"] = 1,
 		["actions"] = function ()
 			if get("sim/private/stats/skyc/sun_amb_b") == 0 then
-				command_once("laminar/B738/switch/wing_light_on")
+				zc_acf_light_wing_onoff(1)
 				zc_acf_light_logo_onoff(1)
 			end
 		end
@@ -1294,8 +1268,7 @@ ZC_PRE_FLIGHT_PROC = {
 	}, 		
 	[67] = {["lefttext"] = "FO: PROBE HEAT OFF", ["timerincr"] = 1,
 		["actions"] = function ()
-			set("laminar/B738/toggle_switch/capt_probes_pos",0)
-			set("laminar/B738/toggle_switch/fo_probes_pos",0)
+			zc_acf_probe_heat_onoff(0,0)
 		end
 	}, 
 	[68] = {["lefttext"] = "FO: AIR CONDITIONING PANEL SET", ["timerincr"] = 1,
@@ -1313,8 +1286,7 @@ ZC_PRE_FLIGHT_PROC = {
 	}, 
 	[70] = {["lefttext"] = "CAPT: LIGHTING PANEL SET", ["timerincr"] = 1,
 		["actions"] = function ()
-			set("laminar/B738/switch/land_lights_left_pos",0)
-			set("laminar/B738/switch/land_lights_right_pos",0)
+			zc_acf_light_landing_mode(0,0)
 		end
 	}, 
 	[71] = {["lefttext"] = "CAPT: LIGHTING PANEL SET", ["timerincr"] = 1,
@@ -1330,7 +1302,7 @@ ZC_PRE_FLIGHT_PROC = {
 	[73] = {["lefttext"] = "FO: FIRE TESTS", ["timerincr"] = 3,
 		["actions"] = function ()
 			command_begin("laminar/B738/toggle_switch/fire_test_lft")
-			command_once("laminar/B738/switch/wing_light_on")
+			zc_acf_light_wing_onoff(1)
 		end
 	},
 	[74] = {["lefttext"] = "FO: FIRE TESTS", ["timerincr"] = 3,
@@ -1372,16 +1344,12 @@ ZC_PRE_FLIGHT_PROC = {
 	[80] = {["lefttext"] = "CAPT: LIGHTING PANEL SET", ["timerincr"] = 1,
 		["actions"] = function ()
 			command_end("laminar/B738/push_button/mach_warn2_test")
-			command_once("laminar/B738/toggle_switch/taxi_light_brightness_pos_up")
-			command_once("laminar/B738/toggle_switch/taxi_light_brightness_pos_up")
+			zc_acf_light_taxi_mode(0)
 		end
 	}, 
 	[81] = {["lefttext"] = "CAPT: LIGHTING PANEL SET", ["timerincr"] = 1,
 		["actions"] = function ()
-			command_once("laminar/B738/switch/land_lights_ret_left_up")
-			command_once("laminar/B738/switch/land_lights_ret_left_up")
-			command_once("laminar/B738/switch/land_lights_ret_right_up")
-			command_once("laminar/B738/switch/land_lights_ret_right_up")
+			zc_acf_light_landing_mode(0,0)
 		end
 	}, 
 	[82] = {["lefttext"] = "CAPT: APU SET", ["timerincr"] = -1,
@@ -1436,10 +1404,7 @@ ZC_PREFLIGHT_CHECKLIST = {
 					command_once("laminar/B738/toggle_switch/dspl_ctrl_pnl_right")
 				end
 				-- Window heat
-				set("laminar/B738/ice/window_heat_l_side_pos",1)
-				set("laminar/B738/ice/window_heat_l_fwd_pos",1)
-				set("laminar/B738/ice/window_heat_r_fwd_pos",1)
-				set("laminar/B738/ice/window_heat_r_side_pos",1)
+				zc_acf_window_heat_onoff(0,1)
 				-- Pressurization
 				set("laminar/B738/annunciator/altn_press",0)
 				-- Parking Brake
@@ -1760,8 +1725,7 @@ ZC_BEFORE_START_PROC = {
 	},
 	[6] = {["lefttext"] = "FO: CABIN SIGNS", ["timerincr"] = 1,
 		["actions"] = function ()
-			command_once("laminar/B738/toggle_switch/seatbelt_sign_dn")
-			command_once("laminar/B738/toggle_switch/seatbelt_sign_dn")
+			zc_acf_seatbelt_onoff(1)
 		end
 	},                                                  
 	[7] = {["lefttext"] = "FO: ISOLATION VLV OPEN", ["timerincr"] = 1,
@@ -1859,8 +1823,7 @@ ZC_BEFORE_START_CHECKLIST = {
 					zc_acf_fuel_pumps_onoff(6,0)
 				end
 				-- seat belts
-				command_once("laminar/B738/toggle_switch/seatbelt_sign_dn")
-				command_once("laminar/B738/toggle_switch/seatbelt_sign_dn")
+				zc_acf_seatbelt_onoff(1)
 				-- Beacon
 				zc_acf_light_beacon_onoff(1)
 			end
@@ -2234,8 +2197,7 @@ ZC_BEFORE_TAXI_PROC = {
 	},
 	[2] = {["lefttext"] = "FO: PROBE HEAT -- ON", ["timerincr"] = 1,
 		["actions"] = function ()
-			set("laminar/B738/toggle_switch/capt_probes_pos",1)
-			set("laminar/B738/toggle_switch/fo_probes_pos",1)
+			zc_acf_probe_heat_onoff(0,1)
 		end
 	},
 	[3] = {["lefttext"] = "FO: ISOLATION VALVES/PACKS -- AUTO", ["timerincr"] = 1,
@@ -2269,7 +2231,7 @@ ZC_BEFORE_TAXI_PROC = {
 	[6] = {["lefttext"] = "FO: APU -- OFF", ["timerincr"] = 1,
 		["actions"] = function ()
 			command_once("laminar/B738/spring_toggle_switch/APU_start_pos_up")
-			command_once("laminar/B738/toggle_switch/taxi_light_brightness_pos_dn")
+			zc_acf_light_taxi_mode(2)
 		end
 	},
 	[7] = {["lefttext"] = "FO: TAKEOFF FLAPS -- SET", ["timerincr"] = 1,
@@ -2321,8 +2283,7 @@ ZC_BEFORE_TAXI_CHECKLIST = {
 				-- generator
 				zc_acf_gen_on_bus(0,1)
 				-- Probe heat
-				set("laminar/B738/toggle_switch/capt_probes_pos",1)
-				set("laminar/B738/toggle_switch/fo_probes_pos",1)
+				zc_acf_probe_heat_onoff(0,1)
 				-- isolation valve
 				set("laminar/B738/air/isolation_valve_pos",1)
 				-- engine starters
@@ -2594,13 +2555,11 @@ ZC_BEFORE_TAKEOFF_PROC = {
 	},
 	[3] = {["lefttext"] = "TAXI LIGHTS -- OFF", ["timerincr"] = 1,
 		["actions"] = function ()
-			command_once("laminar/B738/toggle_switch/taxi_light_brightness_pos_up")
-			command_once("laminar/B738/toggle_switch/taxi_light_brightness_pos_up")
+			zc_acf_light_taxi_mode(0)
 			if get("sim/private/stats/skyc/sun_amb_b") == 0 then
 				zc_acf_light_rwyto_onoff(1)
 			end
-			command_once("laminar/B738/toggle_switch/seatbelt_sign_up")
-			command_once("laminar/B738/toggle_switch/seatbelt_sign_up")
+			zc_acf_seatbelt_onoff(0)
 		end
 	},
 	[4] = {["lefttext"] = "TRANSPONDER -- ON", ["timerincr"] = 1,
@@ -2613,8 +2572,7 @@ ZC_BEFORE_TAKEOFF_PROC = {
 			if get("laminar/B738/EFIS/EFIS_wx_on") == 0 then
 				command_once("laminar/B738/EFIS_control/capt/push_button/wxr_press")
 			end
-			command_once("laminar/B738/toggle_switch/seatbelt_sign_dn")
-			command_once("laminar/B738/toggle_switch/seatbelt_sign_dn")
+			zc_acf_seatbelt_onoff(1)
 			command_once("laminar/B738/push_button/chrono_capt_et_mode")
 			command_once("laminar/B738/LDU_control/push_button/MFD_ENG")
 			if get("laminar/B738/engine/starter1_pos") == 1 then
@@ -2765,10 +2723,7 @@ ZC_CLIMB_PROC = {
 				command_once("laminar/B738/knob/eng2_start_left")
 			end
 			zc_acf_light_rwyto_onoff(0)
-			command_once("laminar/B738/switch/land_lights_ret_left_up")
-			command_once("laminar/B738/switch/land_lights_ret_left_up")
-			command_once("laminar/B738/switch/land_lights_ret_right_up")
-			command_once("laminar/B738/switch/land_lights_ret_right_up")
+			zc_acf_light_landing_mode(2,0)
 			command_once("laminar/B738/knob/autobrake_up")
 			command_once("laminar/B738/LDU_control/push_button/MFD_ENG")
 		end
@@ -3155,11 +3110,9 @@ ZC_APPROACH_CHECKLIST = {
 ZC_LANDING_PROC = {
 	[0] = {["lefttext"] = "LANDING PROCEDURE", ["timerincr"] = 3,
 		["actions"] = function ()
-			command_once("laminar/B738/toggle_switch/taxi_light_brightness_pos_up")
-			command_once("laminar/B738/toggle_switch/taxi_light_brightness_pos_up")
+			zc_acf_light_taxi_mode(0)
 			zc_acf_light_rwyto_onoff(1)
-			command_once("laminar/B738/toggle_switch/seatbelt_sign_up")
-			command_once("laminar/B738/toggle_switch/seatbelt_sign_up")
+			zc_acf_seatbelt_onoff(1)
 			command_once("sim/lights/landing_lights_on")
 			if get("laminar/B738/engine/starter1_pos") == 1 then
 				command_once("laminar/B738/knob/eng1_start_right")
@@ -3477,8 +3430,7 @@ ZC_AFTER_LANDING_PROC = {
 	},
 	[7] = {["lefttext"] = "FO: PROBE HEAT -- OFF", ["timerincr"] = 1,
 		["actions"] = function ()
-			set("laminar/B738/toggle_switch/capt_probes_pos",0)
-			set("laminar/B738/toggle_switch/fo_probes_pos",0)
+			zc_acf_probe_heat_onoff(0,0)
 		end
 	},
 	[8] = {["lefttext"] = "FO: STROBES -- OFF", ["timerincr"] = 1,
@@ -3493,8 +3445,7 @@ ZC_AFTER_LANDING_PROC = {
 	},
 	[10] = {["lefttext"] = "FO: TAXI LIGHTS -- ON", ["timerincr"] = 1,
 		["actions"] = function ()
-			command_once("laminar/B738/toggle_switch/taxi_light_brightness_pos_dn")
-			command_once("laminar/B738/toggle_switch/taxi_light_brightness_pos_dn")
+			zc_acf_light_taxi_mode(1)
 		end
 	},
 	[11] = {["lefttext"] = "FO: RWY TURNOFF LIGHTS -- OFF", ["timerincr"] = 1,
@@ -3549,8 +3500,7 @@ ZC_SHUTDOWN_PROC = {
 	},
 	[1] = {["lefttext"] = "CAPT: TAXI LIGHTS -- OFF", ["timerincr"] = 1,
 		["actions"] = function ()
-			command_once("laminar/B738/toggle_switch/taxi_light_brightness_pos_up")
-			command_once("laminar/B738/toggle_switch/taxi_light_brightness_pos_up")
+			zc_acf_light_taxi_mode(0)
 		end
 	},
 	[2] = {["lefttext"] = "FO: READY FOR SHUTDOWN", ["timerincr"] = 2,
@@ -3566,8 +3516,7 @@ ZC_SHUTDOWN_PROC = {
 	},
 	[4] = {["lefttext"] = "FO: SEATBELT SIGNS -- OFF", ["timerincr"] = 1,
 		["actions"] = function ()
-			command_once("laminar/B738/toggle_switch/seatbelt_sign_up")
-			command_once("laminar/B738/toggle_switch/seatbelt_sign_up")
+			zc_acf_seatbelt_onoff(0)
 		end
 	},
 	[5] = {["lefttext"] = "FO: BEACON -- OFF", ["timerincr"] = 1,
@@ -3607,9 +3556,8 @@ ZC_SHUTDOWN_PROC = {
 	}, 
 	[12] = {["lefttext"] = "FO: WING & ENGINE ANTIICE -- OFF", ["timerincr"] = 2,
 		["actions"] = function ()
-			set("laminar/B738/ice/wing_heat_pos",0)
-			set("laminar/B738/ice/eng1_heat_pos",0)
-			set("laminar/B738/ice/eng2_heat_pos",0)
+			zc_acf_wing_aice_onoff(0)
+			zc_acf_eng_aice_onoff(0,0)
 		end
 	}, 
 	[13] = {["lefttext"] = "FO: ELECTRICAL HYDRAULIC PUMPS -- OFF", ["timerincr"] = 1,
@@ -3825,10 +3773,7 @@ ZC_SECURING_AIRCRAFT_PROC = {
 	},
 	[5] = {["lefttext"] = "FO: WINDOW HEAT -- OFF", ["timerincr"] = 1,
 		["actions"] = function ()
-			set("laminar/B738/ice/window_heat_l_side_pos",0)
-			set("laminar/B738/ice/window_heat_l_fwd_pos",0)
-			set("laminar/B738/ice/window_heat_r_fwd_pos",0)
-			set("laminar/B738/ice/window_heat_r_side_pos",0)
+			zc_acf_window_heat_onoff(0,0)
 		end
 	},
 	[6] = {["lefttext"] = "FO: PACKS -- OFF", ["timerincr"] = 1,
@@ -4146,8 +4091,7 @@ ZC_BACKGROUND_PROCS = {
 		["actions"] = function ()
 			if get("sim/cockpit2/gauges/indicators/altitude_ft_pilot") > 10000.0 then
 				speakNoText(0,"ten thousand")
-				set("laminar/B738/switch/land_lights_left_pos",0)
-				set("laminar/B738/switch/land_lights_right_pos",0)
+				zc_acf_light_landing_mode(1,0)
 				ZC_BACKGROUND_PROCS["TENTHOUSANDUP"].status = 0
 			end
 		end
@@ -4157,8 +4101,7 @@ ZC_BACKGROUND_PROCS = {
 		["actions"] = function ()
 			if get("sim/cockpit2/gauges/indicators/altitude_ft_pilot") <= 10000.0 then
 				speakNoText(0,"ten thousand")
-				set("laminar/B738/switch/land_lights_left_pos",1)
-				set("laminar/B738/switch/land_lights_right_pos",1)
+				zc_acf_light_landing_mode(1,1)
 				ZC_BACKGROUND_PROCS["TENTHOUSANDDN"].status = 0
 			end
 		end
@@ -4599,7 +4542,6 @@ end
 -- function zc_get_flap_position()
 -- function_get_abrk_setting()
 
-
 --------------------------------- aircraft specific action functions
 ----------------- Electric system
 -- Start APU flows full
@@ -4645,16 +4587,16 @@ end
 -- function zc_acf_gpu_stop()
 
 -- GENerators 0=ALL,1=GEN1,2=GEN2; 0=OFF,1=ON Bus
-function zc_acf_gen_on_bus(gen, onoff)
+function zc_acf_gen_on_bus(gen,mode)
 	if gen == 0 or gen == 1 then
-		if onoff == 1 then
+		if mode == 1 then
 			command_once("laminar/B738/toggle_switch/gen1_dn")
 		else
 			command_once("laminar/B738/toggle_switch/gen1_up")
 		end
 	end
 	if gen == 0 or gen == 2 then
-		if onoff == 1 then
+		if mode == 1 then
 			command_once("laminar/B738/toggle_switch/gen2_dn")
 		else
 			command_once("laminar/B738/toggle_switch/gen2_up")
@@ -4663,9 +4605,8 @@ function zc_acf_gen_on_bus(gen, onoff)
 end
 
 -- Battery 0=OFF 1=ON	
-function zc_acf_batteries_onoff(onoff)
-
-	if onoff == 1 then
+function zc_acf_batteries_onoff(mode)
+	if mode == 1 then
 		if get("laminar/B738/button_switch/cover_position",2) == 1 then
 			command_once("laminar/B738/button_switch_cover02")
 		end
@@ -4706,7 +4647,11 @@ end
 
 -- fuel cross feed 0=OFF 1=ON
 function zc_acf_fuel_xfeed_mode(mode)
-	set("laminar/B738/fuel/cross_feed_valve",mode)
+	if mode == 0 then
+		command_once("laminar/B738/toggle_switch/crossfeed_valve_off")
+	else
+		command_once("laminar/B738/toggle_switch/crossfeed_valve_on")
+	end
 end
 
 --- Hydraulic system
@@ -4723,8 +4668,8 @@ end
 -- function zc_acf_crossbleed_isol_mode(mode)
 
 -- APU Bleed air 0=OFF 1=ON
-function zc_acf_apu_bleed_onoff(onoff)
-	set("laminar/B738/toggle_switch/bleed_air_apu_pos",onoff)
+function zc_acf_apu_bleed_onoff(mode)
+	set("laminar/B738/toggle_switch/bleed_air_apu_pos",mode)
 end
 
 -- function zc_acf_temp_control(area,level)
@@ -4735,10 +4680,47 @@ end
 -- function zc_acf_trimair_onoff(onoff)
 
 --- A/ICE
--- function zc_acf_window_heat_onoff(onoff)
--- function zc_acf_wing_aice_onoff(onoff)
--- function zc_acf_eng_aice_onoff(onoff)
--- function zc_acf_probe_heat_onoff(onoff)
+-- Window heat Heater 0=All, 1-4, 0=OFF 1=ON
+function zc_acf_window_heat_onoff(heater,mode)
+	if heater == 0 or heater == 1 then
+		set("laminar/B738/ice/window_heat_l_side_pos",mode)
+	end
+	if heater == 0 or heater == 2 then
+		set("laminar/B738/ice/window_heat_l_fwd_pos",mode)
+	end
+	if heater == 0 or heater == 3 then
+		set("laminar/B738/ice/window_heat_r_fwd_pos",mode)
+	end
+	if heater == 0 or heater == 4 then
+		set("laminar/B738/ice/window_heat_r_side_pos",mode)
+	end
+end
+
+-- wing anti ice 0=OFF 1=ON
+function zc_acf_wing_aice_onoff(mode)
+	set("laminar/B738/ice/wing_heat_pos",mode)
+end
+
+-- engine anti-ice 0=OFF 1=ON
+function zc_acf_eng_aice_onoff(eng,mode)
+	if eng == 0 or eng == 1 then
+		set("laminar/B738/ice/eng1_heat_pos",mode)
+	end
+	if eng == 0 or eng == 2 then
+		set("laminar/B738/ice/eng2_heat_pos",mode)
+	end
+end
+
+
+-- probe heat heater 0=ALL 1=left 2=right; mode 0=OFF, 1=ON
+function zc_acf_probe_heat_onoff(heater,mode)
+	if heater == 0 or heater == 1 then
+		set("laminar/B738/toggle_switch/capt_probes_pos",mode)
+	end
+	if heater == 0 or heater == 2 then
+		set("laminar/B738/toggle_switch/fo_probes_pos",mode)
+	end
+end
 
 --- Flight controls
 -- function zc_acf_flap_set(position)
@@ -4801,7 +4783,14 @@ function zc_acf_light_beacon_onoff(mode)
 	end
 end
 
--- function zc_acf_light_wing_onoff(onoff)
+-- Wing Light 0=OFF 1=ON
+function zc_acf_light_wing_onoff(mode)
+	if mode == 1 then
+		command_once("laminar/B738/switch/wing_light_on")
+	else
+		command_once("laminar/B738/switch/wing_light_off")
+	end
+end
 
 -- Logo lights 0=OFF 1=ON
 function zc_acf_light_logo_onoff(mode)
@@ -4814,12 +4803,84 @@ end
 
 -- RWY turnoff lights both 0=OFF 1=ON
 function zc_acf_light_rwyto_onoff(mode)
-	set("laminar/B738/switch/land_lights_left_pos",mode)
-	set("laminar/B738/switch/land_lights_right_pos",mode)
+	if mode == 0 then 
+		command_once("laminar/B738/switch/rwy_light_left_off")
+		command_once("laminar/B738/switch/rwy_light_right_off")
+	else
+		command_once("laminar/B738/switch/rwy_light_left_on")
+		command_once("laminar/B738/switch/rwy_light_right_on")
+	end
 end
 
--- function zc_acf_light_taxi_mode(mode)
--- function zc_acf_light_landing_mode(mode)
+-- taxi lights 0=OFF 1=LOW 2=HIGH
+function zc_acf_light_taxi_mode(mode)
+	if mode == 0 then
+		command_once("laminar/B738/toggle_switch/taxi_light_brightness_pos_up")
+		command_once("laminar/B738/toggle_switch/taxi_light_brightness_pos_up")
+	end
+	if mode == 1 then
+		command_once("laminar/B738/toggle_switch/taxi_light_brightness_pos_up")
+		command_once("laminar/B738/toggle_switch/taxi_light_brightness_pos_up")
+		command_once("laminar/B738/toggle_switch/taxi_light_brightness_pos_dn")
+	end
+	if mode == 2 then
+		command_once("laminar/B738/toggle_switch/taxi_light_brightness_pos_dn")
+		command_once("laminar/B738/toggle_switch/taxi_light_brightness_pos_dn")
+	end
+	
+end
+
+-- Landing Lights 0=ALL,1=FIXED,2=RET, 3=RETLEFT, 4=RETRIGHT, 5=LEFT, 6=RIGHT
+-- Mode 0=OFF, 1=ON, 2=EXTEND RETs
+function zc_acf_light_landing_mode(light,mode)
+	if light == 0 or light == 1 or light == 5 then
+		if mode == 0 then
+			command_once("laminar/B738/switch/land_lights_left_off")
+		end
+		if mode == 1 then
+			command_once("laminar/B738/switch/land_lights_left_on")
+		end
+	end
+	if light == 0 or light == 1 or light == 6 then
+		if mode == 0 then
+			command_once("laminar/B738/switch/land_lights_right_off")
+		end
+		if mode == 1 then
+			command_once("laminar/B738/switch/land_lights_right_on")
+		end
+	end
+	if light == 0 or light == 2 or light == 3 then
+		if mode == 0 then
+			command_once("laminar/B738/switch/land_lights_ret_left_up")
+			command_once("laminar/B738/switch/land_lights_ret_left_up")
+		end
+		if mode == 1 then
+			command_once("laminar/B738/switch/land_lights_ret_left_dn")
+			command_once("laminar/B738/switch/land_lights_ret_left_dn")
+		end
+		if mode == 2 then
+			command_once("laminar/B738/switch/land_lights_ret_left_up")
+			command_once("laminar/B738/switch/land_lights_ret_left_up")
+			command_once("laminar/B738/switch/land_lights_ret_left_dn")
+		end
+	end
+	if light == 0 or light == 2 or light == 4 then
+		if mode == 0 then
+			command_once("laminar/B738/switch/land_lights_ret_right_up")
+			command_once("laminar/B738/switch/land_lights_ret_right_up")
+		end
+		if mode == 1 then
+			command_once("laminar/B738/switch/land_lights_ret_right_dn")
+			command_once("laminar/B738/switch/land_lights_ret_right_dn")
+		end
+		if mode == 2 then
+			command_once("laminar/B738/switch/land_lights_ret_right_up")
+			command_once("laminar/B738/switch/land_lights_ret_right_up")
+			command_once("laminar/B738/switch/land_lights_ret_right_dn")
+		end
+	end
+end
+
 -- function zc_acf_panel_brightness(value)
 
 -- emergency lights 0=OFF,1=ARMED,2=ON
@@ -4833,15 +4894,15 @@ function zc_acf_emer_lights_mode(mode)
 		end
 	end
 	if mode == 1 then 
-		if get("laminar/B738/button_switch/cover_position", 9) == 1 then
-			command_once("laminar/B738/button_switch_cover09")
-		end
 		command_once("laminar/B738/push_button/emer_exit_full_off")
 		if get("laminar/B738/toggle_switch/emer_exit_lights") == 0 then
 			command_once("laminar/B738/toggle_switch/emer_exit_lights_dn")
 		end
 		if get("laminar/B738/toggle_switch/emer_exit_lights") == 2 then
 			command_once("laminar/B738/toggle_switch/emer_exit_lights_up")
+		end
+		if get("laminar/B738/button_switch/cover_position", 9) == 1 then
+			command_once("laminar/B738/button_switch_cover09")
 		end
 	end
 	if mode == 2 then 
@@ -4853,9 +4914,39 @@ function zc_acf_emer_lights_mode(mode)
 	end
 end
 
--- function zc_acf_light_test(onoff)
--- function zc_acf_seatbelt_onoff(onoff)
--- function zc_acf_no_smoking_onoff(onoff)
+-- Seatbelts 0=OFF 1=ON 2=AUTO
+function zc_acf_seatbelt_onoff(mode)
+	if mode == 0 then 
+		command_once("laminar/B738/toggle_switch/seatbelt_sign_up")
+		command_once("laminar/B738/toggle_switch/seatbelt_sign_up")
+	end
+	if mode == 1 then 
+		command_once("laminar/B738/toggle_switch/seatbelt_sign_dn")
+		command_once("laminar/B738/toggle_switch/seatbelt_sign_dn")
+	end
+	if mode == 2 then 
+		command_once("laminar/B738/toggle_switch/seatbelt_sign_dn")
+		command_once("laminar/B738/toggle_switch/seatbelt_sign_dn")
+		command_once("laminar/B738/toggle_switch/seatbelt_sign_up")
+	end
+end
+
+-- No Smoking 0=OFF 1=ON 2=AMRED
+function zc_acf_no_smoking_onoff(mode)
+	if mode == 0 then 
+		command_once("laminar/B738/toggle_switch/no_smoking_up")
+		command_once("laminar/B738/toggle_switch/no_smoking_up")
+	end
+	if mode == 1 then 
+		command_once("laminar/B738/toggle_switch/no_smoking_dn")
+		command_once("laminar/B738/toggle_switch/no_smoking_dn")
+	end
+	if mode == 2 then 
+		command_once("laminar/B738/toggle_switch/no_smoking_dn")
+		command_once("laminar/B738/toggle_switch/no_smoking_dn")
+		command_once("laminar/B738/toggle_switch/no_smoking_up")
+	end
+end
 
 --- Navigation & A/P & A/T & Radios
 -- function zc_acf_mcp_spd_set(spd)
@@ -5028,10 +5119,6 @@ end
 -- function zc_b738_dc_pwr_selector(mode)
 -- function zc_b738_engine_start_src(mode)
 
-
--- point to configuration file in modules folder
-filename = MODULES_DIRECTORY .. "B738crewconfig.lua"
-
 -- set checklist
 function setchecklist(number)
 		set("sim/operation/failures/rel_fadec_7",number)
@@ -5072,34 +5159,22 @@ function xsp_strobelight_off()
 	zc_acf_light_nav_onoff(1)
 end
 function xsp_taxilights_off()
-	command_once("laminar/B738/toggle_switch/taxi_light_brightness_pos_up")
-	command_once("laminar/B738/toggle_switch/taxi_light_brightness_pos_up")
+	zc_acf_light_taxi_mode(0)
 end
 function xsp_taxilights_on()
-	command_once("laminar/B738/toggle_switch/taxi_light_brightness_pos_dn")
-	command_once("laminar/B738/toggle_switch/taxi_light_brightness_pos_dn")
+	zc_acf_light_taxi_mode(2)
 end
 function xsp_landinglights_off()
-	command_once("laminar/B738/switch/land_lights_ret_left_up")
-	command_once("laminar/B738/switch/land_lights_ret_left_up")
-	command_once("laminar/B738/switch/land_lights_ret_right_up")
-	command_once("laminar/B738/switch/land_lights_ret_right_up")
-	command_once("laminar/B738/switch/land_lights_left_off")
-	command_once("laminar/B738/switch/land_lights_right_off")
+	zc_acf_light_landing_mode(0,0)
 end
 function xsp_landinglights_on()
-	command_once("laminar/B738/switch/land_lights_ret_left_dn")
-	command_once("laminar/B738/switch/land_lights_ret_left_dn")
-	command_once("laminar/B738/switch/land_lights_ret_right_dn")
-	command_once("laminar/B738/switch/land_lights_ret_right_dn")
-	command_once("laminar/B738/switch/land_lights_left_on")
-	command_once("laminar/B738/switch/land_lights_right_on")
+	zc_acf_light_landing_mode(0,1)
 end
 function xsp_winglights_off()
-	command_once("laminar/B738/switch/wing_light_off")
+	zc_acf_light_wing_onoff(0)
 end
 function xsp_winglights_on()
-	command_once("laminar/B738/switch/wing_light_on")
+	zc_acf_light_wing_onoff(1)
 end
 function xsp_logolights_off()
 	zc_acf_light_logo_onoff(0)
