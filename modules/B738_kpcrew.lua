@@ -271,7 +271,7 @@ ZC_COLD_AND_DARK = {
 	[23] = {["lefttext"] = "OTHER", ["timerincr"] = 1,
 		["actions"] = function ()
 			command_once("laminar/B738/spring_toggle_switch/APU_start_pos_up")
-			set("laminar/B738/flt_ctrls/flap_lever",0)
+			zc_acf_flap_set(0)
 			set("laminar/B738/flt_ctrls/speedbrake_lever",0)
 			set("laminar/B738/parking_brake_pos",1)
 			set("laminar/B738/fms/chock_status",0)
@@ -779,7 +779,7 @@ ZC_TURN_AROUND_STATE = {
 	},
 	[29] = {["lefttext"] = "OTHER", ["timerincr"] = 1,
 		["actions"] = function ()
-			set("laminar/B738/flt_ctrls/flap_lever",0)
+			zc_acf_flap_set(0)
 			set("laminar/B738/flt_ctrls/speedbrake_lever",0)
 			set("laminar/B738/parking_brake_pos",1)
 			set("laminar/B738/fms/chock_status",1)
@@ -2237,21 +2237,7 @@ ZC_BEFORE_TAXI_PROC = {
 	[7] = {["lefttext"] = "FO: TAKEOFF FLAPS -- SET", ["timerincr"] = 1,
 		["actions"] = function ()
 			speakNoText(0,"SET TAKEOFF FLAPS")
-			if get("laminar/B738/FMS/takeoff_flaps") == 1 then
-				command_once("laminar/B738/push_button/flaps_1")
-			end
-			if get("laminar/B738/FMS/takeoff_flaps") == 2 then
-				command_once("laminar/B738/push_button/flaps_2")
-			end
-			if get("laminar/B738/FMS/takeoff_flaps") == 5 then
-				command_once("laminar/B738/push_button/flaps_5")
-			end
-			if get("laminar/B738/FMS/takeoff_flaps") == 10 then
-				command_once("laminar/B738/push_button/flaps_10")
-			end
-			if get("laminar/B738/FMS/takeoff_flaps") == 15 then
-				command_once("laminar/B738/push_button/flaps_15")
-			end
+			zc_acf_flap_set(zc_acf_getToFlap())
 		end
 	},
 	[8] = {["lefttext"] = "PROCEDURE FINISHED", ["timerincr"] = -1,
@@ -2472,14 +2458,14 @@ ZC_BEFORE_TAKEOFF_CHECKLIST = {
 	[1] = {["lefttext"] = "FLAPS -- FLAPS __ GREEN LIGHT", ["timerincr"] = 2,
 		["actions"] = function ()
 			speakNoText(0,"FLAPS")
-			gLeftText = string.format("FLAPS %i GREEN LIGHT",get("laminar/B738/FMS/takeoff_flaps"))
+			gLeftText = string.format("FLAPS %i GREEN LIGHT",zc_acf_getToFlap())
 		end
 	},
 	[2] = {["lefttext"] = "FLAPS -- FLAPS __ GREEN LIGHT", ["timerincr"] = 999,
 		["actions"] = function ()
-			gLeftText = string.format("FLAPS %i GREEN LIGHT",get("laminar/B738/FMS/takeoff_flaps"))
+			gLeftText = string.format("FLAPS %i GREEN LIGHT",zc_acf_getToFlap())
 			if get_zc_config("easy") then
-				speakNoText(0,string.format("FLAPS %i GREEN LIGHT",get("laminar/B738/FMS/takeoff_flaps")))
+				speakNoText(0,string.format("FLAPS %i GREEN LIGHT",zc_acf_getToFlap()))
 				command_once("bgood/xchecklist/check_item")
 			end
 		end
@@ -2663,39 +2649,39 @@ ZC_CLIMB_PROC = {
 			command_once("laminar/B738/autopilot/cmd_a_press")
 		end
 	},
-	[6] = {["lefttext"] = "FLAPS 10",["timerincr"] = get("laminar/B738/flt_ctrls/flap_lever")/0.125==5 and 1 or 996,
+	[6] = {["lefttext"] = "FLAPS 10",["timerincr"] = zc_get_flap_position() == 15 and 1 or 996,
 		["actions"] = function ()
 			gLeftText = "FLAPS 10"
 		end
 	},
-	[7] = {["lefttext"] = "FLAPS 10",["timerincr"] = (get_zc_config("easy") == false and get("laminar/B738/flt_ctrls/flap_lever")/0.125==5) and 997 or 996,
+	[7] = {["lefttext"] = "FLAPS 10",["timerincr"] = (get_zc_config("easy") == false and zc_get_flap_position() == 15 and 997 or 996,
 		["actions"] = function ()
 			if get_zc_config("easy") == false then
 				speakNoText(0,"SPEED CHECK   FLAPS 10")
-				command_once("laminar/B738/push_button/flaps_10")
+				zc_acf_flap_set(10)
 			end
 		end
 	},
-	[8] = {["lefttext"] = "FLAPS 5",["timerincr"] = (get_zc_config("easy") == false and get("laminar/B738/flt_ctrls/flap_lever")/0.125>3) and 1 or 996,
+	[8] = {["lefttext"] = "FLAPS 5",["timerincr"] = (get_zc_config("easy") == false and zc_get_flap_position() == 10 and 1 or 996,
 		["actions"] = function ()
 			gLeftText = "FLAPS 5"
 		end
 	},
-	[9] = {["lefttext"] = "FLAPS 5",["timerincr"] = (get_zc_config("easy") == false and get("laminar/B738/flt_ctrls/flap_lever")/0.125>3) and 997 or 996,
+	[9] = {["lefttext"] = "FLAPS 5",["timerincr"] = (get_zc_config("easy") == false and zc_get_flap_position() == 10 and 997 or 996,
 		["actions"] = function ()
 			speakNoText(0,"SPEED CHECK   FLAPS 5")
-			command_once("laminar/B738/push_button/flaps_5")
+			zc_acf_flap_set(5)
 		end
 	},
-	[10] = {["lefttext"] = "FLAPS 1",["timerincr"] = (get_zc_config("easy") == false and get("laminar/B738/flt_ctrls/flap_lever")/0.125>=2) and 1 or 996,
+	[10] = {["lefttext"] = "FLAPS 1",["timerincr"] = (get_zc_config("easy") == false and zc_get_flap_position() == 5 and 1 or 996,
 		["actions"] = function ()
 			gLeftText = "FLAPS 1"
 		end
 	},
-	[11] = {["lefttext"] = "FLAPS 1",["timerincr"] = (get_zc_config("easy") == false and get("laminar/B738/flt_ctrls/flap_lever")/0.125>=2) and 997 or 996,
+	[11] = {["lefttext"] = "FLAPS 1",["timerincr"] = (get_zc_config("easy") == false and zc_get_flap_position() == 5 and 997 or 996,
 		["actions"] = function ()
 			speakNoText(0,"SPEED CHECK   FLAPS 1")
-			command_once("laminar/B738/push_button/flaps_1")
+			zc_acf_flap_set(1)
 		end
 	},
 	[12] = {["lefttext"] = "FLAPS UP",["timerincr"] = get_zc_config("easy") == false and 1 or 996,
@@ -2706,7 +2692,7 @@ ZC_CLIMB_PROC = {
 	[13] = {["lefttext"] = "FLAPS UP",["timerincr"] = get_zc_config("easy") == false and 997 or 996,
 		["actions"] = function ()
 			speakNoText(0,"SPEED CHECK   FLAPS UP")
-			command_once("laminar/B738/push_button/flaps_0")
+			zc_acf_flap_set(0)
 		end
 	},
 	[14] = {["lefttext"] = "GEAR OFF", ["timerincr"] = 1,
@@ -2759,7 +2745,7 @@ ZC_AFTER_TAKEOFF_CHECKLIST = {
 				-- Landing gear
 				command_once("sim/flight_controls/landing_gear_up")
 				-- Flaps
-				command_once("laminar/B738/push_button/flaps_0")
+				zc_acf_flap_set(0)
 			end
 			ZC_BACKGROUND_PROCS["80KTS"].status = 0
 			ZC_BACKGROUND_PROCS["GEARUP"].status = 0
@@ -3150,7 +3136,7 @@ ZC_LANDING_PROC = {
 	[3] = {["lefttext"] = "AT 210 KTS - FLAPS 1", ["timerincr"] = 5,
 		["actions"] = function ()
 			speakNoText(0,"SPEED CHECK FLAPS 1")
-			command_once("laminar/B738/push_button/flaps_1")
+			zc_acf_flap_set(1)
 		end
 	},
 	[4] = {["lefttext"] = "AT 180 KTS - FLAPS 5", ["timerincr"] = 1,
@@ -3166,7 +3152,7 @@ ZC_LANDING_PROC = {
 	[6] = {["lefttext"] = "AT 180 KTS - FLAPS 5", ["timerincr"] = 5,
 		["actions"] = function ()
 			speakNoText(0,"SPEED CHECK FLAPS 5")
-			command_once("laminar/B738/push_button/flaps_5")
+			zc_acf_flap_set(5)
 		end
 	},
 	[7] = {["lefttext"] = "AT 160 KTS -- FLAPS 15 GEAR DOWN", ["timerincr"] = 1,
@@ -3182,7 +3168,7 @@ ZC_LANDING_PROC = {
 	[9] = {["lefttext"] = "AT 160 KTS -- FLAPS 15 GEAR DOWN", ["timerincr"] = 5,
 		["actions"] = function ()
 			speakNoText(0,"SPEED CHECK   FLAPS 15")
-			command_once("laminar/B738/push_button/flaps_15")
+			zc_acf_flap_set(15)
 			command_once("sim/flight_controls/landing_gear_down")
 		end
 	},
@@ -3209,7 +3195,7 @@ ZC_LANDING_PROC = {
 	[14] = {["lefttext"] = "AT 155 KTS - FLAPS 30", ["timerincr"] = 5,
 		["actions"] = function ()
 			speakNoText(0,"SPEED CHECK   FLAPS 30")
-			command_once("laminar/B738/push_button/flaps_30")
+			zc_acf_flap_set(30)
 		end
 	},
 	[15] = {["lefttext"] = "SET MISSED APPROACH ALTITUDE", ["timerincr"] = 1,
@@ -3320,7 +3306,7 @@ ZC_LANDING_CHECKLIST = {
 		["actions"] = function ()
 			gLeftText = string.format("FLAPS %i GREEN LIGHT",get("laminar/B738/FMS/approach_flaps"))
 			if get_zc_config("easy") then
-				speakNoText(0,string.format("FLAPS %i GREEN LIGHT",get("laminar/B738/FMS/approach_flaps")))
+				speakNoText(0,string.format("FLAPS %i GREEN LIGHT",zc_acf_getLdgFlap()))
 				command_once("bgood/xchecklist/check_item")
 			end
 		end
@@ -3425,7 +3411,7 @@ ZC_AFTER_LANDING_PROC = {
 	}, 
 	[6] = {["lefttext"] = "FO: FLAPS -- UP", ["timerincr"] = 1,
 		["actions"] = function ()
-			command_once("laminar/B738/push_button/flaps_0")
+			zc_acf_flap_set(0)
 		end
 	},
 	[7] = {["lefttext"] = "FO: PROBE HEAT -- OFF", ["timerincr"] = 1,
@@ -4120,21 +4106,25 @@ ZC_BACKGROUND_PROCS = {
 	["FLAPSUPSCHED"] = {["status"] = 0,
 		["actions"] = function ()
 			if get("sim/flightmodel/position/y_agl") > 50 then
-				if get("laminar/B738/autopilot/airspeed") > 140.0 and get("laminar/B738/flt_ctrls/flap_lever")/0.125 == 5 then
+				if get("laminar/B738/autopilot/airspeed") > 140.0 and 
+					zc_get_flap_position() == 15 then
 					speakNoText(0,"SPEED CHECK   FLAPS 10")
-					command_once("laminar/B738/push_button/flaps_10")
+					zc_acf_flap_set(10)
 				end
-				if get("laminar/B738/autopilot/airspeed") > 160.0 and get("laminar/B738/flt_ctrls/flap_lever")/0.125 > 3 then
+				if get("laminar/B738/autopilot/airspeed") > 160.0 and 
+					zc_get_flap_position() == 10 then
 					speakNoText(0,"SPEED CHECK   FLAPS 5")
-					command_once("laminar/B738/push_button/flaps_5")
+					zc_acf_flap_set(5)
 				end
-				if get("laminar/B738/autopilot/airspeed") > 170.0 and get("laminar/B738/flt_ctrls/flap_lever")/0.125 >= 2 then
+				if get("laminar/B738/autopilot/airspeed") > 170.0 and 
+					zc_get_flap_position() == 5 then
 					speakNoText(0,"SPEED CHECK   FLAPS 1")
-					command_once("laminar/B738/push_button/flaps_1")
+					zc_acf_flap_set(1)
 				end
-				if get("laminar/B738/autopilot/airspeed") > 180.0 and get("laminar/B738/flt_ctrls/flap_lever")/0.125 >= 1 then
+				if get("laminar/B738/autopilot/airspeed") > 180.0 and 
+					zc_get_flap_position() == 1 then
 					speakNoText(0,"SPEED CHECK   FLAPS UP")
-					command_once("laminar/B738/push_button/flaps_0")
+					zc_acf_flap_set(0)
 					ZC_BACKGROUND_PROCS["FLAPSUPSCHED"].status = 0
 				end
 			end
@@ -4539,7 +4529,37 @@ function zc_get_dest_runway_len()
 end
 
 -- get flaps position
--- function zc_get_flap_position()
+-- 0=UP,0.125=1,0.250=2,0.375=5,0.5=10,0.625=15,0.750=25,0.875=30,1=40
+function zc_get_flap_position()
+	if get("laminar/B738/flt_ctrls/flap_lever") == 1 then
+		return 40
+	end
+	if get("laminar/B738/flt_ctrls/flap_lever") == 0.875 then
+		return 30
+	end
+	if get("laminar/B738/flt_ctrls/flap_lever") == 0.75 then
+		return 25
+	end
+	if get("laminar/B738/flt_ctrls/flap_lever") == 0.625 then
+		return 15
+	end
+	if get("laminar/B738/flt_ctrls/flap_lever") == 0.5 then
+		return 10
+	end
+	if get("laminar/B738/flt_ctrls/flap_lever") == 0.375 then
+		return 5
+	end
+	if get("laminar/B738/flt_ctrls/flap_lever") == 0.25 then
+		return 2
+	end
+	if get("laminar/B738/flt_ctrls/flap_lever") == 0.125 then
+		return 1
+	end
+	if get("laminar/B738/flt_ctrls/flap_lever") == 0 then
+		return 0
+	end
+end
+
 -- function_get_abrk_setting()
 
 --------------------------------- aircraft specific action functions
@@ -4583,8 +4603,24 @@ function zc_acf_apu_on_bus(bus, onoff)
 	end
 end
 
--- function zc_acf_gpu_start()
--- function zc_acf_gpu_stop()
+function zc_acf_gpu_start()
+	if get("laminar/B738/gpu_available") == 0 then
+		command_once("laminar/B738/tab/home")
+		command_once("laminar/B738/tab/menu6")
+		command_once("laminar/B738/tab/menu1")
+		command_once("sim/electrical/GPU_on")
+	end
+end
+
+function zc_acf_gpu_stop()
+	if get("laminar/B738/gpu_available") > 0 then
+		command_once("laminar/B738/tab/home")
+		command_once("laminar/B738/tab/menu6")
+		command_once("laminar/B738/tab/menu1")
+		command_once("laminar/B738/annunciator/ground_power_avail")
+	end
+end
+
 
 -- GENerators 0=ALL,1=GEN1,2=GEN2; 0=OFF,1=ON Bus
 function zc_acf_gen_on_bus(gen,mode)
@@ -4723,7 +4759,35 @@ function zc_acf_probe_heat_onoff(heater,mode)
 end
 
 --- Flight controls
--- function zc_acf_flap_set(position)
+
+-- position=0,1,2,5,10,15,25,30,40
+function zc_acf_flap_set(position)
+	if position == 1 then
+		command_once("laminar/B738/push_button/flaps_1")
+	end
+	if position == 2 then
+		command_once("laminar/B738/push_button/flaps_2")
+	end
+	if position == 5 then
+		command_once("laminar/B738/push_button/flaps_5")
+	end
+	if position == 10 then
+		command_once("laminar/B738/push_button/flaps_10")
+	end
+	if position == 15 then
+		command_once("laminar/B738/push_button/flaps_15")
+	end
+	if position == 25 then
+		command_once("laminar/B738/push_button/flaps_25")
+	end
+	if position == 30 then
+		command_once("laminar/B738/push_button/flaps_30")
+	end
+	if position == 40 then
+		command_once("laminar/B738/push_button/flaps_40")
+	end
+end
+
 -- function zc_acf_speed_break_set(position)
 -- function zc_acf_parking_break_onoff(onoff)
 -- function zc_acf_abrk_mode(mode)
