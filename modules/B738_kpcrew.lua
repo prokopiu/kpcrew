@@ -31,6 +31,9 @@ DEP_bleeds_list = B738:getBleeds()
 APP_apptype_list = {"ILS CAT 1","VISUAL","ILS CAT 2 OR 3","VOR","NDB","RNAV","TOUCH AND GO","CIRCLING"}
 
 zibo_save_counter = 30
+xsp_bravo_mode = 1
+xsp_bravo_layer = 0
+xsp_fine_coarse = 1
 
 -- Procedure definitions
 ZC_INIT_PROC = {
@@ -272,8 +275,8 @@ ZC_COLD_AND_DARK = {
 		["actions"] = function ()
 			command_once("laminar/B738/spring_toggle_switch/APU_start_pos_up")
 			zc_acf_flap_set(0)
-			set("laminar/B738/flt_ctrls/speedbrake_lever",0)
-			set("laminar/B738/parking_brake_pos",1)
+			zc_acf_speed_break_set(0)
+			zc_acf_parking_break_onoff(1)
 			set("laminar/B738/fms/chock_status",0)
 			set("laminar/B738/engine/mixture_ratio2",0)
 			set("laminar/B738/engine/mixture_ratio1",0)
@@ -289,12 +292,8 @@ ZC_COLD_AND_DARK = {
 			while get("laminar/B738/knob/transponder_pos") > 1 do
 				command_once("laminar/B738/knob/transponder_mode_dn")
 			end
-			while get("laminar/B738/autobrake/autobrake_pos") > 1 do
-				command_once("laminar/B738/knob/autobrake_dn")
-			end
-			while get("laminar/B738/autobrake/autobrake_pos") < 1 do
-				command_once("laminar/B738/knob/autobrake_up")
-			end
+			zc_acf_abrk_mode(0)
+			zc_acf_mcp_fds_set(0,0)
 		end
 	},
 	[24] = {["lefttext"] = "OTHER", ["timerincr"] = 1,
@@ -318,9 +317,7 @@ ZC_POWER_UP_PROC = {
 	-- Prepare aircraft
 	[1] = {["lefttext"] = "FO: PARKING BRAKE -- SET",["timerincr"] = 1,
 		["actions"] = function ()
-			if get("sim/cockpit2/controls/parking_brake_ratio") == 0 then
-				command_once("sim/flight_controls/brakes_toggle_max")
-			end
+			zc_acf_parking_break_onoff(1)
 		end
 	},
 	[2] = {["lefttext"] = "CAPT: FUEL CONTROLS -- CUTOFF",["timerincr"] = 1,
@@ -780,8 +777,8 @@ ZC_TURN_AROUND_STATE = {
 	[29] = {["lefttext"] = "OTHER", ["timerincr"] = 1,
 		["actions"] = function ()
 			zc_acf_flap_set(0)
-			set("laminar/B738/flt_ctrls/speedbrake_lever",0)
-			set("laminar/B738/parking_brake_pos",1)
+			zc_acf_speed_break_set(0)
+			zc_acf_parking_break_onoff(1)
 			set("laminar/B738/fms/chock_status",1)
 			set("laminar/B738/engine/mixture_ratio2",0)
 			set("laminar/B738/engine/mixture_ratio1",0)
@@ -797,12 +794,7 @@ ZC_TURN_AROUND_STATE = {
 			while get("laminar/B738/knob/transponder_pos") > 1 do
 				command_once("laminar/B738/knob/transponder_mode_dn")
 			end
-			while get("laminar/B738/autobrake/autobrake_pos") > 1 do
-				command_once("laminar/B738/knob/autobrake_dn")
-			end
-			while get("laminar/B738/autobrake/autobrake_pos") < 1 do
-				command_once("laminar/B738/knob/autobrake_up")
-			end
+			zc_acf_abrk_mode(0)
 		end
 	},
 	[30] = {["lefttext"] = "IRSs ON", ["timerincr"] = 1,
@@ -823,6 +815,7 @@ ZC_TURN_AROUND_STATE = {
 			if get("laminar/B738/systems/lowerDU_page2") == 0 then
 				command_once("laminar/B738/LDU_control/push_button/MFD_SYS")
 			end
+			zc_acf_mcp_fds_set(0,0)
 		end
 	}, 
 	[33] = {["lefttext"] = "PROCEDURE FINISHED", ["timerincr"] = -1,
@@ -864,9 +857,7 @@ ZC_PRE_FLIGHT_PROC = {
 	}, 
 	[5] = {["lefttext"] = "CAPT: SET PARKING BRAKE", ["timerincr"] = 1,
 		["actions"] = function ()
-			if get("laminar/B738/annunciator/parking_brake") == 0 then
-				command_once("sim/flight_controls/brakes_toggle_max")
-			end
+			zc_acf_parking_break_onoff(1)
 		end
 	}, 
 	[6] = {["lefttext"] = "CAPT: CDU PREFLIGHT PROCEDURE", ["timerincr"] = 1,
@@ -956,12 +947,7 @@ ZC_PRE_FLIGHT_PROC = {
 	}, 
 	[18] = {["lefttext"] = "CAPT: MCP - FLIGHT DIRECTORS ON", ["timerincr"] = 1,
 		["actions"] = function ()
-			if get("laminar/B738/autopilot/pfd_fd_cmd") == 0 then
-				command_once("laminar/B738/autopilot/flight_director_toggle")
-			end
-			if get("laminar/B738/autopilot/pfd_fd_cmd_fo") == 0 then
-				command_once("laminar/B738/autopilot/flight_director_fo_toggle")
-			end
+			zc_acf_mcp_fds_set(0,1)
 		end
 	}, 
 	[19] = {["lefttext"] = "CAPT: OXYGEN TEST AND SET", ["timerincr"] = 1,
@@ -1007,7 +993,7 @@ ZC_PRE_FLIGHT_PROC = {
 	}, 
 	[26] = {["lefttext"] = "CAPT: SPD BRAKE LEVER DOWN DETENT", ["timerincr"] = 3,
 		["actions"] = function ()
-			set("laminar/B738/axis/speedbrake_lever", 0)
+			zc_acf_speed_break_set(0)
 		end
 	}, 
 	[27] = {["lefttext"] = "CAPT: RADIO TUNING PANEL SET", ["timerincr"] = 1,
@@ -1245,11 +1231,7 @@ ZC_PRE_FLIGHT_PROC = {
 	}, 
 	[64] = {["lefttext"] = "FO: AUTOBRAKE RTO", ["timerincr"] = 1,
 		["actions"] = function ()
-			command_once("laminar/B738/knob/autobrake_dn")	
-			command_once("laminar/B738/knob/autobrake_dn")	
-			command_once("laminar/B738/knob/autobrake_dn")	
-			command_once("laminar/B738/knob/autobrake_dn")	
-			command_once("laminar/B738/knob/autobrake_dn")	
+			zc_acf_abrk_mode(-1)
 		end
 	}, 
 	[65] = {["lefttext"] = "FO: FUEL FLOW RESET", ["timerincr"] = 1,
@@ -1408,7 +1390,7 @@ ZC_PREFLIGHT_CHECKLIST = {
 				-- Pressurization
 				set("laminar/B738/annunciator/altn_press",0)
 				-- Parking Brake
-				set("laminar/B738/parking_brake_pos",1)
+				zc_acf_parking_break_onoff(1)
 				-- fuel cutoff switches
 				set("laminar/B738/engine/mixture_ratio1",0)
 				set("laminar/B738/engine/mixture_ratio2",0)
@@ -1705,13 +1687,13 @@ ZC_BEFORE_START_PROC = {
 	},
 	[3] = {["lefttext"] = "CAPT: SET STAB TRIM ", ["timerincr"] = 5,
 		["actions"] = function ()
-			set("sim/flightmodel2/controls/elevator_trim",(8.2 - get("laminar/B738/FMS/trim_calc")) * -0.117)
+			zc_acf_elev_trim_set(get_zc_brief_dep("elevtrim"))
 		end
 	}, 
 	[4] = {["lefttext"] = "CAPT: RUDDER & AILERON TRIM SET", ["timerincr"] = 1,
 		["actions"] = function ()
-			set("sim/cockpit2/controls/rudder_trim",0)
-			set("sim/cockpit2/controls/aileron_trim",0)
+			zc_acf_aileron_trim_set(0)
+			zc_acf_rudder_trim_set(0)
 		end
 	},
 	[5] = {["lefttext"] = "FO: SET FUEL PUMPS", ["timerincr"] = 1,
@@ -1917,7 +1899,8 @@ ZC_BEFORE_START_CHECKLIST = {
 		["actions"] = function ()
 			speakNoText(0,"RUDDER AND AILERON TRIM")
 			if get_zc_config("easy") then
-				set("sim/cockpit2/controls/rudder_trim",0)
+				zc_acf_rudder_trim_set(0)
+				zc_acf_aileron_trim_set(0)
 			end
 		end
 	},
@@ -2280,9 +2263,7 @@ ZC_BEFORE_TAXI_CHECKLIST = {
 					command_once("laminar/B738/knob/eng2_start_right")
 				end
 				-- autobrake
-				while get("laminar/B738/autobrake/autobrake_pos") > 0 do
-					command_once("laminar/B738/knob/autobrake_dn")
-				end
+				zc_acf_abrk_mode(-1)
 			end
 		end
 	},
@@ -2452,6 +2433,7 @@ ZC_BEFORE_TAKEOFF_CHECKLIST = {
 			speakNoText(0,"BEFORE TAKE OFF CHECKLIST")
 			if get_zc_config("easy") then
 				setchecklist(5)
+				zc_acf_elev_trim_set(get_zc_brief_dep("elevtrim"))
 			end
 		end
 	},
@@ -2473,14 +2455,14 @@ ZC_BEFORE_TAKEOFF_CHECKLIST = {
 	[3] = {["lefttext"] = "STABILIZER TRIM -- __ UNITS", ["timerincr"] = 2,
 		["actions"] = function ()
 			speakNoText(0,"STABILIZER TRIM")
-			gLeftText = string.format("STABILIZER TRIM -- %.2f UNITS",get("laminar/B738/FMS/trim_calc"))
+			gLeftText = string.format("STABILIZER TRIM -- %.2f UNITS",get_zc_brief_dep("elevtrim"))
 		end
 	},
 	[4] = {["lefttext"] = "STABILIZER TRIM -- __ UNITS", ["timerincr"] = 999,
 		["actions"] = function ()
-			gLeftText = string.format("STABILIZER TRIM -- %.2f UNITS",get("laminar/B738/FMS/trim_calc"))
+			gLeftText = string.format("STABILIZER TRIM -- %.2f UNITS",get_zc_brief_dep("elevtrim"))
 			if get_zc_config("easy") then
-				speakNoText(0,string.format("%.2f units",get("laminar/B738/FMS/trim_calc")))
+				speakNoText(0,string.format("%.2f units",get_zc_brief_dep("elevtrim")))
 				command_once("bgood/xchecklist/check_item")
 			end
 		end
@@ -2649,12 +2631,12 @@ ZC_CLIMB_PROC = {
 			command_once("laminar/B738/autopilot/cmd_a_press")
 		end
 	},
-	[6] = {["lefttext"] = "FLAPS 10",["timerincr"] = zc_get_flap_position() == 15 and 1 or 996,
+	[6] = {["lefttext"] = "FLAPS 10",["timerincr"] = (get_zc_config("easy") == false and zc_get_flap_position() == 15) and 1 or 996,
 		["actions"] = function ()
 			gLeftText = "FLAPS 10"
 		end
 	},
-	[7] = {["lefttext"] = "FLAPS 10",["timerincr"] = (get_zc_config("easy") == false and zc_get_flap_position() == 15 and 997 or 996,
+	[7] = {["lefttext"] = "FLAPS 10",["timerincr"] = (get_zc_config("easy") == false and zc_get_flap_position() == 15) and 997 or 996,
 		["actions"] = function ()
 			if get_zc_config("easy") == false then
 				speakNoText(0,"SPEED CHECK   FLAPS 10")
@@ -2662,23 +2644,23 @@ ZC_CLIMB_PROC = {
 			end
 		end
 	},
-	[8] = {["lefttext"] = "FLAPS 5",["timerincr"] = (get_zc_config("easy") == false and zc_get_flap_position() == 10 and 1 or 996,
+	[8] = {["lefttext"] = "FLAPS 5",["timerincr"] = (get_zc_config("easy") == false and zc_get_flap_position() == 10) and 1 or 996,
 		["actions"] = function ()
 			gLeftText = "FLAPS 5"
 		end
 	},
-	[9] = {["lefttext"] = "FLAPS 5",["timerincr"] = (get_zc_config("easy") == false and zc_get_flap_position() == 10 and 997 or 996,
+	[9] = {["lefttext"] = "FLAPS 5",["timerincr"] = (get_zc_config("easy") == false and zc_get_flap_position() == 10) and 997 or 996,
 		["actions"] = function ()
 			speakNoText(0,"SPEED CHECK   FLAPS 5")
 			zc_acf_flap_set(5)
 		end
 	},
-	[10] = {["lefttext"] = "FLAPS 1",["timerincr"] = (get_zc_config("easy") == false and zc_get_flap_position() == 5 and 1 or 996,
+	[10] = {["lefttext"] = "FLAPS 1",["timerincr"] = (get_zc_config("easy") == false and zc_get_flap_position() == 5) and 1 or 996,
 		["actions"] = function ()
 			gLeftText = "FLAPS 1"
 		end
 	},
-	[11] = {["lefttext"] = "FLAPS 1",["timerincr"] = (get_zc_config("easy") == false and zc_get_flap_position() == 5 and 997 or 996,
+	[11] = {["lefttext"] = "FLAPS 1",["timerincr"] = (get_zc_config("easy") == false and zc_get_flap_position() == 5) and 997 or 996,
 		["actions"] = function ()
 			speakNoText(0,"SPEED CHECK   FLAPS 1")
 			zc_acf_flap_set(1)
@@ -2710,6 +2692,7 @@ ZC_CLIMB_PROC = {
 			end
 			zc_acf_light_rwyto_onoff(0)
 			zc_acf_light_landing_mode(2,0)
+			zc_acf_abrk_mode(0)
 			command_once("laminar/B738/knob/autobrake_up")
 			command_once("laminar/B738/LDU_control/push_button/MFD_ENG")
 		end
@@ -2942,9 +2925,7 @@ ZC_DESCENT_CHECKLIST = {
 			if get_zc_config("easy") then
 				setchecklist(7)
 				-- autobrake
-				while get("laminar/B738/autobrake/autobrake_pos") < get_zc_brief_app("autobrake") do
-					command_once("laminar/B738/knob/autobrake_up")
-				end
+				zc_acf_abrk_mode(get_zc_brief_app("autobrake")-1)
 				-- Switch MFD to ENG
 				if get("laminar/B738/systems/lowerDU_page2") == 0 then
 					command_once("laminar/B738/LDU_control/push_button/MFD_ENG")
@@ -3121,6 +3102,8 @@ ZC_LANDING_PROC = {
 				set("laminar/B738/pfd/dh_pilot",get_zc_brief_app("da"))
 				set("laminar/B738/pfd/dh_copilot",get_zc_brief_app("da"))
 			end
+			zc_acf_speed_break_set(1)
+			zc_acf_abrk_mode(get_zc_brief_app("autobrake")-1)
 		end
 	},
 	[1] = {["lefttext"] = "AT 210 KTS - FLAPS 1", ["timerincr"] = 1,
@@ -3179,7 +3162,7 @@ ZC_LANDING_PROC = {
 	},
 	[11] = {["lefttext"] = "SPEEDBRAKE -- ARMED", ["timerincr"] = 997,
 		["actions"] = function ()
-			set("laminar/B738/annunciator/speedbrake_armed",1)
+			zc_acf_speed_break_set(1)
 		end
 	},
 	[12] = {["lefttext"] = "AT 155 KTS - FLAPS 30", ["timerincr"] = 1,
@@ -3242,6 +3225,7 @@ ZC_LANDING_CHECKLIST = {
 				end
 				-- Gear
 				command_once("laminar/B738/push_button/gear_down")
+				zc_acf_speed_break_set(1)
 			end
 		end
 	},
@@ -3383,7 +3367,7 @@ ZC_AFTER_LANDING_PROC = {
 	},
 	[1] = {["lefttext"] = "CAPT: SPEED BRAKES -- UP", ["timerincr"] = 1,
 		["actions"] = function ()
-			set("laminar/B738/flt_ctrls/speedbrake_lever",0)
+			zc_acf_speed_break_set(0)
 		end
 	},
 	[2] = {["lefttext"] = "CAPT: CHRONO -- STOP", ["timerincr"] = 1,
@@ -3458,9 +3442,7 @@ ZC_AFTER_LANDING_PROC = {
 	},
 	[14] = {["lefttext"] = "FO: AUTOBRAKE -- OFF", ["timerincr"] = 1,
 		["actions"] = function ()
-			while get("laminar/B738/autobrake/autobrake_pos") > 1 do
-				command_once("laminar/B738/knob/autobrake_dn")
-			end
+			zc_acf_abrk_mode(0)
 		end
 	},
 	[15] = {["lefttext"] = "FO: TRANSPONDER -- STBY", ["timerincr"] = 1,
@@ -3564,12 +3546,7 @@ ZC_SHUTDOWN_PROC = {
 	},
 	[16] = {["lefttext"] = "FO: FLIGHT DIRECTORS -- OFF", ["timerincr"] = 1,
 		["actions"] = function ()
-			if get("laminar/B738/autopilot/pfd_fd_cmd") == 1 then
-				command_once("laminar/B738/autopilot/flight_director_toggle")
-			end
-			if get("laminar/B738/autopilot/pfd_fd_cmd_fo") == 1 then
-				command_once("laminar/B738/autopilot/flight_director_fo_toggle")
-			end
+			zc_acf_mcp_fds_set(0,0)
 		end
 	},
 	[17] = {["lefttext"] = "FO: RESET MCP", ["timerincr"] = 1,
@@ -4558,6 +4535,7 @@ function zc_get_flap_position()
 	if get("laminar/B738/flt_ctrls/flap_lever") == 0 then
 		return 0
 	end
+	return 0
 end
 
 -- function_get_abrk_setting()
@@ -4788,12 +4766,70 @@ function zc_acf_flap_set(position)
 	end
 end
 
--- function zc_acf_speed_break_set(position)
--- function zc_acf_parking_break_onoff(onoff)
--- function zc_acf_abrk_mode(mode)
--- function zc_acf_elev_trim_set(value)
--- function zc_acf_aileron_trim_set(value)
--- function zc_acf_rudder_trim_set(value)
+-- Speedbrake 0=UP, 1=ARMED, 2=FULL
+function zc_acf_speed_break_set(position)
+	if position == 0 then
+		set("laminar/B738/flt_ctrls/speedbrake_lever",0)
+		set("laminar/B738/flt_ctrls/speedbrake_lever_stop",0)
+	end
+	if position == 1 then
+		set("laminar/B738/flt_ctrls/speedbrake_lever",0.0889)
+		set("laminar/B738/flt_ctrls/speedbrake_lever_stop",1)
+	end
+	if position == 2 then
+		set("laminar/B738/flt_ctrls/speedbrake_lever",1)
+		set("laminar/B738/flt_ctrls/speedbrake_lever_stop",1)
+	end
+end
+
+function zc_acf_parking_break_onoff(mode)
+	set("sim/cockpit2/controls/parking_brake_ratio",mode)
+end
+
+-- Auto Brake -1=RTO, 0=OFF, 1=1, 2=2, 3=3 4=MAX
+function zc_acf_abrk_mode(mode)
+	while get("laminar/B738/autobrake/autobrake_pos") > 0 do
+		command_once("laminar/B738/knob/autobrake_dn")
+	end
+	if mode == 0 then
+		command_once("laminar/B738/knob/autobrake_up")
+	end
+	if mode == 1 then
+		command_once("laminar/B738/knob/autobrake_up")
+		command_once("laminar/B738/knob/autobrake_up")
+	end
+	if mode == 2 then                             
+		command_once("laminar/B738/knob/autobrake_up")
+		command_once("laminar/B738/knob/autobrake_up")
+		command_once("laminar/B738/knob/autobrake_up")
+	end                                           
+	if mode == 3 then                             
+		command_once("laminar/B738/knob/autobrake_up")
+		command_once("laminar/B738/knob/autobrake_up")
+		command_once("laminar/B738/knob/autobrake_up")
+		command_once("laminar/B738/knob/autobrake_up")
+	end                                           
+	if mode == 4 then                             
+		command_once("laminar/B738/knob/autobrake_up")
+		command_once("laminar/B738/knob/autobrake_up")
+		command_once("laminar/B738/knob/autobrake_up")
+		command_once("laminar/B738/knob/autobrake_up")
+		command_once("laminar/B738/knob/autobrake_up")
+	end
+end
+
+-- Set elevator trim to value
+function zc_acf_elev_trim_set(value)
+	set("sim/flightmodel2/controls/elevator_trim",(8.2 - value) * -0.117)
+end
+
+function zc_acf_aileron_trim_set(value)
+	set("sim/cockpit2/controls/aileron_trim",value)
+end
+
+function zc_acf_rudder_trim_set(value)
+	set("sim/cockpit2/controls/rudder_trim",value)
+end
 
 --- LIGHTS
 
@@ -4807,32 +4843,32 @@ function zc_acf_light_strobe_mode(mode)
 	if mode == 0 then
 		command_once("laminar/B738/toggle_switch/position_light_up")
 		command_once("laminar/B738/toggle_switch/position_light_up")
-		command_once("laminar/B738/toggle_switch/position_light_dn")
+		command_once("laminar/B738/toggle_switch/position_light_down")
 	end
 	if mode == 1 then
 		command_once("laminar/B738/toggle_switch/position_light_up")
 		command_once("laminar/B738/toggle_switch/position_light_up")
 	end
 	if mode == 2 then
-		command_once("laminar/B738/toggle_switch/position_light_dn")
-		command_once("laminar/B738/toggle_switch/position_light_dn")
+		command_once("laminar/B738/toggle_switch/position_light_down")
+		command_once("laminar/B738/toggle_switch/position_light_down")
 	end
 end
 
 -- poslights combined with strobes 0=off, 1=on only, 2=+strobes
 function zc_acf_light_nav_onoff(mode)
 	if mode == 0 then
-		command_once("laminar/B738/toggle_switch/position_light_dn")
-		command_once("laminar/B738/toggle_switch/position_light_dn")
+		command_once("laminar/B738/toggle_switch/position_light_down")
+		command_once("laminar/B738/toggle_switch/position_light_down")
 		command_once("laminar/B738/toggle_switch/position_light_up")
 	end
 	if mode == 1 then
-		command_once("laminar/B738/toggle_switch/position_light_dn")
-		command_once("laminar/B738/toggle_switch/position_light_dn")
+		command_once("laminar/B738/toggle_switch/position_light_down")
+		command_once("laminar/B738/toggle_switch/position_light_down")
 	end
 	if mode == 2 then
-		command_once("laminar/B738/toggle_switch/position_light_dn")
-		command_once("laminar/B738/toggle_switch/position_light_dn")
+		command_once("laminar/B738/toggle_switch/position_light_down")
+		command_once("laminar/B738/toggle_switch/position_light_down")
 		command_once("laminar/B738/toggle_switch/position_light_up")
 		command_once("laminar/B738/toggle_switch/position_light_up")
 	end
@@ -5013,6 +5049,34 @@ function zc_acf_no_smoking_onoff(mode)
 end
 
 --- Navigation & A/P & A/T & Radios
+-- FD 0=BOTH, 1=LEFT, 2=RIGHT
+function zc_acf_mcp_fds_set(fd, mode)
+	if mode == 0 then
+		if fd == 0 or fd == 1 then
+			if get("laminar/B738/autopilot/flight_director_pos") == 1 then
+				command_once("laminar/B738/autopilot/flight_director_toggle")
+			end
+		end
+		if fd == 0 or fd == 2 then
+			if get("laminar/B738/autopilot/flight_director_fo_pos") == 1 then
+				command_once("laminar/B738/autopilot/flight_director_fo_toggle")
+			end
+		end
+	else
+		if fd == 0 or fd == 1 then
+			if get("laminar/B738/autopilot/flight_director_pos") == 0 then
+				command_once("laminar/B738/autopilot/flight_director_toggle")
+			end
+		end
+		if fd == 0 or fd == 2 then
+			if get("laminar/B738/autopilot/flight_director_fo_pos") == 0 then
+				command_once("laminar/B738/autopilot/flight_director_fo_toggle")
+			end
+		end
+	end
+end
+			
+
 -- function zc_acf_mcp_spd_set(spd)
 -- function zc_acf_mcp_alt_set(alt)
 -- function zc_acf_mcp_hdg_set(hdg)
@@ -5061,7 +5125,18 @@ end
 -- function zc_acf_overspeed()
 
 
---- Doors and external items
+--- Doors and external items 0=UP, 1=DOWN, 2=OFF
+function zc_acf_gears(mode)
+	if mode == 0 then
+		command_once("sim/flight_controls/landing_gear_up")
+	end
+	if mode == 1 then
+		command_once("sim/flight_controls/landing_gear_down")
+	end
+	if mode == 2 then
+		command_once("sim/flight_controls/landing_gear_off")
+	end
+end
 
 -- door 0=ALL, 1=main, 2=cargof, 3=cargor 
 function zc_acf_external_doors(door,openclose)
@@ -5174,7 +5249,6 @@ end
 -- function zc_acf_nd_terr_onoff(onoff)
 -- function zc_acf_nd_trfc_onoff(onoff)
 -- function zc_acf_nd_ctr_onoff(onoff)
--- function zc_acf_fd_onoff(fd,onoff)
 
 -- B738 specific action functions
 -- function zc_b738_navctr_panel_set(mode)
@@ -5198,53 +5272,11 @@ function clearchecklist()
 end
 
 -- Aircraft specific Joystick functions
-function xsp_beaconlights_off()
-	zc_acf_light_beacon_onoff(0)
+function xsp_flaps_dec()
+	command_once("sim/flight_controls/flaps_up")
 end
-function xsp_beaconlights_on()
-	zc_acf_light_beacon_onoff(1)
-end
-function xsp_domelight_on()
-	zc_acf_cockpit_light_mode(1)
-end
-function xsp_domelight_off()
-	zc_acf_cockpit_light_mode(0)
-end
-function xsp_navlight_on()
-	zc_acf_light_nav_onoff(1)
-end
-function xsp_navlight_off()
-	zc_acf_light_nav_onoff(0)
-end
-function xsp_strobelight_on()
-	zc_acf_light_nav_onoff(2)
-end
-function xsp_strobelight_off()
-	zc_acf_light_nav_onoff(1)
-end
-function xsp_taxilights_off()
-	zc_acf_light_taxi_mode(0)
-end
-function xsp_taxilights_on()
-	zc_acf_light_taxi_mode(2)
-end
-function xsp_landinglights_off()
-	zc_acf_light_landing_mode(0,0)
-end
-function xsp_landinglights_on()
-	zc_acf_light_landing_mode(0,1)
-end
-function xsp_winglights_off()
-	zc_acf_light_wing_onoff(0)
-end
-function xsp_winglights_on()
-	zc_acf_light_wing_onoff(1)
-end
-function xsp_logolights_off()
-	zc_acf_light_logo_onoff(0)
-end
-function xsp_logolights_on()
-	zc_acf_light_logo_onoff(1)
+function xsp_flaps_inc()
+	command_once("sim/flight_controls/flaps_down")
 end
 function xsp_toggle_fd_both()
 	command_once("laminar/B738/autopilot/flight_director_fo_toggle")
@@ -5253,6 +5285,112 @@ end
 function xsp_toggle_std_both()
 	command_once("laminar/B738/EFIS_control/capt/push_button/std_press")
 	command_once("laminar/B738/EFIS_control/fo/push_button/std_press")
+end
+function xsp_toggle_autopilot()
+	command_once("laminar/B738/autopilot/cmd_a_press")
+end
+function xsp_toggle_alt()
+	command_once("laminar/B738/autopilot/alt_hld_press")
+end
+function xsp_toggle_hdg()
+	command_once("laminar/B738/autopilot/hdg_sel_press")
+end
+function xsp_toggle_nav()
+	command_once("laminar/B738/autopilot/vorloc_press")
+end
+function xsp_toggle_app()
+	command_once("laminar/B738/autopilot/app_press")
+end
+function xsp_toggle_vs()
+	command_once("laminar/B738/autopilot/vs_press")
+end
+function xsp_toggle_ias()
+	command_once("laminar/B738/autopilot/speed_press")
+end
+
+function xsp_toggle_rev_course()
+	if xsp_bravo_layer == 0 then
+		command_once("sim/autopilot/back_course")
+	end
+	if xsp_bravo_layer == 1 and xsp_bravo_mode == 1 then
+		command_once("laminar/B738/rtp_L/freq_txfr/sel_switch")
+	end
+	if xsp_bravo_layer == 1 and xsp_bravo_mode == 2 then
+		command_once("laminar/B738/rtp_R/freq_txfr/sel_switch")
+	end
+end
+
+function xsp_bravo_knob_up()
+	if xsp_bravo_layer == 0 then
+		if xsp_bravo_mode == 1 then
+			command_once("laminar/B738/autopilot/altitude_up")
+		end
+		if xsp_bravo_mode == 2 then
+			command_once("sim/autopilot/vertical_speed_up")
+		end
+		if xsp_bravo_mode == 3 then
+			command_once("laminar/B738/autopilot/heading_up")
+		end
+		if xsp_bravo_mode == 4 then
+			command_once("laminar/B738/autopilot/course_pilot_up")
+		end
+		if xsp_bravo_mode == 5 then
+			command_once("sim/autopilot/airspeed_up")
+		end
+	end
+	if xsp_bravo_layer == 1 then
+		if xsp_bravo_mode == 1 then
+			if xsp_fine_coarse == 0 then
+				command_once("sim/radios/stby_com1_coarse_up")
+			else
+				command_once("sim/radios/stby_com1_fine_up_833")
+			end
+		end
+		if xsp_bravo_mode == 2 then
+			if xsp_fine_coarse == 0 then
+				command_once("sim/radios/stby_com2_coarse_up")
+			else
+				command_once("sim/radios/stby_com2_fine_up_833")
+			end
+		end
+	end
+end
+function xsp_bravo_knob_dn()
+	if xsp_bravo_layer == 0 then
+		if xsp_bravo_mode == 1 then
+			command_once("laminar/B738/autopilot/altitude_dn")
+		end
+		if xsp_bravo_mode == 2 then
+			command_once("sim/autopilot/vertical_speed_up")
+		end
+		if xsp_bravo_mode == 3 then
+			command_once("laminar/B738/autopilot/heading_dn")
+		end
+		if xsp_bravo_mode == 4 then
+			command_once("laminar/B738/autopilot/course_pilot_dn")
+		end
+		if xsp_bravo_mode == 5 then
+			command_once("sim/autopilot/airspeed_down")
+		end
+	end
+	if xsp_bravo_layer == 1 then
+		if xsp_bravo_mode == 1 then
+			if xsp_fine_coarse == 0 then
+				command_once("sim/radios/stby_com1_coarse_down")
+			else
+				command_once("sim/radios/stby_com1_fine_down_833")
+			end
+		end
+	end
+	if xsp_bravo_layer == 1 then
+		if xsp_bravo_mode == 2 then
+			if xsp_fine_coarse == 0 then
+				command_once("sim/radios/stby_com2_coarse_down")
+			else
+				command_once("sim/radios/stby_com2_fine_down_833")
+			end
+		end
+	end
 end
 
 -- ZIBO special regular save situation #8
@@ -5269,25 +5407,95 @@ function zc_zibo_save()
 	end
 end
 
--- aircraft specific joystick/key commands
-create_command("kp/xsp/beacon_lights_switch_on",	"Beacon Lights On",	"xsp_beaconlights_on()", "", "")
-create_command("kp/xsp/beacon_lights_switch_off",	"Beacon Lights Off",	"xsp_beaconlights_off()", "", "")
-create_command("kp/xsp/dome_lights_switch_on",		"Dome Lights On",		"xsp_domelight_on()", "", "")
-create_command("kp/xsp/dome_lights_switch_off",		"Dome Lights Off",	"xsp_domelight_off()", "", "")
-create_command("kp/xsp/nav_lights_switch_on",		"Position Lights On",	"xsp_navlight_on()", "", "")
-create_command("kp/xsp/nav_lights_switch_off",		"Position Lights Off","xsp_navlight_off()", "", "")
-create_command("kp/xsp/strobe_lights_switch_on",	"Strobe Lights On",	"xsp_strobelight_on()", "", "")
-create_command("kp/xsp/strobe_lights_switch_off",	"Strobe Lights Off",	"xsp_strobelight_off()", "", "")
-create_command("kp/xsp/taxi_lights_switch_on",		"Taxi Lights On",		"xsp_taxilights_on()", "", "")
-create_command("kp/xsp/taxi_lights_switch_off",		"Taxi Lights Off",	"xsp_taxilights_off()", "", "")
-create_command("kp/xsp/landing_lights_switch_on",	"Landing Lights On",	"xsp_landinglights_on()", "", "")
-create_command("kp/xsp/landing_lights_switch_off",	"Landing Lights Off",	"xsp_landinglights_off()", "", "")
-create_command("kp/xsp/wing_lights_switch_on",		"Wing Lights On",		"xsp_winglights_on()", "", "")
-create_command("kp/xsp/wing_lights_switch_off",		"Wing Lights Off",	"xsp_winglights_off()", "", "")
-create_command("kp/xsp/logo_lights_switch_on",		"Logo Lights On",		"xsp_logolights_on()", "", "")
-create_command("kp/xsp/logo_lights_switch_off",		"Logo Lights Off",	"xsp_logolights_off()", "", "")
+xsp_parking_brake = create_dataref_table("kp/xsp/parking_brake", "Int")
+xsp_master_caution = create_dataref_table("kp/xsp/master_caution", "Int")
+xsp_mcp_hdg = create_dataref_table("kp/xsp/mcp_hdg", "Int")
+xsp_mcp_nav = create_dataref_table("kp/xsp/mcp_nav", "Int")
+xsp_mcp_app = create_dataref_table("kp/xsp/mcp_app", "Int")
+xsp_mcp_ias = create_dataref_table("kp/xsp/mcp_ias", "Int")
+xsp_mcp_vsp = create_dataref_table("kp/xsp/mcp_vsp", "Int")
+xsp_mcp_alt = create_dataref_table("kp/xsp/mcp_alt", "Int")
+xsp_mcp_ap1 = create_dataref_table("kp/xsp/mcp_ap1", "Int")
+xsp_doors = create_dataref_table("kp/xsp/doors", "Int")
+
+function xsp_set_lightvars()
+	xsp_parking_brake[0] = get("sim/cockpit2/controls/parking_brake_ratio")
+	-- Master Caution light
+	xsp_master_caution[0] = get("laminar/B738/annunciator/master_caution_light")
+	xsp_mcp_hdg[0] = get("laminar/B738/autopilot/hdg_sel_status")
+	if get("laminar/B738/autopilot/vorloc_status") == 0 and get("laminar/B738/autopilot/lnav_status") == 0 then
+		xsp_mcp_nav[0] = 0
+	else
+		xsp_mcp_nav[0] = 1
+	end
+	xsp_mcp_app[0] = get("laminar/B738/autopilot/app_status")
+	if get("laminar/B738/autopilot/n1_status") == 0 and get("laminar/B738/autopilot/speed_mode") == 0 then
+		xsp_mcp_ias[0] = 0
+	else
+		xsp_mcp_ias[0] = 1
+	end
+	if get("laminar/B738/autopilot/lvl_chg_status") == 0 and get("laminar/B738/autopilot/vs_status") == 0 and get("laminar/B738/autopilot/vnav_status1") == 0 then
+		xsp_mcp_vsp[0] = 0
+	else
+		xsp_mcp_vsp[0] = 1
+	end
+	xsp_mcp_alt[0] = get("laminar/B738/autopilot/alt_hld_status")
+	xsp_mcp_ap1[0] = get("laminar/B738/autopilot/cmd_a_status")
+	if get("737u/doors/aft1") == 0 and get("737u/doors/aft1") == 0 and get("737u/doors/aft_Cargo") == 0 and get(		"737u/doors/Fwd_Cargo")  == 0 and get("737u/doors/L1") == 0 and get("737u/doors/L2") == 0 and get(			"737u/doors/R1") == 0 and get("737u/doors/R2") then
+		xsp_doors[0] = 0
+	else
+		xsp_doors[0] = 1
+	end
+end
+
+-- aircraft specific joystick/key commands (e.g. for Alpha Yoke)
+create_command("kp/xsp/beacon_lights_switch_on",	"Beacon Lights On",		"zc_acf_light_beacon_onoff(1)", "", "")
+create_command("kp/xsp/beacon_lights_switch_off",	"Beacon Lights Off",	"zc_acf_light_beacon_onoff(0)", "", "")
+create_command("kp/xsp/dome_lights_switch_on",		"Dome Lights On",		"zc_acf_cockpit_light_mode(1)", "", "")
+create_command("kp/xsp/dome_lights_switch_off",		"Dome Lights Off",		"zc_acf_cockpit_light_mode(0)", "", "")
+create_command("kp/xsp/nav_lights_switch_on",		"Position Lights On",	"zc_acf_light_nav_onoff(1)", "", "")
+create_command("kp/xsp/nav_lights_switch_off",		"Position Lights Off",	"zc_acf_light_nav_onoff(0)", "", "")
+create_command("kp/xsp/strobe_lights_switch_on",	"Strobe Lights On",		"zc_acf_light_strobe_mode(1)", "", "")
+create_command("kp/xsp/strobe_lights_switch_off",	"Strobe Lights Off",	"zc_acf_light_strobe_mode(0)", "", "")
+create_command("kp/xsp/taxi_lights_switch_on",		"Taxi Lights On",		"zc_acf_light_taxi_mode(1)", "", "")
+create_command("kp/xsp/taxi_lights_switch_off",		"Taxi Lights Off",		"zc_acf_light_taxi_mode(0)", "", "")
+create_command("kp/xsp/landing_lights_switch_on",	"Landing Lights On",	"zc_acf_light_landing_mode(0,1)", "", "")
+create_command("kp/xsp/landing_lights_switch_off",	"Landing Lights Off",	"zc_acf_light_landing_mode(0,0)", "", "")
+create_command("kp/xsp/wing_lights_switch_on",		"Wing Lights On",		"zc_acf_light_wing_onoff(1)", "", "")
+create_command("kp/xsp/wing_lights_switch_off",		"Wing Lights Off",		"zc_acf_light_wing_onoff(0)", "", "")
+create_command("kp/xsp/logo_lights_switch_on",		"Logo Lights On",		"zc_acf_light_logo_onoff(1)", "", "")
+create_command("kp/xsp/logo_lights_switch_off",		"Logo Lights Off",		"zc_acf_light_logo_onoff(0)", "", "")
+-- General commands
+create_command("kp/xsp/parking_brake_on",			"Parking Brake On",		"zc_acf_parking_break_onoff(1)", "", "")
+create_command("kp/xsp/parking_brake_off",			"Parking Brake Off",	"zc_acf_parking_break_onoff(0)", "", "")
+create_command("kp/xsp/gears_up",					"Gear Up",				"zc_acf_gears(0)", "", "")
+create_command("kp/xsp/gears_down",					"Gear Down",			"zc_acf_gears(1)", "", "")
+create_command("kp/xsp/flaps_up",					"Flaps 1 Up",			"xsp_flaps_dec()", "", "")
+create_command("kp/xsp/flaps_down",					"Flaps 1 Down",			"xsp_flaps_inc()", "", "")
+-- A/P and NAV related commands
 create_command("kp/xsp/toggle_both_fd",				"Toggle Both FD",		"xsp_toggle_fd_both()", "", "")
-create_command("kp/xsp/toggle_both_std",			"Toggle Both STD",	"xsp_toggle_std_both()", "", "")
+create_command("kp/xsp/toggle_both_std",			"Toggle Both STD",		"xsp_toggle_std_both()", "", "")
+create_command("kp/xsp/toggle_rev_appr",			"Toggle Reverse Appr",	"xsp_toggle_rev_course()", "", "")
+create_command("kp/xsp/toggle_ap",					"Toggle A/P 1",			"xsp_toggle_autopilot()", "", "")
+create_command("kp/xsp/toggle_alt",					"Toggle Altitude",		"xsp_toggle_alt()","","")
+create_command("kp/xsp/toggle_hdg",					"Toggle Heading",		"xsp_toggle_hdg()","","")
+create_command("kp/xsp/toggle_nav",					"Toggle Nav",			"xsp_toggle_nav()","","")
+create_command("kp/xsp/toggle_app",					"Toggle Approach",		"xsp_toggle_app()","","")
+create_command("kp/xsp/toggle_vs",					"Toggle vertical speed","xsp_toggle_vs()","","")
+create_command("kp/xsp/toggle_ias",					"Toggle ias",			"xsp_toggle_ias()","","")
+
+-- Bravo specific commands
+create_command("kp/xsp/bravo_mode_alt",				"Bravo AP Mode ALT",	"xsp_bravo_mode=1", "", "")
+create_command("kp/xsp/bravo_mode_vs",				"Bravo AP Mode VS",		"xsp_bravo_mode=2", "", "")
+create_command("kp/xsp/bravo_mode_hdg",				"Bravo AP Mode HDG",	"xsp_bravo_mode=3", "", "")
+create_command("kp/xsp/bravo_mode_crs",				"Bravo AP Mode CRS",	"xsp_bravo_mode=4", "", "")
+create_command("kp/xsp/bravo_mode_ias",				"Bravo AP Mode IAS",	"xsp_bravo_mode=5", "", "")
+create_command("kp/xsp/bravo_knob_up",				"Bravo AP Knob Up",		"xsp_bravo_knob_up()", "", "")
+create_command("kp/xsp/bravo_knob_dn",				"Bravo AP Knob Down",	"xsp_bravo_knob_dn()", "", "")
+create_command("kp/xsp/bravo_layer_com",			"Bravo Layer COM",		"xsp_bravo_layer=1", "", "")
+create_command("kp/xsp/bravo_layer_ap",				"Bravo Layer A/P",		"xsp_bravo_layer=0", "", "")
+create_command("kp/xsp/bravo_fine",					"Bravo Fine",			"xsp_fine_coarse = 1", "", "")
+create_command("kp/xsp/bravo_coarse",				"Bravo Coarse",			"xsp_fine_coarse = 0", "", "")
 
 do_sometimes("zc_zibo_save()")
-
+do_often("xsp_set_lightvars()")
