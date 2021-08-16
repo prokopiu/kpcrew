@@ -65,7 +65,7 @@ ZC_COLD_AND_DARK = {
 	}, 
 	[1] = {["lefttext"] = "OVERHEAD COLUMN 1", ["timerincr"] = 1,
 		["actions"] = function ()
-			set("laminar/B738/toggle_switch/yaw_dumper_pos",0)
+			zc_acf_yaw_damper_onoff(0)
 			set("laminar/B738/toggle_switch/alt_flaps_ctrl",0)
 		end
 	},
@@ -131,9 +131,6 @@ ZC_COLD_AND_DARK = {
 			command_once("laminar/B738/knob/dc_power_dn")
 			command_once("laminar/B738/knob/dc_power_dn")
 			command_once("laminar/B738/knob/dc_power_dn")
-			if get("laminar/B738/gpu_available") > 0 then
-				command_once("laminar/B738/tab/home")
-			end
 		end
 	},                                                  
 	[7] = {["lefttext"] = "OVERHEAD COLUMN 2", ["timerincr"] = 1,
@@ -144,17 +141,11 @@ ZC_COLD_AND_DARK = {
 			command_once("laminar/B738/knob/ac_power_dn")
 			command_once("laminar/B738/knob/ac_power_dn")
 			command_once("laminar/B738/knob/ac_power_dn")
-			if get("laminar/B738/gpu_available") > 0 then
-				command_once("laminar/B738/tab/menu6")
-			end
 		end
 	},                                                  
 	[8] = {["lefttext"] = "OVERHEAD COLUMN 2", ["timerincr"] = 1,
 		["actions"] = function ()
-			if get("laminar/B738/gpu_available") > 0 then
-				command_once("laminar/B738/tab/menu1")
-			end
-			command_once("laminar/B738/annunciator/ground_power_avail")
+			zc_acf_gpu_stop()
 		end
 	},                                                  
 	[9] = {["lefttext"] = "OVERHEAD COLUMN 2", ["timerincr"] = 1,
@@ -176,7 +167,7 @@ ZC_COLD_AND_DARK = {
 	},                                                  
 	[11] = {["lefttext"] = "OVERHEAD COLUMN 3", ["timerincr"] = 1,
 		["actions"] = function ()
-			set("laminar/B738/electric/panel_brightness",2,0)
+			zc_acf_panel_brightness(2,0)
 			set("laminar/B738/toggle_switch/eq_cool_exhaust",0)
 			set("laminar/B738/toggle_switch/eq_cool_supply",0)
 			zc_acf_emer_lights_mode(0)
@@ -202,10 +193,7 @@ ZC_COLD_AND_DARK = {
 	},                                                  
 	[15] = {["lefttext"] = "OVERHEAD COLUMN 4", ["timerincr"] = 1,
 		["actions"] = function ()
-			set("laminar/B738/toggle_switch/hydro_pumps2_pos",0)
-			set("laminar/B738/toggle_switch/hydro_pumps1_pos",0)
-			set("laminar/B738/toggle_switch/electric_hydro_pumps1_pos",0)
-			set("laminar/B738/toggle_switch/electric_hydro_pumps2_pos",0)
+			zc_acf_hyd_pumps_onoff(0,0)
 		end
 	},                                                  	
 	[16] = {["lefttext"] = "OVERHEAD COLUMN 5", ["timerincr"] = 1,
@@ -220,15 +208,13 @@ ZC_COLD_AND_DARK = {
 		["actions"] = function ()
 			set("laminar/B738/air/l_recirc_fan_pos",0)
 			set("laminar/B738/air/r_recirc_fan_pos",0)
-			set("laminar/B738/air/l_pack_pos",0)
-			set("laminar/B738/air/r_pack_pos",0)
+			zc_acf_packs_set(0,0)
 		end
 	},                     
 	[18] = {["lefttext"] = "OVERHEAD COLUMN 5", ["timerincr"] = 1,
 		["actions"] = function ()
-			set("laminar/B738/air/isolation_valve_pos",2)
-			set("laminar/B738/toggle_switch/bleed_air_1_pos",0)
-			set("laminar/B738/toggle_switch/bleed_air_2_pos",0)
+			zc_acf_crossbleed_isol_mode(2)
+			zc_acf_eng_bleeds_onoff(0,0)
 			zc_acf_apu_bleed_onoff(0)
 			set("sim/cockpit/pressure/max_allowable_altitude",0)
 			set("laminar/B738/pressurization/knobs/landing_alt",0)
@@ -257,10 +243,10 @@ ZC_COLD_AND_DARK = {
 	},                     
 	[21] = {["lefttext"] = "LIGHTS", ["timerincr"] = 1,
 		["actions"] = function ()
-			set("laminar/B738/electric/panel_brightness",0,0)
-			set("laminar/B738/electric/panel_brightness",1,0)
-			set("laminar/B738/electric/panel_brightness",2,0)
-			set("laminar/B738/electric/panel_brightness",3,0)
+			zc_acf_panel_brightness(0,0)
+			zc_acf_panel_brightness(1,0)
+			zc_acf_panel_brightness(2,0)
+			zc_acf_panel_brightness(3,0)
 		end
 	},                     
 	[22] = {["lefttext"] = "LIGHTS", ["timerincr"] = 1,
@@ -273,22 +259,16 @@ ZC_COLD_AND_DARK = {
 	},
 	[23] = {["lefttext"] = "OTHER", ["timerincr"] = 1,
 		["actions"] = function ()
-			command_once("laminar/B738/spring_toggle_switch/APU_start_pos_up")
+			zc_acf_apu_stop()
 			zc_acf_flap_set(0)
 			zc_acf_speed_break_set(0)
 			zc_acf_parking_break_onoff(1)
 			set("laminar/B738/fms/chock_status",0)
-			set("laminar/B738/engine/mixture_ratio2",0)
-			set("laminar/B738/engine/mixture_ratio1",0)
+			zc_acf_fuel_lever_set(0,0)
 			command_once("laminar/B738/tab/home")
 			command_once("laminar/B738/tab/menu6")
 			command_once("laminar/B738/tab/menu2")
-			if get("laminar/B738/engine/starter1_pos") ~= 1 then
-				command_once("laminar/B738/knob/eng1_start_left")
-			end
-			if get("laminar/B738/engine/starter2_pos") ~= 1 then
-				command_once("laminar/B738/knob/eng2_start_left")
-			end
+			zc_acf_eng_starter_mode(0,1)
 			while get("laminar/B738/knob/transponder_pos") > 1 do
 				command_once("laminar/B738/knob/transponder_mode_dn")
 			end
@@ -322,8 +302,7 @@ ZC_POWER_UP_PROC = {
 	},
 	[2] = {["lefttext"] = "CAPT: FUEL CONTROLS -- CUTOFF",["timerincr"] = 1,
 		["actions"] = function ()
-			set("laminar/B738/engine/mixture_ratio1",0)
-			set("laminar/B738/engine/mixture_ratio2",0)
+			zc_acf_fuel_lever_set(0,0)
 		end
 	},
 	-- BATTERY ON
@@ -451,8 +430,8 @@ ZC_POWER_UP_PROC = {
 	-- OTHER SETTINGS
 	[23] = {["lefttext"] = "FO: CONFIGURE ELEC HYD PUMPS", ["timerincr"] = 1,
 		["actions"] = function ()
-			set("laminar/B738/toggle_switch/electric_hydro_pumps1_pos",1)
-			set("laminar/B738/toggle_switch/electric_hydro_pumps2_pos",1)
+			zc_acf_hyd_pumps_onoff(1,1)
+			zc_acf_hyd_pumps_onoff(2,1)
 		end
 	}, 
 	[24] = {["lefttext"] = "FO: POSITION & WING LIGHTS", ["timerincr"] = 1,
@@ -495,9 +474,9 @@ ZC_POWER_UP_PROC = {
 	}, 
 	[31] = {["lefttext"] = "CAPT: MCP - IAS TO V2", ["timerincr"] = 1,
 		["actions"] = function ()
-			set("laminar/B738/autopilot/mcp_speed_dial_kts_mach",get_zc_config("apspd"))
-			set("laminar/B738/autopilot/mcp_hdg_dial",get_zc_config("aphdg"))
-			set("laminar/B738/autopilot/mcp_alt_dial",get_zc_config("apalt"))
+			zc_acf_mcp_spd_set(get_zc_config("apspd"))
+			zc_acf_mcp_hdg_set(get_zc_config("aphdg"))
+			zc_acf_mcp_alt_set(get_zc_config("apalt"))
 			if get("laminar/B738/systems/lowerDU_page2") == 0 then
 				command_once("laminar/B738/LDU_control/push_button/MFD_SYS")
 			end
@@ -528,7 +507,7 @@ ZC_TURN_AROUND_STATE = {
 	}, 
 	[1] = {["lefttext"] = "OVERHEAD COLUMN 1", ["timerincr"] = 1,
 		["actions"] = function ()
-			set("laminar/B738/toggle_switch/yaw_dumper_pos",0)
+			zc_acf_yaw_damper_onoff(0)
 			set("laminar/B738/toggle_switch/alt_flaps_ctrl",0)
 		end
 	}, 
@@ -680,7 +659,7 @@ ZC_TURN_AROUND_STATE = {
 	},                                                  
 	[17] = {["lefttext"] = "OVERHEAD COLUMN 3", ["timerincr"] = 1,
 		["actions"] = function ()
-			set("laminar/B738/electric/panel_brightness",2,0)
+			zc_acf_panel_brightness(2,0)
 			set("laminar/B738/toggle_switch/eq_cool_exhaust",0)
 			set("laminar/B738/toggle_switch/eq_cool_supply",0)
 			zc_acf_emer_lights_mode(1)
@@ -706,10 +685,10 @@ ZC_TURN_AROUND_STATE = {
 	},                                                  
 	[21] = {["lefttext"] = "OVERHEAD COLUMN 4", ["timerincr"] = 1,
 		["actions"] = function ()
-			set("laminar/B738/toggle_switch/hydro_pumps2_pos",1)
-			set("laminar/B738/toggle_switch/hydro_pumps1_pos",1)
-			set("laminar/B738/toggle_switch/electric_hydro_pumps1_pos",0)
-			set("laminar/B738/toggle_switch/electric_hydro_pumps2_pos",0)
+			zc_acf_hyd_pumps_onoff(1,1)
+			zc_acf_hyd_pumps_onoff(2,1)
+			zc_acf_hyd_pumps_onoff(3,0)
+			zc_acf_hyd_pumps_onoff(4,0)
 		end
 	},                                                  	
 	[22] = {["lefttext"] = "OVERHEAD COLUMN 5", ["timerincr"] = 1,
@@ -724,15 +703,14 @@ ZC_TURN_AROUND_STATE = {
 		["actions"] = function ()
 			set("laminar/B738/air/l_recirc_fan_pos",1)
 			set("laminar/B738/air/r_recirc_fan_pos",1)
-			set("laminar/B738/air/l_pack_pos",0)
-			set("laminar/B738/air/r_pack_pos",1)
+			zc_acf_packs_set(1,0)
+			zc_acf_packs_set(2,1)
 		end
 	},                     
 	[24] = {["lefttext"] = "OVERHEAD COLUMN 5", ["timerincr"] = 1,
 		["actions"] = function ()
-			set("laminar/B738/air/isolation_valve_pos",1)
-			set("laminar/B738/toggle_switch/bleed_air_1_pos",0)
-			set("laminar/B738/toggle_switch/bleed_air_2_pos",0)
+			zc_acf_crossbleed_isol_mode(1)
+			zc_acf_eng_bleeds_onoff(0,0)
 			zc_acf_apu_bleed_onoff(0)
 			set("sim/cockpit/pressure/max_allowable_altitude",0)
 			set("laminar/B738/pressurization/knobs/landing_alt",0)
@@ -761,10 +739,10 @@ ZC_TURN_AROUND_STATE = {
 	},                     
 	[27] = {["lefttext"] = "LIGHTS", ["timerincr"] = 1,
 		["actions"] = function ()
-			set("laminar/B738/electric/panel_brightness",0,0)
-			set("laminar/B738/electric/panel_brightness",1,0)
-			set("laminar/B738/electric/panel_brightness",2,0)
-			set("laminar/B738/electric/panel_brightness",3,0)
+			zc_acf_panel_brightness(0,0)
+			zc_acf_panel_brightness(1,0)
+			zc_acf_panel_brightness(2,0)
+			zc_acf_panel_brightness(3,0)
 		end
 	},                     
 	[28] = {["lefttext"] = "LIGHTS", ["timerincr"] = 1,
@@ -780,17 +758,11 @@ ZC_TURN_AROUND_STATE = {
 			zc_acf_speed_break_set(0)
 			zc_acf_parking_break_onoff(1)
 			set("laminar/B738/fms/chock_status",1)
-			set("laminar/B738/engine/mixture_ratio2",0)
-			set("laminar/B738/engine/mixture_ratio1",0)
+			zc_acf_fuel_lever_set(0,0)
 			command_once("laminar/B738/tab/home")
 			command_once("laminar/B738/tab/menu6")
 			command_once("laminar/B738/tab/menu2")
-			if get("laminar/B738/engine/starter1_pos") > 1 then
-				command_once("laminar/B738/knob/eng1_start_left")
-			end
-			if get("laminar/B738/engine/starter2_pos") > 1 then
-				command_once("laminar/B738/knob/eng2_start_left")
-			end
+			zc_acf_eng_starter_mode(0,1)
 			while get("laminar/B738/knob/transponder_pos") > 1 do
 				command_once("laminar/B738/knob/transponder_mode_dn")
 			end
@@ -809,9 +781,9 @@ ZC_TURN_AROUND_STATE = {
 	}, 
 	[32] = {["lefttext"] = "CAPT: MCP - IAS TO V2", ["timerincr"] = 1,
 		["actions"] = function ()
-			set("laminar/B738/autopilot/mcp_speed_dial_kts_mach",get_zc_config("apspd"))
-			set("laminar/B738/autopilot/mcp_hdg_dial",get_zc_config("aphdg"))
-			set("laminar/B738/autopilot/mcp_alt_dial",get_zc_config("apalt"))
+			zc_acf_mcp_spd_set(get_zc_config("apspd"))
+			zc_acf_mcp_hdg_set(get_zc_config("aphdg"))
+			zc_acf_mcp_alt_set(get_zc_config("apalt"))
 			if get("laminar/B738/systems/lowerDU_page2") == 0 then
 				command_once("laminar/B738/LDU_control/push_button/MFD_SYS")
 			end
@@ -974,15 +946,14 @@ ZC_PRE_FLIGHT_PROC = {
 	}, 
 	[23] = {["lefttext"] = "CAPT: MCP - IAS TO V2", ["timerincr"] = 1,
 		["actions"] = function ()
-			set("laminar/B738/autopilot/mcp_speed_dial_kts_mach",get("laminar/B738/FMS/v2_set"))
-			set("laminar/B738/autopilot/mcp_hdg_dial",get("laminar/B738/fms/ref_runway_crs"))
-			set("laminar/B738/autopilot/course_pilot",get("laminar/B738/fms/ref_runway_crs"))
-			set("laminar/B738/autopilot/course_copilot",get("laminar/B738/fms/ref_runway_crs"))
+			zc_acf_mcp_spd_set(get("laminar/B738/FMS/v2_set"))
+			zc_acf_mcp_hdg_set(get("laminar/B738/fms/ref_runway_crs"))
+			zc_acf_mcp_crs_set(0,get("laminar/B738/fms/ref_runway_crs"))
 		end
 	}, 
 	[24] = {["lefttext"] = "CAPT: MCP - ALTITUDE TO 4900 UNTIL CLEARANCE", ["timerincr"] = 3,
 		["actions"] = function ()
-			set("laminar/B738/autopilot/mcp_alt_dial", get_zc_config("apalt"))
+			zc_acf_mcp_alt_set(get_zc_config("apalt"))
 		end
 	}, 
 	[25] = {["lefttext"] = "CAPT: SET STANDBY RMI", ["timerincr"] = 1,
@@ -1008,7 +979,7 @@ ZC_PRE_FLIGHT_PROC = {
 	}, 
 	[29] = {["lefttext"] = "FO: YAW DAMPER ON", ["timerincr"] = 1,
 		["actions"] = function ()
-			set("laminar/B738/toggle_switch/yaw_dumper_pos",1)
+			zc_acf_yaw_damper_onoff(1)
 		end
 	}, 
 	[30] = {["lefttext"] = "FO: IFE & GALLEY POWER", ["timerincr"] = 3,
@@ -1055,22 +1026,22 @@ ZC_PRE_FLIGHT_PROC = {
 	}, 
 	[38] = {["lefttext"] = "FO: HYDRAULIC PANEL SET", ["timerincr"] = 1,
 		["actions"] = function ()
-			set("laminar/B738/toggle_switch/hydro_pumps2_pos",1)
+			zc_acf_hyd_pumps_onoff(1,1)
 		end
 	}, 
 	[39] = {["lefttext"] = "FO: HYDRAULIC PANEL SET", ["timerincr"] = 1,
 		["actions"] = function ()
-			set("laminar/B738/toggle_switch/hydro_pumps1_pos",1)
+			zc_acf_hyd_pumps_onoff(2,1)
 		end
 	}, 
 	[40] = {["lefttext"] = "FO: HYDRAULIC PANEL SET", ["timerincr"] = 1,
 		["actions"] = function ()
-			set("laminar/B738/toggle_switch/electric_hydro_pumps1_pos",0)
+			zc_acf_hyd_pumps_onoff(3,0)
 		end
 	}, 
 	[41] = {["lefttext"] = "FO: HYDRAULIC PANEL SET", ["timerincr"] = 1,
 		["actions"] = function ()
-			set("laminar/B738/toggle_switch/electric_hydro_pumps2_pos",0)
+			zc_acf_hyd_pumps_onoff(4,0)
 		end
 	}, 
 	[42] = {["lefttext"] = "FO: TRIM AIR & RECIRC FANS", ["timerincr"] = 1,
@@ -1082,19 +1053,17 @@ ZC_PRE_FLIGHT_PROC = {
 	}, 
 	[43] = {["lefttext"] = "FO: PACKS AUTO", ["timerincr"] = 1,
 		["actions"] = function ()
-			set("laminar/B738/air/l_pack_pos",1)
-			set("laminar/B738/air/r_pack_pos",1)
+			zc_acf_packs_set(0,1)
 		end
 	}, 
 	[44] = {["lefttext"] = "FO: ISOLATION VLV OPEN", ["timerincr"] = 1,
 		["actions"] = function ()
-			set("laminar/B738/air/isolation_valve_pos",2)
+			zc_acf_crossbleed_isol_mode(2)
 		end
 	}, 
 	[45] = {["lefttext"] = "FO: BLEEDS ON", ["timerincr"] = 1,
 		["actions"] = function ()
-			set("laminar/B738/toggle_switch/bleed_air_1_pos",1)
-			set("laminar/B738/toggle_switch/bleed_air_2_pos",1)
+			zc_acf_eng_bleeds_onoff(0,1)
 			zc_acf_apu_bleed_onoff(1)
 		end
 	}, 
@@ -1392,8 +1361,7 @@ ZC_PREFLIGHT_CHECKLIST = {
 				-- Parking Brake
 				zc_acf_parking_break_onoff(1)
 				-- fuel cutoff switches
-				set("laminar/B738/engine/mixture_ratio1",0)
-				set("laminar/B738/engine/mixture_ratio2",0)
+				zc_acf_fuel_lever_set(0,0)
 			end
 		end
 	},
@@ -1712,17 +1680,17 @@ ZC_BEFORE_START_PROC = {
 	},                                                  
 	[7] = {["lefttext"] = "FO: ISOLATION VLV OPEN", ["timerincr"] = 1,
 		["actions"] = function ()
-			set("laminar/B738/air/isolation_valve_pos",2)
+			zc_acf_crossbleed_isol_mode(2)
 		end
 	}, 
 	[8] = {["lefttext"] = "FO: HYDRAULIC PANEL SET", ["timerincr"] = 1,
 		["actions"] = function ()
-			set("laminar/B738/toggle_switch/electric_hydro_pumps1_pos",0)
+			zc_acf_hyd_pumps_onoff(1,0)
 		end
 	}, 
 	[9] = {["lefttext"] = "FO: HYDRAULIC PANEL SET", ["timerincr"] = 1,
 		["actions"] = function ()
-			set("laminar/B738/toggle_switch/electric_hydro_pumps2_pos",0)
+			zc_acf_hyd_pumps_onoff(2,0)
 		end
 	},
 	[10] = {["lefttext"] = "FO: BEACON ON", ["timerincr"] = 1,
@@ -1997,8 +1965,7 @@ ZC_STARTENGINE_PROC = {
 	},
 	[1] = {["lefttext"] = "AIR - BLEEDS - PACKS", ["timerincr"] = 1,
 		["actions"] = function ()
-			set("laminar/B738/air/l_pack_pos",0)
-			set("laminar/B738/air/r_pack_pos",0)
+			zc_acf_packs_set(0,0)
 		end
 	},
 	[2] = {["lefttext"] = "START ENGINE TWO", ["timerincr"] = 1,
@@ -2185,30 +2152,20 @@ ZC_BEFORE_TAXI_PROC = {
 	},
 	[3] = {["lefttext"] = "FO: ISOLATION VALVES/PACKS -- AUTO", ["timerincr"] = 1,
 		["actions"] = function ()
-			set("laminar/B738/air/isolation_valve_pos",1)
-			set("laminar/B738/toggle_switch/bleed_air_1_pos",1)
-			set("laminar/B738/toggle_switch/bleed_air_2_pos",1)
+			zc_acf_crossbleed_isol_mode(1)
+			zc_acf_eng_bleeds_onoff(0,1)
 			zc_acf_apu_bleed_onoff(0)
-			set("laminar/B738/air/l_pack_pos",1)
-			set("laminar/B738/air/r_pack_pos",1)
+			zc_acf_packs_set(0,1)
 		end
 	},
 	[4] = {["lefttext"] = "FO: HYDRAULICS -- ON", ["timerincr"] = 1,
 		["actions"] = function ()
-			set("laminar/B738/toggle_switch/hydro_pumps2_pos",1)
-			set("laminar/B738/toggle_switch/hydro_pumps1_pos",1)
-			set("laminar/B738/toggle_switch/electric_hydro_pumps1_pos",1)
-			set("laminar/B738/toggle_switch/electric_hydro_pumps2_pos",1)
+			zc_acf_hyd_pumps_onoff(0,1)
 		end
 	},
 	[5] = {["lefttext"] = "FO: ENGINE START SWITCHES -- CONT", ["timerincr"] = 1,
 		["actions"] = function ()
-			if get("laminar/B738/engine/starter1_pos") == 1 then
-				command_once("laminar/B738/knob/eng1_start_right")
-			end
-			if get("laminar/B738/engine/starter2_pos") == 1 then
-				command_once("laminar/B738/knob/eng2_start_right")
-			end
+			zc_acf_eng_starter_mode(0,2)
 		end
 	},
 	[6] = {["lefttext"] = "FO: APU -- OFF", ["timerincr"] = 1,
@@ -2254,14 +2211,9 @@ ZC_BEFORE_TAXI_CHECKLIST = {
 				-- Probe heat
 				zc_acf_probe_heat_onoff(0,1)
 				-- isolation valve
-				set("laminar/B738/air/isolation_valve_pos",1)
+				zc_acf_crossbleed_isol_mode(1)
 				-- engine starters
-				if get("laminar/B738/engine/starter1_pos") == 1 then
-					command_once("laminar/B738/knob/eng1_start_right")
-				end
-				if get("laminar/B738/engine/starter2_pos") == 1 then
-					command_once("laminar/B738/knob/eng2_start_right")
-				end
+				zc_acf_eng_starter_mode(0,2)
 				-- autobrake
 				zc_acf_abrk_mode(-1)
 			end
@@ -2543,12 +2495,7 @@ ZC_BEFORE_TAKEOFF_PROC = {
 			zc_acf_seatbelt_onoff(1)
 			command_once("laminar/B738/push_button/chrono_capt_et_mode")
 			command_once("laminar/B738/LDU_control/push_button/MFD_ENG")
-			if get("laminar/B738/engine/starter1_pos") == 1 then
-				command_once("laminar/B738/knob/eng1_start_right")
-			end
-			if get("laminar/B738/engine/starter2_pos") == 1 then
-				command_once("laminar/B738/knob/eng2_start_right")
-			end
+			zc_acf_eng_starter_mode(0,2)
 			if get("laminar/B738/systems/lowerDU_page") == 0 then
 				command_once("laminar/B738/LDU_control/push_button/MFD_ENG")
 			end
@@ -2628,7 +2575,7 @@ ZC_CLIMB_PROC = {
 	[5] = {["lefttext"] = "SET CMD A",["timerincr"] = 997,
 		["actions"] = function ()
 			speakNoText(0,"COMMAND A")
-			command_once("laminar/B738/autopilot/cmd_a_press")
+			zc_acf_mcp_ap_set(1,1)
 		end
 	},
 	[6] = {["lefttext"] = "FLAPS 10",["timerincr"] = (get_zc_config("easy") == false and zc_get_flap_position() == 15) and 1 or 996,
@@ -2684,12 +2631,7 @@ ZC_CLIMB_PROC = {
 	}, 
 	[15] = {["lefttext"] = "AFTER TAKEOFF ITEMS", ["timerincr"] = 1,
 		["actions"] = function ()
-			if get("laminar/B738/engine/starter1_pos") == 2 then
-				command_once("laminar/B738/knob/eng1_start_left")
-			end
-			if get("laminar/B738/engine/starter2_pos") == 2 then
-				command_once("laminar/B738/knob/eng2_start_left")
-			end
+			zc_acf_eng_starter_mode(0,1)
 			zc_acf_light_rwyto_onoff(0)
 			zc_acf_light_landing_mode(2,0)
 			zc_acf_abrk_mode(0)
@@ -2720,15 +2662,14 @@ ZC_AFTER_TAKEOFF_CHECKLIST = {
 			if get_zc_config("easy") then
 				setchecklist(6)
 				-- Bleeds
-				set("laminar/B738/toggle_switch/bleed_air_1_pos",1)
-				set("laminar/B738/toggle_switch/bleed_air_2_pos",1)
+				zc_acf_eng_bleeds_onoff(0,1)
 				-- Packs
-				set("laminar/B738/air/l_pack_pos",1)
-				set("laminar/B738/air/r_pack_pos",1)
+				zc_acf_packs_set(0,1)
 				-- Landing gear
 				command_once("sim/flight_controls/landing_gear_up")
 				-- Flaps
 				zc_acf_flap_set(0)
+				zc_acf_abrk_mode(0)
 			end
 			ZC_BACKGROUND_PROCS["80KTS"].status = 0
 			ZC_BACKGROUND_PROCS["GEARUP"].status = 0
@@ -2942,7 +2883,7 @@ ZC_DESCENT_CHECKLIST = {
 			speakNoText(0,"PRESSURIZATION")
 		end
 	},
-	[2] = {["lefttext"] = "PRESSURIZATION -- LAND ALT___", ["timerincr"] = 2,
+	[2] = {["lefttext"] = "PRESSURIZATION -- LAND ALT___", ["timerincr"] = 3,
 		["actions"] = function ()
 			gLeftText = string.format("landing altitude %i",get("laminar/B738/pressurization/knobs/landing_alt"))
 			if get_zc_config("easy") then
@@ -3081,12 +3022,7 @@ ZC_LANDING_PROC = {
 			zc_acf_light_rwyto_onoff(1)
 			zc_acf_seatbelt_onoff(1)
 			command_once("sim/lights/landing_lights_on")
-			if get("laminar/B738/engine/starter1_pos") == 1 then
-				command_once("laminar/B738/knob/eng1_start_right")
-			end
-			if get("laminar/B738/engine/starter2_pos") == 1 then
-				command_once("laminar/B738/knob/eng2_start_right")
-			end
+			zc_acf_eng_starter_mode(0,2)
 			ZC_BACKGROUND_PROCS["TRANSALT"].status = 0
 			ZC_BACKGROUND_PROCS["TRANSLVL"].status = 0
 			ZC_BACKGROUND_PROCS["TENTHOUSANDDN"].status = 0
@@ -3188,7 +3124,7 @@ ZC_LANDING_PROC = {
 	},
 	[16] = {["lefttext"] = "SET MISSED APPROACH ALTITUDE", ["timerincr"] = 997,
 		["actions"] = function ()
-			set("laminar/B738/autopilot/mcp_alt_dial", get("laminar/B738/fms/missed_app_alt"))
+			zc_acf_mcp_alt_set(get("laminar/B738/fms/missed_app_alt"))
 		end
 	},
 	[17] = {["lefttext"] = "PROCEDURE FINISHED", ["timerincr"] = 1,
@@ -3217,12 +3153,7 @@ ZC_LANDING_CHECKLIST = {
 			if get_zc_config("easy") then
 				setchecklist(9)
 				-- starter cont
-				if get("laminar/B738/engine/starter1_pos") == 1 then
-					command_once("laminar/B738/knob/eng1_start_right")
-				end
-				if get("laminar/B738/engine/starter2_pos") == 1 then
-					command_once("laminar/B738/knob/eng2_start_right")
-				end
+				zc_acf_eng_starter_mode(0,2)
 				-- Gear
 				command_once("laminar/B738/push_button/gear_down")
 				zc_acf_speed_break_set(1)
@@ -3290,7 +3221,7 @@ ZC_LANDING_CHECKLIST = {
 		["actions"] = function ()
 			gLeftText = string.format("FLAPS %i GREEN LIGHT",get("laminar/B738/FMS/approach_flaps"))
 			if get_zc_config("easy") then
-				speakNoText(0,string.format("FLAPS %i GREEN LIGHT",zc_acf_getLdgFlap()))
+				speakNoText(0,string.format("FLAPS %i GREEN LIGHT",zc_get_flap_position()))
 				command_once("bgood/xchecklist/check_item")
 			end
 		end
@@ -3425,12 +3356,7 @@ ZC_AFTER_LANDING_PROC = {
 	},
 	[12] = {["lefttext"] = "FO: ENGINE START SWITCHES -- AUTO", ["timerincr"] = 1,
 		["actions"] = function ()
-			if get("laminar/B738/engine/starter1_pos") ~= 1 then
-				command_once("laminar/B738/knob/eng1_start_left")
-			end
-			if get("laminar/B738/engine/starter2_pos") ~= 1 then
-				command_once("laminar/B738/knob/eng2_start_left")
-			end
+			zc_acf_eng_starter_mode(0,1)
 		end
 	},
 	[13] = {["lefttext"] = "FO: TRAFFIC -- OFF", ["timerincr"] = 1,
@@ -3478,8 +3404,7 @@ ZC_SHUTDOWN_PROC = {
 	},
 	[3] = {["lefttext"] = "CAPT: SHUTDOWN ENGINES!", ["timerincr"] = 997,
 		["actions"] = function ()
-			command_once("laminar/B738/engine/mixture1_cutoff")
-			command_once("laminar/B738/engine/mixture2_cutoff")
+			zc_acf_fuel_lever_set(0,0)
 		end
 	},
 	[4] = {["lefttext"] = "FO: SEATBELT SIGNS -- OFF", ["timerincr"] = 1,
@@ -3530,13 +3455,13 @@ ZC_SHUTDOWN_PROC = {
 	}, 
 	[13] = {["lefttext"] = "FO: ELECTRICAL HYDRAULIC PUMPS -- OFF", ["timerincr"] = 1,
 		["actions"] = function ()
-			set("laminar/B738/toggle_switch/electric_hydro_pumps1_pos",0)
-			set("laminar/B738/toggle_switch/electric_hydro_pumps2_pos",0)
+			zc_acf_hyd_pumps_onoff(1,0)
+			zc_acf_hyd_pumps_onoff(2,0)
 		end
 	}, 
 	[14] = {["lefttext"] = "FO: ISOLATION VALVE -- OPEN", ["timerincr"] = 1,
 		["actions"] = function ()
-			set("laminar/B738/air/isolation_valve_pos",2)
+			zc_acf_crossbleed_isol_mode(2)
 		end
 	},
 	[15] = {["lefttext"] = "FO: APU BLEED -- ON", ["timerincr"] = 1,
@@ -3551,9 +3476,9 @@ ZC_SHUTDOWN_PROC = {
 	},
 	[17] = {["lefttext"] = "FO: RESET MCP", ["timerincr"] = 1,
 		["actions"] = function ()
-			set("laminar/B738/autopilot/mcp_alt_dial", get_zc_config("apalt"))
-			set("laminar/B738/autopilot/mcp_hdg_dial", get_zc_config("aphdg"))
-			set("laminar/B738/autopilot/mcp_speed_dial_kts_mach", get_zc_config("apspd"))
+			zc_acf_mcp_alt_set(get_zc_config("apalt"))
+			zc_acf_mcp_hdg_set(get_zc_config("aphdg"))
+			zc_acf_mcp_spd_set(get_zc_config("apspd"))
 		end
 	},
 	[18] = {["lefttext"] = "FO: RESET TRANSPONDER", ["timerincr"] = 1,
@@ -3741,8 +3666,7 @@ ZC_SECURING_AIRCRAFT_PROC = {
 	},
 	[6] = {["lefttext"] = "FO: PACKS -- OFF", ["timerincr"] = 1,
 		["actions"] = function ()
-			set("laminar/B738/air/l_pack_pos",0)
-			set("laminar/B738/air/r_pack_pos",0)
+			zc_acf_packs_set(0,0)
 		end
 	}, 
 	[7] = {["lefttext"] = "CAPT: APU -- OFF", ["timerincr"] = 15,
@@ -3877,7 +3801,7 @@ ZC_BACKGROUND_PROCS = {
 	["FUEL1IDLE"] = {["status"] = 0,
 		["actions"] = function ()
 			if get("laminar/B738/engine/indicators/N2_percent_1") > 25.0 then
-				command_once("laminar/B738/engine/mixture1_idle")
+				zc_acf_fuel_lever_set(1,1)
 				ZC_BACKGROUND_PROCS["FUEL1IDLE"].status = 0
 			end
 		end
@@ -3941,7 +3865,7 @@ ZC_BACKGROUND_PROCS = {
 	["FUEL2IDLE"] = {["status"] = 0,
 		["actions"] = function ()
 			if get("laminar/B738/engine/indicators/N2_percent_2") > 25.0 then
-				command_once("laminar/B738/engine/mixture2_idle")
+				zc_acf_fuel_lever_set(2,1)
 				ZC_BACKGROUND_PROCS["FUEL2IDLE"].status = 0
 			end
 		end
@@ -4581,6 +4505,7 @@ function zc_acf_apu_on_bus(bus, onoff)
 	end
 end
 
+-- start the GPU full automatic and set gen/air
 function zc_acf_gpu_start()
 	if get("laminar/B738/gpu_available") == 0 then
 		command_once("laminar/B738/tab/home")
@@ -4590,6 +4515,7 @@ function zc_acf_gpu_start()
 	end
 end
 
+-- stop APU 
 function zc_acf_gpu_stop()
 	if get("laminar/B738/gpu_available") > 0 then
 		command_once("laminar/B738/tab/home")
@@ -4598,7 +4524,6 @@ function zc_acf_gpu_stop()
 		command_once("laminar/B738/annunciator/ground_power_avail")
 	end
 end
-
 
 -- GENerators 0=ALL,1=GEN1,2=GEN2; 0=OFF,1=ON Bus
 function zc_acf_gen_on_bus(gen,mode)
@@ -4669,17 +4594,80 @@ function zc_acf_fuel_xfeed_mode(mode)
 end
 
 --- Hydraulic system
--- function zc_acf_hyd_pumps_onoff(pump,onoff)
--- function zc_acf_hyd_aux_pumps_onoff(pump,onoff)
+
+-- Set hydraulic pumps, pump 0=ALL, 1=ENG1, 2=ENG2, 3=ELEC1, 4=ELEC2
+function zc_acf_hyd_pumps_onoff(pump,mode)
+	if pump == 0 or pump == 1 then
+		set("laminar/B738/toggle_switch/hydro_pumps1_pos",mode)
+	end
+	if pump == 0 or pump == 2 then
+		set("laminar/B738/toggle_switch/hydro_pumps2_pos",mode)
+	end
+	if pump == 0 or pump == 3 then
+		set("laminar/B738/toggle_switch/electric_hydro_pumps1_pos",mode)
+	end
+	if pump == 0 or pump == 4 then
+		set("laminar/B738/toggle_switch/electric_hydro_pumps2_pos",mode)
+	end
+end
 
 --- Engines
--- function zc_acf_fuel_lever_set(lever,mode)
--- function zc_acf_eng_starter_mode(starter,mode)
+-- Set fuel levers 1,2 0=CUTOFF,1=IDLE
+function zc_acf_fuel_lever_set(lever,mode)
+	if lever == 0 or lever == 1 then
+		set("laminar/B738/engine/mixture_ratio1",mode)
+	end
+	if lever == 0 or lever == 2 then
+		set("laminar/B738/engine/mixture_ratio2",mode)
+	end
+end
+
+-- Engine starter knobs 0=ALL,1,2 0=START GRD,1=AUTO,2=CONT,3=FLT
+function zc_acf_eng_starter_mode(starter,mode)
+	if starter == 0 or starter == 1 then
+		if get("laminar/B738/engine/starter1_pos") > mode then
+			command_once("laminar/B738/knob/eng1_start_left")
+		end
+		if get("laminar/B738/engine/starter1_pos") < mode then
+			command_once("laminar/B738/knob/eng1_start_right")
+		end
+	end
+	if starter == 0 or starter == 2 then
+		if get("laminar/B738/engine/starter2_pos") > mode then
+			command_once("laminar/B738/knob/eng2_start_left")
+		end
+		if get("laminar/B738/engine/starter2_pos") < mode then
+			command_once("laminar/B738/knob/eng2_start_right")
+		end
+	end
+end
 
 --- Pressurisation & AIR
--- function zc_acf_packs_both_onoff(onoff)
--- function zc_acf_eng_bleeds_onoff(onoff)
--- function zc_acf_crossbleed_isol_mode(mode)
+
+-- Packs 0=all,1,2 mode 0=OFF, 1=AUTO, 2=OPEN
+function zc_acf_packs_set(pack, mode)
+	if pack == 0 or pack == 1 then
+		set("laminar/B738/air/l_pack_pos",mode)
+	end
+	if pack == 0 or pack == 2 then
+		set("laminar/B738/air/r_pack_pos",mode)
+	end
+end
+
+-- Bleeds bleed 0=ALL,1=LEFT,2=RIGHT  0=OFF, 1=ON
+function zc_acf_eng_bleeds_onoff(bleed,mode)
+	if bleed == 0 or bleed == 1 then
+		set("laminar/B738/toggle_switch/bleed_air_1_pos",mode)
+	end
+	if bleed == 0 or bleed == 2 then
+		set("laminar/B738/toggle_switch/bleed_air_2_pos",mode)
+	end
+end
+
+-- cross bleed isolation 0=CLOSE,1=AUTO,2=OPEN		
+function zc_acf_crossbleed_isol_mode(mode)
+	set("laminar/B738/air/isolation_valve_pos",mode)
+end
 
 -- APU Bleed air 0=OFF 1=ON
 function zc_acf_apu_bleed_onoff(mode)
@@ -4687,6 +4675,7 @@ function zc_acf_apu_bleed_onoff(mode)
 end
 
 -- function zc_acf_temp_control(area,level)
+
 -- function zc_acf_recirc_fans_onoff(onoff)
 -- function zc_acf_set_landing_altitude(altitude)
 -- function zc_acf_set_flight_altitude(altitude)
@@ -4740,6 +4729,9 @@ end
 
 -- position=0,1,2,5,10,15,25,30,40
 function zc_acf_flap_set(position)
+	if position == 0 then
+		command_once("laminar/B738/push_button/flaps_up")
+	end
 	if position == 1 then
 		command_once("laminar/B738/push_button/flaps_1")
 	end
@@ -4782,38 +4774,17 @@ function zc_acf_speed_break_set(position)
 	end
 end
 
+--- Parking brake 0=OFF 1=ON
 function zc_acf_parking_break_onoff(mode)
 	set("sim/cockpit2/controls/parking_brake_ratio",mode)
 end
 
 -- Auto Brake -1=RTO, 0=OFF, 1=1, 2=2, 3=3 4=MAX
 function zc_acf_abrk_mode(mode)
-	while get("laminar/B738/autobrake/autobrake_pos") > 0 do
+	while get("laminar/B738/autobrake/autobrake_pos") > mode+1 do
 		command_once("laminar/B738/knob/autobrake_dn")
 	end
-	if mode == 0 then
-		command_once("laminar/B738/knob/autobrake_up")
-	end
-	if mode == 1 then
-		command_once("laminar/B738/knob/autobrake_up")
-		command_once("laminar/B738/knob/autobrake_up")
-	end
-	if mode == 2 then                             
-		command_once("laminar/B738/knob/autobrake_up")
-		command_once("laminar/B738/knob/autobrake_up")
-		command_once("laminar/B738/knob/autobrake_up")
-	end                                           
-	if mode == 3 then                             
-		command_once("laminar/B738/knob/autobrake_up")
-		command_once("laminar/B738/knob/autobrake_up")
-		command_once("laminar/B738/knob/autobrake_up")
-		command_once("laminar/B738/knob/autobrake_up")
-	end                                           
-	if mode == 4 then                             
-		command_once("laminar/B738/knob/autobrake_up")
-		command_once("laminar/B738/knob/autobrake_up")
-		command_once("laminar/B738/knob/autobrake_up")
-		command_once("laminar/B738/knob/autobrake_up")
+	while get("laminar/B738/autobrake/autobrake_pos") < mode+1 do
 		command_once("laminar/B738/knob/autobrake_up")
 	end
 end
@@ -4823,12 +4794,19 @@ function zc_acf_elev_trim_set(value)
 	set("sim/flightmodel2/controls/elevator_trim",(8.2 - value) * -0.117)
 end
 
+-- set aileron trim
 function zc_acf_aileron_trim_set(value)
 	set("sim/cockpit2/controls/aileron_trim",value)
 end
 
+-- set rudder trim
 function zc_acf_rudder_trim_set(value)
 	set("sim/cockpit2/controls/rudder_trim",value)
+end
+
+-- Set Yaw Damper
+function zc_acf_yaw_damper_onoff(mode)
+	set("laminar/B738/toggle_switch/yaw_dumper_pos",mode)
 end
 
 --- LIGHTS
@@ -4981,7 +4959,9 @@ function zc_acf_light_landing_mode(light,mode)
 	end
 end
 
--- function zc_acf_panel_brightness(value)
+function zc_acf_panel_brightness(light,value)
+	set("laminar/B738/electric/panel_brightness",light,value)
+end
 
 -- emergency lights 0=OFF,1=ARMED,2=ON
 function zc_acf_emer_lights_mode(mode)
@@ -5077,13 +5057,49 @@ function zc_acf_mcp_fds_set(fd, mode)
 end
 			
 
--- function zc_acf_mcp_spd_set(spd)
--- function zc_acf_mcp_alt_set(alt)
--- function zc_acf_mcp_hdg_set(hdg)
--- function zc_acf_mcp_crs_set(nav,hdg)
--- function zc_acf_mcp_vs_set(vs)
--- function zc_acf_mcp_cmda_onoff()
--- function zc_acf_mcp_cmdb_onoff()
+-- MCP set speed
+function zc_acf_mcp_spd_set(value)
+	set("laminar/B738/autopilot/mcp_speed_dial_kts_mach",value)
+end
+
+-- MCP set altitude
+function zc_acf_mcp_alt_set(value)
+	set("laminar/B738/autopilot/mcp_alt_dial",value)
+end
+
+-- MCP set heading
+function zc_acf_mcp_hdg_set(value)
+	set("laminar/B738/autopilot/mcp_hdg_dial",value)
+end
+
+-- MCP course 0=all 1=CRS1, 2=CRS2, value
+function zc_acf_mcp_crs_set(nav,value)
+	if nav == 0 or nav == 1 then
+		set("laminar/B738/autopilot/course_pilot",value)
+	end
+	if nav == 0 or nav == 2 then
+		set("laminar/B738/autopilot/course_copilot",value)
+	end
+end
+
+-- MCP vertical Speed value
+function zc_acf_mcp_vs_set(value)
+	set("sim/cockpit2/autopilot/vvi_dial_fpm",value)
+end
+
+-- Set CMD A or B ap 0=ALL 1=CMDA 2=CMDB, mode 0=OFF 1=ON
+function zc_acf_mcp_ap_set(ap, mode)
+	if ap == 0 or ap == 1 then
+		if get("laminar/B738/autopilot/cmd_a_status") ~= mode then
+			command_once("laminar/B738/autopilot/cmd_a_press")
+		end
+	end
+	if ap == 0 or ap == 2 then
+		if get("laminar/B738/autopilot/cmd_b_status") ~= mode then
+			command_once("laminar/B738/autopilot/cmd_b_press")
+		end
+	end
+end
 
 -- Set IRS switches 0=OFF, 1=ALIGN, 2=NAV, 3=ATT
 function zc_acf_irs_mode(unit,mode)
@@ -5361,7 +5377,7 @@ function xsp_bravo_knob_dn()
 			command_once("laminar/B738/autopilot/altitude_dn")
 		end
 		if xsp_bravo_mode == 2 then
-			command_once("sim/autopilot/vertical_speed_up")
+			command_once("sim/autopilot/vertical_speed_down")
 		end
 		if xsp_bravo_mode == 3 then
 			command_once("laminar/B738/autopilot/heading_dn")
@@ -5417,35 +5433,80 @@ xsp_mcp_vsp = create_dataref_table("kp/xsp/mcp_vsp", "Int")
 xsp_mcp_alt = create_dataref_table("kp/xsp/mcp_alt", "Int")
 xsp_mcp_ap1 = create_dataref_table("kp/xsp/mcp_ap1", "Int")
 xsp_doors = create_dataref_table("kp/xsp/doors", "Int")
+xsp_anc_hyd = create_dataref_table("kp/xsp/anc_hyd", "Int")
+xsp_anc_fuel = create_dataref_table("kp/xsp/anc_fuel", "Int")
+xsp_anc_oil = create_dataref_table("kp/xsp/anc_oil", "Int")
+xsp_anc_aice = create_dataref_table("kp/xsp/anc_aice", "Int")
+xsp_anc_starter = create_dataref_table("kp/xsp/anc_starter", "Int")
 
 function xsp_set_lightvars()
 	xsp_parking_brake[0] = get("sim/cockpit2/controls/parking_brake_ratio")
+
 	-- Master Caution light
 	xsp_master_caution[0] = get("laminar/B738/annunciator/master_caution_light")
+
 	xsp_mcp_hdg[0] = get("laminar/B738/autopilot/hdg_sel_status")
+
 	if get("laminar/B738/autopilot/vorloc_status") == 0 and get("laminar/B738/autopilot/lnav_status") == 0 then
 		xsp_mcp_nav[0] = 0
 	else
 		xsp_mcp_nav[0] = 1
 	end
+
 	xsp_mcp_app[0] = get("laminar/B738/autopilot/app_status")
+
 	if get("laminar/B738/autopilot/n1_status") == 0 and get("laminar/B738/autopilot/speed_mode") == 0 then
 		xsp_mcp_ias[0] = 0
 	else
 		xsp_mcp_ias[0] = 1
 	end
+
 	if get("laminar/B738/autopilot/lvl_chg_status") == 0 and get("laminar/B738/autopilot/vs_status") == 0 and get("laminar/B738/autopilot/vnav_status1") == 0 then
 		xsp_mcp_vsp[0] = 0
 	else
 		xsp_mcp_vsp[0] = 1
 	end
+
 	xsp_mcp_alt[0] = get("laminar/B738/autopilot/alt_hld_status")
+
 	xsp_mcp_ap1[0] = get("laminar/B738/autopilot/cmd_a_status")
+
 	if get("737u/doors/aft1") == 0 and get("737u/doors/aft1") == 0 and get("737u/doors/aft_Cargo") == 0 and get(		"737u/doors/Fwd_Cargo")  == 0 and get("737u/doors/L1") == 0 and get("737u/doors/L2") == 0 and get(			"737u/doors/R1") == 0 and get("737u/doors/R2") then
 		xsp_doors[0] = 0
 	else
 		xsp_doors[0] = 1
 	end
+
+	if get("laminar/B738/annunciator/hyd_el_press_a") == 0 and get("laminar/B738/annunciator/hyd_el_press_b") == 0 then
+		xsp_anc_hyd[0] = 0
+	else
+		xsp_anc_hyd[0] = 1
+	end
+	
+	if get("laminar/B738/annunciator/low_fuel_press_c1") == 0 and get("laminar/B738/annunciator/low_fuel_press_c2") == 0 and get("laminar/B738/annunciator/low_fuel_press_l1") == 0 and get("laminar/B738/annunciator/low_fuel_press_l2") == 0 and get("laminar/B738/annunciator/low_fuel_press_r1") == 0 and get("laminar/B738/annunciator/low_fuel_press_r2") == 0 then
+		xsp_anc_fuel[0] = 0
+	else
+		xsp_anc_fuel[0] = 1
+	end
+
+	if get("laminar/B738/engine/eicas_oil_press1") == 0 and get("laminar/B738/engine/eicas_oil_press2") == 0 then
+		xsp_anc_oil[0] = 0
+	else
+		xsp_anc_oil[0] = 1
+	end
+
+	if get("laminar/B738/air/engine1/starter_valve") == 0 and get("laminar/B738/air/engine2/starter_valve") == 0 then
+		xsp_anc_starter[0] = 0
+	else
+		xsp_anc_starter[0] = 1
+	end
+
+	if get("laminar/B738/annunciator/wing_ice_on_L") == 0 and get("laminar/B738/annunciator/wing_ice_on_R") == 0 and get("laminar/B738/annunciator/cowl_ice_on_0") == 0 and get("laminar/B738/annunciator/cowl_ice_on_1") == 0  then
+		xsp_anc_aice[0] = 0
+	else
+		xsp_anc_aice[0] = 1
+	end
+
 end
 
 -- aircraft specific joystick/key commands (e.g. for Alpha Yoke)
