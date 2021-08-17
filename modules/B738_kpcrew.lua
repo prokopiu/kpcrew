@@ -198,16 +198,13 @@ ZC_COLD_AND_DARK = {
 	},                                                  	
 	[16] = {["lefttext"] = "OVERHEAD COLUMN 5", ["timerincr"] = 1,
 		["actions"] = function ()
-			set("laminar/B738/air/cont_cab_temp/rheostat",0.5)
-			set("laminar/B738/air/fwd_cab_temp/rheostat",0.5)
-			set("laminar/B738/air/aft_cab_temp/rheostat",0.5)
+			zc_acf_temp_control(0,0.5)
 			set("laminar/B738/air/trim_air_pos",1)
 		end
 	},                     
 	[17] = {["lefttext"] = "OVERHEAD COLUMN 5", ["timerincr"] = 1,
 		["actions"] = function ()
-			set("laminar/B738/air/l_recirc_fan_pos",0)
-			set("laminar/B738/air/r_recirc_fan_pos",0)
+			zc_acf_recirc_fans_onoff(1,0)
 			zc_acf_packs_set(0,0)
 		end
 	},                     
@@ -216,8 +213,8 @@ ZC_COLD_AND_DARK = {
 			zc_acf_crossbleed_isol_mode(2)
 			zc_acf_eng_bleeds_onoff(0,0)
 			zc_acf_apu_bleed_onoff(0)
-			set("sim/cockpit/pressure/max_allowable_altitude",0)
-			set("laminar/B738/pressurization/knobs/landing_alt",0)
+			zc_acf_set_flight_altitude(0)
+			zc_acf_set_landing_altitude(0)
 			command_once("laminar/B738/toggle_switch/air_valve_ctrl_left")
 			command_once("laminar/B738/toggle_switch/air_valve_ctrl_left")
 		end
@@ -693,16 +690,13 @@ ZC_TURN_AROUND_STATE = {
 	},                                                  	
 	[22] = {["lefttext"] = "OVERHEAD COLUMN 5", ["timerincr"] = 1,
 		["actions"] = function ()
-			set("laminar/B738/air/cont_cab_temp/rheostat",0.5)
-			set("laminar/B738/air/fwd_cab_temp/rheostat",0.5)
-			set("laminar/B738/air/aft_cab_temp/rheostat",0.5)
+			zc_acf_temp_control(0,0.5)
 			set("laminar/B738/air/trim_air_pos",1)
 		end
 	},                     
 	[23] = {["lefttext"] = "OVERHEAD COLUMN 5", ["timerincr"] = 1,
 		["actions"] = function ()
-			set("laminar/B738/air/l_recirc_fan_pos",1)
-			set("laminar/B738/air/r_recirc_fan_pos",1)
+			zc_acf_recirc_fans_onoff(1,1)
 			zc_acf_packs_set(1,0)
 			zc_acf_packs_set(2,1)
 		end
@@ -712,8 +706,8 @@ ZC_TURN_AROUND_STATE = {
 			zc_acf_crossbleed_isol_mode(1)
 			zc_acf_eng_bleeds_onoff(0,0)
 			zc_acf_apu_bleed_onoff(0)
-			set("sim/cockpit/pressure/max_allowable_altitude",0)
-			set("laminar/B738/pressurization/knobs/landing_alt",0)
+			zc_acf_set_flight_altitude(0)
+			zc_acf_set_landing_altitude(0)
 			command_once("laminar/B738/toggle_switch/air_valve_ctrl_left")
 			command_once("laminar/B738/toggle_switch/air_valve_ctrl_left")
 		end
@@ -857,17 +851,12 @@ ZC_PRE_FLIGHT_PROC = {
 	}, 
 	[10] = {["lefttext"] = "CAPT: EFIS CONTROL PANEL SETUP", ["timerincr"] = 1, 
 		["actions"] = function ()
-			command_once("laminar/B738/EFIS_control/cpt/minimums_dn")
+			zc_acf_set_dhda_mode(0,0)
 		end
 	}, 
 	[11] = {["lefttext"] = "CAPT: EFIS CONTROL PANEL SETUP", ["timerincr"] = 1,
 		["actions"] = function ()
-			while get("laminar/B738/pfd/dh_pilot") < get("sim/cockpit/pressure/cabin_altitude_actual_m_msl") + 200 do 
-				command_once("laminar/B738/pfd/dh_pilot_up")
-			end
-			while get("laminar/B738/pfd/dh_pilot") > get("sim/cockpit/pressure/cabin_altitude_actual_m_msl") + 200 do 
-				command_once("laminar/B738/pfd/dh_pilot_dn")
-			end
+			zc_acf_set_minimum(0, get("sim/cockpit/pressure/cabin_altitude_actual_m_msl") + 200)
 		end
 	}, 
 	[12] = {["lefttext"] = "CAPT: EFIS CONTROL PANEL SETUP", ["timerincr"] = 1,  
@@ -1046,9 +1035,8 @@ ZC_PRE_FLIGHT_PROC = {
 	}, 
 	[42] = {["lefttext"] = "FO: TRIM AIR & RECIRC FANS", ["timerincr"] = 1,
 		["actions"] = function ()
+			zc_acf_recirc_fans_onoff(1,1)
 			set("laminar/B738/air/trim_air_pos",1)
-			set("laminar/B738/air/l_recirc_fan_pos",1)
-			set("laminar/B738/air/r_recirc_fan_pos",1)
 		end
 	}, 
 	[43] = {["lefttext"] = "FO: PACKS AUTO", ["timerincr"] = 1,
@@ -1069,8 +1057,8 @@ ZC_PRE_FLIGHT_PROC = {
 	}, 
 	[46] = {["lefttext"] = "FO: FLT ALT & LAND ALT SET", ["timerincr"] = 1,
 		["actions"] = function ()
-			set("sim/cockpit/pressure/max_allowable_altitude",get("laminar/B738/autopilot/fmc_cruise_alt"))
-			set("laminar/B738/pressurization/knobs/landing_alt",get("laminar/B738/autopilot/altitude"))
+			zc_acf_set_flight_altitude(get("laminar/B738/autopilot/fmc_cruise_alt"))
+			zc_acf_set_landing_altitude(get("laminar/B738/autopilot/altitude"))
 		end
 	}, 
 	[47] = {["lefttext"] = "FO: IGNITION SWITCH RIGHT", ["timerincr"] = 1,
@@ -1224,9 +1212,7 @@ ZC_PRE_FLIGHT_PROC = {
 	}, 
 	[68] = {["lefttext"] = "FO: AIR CONDITIONING PANEL SET", ["timerincr"] = 1,
 		["actions"] = function ()
-			set("laminar/B738/air/cont_cab_temp/rheostat",0.5)
-			set("laminar/B738/air/fwd_cab_temp/rheostat",0.5)
-			set("laminar/B738/air/aft_cab_temp/rheostat",0.5)
+			zc_acf_temp_control(0,0.5)
 		end
 	}, 
 	[69] = {["lefttext"] = "FO: CABIN PRESSURIZATION PANEL SET", ["timerincr"] = 1,
@@ -3028,15 +3014,11 @@ ZC_LANDING_PROC = {
 			ZC_BACKGROUND_PROCS["TENTHOUSANDDN"].status = 0
 			setchecklist(92)
 			if (ZC_CONFIG["dhda"]) then
-				set("laminar/B738/EFIS_control/cpt/minimums",0)
-				set("laminar/B738/EFIS_control/fo/minimums",0)
-				set("laminar/B738/pfd/dh_pilot",get_zc_brief_app("dh"))
-				set("laminar/B738/pfd/dh_copilot",get_zc_brief_app("dh"))
+				zc_acf_set_dhda_mode(0,0)
+				zc_acf_set_minimum(0, get_zc_brief_app("dh"))
 			else
-				set("laminar/B738/EFIS_control/cpt/minimums",1)
-				set("laminar/B738/EFIS_control/fo/minimums",1)
-				set("laminar/B738/pfd/dh_pilot",get_zc_brief_app("da"))
-				set("laminar/B738/pfd/dh_copilot",get_zc_brief_app("da"))
+				zc_acf_set_dhda_mode(0,1)
+				zc_acf_set_minimum(0, get_zc_brief_app("da"))
 			end
 			zc_acf_speed_break_set(1)
 			zc_acf_abrk_mode(get_zc_brief_app("autobrake")-1)
@@ -4674,13 +4656,38 @@ function zc_acf_apu_bleed_onoff(mode)
 	set("laminar/B738/toggle_switch/bleed_air_apu_pos",mode)
 end
 
--- function zc_acf_temp_control(area,level)
+-- Temperature control area 0=ALL,1=CONT,2=FWD CAB,3=AFT CAB level 0..1
+function zc_acf_temp_control(area,level)
+	if area == 0 or area == 1 then
+		set("laminar/B738/air/cont_cab_temp/rheostat",level)
+	end
+	if area == 0 or area == 2 then
+		set("laminar/B738/air/fwd_cab_temp/rheostat",0.5)
+	end
+	if area == 0 or area == 3 then
+		set("laminar/B738/air/aft_cab_temp/rheostat",0.5)
+	end
+end
 
--- function zc_acf_recirc_fans_onoff(onoff)
--- function zc_acf_set_landing_altitude(altitude)
--- function zc_acf_set_flight_altitude(altitude)
--- function zc_acf_airvalve_mode(mode)
--- function zc_acf_trimair_onoff(onoff)
+-- Recirc Fans 0=ALL,1=Left,2=Right mode 0=OFF,1=ON
+function zc_acf_recirc_fans_onoff(fan,mode)
+	if fan == 0 or fan == 1 then
+		set("laminar/B738/air/l_recirc_fan_pos",mode)
+	end
+	if fan == 0 or fan == 2 then
+		set("laminar/B738/air/r_recirc_fan_pos",mode)
+	end
+end
+
+-- Landing altitude in ft 
+function zc_acf_set_landing_altitude(altitude)
+	set("laminar/B738/pressurization/knobs/landing_alt",altitude)
+end
+
+-- set flight altitude (B737)
+function zc_acf_set_flight_altitude(altitude)
+	set("sim/cockpit/pressure/max_allowable_altitude",altitude)
+end
 
 --- A/ICE
 -- Window heat Heater 0=All, 1-4, 0=OFF 1=ON
@@ -5247,8 +5254,45 @@ end
 -- function zc_acf_baro_set(value)
 -- function zc_acf_baro_sync()
 -- function zc_acf_baro_in_mb(mode)
--- function zc_acf_set_dhda_mode(mode)
--- function zc_acf_set_minimum(altitude)
+
+-- EFIS: Set mode of minimums side 0=ALL,1=CAPT,2=FO mode 0=RADIO,1=BARO
+function zc_acf_set_dhda_mode(side,mode)
+	if side == 0 or side == 1 then
+		if mode == 0 then
+			command_once("laminar/B738/EFIS_control/cpt/minimums_dn")
+		else
+			command_once("laminar/B738/EFIS_control/cpt/minimums_up")
+		end
+	end
+	if side == 0 or side == 2 then
+		if mode == 0 then
+			command_once("laminar/B738/EFIS_control/fo/minimums_dn")
+		else
+			command_once("laminar/B738/EFIS_control/fo/minimums_up")
+		end
+	end
+end
+
+-- set minimums side 0=ALL,1=LEFT,2=RGT altitude in feet
+function zc_acf_set_minimum(side, altitude)
+	if side == 0 or side == 1 then
+		while get("laminar/B738/pfd/dh_pilot") < altitude do 
+			command_once("laminar/B738/pfd/dh_pilot_up")
+		end
+		while get("laminar/B738/pfd/dh_pilot") > altitude do 
+			command_once("laminar/B738/pfd/dh_pilot_dn")
+		end
+	end
+	if side == 0 or side == 2 then
+		while get("laminar/B738/pfd/dh_copilot") < altitude do 
+			command_once("laminar/B738/pfd/dh_copilot_up")
+		end
+		while get("laminar/B738/pfd/dh_copilot") > altitude do 
+			command_once("laminar/B738/pfd/dh_copilot_dn")
+		end
+	end
+end
+
 -- function zc_acf_mins_reset()
 -- function zc_acf_pfd_navselect1(mode)
 -- function zc_acf_pfd_navselect2(mode)
@@ -5265,13 +5309,6 @@ end
 -- function zc_acf_nd_terr_onoff(onoff)
 -- function zc_acf_nd_trfc_onoff(onoff)
 -- function zc_acf_nd_ctr_onoff(onoff)
-
--- B738 specific action functions
--- function zc_b738_navctr_panel_set(mode)
--- function zc_b738_dispctr_panel_set(mode)
--- function zc_b738_ac_pwr_selector(mode)
--- function zc_b738_dc_pwr_selector(mode)
--- function zc_b738_engine_start_src(mode)
 
 -- set checklist
 function setchecklist(number)
