@@ -1,5 +1,5 @@
-4--[[
-	*** KPCREW for Zibo Mod 2.1.0.1.1
+--[[
+	*** KPCREW for Zibo Mod 2.1.0.1.2
 	Kosta Prokopiu, July 2021
 --]]
 
@@ -2498,22 +2498,22 @@ ZC_CLIMB_PROC = {
 				command_once("laminar/B738/autopilot/autothrottle_arm_toggle")
 			end
 			if get("laminar/B738/autopilot/pfd_hdg_mode") == 0 then
-				command_once("laminar/B738/autopilot/hdg_sel_press")
+				zc_acf_mcp_hdgsel_onoff(1)
 			end
 			if get("laminar/B738/EFIS/EFIS_wx_on") == 1 then
 				command_once("laminar/B738/EFIS_control/capt/push_button/wxr_press")
 			end
-			if get_zc_brief_dep("lnavvnav") and get("laminar/B738/autopilot/lnav_pos") == 0 then
-				command_once("laminar/B738/autopilot/lnav_press")
+			if get_zc_brief_dep("lnavvnav") then
+				zc_acf_mcp_lnav_onoff(1)
 			end
-			if get_zc_brief_dep("lnavvnav") == false and get("laminar/B738/autopilot/hdg_sel_status") == 0 then
-				command_once("laminar/B738/autopilot/hdg_sel_press")
+			if get_zc_brief_dep("lnavvnav") == false then
+				zc_acf_mcp_hdgsel_onoff(1)
 			end
-			if get_zc_brief_dep("lnavvnav") and get("laminar/B738/autopilot/vnav_pos") == 0 then
-				command_once("laminar/B738/autopilot/vnav_press")
+			if get_zc_brief_dep("lnavvnav") then
+				zc_acf_mcp_vnav_onoff(1)
 			end
-			if get_zc_brief_dep("lnavvnav") == false and get("laminar/B738/autopilot/lvl_chg_status") == 0 then
-				command_once("laminar/B738/autopilot/lvl_chg_press")
+			if get_zc_brief_dep("lnavvnav") == false then
+				zc_acf_mcp_lvlchg_onoff(1)
 			end
 			if get_zc_config("easy") then
 				ZC_BACKGROUND_PROCS["80KTS"].status = 1
@@ -5145,23 +5145,132 @@ end
 
 -- function zc_acf_ap_dis_bar_onoff(onoff)
 -- function zc_acf_mcp_alt_intv()
--- function zc_acf_mcp_vsm_onoff(onoff)
--- function zc_acf_mcp_althld_onoff(onoff)
--- function zc_acf_mcp_lnav_onoff(onoff)
--- function zc_acf_mcp_vnav_onoff(onoff)
--- function zc_acf_mcp_vorloc_onoff(onoff)
--- function zc_acf_mcp_hdgsel_onoff(onoff)
--- function zc_acf_mcp_lvlchg_onoff(onoff)
+
+-- VNAV 0=OFF, 1=ON, 2=TOGGLE
+function zc_acf_mcp_lnav_onoff(mode)
+	if mode == 0 and get("laminar/B738/autopilot/lnav_status") == 1 then
+		command_once("laminar/B738/autopilot/lnav_press")
+	end
+	if mode == 1 and get("laminar/B738/autopilot/lnav_status") == 0 then
+		command_once("laminar/B738/autopilot/lnav_press")
+	end
+	if mode == 2 then
+		command_once("laminar/B738/autopilot/lnav_press")
+	end
+end
+
+-- VNAV 0=OFF, 1=ON, 2=TOGGLE
+function zc_acf_mcp_vnav_onoff(mode)
+	if mode == 0 and get("laminar/B738/autopilot/vnav_status1") == 1 then
+		command_once("laminar/B738/autopilot/vnav_press")
+	end
+	if mode == 1 and get("laminar/B738/autopilot/vnav_status1") == 0 then
+		command_once("laminar/B738/autopilot/vnav_press")
+	end
+	if mode == 2 then
+		command_once("laminar/B738/autopilot/vnav_press")
+	end
+end
+
+-- VS 0=OFF, 1=ON, 2=TOGGLE
+function zc_acf_mcp_vs_onoff(mode)
+	if mode == 0 and get("laminar/B738/autopilot/vs_status") == 1 then
+		command_once("laminar/B738/autopilot/alt_hld_press")
+	end
+	if mode == 1 and get("laminar/B738/autopilot/vs_status") == 0 then
+		command_once("laminar/B738/autopilot/alt_hld_press")
+	end
+	if mode == 2 then
+		command_once("laminar/B738/autopilot/alt_hld_press")
+	end
+end
+
+-- APP 0=OFF, 1=ON, 2=TOGGLE
+function zc_acf_mcp_app_onoff(mode)
+	if mode == 0 and get("laminar/B738/autopilot/alt_hld_status") == 1 then
+		command_once("laminar/B738/autopilot/alt_hld_press")
+	end
+	if mode == 1 and get("laminar/B738/autopilot/alt_hld_status") == 0 then
+		command_once("laminar/B738/autopilot/alt_hld_press")
+	end
+	if mode == 2 then
+		command_once("laminar/B738/autopilot/alt_hld_press")
+	end
+end
+
+-- ALT HLD 0=OFF, 1=ON, 2=TOGGLE
+function zc_acf_mcp_althld_onoff(mode)
+	if mode == 0 and get("laminar/B738/autopilot/alt_hld_status") == 1 then
+		command_once("laminar/B738/autopilot/alt_hld_press")
+	end
+	if mode == 1 and get("laminar/B738/autopilot/alt_hld_status") == 0 then
+		command_once("laminar/B738/autopilot/alt_hld_press")
+	end
+	if mode == 2 then
+		command_once("laminar/B738/autopilot/alt_hld_press")
+	end
+end
+
+-- VOR LOC 0=OFF, 1=ON, 2=TOGGLE
+function zc_acf_mcp_vorloc_onoff(mode)
+	if mode == 0 and get("laminar/B738/autopilot/vorloc_status") == 1 then
+		command_once("laminar/B738/autopilot/vorloc_press")
+	end
+	if mode == 1 and get("laminar/B738/autopilot/vorloc_status") == 0 then
+		command_once("laminar/B738/autopilot/vorloc_press")
+	end
+	if mode == 2 then
+		command_once("laminar/B738/autopilot/vorloc_press")
+	end
+end
+
+-- HDGSEL 0=OFF, 1=ON, 2=TOGGLE
+function zc_acf_mcp_hdgsel_onoff(mode)
+	if mode == 0 and get("laminar/B738/autopilot/hdg_sel_status") == 1 then
+		command_once("laminar/B738/autopilot/hdg_sel_press")
+	end
+	if mode == 1 and get("laminar/B738/autopilot/hdg_sel_status") == 0 then
+		command_once("laminar/B738/autopilot/hdg_sel_press")
+	end
+	if mode == 2 then
+		command_once("laminar/B738/autopilot/hdg_sel_press")
+	end
+end
+
+-- SPD 0=OFF, 1=ON, 2=TOGGLE
+function zc_acf_mcp_spd_onoff(mode)
+	if mode == 0 and get("laminar/B738/autopilot/speed_status1") == 1 then
+		command_once("laminar/B738/autopilot/speed_press")
+	end
+	if mode == 1 and get("laminar/B738/autopilot/speed_status1") == 0 then
+		command_once("laminar/B738/autopilot/speed_press")
+	end
+	if mode == 2 then
+		command_once("laminar/B738/autopilot/speed_press")
+	end
+end
+
+-- SPD 0=OFF, 1=ON, 2=TOGGLE
+function zc_acf_mcp_lvlchg_onoff(mode)
+	if mode == 0 and get("laminar/B738/autopilot/lvl_chg_status") == 1 then
+		command_once("laminar/B738/autopilot/lvl_chg_press")
+	end
+	if mode == 1 and get("laminar/B738/autopilot/lvl_chg_status") == 0 then
+		command_once("laminar/B738/autopilot/lvl_chg_press")
+	end
+	if mode == 2 then
+		command_once("laminar/B738/autopilot/lvl_chg_press")
+	end
+end
+
 -- function zc_acf_mcp_spd_intv()
 -- function zc_acf_mcp_turnrate_set(value)
 -- function zc_acf_mcp_at_onoff(onoff)
 -- function zc_acf_mcp_n1_onoff(onoff)
--- function zc_acf_mcp_spd_onoff(onoff)
 -- function zc_acf_mcp_ias_mach(mode)
 -- function zc_acf_mcp_ls_onoff(onoff)
 -- function zc_acf_mcp_100_1000(mode)
--- function zc_acf_mcp_start_et()
--- function zc_acf_mcp_stop_et()
+
 
 --- Tests
 -- function zc_acf_apu_firetest()
@@ -5364,13 +5473,13 @@ function xsp_toggle_autopilot()
 	command_once("laminar/B738/autopilot/cmd_a_press")
 end
 function xsp_toggle_alt()
-	command_once("laminar/B738/autopilot/alt_hld_press")
+	zc_acf_mcp_althld_onoff(2)
 end
 function xsp_toggle_hdg()
-	command_once("laminar/B738/autopilot/hdg_sel_press")
+	zc_acf_mcp_hdgsel_onoff(2)
 end
 function xsp_toggle_nav()
-	command_once("laminar/B738/autopilot/vorloc_press")
+	zc_acf_mcp_vorloc_onoff(2)
 end
 function xsp_toggle_app()
 	command_once("laminar/B738/autopilot/app_press")
@@ -5379,7 +5488,7 @@ function xsp_toggle_vs()
 	command_once("laminar/B738/autopilot/vs_press")
 end
 function xsp_toggle_ias()
-	command_once("laminar/B738/autopilot/speed_press")
+	zc_acf_mcp_spd_onoff(2)
 end
 
 function xsp_toggle_rev_course()
