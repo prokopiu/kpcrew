@@ -1,4 +1,4 @@
---[[
+4--[[
 	*** KPCREW for Zibo Mod 2.1.0.1.1
 	Kosta Prokopiu, July 2021
 --]]
@@ -266,9 +266,7 @@ ZC_COLD_AND_DARK = {
 			command_once("laminar/B738/tab/menu6")
 			command_once("laminar/B738/tab/menu2")
 			zc_acf_eng_starter_mode(0,1)
-			while get("laminar/B738/knob/transponder_pos") > 1 do
-				command_once("laminar/B738/knob/transponder_mode_dn")
-			end
+			zc_acf_xpdr_mode(1)
 			zc_acf_abrk_mode(0)
 			zc_acf_mcp_fds_set(0,0)
 		end
@@ -479,6 +477,7 @@ ZC_POWER_UP_PROC = {
 			end
 			-- open flight information window
 			ZC_BACKGROUND_PROCS["OPENINFOWINDOW"].status=1
+			zc_acf_xpdr_code_set(2000)
 		end
 	}, 
 	[32] = {["lefttext"] = "PROCEDURE FINISHED", ["timerincr"] = -1,
@@ -757,9 +756,7 @@ ZC_TURN_AROUND_STATE = {
 			command_once("laminar/B738/tab/menu6")
 			command_once("laminar/B738/tab/menu2")
 			zc_acf_eng_starter_mode(0,1)
-			while get("laminar/B738/knob/transponder_pos") > 1 do
-				command_once("laminar/B738/knob/transponder_mode_dn")
-			end
+			zc_acf_xpdr_mode(1)
 			zc_acf_abrk_mode(0)
 		end
 	},
@@ -782,6 +779,7 @@ ZC_TURN_AROUND_STATE = {
 				command_once("laminar/B738/LDU_control/push_button/MFD_SYS")
 			end
 			zc_acf_mcp_fds_set(0,0)
+			zc_acf_xpdr_code_set(2000)
 		end
 	}, 
 	[33] = {["lefttext"] = "PROCEDURE FINISHED", ["timerincr"] = -1,
@@ -918,7 +916,7 @@ ZC_PRE_FLIGHT_PROC = {
 	}, 
 	[20] = {["lefttext"] = "CAPT: SET CLOCK", ["timerincr"] = 1,
 		["actions"] = function ()
-			command_once("laminar/B738/push_button/et_reset_capt")
+			zc_acf_et_timer_reset(1)
 		end
 	}, 
 	[21] = {["lefttext"] = "CAPT: DISPLAY SELECT PANEL", ["timerincr"] = 1,
@@ -1098,9 +1096,7 @@ ZC_PRE_FLIGHT_PROC = {
 	}, 
 	[51] = {["lefttext"] = "FO: TRANSPONDER CONTROL PANEL SET", ["timerincr"] = 1,
 		["actions"] = function ()
-			while get("laminar/B738/knob/transponder_pos") > 1 do
-				command_once("laminar/B738/knob/transponder_mode_dn")
-			end
+			zc_acf_xpdr_mode(1)
 			command_begin("laminar/B738/knob/transponder_mode_dn")
 			command_once("laminar/B738/push_button/gpws_test")
 		end
@@ -2470,16 +2466,13 @@ ZC_BEFORE_TAKEOFF_PROC = {
 	},
 	[4] = {["lefttext"] = "TRANSPONDER -- ON", ["timerincr"] = 1,
 		["actions"] = function ()
-			set("sim/cockpit/radios/transponder_code",get_zc_brief_gen("squawk"))
-			command_once("laminar/B738/knob/transponder_mode_up")		
-			command_once("laminar/B738/knob/transponder_mode_up")		
-			command_once("laminar/B738/knob/transponder_mode_up")		
-			command_once("laminar/B738/knob/transponder_mode_up")		
+			zc_acf_xpdr_code_set(get_zc_brief_gen("squawk"))
+			zc_acf_xpdr_mode(5)
 			if get("laminar/B738/EFIS/EFIS_wx_on") == 0 then
 				command_once("laminar/B738/EFIS_control/capt/push_button/wxr_press")
 			end
 			zc_acf_seatbelt_onoff(1)
-			command_once("laminar/B738/push_button/chrono_capt_et_mode")
+			zc_acf_et_timer_startstop(1)
 			command_once("laminar/B738/LDU_control/push_button/MFD_ENG")
 			zc_acf_eng_starter_mode(0,2)
 			if get("laminar/B738/systems/lowerDU_page") == 0 then
@@ -3285,6 +3278,7 @@ ZC_AFTER_LANDING_PROC = {
 	},
 	[2] = {["lefttext"] = "CAPT: CHRONO -- STOP", ["timerincr"] = 1,
 		["actions"] = function ()
+			zc_acf_et_timer_startstop(1)
 			command_once("laminar/B738/push_button/chrono_capt_et_mode")
 		end
 	},
@@ -3355,10 +3349,7 @@ ZC_AFTER_LANDING_PROC = {
 	},
 	[15] = {["lefttext"] = "FO: TRANSPONDER -- STBY", ["timerincr"] = 1,
 		["actions"] = function ()
-			command_once("laminar/B738/knob/transponder_mode_dn")		
-			command_once("laminar/B738/knob/transponder_mode_dn")		
-			command_once("laminar/B738/knob/transponder_mode_dn")		
-			command_once("laminar/B738/knob/transponder_mode_dn")
+			zc_acf_xpdr_mode(1)
 		end
 	},
 	[16] = {["lefttext"] = "CLEANUP FINISHED", ["timerincr"] = -1,
@@ -3465,7 +3456,7 @@ ZC_SHUTDOWN_PROC = {
 	},
 	[18] = {["lefttext"] = "FO: RESET TRANSPONDER", ["timerincr"] = 1,
 		["actions"] = function ()
-			set("sim/cockpit/radios/transponder_code", 2000)
+			zc_acf_xpdr_code_set(2000)
 		end
 	},
 	[19] = {["lefttext"] = "DOORS", ["timerincr"] = 1,
@@ -3480,8 +3471,7 @@ ZC_SHUTDOWN_PROC = {
 	},
 	[20] = {["lefttext"] = "FO: RESET ELAPSED TIME", ["timerincr"] = 1,
 		["actions"] = function ()
-			command_once("laminar/B738/push_button/et_reset_capt")
-			command_once("laminar/B738/push_button/et_reset_fo")
+			zc_acf_et_timer_reset(0)
 			command_once("laminar/B738/LDU_control/push_button/MFD_SYS")
 		end
 	},
@@ -5118,9 +5108,41 @@ function zc_acf_irs_mode(unit,mode)
 	end
 end
 
--- function zc_acf_xpdr_mode(mode)
--- function zc_acf_xpdr_code_set(code)
--- function zc_acf_et_timer_reset()
+-- Transponder mode 0=TEST, 1=STBY, 2=ALT OFF, 3=ALT ON, 4=TA, 5=TARA
+function zc_acf_xpdr_mode(mode)
+	while get("laminar/B738/knob/transponder_pos") > 1 do
+		command_once("laminar/B738/knob/transponder_mode_dn")
+	end
+	while get("laminar/B738/knob/transponder_pos") < mode do
+		command_once("laminar/B738/knob/transponder_mode_up")	
+	end
+end
+
+-- set transponder code
+function zc_acf_xpdr_code_set(code)
+	set("sim/cockpit/radios/transponder_code",code)
+end
+
+-- Reset elapsed timer 0=ALL, 1=CAPT, 2=FO
+function zc_acf_et_timer_reset(timer)
+	if timer == 0 or timer == 1 then
+		command_once("laminar/B738/push_button/et_reset_capt")
+	end
+	if timer == 0 or timer == 2 then
+		command_once("laminar/B738/push_button/et_reset_fo")
+	end
+end
+
+-- Start/Stop ET timer
+function zc_acf_et_timer_startstop(timer)
+	if timer == 0 or timer == 1 then
+		command_once("laminar/B738/push_button/chrono_capt_et_mode")
+	end
+	if timer == 0 or timer == 2 then
+		command_once("laminar/B738/push_button/chrono_fo_et_mode")
+	end
+end
+
 -- function zc_acf_ap_dis_bar_onoff(onoff)
 -- function zc_acf_mcp_alt_intv()
 -- function zc_acf_mcp_vsm_onoff(onoff)
@@ -5293,7 +5315,6 @@ function zc_acf_set_minimum(side, altitude)
 	end
 end
 
--- function zc_acf_mins_reset()
 -- function zc_acf_pfd_navselect1(mode)
 -- function zc_acf_pfd_navselect2(mode)
 -- function zc_acf_nd_map_mode(mode)
