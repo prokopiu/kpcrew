@@ -1,6 +1,6 @@
 --[[
 	*** KPCREW for Zibo Mod 2.1.0.1.2
-	Kosta Prokopiu, July 2021
+	Kosta Prokopiu, August 2021
 --]]
 
 -- Briefing / Aircraft specific details
@@ -876,7 +876,7 @@ ZC_PRE_FLIGHT_PROC = {
 	}, 
 	[14] = {["lefttext"] = "CAPT: EFIS CONTROL PANEL SETUP", ["timerincr"] = 1,  
 		["actions"] = function ()
-			set("laminar/B738/EFIS/baro_sel_in_hg_pilot",get("sim/weather/barometer_sealevel_inhg"))
+			zc_acf_baro_sync()
 		end
 	}, 
 	[15] = {["lefttext"] = "CAPT: EFIS CONTROL PANEL SETUP", ["timerincr"] = 1,
@@ -1624,9 +1624,7 @@ ZC_BEFORE_START_PROC = {
 	},  
 	[1] = {["lefttext"] = "CAPT: ARM AUTOTHROTTLE",["timerincr"] = 1,
 		["actions"] = function ()
-			if get("laminar/B738/autopilot/autothrottle_status") == 0 then
-				command_once("laminar/B738/autopilot/autothrottle_arm_toggle")
-			end
+			zc_acf_mcp_at_onoff(1)
 		end
 	},
 	[2] = {["lefttext"] = "CLOSE EXTERNAL DOORS",["timerincr"] = 1,
@@ -2494,9 +2492,7 @@ ZC_CLIMB_PROC = {
 	[0] = {["lefttext"] = "TAKEOFF AND CLIMB PROCEDURE", ["timerincr"] = 1,
 		["actions"] = function ()
 			gLeftText = "SET TAKEOFF THRUST"
-			if get("laminar/B738/autopilot/autothrottle_arm_pos") == 0 then
-				command_once("laminar/B738/autopilot/autothrottle_arm_toggle")
-			end
+			zc_acf_mcp_at_onoff(1)
 			if get("laminar/B738/autopilot/pfd_hdg_mode") == 0 then
 				zc_acf_mcp_hdgsel_onoff(1)
 			end
@@ -3249,7 +3245,7 @@ ZC_FINAL_PROC = {
 	[6] = {["lefttext"] = "AUTOTHROTTLE -- OFF", ["timerincr"] = 997,
 		["actions"] = function ()
 			gLeftText = "SET OFF"
-			command_once("laminar/B738/autopilot/left_at_dis_press")
+			zc_acf_mcp_at_onoff(0)
 			command_end("laminar/B738/autopilot/capt_disco_press")
 		end
 	},
@@ -3928,8 +3924,7 @@ ZC_BACKGROUND_PROCS = {
 		["actions"] = function ()
 			if get("sim/cockpit2/gauges/indicators/altitude_ft_pilot") > get("laminar/B738/FMS/fmc_trans_alt") then
 				speakNoText(0,"Transition altitude")
-				command_once("laminar/B738/EFIS_control/capt/push_button/std_press")
-				command_once("laminar/B738/EFIS_control/fo/push_button/std_press")
+				zc_acf_baro_std_set(0)
 				ZC_BACKGROUND_PROCS["TRANSALT"].status = 0
 			end
 		end
@@ -3939,8 +3934,7 @@ ZC_BACKGROUND_PROCS = {
 		["actions"] = function ()
 			if get("sim/cockpit2/gauges/indicators/altitude_ft_pilot") > get("laminar/B738/FMS/fmc_trans_lvl") then
 				speakNoText(0,"Transition level")
-				command_once("laminar/B738/EFIS_control/capt/push_button/std_press") 
-				command_once("laminar/B738/EFIS_control/fo/push_button/std_press") 
+				zc_acf_baro_std_set(0)
 				ZC_BACKGROUND_PROCS["TRANSLVL"].status = 0
 			end
 		end
@@ -4755,6 +4749,15 @@ function zc_acf_flap_set(position)
 	end
 end
 
+-- increase/decrease flaps
+function zc_acf_flaps_inc()
+	command_once("sim/flight_controls/flaps_down")
+end
+
+function zc_acf_flaps_dec()
+	command_once("sim/flight_controls/flaps_up")
+end
+
 -- Speedbrake 0=UP, 1=ARMED, 2=FULL
 function zc_acf_speed_break_set(position)
 	if position == 0 then
@@ -5026,7 +5029,7 @@ function zc_acf_no_smoking_onoff(mode)
 end
 
 --- Navigation & A/P & A/T & Radios
--- FD 0=BOTH, 1=LEFT, 2=RIGHT
+-- FD 0=BOTH, 1=LEFT, 2=RIGHT; mode 0=OFF,1=ON,2=toggle
 function zc_acf_mcp_fds_set(fd, mode)
 	if mode == 0 then
 		if fd == 0 or fd == 1 then
@@ -5039,7 +5042,8 @@ function zc_acf_mcp_fds_set(fd, mode)
 				command_once("laminar/B738/autopilot/flight_director_fo_toggle")
 			end
 		end
-	else
+	end
+	if mode == 1 then
 		if fd == 0 or fd == 1 then
 			if get("laminar/B738/autopilot/flight_director_pos") == 0 then
 				command_once("laminar/B738/autopilot/flight_director_toggle")
@@ -5049,6 +5053,14 @@ function zc_acf_mcp_fds_set(fd, mode)
 			if get("laminar/B738/autopilot/flight_director_fo_pos") == 0 then
 				command_once("laminar/B738/autopilot/flight_director_fo_toggle")
 			end
+		end
+	end
+	if mode == 2 then
+		if fd == 0 or fd == 1 then
+			command_once("laminar/B738/autopilot/flight_director_toggle")
+		end
+		if fd == 0 or fd == 2 then
+			command_once("laminar/B738/autopilot/flight_director_fo_toggle")
 		end
 	end
 end
@@ -5084,16 +5096,24 @@ function zc_acf_mcp_vs_set(value)
 	set("sim/cockpit2/autopilot/vvi_dial_fpm",value)
 end
 
--- Set CMD A or B ap 0=ALL 1=CMDA 2=CMDB, mode 0=OFF 1=ON
+-- Set CMD A or B ap 0=ALL 1=CMDA 2=CMDB, mode 0=OFF 1=ON, 2=toggle
 function zc_acf_mcp_ap_set(ap, mode)
 	if ap == 0 or ap == 1 then
-		if get("laminar/B738/autopilot/cmd_a_status") ~= mode then
+		if mode == 2 then
 			command_once("laminar/B738/autopilot/cmd_a_press")
+		else
+			if get("laminar/B738/autopilot/cmd_a_status") ~= mode then
+				command_once("laminar/B738/autopilot/cmd_a_press")
+			end
 		end
 	end
 	if ap == 0 or ap == 2 then
-		if get("laminar/B738/autopilot/cmd_b_status") ~= mode then
+		if mode == 2 then
 			command_once("laminar/B738/autopilot/cmd_b_press")
+		else
+			if get("laminar/B738/autopilot/cmd_b_status") ~= mode then
+				command_once("laminar/B738/autopilot/cmd_b_press")
+			end
 		end
 	end
 end
@@ -5146,7 +5166,7 @@ end
 -- function zc_acf_ap_dis_bar_onoff(onoff)
 -- function zc_acf_mcp_alt_intv()
 
--- VNAV 0=OFF, 1=ON, 2=TOGGLE
+-- LNAV 0=OFF, 1=ON, 2=TOGGLE
 function zc_acf_mcp_lnav_onoff(mode)
 	if mode == 0 and get("laminar/B738/autopilot/lnav_status") == 1 then
 		command_once("laminar/B738/autopilot/lnav_press")
@@ -5175,26 +5195,26 @@ end
 -- VS 0=OFF, 1=ON, 2=TOGGLE
 function zc_acf_mcp_vs_onoff(mode)
 	if mode == 0 and get("laminar/B738/autopilot/vs_status") == 1 then
-		command_once("laminar/B738/autopilot/alt_hld_press")
+		command_once("laminar/B738/autopilot/vs_press")
 	end
 	if mode == 1 and get("laminar/B738/autopilot/vs_status") == 0 then
-		command_once("laminar/B738/autopilot/alt_hld_press")
+		command_once("laminar/B738/autopilot/vs_press")
 	end
 	if mode == 2 then
-		command_once("laminar/B738/autopilot/alt_hld_press")
+		command_once("laminar/B738/autopilot/vs_press")
 	end
 end
 
 -- APP 0=OFF, 1=ON, 2=TOGGLE
 function zc_acf_mcp_app_onoff(mode)
-	if mode == 0 and get("laminar/B738/autopilot/alt_hld_status") == 1 then
-		command_once("laminar/B738/autopilot/alt_hld_press")
+	if mode == 0 and get("laminar/B738/autopilot/app_status") == 1 then
+		command_once("laminar/B738/autopilot/app_press")
 	end
-	if mode == 1 and get("laminar/B738/autopilot/alt_hld_status") == 0 then
-		command_once("laminar/B738/autopilot/alt_hld_press")
+	if mode == 1 and get("laminar/B738/autopilot/app_status") == 0 then
+		command_once("laminar/B738/autopilot/app_press")
 	end
 	if mode == 2 then
-		command_once("laminar/B738/autopilot/alt_hld_press")
+		command_once("laminar/B738/autopilot/app_press")
 	end
 end
 
@@ -5263,10 +5283,25 @@ function zc_acf_mcp_lvlchg_onoff(mode)
 	end
 end
 
--- function zc_acf_mcp_spd_intv()
--- function zc_acf_mcp_turnrate_set(value)
--- function zc_acf_mcp_at_onoff(onoff)
+-- Auththrottle  mode 0=OFF 1=ARMED 2=toggle
+function zc_acf_mcp_at_onoff(mode)
+	if mode == 0 then
+		if get("laminar/B738/autopilot/autothrottle_status") == 1 then
+			command_once("laminar/B738/autopilot/autothrottle_arm_toggle")
+		end
+	end
+	if mode == 1 then
+		if get("laminar/B738/autopilot/autothrottle_status") == 0 then
+			command_once("laminar/B738/autopilot/autothrottle_arm_toggle")
+		end
+	end
+	if mode == 2 then
+		command_once("laminar/B738/autopilot/autothrottle_arm_toggle")
+	end
+end
+
 -- function zc_acf_mcp_n1_onoff(onoff)
+
 -- function zc_acf_mcp_ias_mach(mode)
 -- function zc_acf_mcp_ls_onoff(onoff)
 -- function zc_acf_mcp_100_1000(mode)
@@ -5381,9 +5416,24 @@ end
 -- function zc_acf_lower_efis_mode(mode)
 -- function zc_acf_fpvfpa_onoff(onoff)
 -- function zc_acf_ft_meter(mode)
--- function zc_acf_baro_std_set()
+
+-- Set STD baro side 0=ALL,1=CAPT,2=FO
+function zc_acf_baro_std_set(side)
+	if side == 0 or side == 1 then
+		command_once("laminar/B738/EFIS_control/capt/push_button/std_press")
+	end
+	if side == 0 or side == 2 then
+		command_once("laminar/B738/EFIS_control/fo/push_button/std_press")
+	end
+end
+
 -- function zc_acf_baro_set(value)
--- function zc_acf_baro_sync()
+
+-- synchronize baro with outside pressure
+function zc_acf_baro_sync()
+	set("laminar/B738/EFIS/baro_sel_in_hg_pilot",get("sim/weather/barometer_sealevel_inhg"))
+end
+
 -- function zc_acf_baro_in_mb(mode)
 
 -- EFIS: Set mode of minimums side 0=ALL,1=CAPT,2=FO mode 0=RADIO,1=BARO
@@ -5455,42 +5505,6 @@ function clearchecklist()
 end
 
 -- Aircraft specific Joystick functions
-function xsp_flaps_dec()
-	command_once("sim/flight_controls/flaps_up")
-end
-function xsp_flaps_inc()
-	command_once("sim/flight_controls/flaps_down")
-end
-function xsp_toggle_fd_both()
-	command_once("laminar/B738/autopilot/flight_director_fo_toggle")
-	command_once("laminar/B738/autopilot/flight_director_toggle")
-end
-function xsp_toggle_std_both()
-	command_once("laminar/B738/EFIS_control/capt/push_button/std_press")
-	command_once("laminar/B738/EFIS_control/fo/push_button/std_press")
-end
-function xsp_toggle_autopilot()
-	command_once("laminar/B738/autopilot/cmd_a_press")
-end
-function xsp_toggle_alt()
-	zc_acf_mcp_althld_onoff(2)
-end
-function xsp_toggle_hdg()
-	zc_acf_mcp_hdgsel_onoff(2)
-end
-function xsp_toggle_nav()
-	zc_acf_mcp_vorloc_onoff(2)
-end
-function xsp_toggle_app()
-	command_once("laminar/B738/autopilot/app_press")
-end
-function xsp_toggle_vs()
-	command_once("laminar/B738/autopilot/vs_press")
-end
-function xsp_toggle_ias()
-	zc_acf_mcp_spd_onoff(2)
-end
-
 function xsp_toggle_rev_course()
 	if xsp_bravo_layer == 0 then
 		command_once("sim/autopilot/back_course")
@@ -5592,6 +5606,11 @@ end
 
 xsp_parking_brake = create_dataref_table("kp/xsp/parking_brake", "Int")
 xsp_master_caution = create_dataref_table("kp/xsp/master_caution", "Int")
+xsp_master_warning = create_dataref_table("kp/xsp/master_warning", "Int")xsp_engine_fire = create_dataref_table("kp/xsp/engine_fire", "Int")
+xsp_vacuum = create_dataref_table("kp/xsp/vacuum", "Int")
+xsp_fuel_pumps = create_dataref_table("kp/xsp/fuel_pums", "Int")
+xsp_low_volts = create_dataref_table("kp/xsp/low_volts", "Int")
+
 xsp_mcp_hdg = create_dataref_table("kp/xsp/mcp_hdg", "Int")
 xsp_mcp_nav = create_dataref_table("kp/xsp/mcp_nav", "Int")
 xsp_mcp_app = create_dataref_table("kp/xsp/mcp_app", "Int")
@@ -5599,6 +5618,7 @@ xsp_mcp_ias = create_dataref_table("kp/xsp/mcp_ias", "Int")
 xsp_mcp_vsp = create_dataref_table("kp/xsp/mcp_vsp", "Int")
 xsp_mcp_alt = create_dataref_table("kp/xsp/mcp_alt", "Int")
 xsp_mcp_ap1 = create_dataref_table("kp/xsp/mcp_ap1", "Int")
+
 xsp_doors = create_dataref_table("kp/xsp/doors", "Int")
 xsp_anc_hyd = create_dataref_table("kp/xsp/anc_hyd", "Int")
 xsp_anc_fuel = create_dataref_table("kp/xsp/anc_fuel", "Int")
@@ -5693,24 +5713,27 @@ create_command("kp/xsp/wing_lights_switch_on",		"Wing Lights On",		"zc_acf_light
 create_command("kp/xsp/wing_lights_switch_off",		"Wing Lights Off",		"zc_acf_light_wing_onoff(0)", "", "")
 create_command("kp/xsp/logo_lights_switch_on",		"Logo Lights On",		"zc_acf_light_logo_onoff(1)", "", "")
 create_command("kp/xsp/logo_lights_switch_off",		"Logo Lights Off",		"zc_acf_light_logo_onoff(0)", "", "")
+
 -- General commands
 create_command("kp/xsp/parking_brake_on",			"Parking Brake On",		"zc_acf_parking_break_onoff(1)", "", "")
 create_command("kp/xsp/parking_brake_off",			"Parking Brake Off",	"zc_acf_parking_break_onoff(0)", "", "")
 create_command("kp/xsp/gears_up",					"Gear Up",				"zc_acf_gears(0)", "", "")
 create_command("kp/xsp/gears_down",					"Gear Down",			"zc_acf_gears(1)", "", "")
-create_command("kp/xsp/flaps_up",					"Flaps 1 Up",			"xsp_flaps_dec()", "", "")
-create_command("kp/xsp/flaps_down",					"Flaps 1 Down",			"xsp_flaps_inc()", "", "")
+create_command("kp/xsp/flaps_up",					"Flaps 1 Up",			"zc_acf_flaps_dec()", "", "")
+create_command("kp/xsp/flaps_down",					"Flaps 1 Down",			"zc_acf_flaps_inc()", "", "")
+
 -- A/P and NAV related commands
-create_command("kp/xsp/toggle_both_fd",				"Toggle Both FD",		"xsp_toggle_fd_both()", "", "")
-create_command("kp/xsp/toggle_both_std",			"Toggle Both STD",		"xsp_toggle_std_both()", "", "")
+create_command("kp/xsp/toggle_both_fd",				"Toggle Both FD",		"zc_acf_mcp_fds_set(0,2)", "", "")
+create_command("kp/xsp/toggle_both_std",			"Toggle Both STD",		"	zc_acf_baro_std_set(0)", "", "")
 create_command("kp/xsp/toggle_rev_appr",			"Toggle Reverse Appr",	"xsp_toggle_rev_course()", "", "")
-create_command("kp/xsp/toggle_ap",					"Toggle A/P 1",			"xsp_toggle_autopilot()", "", "")
-create_command("kp/xsp/toggle_alt",					"Toggle Altitude",		"xsp_toggle_alt()","","")
-create_command("kp/xsp/toggle_hdg",					"Toggle Heading",		"xsp_toggle_hdg()","","")
-create_command("kp/xsp/toggle_nav",					"Toggle Nav",			"xsp_toggle_nav()","","")
-create_command("kp/xsp/toggle_app",					"Toggle Approach",		"xsp_toggle_app()","","")
-create_command("kp/xsp/toggle_vs",					"Toggle vertical speed","xsp_toggle_vs()","","")
-create_command("kp/xsp/toggle_ias",					"Toggle ias",			"xsp_toggle_ias()","","")
+create_command("kp/xsp/toggle_ap",					"Toggle A/P 1",			"zc_acf_mcp_ap_set(1,2)", "", "")
+create_command("kp/xsp/toggle_alt",					"Toggle Altitude",		"zc_acf_mcp_althld_onoff(2)","","")
+create_command("kp/xsp/toggle_hdg",					"Toggle Heading",		"zc_acf_mcp_hdgsel_onoff(2)","","")
+create_command("kp/xsp/toggle_nav",					"Toggle Nav",			"zc_acf_mcp_vorloc_onoff(2)","","")
+create_command("kp/xsp/toggle_app",					"Toggle Approach",		"zc_acf_mcp_app_onoff(2)","","")
+create_command("kp/xsp/toggle_vs",					"Toggle vertical speed","zc_acf_mcp_vs_onoff(2)","","")
+create_command("kp/xsp/toggle_ias",					"Toggle ias",			"zc_acf_mcp_spd_onoff(2)","","")
+create_command("kp/xsp/toggle_athr",				"Toggle Autothrottle",			"zc_acf_mcp_at_onoff(2)","","")
 
 -- Bravo specific commands
 create_command("kp/xsp/bravo_mode_alt",				"Bravo AP Mode ALT",	"xsp_bravo_mode=1", "", "")
