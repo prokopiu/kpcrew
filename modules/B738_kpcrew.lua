@@ -1,4 +1,4 @@
---[[
+4--[[
 	*** KPCREW for Zibo Mod 2.1.0.1.2
 	Kosta Prokopiu, August 2021
 --]]
@@ -881,27 +881,17 @@ ZC_PRE_FLIGHT_PROC = {
 	}, 
 	[15] = {["lefttext"] = "CAPT: EFIS CONTROL PANEL SETUP", ["timerincr"] = 1,
 		["actions"] = function ()
-			command_once("laminar/B738/EFIS_control/capt/vor1_off_up")
-			command_once("laminar/B738/EFIS_control/capt/vor1_off_up")
-			command_once("laminar/B738/EFIS_control/capt/vor2_off_up")
-			command_once("laminar/B738/EFIS_control/capt/vor2_off_up")
-			command_once("laminar/B738/EFIS_control/fo/vor1_off_up")
-			command_once("laminar/B738/EFIS_control/fo/vor1_off_up")
-			command_once("laminar/B738/EFIS_control/fo/vor2_off_up")
-			command_once("laminar/B738/EFIS_control/fo/vor2_off_up")
+			zc_acf_nd_vorcapt(0,1)
 		end
 	}, 
 	[16] = {["lefttext"] = "CAPT: EFIS CONTROL PANEL SETUP", ["timerincr"] = 1,
 		["actions"] = function ()
-			set("laminar/B738/EFIS_control/fo/map_mode_pos",2)
-			set("laminar/B738/EFIS_control/capt/map_mode_pos",2)
+			zc_acf_nd_map_mode(0,2)
 		end
 	}, 
 	[17] = {["lefttext"] = "CAPT: EFIS CONTROL PANEL SETUP", ["timerincr"] = 5,  
 		["actions"] = function ()
-			if get("laminar/B738/EFIS/EFIS_wx_on") == 1 then
-				command_once("laminar/B738/EFIS_control/capt/push_button/wxr_press")
-			end
+			zc_acf_nd_wxr_onoff(0,0)
 		end
 	}, 
 	[18] = {["lefttext"] = "CAPT: MCP - FLIGHT DIRECTORS ON", ["timerincr"] = 1,
@@ -1080,12 +1070,7 @@ ZC_PRE_FLIGHT_PROC = {
 	}, 
 	[50] = {["lefttext"] = "FO: WEATHER RADAR AND TERRAIN SET", ["timerincr"] = 1,
 		["actions"] = function ()
-			if get("laminar/B738/EFIS/EFIS_wx_on") == 0 then
-				command_once("laminar/B738/EFIS_control/capt/push_button/wxr_press")
-			end
-			if get("laminar/B738/EFIS/fo/EFIS_wx_on") == 1 then
-				command_once("laminar/B738/EFIS_control/fo/push_button/wxr_press")
-			end
+			zc_acf_nd_wxr_onoff(0,1)
 			if get("laminar/B738/EFIS_control/fo/terr_on") == 0 then
 				command_once("laminar/B738/EFIS_control/fo/push_button/terr_press")
 			end
@@ -2466,9 +2451,7 @@ ZC_BEFORE_TAKEOFF_PROC = {
 		["actions"] = function ()
 			zc_acf_xpdr_code_set(get_zc_brief_gen("squawk"))
 			zc_acf_xpdr_mode(5)
-			if get("laminar/B738/EFIS/EFIS_wx_on") == 0 then
-				command_once("laminar/B738/EFIS_control/capt/push_button/wxr_press")
-			end
+			zc_acf_nd_wxr_onoff(1,0)
 			zc_acf_seatbelt_onoff(1)
 			zc_acf_et_timer_startstop(1)
 			command_once("laminar/B738/LDU_control/push_button/MFD_ENG")
@@ -2496,9 +2479,7 @@ ZC_CLIMB_PROC = {
 			if get("laminar/B738/autopilot/pfd_hdg_mode") == 0 then
 				zc_acf_mcp_hdgsel_onoff(1)
 			end
-			if get("laminar/B738/EFIS/EFIS_wx_on") == 1 then
-				command_once("laminar/B738/EFIS_control/capt/push_button/wxr_press")
-			end
+			zc_acf_nd_wxr_onoff(1,1)
 			if get_zc_brief_dep("lnavvnav") then
 				zc_acf_mcp_lnav_onoff(1)
 			end
@@ -3280,9 +3261,7 @@ ZC_AFTER_LANDING_PROC = {
 	},
 	[3] = {["lefttext"] = "CAPT: WX RADAR -- OFF", ["timerincr"] = 1,
 		["actions"] = function ()
-			if get("laminar/B738/EFIS/EFIS_wx_on") == 1 then
-				command_once("laminar/B738/EFIS_control/capt/push_button/wxr_press")
-			end
+			zc_acf_nd_wxr_onoff(1,0)
 		end
 	},
 	[4] = {["lefttext"] = "FO: APU -- ON", ["timerincr"] = 5,
@@ -4793,6 +4772,12 @@ end
 function zc_acf_elev_trim_set(value)
 	set("sim/flightmodel2/controls/elevator_trim",(8.2 - value) * -0.117)
 end
+function zc_acf_elev_trim_dn()
+	command_once("laminar/B738/flight_controls/pitch_trim_down")
+end
+function zc_acf_elev_trim_up()
+	command_once("laminar/B738/flight_controls/pitch_trim_up")
+end
 
 -- set aileron trim
 function zc_acf_aileron_trim_set(value)
@@ -5327,6 +5312,11 @@ function zc_acf_gears(mode)
 	end
 end
 
+-- Reverse 0=OFF 1=ON 2=toggle
+function zc_acf_reverse_onoff(mode)
+	set("laminar/B738/flt_ctrls/reverse_lever12",mode)
+end
+
 -- door 0=ALL, 1=main, 2=cargof, 3=cargor 
 function zc_acf_external_doors(door,openclose)
 	if door == 0 or door == 1 then
@@ -5474,12 +5464,129 @@ function zc_acf_set_minimum(side, altitude)
 	end
 end
 
--- function zc_acf_pfd_navselect1(mode)
--- function zc_acf_pfd_navselect2(mode)
--- function zc_acf_nd_map_mode(mode)
--- function zc_acf_nd_map_rng(mode)
--- function zc_acf_nd_wxr_onoff(onoff)
--- function zc_acf_nd_sta_cstr_onoff(onoff)
+-- VOR OFF 0=both,1=LEFT,2=RIGHT mode 0=OFF, -1=ADF, 1=VOR
+function zc_acf_nd_vorcapt(nav,mode)
+	if nav == 0 or nav == 1 then
+		while get("laminar/B738/EFIS_control/capt/vor1_off_pfd") < mode do 
+			command_once("laminar/B738/EFIS_control/capt/vor1_off_up")
+		end
+		while get("laminar/B738/EFIS_control/capt/vor1_off_pfd") > mode do 
+			command_once("laminar/B738/EFIS_control/capt/vor1_off_dn")
+		end
+	end
+	if nav == 0 or nav == 2 then
+		while get("laminar/B738/EFIS_control/capt/vor2_off_pfd") < mode do 
+			command_once("laminar/B738/EFIS_control/capt/vor2_off_up")
+		end
+		while get("laminar/B738/EFIS_control/capt/vor2_off_pfd") > mode do 
+			command_once("laminar/B738/EFIS_control/capt/vor2_off_dn")
+		end
+	end
+end
+
+function zc_acf_nd_vorfo(nav,mode)
+	if nav == 0 or nav == 1 then
+		while get("laminar/B738/EFIS_control/fo/vor1_off_pfd") < mode do 
+			command_once("laminar/B738/EFIS_control/fo/vor1_off_up")
+		end
+		while get("laminar/B738/EFIS_control/fo/vor1_off_pfd") > mode do 
+			command_once("laminar/B738/EFIS_control/fo/vor1_off_dn")
+		end
+	end
+	if nav == 0 or nav == 2 then
+		while get("laminar/B738/EFIS_control/fo/vor2_off_pfd") < mode do 
+			command_once("laminar/B738/EFIS_control/fo/vor2_off_up")
+		end
+		while get("laminar/B738/EFIS_control/fo/vor2_off_pfd") > mode do 
+			command_once("laminar/B738/EFIS_control/fo/vor2_off_dn")
+		end
+	end
+end
+
+-- ND map mode nd: 0=both, 1=LEFT, 2=RIGHT, mode: 0=APP,1=VOR,2=MAP,3=PLN 
+function zc_acf_nd_map_mode(nd,mode)
+	if nd == 0 or nd == 1 then
+		set("laminar/B738/EFIS_control/capt/map_mode_pos",mode)
+	end
+	if nd == 0 or nd == 2 then
+		set("laminar/B738/EFIS_control/fo/map_mode_pos",mode)
+	end
+end
+
+function zc_acf_nd_map_mode_up(nd)
+	if nd == 0 or nd == 1 then
+		command_once("laminar/B738/EFIS_control/capt/map_mode_up")
+	end
+	if nd == 0 or nd == 2 then
+		command_once("laminar/B738/EFIS_control/fo/map_mode_up")
+	end
+end
+
+function zc_acf_nd_map_mode_dn(nd)
+	if nd == 0 or nd == 1 then
+		command_once("laminar/B738/EFIS_control/capt/map_mode_dn")
+	end
+	if nd == 0 or nd == 2 then
+		command_once("laminar/B738/EFIS_control/fo/map_mode_dn")
+	end
+end
+
+-- ND map mode nd: 0=both, 1=LEFT, 2=RIGHT, mode: 0=5,1=10,2=20,3=40,4=80,5=160,6=320,7=640 
+function zc_acf_nd_map_range(nd,mode)
+	if nd == 0 or nd == 1 then
+		set("laminar/B738/EFIS_control/capt/map_range",mode)
+	end
+	if nd == 0 or nd == 2 then
+		set("laminar/B738/EFIS_control/fo/map_range",mode)
+	end
+end
+
+function zc_acf_nd_map_range_up(nd)
+	if nd == 0 or nd == 1 then
+		command_once("laminar/B738/EFIS_control/capt/map_range_up")
+	end
+	if nd == 0 or nd == 2 then
+		command_once("laminar/B738/EFIS_control/fo/map_range_up")
+	end
+end
+
+function zc_acf_nd_map_range_dn(nd)
+	if nd == 0 or nd == 1 then
+		command_once("laminar/B738/EFIS_control/capt/map_range_dn")
+	end
+	if nd == 0 or nd == 2 then
+		command_once("laminar/B738/EFIS_control/fo/map_range_dn")
+	end
+end
+
+-- ND WX nd: 0=both, 1=LEFT, 2=RIGHT, mode: 0=OFF, 1=ON
+function zc_acf_nd_wxr_onoff(nd,mode)
+	if nd == 0 or nd == 1 then
+		if get("laminar/B738/EFIS/EFIS_wx_on") ~= mode then
+			command_once("laminar/B738/EFIS_control/capt/push_button/wxr")
+		end
+	end
+	if nd == 0 or nd == 2 then
+		if get("laminar/B738/EFIS/fo/EFIS_wx_on") ~= mode then
+			command_once("laminar/B738/EFIS_control/fo/push_button/wxr")
+		end
+	end
+end
+
+-- ND WX nd: 0=both, 1=LEFT, 2=RIGHT, mode: 0=OFF, 1=ON
+function zc_acf_nd_sta_cstr_onoff(nd,mode)
+	if nd == 0 or nd == 1 then
+		if get("laminar/B738/EFIS/EFIS_vor_on") ~= mode then
+			command_once("laminar/B738/EFIS_control/capt/push_button/sta_press")
+		end
+	end
+	if nd == 0 or nd == 2 then
+		if get("laminar/B738/EFIS/EFIS_fo_nav") ~= mode then
+			command_once("laminar/B738/EFIS_control/capt/push_button/sta_press")
+		end
+	end
+end
+
 -- function zc_acf_nd_wpt_onoff(onoff)
 -- function zc_acf_nd_arpt_onoff(onoff)
 -- function zc_acf_nd_vord_onoff(onoff)
@@ -5606,9 +5713,10 @@ end
 
 xsp_parking_brake = create_dataref_table("kp/xsp/parking_brake", "Int")
 xsp_master_caution = create_dataref_table("kp/xsp/master_caution", "Int")
-xsp_master_warning = create_dataref_table("kp/xsp/master_warning", "Int")xsp_engine_fire = create_dataref_table("kp/xsp/engine_fire", "Int")
+xsp_master_warning = create_dataref_table("kp/xsp/master_warning", "Int")
+xsp_engine_fire = create_dataref_table("kp/xsp/engine_fire", "Int")
 xsp_vacuum = create_dataref_table("kp/xsp/vacuum", "Int")
-xsp_fuel_pumps = create_dataref_table("kp/xsp/fuel_pums", "Int")
+xsp_fuel_pumps = create_dataref_table("kp/xsp/fuel_pumps", "Int")
 xsp_low_volts = create_dataref_table("kp/xsp/low_volts", "Int")
 
 xsp_mcp_hdg = create_dataref_table("kp/xsp/mcp_hdg", "Int")
@@ -5618,6 +5726,7 @@ xsp_mcp_ias = create_dataref_table("kp/xsp/mcp_ias", "Int")
 xsp_mcp_vsp = create_dataref_table("kp/xsp/mcp_vsp", "Int")
 xsp_mcp_alt = create_dataref_table("kp/xsp/mcp_alt", "Int")
 xsp_mcp_ap1 = create_dataref_table("kp/xsp/mcp_ap1", "Int")
+xsp_mcp_rev = create_dataref_table("kp/xsp/mcp_rev", "Int")
 
 xsp_doors = create_dataref_table("kp/xsp/doors", "Int")
 xsp_anc_hyd = create_dataref_table("kp/xsp/anc_hyd", "Int")
@@ -5626,11 +5735,39 @@ xsp_anc_oil = create_dataref_table("kp/xsp/anc_oil", "Int")
 xsp_anc_aice = create_dataref_table("kp/xsp/anc_aice", "Int")
 xsp_anc_starter = create_dataref_table("kp/xsp/anc_starter", "Int")
 
+xsp_parking_brake[0] = 0
+xsp_master_caution[0] = 0
+xsp_master_warning[0] = 0
+xsp_engine_fire[0] = 0
+xsp_vacuum[0] = 0
+xsp_fuel_pumps[0] = 0
+xsp_low_volts[0] = 0
+
+xsp_mcp_hdg[0] = 0
+xsp_mcp_nav[0] = 0
+xsp_mcp_app[0] = 0
+xsp_mcp_ias[0] = 0
+xsp_mcp_vsp[0] = 0
+xsp_mcp_alt[0] = 0
+xsp_mcp_ap1[0] = 0
+xsp_mcp_rev[0] = 0
+
+xsp_doors[0] = 0
+xsp_anc_hyd[0] = 0
+xsp_anc_fuel[0] = 0
+xsp_anc_oil[0] = 0
+xsp_anc_aice[0] = 0
+xsp_anc_starter[0] = 0
+
 function xsp_set_lightvars()
 	xsp_parking_brake[0] = get("sim/cockpit2/controls/parking_brake_ratio")
 
 	-- Master Caution light
-	xsp_master_caution[0] = get("laminar/B738/annunciator/master_caution_light")
+	if get("laminar/B738/annunciator/master_caution_light") > 0 then
+		xsp_master_caution[0] = 1
+	else
+		xsp_master_caution[0] = 0
+	end
 
 	xsp_mcp_hdg[0] = get("laminar/B738/autopilot/hdg_sel_status")
 
@@ -5676,10 +5813,10 @@ function xsp_set_lightvars()
 		xsp_anc_fuel[0] = 1
 	end
 
-	if get("laminar/B738/engine/eicas_oil_press1") == 0 and get("laminar/B738/engine/eicas_oil_press2") == 0 then
-		xsp_anc_oil[0] = 0
-	else
+	if get("laminar/B738/engine/eicas_oil_press1") == 0 or get("laminar/B738/engine/eicas_oil_press2") == 0 then
 		xsp_anc_oil[0] = 1
+	else
+		xsp_anc_oil[0] = 0
 	end
 
 	if get("laminar/B738/air/engine1/starter_valve") == 0 and get("laminar/B738/air/engine2/starter_valve") == 0 then
@@ -5694,6 +5831,13 @@ function xsp_set_lightvars()
 		xsp_anc_aice[0] = 1
 	end
 
+	xsp_master_warning[0] = get("laminar/B738/flt_ctrls/reverse_lever12")
+	
+	if get("laminar/B738/annunciator/pack_left") > 0 or get("laminar/B738/annunciator/pack_right") > 0 then
+		xsp_vacuum[0] = 1
+	else
+		xsp_vacuum[0] = 0
+	end
 end
 
 -- aircraft specific joystick/key commands (e.g. for Alpha Yoke)
@@ -5721,6 +5865,10 @@ create_command("kp/xsp/gears_up",					"Gear Up",				"zc_acf_gears(0)", "", "")
 create_command("kp/xsp/gears_down",					"Gear Down",			"zc_acf_gears(1)", "", "")
 create_command("kp/xsp/flaps_up",					"Flaps 1 Up",			"zc_acf_flaps_dec()", "", "")
 create_command("kp/xsp/flaps_down",					"Flaps 1 Down",			"zc_acf_flaps_inc()", "", "")
+create_command("kp/xsp/reverse_thrust_on",			"Reverse Thrust on",			"zc_acf_reverse_onoff(1)", "", "")
+create_command("kp/xsp/reverse_thrust_off",			"Reverse Thrust off",			"zc_acf_reverse_onoff(0)", "", "")
+create_command("kp/xsp/pitch_trim_up",				"Pitch Trim Up",			"zc_acf_elev_trim_up()", "", "")
+create_command("kp/xsp/pitch_trim_down",			"Pitch Trim Down",			"zc_acf_elev_trim_dn()", "", "")
 
 -- A/P and NAV related commands
 create_command("kp/xsp/toggle_both_fd",				"Toggle Both FD",		"zc_acf_mcp_fds_set(0,2)", "", "")
