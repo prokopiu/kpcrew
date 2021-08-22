@@ -1,4 +1,4 @@
-4--[[
+--[[
 	*** KPCREW for Zibo Mod 2.1.0.1.2
 	Kosta Prokopiu, August 2021
 --]]
@@ -5404,8 +5404,50 @@ end
 --- EFIS
 -- function zc_acf_upper_efis_mode(mode)
 -- function zc_acf_lower_efis_mode(mode)
--- function zc_acf_fpvfpa_onoff(onoff)
--- function zc_acf_ft_meter(mode)
+
+-- ND FPV nd: 0=both, 1=LEFT, 2=RIGHT, mode: 0=OFF, 1=ON, 2=toggle
+function zc_acf_fpvfpa_onoff(nd,mode)
+	if ap == 0 or ap == 1 then
+		if mode == 2 then
+			command_once("laminar/B738/EFIS_control/capt/push_button/fpv_press")
+		else
+			if get("laminar/B738/PFD/capt/fpv_on") ~= mode then
+				command_once("laminar/B738/EFIS_control/capt/push_button/fpv_press")
+			end
+		end
+	end
+	if ap == 0 or ap == 2 then
+		if mode == 2 then
+			command_once("laminar/B738/EFIS_control/fo/push_button/fpv_press")
+		else
+			if get("laminar/B738/PFD/fo/fpv_on") ~= mode then
+				command_once("laminar/B738/EFIS_control/fo/push_button/fpv_press")
+			end
+		end
+	end
+end
+
+-- ND MTR nd: 0=both, 1=LEFT, 2=RIGHT, mode: 0=OFF, 1=ON, 2=toggle
+function zc_acf_ft_meter(nd,mode)
+	if ap == 0 or ap == 1 then
+		if mode == 2 then
+			command_once("laminar/B738/EFIS_control/capt/push_button/mtrs_press")
+		else
+			if get("laminar/B738/PFD/capt/alt_mode_is_meters") ~= mode then
+				command_once("laminar/B738/EFIS_control/capt/push_button/mtrs_press")
+			end
+		end
+	end
+	if ap == 0 or ap == 2 then
+		if mode == 2 then
+			command_once("laminar/B738/EFIS_control/fo/push_button/mtrs_press")
+		else
+			if get("laminar/B738/PFD/capt/alt_mode_is_meters") ~= mode then
+				command_once("laminar/B738/EFIS_control/fo/push_button/mtrs_press")
+			end
+		end
+	end
+end
 
 -- Set STD baro side 0=ALL,1=CAPT,2=FO
 function zc_acf_baro_std_set(side)
@@ -5559,43 +5601,193 @@ function zc_acf_nd_map_range_dn(nd)
 	end
 end
 
--- ND WX nd: 0=both, 1=LEFT, 2=RIGHT, mode: 0=OFF, 1=ON
+-- ND WX nd: 0=both, 1=LEFT, 2=RIGHT, mode: 0=OFF, 1=ON, 2=toggle
 function zc_acf_nd_wxr_onoff(nd,mode)
-	if nd == 0 or nd == 1 then
-		if get("laminar/B738/EFIS/EFIS_wx_on") ~= mode then
+	if ap == 0 or ap == 1 then
+		if mode == 2 then
 			command_once("laminar/B738/EFIS_control/capt/push_button/wxr")
+		else
+			if get("laminar/B738/EFIS/EFIS_wx_on") ~= mode then
+				command_once("laminar/B738/EFIS_control/capt/push_button/wxr")
+			end
 		end
 	end
-	if nd == 0 or nd == 2 then
-		if get("laminar/B738/EFIS/fo/EFIS_wx_on") ~= mode then
+	if ap == 0 or ap == 2 then
+		if mode == 2 then
 			command_once("laminar/B738/EFIS_control/fo/push_button/wxr")
+		else
+			if get("laminar/B738/EFIS/fo/EFIS_wx_on") ~= mode then
+				command_once("laminar/B738/EFIS_control/fo/push_button/wxr")
+			end
 		end
 	end
 end
 
--- ND WX nd: 0=both, 1=LEFT, 2=RIGHT, mode: 0=OFF, 1=ON
+-- ND WX nd: 0=both, 1=LEFT, 2=RIGHT, mode: 0=OFF, 1=ON, 2=toggle
 function zc_acf_nd_sta_cstr_onoff(nd,mode)
-	if nd == 0 or nd == 1 then
-		if get("laminar/B738/EFIS/EFIS_vor_on") ~= mode then
+	if ap == 0 or ap == 1 then
+		if mode == 2 then
 			command_once("laminar/B738/EFIS_control/capt/push_button/sta_press")
+		else
+			if get("laminar/B738/EFIS/EFIS_vor_on") ~= mode then
+				command_once("laminar/B738/EFIS_control/capt/push_button/sta_press")
+			end
 		end
 	end
-	if nd == 0 or nd == 2 then
-		if get("laminar/B738/EFIS/EFIS_fo_nav") ~= mode then
-			command_once("laminar/B738/EFIS_control/capt/push_button/sta_press")
+	if ap == 0 or ap == 2 then
+		if mode == 2 then
+			command_once("laminar/B738/EFIS_control/fo/push_button/sta_press")
+		else
+			if get("laminar/B738/EFIS/fo/EFIS_vor_on") ~= mode then
+				command_once("laminar/B738/EFIS_control/fo/push_button/sta_press")
+			end
 		end
 	end
 end
 
--- function zc_acf_nd_wpt_onoff(onoff)
--- function zc_acf_nd_arpt_onoff(onoff)
--- function zc_acf_nd_vord_onoff(onoff)
--- function zc_acf_nd_ndb_onoff(onoff)
--- function zc_acf_nd_data_onoff(onoff)
--- function zc_acf_nd_pos_onoff(onoff)
--- function zc_acf_nd_terr_onoff(onoff)
--- function zc_acf_nd_trfc_onoff(onoff)
--- function zc_acf_nd_ctr_onoff(onoff)
+-- ND WPT nd: 0=both, 1=LEFT, 2=RIGHT, mode: 0=OFF, 1=ON, 2=toggle
+function zc_acf_nd_wpt_onoff(mode)
+	if ap == 0 or ap == 1 then
+		if mode == 2 then
+			command_once("laminar/B738/EFIS_control/capt/push_button/wpt_press")
+		else
+			if get("laminar/B738/EFIS/EFIS_fix_on") ~= mode then
+				command_once("laminar/B738/EFIS_control/capt/push_button/wpt_press")
+			end
+		end
+	end
+	if ap == 0 or ap == 2 then
+		if mode == 2 then
+			command_once("laminar/B738/EFIS_control/fo/push_button/sta_press")
+		else
+			if get("laminar/B738/EFIS/fo/EFIS_fix_on") ~= mode then
+				command_once("laminar/B738/EFIS_control/fo/push_button/wpt_press")
+			end
+		end
+	end
+end
+
+-- ND ARPT nd: 0=both, 1=LEFT, 2=RIGHT, mode: 0=OFF, 1=ON, 2=toggle
+function zc_acf_nd_arpt_onoff(mode)
+	if ap == 0 or ap == 1 then
+		if mode == 2 then
+			command_once("laminar/B738/EFIS_control/capt/push_button/arpt_press")
+		else
+			if get("laminar/B738/EFIS/EFIS_airport_on") ~= mode then
+				command_once("laminar/B738/EFIS_control/capt/push_button/arpt_press")
+			end
+		end
+	end
+	if ap == 0 or ap == 2 then
+		if mode == 2 then
+			command_once("laminar/B738/EFIS_control/fo/push_button/arpt_press")
+		else
+			if get("laminar/B738/EFIS/fo/EFIS_airport_on") ~= mode then
+				command_once("laminar/B738/EFIS_control/fo/push_button/arpt_press")
+			end
+		end
+	end
+end
+
+-- ND DATA nd: 0=both, 1=LEFT, 2=RIGHT, mode: 0=OFF, 1=ON, 2=toggle
+function zc_acf_nd_data_onoff(mode)
+	if ap == 0 or ap == 1 then
+		if mode == 2 then
+			command_once("laminar/B738/EFIS_control/capt/push_button/data_press")
+		else
+			if get("laminar/B738/EFIS/capt/data_status") ~= mode then
+				command_once("laminar/B738/EFIS_control/capt/push_button/data_press")
+			end
+		end
+	end
+	if ap == 0 or ap == 2 then
+		if mode == 2 then
+			command_once("laminar/B738/EFIS_control/fo/push_button/data_press")
+		else
+			if get("laminar/B738/EFIS/fo/data_status") ~= mode then
+				command_once("laminar/B738/EFIS_control/fo/push_button/data_press")
+			end
+		end
+	end
+end
+
+-- function zc_acf_nd_vord_onoff(mode)
+-- end
+
+-- function zc_acf_nd_ndb_onoff(mode)
+-- end
+
+
+-- ND POS nd: 0=both, 1=LEFT, 2=RIGHT, mode: 0=OFF, 1=ON, 2=toggle
+-- function zc_acf_nd_pos_onoff(mode)
+-- end
+
+-- ND TERR nd: 0=both, 1=LEFT, 2=RIGHT, mode: 0=OFF, 1=ON, 2=toggle
+function zc_acf_nd_terr_onoff(mode)
+	if ap == 0 or ap == 1 then
+		if mode == 2 then
+			command_once("laminar/B738/EFIS_control/capt/push_button/terr_press")
+		else
+			if get("laminar/B738/EFIS_control/capt/terr_on") ~= mode then
+				command_once("laminar/B738/EFIS_control/capt/push_button/terr_press")
+			end
+		end
+	end
+	if ap == 0 or ap == 2 then
+		if mode == 2 then
+			command_once("laminar/B738/EFIS_control/fo/push_button/terr_press")
+		else
+			if get("laminar/B738/EFIS_control/fo/terr_on") ~= mode then
+				command_once("laminar/B738/EFIS_control/fo/push_button/terr_press")
+			end
+		end
+	end
+end
+
+
+-- ND TRFC nd: 0=both, 1=LEFT, 2=RIGHT, mode: 0=OFF, 1=ON, 2=toggle
+function zc_acf_nd_trfc_onoff(mode)
+	if ap == 0 or ap == 1 then
+		if mode == 2 then
+			command_once("laminar/B738/EFIS_control/capt/push_button/tfc_press")
+		else
+			if get("laminar/B738/EFIS/tcas_on") ~= mode then
+				command_once("laminar/B738/EFIS_control/capt/push_button/tfc_press")
+			end
+		end
+	end
+	if ap == 0 or ap == 2 then
+		if mode == 2 then
+			command_once("laminar/B738/EFIS_control/fo/push_button/tfc_press")
+		else
+			if get("laminar/B738/EFIS/tcas_on_fo") ~= mode then
+				command_once("laminar/B738/EFIS_control/fo/push_button/tfc_press")
+			end
+		end
+	end
+end
+
+-- ND CTR nd: 0=both, 1=LEFT, 2=RIGHT, mode: 0=OFF, 1=ON, 2=toggle
+function zc_acf_nd_ctr_onoff(mode)
+	if ap == 0 or ap == 1 then
+		if mode == 2 then
+			command_once("laminar/B738/EFIS_control/capt/push_button/ctr_press")
+		else
+			if get("laminar/B738/EFIS_control/capt/exp_map") ~= mode then
+				command_once("laminar/B738/EFIS_control/capt/push_button/ctr_press")
+			end
+		end
+	end
+	if ap == 0 or ap == 2 then
+		if mode == 2 then
+			command_once("laminar/B738/EFIS_control/fo/push_button/ctr_press")
+		else
+			if get("laminar/B738/EFIS_control/fo/exp_map") ~= mode then
+				command_once("laminar/B738/EFIS_control/fo/push_button/ctr_press")
+			end
+		end
+	end
+end
 
 -- set checklist
 function setchecklist(number)
