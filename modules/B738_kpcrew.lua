@@ -2502,8 +2502,8 @@ ZC_CLIMB_PROC = {
 	[1] = {["lefttext"] = "SET TAKEOFF THRUST", ["timerincr"] = 997,
 		["actions"] = function ()
 			speakNoText(0,"TAKEOFF thrust set")
-			command_once("laminar/B738/autopilot/n1_press")
-			command_once("laminar/B738/autopilot/left_toga_press")
+			zc_acf_mcp_n1_onoff(1)
+			zc_acf_mcp_toga()
 			if get_zc_config("easy") then
 				ZC_BACKGROUND_PROCS["FLAPSUPSCHED"].status = 1
 				ZC_BACKGROUND_PROCS["GEARUP"].status = 1
@@ -4684,7 +4684,6 @@ function zc_acf_eng_aice_onoff(eng,mode)
 	end
 end
 
-
 -- probe heat heater 0=ALL 1=left 2=right; mode 0=OFF, 1=ON
 function zc_acf_probe_heat_onoff(heater,mode)
 	if heater == 0 or heater == 1 then
@@ -4944,6 +4943,7 @@ function zc_acf_light_landing_mode(light,mode)
 	end
 end
 
+-- general panel brughtness light=0..9, value=0..1
 function zc_acf_panel_brightness(light,value)
 	set("laminar/B738/electric/panel_brightness",light,value)
 end
@@ -5148,8 +5148,28 @@ function zc_acf_et_timer_startstop(timer)
 	end
 end
 
--- function zc_acf_ap_dis_bar_onoff(onoff)
--- function zc_acf_mcp_alt_intv()
+-- AP Disconnect button mode 0=OFF, 1=ON
+function zc_acf_ap_dis_bar_onoff(mode)
+	if mode == 0 and get("laminar/B738/autopilot/disconnect_pos") == 1 then
+		command_once("laminar/B738/autopilot/disconnect_button")
+	end
+	if mode == 1 and get("laminar/B738/autopilot/disconnect_pos") == 0 then
+		command_once("laminar/B738/autopilot/disconnect_button")
+	end
+	if mode == 2 then
+		command_once("laminar/B738/autopilot/disconnect_button")
+	end
+end
+
+-- ALT intervention 
+function zc_acf_mcp_alt_intv()
+	command_once("laminar/B738/autopilot/alt_interv")
+end
+
+-- speed intervention
+function zc_acf_mcp_spd_intv()
+	command_once("laminar/B738/autopilot/spd_interv")
+end
 
 -- LNAV 0=OFF, 1=ON, 2=TOGGLE
 function zc_acf_mcp_lnav_onoff(mode)
@@ -5268,7 +5288,7 @@ function zc_acf_mcp_lvlchg_onoff(mode)
 	end
 end
 
--- Auththrottle  mode 0=OFF 1=ARMED 2=toggle
+-- Autothrottle  mode 0=OFF 1=ARMED 2=toggle
 function zc_acf_mcp_at_onoff(mode)
 	if mode == 0 then
 		if get("laminar/B738/autopilot/autothrottle_status") == 1 then
@@ -5285,7 +5305,26 @@ function zc_acf_mcp_at_onoff(mode)
 	end
 end
 
--- function zc_acf_mcp_n1_onoff(onoff)
+-- N1 A/T mode 0=OFF, 1=ON, 2=toggle
+function zc_acf_mcp_n1_onoff(mode)
+	if mode == 0 then
+		if get("laminar/B738/autopilot/n1_status") == 1 then
+			command_once("laminar/B738/autopilot/n1_press")
+		end
+	end
+	if mode == 1 then
+		if get("laminar/B738/autopilot/n1_status") == 0 then
+			command_once("laminar/B738/autopilot/n1_press")
+		end
+	end
+	if mode == 2 then
+		command_once("laminar/B738/autopilot/n1_press")
+	end
+
+-- TOGA press 
+function zc_acf_mcp_toga()
+	command_once("laminar/B738/autopilot/left_toga_press")
+end 
 
 -- function zc_acf_mcp_ias_mach(mode)
 -- function zc_acf_mcp_ls_onoff(onoff)
