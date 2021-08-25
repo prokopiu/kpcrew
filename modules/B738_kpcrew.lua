@@ -3,7 +3,7 @@
 	Kosta Prokopiu, August 2021
 --]]
 
--- Briefing / Aircraft specific details
+-- =========== Aircraft specific details
 B738 = Class_ACF:Create()
 B738:setDEP_Flaps({"0","1","5","10","15","",""})
 B738:setDEP_Flaps_val({0,1,5,10,15,15,15})
@@ -35,7 +35,7 @@ xsp_bravo_mode = 1
 xsp_bravo_layer = 0
 xsp_fine_coarse = 1
 
--- Procedure definitions
+-- =========== Procedure definitions
 ZC_INIT_PROC = {
 	[0] = {["lefttext"] = "ZIBOCREW ".. ZC_VERSION .. " STARTED",["timerincr"] = -1,
 		["actions"] = function ()
@@ -45,6 +45,7 @@ ZC_INIT_PROC = {
 	}
 }
 
+-- Start preflight events (WIP)
 ZC_PREFLIGHT_START = {
 	[0] = {["lefttext"] = "START PREFLIGHT EVENTS",["timerincr"] = -1,
 		["actions"] = function ()
@@ -55,6 +56,7 @@ ZC_PREFLIGHT_START = {
 	}
 }
 
+-- Set aircraft into Cold&Dark mode
 ZC_COLD_AND_DARK = {
 	[0] = {["lefttext"] = "OVERHEAD TOP", ["timerincr"] = 1,
 		["actions"] = function ()
@@ -283,6 +285,7 @@ ZC_COLD_AND_DARK = {
 	}
 }
 
+-- Power up aircraft from Cold&Dark
 ZC_POWER_UP_PROC = {
 	[0] = {["lefttext"] = "POWER UP",["timerincr"] = 2,
 		["actions"] = function ()
@@ -355,81 +358,60 @@ ZC_POWER_UP_PROC = {
 		end
 	},
 	-- FIRE TESTS
-	[11] = {["lefttext"] = "FO: FIRE TESTS", ["timerincr"] = 3,
+	[11] = {["lefttext"] = "FO: FIRE TESTS", ["timerincr"] = 12,
 		["actions"] = function ()
-			command_begin("laminar/B738/toggle_switch/fire_test_lft")
+			zc_acf_firetests()
+		end
+	},
+	[12] = {["lefttext"] = "FO: WING LIGHTS", ["timerincr"] = 1,
+		["actions"] = function ()
 			zc_acf_light_wing_onoff(1)
 		end
 	},
-	[12] = {["lefttext"] = "FO: FIRE TESTS", ["timerincr"] = 3,
-		["actions"] = function ()
-			command_end("laminar/B738/toggle_switch/fire_test_lft")
-			command_begin("laminar/B738/toggle_switch/fire_test_rgt")
-		end
-	},
-	[13] = {["lefttext"] = "FO: FIRE TESTS", ["timerincr"] = 3,
-		["actions"] = function ()
-			command_end("laminar/B738/toggle_switch/fire_test_rgt")
-			command_begin("laminar/B738/toggle_switch/exting_test_lft")
-		end
-	},
-	[14] = {["lefttext"] = "FO: FIRE TESTS", ["timerincr"] = 3,
-		["actions"] = function ()
-			command_end("laminar/B738/toggle_switch/exting_test_lft")
-			command_begin("laminar/B738/toggle_switch/exting_test_rgt")
-		end
-	},
-	[15] = {["lefttext"] = "FO: FIRE TESTS", ["timerincr"] = 3,
-		["actions"] = function ()
-			command_end("laminar/B738/toggle_switch/exting_test_rgt")
-			command_begin("laminar/B738/push_button/cargo_fire_test_push")
-		end
-	},
 	-- CONFIGURE FUEL PUMPS
-	[16] = {["lefttext"] = "FO: CONFIGURE FUEL PUMPS", ["timerincr"] = 1,
+	[13] = {["lefttext"] = "FO: CONFIGURE FUEL PUMPS", ["timerincr"] = 1,
 		["actions"] = function ()
-			command_end("laminar/B738/push_button/cargo_fire_test_push")
 			zc_acf_fuel_pumps_onoff(5,0)
 		end
 	}, 
-	[17] = {["lefttext"] = "FO: CONFIGURE FUEL PUMPS", ["timerincr"] = 1,
+	[14] = {["lefttext"] = "FO: CONFIGURE FUEL PUMPS", ["timerincr"] = 1,
 		["actions"] = function ()
 			zc_acf_fuel_pumps_onoff(6,0)
 		end
 	}, 
-	[18] = {["lefttext"] = "FO: CONFIGURE FUEL PUMPS", ["timerincr"] = 1,
+	[15] = {["lefttext"] = "FO: CONFIGURE FUEL PUMPS", ["timerincr"] = 1,
 		["actions"] = function ()
 			zc_acf_fuel_pumps_onoff(1,0)
 		end
 	}, 
-	[19] = {["lefttext"] = "FO: CONFIGURE FUEL PUMPS", ["timerincr"] = 1,
+	[16] = {["lefttext"] = "FO: CONFIGURE FUEL PUMPS", ["timerincr"] = 1,
 		["actions"] = function ()
 			zc_acf_fuel_pumps_onoff(2,0)
 		end
 	}, 
-	[20] = {["lefttext"] = "FO: CONFIGURE FUEL PUMPS", ["timerincr"] = 1,
+	[17] = {["lefttext"] = "FO: CONFIGURE FUEL PUMPS", ["timerincr"] = 1,
 		["actions"] = function ()
 			zc_acf_fuel_pumps_onoff(3,0)
 		end
 	}, 
-	[21] = {["lefttext"] = "FO: CONFIGURE FUEL PUMPS", ["timerincr"] = 1,
+	[18] = {["lefttext"] = "FO: CONFIGURE FUEL PUMPS", ["timerincr"] = 1,
 		["actions"] = function ()
 			zc_acf_fuel_pumps_onoff(4,0)
 		end
 	}, 
-	[22] = {["lefttext"] = "FO: CONFIGURE FUEL PUMPS", ["timerincr"] = 1,
+	[19] = {["lefttext"] = "FO: CONFIGURE FUEL PUMPS", ["timerincr"] = 1,
 		["actions"] = function ()
 			zc_acf_fuel_xfeed_mode(0)
 		end
 	}, 
 	-- OTHER SETTINGS
-	[23] = {["lefttext"] = "FO: CONFIGURE ELEC HYD PUMPS", ["timerincr"] = 1,
+	[20] = {["lefttext"] = "FO: CONFIGURE ELEC HYD PUMPS", ["timerincr"] = 1,
 		["actions"] = function ()
 			zc_acf_hyd_pumps_onoff(1,1)
 			zc_acf_hyd_pumps_onoff(2,1)
 		end
 	}, 
-	[24] = {["lefttext"] = "FO: POSITION & WING LIGHTS", ["timerincr"] = 1,
+	[21] = {["lefttext"] = "FO: POSITION & WING LIGHTS", ["timerincr"] = 1,
 		["actions"] = function ()
 			zc_acf_light_nav_onoff(1)
 			if get("sim/private/stats/skyc/sun_amb_b") == 0 then
@@ -437,37 +419,37 @@ ZC_POWER_UP_PROC = {
 			end
 		end
 	}, 
-	[25] = {["lefttext"] = "CAPT: IRSs OFF, WAIT, THEN ON", ["timerincr"] = 1,
+	[22] = {["lefttext"] = "CAPT: IRSs OFF, WAIT, THEN ON", ["timerincr"] = 1,
 		["actions"] = function ()
 			zc_acf_irs_mode(1,0)
 		end
 	}, 
-	[26] = {["lefttext"] = "CAPT: IRSs OFF, WAIT, THEN ON", ["timerincr"] = 4,
+	[23] = {["lefttext"] = "CAPT: IRSs OFF, WAIT, THEN ON", ["timerincr"] = 4,
 		["actions"] = function ()
 			zc_acf_irs_mode(2,0)
 		end
 	}, 
-	[27] = {["lefttext"] = "CAPT: IRSs OFF, WAIT, THEN ON", ["timerincr"] = 1,
+	[24] = {["lefttext"] = "CAPT: IRSs OFF, WAIT, THEN ON", ["timerincr"] = 1,
 		["actions"] = function ()
 			zc_acf_irs_mode(1,1)
 		end
 	}, 
-	[28] = {["lefttext"] = "CAPT: IRSs OFF, WAIT, THEN ON", ["timerincr"] = 1,
+	[25] = {["lefttext"] = "CAPT: IRSs OFF, WAIT, THEN ON", ["timerincr"] = 1,
 		["actions"] = function ()
 			zc_acf_irs_mode(1,2)
 		end
 	}, 
-	[29] = {["lefttext"] = "CAPT: IRSs OFF, WAIT, THEN ON", ["timerincr"] = 1,
+	[26] = {["lefttext"] = "CAPT: IRSs OFF, WAIT, THEN ON", ["timerincr"] = 1,
 		["actions"] = function ()
 			zc_acf_irs_mode(2,1)
 		end
 	}, 
-	[30] = {["lefttext"] = "CAPT: IRSs OFF, WAIT, THEN ON", ["timerincr"] = 1,
+	[27] = {["lefttext"] = "CAPT: IRSs OFF, WAIT, THEN ON", ["timerincr"] = 1,
 		["actions"] = function ()
 			zc_acf_irs_mode(2,2)
 		end
 	}, 
-	[31] = {["lefttext"] = "CAPT: MCP - IAS TO V2", ["timerincr"] = 1,
+	[28] = {["lefttext"] = "CAPT: MCP - IAS TO V2", ["timerincr"] = 1,
 		["actions"] = function ()
 			zc_acf_mcp_spd_set(get_zc_config("apspd"))
 			zc_acf_mcp_hdg_set(get_zc_config("aphdg"))
@@ -478,7 +460,7 @@ ZC_POWER_UP_PROC = {
 			zc_acf_xpdr_code_set(2000)
 		end
 	}, 
-	[32] = {["lefttext"] = "PROCEDURE FINISHED", ["timerincr"] = -1,
+	[29] = {["lefttext"] = "PROCEDURE FINISHED", ["timerincr"] = -1,
 		["actions"] = function ()
 			gLeftText = "POWER UP FINISHED"
 			speakNoText(0,"POWER UP FINISHED")
@@ -487,6 +469,7 @@ ZC_POWER_UP_PROC = {
 	}
 }
 
+-- Set aircraft in mode for turn around between flights
 ZC_TURN_AROUND_STATE = {
 	[0] = {["lefttext"] = "OVERHEAD TOP", ["timerincr"] = 1,
 		["actions"] = function ()
@@ -785,6 +768,7 @@ ZC_TURN_AROUND_STATE = {
 	}
 }
 
+-- Pre-Flight Procedure
 ZC_PRE_FLIGHT_PROC = {
 	[0] = {["lefttext"] = "PRE FLIGHT PROCEDURE",["timerincr"] = 2,
 		["actions"] = function ()
@@ -798,21 +782,19 @@ ZC_PRE_FLIGHT_PROC = {
 			end
 		end
 	}, 
-	[2] = {["lefttext"] = "CAPT: STALL WARNING TEST", ["timerincr"] = 3,
+	[2] = {["lefttext"] = "CAPT: STALL WARNING TEST", ["timerincr"] = 1,
 		["actions"] = function ()
-			command_end("laminar/B738/push_button/mach_warn2_test")
-			command_begin("laminar/B738/push_button/stall_test1_press")
+			gLeftText = "---- OBSOLETE"
 		end
 	}, 
-	[3] = {["lefttext"] = "CAPT: STALL WARNING TEST", ["timerincr"] = 3,
+	[3] = {["lefttext"] = "CAPT: STALL WARNING TEST", ["timerincr"] = 1,
 		["actions"] = function ()
-			command_end("laminar/B738/push_button/stall_test1_press")
-			command_begin("laminar/B738/push_button/stall_test2_press")
+			gLeftText = "---- OBSOLETE"
 		end
 	}, 
 	[4] = {["lefttext"] = "CAPT: STALL WARNING TEST", ["timerincr"] = 1,
 		["actions"] = function ()
-			command_end("laminar/B738/push_button/stall_test2_press")
+			gLeftText = "---- OBSOLETE"
 		end
 	}, 
 	[5] = {["lefttext"] = "CAPT: SET PARKING BRAKE", ["timerincr"] = 1,
@@ -825,7 +807,6 @@ ZC_PRE_FLIGHT_PROC = {
 			gLeftText = "CAPT: CDU PREFLIGHT PROCEDURE"
 			command_once("FlyWithLua/AceLM/ShowHideMainWindow")
 			ZC_BACKGROUND_PROCS["OPENINFOWINDOW"].status=1
-			-- setchecklist(91)
 		end
 	}, 
 	[7] = {["lefttext"] = "CAPT: CDU PREFLIGHT PROCEDURE", ["timerincr"] = 997,
@@ -1211,60 +1192,37 @@ ZC_PRE_FLIGHT_PROC = {
 			zc_acf_light_beacon_onoff(0)
 		end
 	}, 
-	[73] = {["lefttext"] = "FO: FIRE TESTS", ["timerincr"] = 3,
+	[73] = {["lefttext"] = "FO: FIRE TESTS", ["timerincr"] = 12,
 		["actions"] = function ()
-			command_begin("laminar/B738/toggle_switch/fire_test_lft")
+			zc_acf_firetests()
+		end
+	},
+	[74] = {["lefttext"] = "FO: WING LIGHTS", ["timerincr"] = 1,
+		["actions"] = function ()
 			zc_acf_light_wing_onoff(1)
 		end
 	},
-	[74] = {["lefttext"] = "FO: FIRE TESTS", ["timerincr"] = 3,
+	[75] = {["lefttext"] = "FO: MACH OVERSPEED TEST", ["timerincr"] = 7,
 		["actions"] = function ()
-			command_end("laminar/B738/toggle_switch/fire_test_lft")
-			command_begin("laminar/B738/toggle_switch/fire_test_rgt")
-		end
-	},
-	[75] = {["lefttext"] = "FO: FIRE TESTS", ["timerincr"] = 3,
-		["actions"] = function ()
-			command_end("laminar/B738/toggle_switch/fire_test_rgt")
-			command_begin("laminar/B738/toggle_switch/exting_test_lft")
-		end
-	},
-	[76] = {["lefttext"] = "FO: FIRE TESTS", ["timerincr"] = 3,
-		["actions"] = function ()
-			command_end("laminar/B738/toggle_switch/exting_test_lft")
-			command_begin("laminar/B738/toggle_switch/exting_test_rgt")
-		end
-	},
-	[77] = {["lefttext"] = "FO: FIRE TESTS", ["timerincr"] = 3,
-		["actions"] = function ()
-			command_end("laminar/B738/toggle_switch/exting_test_rgt")
-			command_begin("laminar/B738/push_button/cargo_fire_test_push")
-		end
-	},
-	[78] = {["lefttext"] = "FO: MACH OVERSPEED TEST", ["timerincr"] = 3,
-		["actions"] = function ()
-			command_end("laminar/B738/push_button/cargo_fire_test_push")
-			command_begin("laminar/B738/push_button/mach_warn1_test")
+			zc_acf_overspeed()
 		end
 	}, 
-	[79] = {["lefttext"] = "FO: MACH OVERSPEED TEST", ["timerincr"] = 3,
+	[76] = {["lefttext"] = "FO: STALL WARNING TEST", ["timerincr"] = 7,
 		["actions"] = function ()
-			command_end("laminar/B738/push_button/mach_warn1_test")
-			command_begin("laminar/B738/push_button/mach_warn2_test")
+			zc_acf_stall_warnings()
 		end
 	}, 
-	[80] = {["lefttext"] = "CAPT: LIGHTING PANEL SET", ["timerincr"] = 1,
+	[77] = {["lefttext"] = "CAPT: LIGHTING PANEL SET", ["timerincr"] = 1,
 		["actions"] = function ()
-			command_end("laminar/B738/push_button/mach_warn2_test")
 			zc_acf_light_taxi_mode(0)
 		end
 	}, 
-	[81] = {["lefttext"] = "CAPT: LIGHTING PANEL SET", ["timerincr"] = 1,
+	[78] = {["lefttext"] = "CAPT: LIGHTING PANEL SET", ["timerincr"] = 1,
 		["actions"] = function ()
 			zc_acf_light_landing_mode(0,0)
 		end
 	}, 
-	[82] = {["lefttext"] = "CAPT: APU SET", ["timerincr"] = -1,
+	[79] = {["lefttext"] = "CAPT: APU SET", ["timerincr"] = -1,
 		["actions"] = function ()
 			gLeftText = "PREFLIGHT PROCEDURE FINISHED"
 			speakNoText(0,"READY FOR PREFLIGHT CHECKLIST")
@@ -1594,6 +1552,7 @@ ZC_DEPARTURE_BRIEFING = {
 	}
 }
 
+-- Before start items to prepare for push and start
 ZC_BEFORE_START_PROC = {
 	[0] = {["lefttext"] = "BEFORE START PROCEDURE",["timerincr"] = 1,
 		["actions"] = function ()
@@ -1718,9 +1677,7 @@ ZC_BEFORE_START_CHECKLIST = {
 			if get_zc_config("easy") then
 				setchecklist(3)
 				-- flight deck door
-				if get("laminar/B738/door/flt_dk_door_ratio") == 1 then
-					command_once("laminar/B738/toggle_switch/flt_dk_door_open")
-				end
+				zc_acf_cockpit_door(0)
 				-- fuel tanks
 				zc_acf_fuel_pumps_onoff(0,1)
 				if get("laminar/B738/fuel/center_tank_kgs") <  100 then
@@ -3699,7 +3656,7 @@ ZC_SECURE_CHECKLIST = {
 	}
 }
 
--- Background procedures
+-- ============ Background procedures
 ZC_BACKGROUND_PROCS = {
 	-- hold down APU start switch for 5 seconds
 	["APUSTART"] = {["status"] = 0,
@@ -3955,6 +3912,90 @@ ZC_BACKGROUND_PROCS = {
 		end
 	},
 	
+	-- TESTS
+	["FIRETESTLEFTSTOP"] = {["status"] = 0,
+		["actions"] = function ()
+			ZC_BACKGROUND_PROCS["FIRETESTLEFTSTOP"].status = ZC_BACKGROUND_PROCS["FIRETESTLEFTSTOP"].status - 1
+			if ZC_BACKGROUND_PROCS["FIRETESTLEFTSTOP"].status == 1 then
+				command_end("laminar/B738/toggle_switch/fire_test_lft")
+				command_begin("laminar/B738/toggle_switch/fire_test_rgt")
+				ZC_BACKGROUND_PROCS["FIRETESTLEFTSTOP"].status = 0
+				ZC_BACKGROUND_PROCS["FIRETESTRGTSTOP"].status = 4
+			end
+		end
+	},
+	["FIRETESTRGTSTOP"] = {["status"] = 0,
+		["actions"] = function ()
+			ZC_BACKGROUND_PROCS["FIRETESTRGTSTOP"].status = ZC_BACKGROUND_PROCS["FIRETESTRGTSTOP"].status - 1
+			if ZC_BACKGROUND_PROCS["FIRETESTRGTSTOP"].status == 1 then
+				command_end("laminar/B738/toggle_switch/fire_test_rgt")
+				command_begin("laminar/B738/toggle_switch/exting_test_lft")
+				ZC_BACKGROUND_PROCS["FIRETESTRGTSTOP"].status = 0
+				ZC_BACKGROUND_PROCS["EXTINGSTOP"].status = 4
+			end
+		end
+	},
+	["EXTINGSTOP"] = {["status"] = 0,
+		["actions"] = function ()
+			ZC_BACKGROUND_PROCS["EXTINGSTOP"].status = ZC_BACKGROUND_PROCS["EXTINGSTOP"].status - 1
+			if ZC_BACKGROUND_PROCS["EXTINGSTOP"].status == 1 then
+				command_end("laminar/B738/toggle_switch/exting_test_lft")
+				command_begin("laminar/B738/push_button/cargo_fire_test_push")
+				ZC_BACKGROUND_PROCS["EXTINGSTOP"].status = 0
+				ZC_BACKGROUND_PROCS["CARGOFIRESTOP"].status = 4
+			end
+		end
+	},
+	["CARGOFIRESTOP"] = {["status"] = 0,
+		["actions"] = function ()
+			ZC_BACKGROUND_PROCS["CARGOFIRESTOP"].status = ZC_BACKGROUND_PROCS["CARGOFIRESTOP"].status - 1
+			if ZC_BACKGROUND_PROCS["CARGOFIRESTOP"].status == 1 then
+				command_end("laminar/B738/push_button/cargo_fire_test_push")
+				ZC_BACKGROUND_PROCS["CARGOFIRESTOP"].status = 0
+			end
+		end
+	},
+	["MACH1TESTSTOP"] = {["status"] = 0,
+		["actions"] = function ()
+			ZC_BACKGROUND_PROCS["MACH1TESTSTOP"].status = ZC_BACKGROUND_PROCS["MACH1TESTSTOP"].status - 1
+			if ZC_BACKGROUND_PROCS["MACH1TESTSTOP"].status == 1 then
+				command_end("laminar/B738/push_button/mach_warn1_test")
+				command_begin("laminar/B738/push_button/mach_warn2_test")
+				ZC_BACKGROUND_PROCS["MACH1TESTSTOP"].status = 0
+				ZC_BACKGROUND_PROCS["MACH2TESTSTOP"].status = 4
+			end
+		end
+	},
+	["MACH2TESTSTOP"] = {["status"] = 0,
+		["actions"] = function ()
+			ZC_BACKGROUND_PROCS["MACH2TESTSTOP"].status = ZC_BACKGROUND_PROCS["MACH2TESTSTOP"].status - 1
+			if ZC_BACKGROUND_PROCS["MACH2TESTSTOP"].status == 1 then
+				command_end("laminar/B738/push_button/mach_warn2_test")
+				ZC_BACKGROUND_PROCS["MACH2TESTSTOP"].status = 0
+			end
+		end
+	},
+	["STALL1TESTSTOP"] = {["status"] = 0,
+		["actions"] = function ()
+			ZC_BACKGROUND_PROCS["STALL1TESTSTOP"].status = ZC_BACKGROUND_PROCS["STALL1TESTSTOP"].status - 1
+			if ZC_BACKGROUND_PROCS["STALL1TESTSTOP"].status == 1 then
+				command_end("laminar/B738/push_button/stall_test1_press")
+				command_begin("laminar/B738/push_button/stall_test2_press")
+				ZC_BACKGROUND_PROCS["STALL1TESTSTOP"].status = 0
+				ZC_BACKGROUND_PROCS["STALL2TESTSTOP"].status = 4
+			end
+		end
+	},
+	["STALL2TESTSTOP"] = {["status"] = 0,
+		["actions"] = function ()
+			ZC_BACKGROUND_PROCS["STALL2TESTSTOP"].status = ZC_BACKGROUND_PROCS["STALL2TESTSTOP"].status - 1
+			if ZC_BACKGROUND_PROCS["STALL2TESTSTOP"].status == 1 then
+				command_end("laminar/B738/push_button/stall_test2_press")
+				ZC_BACKGROUND_PROCS["STALL2TESTSTOP"].status = 0
+			end
+		end
+	},	
+	
 	-- Open Briefing Windows & not aircraft specific functions
 	["OPENINFOWINDOW"] = {["status"] = 0,
 		["actions"] = function ()
@@ -4072,7 +4113,7 @@ ZC_BACKGROUND_PROCS = {
 }
 
 -- defines the available procedures/checklists and in which sequence they appear in the menu
-lNoProcs = 28
+lNoProcs = 27
 function zc_get_procedure()
 
 	incnt=1
@@ -4087,12 +4128,12 @@ function zc_get_procedure()
 		lNameActiveProc = incnt.." TURN AROUND STATE - OPTIONAL"
 		lChecklistMode = 0
 	end
-	incnt=incnt+1
-	if lProcIndex == incnt then
-		lActiveProc = ZC_PREFLIGHT_START
-		lNameActiveProc = incnt.." START PREFLIGHT EVENTS - OPTIONAL"
-		lChecklistMode = 1
-	end
+	-- incnt=incnt+1
+	-- if lProcIndex == incnt then
+		-- lActiveProc = ZC_PREFLIGHT_START
+		-- lNameActiveProc = incnt.." START PREFLIGHT EVENTS - OPTIONAL"
+		-- lChecklistMode = 1
+	-- end
 	incnt=incnt+1
 	if lProcIndex == incnt then
 		lActiveProc = ZC_POWER_UP_PROC
@@ -4252,7 +4293,7 @@ function zc_get_procedure()
 	lNoProcs=incnt
 end
 
--- aircraft specific status functions 
+-- ============= aircraft specific status functions 
 
 -- V1 - FMC must have been programmed
 function zc_acf_getV1()
@@ -4385,11 +4426,8 @@ function zc_get_flap_position()
 	return 0
 end
 
--- function_get_abrk_setting()
-
---------------------------------- aircraft specific action functions
+-- ========================= aircraft specific action functions
 ----------------- Electric system
--- Start APU flows full
 
 -- Bring APU completely online
 function zc_acf_apu_activate()
@@ -4535,6 +4573,7 @@ function zc_acf_hyd_pumps_onoff(pump,mode)
 end
 
 --- Engines
+
 -- Set fuel levers 1,2 0=CUTOFF,1=IDLE
 function zc_acf_fuel_lever_set(lever,mode)
 	if lever == 0 or lever == 1 then
@@ -4631,6 +4670,7 @@ function zc_acf_set_flight_altitude(altitude)
 end
 
 --- A/ICE
+
 -- Window heat Heater 0=All, 1-4, 0=OFF 1=ON
 function zc_acf_window_heat_onoff(heater,mode)
 	if heater == 0 or heater == 1 then
@@ -4730,7 +4770,7 @@ function zc_acf_speed_break_set(position)
 	end
 end
 
---- Parking brake 0=OFF 1=ON
+-- Parking brake 0=OFF 1=ON
 function zc_acf_parking_break_onoff(mode)
 	set("sim/cockpit2/controls/parking_brake_ratio",mode)
 end
@@ -4992,6 +5032,7 @@ function zc_acf_no_smoking_onoff(mode)
 end
 
 --- Navigation & A/P & A/T & Radios
+
 -- FD 0=BOTH, 1=LEFT, 2=RIGHT; mode 0=OFF,1=ON,2=toggle
 function zc_acf_mcp_fds_set(fd, mode)
 	if mode == 0 then
@@ -5309,13 +5350,27 @@ end
 -- function zc_acf_mcp_ls_onoff(onoff)
 -- function zc_acf_mcp_100_1000(mode)
 
-
 --- Tests
--- function zc_acf_apu_firetest()
--- function zc_acf_eng_firetests()
--- function zc_acf_stall_warnings()
--- function zc_acf_overspeed()
 
+-- function zc_acf_apu_firetest()
+
+-- trigger fire tests
+function zc_acf_firetests()
+	command_begin("laminar/B738/toggle_switch/fire_test_lft")
+	ZC_BACKGROUND_PROCS["FIRETESTLEFTSTOP"].status = 4
+end
+
+-- Stall test
+function zc_acf_stall_warnings()
+	command_begin("laminar/B738/push_button/stall_test1_press")
+	ZC_BACKGROUND_PROCS["STALL1TESTSTOP"].status = 4
+end
+
+-- Mach Overspeed tests
+function zc_acf_overspeed()
+	command_begin("laminar/B738/push_button/mach_warn1_test")
+	ZC_BACKGROUND_PROCS["MACH1TESTSTOP"].status = 4
+end
 
 --- Doors and external items 0=UP, 1=DOWN, 2=OFF
 function zc_acf_gears(mode)
@@ -5386,7 +5441,20 @@ function zc_acf_airstair_onoff(onoff)
 	end
 end	
 
--- function zc_acf_cockpit_door(openclose)
+-- Cockpit door 0=CLOSED, 1=OPEN
+function zc_acf_cockpit_door(mode)
+	if mode == 0 then
+		if get("laminar/B738/door/flt_dk_door_ratio") == 1 then
+			command_once("laminar/B738/toggle_switch/flt_dk_door_open")
+		end
+	end
+	if mode == 1 then
+		if get("laminar/B738/door/flt_dk_door_ratio") == 0 then
+			command_once("laminar/B738/toggle_switch/flt_dk_door_open")
+		end
+	end
+end
+
 -- Wipers 0=ALL;1=left,2=right; 0=park,1=int,2=low,3=high
 function zc_acf_wipers_mode(wiper,mode)
 	if wiper == 0 or wiper == 1 then
@@ -5420,7 +5488,6 @@ function zc_acf_wipers_mode(wiper,mode)
 end
 
 --- EICAS
--- function zc_acf_upper_efis_mode(mode)
 
 -- EICAS modes mode 0=OFF 1=ENG 2=ENG UP 3=SYS
 function zc_acf_lower_eicas_mode(mode)
@@ -5757,11 +5824,8 @@ function zc_acf_nd_data_onoff(mode)
 end
 
 -- function zc_acf_nd_vord_onoff(nd,mode)
--- end
 
 -- function zc_acf_nd_ndb_onoff(nd,mode)
--- end
-
 
 -- ND POS nd: 0=both, 1=LEFT, 2=RIGHT, mode: 0=OFF, 1=ON, 2=toggle
 function zc_acf_nd_pos_onoff(nd,mode)
@@ -5853,6 +5917,8 @@ function zc_acf_nd_ctr_onoff(mode)
 	end
 end
 
+-- =============== XChecklist related functions
+
 -- set checklist
 function setchecklist(number)
 		set("sim/operation/failures/rel_fadec_7",number)
@@ -5867,7 +5933,8 @@ function clearchecklist()
 	end
 end
 
--- Aircraft specific Joystick functions
+-- =============== Aircraft specific Joystick functions
+
 function xsp_toggle_rev_course()
 	if xsp_bravo_layer == 0 then
 		command_once("sim/autopilot/back_course")
