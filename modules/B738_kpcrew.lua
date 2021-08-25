@@ -472,9 +472,7 @@ ZC_POWER_UP_PROC = {
 			zc_acf_mcp_spd_set(get_zc_config("apspd"))
 			zc_acf_mcp_hdg_set(get_zc_config("aphdg"))
 			zc_acf_mcp_alt_set(get_zc_config("apalt"))
-			if get("laminar/B738/systems/lowerDU_page2") == 0 then
-				command_once("laminar/B738/LDU_control/push_button/MFD_SYS")
-			end
+			zc_acf_lower_eicas_mode(3)
 			-- open flight information window
 			ZC_BACKGROUND_PROCS["OPENINFOWINDOW"].status=1
 			zc_acf_xpdr_code_set(2000)
@@ -775,9 +773,7 @@ ZC_TURN_AROUND_STATE = {
 			zc_acf_mcp_spd_set(get_zc_config("apspd"))
 			zc_acf_mcp_hdg_set(get_zc_config("aphdg"))
 			zc_acf_mcp_alt_set(get_zc_config("apalt"))
-			if get("laminar/B738/systems/lowerDU_page2") == 0 then
-				command_once("laminar/B738/LDU_control/push_button/MFD_SYS")
-			end
+			zc_acf_lower_eicas_mode(3)
 			zc_acf_mcp_fds_set(0,0)
 			zc_acf_xpdr_code_set(2000)
 		end
@@ -1181,9 +1177,7 @@ ZC_PRE_FLIGHT_PROC = {
 	}, 		
 	[66] = {["lefttext"] = "FO: LOWER DU SYS", ["timerincr"] = 1,
 		["actions"] = function ()
-			if get("laminar/B738/systems/lowerDU_page2") == 0 then
-				command_once("laminar/B738/LDU_control/push_button/MFD_SYS")
-			end
+			zc_acf_lower_eicas_mode(3)
 		end
 	}, 		
 	[67] = {["lefttext"] = "FO: PROBE HEAT OFF", ["timerincr"] = 1,
@@ -1692,12 +1686,8 @@ ZC_BEFORE_START_PROC = {
 	[15] = {["lefttext"] = "BEFORE START PROCEDURE COMPLETED", ["timerincr"] = 2,
 		["actions"] = function ()
 			speakNoText(0,"BEFORE START PROCEDURE COMPLETED")
-			if get("laminar/B738/systems/lowerDU_page2") ~= 0 then
-				command_once("laminar/B738/LDU_control/push_button/MFD_SYS")
-			end
-			if get("laminar/B738/systems/lowerDU_page") == 0 then
-				command_once("laminar/B738/LDU_control/push_button/MFD_ENG")
-			end
+			zc_acf_lower_eicas_mode(0)
+			zc_acf_lower_eicas_mode(1)
 		end
 	},
 	[16] = {["lefttext"] = "BEFORE START PROCEDURE COMPLETED", ["timerincr"] = -1,
@@ -1923,9 +1913,7 @@ ZC_STARTENGINE_PROC = {
 	[0] = {["lefttext"] = "START SEQUENCE IS TWO THEN ONE", ["timerincr"] = 3,
 		["actions"] = function ()
 			speakNoText(0,"START SEQUENCE IS TWO THEN ONE")
-			if get("laminar/B738/systems/lowerDU_page") == 0 then
-				command_once("laminar/B738/LDU_control/push_button/MFD_ENG")
-			end
+			zc_acf_lower_eicas_mode(1)
 		end
 	},
 	[1] = {["lefttext"] = "AIR - BLEEDS - PACKS", ["timerincr"] = 1,
@@ -2020,9 +2008,7 @@ ZC_FLIGHT_CONTROLS_CHECK = {
 	},
 	[1] = {["lefttext"] = "AILERON FULL LEFT - CENTER - FULL RIGHT - CENTER", ["timerincr"] = 997,
 		["actions"] = function ()
-			if get("laminar/B738/systems/lowerDU_page2") == 0 then
-				command_once("laminar/B738/LDU_control/push_button/MFD_SYS")
-			end
+			zc_acf_lower_eicas_mode(3)
 		end
 	},
 	[2] = {["lefttext"] = "AILERON FULL LEFT", ["timerincr"] = 2,
@@ -2092,7 +2078,7 @@ ZC_FLIGHT_CONTROLS_CHECK = {
 		["actions"] = function ()
 			gLeftText="FLIGHT CONTROLS CHECKED"
 			speakNoText(0,"before taxi checklist please")
-			command_once("laminar/B738/LDU_control/push_button/MFD_SYS")
+			zc_acf_lower_eicas_mode(0)
 		end
 	}
 }
@@ -2454,14 +2440,8 @@ ZC_BEFORE_TAKEOFF_PROC = {
 			zc_acf_nd_wxr_onoff(1,0)
 			zc_acf_seatbelt_onoff(1)
 			zc_acf_et_timer_startstop(1)
-			command_once("laminar/B738/LDU_control/push_button/MFD_ENG")
+			zc_acf_lower_eicas_mode(1)
 			zc_acf_eng_starter_mode(0,2)
-			if get("laminar/B738/systems/lowerDU_page") == 0 then
-				command_once("laminar/B738/LDU_control/push_button/MFD_ENG")
-			end
-			if get("laminar/B738/systems/lowerDU_page") == 1 then
-				command_once("laminar/B738/LDU_control/push_button/MFD_ENG")
-			end
 		end
 	},
 	[5] = {["lefttext"] = "PROCEDURE FINISHED", ["timerincr"] = -1,
@@ -2592,7 +2572,7 @@ ZC_CLIMB_PROC = {
 			zc_acf_light_landing_mode(2,0)
 			zc_acf_abrk_mode(0)
 			command_once("laminar/B738/knob/autobrake_up")
-			command_once("laminar/B738/LDU_control/push_button/MFD_ENG")
+			zc_acf_lower_eicas_mode(0)
 		end
 	},
 	[16] = {["lefttext"] = "PROCEDURE FINISHED", ["timerincr"] = -1,
@@ -2824,9 +2804,7 @@ ZC_DESCENT_CHECKLIST = {
 				-- autobrake
 				zc_acf_abrk_mode(get_zc_brief_app("autobrake")-1)
 				-- Switch MFD to ENG
-				if get("laminar/B738/systems/lowerDU_page2") == 0 then
-					command_once("laminar/B738/LDU_control/push_button/MFD_ENG")
-				end
+				zc_acf_lower_eicas_mode(1)
 			end
 			ZC_BACKGROUND_PROCS["TRANSALT"].status = 0
 			ZC_BACKGROUND_PROCS["TENTHOUSANDUP"].status = 0
@@ -3447,7 +3425,7 @@ ZC_SHUTDOWN_PROC = {
 	[20] = {["lefttext"] = "FO: RESET ELAPSED TIME", ["timerincr"] = 1,
 		["actions"] = function ()
 			zc_acf_et_timer_reset(0)
-			command_once("laminar/B738/LDU_control/push_button/MFD_SYS")
+			zc_acf_lower_eicas_mode(0)
 		end
 	},
 	[21] = {["lefttext"] = "SHUTDOWN FINISHED", ["timerincr"] = -1,
@@ -5320,6 +5298,7 @@ function zc_acf_mcp_n1_onoff(mode)
 	if mode == 2 then
 		command_once("laminar/B738/autopilot/n1_press")
 	end
+end
 
 -- TOGA press 
 function zc_acf_mcp_toga()
@@ -5440,9 +5419,35 @@ function zc_acf_wipers_mode(wiper,mode)
 	end
 end
 
---- EFIS
+--- EICAS
 -- function zc_acf_upper_efis_mode(mode)
--- function zc_acf_lower_efis_mode(mode)
+
+-- EICAS modes mode 0=OFF 1=ENG 2=ENG UP 3=SYS
+function zc_acf_lower_eicas_mode(mode)
+	if mode == 0 then
+		while get("laminar/B738/systems/lowerDU_page") ~= 0 do
+			command_once("laminar/B738/LDU_control/push_button/MFD_ENG")
+		end
+		while get("laminar/B738/systems/lowerDU_page2") ~= 0 do
+			command_once("laminar/B738/LDU_control/push_button/MFD_SYS")
+		end
+	end
+	if mode == 1 then
+		while get("laminar/B738/systems/lowerDU_page") ~= 1 do
+			command_once("laminar/B738/LDU_control/push_button/MFD_ENG")
+		end
+	end
+	if mode == 2 then
+		while get("laminar/B738/systems/lowerDU_page") ~= 2 do
+			command_once("laminar/B738/LDU_control/push_button/MFD_ENG")
+		end
+	end
+	if mode == 3 then
+		while get("laminar/B738/systems/lowerDU_page2") ~= 1 do
+			command_once("laminar/B738/LDU_control/push_button/MFD_SYS")
+		end
+	end
+end
 
 -- ND FPV nd: 0=both, 1=LEFT, 2=RIGHT, mode: 0=OFF, 1=ON, 2=toggle
 function zc_acf_fpvfpa_onoff(nd,mode)
@@ -5503,6 +5508,7 @@ end
 -- synchronize baro with outside pressure
 function zc_acf_baro_sync()
 	set("laminar/B738/EFIS/baro_sel_in_hg_pilot",get("sim/weather/barometer_sealevel_inhg"))
+	set("laminar/B738/EFIS/baro_sel_in_hg_copilot",get("sim/weather/barometer_sealevel_inhg"))
 end
 
 -- function zc_acf_baro_in_mb(mode)
@@ -5750,20 +5756,39 @@ function zc_acf_nd_data_onoff(mode)
 	end
 end
 
--- function zc_acf_nd_vord_onoff(mode)
+-- function zc_acf_nd_vord_onoff(nd,mode)
 -- end
 
--- function zc_acf_nd_ndb_onoff(mode)
+-- function zc_acf_nd_ndb_onoff(nd,mode)
 -- end
 
 
 -- ND POS nd: 0=both, 1=LEFT, 2=RIGHT, mode: 0=OFF, 1=ON, 2=toggle
--- function zc_acf_nd_pos_onoff(mode)
--- end
+function zc_acf_nd_pos_onoff(nd,mode)
+	if nd == 0 or nd == 1 then
+		if mode == 2 then
+			command_once("laminar/B738/EFIS_control/capt/push_button/pos_press")
+		else
+--			if get("laminar/B738/EFIS_control/capt/terr_on") ~= mode then
+				command_once("laminar/B738/EFIS_control/capt/push_button/pos_press")
+--			end
+		end
+	end
+	if nd == 0 or nd == 2 then
+		if mode == 2 then
+			command_once("laminar/B738/EFIS_control/fo/push_button/pos_press")
+		else
+--			if get("laminar/B738/EFIS_control/fo/terr_on") ~= mode then
+				command_once("laminar/B738/EFIS_control/fo/push_button/pos_press")
+--			end
+		end
+	end
+
+end
 
 -- ND TERR nd: 0=both, 1=LEFT, 2=RIGHT, mode: 0=OFF, 1=ON, 2=toggle
-function zc_acf_nd_terr_onoff(mode)
-	if ap == 0 or ap == 1 then
+function zc_acf_nd_terr_onoff(nd,mode)
+	if nd == 0 or nd == 1 then
 		if mode == 2 then
 			command_once("laminar/B738/EFIS_control/capt/push_button/terr_press")
 		else
@@ -5772,7 +5797,7 @@ function zc_acf_nd_terr_onoff(mode)
 			end
 		end
 	end
-	if ap == 0 or ap == 2 then
+	if nd == 0 or nd == 2 then
 		if mode == 2 then
 			command_once("laminar/B738/EFIS_control/fo/push_button/terr_press")
 		else
