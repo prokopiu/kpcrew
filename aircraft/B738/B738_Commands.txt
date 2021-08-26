@@ -1,0 +1,522 @@
+Last update - Release 3.05y
+---------------------------
+
+-- systems.lua
+laminar/B738/toggle_switch/yaw_dumper					Yaw dumper toggle
+laminar/B738/toggle_switch/gpu_up						GPU up
+laminar/B738/toggle_switch/gpu_dn						GPU down
+laminar/B738/toggle_switch/apu_gen1_up					APU generator1 up
+laminar/B738/toggle_switch/apu_gen1_dn					APU generator1 dn
+laminar/B738/toggle_switch/apu_gen2_up					APU generator2 up
+laminar/B738/toggle_switch/apu_gen2_dn					APU generator2 dn
+laminar/B738/toggle_switch/gen1_up						Generator1 up
+laminar/B738/toggle_switch/gen1_dn						Generator1 dn
+laminar/B738/toggle_switch/gen2_up						Generator2 up
+laminar/B738/toggle_switch/gen2_dn						Generator2 dn
+laminar/B738/toggle_switch/fuel_pump_lft1				Fuel pump left1 toggle
+laminar/B738/toggle_switch/fuel_pump_lft2				Fuel pump left2 toggle
+laminar/B738/toggle_switch/fuel_pump_ctr1				Fuel pump center1 toggle
+laminar/B738/toggle_switch/fuel_pump_ctr2				Fuel pump center2 toggle
+laminar/B738/toggle_switch/fuel_pump_rgt1				Fuel pump right1 toggle
+laminar/B738/toggle_switch/fuel_pump_rgt2				Fuel pump right2 toggle
+laminar/B738/toggle_switch/crossfeed_valve_on			Fuel crossfeed on
+laminar/B738/toggle_switch/crossfeed_valve_off			Fuel crosfeed off
+laminar/B738/toggle_switch/capt_probes_pos				Probe heat A toggle (on/off)
+laminar/B738/toggle_switch/fo_probes_pos				Prebe heat B toggle (on/off)
+laminar/B738/spring_toggle_switch/APU_start_pos_up		APU start switch up
+laminar/B738/spring_toggle_switch/APU_start_pos_dn		APU start switch down
+laminar/B738/toggle_switch/hydro_pumps1					Engine hydraulic pumps 1 - toggle (on/off)
+laminar/B738/toggle_switch/hydro_pumps2					Engine hydraulic pumps 2 - toggle (on/off)
+laminar/B738/toggle_switch/electric_hydro_pumps1		Electric hydraulic pumps 1 - toggle (on/off)
+laminar/B738/toggle_switch/electric_hydro_pumps2		Electric hydraulic pumps 2 - toggle (on/off)
+laminar/B738/one_way_switch/drive_disconnect1			Drive disconnect 1 on
+laminar/B738/one_way_switch/drive_disconnect2			Drive disconnect 2 on
+laminar/B738/one_way_switch/drive_disconnect1_off		Drive disconnect 1 off
+laminar/B738/one_way_switch/drive_disconnect2_off		Drive disconnect 2 off
+laminar/B738/one_way_switch/pax_oxy_on					Passenger Oxygen on
+laminar/B738/one_way_switch/pax_oxy_norm				Passenger Oxygen normal
+laminar/B738/toggle_switch/bleed_air_1					Bleed air engine 1 toggle (on/off)
+laminar/B738/toggle_switch/bleed_air_2					Bleed air engine 2 toggle (on/off)
+laminar/B738/toggle_switch/bleed_air_apu				Bleed air APU toggle (on/off)
+laminar/B738/push_button/bleed_trip_reset				Bleed air trip reset
+laminar/B738/push_button/stall_test1_press				Stall test 1
+laminar/B738/push_button/stall_test2_press				Stall test 2
+laminar/B738/knob/transponder_mode_up					Trasponder mode up
+laminar/B738/knob/transponder_mode_dn					Transponder mode down
+laminar/B738/push_button/transponder_ident_dn			Transponder IDENT
+laminar/B738/push_button/switch_freq_nav1_press			NAV 1 frequency swap
+laminar/B738/push_button/switch_freq_nav2_press			NAV 2 frequency swap
+laminar/B738/knob/ac_power_up							AC power panel up
+laminar/B738/knob/ac_power_dn							AC power panel down
+laminar/B738/knob/dc_power_up							DC power panel up
+laminar/B738/knob/dc_power_dn							DC power panel down
+laminar/B738/knob/eng1_start_left						Engine starter 1 left
+laminar/B738/knob/eng1_start_right						Engine starter 1 right
+laminar/B738/knob/eng2_start_left						Engine starter 2 left
+laminar/B738/knob/eng2_start_right						Engine starter 2 right
+laminar/B738/rotary/eng1_start_grd						ENGINE STARTER1 GRD
+laminar/B738/rotary/eng1_start_off						ENGINE STARTER1 OFF
+laminar/B738/rotary/eng1_start_cont						ENGINE STARTER1 CONT
+laminar/B738/rotary/eng1_start_flt						ENGINE STARTER1 FLT
+laminar/B738/rotary/eng2_start_grd						ENGINE STARTER2 GRD
+laminar/B738/rotary/eng2_start_off						ENGINE STARTER2 OFF
+laminar/B738/rotary/eng2_start_cont						ENGINE STARTER2 CONT
+laminar/B738/rotary/eng2_start_flt						ENGINE STARTER2 FLT
+laminar/B738/toggle_switch/l_pack_up					L PACK up
+laminar/B738/toggle_switch/l_pack_dn					L PACK down
+laminar/B738/toggle_switch/r_pack_up					R PACK up
+laminar/B738/toggle_switch/r_pack_dn					R PACK down
+laminar/B738/toggle_switch/iso_valve_up					ISOLATION VALVE up
+laminar/B738/toggle_switch/iso_valve_dn					ISOLATION VALVE down
+laminar/B738/knob/autobrake_up							AUTOBRAKE up
+laminar/B738/knob/autobrake_dn							AUTOBRAKE down
+laminar/B738/toggle_switch/l_recirc_fan					Left RECIRC toggle (on/off)
+laminar/B738/toggle_switch/r_recirc_fan					Right RECIRC toggle (on/off)
+laminar/B738/toggle_switch/trim_air						Trim air on toggle (on/off)
+laminar/B738/push_button/gear_down						Landing gear down
+laminar/B738/push_button/gear_up						Landing gear up
+laminar/B738/push_button/gear_off						Landing gear off
+laminar/B738/push_button/gear_down_one					Landing gear down (off, down)
+laminar/B738/push_button/gear_up_one					Landing gear up (up only)
+laminar/B738/toggle_switch/fuel_flow_up					Fuel flow switch up
+laminar/B738/toggle_switch/fuel_flow_dn					Fuel flow switch down
+laminar/B738/toggle_switch/eng_start_source_left		Engine starter left
+laminar/B738/toggle_switch/eng_start_source_right		Engine starter right
+laminar/B738/toggle_switch/air_valve_manual_left		Air valve manual left
+laminar/B738/toggle_switch/air_valve_manual_right		Air valve manual right
+laminar/B738/toggle_switch/eq_cool_exhaust				Equipment cooling exhaust toggle (on/off)
+laminar/B738/toggle_switch/eq_cool_supply				Equipment cooling supply toogle (on/off)
+laminar/B738/toggle_switch/dspl_ctrl_pnl_left			Display control panel left
+laminar/B738/toggle_switch/dspl_ctrl_pnl_right			Display control panel right
+laminar/B738/toggle_switch/fmc_source_left				FMC source left
+laminar/B738/toggle_switch/fmc_source_right				FMC source right
+laminar/B738/toggle_switch/window_ovht_test_up			Windows overheat test up
+laminar/B738/toggle_switch/window_ovht_test_dn			Windows overheat test down
+laminar/B738/toggle_switch/service_interphone			Service interphone toggle (on/off)
+laminar/B738/toggle_switch/alt_flaps_ctrl_up			Alternate flaps control up
+laminar/B738/toggle_switch/alt_flaps_ctrl_dn			Alternate flaps control down
+laminar/B738/toggle_switch/air_valve_ctrl_left			Air valve control left
+laminar/B738/toggle_switch/air_valve_ctrl_right			Air valve control right
+laminar/B738/toggle_switch/air_temp_source_left			Air temp control left
+laminar/B738/toggle_switch/air_temp_source_right		Air temp control right
+laminar/B738/toggle_switch/flt_dk_door_left				Flight deck door left
+laminar/B738/toggle_switch/flt_dk_door_right			Flight deck door right
+laminar/B738/toggle_switch/main_pnl_du_fo_left			Main panel DU FO left
+laminar/B738/toggle_switch/main_pnl_du_fo_right			Main panel DU FO right
+laminar/B738/toggle_switch/lower_du_fo_left				Lower DU FO left
+laminar/B738/toggle_switch/lower_du_fo_right			Lower DU FO right
+laminar/B738/toggle_switch/main_pnl_du_capt_left		Main panel DU CPT left
+laminar/B738/toggle_switch/main_pnl_du_capt_right		Main panel DU CPT right
+laminar/B738/toggle_switch/lower_du_capt_left			Lower DU CPT left
+laminar/B738/toggle_switch/lower_du_capt_right			Lower DU CPT right
+laminar/B738/toggle_switch/dspl_source_left				Display source left
+laminar/B738/toggle_switch/dspl_source_right			Display source right
+laminar/B738/toggle_switch/spd_ref_left					SPEED set select left
+laminar/B738/toggle_switch/spd_ref_right				SPEED set select right
+laminar/B738/toggle_switch/spd_ref_adjust_left			SPEED set adjust left
+laminar/B738/toggle_switch/spd_ref_adjust_right			SPEED set adjust right
+laminar/B738/push_button/toe_brake_left					Toe brake left
+laminar/B738/push_button/toe_brake_right				Toe brake right
+laminar/B738/push_button/toe_brake_both					Toe brake both
+laminar/B738/push_button/gpws_test						GPWS test button
+laminar/B738/toggle_switch/gpws_gear					GPWS gear inhibited
+laminar/B738/toggle_switch/gpws_flap					GPWS flaps inhibited
+laminar/B738/toggle_switch/gpws_terr					GPWS terrain inhibited
+laminar/B738/toggle_switch/gpws_gear_cover				GPWS gear inhibited cover
+laminar/B738/toggle_switch/gpws_flap_cover				GPWS flaps inhibited cover
+laminar/B738/toggle_switch/gpws_terr_cover				GPWS terrain inhibited cover
+laminar/B738/toggle_switch/man_lndgear_cover			Manual Landing gear cover
+laminar/B738/toggle_switch/man_lndgear					Manual Landing gear
+laminar/B738/push_button/mach_warn1_test				MACH warning test1 button
+laminar/B738/push_button/mach_warn2_test				MACH warning test2 button
+laminar/B738/push_button/flaps_test						FLAPS test
+laminar/B738/push_button/toe_brake_left					Toe brake left
+laminar/B738/push_button/toe_brake_right				Toe brake right
+laminar/B738/push_button/toe_brake_both					Toe brake both
+laminar/B738/alert/alt_horn_cutout						Alt Horn Cutout
+laminar/B738/alert/below_gs_pilot						Below G/S_pilot
+laminar/B738/alert/below_gs_copilot						Below G/S_copilot
+laminar/B738/push_button/tat_test						TAT test
+laminar/B738/push_button/grd_call						GROUND CALL
+laminar/B738/push_button/attend							ATTEND
+laminar/B738/push_button/duct_ovht_test					DUCT OVHT test
+laminar/B738/push_button/acdc_maint						AC/DC MAINT
+laminar/B738/toggle_switch/flt_ctr_A_up					Flight control A Up
+laminar/B738/toggle_switch/flt_ctr_A_dn					Flight control A Down
+laminar/B738/toggle_switch/flt_ctr_B_up					Flight control B Up
+laminar/B738/toggle_switch/flt_ctr_B_dn					Flight control B Down
+laminar/B738/toggle_switch/flt_ctr_A_cover				Cover Flight control A
+laminar/B738/toggle_switch/flt_ctr_B_cover				Cover Flight control B
+laminar/B738/toggle_switch/spoiler_A					Spoiler A
+laminar/B738/toggle_switch/spoiler_B					Spoiler B
+laminar/B738/toggle_switch/spoiler_A_cover				Cover spoiler A
+laminar/B738/toggle_switch/spoiler_B_cover				Cover spoiler B
+laminar/B738/toggle_switch/alt_flaps					Alternate flaps
+laminar/B738/toggle_switch/alt_flaps_cover				Alternate Flaps
+laminar/B738/knob/left_wiper_up							Left wiper up
+laminar/B738/knob/left_wiper_dn							Left wiper down
+laminar/B738/knob/right_wiper_up						Right wiper up
+laminar/B738/knob/right_wiper_dn						Right wiper down
+
+
+-- glareshield.lua
+laminar/B738/EFIS_control/fo/minimums_up				FO Minimum select radio-baro up
+laminar/B738/EFIS_control/fo/minimums_dn				FO Minimum select radio-baro down
+laminar/B738/EFIS_control/cpt/minimums_up				CAPT Minimum select radio-baro up
+laminar/B738/EFIS_control/cpt/minimums_dn				CAPT Minimum select radio-baro down
+laminar/B738/pfd/dh_pilot_up							Captain DH up
+laminar/B738/pfd/dh_pilot_dn							Captain DH down
+laminar/B738/pfd/dh_pilot_up1							Captain DH up 1 detend
+laminar/B738/pfd/dh_pilot_up2							Captain DH up 2 detend
+laminar/B738/pfd/dh_pilot_dn1							Captain DH down 1 detend
+laminar/B738/pfd/dh_pilot_dn2							Captain DH down 2 detend
+laminar/B738/pfd/dh_copilot_up							First Officer DH up
+laminar/B738/pfd/dh_copilot_dn							First Officer DH down
+laminar/B738/pfd/dh_copilot_up1							First Officer DH up 1 detend
+laminar/B738/pfd/dh_copilot_up2							First Officer DH up 2 detend
+laminar/B738/pfd/dh_copilot_dn1							First Officer DH down 1 detend
+laminar/B738/pfd/dh_copilot_dn2							First Officer DH down 2 detend
+laminar/B738/EFIS_control/capt/push_button/wxr_press	Captain EFIS weather press
+laminar/B738/EFIS_control/capt/push_button/sta_press	Captain EFIS station press
+laminar/B738/EFIS_control/capt/push_button/wpt_press	Captain EFIS waypoint press
+laminar/B738/EFIS_control/capt/push_button/arpt_press	Captain EFIS airport press
+laminar/B738/EFIS_control/capt/push_button/data_press	Captain EFIS data press
+laminar/B738/EFIS_control/capt/push_button/pos_press	Captain EFIS position press
+laminar/B738/EFIS_control/capt/push_button/terr_press	Captain EFIS terrain press
+laminar/B738/EFIS_control/capt/push_button/rst_press	Captain EFIS reset presss
+laminar/B738/EFIS_control/capt/push_button/ctr_press	Captain EFIS center press
+laminar/B738/EFIS_control/capt/push_button/tfc_press	Captain EFIS traffic press
+laminar/B738/EFIS_control/capt/push_button/std_press	Captain EFIS standard press
+laminar/B738/EFIS_control/capt/push_button/mtrs_press	Captain ALT in meters press
+laminar/B738/EFIS_control/capt/push_button/fpv_press	Captain flight path vector press
+laminar/B738/EFIS_control/capt/baro_in_hpa_up			Captain baro mode HPA
+laminar/B738/EFIS_control/capt/baro_in_hpa_dn			Captain baro mode IN
+laminar/B738/EFIS_control/capt/vor1_off_up				Captain VOR 1 up
+laminar/B738/EFIS_control/capt/vor1_off_dn				Captain VOR 1 down
+laminar/B738/EFIS_control/capt/vor2_off_up				Captain VOR 2 up
+laminar/B738/EFIS_control/capt/vor2_off_dn				Captain VOR 2 down
+laminar/B738/EFIS_control/fo/push_button/wxr_press		First officer EFIS weather press
+laminar/B738/EFIS_control/fo/push_button/sta_press		First officer EFIS station press
+laminar/B738/EFIS_control/fo/push_button/wpt_press		First officer EFIS waypoint press
+laminar/B738/EFIS_control/fo/push_button/arpt_press		First officer EFIS airport press
+laminar/B738/EFIS_control/fo/push_button/data_press		First officer EFIS data press
+laminar/B738/EFIS_control/fo/push_button/pos_press		First officer EFIS position press
+laminar/B738/EFIS_control/fo/push_button/terr_press		First officer EFIS terrain press
+laminar/B738/EFIS_control/fo/push_button/rst_press		First officer EFIS reset presss
+laminar/B738/EFIS_control/fo/push_button/ctr_press		First officer EFIS center press
+laminar/B738/EFIS_control/fo/push_button/tfc_press		First officer EFIS traffic press
+laminar/B738/EFIS_control/fo/push_button/std_press		First officer EFIS standard press
+laminar/B738/EFIS_control/fo/push_button/mtrs_press		First officer ALT in meters press
+laminar/B738/EFIS_control/fo/push_button/fpv_press		First officer flight path vector press
+laminar/B738/EFIS_control/fo/baro_in_hpa_up				First officer baro mode HPA
+laminar/B738/EFIS_control/fo/baro_in_hpa_dn				First officer baro mode IN
+laminar/B738/EFIS_control/fo/vor1_off_up				First officer VOR 1 up
+laminar/B738/EFIS_control/fo/vor1_off_dn				First officer VOR 1 down
+laminar/B738/EFIS_control/fo/vor2_off_up				First officer VOR 2 up
+laminar/B738/EFIS_control/fo/vor2_off_dn				First officer VOR 2 down
+laminar/B738/EFIS_control/map_mode_up					MAP mode up
+laminar/B738/EFIS_control/map_mode_dn					MAP mode down
+laminar/B738/autopilot/n1_press							Autopilot N1 press
+laminar/B738/autopilot/speed_press						Autopilot SPEED press
+laminar/B738/autopilot/lvl_chg_press					Autopilot LVL CHG press
+laminar/B738/autopilot/vnav_press						Autopilot VNAV press
+laminar/B738/autopilot/change_over_press				Autopilot IAS MACH change over press
+laminar/B738/autopilot/lnav_press						Autopilot LNAV press
+laminar/B738/autopilot/vorloc_press						Autopilot VOR LOC press
+laminar/B738/autopilot/app_press						Autopilot APP press
+laminar/B738/autopilot/hdg_sel_press					Autopilot HDG press
+laminar/B738/autopilot/alt_hld_press					Autopilot ALT HLD press
+laminar/B738/autopilot/vs_press							Autopilot VS press
+laminar/B738/autopilot/disconnect_toggle				Autopilot A/P disconnect toggle
+laminar/B738/autopilot/autothrottle_arm_toggle			Autopilot A/T arm toggle
+laminar/B738/autopilot/flight_director_toggle			Autopilot F/D captain toggle
+laminar/B738/autopilot/flight_director_fo_toggle		Autopilot F/D first officer toggle
+laminar/B738/autopilot/bank_angle_up					Autopilot bank angle increase
+laminar/B738/autopilot/bank_angle_dn					Autopilot bank angle decrease
+laminar/B738/autopilot/cmd_a_press						Autopilot CMD A press
+laminar/B738/autopilot/cmd_b_press						Autopilot CMD B press
+laminar/B738/autopilot/cws_a_press						Autopilot CWS A press
+laminar/B738/autopilot/cws_b_press						Autopilot CWS B press
+laminar/B738/toggle_switch/vhf_nav_source_lft			VHF source left
+laminar/B738/toggle_switch/vhf_nav_source_rgt			VHF source right
+laminar/B738/autopilot/altitude_up						AP altitude Up
+laminar/B738/autopilot/altitude_dn						AP altitude Down
+laminar/B738/autopilot/heading_up						AP heading Up
+laminar/B738/autopilot/heading_dn						AP heading Down
+laminar/B738/autopilot/course_pilot_up					Autopilot CRS pilot up
+laminar/B738/autopilot/course_pilot_dn					Autopilot CRS pilot down
+laminar/B738/autopilot/course_copilot_up				Autopilot CRS copilot up
+laminar/B738/autopilot/course_copilot_dn				Autopilot CRS copilot down
+laminar/B738/LDU_control/push_button/MFD_SYS			MFD SYS press
+laminar/B738/LDU_control/push_button/MFD_ENG			MFD ENG press
+laminar/B738/toggle_switch/n1_set_source_left			N1 set select source left
+laminar/B738/toggle_switch/n1_set_source_right			N1 set select source right
+laminar/B738/pilot/barometer_up							Barometer pilot up
+laminar/B738/pilot/barometer_down						Barometer pilot down
+laminar/B738/copilot/barometer_up						Barometer copilot up
+laminar/B738/copilot/barometer_down						Barometer copilot down
+laminar/B738/autopilot/spd_interv						Autopilot SPD INTRV press
+laminar/B738/autopilot/left_toga_press					Left TO/GA
+laminar/B738/autopilot/right_toga_press					Right TO/GA
+laminar/B738/autopilot/left_at_dis_press				Left A/T disengage
+laminar/B738/autopilot/right_at_dis_press				Right A/T disengage
+laminar/B738/push_button/mic							MIC (TO/GA button)
+laminar/B738/EFIS_control/capt/map_range_up				CAPT EFIS Map range Up
+laminar/B738/EFIS_control/capt/map_range_dn				CAPT EFIS Map range Down
+laminar/B738/EFIS_control/capt/map_mode_up				CAPT MAP mode Up
+laminar/B738/EFIS_control/capt/map_mode_dn				CAPT MAP mode Down
+laminar/B738/EFIS_control/fo/map_range_up				FO EFIS Map range Up
+laminar/B738/EFIS_control/fo/map_range_dn				FO EFIS Map range Down
+laminar/B738/EFIS_control/fo/map_mode_up				FO MAP mode Up
+laminar/B738/EFIS_control/fo/map_mode_dn				FO MAP mode Down
+laminar/B738/push_button/ap_light_pilot					A/P light captain button
+laminar/B738/push_button/at_light_pilot					A/T light captain button
+laminar/B738/push_button/ap_light_fo					A/P light FO button
+laminar/B738/push_button/at_light_fo					A/T light FO button
+
+-- annunciators.lua
+laminar/B738/toggle_switch/elt_on						ELT on
+laminar/B738/toggle_switch/elt_arm						ELT arm
+laminar/B738/toggle_switch/bright_test_dn				Light test / brightness down
+laminar/B738/toggle_switch/bright_test_up				Light test / brightness up
+laminar/B738/toggle_switch/emer_exit_lights_dn			Emergency exit lights switch down
+laminar/B738/toggle_switch/emer_exit_lights_up			Emergency exit lights switch up
+laminar/B738/toggle_switch/exting_test_lft				Extinguisher test switch left
+laminar/B738/toggle_switch/exting_test_rgt				Extinguisher test switch right
+laminar/B738/push_button/cargo_fire_test_push			Cargo fire test press
+laminar/B738/toggle_switch/fire_test_lft				Fire panel test left
+laminar/B738/toggle_switch/fire_test_rgt				Fire panel test right
+laminar/B738/toggle_switch/ap_disconnect_test1_up		Captain A/P disconnect test up
+laminar/B738/toggle_switch/ap_disconnect_test1_dn		Captain A/P disconnect test down
+laminar/B738/toggle_switch/ap_disconnect_test2_up		First officer A/P disconnect test up
+laminar/B738/toggle_switch/ap_disconnect_test2_dn		First officer A/P disconnect test down
+laminar/B738/push_button/fire_bell_light1				Captain fire warning bell cutout press
+laminar/B738/push_button/fire_bell_light2				First officer warning bell cutout press
+laminar/B738/push_button/master_caution1				Captain fire master caution
+laminar/B738/push_button/master_caution2				First officer master caution
+laminar/B738/audio/capt/mic_push1						Captain VHF 1 mic press
+laminar/B738/audio/capt/mic_push2						Captain VHF 2 mic press
+laminar/B738/audio/capt/mic_push3						Captain VHF 3 mic press
+laminar/B738/audio/capt/mic_push4						Captain interphone mic press
+laminar/B738/audio/capt/mic_push5						Captain cabin mic
+laminar/B738/audio/capt/mic_push6						Captain PA mic
+laminar/B738/audio/fo/mic_push1							First officer VHF 1 mic press
+laminar/B738/audio/fo/mic_push2							First officer VHF 2 mic press
+laminar/B738/audio/fo/mic_push3							First officer VHF 3 mic press
+laminar/B738/audio/fo/mic_push4							First officer interphone mic press
+laminar/B738/audio/fo/mic_push5							First officer cabin mic
+laminar/B738/audio/fo/mic_push6							First officer PA mic
+laminar/B738/audio/obs/mic_push1						Observer VHF 1 mic press
+laminar/B738/audio/obs/mic_push2						Observer VHF 1 mic press
+laminar/B738/audio/obs/mic_push3						Observer VHF 3 mic press
+laminar/B738/audio/obs/mic_push4						Observer interphone mic press
+laminar/B738/audio/obs/mic_push5						Observer cabin mic
+laminar/B738/audio/obs/mic_push6						Observer PA mic
+laminar/B738/push_button/capt_six_pack					Captain Master warn six pack
+laminar/B738/push_button/fo_six_pack					First officer Master warn six pack
+
+-- antiice.lua
+laminar/B738/toggle_switch/eng1_heat				Engine 1 anti ice toggle (on/off)
+laminar/B738/toggle_switch/eng2_heat				Engine 2 anti ice toggle (on/off)
+laminar/B738/toggle_switch/wing_heat				Wing anti ice toggle (on/off)
+laminar/B738/toggle_switch/window_heat_l_side		Window left side heat toggle (on/off)
+laminar/B738/toggle_switch/window_heat_l_fwd		Window left forward heat toggle (on/off)
+laminar/B738/toggle_switch/window_heat_r_side		Windows right side heat toggle (on/off)
+laminar/B738/toggle_switch/window_heat_r_fwd		Window right forward heat toggle (on/off)
+
+-- comms.lua
+laminar/B738/rtp_L/off_switch							Radio tuning panel left OFF switch
+laminar/B738/rtp_L/vhf_1/sel_switch						Radio tuning panel left VHF L select switch
+laminar/B738/rtp_L/vhf_2/sel_switch						Radio tuning panel left VHF C select switch
+laminar/B738/rtp_L/vhf_3/sel_switch						Radio tuning panel left VHF R select switch
+laminar/B738/rtp_L/hf_1/sel_switch						Radio tuning panel left HF L select switch
+laminar/B738/rtp_L/am/sel_switch						Radio tuning panel left AM select switch
+laminar/B738/rtp_L/hf_2/sel_switch						Radio tuning panel left HF R select switch
+laminar/B738/rtp_L/freq_txfr/sel_switch					Radio tuning panel left frequency txfr switch
+laminar/B738/rtp_L/freq_MHz/sel_dial_up					Radio tuning panel left frequency MHz select up
+laminar/B738/rtp_L/freq_MHz/sel_dial_dn					Radio tuning panel left frequency MHz select down
+laminar/B738/rtp_L/freq_khz/sel_dial_up					Radio tuning panel left frequency kHz select up
+laminar/B738/rtp_L/freq_khz/sel_dial_dn					Radio tuning panel left frequency kHz select down
+laminar/B738/rtp_R/off_switch							Radio tuning panel right OFF switch
+laminar/B738/rtp_R/vhf_1/sel_switch						Radio tuning panel right VHF L select switch
+laminar/B738/rtp_R/vhf_2/sel_switch						Radio tuning panel right VHF C select switch
+laminar/B738/rtp_R/vhf_3/sel_switch						Radio tuning panel right VHF R select switch
+laminar/B738/rtp_R/hf_1/sel_switch						Radio tuning panel right HF L select switch
+laminar/B738/rtp_R/am/sel_switch						Radio tuning panel right AM select switch
+laminar/B738/rtp_R/hf_2/sel_switch						Radio tuning panel right HF R select switch
+laminar/B738/rtp_R/freq_txfr/sel_switch					Radio tuning panel right frequency txfr switch
+laminar/B738/rtp_R/freq_MHz/sel_dial_up					Radio tuning panel right frequency MHz select up
+laminar/B738/rtp_R/freq_MHz/sel_dial_dn					Radio tuning panel right frequency MHz select down
+laminar/B738/rtp_R/freq_khz/sel_dial_up					Radio tuning panel right frequency kHz select up
+laminar/B738/rtp_R/freq_khz/sel_dial_dn					Radio tuning panel right frequency kHz select down
+
+-- fire.lua
+laminar/B738/fire/engine01/ext_switch_arm				Fire extinguisher switch engine 1 arm
+laminar/B738/fire/engine02/ext_switch_arm				Fire extinguisher switch engine 2 arm
+laminar/B738/fire/engine01/ext_switch_L					Fire extinguisher switch L engine 1
+laminar/B738/fire/engine01/ext_switch_R					Fire extinguisher switch R engine 1
+laminar/B738/fire/engine02/ext_switch_L					Fire extinguisher switch L engine 2
+laminar/B738/fire/engine02/ext_switch_R					Fire extinguisher switch R engine 2
+laminar/B738/fire/apu/ext_switch_arm					Fire Extinguisher Switch APU
+laminar/B738/fire/apu/ext_switch_L						Fire Extinguisher Switch L
+laminar/B738/fire/apu/ext_switch_R						Fire Extinguisher Switch R
+
+-- chrono.lua
+laminar/B738/push_button/chrono_disp_mode_capt			Chrono display mode captain
+laminar/B738/push_button/chrono_disp_mode_fo			Chrono display mode first officer
+laminar/B738/push_button/chrono_capt_et_mode			Elapsed timer captain
+laminar/B738/push_button/chrono_fo_et_mode				Elapsed timer first officer
+laminar/B738/push_button/et_reset_capt					Elapsed timer reset captain
+laminar/B738/push_button/et_reset_fo					Elapsed timer reset first officer
+laminar/B738/push_button/chrono_cycle_capt				Chrono start-stop-reset captain
+laminar/B738/push_button/chrono_cycle_fo				Chrono start-stop-reset first officer
+
+-- lighting.lua
+laminar/B738/switch/land_lights_ret_left_up				Landing Lights Retract Left Up
+laminar/B738/switch/land_lights_ret_left_dn				Landing Lights Retract Left Down
+laminar/B738/switch/land_lights_ret_right_up			Landing Lights Retract Right Up
+laminar/B738/switch/land_lights_ret_right_dn			Landing Lights Retract Right Down
+laminar/B738/toggle_switch/position_light_up			Position light switch up
+laminar/B738/toggle_switch/position_light_down			Position light switch down
+laminar/B738/toggle_switch/compass_brightness_lft		Standby compass light switch left
+laminar/B738/toggle_switch/compass_brightness_rgt		Standby compass light switch right
+laminar/B738/toggle_switch/cockpit_dome_up				Cockpit dome light switch up
+laminar/B738/toggle_switch/cockpit_dome_dn				Cockpit dome light switch down
+laminar/B738/toggle_switch/taxi_light_brightness_pos_up	Taxi light brightness up
+laminar/B738/toggle_switch/taxi_light_brightness_pos_dn	Taxi light brightness down
+laminar/B738/spring_switch/landing_lights_all			All landing lights on
+laminar/B738/toggle_switch/seatbelt_sign_up				Seat belt switch up
+laminar/B738/toggle_switch/seatbelt_sign_dn				Seat belt switch down
+laminar/B738/toggle_switch/no_smoking_up				No smoking switch up
+laminar/B738/toggle_switch/no_smoking_dn				No smoking switch down
+laminar/B738/autopilot/ife_pass_seat_toggle				IFE PASS SEAT toggle (on/off)
+laminar/B738/autopilot/cab_util_toggle					CABIN UTILITY toggle (on/off)
+laminar/B738/switch/rwy_light_left_on					Runway light left on
+laminar/B738/switch/rwy_light_left_off					Runway light left off
+laminar/B738/switch/rwy_light_right_on					Runway light right on
+laminar/B738/switch/rwy_light_right_off					Runway light right off
+laminar/B738/switch/logo_light_on						Logo Light Switch On
+laminar/B738/switch/logo_light_off						Logo Light Switch Off
+laminar/B738/switch/wing_light_on						Wing Light Switch On
+laminar/B738/switch/wing_light_off						Wing Light Switch Off
+laminar/B738/switch/wheel_light_on						Wheel Light Switch On
+laminar/B738/switch/wheel_light_off						Wheel Light Switch Off
+
+-- trim.lua
+sim/flight_controls/rudder_trim_left					Rudder trim left
+sim/flight_controls/rudder_trim_right					Rudder trim right
+sim/flight_controls/aileron_trim_left					Aileron trim left
+sim/flight_controls/aileron_trim_right					Aileron trim right
+
+-- LATLON.lua
+laminar/B738/toggle_switch/irs_source_left				IRS source left
+laminar/B738/toggle_switch/irs_source_right				IRS source right
+laminar/B738/toggle_switch/irs_L_left					IRS L left
+laminar/B738/toggle_switch/irs_L_right					IRS L right
+laminar/B738/toggle_switch/irs_R_left					IRS R left
+laminar/B738/toggle_switch/irs_R_right					IRS R right
+laminar/B738/toggle_switch/irs_sys_dspl					IRS system display toggle (L/R)
+laminar/B738/toggle_switch/irs_dspl_sel_left			IRS display select left
+laminar/B738/toggle_switch/irs_dspl_sel_right			IRS display select right
+laminar/B738/toggle_switch/irs_dspl_sel_brt_left		IRS display bright left
+laminar/B738/toggle_switch/irs_dspl_sel_brt_right		IRS display bright right
+
+-- fms.lua
+laminar/B738/button/fmc1_1L								FMC captain 1LSK
+laminar/B738/button/fmc1_2L								FMC captain 2LSK
+laminar/B738/button/fmc1_3L								FMC captain 3LSK
+laminar/B738/button/fmc1_4L								FMC captain 4LSK
+laminar/B738/button/fmc1_5L								FMC captain 5LSK
+laminar/B738/button/fmc1_6L								FMC captain 6LSK
+laminar/B738/button/fmc1_1R								FMC captain 1RSK
+laminar/B738/button/fmc1_2R								FMC captain 2RSK
+laminar/B738/button/fmc1_3R								FMC captain 3RSK
+laminar/B738/button/fmc1_4R								FMC captain 4RSK
+laminar/B738/button/fmc1_5R								FMC captain 5RSK
+laminar/B738/button/fmc1_6R								FMC captain 6RSK
+laminar/B738/button/fmc1_0								FMC captain 0
+laminar/B738/button/fmc1_1								FMC captain 1
+laminar/B738/button/fmc1_2								FMC captain 2
+laminar/B738/button/fmc1_3								FMC captain 3
+laminar/B738/button/fmc1_4								FMC captain 4
+laminar/B738/button/fmc1_5								FMC captain 5
+laminar/B738/button/fmc1_6								FMC captain 6
+laminar/B738/button/fmc1_7								FMC captain 7
+laminar/B738/button/fmc1_8								FMC captain 8
+laminar/B738/button/fmc1_9								FMC captain 9
+laminar/B738/button/fmc1_period							FMC captain period
+laminar/B738/button/fmc1_minus							FMC captain minus
+laminar/B738/button/fmc1_slash							FMC captain slash
+laminar/B738/button/fmc1_A								FMC captain A
+laminar/B738/button/fmc1_B								FMC captain B
+laminar/B738/button/fmc1_C								FMC captain C
+laminar/B738/button/fmc1_D								FMC captain D
+laminar/B738/button/fmc1_E								FMC captain E
+laminar/B738/button/fmc1_F								FMC captain F
+laminar/B738/button/fmc1_G								FMC captain G
+laminar/B738/button/fmc1_H								FMC captain H
+laminar/B738/button/fmc1_I								FMC captain I
+laminar/B738/button/fmc1_J								FMC captain J
+laminar/B738/button/fmc1_K								FMC captain K
+laminar/B738/button/fmc1_L								FMC captain L
+laminar/B738/button/fmc1_M								FMC captain M
+laminar/B738/button/fmc1_N								FMC captain N
+laminar/B738/button/fmc1_O								FMC captain O
+laminar/B738/button/fmc1_P								FMC captain P
+laminar/B738/button/fmc1_Q								FMC captain Q
+laminar/B738/button/fmc1_R								FMC captain R
+laminar/B738/button/fmc1_S								FMC captain S
+laminar/B738/button/fmc1_T								FMC captain T
+laminar/B738/button/fmc1_U								FMC captain U
+laminar/B738/button/fmc1_V								FMC captain V
+laminar/B738/button/fmc1_W								FMC captain W
+laminar/B738/button/fmc1_X								FMC captain X
+laminar/B738/button/fmc1_Y								FMC captain Y
+laminar/B738/button/fmc1_Z								FMC captain Z
+laminar/B738/button/fmc1_SP								FMC captain SPACE
+laminar/B738/button/fmc1_clr							FMC captain CLR
+laminar/B738/button/fmc1_del							FMC captain DEL
+laminar/B738/button/fmc1_prev_page						FMC captain PREV PAGE
+laminar/B738/button/fmc1_next_page						FMC captain NEXT PAGE
+laminar/B738/button/fmc1_init_ref						FMC captain INIT REF
+laminar/B738/button/fmc1_menu							FMC captain MENU
+laminar/B738/button/fmc1_n1_lim							FMC captain N1 LIMIT
+laminar/B738/button/fmc1_rte							FMC captain RTE
+laminar/B738/button/fmc1_legs							FMC captain LEGS
+laminar/B738/button/fmc1_fix							FMC captain FIX
+laminar/B738/button/fmc1_clb							FMC captain CLB
+laminar/B738/button/fmc1_crz							FMC captain CRZ
+laminar/B738/button/fmc1_des							FMC captain DES
+laminar/B738/button/fmc1_dep_app						FMC captain DEP/ARR
+laminar/B738/button/fmc1_hold							FMC captain HOLD
+laminar/B738/button/fmc1_prog							FMC captain PROG
+laminar/B738/button/fmc1_exec							FMC captain EXEC
+laminar/B738/autopilot/alt_interv						Autopilot ALT INTV press
+
+-- calc.lua
+laminar/B738/engine/mixture1_cutoff						Mixture engine 1 cutoff
+laminar/B738/engine/mixture1_idle						Mixture engine 1 idle
+laminar/B738/engine/mixture1_toggle						Mixture engine 1 toggle cutoff/idle
+laminar/B738/engine/mixture2_cutoff						Mixture engine 2 cutoff
+laminar/B738/engine/mixture2_idle						Mixture engine 2 idle
+laminar/B738/engine/mixture2_toggle						Mixture engine 2 toggle cutoff/idle
+
+-- Rewrite default commands
+sim/flight_controls/landing_gear_toggle					Landing gear - toggle (up, off, down)
+sim/flight_controls/landing_gear_down					Landing gear - down (off, down)
+sim/flight_controls/landing_gear_up						Landing gear - up (up)
+sim/autopilot/take_off_go_around						Takeoff / Go-Around button
+sim/engines/TOGA_power									Takeoff / Go-Around button
+sim/flight_controls/brakes_toggle_max					Brake max toggle
+sim/flight_controls/brakes_toggle_regular				Brake regular toggle
+sim/flight_controls/brakes_max							Brake max
+sim/flight_controls/brakes_regular						Brake regular
+sim/autopilot/altitude_up								MCP altitude dial up
+sim/autopilot/altitude_down								MCP altitude dial down
+sim/radios/obs_HSI_up									MCP captain course dial up
+sim/radios/obs_HSI_down									MCP captain course dial down
+sim/radios/copilot_obs_HSI_up							MCP first officer course dial up
+sim/radios/copilot_obs_HSI_down							MCP first officer course dial down
+sim/lights/landing_lights_on							Landing lights on (all)
+sim/lights/landing_lights_off							Landing lights off (all)
+sim/lights/landing_lights_toggle						Landing lights toggle (all)

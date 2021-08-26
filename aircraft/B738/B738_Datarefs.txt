@@ -1,0 +1,368 @@
+Last update - Release 2.35
+--------------------------
+
+AUTOPILOT LIGHTS (read only)
+----------------------------
+N1					laminar/B738/autopilot/n1_status
+SPEED				laminar/B738/autopilot/speed_status1
+LVL CHG				laminar/B738/autopilot/lvl_chg_status
+VNAV				laminar/B738/autopilot/vnav_status1
+LNAV				laminar/B738/autopilot/lnav_status
+VOR LOC				laminar/B738/autopilot/vorloc_status
+APP					laminar/B738/autopilot/app_status
+HDG SEL				laminar/B738/autopilot/hdg_sel_status
+ALT HLD				laminar/B738/autopilot/alt_hld_status
+VS					laminar/B738/autopilot/vs_status
+CMD a				laminar/B738/autopilot/cmd_a_status
+CMD b				laminar/B738/autopilot/cmd_b_status
+CWS a				laminar/B738/autopilot/cws_a_status
+CWS b				laminar/B738/autopilot/cws_b_status
+A/T arm				laminar/B738/autopilot/autothrottle_status
+MA captain			laminar/B738/autopilot/master_capt_status
+MA first officer	laminar/B738/autopilot/master_fo_status
+
+AUTOPILOT BUTTONS (read/write)
+------------------------------
+pressed, if state change 0 -> 1 only
+N1					laminar/B738/buttons/autopilot/n1
+SPEED				laminar/B738/buttons/autopilot/speed
+LVL CHG				laminar/B738/buttons/autopilot/lvl_chg
+VNAV				laminar/B738/buttons/autopilot/vnav
+LNAV				laminar/B738/buttons/autopilot/lnav
+VOR LOC				laminar/B738/buttons/autopilot/vor_loc
+APP					laminar/B738/buttons/autopilot/app
+HDG SEL				laminar/B738/buttons/autopilot/hdg_sel
+ALT HLD				laminar/B738/buttons/autopilot/alt_hld
+VS					laminar/B738/buttons/autopilot/vs
+CMD a				laminar/B738/buttons/autopilot/cmd_a
+CMD b				laminar/B738/buttons/autopilot/cmd_b
+CWS a				laminar/B738/buttons/autopilot/cws_a
+CWS b				laminar/B738/buttons/autopilot/cws_b
+C/O (crossover)		laminar/B738/buttons/autopilot/co
+
+AUTOPILOT SWITCHES (read/write)
+------------------------------
+F/D captain			0-off, 1-on		laminar/B738/switches/autopilot/fd_ca
+F/D first officer	0-off, 1-on		laminar/B738/switches/autopilot/fd_fo
+A/T arm				0-off, 1-on		laminar/B738/switches/autopilot/at_arm
+
+AUTOPILOT ROTARY (read/write)
+-----------------------------
+BANK ANGLE		0-10deg, 1-15deg, 2-20deg, 3-25deg, 4-30deg		laminar/B738/rotary/autopilot/bank_angle
+MCP IAS															sim/cockpit2/autopilot/airspeed_dial_kts_mach
+MCP HDG															laminar/B738/autopilot/mcp_hdg_dial
+MCP ALT															laminar/B738/autopilot/mcp_alt_dial
+MCP VVI															sim/cockpit2/autopilot/vvi_dial_fpm
+CRS captain														laminar/B738/autopilot/course_pilot
+CRS first officer												laminar/B738/autopilot/course_copilot
+
+AUTOPILOT DISPLAY (read)
+------------------------
+MCP SPD					sim/cockpit2/autopilot/airspeed_dial_kts_mach
+MCP SPD DIGIT 8			laminar/B738/mcp/digit_8
+MCP SPD DIGIT A			laminar/B738/mcp/digit_A
+MCP HDG					laminar/B738/autopilot/mcp_hdg_dial
+MCP ALT					laminar/B738/autopilot/mcp_alt_dial
+MCP VVI					sim/cockpit2/autopilot/vvi_dial_fpm
+MCP CRS captain			laminar/B738/autopilot/course_pilot
+MCP CRS first officer	laminar/B738/autopilot/course_copilot
+
+EFIS (read/write)
+-----------------
+Baro altimeter dial captain 		rottary		laminar/B738/EFIS/baro_sel_in_hg_pilot
+Baro altimeter std captain			button		laminar/B738/EFIS/baro_set_std_pilot		0 - off, 1 - STD
+Baro altimeter dial first officer 	rottary		laminar/B738/EFIS/baro_sel_in_hg_copilot
+Baro altimeter std first officer	button		laminar/B738/EFIS/baro_set_std_copilot		0 - off, 1 - STD
+
+FUEL PUMPS - SWITCHES (read/write)
+----------------------------------
+LEFT TANK 1		0-Off, 1-on		laminar/B738/fuel/fuel_tank_pos_lft1
+LEFT TANK 2		0-Off, 1-on		laminar/B738/fuel/fuel_tank_pos_lft2
+RIGHT TANK 1	0-Off, 1-on		laminar/B738/fuel/fuel_tank_pos_rgt1
+RIGHT TANK 2	0-Off, 1-on		laminar/B738/fuel/fuel_tank_pos_rgt2
+CENTER TANK 1	0-Off, 1-on		laminar/B738/fuel/fuel_tank_pos_ctr1
+CEBTER TANK 2	0-Off, 1-on		laminar/B738/fuel/fuel_tank_pos_ctr2
+CROSS FEED		0-Off, 1-on		laminar/B738/knobs/cross_feed_pos
+
+ENGINES / APU STARTER - SWITCHES (read/write)
+---------------------------------------
+STARTER ENG1	0-GRD, 1-AUTO, 2-CNT, 3-FLT		laminar/B738/engine/starter1_pos
+STARTER ENG2	0-GRD, 1-AUTO, 2-CNT, 3-FLT		laminar/B738/engine/starter2_pos
+APU 			0-off, 1-on, 2-start			laminar/B738/switches/apu_start
+MIXTURE ENG 1	0 .. 1							laminar/B738/engine/mixture_ratio1
+MIXTURE ENG 2	0 .. 1							laminar/B738/engine/mixture_ratio2
+START SELECTOR ENGINE			-1 / 0 / 1		laminar/B738/toggle_switch/eng_start_source
+FUEL FLOW						-1 / 0 / 1		laminar/B738/toggle_switch/fuel_flow_pos
+
+AIR BLEED - SWITCHES (read/write)
+---------------------------------
+AIR BLEED ENG1	0-off, 1-on						laminar/B738/toggle_switch/bleed_air_1_pos
+AIR BLEED ENG2	0-off, 1-on						laminar/B738/toggle_switch/bleed_air_2_pos
+AIR BLEED APU	0-off, 1-on						laminar/B738/toggle_switch/bleed_air_apu_pos
+LEFT PACK		0-off, 1-auto, 2-open			laminar/B738/air/l_pack_pos
+RIGHT PACK		0-off, 1-auto, 2-open			laminar/B738/air/r_pack_pos
+ISOLATION VALVE	0-close, 1-auto, 2-open			laminar/B738/air/isolation_valve_pos
+LEFT RECIRC		0-off, 1-on						laminar/B738/air/l_recirc_fan_pos
+RIGHT RECIRC	0-off, 1-on						laminar/B738/air/r_recirc_fan_pos
+TRIM AIR		0-off, 1-on						laminar/B738/air/trim_air_pos
+AIR VALVE MANUAL CONTROL	-1 / 0 / 1			laminar/B738/toggle_switch/air_valve_manual
+AIR VALVE CONTROL MODE		0 / 1 / 2			laminar/B738/toggle_switch/air_valve_ctrl
+AIR TEMP SELECT				0/1/2/3/4/5/6		laminar/B738/toggle_switch/air_temp_source
+
+OTHERS - DISPLAY (read)
+--------------------------
+AIR BLEED DUCT PRESSURE LEFT PSI		laminar/B738/indicators/duct_press_L
+AIR BLEED DUCT PRESSURE RIGHT PSI		laminar/B738/indicators/duct_press_R
+FIRE EXT BOTTLE LEFT PSI				laminar/B738/fire/engine01_02L/ext_bottle/psi
+FIRE EXT BOTTLE RIGHT PSI				laminar/B738/fire/engine01_02R/ext_bottle/psi
+BRAKE TEMP LEFT OUT						laminar/B738/systems/brake_temp_left_out
+BRAKE TEMP LEFT IN						laminar/B738/systems/brake_temp_left_in
+BRAKE TEMP RIGHT OUT					laminar/B738/systems/brake_temp_right_out
+BRAKE TEMP RIGHT IN						laminar/B738/systems/brake_temp_right_in
+
+OTHERS - SWITCHES (read/write)
+------------------------------
+LANDING GEAR					0-up, 1-off, 2-down		laminar/B738/switches/landing_gear
+EQUIPMENT COOLING EXHAUST		0-off, 1-on				laminar/B738/toggle_switch/eq_cool_exhaust
+EQUIPMENT COOLING SUPPLY		0-off, 1-on				laminar/B738/toggle_switch/eq_cool_supply
+DISPLAY CONTROL PANEL			-1 / 0 / 1				laminar/B738/toggle_switch/dspl_ctrl_pnl
+FMC NAVIGATION					-1 / 0 / 1				laminar/B738/toggle_switch/fmc_source
+WINDOW OVERHEAT TEST			-1 / 0 / 1				laminar/B738/toggle_switch/window_ovht_test
+SERVICE INTERPHONE				0-off, 1-on				laminar/B738/toggle_switch/service_interphone
+ALTERNATE FLAPS CONTROL			-1 / 0 / 1				laminar/B738/toggle_switch/alt_flaps_ctrl
+FLIGHT DECK DOOR				-1 / 0 / 1				laminar/B738/toggle_switch/flt_dk_door
+MAIN PANEL DU CAPTAIN			-1 / 0 / 1 / 2			laminar/B738/toggle_switch/main_pnl_du_capt
+LOWER DU CAPTAIN				-1 / 0 / 1				laminar/B738/toggle_switch/lower_du_capt
+MAIN PANEL DU F/O				-1 / 0 / 1 / 2			laminar/B738/toggle_switch/main_pnl_du_fo
+LOWER DU F/O					-1 / 0 / 1				laminar/B738/toggle_switch/lower_du_fo
+DISPLAY SOURCE					-1 / 0 / 1				laminar/B738/toggle_switch/spd_ref
+SPEED REFERENCE MODE			0/1/2/3/4/5/6			laminar/B738/toggle_switch/dspl_source
+MINIMUMS MODE CAPTAIN			0 / 1					laminar/B738/EFIS_control/cpt/minimums
+MINIMUMS MODE F/O				0 / 1					laminar/B738/EFIS_control/fo/minimums
+WINDOW HEAT L SIDE				0-off, 1-on				laminar/B738/ice/window_heat_l_side_pos
+WINDOW HEAT L FWD				0-off, 1-on				laminar/B738/ice/window_heat_l_fwd_pos
+WINDOW HEAT R SIDE				0-off, 1-on				laminar/B738/ice/window_heat_r_side_pos
+WINDOW HEAT R FWD				0-off, 1-on				laminar/B738/ice/window_heat_r_fwd_pos
+
+ANTI ICE SWITCHES (read/write)
+------------------------------
+WING ANTI ICE					0-off, 1-on				laminar/B738/ice/wing_heat_pos
+ENGINE 1 ANTI ICE				0-off, 1-on				laminar/B738/ice/eng1_heat_pos
+ENGINE 2 ANTI ICE				0-off, 1-on				laminar/B738/ice/eng2_heat_pos
+PROBES ANTI ICE CAPTAIN			0-off, 1-on				laminar/B738/toggle_switch/capt_probes_pos
+PROBES ANTI ICE F/O				0-off, 1-on				laminar/B738/toggle_switch/fo_probes_pos
+
+HYDRAULIC SWITCHES (read/write)
+-------------------------------
+ENGINE 1 HYDRO PUMP				0-off, 1-on				laminar/B738/toggle_switch/hydro_pumps1_pos
+ENGINE 2 HYDRO PUMP				0-off, 1-on				laminar/B738/toggle_switch/hydro_pumps2_pos
+ENGINE 1 ELECTRIC HYDRO PUMP	0-off, 1-on				laminar/B738/toggle_switch/electric_hydro_pumps1_pos
+ENGINE 2 ELECTRIC HYDRO PUMP	0-off, 1-on				laminar/B738/toggle_switch/electric_hydro_pumps2_pos
+
+ANNUNCIATORS (read) => 0 - OFF, 0.1 .. 1.0 ON by brightness
+-----------------------------------------------------------
+PARKING BRAKE						laminar/B738/annunciator/parking_brake
+WINDOW HEAT L SIDE					laminar/B738/annunciator/window_heat_l_side
+WINDOW HEAT L FWD					laminar/B738/annunciator/window_heat_l_fwd
+WINDOW HEAT R SIDE					laminar/B738/annunciator/window_heat_r_side
+WINDOW HEAT R FWD					laminar/B738/annunciator/window_heat_r_fwd
+FADEC FAIL ENG 1					laminar/B738/annunciator/fadec_fail_0
+FADEC FAIL ENG 2					laminar/B738/annunciator/fadec_fail_1
+REVERSER FAIL ENG 1					laminar/B738/annunciator/reverser_fail_0
+REVERSER FAIL ENG 2					laminar/B738/annunciator/reverser_fail_1
+CAPTAIN PITOT OFF					laminar/B738/annunciator/capt_pitot_off
+F/O PITOT OFF						laminar/B738/annunciator/fo_pitot_off
+CAPTAIN AOA OFF						laminar/B738/annunciator/capt_aoa_off
+F/O AOA OFF							laminar/B738/annunciator/fo_aoa_off
+WINDOW HEAT OVERHEAT R FWD			laminar/B738/annunciator/window_heat_ovht_rf
+WINDOW HEAT OVERHEAT R SIDE			laminar/B738/annunciator/window_heat_ovht_rs
+WINDOW HEAT OVERHEAT L FWD			laminar/B738/annunciator/window_heat_ovht_lf
+WINDOW HEAT OVERHEAT L SIDE			laminar/B738/annunciator/window_heat_ovht_ls
+COWL ANTI ICE ENG 1					laminar/B738/annunciator/cowl_ice_0
+COWL ANTI ICE ENG 2					laminar/B738/annunciator/cowl_ice_1
+COWL ANTI ICE ENG 1 ON				laminar/B738/annunciator/cowl_ice_on_0
+COWL ANTI ICE ENG 2 ON				laminar/B738/annunciator/cowl_ice_on_1
+WING ANTI ICE L ON					laminar/B738/annunciator/wing_ice_on_L
+WING ANTI ICE R ON					laminar/B738/annunciator/wing_ice_on_R
+APU FAULT							laminar/B738/annunciator/apu_fault
+NOSE GEAR TRANSIT					laminar/B738/annunciator/nose_gear_transit
+NOSE GEAR SAFE						laminar/B738/annunciator/nose_gear_safe
+LEFT GEAR TRANSIT					laminar/B738/annunciator/left_gear_transit
+LEFT GEAR SAFE						laminar/B738/annunciator/left_gear_safe
+RIGHT GEAR TRANSIT					laminar/B738/annunciator/right_gear_transit
+RIGHT GEAR SAFE						laminar/B738/annunciator/right_gear_safe
+LOW FUEL PRESSURE LEFT1				laminar/B738/annunciator/low_fuel_press_l1
+LOW FUEL PRESSURE LEFT2				laminar/B738/annunciator/low_fuel_press_l2
+LOW FUEL PRESSURE CENTER1			laminar/B738/annunciator/low_fuel_press_c1
+LOW FUEL PRESSURE CENTER2			laminar/B738/annunciator/low_fuel_press_c2
+LOW FUEL PRESSURE RIGHT1			laminar/B738/annunciator/low_fuel_press_r1
+LOW FUEL PRESSURE RIGHT2			laminar/B738/annunciator/low_fuel_press_r2
+FUEL VALVE CLOSED ENG 1				laminar/B738/annunciator/eng1_valve_closed
+FUEL VALVE CLOSED ENG 2				laminar/B738/annunciator/eng2_valve_closed
+FADEC ENG 1 OFF						laminar/B738/annunciator/fadec1_off
+FADEC ENG 2 OFF						laminar/B738/annunciator/fadec2_off
+GENERATOR FAIL DRIVE 1				laminar/B738/annunciator/drive1
+GENERATOR FAIL DRIVE 2				laminar/B738/annunciator/drive2
+STANDBY POWER OFF					laminar/B738/annunciator/standby_pwr_off
+BYPASS FILTER ENG 1					laminar/B738/annunciator/bypass_filter_1
+BYPASS FILTER ENG 2					laminar/B738/annunciator/bypass_filter_2
+BATT DISCHARGE						laminar/B738/annunciator/bat_discharge
+HYDRAULIC PRESSURE SYS A			laminar/B738/annunciator/hyd_press_a
+HYDRAULIC PRESSURE SYS B			laminar/B738/annunciator/hyd_press_b
+ELECTRIC HYDRAULIC PRESSURE SYS A	laminar/B738/annunciator/hyd_el_press_a
+ELECTRIC HYDRAULIC PRESSURE SYS B	laminar/B738/annunciator/hyd_el_press_b
+PACK								laminar/B738/annunciator/pack
+SMOKE								laminar/B738/annunciator/smoke
+APU GENERATOR OFF BUS				laminar/B738/annunciator/apu_gen_off_bus
+GENERATOR OFF BUS 1					laminar/B738/annunciator/gen_off_bus1
+GENERATOR OFF BUS 2					laminar/B738/annunciator/gen_off_bus2
+SOURCE OFF BUS 1					laminar/B738/annunciator/source_off1
+SOURCE OFF BUS 2					laminar/B738/annunciator/source_off2
+TRANSFER BUS 1 OFF					laminar/B738/annunciator/trans_bus_off1
+TRANSFER BUS 2 OFF					laminar/B738/annunciator/trans_bus_off2
+DOOR ENTRY FWD						laminar/B738/annunciator/fwd_entry
+DOOR LEFT FWD						laminar/B738/annunciator/left_fwd_overwing
+DOOR LEFT AFT						laminar/B738/annunciator/left_aft_overwing
+DOOR AFT ENTRY						laminar/B738/annunciator/aft_entry
+DOOR SERVICE FWD					laminar/B738/annunciator/fwd_service
+DOOR RIGHT FWD						laminar/B738/annunciator/right_fwd_overwing
+DOOR RIGHT AFT						laminar/B738/annunciator/right_aft_overwing
+DOOR SERVICE AFT					laminar/B738/annunciator/aft_service
+DOOR CARGO FWD						laminar/B738/annunciator/fwd_cargo
+DOOR CARGO AFT						laminar/B738/annunciator/aft_cargo
+DOOR EQUIPMENT						laminar/B738/annunciator/equip_door
+PAX OXY								laminar/B738/annunciator/pax_oxy
+BLEED TRIP OFF LEFT					laminar/B738/annunciator/bleed_trip_1
+BLEED TRIP OFF RIGHT				laminar/B738/annunciator/bleed_trip_2
+WING BODY OVERHEAT					laminar/B738/annunciator/wing_body_ovht
+GROUND POWER AVAILABLE				laminar/B738/annunciator/ground_power_avail
+ELT									laminar/B738/toggle_switch/elt
+FDR OFF								laminar/B738/annunciator/fdr_off
+YAW DAMPER							laminar/B738/annunciator/yaw_damp
+CROSSFEED VALVE						laminar/B738/annunciator/crossfeed
+EMERGENCY EXIT						laminar/B738/annunciator/emer_exit
+CABIN ALT							laminar/B738/annunciator/cabin_alt
+SPEEDBRAKE ARMED					laminar/B738/annunciator/speedbrake_armed
+SPEEDBRAKE EXTEND					laminar/B738/annunciator/speedbrake_extend
+GPWS								laminar/B738/annunciator/gpws
+TAKEOFF CONFIG						laminar/B738/annunciator/takeoff_config
+BELOW GLIDESLOPE					laminar/B738/annunciator/below_gs
+SLATS TRANSIT						laminar/B738/annunciator/slats_transit
+SLATS EXTENDED						laminar/B738/annunciator/slats_extend
+EXTINGUISHER CIRCUIT 1				laminar/B738/annunciator/extinguisher_circuit_annun1
+EXTINGUISHER CIRCUIT 2				laminar/B738/annunciator/extinguisher_circuit_annun2
+CARGO FIRE							laminar/B738/annunciator/cargo_fire
+FIRE FAULT INOP						laminar/B738/annunciator/fire_fault_inop
+APU FIRE							laminar/B738/annunciator/apu_fire
+ENGINE 1 FIRE						laminar/B738/annunciator/engine1_fire
+ENGINE 2 FIRE						laminar/B738/annunciator/engine2_fire
+ENGINE 1 OVERHEAT					laminar/B738/annunciator/engine1_ovht
+ENGINE 2 OVERHEAT					laminar/B738/annunciator/engine2_ovht
+LEFT BOTTLE DISCHARGE				laminar/B738/annunciator/l_bottle_discharge
+RIGHT BOTTLE DISCHARGE				laminar/B738/annunciator/r_bottle_discharge
+WHEEL WELL FIRE						laminar/B738/annunciator/wheel_well_fire
+FIRE BELL							laminar/B738/annunciator/fire_bell_annun
+CAUTION LIGHT						laminar/B738/annunciator/master_caution_light
+A/P DISCONNECT CAPTAIN				laminar/B738/annunciator/ap_disconnect1
+A/T FMS DISCONNECT CAPTAIN			laminar/B738/annunciator/at_fms_disconnect1
+A/P DISCONNECT F/O					laminar/B738/annunciator/ap_disconnect2
+A/T FMS DISCONNECT F/O				laminar/B738/annunciator/at_fms_disconnect2
+SIX PACK - FUEL						laminar/B738/annunciator/six_pack_fuel
+SIX PACK - FIRE						laminar/B738/annunciator/six_pack_fire
+SIX PACK - APU						laminar/B738/annunciator/six_pack_apu
+SIX PACK - FLT CONT					laminar/B738/annunciator/six_pack_flt_cont
+SIX PACK - ELEC						laminar/B738/annunciator/six_pack_elec
+SIX PACK - IRS						laminar/B738/annunciator/six_pack_irs
+SIX PACK - ICE						laminar/B738/annunciator/six_pack_ice
+SIX PACK - DOORS					laminar/B738/annunciator/six_pack_doors
+SIX PACK - ENG						laminar/B738/annunciator/six_pack_eng
+SIX PACK - HYD						laminar/B738/annunciator/six_pack_hyd
+SIX PACK - AIR COND					laminar/B738/annunciator/six_pack_air_cond
+SIX PACK - OVERHEAT					laminar/B738/annunciator/six_pack_overhead
+TRANSPONDER FAIL					laminar/B738/transponder/indicators/xpond_fail
+AUTOBRAKE DISARM					laminar/B738/annunciator/auto_brake_disarm
+GPS FAIL							laminar/B738/annunciator/gps
+DUAL BLEED							laminar/B738/annunciator/dual_bleed
+
+IRS DISPLAY (read)
+------------------
+LATITUDE DEG						laminar/B738/latitude_deg
+LATITUDE MIN						laminar/B738/latitude_min
+LATITUDE N/S		0-N, 1-S		laminar/B738/latitude_NS
+LONGITUDE DEG						laminar/B738/longitude_deg
+LONGITUDE MIN						laminar/B738/longitude_min
+LONGITUDE E/W		0-E, 1-W		laminar/B738/longitude_EW
+IRS LEFT 1							laminar/B738/irs_left1
+IRS LEFT 2							laminar/B738/irs_left2
+IRS RIGHT 1							laminar/B738/irs_right1
+IRS RIGHT 2							laminar/B738/irs_right2
+SHOW N/S E/W		0-OFF, 1-ON		laminar/B738/ns_ew_show
+SHOW LATITUDE DEG	0-OFF, 1-ON		laminar/B738/lat_deg_show
+SHOW LATITUDE MIN	0-OFF, 1-ON		laminar/B738/lat_min_show
+SHOW LONGITUDE DEG	0-OFF, 1-ON		laminar/B738/lon_deg_show
+SHOW LONGITUDE MIN	0-OFF, 1-ON		laminar/B738/lon_min_show
+SHOW DECIMAL		0-OFF, 1-ON		laminar/B738/decimals_show
+SHOW IRS LEFT 1						laminar/B738/irs_left1_show
+SHOW IRS LEFT 2						laminar/B738/irs_left2_show
+SHOW IRS RIGHT 1					laminar/B738/irs_right1_show
+SHOW IRS RIGHT 2					laminar/B738/irs_right2_show
+
+IRS ANNUNCIATORS (read)
+-----------------------
+ALIGN FAIL RIGHT					laminar/B738/annunciator/irs_align_fail_right
+ALIGN FAIL LEFT						laminar/B738/annunciator/irs_align_fail_left
+ALIGN RIGHT							laminar/B738/annunciator/irs_align_right
+ALIGN LEFT							laminar/B738/annunciator/irs_align_left
+DC FAIL LEFT						laminar/B738/annunciator/irs_dc_fail_left
+DC ON LEFT							laminar/B738/annunciator/irs_on_dc_left
+DC FAIL RIGHT						laminar/B738/annunciator/irs_dc_fail_right
+DC ON RIGHT							laminar/B738/annunciator/irs_on_dc_right
+
+FMC CAPTAIN (read) - 24 char per line, displayed custom FMC pages only
+------------------
+PAGE LABEL LARGE FONT				laminar/B738/fmc1/Line00_L		string
+PAGE LABEL SMALL FONT				laminar/B738/fmc1/Line00_S		string
+LINE 1 LABEL SMALL FONT				laminar/B738/fmc1/Line01_X		string
+LINE 2 LABEL SMALL FONT				laminar/B738/fmc1/Line02_X		string
+LINE 3 LABEL SMALL FONT				laminar/B738/fmc1/Line03_X		string
+LINE 4 LABEL SMALL FONT				laminar/B738/fmc1/Line04_X		string
+LINE 5 LABEL SMALL FONT				laminar/B738/fmc1/Line05_X		string
+LINE 6 LABEL SMALL FONT				laminar/B738/fmc1/Line06_X		string
+LINE 1 LARGE FONT					laminar/B738/fmc1/Line01_L		string
+LINE 2 LARGE FONT					laminar/B738/fmc1/Line02_L		string
+LINE 3 LARGE FONT					laminar/B738/fmc1/Line03_L		string
+LINE 4 LARGE FONT					laminar/B738/fmc1/Line04_L		string
+LINE 5 LARGE FONT					laminar/B738/fmc1/Line05_L		string
+LINE 6 LARGE FONT					laminar/B738/fmc1/Line06_L		string
+LINE 1 LARGE FONT INVERSE			laminar/B738/fmc1/Line01_I		string
+LINE 2 LARGE FONT INVERSE			laminar/B738/fmc1/Line02_I		string
+LINE 3 LARGE FONT INVERSE			laminar/B738/fmc1/Line03_I		string
+LINE 4 LARGE FONT INVERSE			laminar/B738/fmc1/Line04_I		string
+LINE 5 LARGE FONT INVERSE			laminar/B738/fmc1/Line05_I		string
+LINE 6 LARGE FONT INVERSE			laminar/B738/fmc1/Line06_I		string
+LINE 1 SMALL FONT					laminar/B738/fmc1/Line01_S		string
+LINE 2 SMALL FONT					laminar/B738/fmc1/Line02_S		string
+LINE 3 SMALL FONT					laminar/B738/fmc1/Line03_S		string
+LINE 4 SMALL FONT					laminar/B738/fmc1/Line04_S		string
+LINE 5 SMALL FONT					laminar/B738/fmc1/Line05_S		string
+LINE 6 SMALL FONT					laminar/B738/fmc1/Line06_S		string
+LINE ENTRY LARGE FONT				laminar/B738/fmc1/Line_entry	string
+LINE ENTRY LARGE FONT INVERSE		laminar/B738/fmc1/Line_entry_I	string
+FMC EXEC LIGHT						laminar/B738/indicators/fms_exec_light_pilot
+
+
+OTHERS (read)
+-------------------
+Takeoff flaps	1, 2, 5, 10, 15, 25		laminar/B738/FMS/takeoff_flaps
+Approach flaps	15, 30, 40				laminar/B738/FMS/approach_flaps
+Takeoff trim							laminar/B738/FMS/trim_calc
+Takeoff flaps set by FMC				laminar/B738/FMS/takeoff_flaps_set
+Approach flaps set by FMC				laminar/B738/FMS/approach_flaps_set
+Takeoff trim set by FMC					laminar/B738/FMS/trim_set
+
+FMOD sounds (read only)
+-----------------------
+FMS MESSAGE										laminar/B738/fmod/fms_message
+DH MINIMUM PILOT	0,1-off, 2,3-play			laminar/B738/fmod/dh_minimum_pilot
+DH MINIMUM COPILOT	0,1-off, 2,3-play			laminar/B738/fmod/dh_minimum_copilot
+ALTITUDE ALERT									laminar/B738/autopilot/rec_alt_alert
