@@ -836,18 +836,15 @@ ZC_PRE_FLIGHT_PROC = {
 	}, 
 	[12] = {["lefttext"] = "CAPT: EFIS CONTROL PANEL SETUP", ["timerincr"] = 1,  
 		["actions"] = function ()
-			if get("laminar/B738/PFD/capt/fpv_on") ~= 0 then
-				command_once("laminar/B738/EFIS_control/capt/push_button/fpv_press")
-			end
+			zc_acf_fpvfpa_onoff(0,0)
 		end
 	}, 
 	[13] = {["lefttext"] = "CAPT: EFIS CONTROL PANEL SETUP", ["timerincr"] = 1,
 		["actions"] = function ()
 			if get_zc_config("qnhhpa") then
-				command_once("laminar/B738/EFIS_control/capt/baro_in_hpa_up")
-			end
-			if get_zc_config("qnhhpa") == false then
-				command_once("laminar/B738/EFIS_control/capt/baro_in_hpa_dn")
+				zc_acf_baro_in_mb(0,1)
+			else
+				zc_acf_baro_in_mb(0,0)
 			end
 		end
 	}, 
@@ -3838,7 +3835,7 @@ ZC_BACKGROUND_PROCS = {
 		["actions"] = function ()
 			if get("sim/cockpit2/gauges/indicators/altitude_ft_pilot") > get("laminar/B738/FMS/fmc_trans_alt") then
 				speakNoText(0,"Transition altitude")
-				zc_acf_baro_std_set(0)
+				zc_acf_baro_std_set(1)
 				ZC_BACKGROUND_PROCS["TRANSALT"].status = 0
 			end
 		end
@@ -5560,25 +5557,118 @@ function zc_acf_ft_meter(nd,mode)
 	end
 end
 
--- Set STD baro side 0=ALL,1=CAPT,2=FO
-function zc_acf_baro_std_set(side)
+-- Set STD baro side 0=ALL,1=CAPT,2=FO,3=STB mode 0=NORM, 1=STD
+function zc_acf_baro_std_set(side,mode)
 	if side == 0 or side == 1 then
-		command_once("laminar/B738/EFIS_control/capt/push_button/std_press")
+		if mode == 0 and get("laminar/B738/EFIS/baro_set_std_pilot") == 1 then
+			command_once("laminar/B738/EFIS_control/capt/push_button/std_press")
+		end
+		if mode == 1 and get("laminar/B738/EFIS/baro_set_std_pilot") == 0 then
+			command_once("laminar/B738/EFIS_control/capt/push_button/std_press")
+		end
 	end
 	if side == 0 or side == 2 then
-		command_once("laminar/B738/EFIS_control/fo/push_button/std_press")
+		if mode == 0 and get("laminar/B738/EFIS/baro_set_std_copilot") == 1 then
+			command_once("laminar/B738/EFIS_control/fo/push_button/std_press")
+		end
+		if mode == 1 and get("laminar/B738/EFIS/baro_set_std_copilot") == 0 then
+			command_once("laminar/B738/EFIS_control/fo/push_button/std_press")
+		end
+	end
+	if side == 0 or side == 3 then
+		if mode == 0 and get("laminar/B738/gauges/standby_alt_std_mode") == 1 then
+			command_once("laminar/B738/toggle_switch/standby_alt_baro_std")
+		end
+		if mode == 1 and get("laminar/B738/gauges/standby_alt_std_mode") == 0 then
+			command_once("laminar/B738/toggle_switch/standby_alt_baro_std")
+		end
+	
 	end
 end
 
--- function zc_acf_baro_set(value)
+-- baro up 1 unit 0=ALL 1=CAPT, 2=FO, 3=STBY, mode 0=dn,1=up
+function zc_acf_baro_up_down(side,mode)
+	if side == 0 or side == 1 then
+		if mode == 0 then
+			command_once("laminar/B738/pilot/barometer_down")
+		else
+			command_once("laminar/B738/pilot/barometer_up")
+		end
+	end
+	if side == 0 or side == 2 then
+		if mode == 0 then
+			command_once("laminar/B738/copilot/barometer_down")
+		else
+			command_once("laminar/B738/copilot/barometer_up")
+		end
+	end
+	if side == 0 or side == 3 then
+		if mode == 0 then
+			command_once("laminar/B738/knob/standby_alt_baro_dn")
+		else
+			command_once("laminar/B738/knob/standby_alt_baro_up")
+		end
+	end
+end
+
+-- set baro woth direct value side 0=all,1=CAPT,2=FO,3=STBY value inhg or mb depending on mode
+function zc_acf_baro_set(side,value)
+	set("laminar/B738/EFIS/baro_sel_in_hg_pilot",value)
+	set("laminar/B738/EFIS/baro_sel_in_hg_copilot",value)
+	set("laminar/B738/knobs/standby_alt_baro",value)
+end
 
 -- synchronize baro with outside pressure
 function zc_acf_baro_sync()
 	set("laminar/B738/EFIS/baro_sel_in_hg_pilot",get("sim/weather/barometer_sealevel_inhg"))
 	set("laminar/B738/EFIS/baro_sel_in_hg_copilot",get("sim/weather/barometer_sealevel_inhg"))
+	set("laminar/B738/knobs/standby_alt_baro",get("sim/weather/barometer_sealevel_inhg"))
 end
 
--- function zc_acf_baro_in_mb(mode)
+-- switch between mb and in side 0=ALL,1=CAPT,2=FO,3=STBY mode 0=in,1=mb,2=toggle
+function zc_acf_baro_in_mb(side,mode)
+	if side == 0 or side == 1 then
+		if mode == 0 and get("laminar/B738/EFIS_control/capt/baro_in_hpa") == 1 then
+			command_once("laminar/B738/EFIS_control/capt/baro_in_hpa_dn")
+		end
+		if mode == 1 and get("laminar/B738/EFIS_control/capt/baro_in_hpa") == 0 then
+			command_once("laminar/B738/EFIS_control/capt/baro_in_hpa_up")
+		end
+		if mode == 2 then
+			if get("laminar/B738/EFIS_control/capt/baro_in_hpa") == 1 then
+				command_once("laminar/B738/EFIS_control/capt/baro_in_hpa_dn")
+			else
+				command_once("laminar/B738/EFIS_control/capt/baro_in_hpa_up")
+			end
+		end
+	end
+	if side == 0 or side == 2 then
+		if mode == 0 and get("laminar/B738/EFIS_control/fo/baro_in_hpa") == 1 then
+			command_once("laminar/B738/EFIS_control/fo/baro_in_hpa_dn")
+		end
+		if mode == 1 and get("laminar/B738/EFIS_control/fo/baro_in_hpa") == 0 then
+			command_once("laminar/B738/EFIS_control/fo/baro_in_hpa_up")
+		end
+		if mode == 2 then
+			if get("laminar/B738/EFIS_control/fo/baro_in_hpa") == 1 then
+				command_once("laminar/B738/EFIS_control/fo/baro_in_hpa_dn")
+			else
+				command_once("laminar/B738/EFIS_control/fo/baro_in_hpa_up")
+			end
+		end
+	end
+	if side == 0 or side == 3 then
+		if mode == 0 and get("laminar/B738/gauges/standby_alt_mode") == 1 then
+			command_once("laminar/B738/toggle_switch/standby_alt_hpin")
+		end
+		if mode == 1 and get("laminar/B738/gauges/standby_alt_mode") == 0 then
+			command_once("laminar/B738/toggle_switch/standby_alt_hpin")
+		end
+		if mode == 2 then
+			command_once("laminar/B738/toggle_switch/standby_alt_hpin")
+		end
+	end
+end
 
 -- EFIS: Set mode of minimums side 0=ALL,1=CAPT,2=FO mode 0=RADIO,1=BARO
 function zc_acf_set_dhda_mode(side,mode)
@@ -6188,14 +6278,18 @@ create_command("kp/xsp/gears_up",					"Gear Up",				"zc_acf_gears(0)", "", "")
 create_command("kp/xsp/gears_down",					"Gear Down",			"zc_acf_gears(1)", "", "")
 create_command("kp/xsp/flaps_up",					"Flaps 1 Up",			"zc_acf_flaps_dec()", "", "")
 create_command("kp/xsp/flaps_down",					"Flaps 1 Down",			"zc_acf_flaps_inc()", "", "")
-create_command("kp/xsp/reverse_thrust_on",			"Reverse Thrust on",			"zc_acf_reverse_onoff(1)", "", "")
-create_command("kp/xsp/reverse_thrust_off",			"Reverse Thrust off",			"zc_acf_reverse_onoff(0)", "", "")
-create_command("kp/xsp/pitch_trim_up",				"Pitch Trim Up",			"zc_acf_elev_trim_up()", "", "")
-create_command("kp/xsp/pitch_trim_down",			"Pitch Trim Down",			"zc_acf_elev_trim_dn()", "", "")
+create_command("kp/xsp/reverse_thrust_on",			"Reverse Thrust on",	"zc_acf_reverse_onoff(1)", "", "")
+create_command("kp/xsp/reverse_thrust_off",			"Reverse Thrust off",	"zc_acf_reverse_onoff(0)", "", "")
+create_command("kp/xsp/pitch_trim_up",				"Pitch Trim Up",		"zc_acf_elev_trim_up()", "", "")
+create_command("kp/xsp/pitch_trim_down",			"Pitch Trim Down",		"zc_acf_elev_trim_dn()", "", "")
 
 -- A/P and NAV related commands
 create_command("kp/xsp/toggle_both_fd",				"Toggle Both FD",		"zc_acf_mcp_fds_set(0,2)", "", "")
-create_command("kp/xsp/toggle_both_std",			"Toggle Both STD",		"	zc_acf_baro_std_set(0)", "", "")
+create_command("kp/xsp/toggle_all_std",				"Toggle Both STD",		"zc_acf_baro_std_set(0)", "", "")
+create_command("kp/xsp/toggle_baro_modes",			"Toggle Baro inch/mb",	"zc_acf_baro_in_mb(0,2)", "", "")
+create_command("kp/xsp/all_baro_down",				"All baro down",		"zc_acf_baro_up_down(0,0)", "", "")
+create_command("kp/xsp/all_baro_up",				"All baro up",			"zc_acf_baro_up_down(0,1)", "", "")
+create_command("kp/xsp/toggle_baro_mode",			"Toggle Baro inch/mb",	"zc_acf_baro_in_mb(0,2)", "", "")
 create_command("kp/xsp/toggle_rev_appr",			"Toggle Reverse Appr",	"xsp_toggle_rev_course()", "", "")
 create_command("kp/xsp/toggle_ap",					"Toggle A/P 1",			"zc_acf_mcp_ap_set(1,2)", "", "")
 create_command("kp/xsp/toggle_alt",					"Toggle Altitude",		"zc_acf_mcp_althld_onoff(2)","","")
@@ -6204,7 +6298,7 @@ create_command("kp/xsp/toggle_nav",					"Toggle Nav",			"zc_acf_mcp_vorloc_onoff
 create_command("kp/xsp/toggle_app",					"Toggle Approach",		"zc_acf_mcp_app_onoff(2)","","")
 create_command("kp/xsp/toggle_vs",					"Toggle vertical speed","zc_acf_mcp_vs_onoff(2)","","")
 create_command("kp/xsp/toggle_ias",					"Toggle ias",			"zc_acf_mcp_spd_onoff(2)","","")
-create_command("kp/xsp/toggle_athr",				"Toggle Autothrottle",			"zc_acf_mcp_at_onoff(2)","","")
+create_command("kp/xsp/toggle_athr",				"Toggle Autothrottle",	"zc_acf_mcp_at_onoff(2)","","")
 
 -- Bravo specific commands
 create_command("kp/xsp/bravo_mode_alt",				"Bravo AP Mode ALT",	"xsp_bravo_mode=1", "", "")
