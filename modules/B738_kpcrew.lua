@@ -1143,7 +1143,7 @@ ZC_PRE_FLIGHT_PROC = {
 	}, 
 	[64] = {["lefttext"] = "FO: AUTOBRAKE RTO", ["timerincr"] = 1,
 		["actions"] = function ()
-			zc_acf_abrk_mode(-1)
+			zc_acf_abrk_mode(0)
 		end
 	}, 
 	[65] = {["lefttext"] = "FO: FUEL FLOW RESET", ["timerincr"] = 1,
@@ -2120,7 +2120,7 @@ ZC_BEFORE_TAXI_CHECKLIST = {
 				-- engine starters
 				zc_acf_eng_starter_mode(0,2)
 				-- autobrake
-				zc_acf_abrk_mode(-1)
+				zc_acf_abrk_mode(0)
 			end
 		end
 	},
@@ -2254,7 +2254,7 @@ ZC_BEFORE_TAXI_CHECKLIST = {
 			end
 		end
 	},
-	[21] = {["lefttext"] = "CLEAR RIGHT", ["timerincr"] = 1,
+	[21] = {["lefttext"] = "CLEAR RIGHT", ["timerincr"] = 2,
 		["actions"] = function ()
 			speakNoText(0,"CLEAR RIGHT")
 		end
@@ -2524,8 +2524,7 @@ ZC_CLIMB_PROC = {
 			zc_acf_eng_starter_mode(0,1)
 			zc_acf_light_rwyto_onoff(0)
 			zc_acf_light_landing_mode(2,0)
-			zc_acf_abrk_mode(0)
-			command_once("laminar/B738/knob/autobrake_up")
+			zc_acf_abrk_mode(1)
 			zc_acf_lower_eicas_mode(0)
 		end
 	},
@@ -2923,7 +2922,7 @@ ZC_LANDING_PROC = {
 				zc_acf_set_minimum(0, get_zc_brief_app("da"))
 			end
 			zc_acf_speed_break_set(1)
-			zc_acf_abrk_mode(get_zc_brief_app("autobrake")-1)
+			zc_acf_abrk_mode(get_zc_brief_app("autobrake"))
 		end
 	},
 	[1] = {["lefttext"] = "AT 210 KTS - FLAPS 1", ["timerincr"] = 1,
@@ -3198,12 +3197,11 @@ ZC_AFTER_LANDING_PROC = {
 	},
 	[4] = {["lefttext"] = "FO: APU -- ON", ["timerincr"] = 5,
 		["actions"] = function ()
-			command_begin("laminar/B738/spring_toggle_switch/APU_start_pos_dn")
+		zc_acf_apu_start()
 		end
 	}, 
 	[5] = {["lefttext"] = "FO: APU -- SET", ["timerincr"] = 1,
 		["actions"] = function ()
-			command_end("laminar/B738/spring_toggle_switch/APU_start_pos_dn")
 			ZC_BACKGROUND_PROCS["APUBUSON"].status = 1
 		end
 	}, 
@@ -3229,7 +3227,7 @@ ZC_AFTER_LANDING_PROC = {
 	},
 	[10] = {["lefttext"] = "FO: TAXI LIGHTS -- ON", ["timerincr"] = 1,
 		["actions"] = function ()
-			zc_acf_light_taxi_mode(1)
+			zc_acf_light_taxi_mode(2)
 		end
 	},
 	[11] = {["lefttext"] = "FO: RWY TURNOFF LIGHTS -- OFF", ["timerincr"] = 1,
@@ -3251,7 +3249,7 @@ ZC_AFTER_LANDING_PROC = {
 	},
 	[14] = {["lefttext"] = "FO: AUTOBRAKE -- OFF", ["timerincr"] = 1,
 		["actions"] = function ()
-			zc_acf_abrk_mode(0)
+			zc_acf_abrk_mode(1)
 		end
 	},
 	[15] = {["lefttext"] = "FO: TRANSPONDER -- STBY", ["timerincr"] = 1,
@@ -3660,7 +3658,10 @@ ZC_BACKGROUND_PROCS = {
 		["actions"] = function ()
 			command_once("laminar/B738/spring_toggle_switch/APU_start_pos_dn")
 			command_begin("laminar/B738/spring_toggle_switch/APU_start_pos_dn")
-			if (get("sim/cockpit2/clock_timer/hobbs_time_seconds") % 7 == 0) then
+			if ZC_BACKGROUND_PROCS["APUSTART"].status > 1 then
+				ZC_BACKGROUND_PROCS["APUSTART"].status = ZC_BACKGROUND_PROCS["APUSTART"].status -1
+			end
+			if ZC_BACKGROUND_PROCS["APUSTART"].status == 1 then
 				command_end("laminar/B738/spring_toggle_switch/APU_start_pos_dn")
 				ZC_BACKGROUND_PROCS["APUSTART"].status = 0
 			end
@@ -3669,7 +3670,7 @@ ZC_BACKGROUND_PROCS = {
 	-- Switches generators to APU when the blue APU light comes on
 	["APUBUSON"] = {["status"] = 0,
 		["actions"] = function ()
-			if get("laminar/B738/electrical/apu_bus_enable") == 1.0 then
+			if get("laminar/B738/electrical/apu_bus_enable") == 1 then
 				zc_acf_apu_on_bus(0,1)
 				zc_acf_apu_bleed_onoff(1)
 				ZC_BACKGROUND_PROCS["APUBUSON"].status = 0
@@ -4436,7 +4437,7 @@ end
 
 function zc_acf_apu_start()
 	zc_acf_apu_stop()
-	ZC_BACKGROUND_PROCS["APUSTART"].status = 1
+	ZC_BACKGROUND_PROCS["APUSTART"].status = 7
 end
 
 -- stop APU
@@ -4714,7 +4715,7 @@ end
 -- position=0,1,2,5,10,15,25,30,40
 function zc_acf_flap_set(position)
 	if position == 0 then
-		command_once("laminar/B738/push_button/flaps_up")
+		command_once("laminar/B738/push_button/flaps_0")
 	end
 	if position == 1 then
 		command_once("laminar/B738/push_button/flaps_1")
@@ -4772,12 +4773,12 @@ function zc_acf_parking_break_onoff(mode)
 	set("sim/cockpit2/controls/parking_brake_ratio",mode)
 end
 
--- Auto Brake -1=RTO, 0=OFF, 1=1, 2=2, 3=3 4=MAX
+-- Auto Brake 0=RTO, 1=OFF, 2=1, 3=2, 4=3 5=MAX
 function zc_acf_abrk_mode(mode)
-	while get("laminar/B738/autobrake/autobrake_pos") > mode+1 do
+	while get("laminar/B738/autobrake/autobrake_pos") > mode do
 		command_once("laminar/B738/knob/autobrake_dn")
 	end
-	while get("laminar/B738/autobrake/autobrake_pos") < mode+1 do
+	while get("laminar/B738/autobrake/autobrake_pos") < mode do
 		command_once("laminar/B738/knob/autobrake_up")
 	end
 end
