@@ -1,9 +1,9 @@
-﻿--[[
+--[[
 	*** KPCREW 2.1.0.1.1
 	Kosta Prokopiu, July 2021
 --]]
 
-ZC_VERSION = "2.1.0.1"
+ZC_VERSION = "2.1.0.1.1"
 
 -- stop if pre-reqs are not met
 if not SUPPORTS_FLOATING_WINDOWS then
@@ -1189,33 +1189,10 @@ function zc_depbrf_build ()
 	imgui.NextColumn()
 						
 	if imgui.Button("Aircraft Data") then
-		ZC_BRIEF_DEP["v1"] = zc_acf_getV1()
-		ZC_BRIEF_DEP["vr"] = zc_acf_getVr()
-		ZC_BRIEF_DEP["v2"] = zc_acf_getV2()
-		ZC_BRIEF_GEN["glarespd"] = ZC_BRIEF_DEP["v2"]
-		ZC_BRIEF_GEN["glarecrs1"] = round(zc_acf_getrwycrs())
-		ZC_BRIEF_GEN["glarecrs2"] = round(zc_acf_getrwycrs())
-		ZC_BRIEF_GEN["glarehdg"] = round(zc_acf_getrwycrs())
-		ZC_BRIEF_GEN["glarealt"] = ZC_BRIEF_GEN["cruisealt"]
-		-- Trim Setting
-		ZC_BRIEF_DEP["elevtrim"] = zc_acf_getTrim()
-		-- Select Flaps Setting from List
-		for i = 1, #GENERAL_Acf:getDEP_Flaps() do
-			if GENERAL_Acf:getDEP_Flaps()[i] == tostring(math.floor(zc_acf_getToFlap())) then
-				ZC_BRIEF_DEP["toflaps"] = i
-			end
-		end
+		zc_menus_set_DEP_data()
 	end
 	imgui.NextColumn()
 		
---	imgui.Separator()		
-
--- remarks
---	imgui.SetColumnWidth(1, win_width - 50)
---	ZC_BRIEF_DEP["remarks"] = zc_gui_in_multiline("Remarks",ZC_BRIEF_DEP["remarks"],120,250)
-
-	imgui.Separator()		
-
 end
 
 -- approach briefing window
@@ -1247,7 +1224,7 @@ function zc_appbrf_build()
 	
 	-- departure runway designation
 	if (PLANE_ICAO == "B738") then
-		zc_gui_out_text("Runway",string.sub(zc_acf_getilsrwy(),1,3),0xFF21FF00)
+		zc_gui_out_text("Runway",string.sub(zc_acf_get_ils_rwy(),1,3),0xFF21FF00)
 	else
 		dest_rwy = zc_gui_in_text("Runway Designation",dest_rwy,5,150)
 	end
@@ -1341,24 +1318,8 @@ function zc_appbrf_build()
 	ZC_BRIEF_APP["gaalt"] = zc_gui_in_int("Go Around ALT",ZC_BRIEF_APP["gaalt"],1,170)
 
 	if imgui.Button("Aircraft Data") then
-		ZC_BRIEF_APP["vref"] = zc_acf_getVref()
-		ZC_BRIEF_APP["vapp"] = zc_acf_getVapp()
-		ZC_BRIEF_GEN["dest"] = zc_get_dest_icao()
-		-- Select Flaps Setting from List
-		for i = 1, #GENERAL_Acf:getAPP_Flaps() do
-			if GENERAL_Acf:getAPP_Flaps()[i] == tostring(math.floor(zc_acf_getLdgFlap())) then
-				ZC_BRIEF_APP["ldgflaps"] = i
-			end
-		end
+		zc_menus_set_APP_data()
 	end
-
--- remarks disabled as the field does not break lines
---	imgui.Separator()		
-
---	imgui.SetColumnWidth(1, win_width - 50)
---	ZC_BRIEF_APP["remarks"] = zc_gui_in_multiline("Remarks",ZC_BRIEF_APP["remarks"],120,250)
-
-	imgui.Separator()		
 
 end
 
