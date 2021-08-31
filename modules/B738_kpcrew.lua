@@ -43,7 +43,7 @@ zc_flaps_set_commands = {
 zc_flaps_display = {[0]="UP",[1]="1",[2]="2",[5]="5",[10]="10",[15]="15",[25]="25",[30]="30",[40]="40"}
 
 -- autobrake handling
-zc_autobrake_setting_display = {[0]=0,[1]=1,[2]=2,[3]=3,[4]=4,[5]=5}
+zc_autobrake_setting_aircraft = {[0]=0,[1]=1,[2]=2,[3]=3,[4]=4,[5]=5}
 zc_autobrake_position_dataref = "laminar/B738/autobrake/autobrake_pos"
 zc_autobrake_set_commands = {
 [0] = "laminar/B738/knob/autobrake_rto",
@@ -55,7 +55,7 @@ zc_autobrake_set_commands = {
 zc_autobrake_display = {[0]="RTO",[1]="OFF",[2]="1",[3]="2",[4]="3",[5]="MAX"}
 
 -- transponder handling
-zc_transponder_setting_display = {[0]=0,[1]=1,[2]=2,[3]=3,[4]=4,[5]=5}
+zc_transponder_setting_aircraft = {[0]=0,[1]=1,[2]=2,[3]=3,[4]=4,[5]=5}
 zc_transponder_position_dataref = "laminar/B738/knob/transponder_pos"
 zc_transponder_set_commands = {
 [0] = "laminar/B738/knob/transponder_test",
@@ -351,7 +351,9 @@ ZC_POWER_UP_PROC = {
 	-- GROUND POWER ON
 	[4] = {["lefttext"] = "FO: GROUND POWER -- ON - OPTIONAL",["timerincr"] = 1,
 		["actions"] = function ()
-			zc_acf_elec_gpu_start()
+			if get_zc_config("apuinit") == false then
+				zc_acf_elec_gpu_start()
+			end
 		end
 	},
 	[5] = {["lefttext"] = "FO: GROUND POWER -- ON - OPTIONAL",["timerincr"] = 1,
@@ -560,31 +562,22 @@ ZC_TURN_AROUND_STATE = {
 	[4] = {["lefttext"] = "GROUND POWER -- ON - OPTIONAL",["timerincr"] = 1,
 		["actions"] = function ()
 			zc_acf_elec_battery_onoff(1)
-			if get_zc_config("apuinit") == false and get("laminar/B738/gpu_available") == 0 then
-				command_once("laminar/B738/tab/home")
+			if get_zc_config("apuinit") == false then
+				zc_acf_elec_gpu_start()
 			end
 		end
 	},
 	[5] = {["lefttext"] = "GROUND POWER -- ON - OPTIONAL",["timerincr"] = 1,
 		["actions"] = function ()
-			if get_zc_config("apuinit") == false and get("laminar/B738/gpu_available") == 0 then
-				command_once("laminar/B738/tab/menu6")
-			end
 		end
 	},
 	[6] = {["lefttext"] = "GROUND POWER -- ON - OPTIONAL",["timerincr"] = 1,
 		["actions"] = function ()
-			if get_zc_config("apuinit") == false and get("laminar/B738/gpu_available") == 0 then
-				command_once("laminar/B738/tab/menu1")
-			end
 			zc_acf_external_doors(1,1)
 		end
 	},
 	[7] = {["lefttext"] = "GROUND POWER -- ON - OPTIONAL", ["timerincr"] = 1,
 		["actions"] = function ()
-			if get_zc_config("apuinit") == false then
-				command_once("sim/electrical/GPU_on")
-			end
 			if get_zc_config("apuinit") == false and get("laminar/B738/button_switch/cover_position",3) == 1 then
 				command_once("laminar/B738/button_switch_cover03")
 			end
@@ -612,7 +605,6 @@ ZC_TURN_AROUND_STATE = {
 	}, 
 	[10] = {["lefttext"] = "APU START - OPTIONAL", ["timerincr"] = 1,
 		["actions"] = function ()
-			gLeftText = "------- OBSOLETE REMOVE"
 		end
 	},
 	[11] = {["lefttext"] = "OVERHEAD COLUMN 2", ["timerincr"] = 1,
@@ -812,17 +804,15 @@ ZC_PRE_FLIGHT_PROC = {
 	}, 
 	[2] = {["lefttext"] = "CAPT: STALL WARNING TEST", ["timerincr"] = 1,
 		["actions"] = function ()
-			gLeftText = "---- OBSOLETE"
+			zc_acf_stall_warnings()
 		end
 	}, 
 	[3] = {["lefttext"] = "CAPT: STALL WARNING TEST", ["timerincr"] = 1,
 		["actions"] = function ()
-			gLeftText = "---- OBSOLETE"
 		end
 	}, 
 	[4] = {["lefttext"] = "CAPT: STALL WARNING TEST", ["timerincr"] = 1,
 		["actions"] = function ()
-			gLeftText = "---- OBSOLETE"
 		end
 	}, 
 	[5] = {["lefttext"] = "CAPT: SET PARKING BRAKE", ["timerincr"] = 1,
@@ -925,9 +915,9 @@ ZC_PRE_FLIGHT_PROC = {
 	}, 
 	[23] = {["lefttext"] = "CAPT: MCP - IAS TO V2", ["timerincr"] = 1,
 		["actions"] = function ()
-			zc_acf_mcp_spd_set(get("laminar/B738/FMS/v2_set"))
-			zc_acf_mcp_hdg_set(get("laminar/B738/fms/ref_runway_crs"))
-			zc_acf_mcp_crs_set(0,get("laminar/B738/fms/ref_runway_crs"))
+			zc_acf_mcp_spd_set(zc_acf_get_V2())
+			zc_acf_mcp_hdg_set(zc_acf_get_TO_rwy_crs())
+			zc_acf_mcp_crs_set(0,zc_acf_get_TO_rwy_crs())
 		end
 	}, 
 	[24] = {["lefttext"] = "CAPT: MCP - ALTITUDE TO 4900 UNTIL CLEARANCE", ["timerincr"] = 3,
@@ -1083,14 +1073,12 @@ ZC_PRE_FLIGHT_PROC = {
 	}, 
 	[51] = {["lefttext"] = "FO: TRANSPONDER CONTROL PANEL SET", ["timerincr"] = 1,
 		["actions"] = function ()
-			zc_acf_xpdr_mode(1)
-			command_begin("laminar/B738/knob/transponder_mode_dn")
+			zc_acf_xpdr_mode(0)
 			command_once("laminar/B738/push_button/gpws_test")
 		end
 	}, 
 	[52] = {["lefttext"] = "CAPT: NAVIGATION AND DISPLAYS PANEL SET", ["timerincr"] = 1,
 		["actions"] = function ()
-			command_end("laminar/B738/knob/transponder_mode_dn")
 			if get("laminar/B738/toggle_switch/vhf_nav_source") > 0 then
 				command_once("laminar/B738/toggle_switch/vhf_nav_source_lft")
 			end
@@ -4427,9 +4415,16 @@ function zc_get_flap_position()
 	return zc_flaps_position_aircraft[lv_flaplever]
 end
 
+-- get abrk setting
 function zc_get_abrk_mode()
-	lv_flaplever = get(zc_flaps_position_dataref)
-	return zc_flaps_position_aircraft[lv_flaplever]
+	lv_abrk = get(zc_autobrake_position_dataref)
+	return zc_autobrake_setting_aircraft[lv_abrk]
+end
+
+-- get transponder setting
+function zc_get_transponder_mode()
+	lv_xpdr = get(zc_transponder_position_dataref)
+	return zc_transponder_setting_aircraft[lv_xpdr]
 end
 
 -- ========================= aircraft specific action functions
@@ -5109,12 +5104,7 @@ end
 
 -- Transponder mode 0=TEST, 1=STBY, 2=ALT OFF, 3=ALT ON, 4=TA, 5=TARA
 function zc_acf_xpdr_mode(mode)
-	while get("laminar/B738/knob/transponder_pos") > 1 do
-		command_once("laminar/B738/knob/transponder_mode_dn")
-	end
-	while get("laminar/B738/knob/transponder_pos") < mode do
-		command_once("laminar/B738/knob/transponder_mode_up")	
-	end
+	command_once(zc_transponder_set_commands[mode])
 end
 
 -- set transponder code
