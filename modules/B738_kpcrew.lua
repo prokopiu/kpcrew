@@ -5,10 +5,10 @@
 
 -- =========== Aircraft specific details
 B738 = Class_ACF:Create()
-B738:setDEP_Flaps({"0","1","5","10","15","","",""})
-B738:setDEP_Flaps_val({0,1,5,10,15,0,0,0})
-B738:setAPP_Flaps({"15","30","40"})
-B738:setAPP_Flaps_val({15,30,40})
+B738:setDEP_Flaps({"UP","1","5","10","15","","",""})
+B738:setDEP_Flaps_val({0,1,5,10,15,15,15,15})
+B738:setAPP_Flaps({"15","30","40","",""})
+B738:setAPP_Flaps_val({15,30,40,40,40})
 B738:setAutoBrake({"OFF","1","2","3","MAX"})
 B738:setAutoBrake_val({1,2,3,4,5})
 B738:setTakeoffThrust({"Rated","De-Rated","Assumed Temperature","Rated and Assumed","De-Rated and Assumed"})
@@ -40,29 +40,31 @@ zc_flaps_set_commands = {
 [25] = "laminar/B738/push_button/flaps_25",
 [30] = "laminar/B738/push_button/flaps_30",
 [40] = "laminar/B738/push_button/flaps_40"}
+zc_flaps_display = {[0]="UP",[1]="1",[2]="2",[5]="5",[10]="10",[15]="15",[25]="25",[30]="30",[40]="40"}
 
 -- autobrake handling
-zc_autobrake_setting_display = {0,1,2,3,4,5}
-zc_autobrake_setting_aircraft = {0,1,2,3,4,5}
+zc_autobrake_setting_display = {[0]=0,[1]=1,[2]=2,[3]=3,[4]=4,[5]=5}
 zc_autobrake_position_dataref = "laminar/B738/autobrake/autobrake_pos"
 zc_autobrake_set_commands = {
-"laminar/B738/knob/autobrake_rto",
-"laminar/B738/knob/autobrake_off",
-"laminar/B738/knob/autobrake_1",
-"laminar/B738/knob/autobrake_2",
-"laminar/B738/knob/autobrake_3",
-"laminar/B738/knob/autobrake_max"}
+[0] = "laminar/B738/knob/autobrake_rto",
+[1] = "laminar/B738/knob/autobrake_off",
+[2] = "laminar/B738/knob/autobrake_1",
+[3] = "laminar/B738/knob/autobrake_2",
+[4] = "laminar/B738/knob/autobrake_3",
+[5] = "laminar/B738/knob/autobrake_max"}
+zc_autobrake_display = {[0]="RTO",[1]="OFF",[2]="1",[3]="2",[4]="3",[5]="MAX"}
 
 -- transponder handling
-zc_transponder_setting_display = {0,1,2,3,4,5}
-zc_transponder_setting_aircraft = {0,1,2,3,4,5}
+zc_transponder_setting_display = {[0]=0,[1]=1,[2]=2,[3]=3,[4]=4,[5]=5}
 zc_transponder_position_dataref = "laminar/B738/knob/transponder_pos"
-zc_transponder_set_commands = {"laminar/B738/knob/transponder_test",
-"laminar/B738/knob/transponder_stby",
-"laminar/B738/knob/transponder_altoff",
-"laminar/B738/knob/transponder_alton",
-"laminar/B738/knob/transponder_ta",
-"laminar/B738/knob/transponder_tara"}
+zc_transponder_set_commands = {
+[0] = "laminar/B738/knob/transponder_test",
+[1] = "laminar/B738/knob/transponder_stby",
+[2] = "laminar/B738/knob/transponder_altoff",
+[3] = "laminar/B738/knob/transponder_alton",
+[4] = "laminar/B738/knob/transponder_ta",
+[5] = "laminar/B738/knob/transponder_tara"}
+zc_transponder_display = {[0]="TEST",[1]="STBY",[2]="ALT OFF",[3]="ALT ON",[4]="TA",[5]="TA RA"}
 
 -- overwrite approach types if necessary - "---" for unsupported
 APP_apptype_list = {"ILS CAT 1","VISUAL","ILS CAT 2 OR 3","VOR","NDB","RNAV","TOUCH AND GO","CIRCLING"}
@@ -2323,14 +2325,14 @@ ZC_BEFORE_TAKEOFF_CHECKLIST = {
 	[1] = {["lefttext"] = "FLAPS -- FLAPS __ GREEN LIGHT", ["timerincr"] = 2,
 		["actions"] = function ()
 			speakNoText(0,"FLAPS")
-			gLeftText = string.format("FLAPS %i GREEN LIGHT",zc_get_flap_position())
+			gLeftText = string.format("FLAPS %i GREEN LIGHT",zc_flaps_display[zc_get_flap_position()])
 		end
 	},
 	[2] = {["lefttext"] = "FLAPS -- FLAPS __ GREEN LIGHT", ["timerincr"] = 999,
 		["actions"] = function ()
 			gLeftText = string.format("FLAPS %i GREEN LIGHT",zc_acf_getToFlap())
 			if get_zc_config("easy") then
-				speakNoText(0,string.format("FLAPS %i GREEN LIGHT",zc_get_flap_position()))
+				speakNoText(0,string.format("FLAPS %i GREEN LIGHT",zc_flaps_display[zc_get_flap_position()]))
 				command_once("bgood/xchecklist/check_item")
 			end
 		end
@@ -2821,14 +2823,14 @@ ZC_DESCENT_CHECKLIST = {
 	[5] = {["lefttext"] = "AUTOBRAKE -- ___", ["timerincr"] = 1,
 		["actions"] = function ()
 			speakNoText(0,"AUTOBRAKE")
-			gLeftText = string.format("AUTOBRAKE %i",get("laminar/B738/autobrake/autobrake_pos"))
+			gLeftText = string.format("AUTOBRAKE %s",zc_autobrake_display[zc_get_abrk_mode()])
 		end
 	},
 	[6] = {["lefttext"] = "AUTOBRAKE -- ___", ["timerincr"] = 3,
 		["actions"] = function ()
-			gLeftText = string.format("AUTOBRAKE %i",get("laminar/B738/autobrake/autobrake_pos"))
+			gLeftText = string.format("AUTOBRAKE %s",zc_autobrake_display[zc_get_abrk_mode()])
 			if get_zc_config("easy") then
-				speakNoText(0,string.format("AUTOBRAKE %i",get("laminar/B738/autobrake/autobrake_pos")))
+				speakNoText(0,string.format("AUTOBRAKE %s",zc_autobrake_display[zc_get_abrk_mode()]))
 				command_once("bgood/xchecklist/check_item")
 			end
 		end
@@ -3128,9 +3130,9 @@ ZC_LANDING_CHECKLIST = {
 	},
 	[10] = {["lefttext"] = "FLAPS -- FLAPS 15/30/40 GREEN LIGHT", ["timerincr"] = 3,
 		["actions"] = function ()
-			gLeftText = string.format("FLAPS %i GREEN LIGHT",get("laminar/B738/FMS/approach_flaps"))
+			gLeftText = string.format("FLAPS %i GREEN LIGHT",zc_flaps_display[zc_get_flap_position()])
 			if get_zc_config("easy") then
-				speakNoText(0,string.format("FLAPS %i GREEN LIGHT",zc_get_flap_position()))
+				speakNoText(0,string.format("FLAPS %i GREEN LIGHT",zc_flaps_display[zc_get_flap_position()]))
 				command_once("bgood/xchecklist/check_item")
 			end
 		end
@@ -3912,7 +3914,7 @@ ZC_BACKGROUND_PROCS = {
 		["actions"] = function ()
 			if get("sim/flightmodel/position/y_agl") > 50 then
 				if get("laminar/B738/autopilot/airspeed") > 140.0 and 
-					zc_get_flap_position() == 15 then
+					zc_get_flap_position() >= 15 then
 					speakNoText(0,"SPEED CHECK   FLAPS 10")
 					zc_acf_flap_set(10)
 				end
@@ -3921,12 +3923,12 @@ ZC_BACKGROUND_PROCS = {
 					speakNoText(0,"SPEED CHECK   FLAPS 5")
 					zc_acf_flap_set(5)
 				end
-				if get("laminar/B738/autopilot/airspeed") > 170.0 and 
+				if get("laminar/B738/autopilot/airspeed") > 180.0 and 
 					zc_get_flap_position() == 5 then
 					speakNoText(0,"SPEED CHECK   FLAPS 1")
 					zc_acf_flap_set(1)
 				end
-				if get("laminar/B738/autopilot/airspeed") > 180.0 and 
+				if get("laminar/B738/autopilot/airspeed") > 190.0 and 
 					zc_get_flap_position() == 1 then
 					speakNoText(0,"SPEED CHECK   FLAPS UP")
 					zc_acf_flap_set(0)
@@ -4423,34 +4425,11 @@ end
 function zc_get_flap_position()
 	lv_flaplever = get(zc_flaps_position_dataref)
 	return zc_flaps_position_aircraft[lv_flaplever]
-	-- if get("laminar/B738/flt_ctrls/flap_lever") == 1 then
-		-- return 40
-	-- end
-	-- if get("laminar/B738/flt_ctrls/flap_lever") == 0.875 then
-		-- return 30
-	-- end
-	-- if get("laminar/B738/flt_ctrls/flap_lever") == 0.75 then
-		-- return 25
-	-- end
-	-- if get("laminar/B738/flt_ctrls/flap_lever") == 0.625 then
-		-- return 15
-	-- end
-	-- if get("laminar/B738/flt_ctrls/flap_lever") == 0.5 then
-		-- return 10
-	-- end
-	-- if get("laminar/B738/flt_ctrls/flap_lever") == 0.375 then
-		-- return 5
-	-- end
-	-- if get("laminar/B738/flt_ctrls/flap_lever") == 0.25 then
-		-- return 2
-	-- end
-	-- if get("laminar/B738/flt_ctrls/flap_lever") == 0.125 then
-		-- return 1
-	-- end
-	-- if get("laminar/B738/flt_ctrls/flap_lever") == 0 then
-		-- return 0
-	-- end
-	-- return 0
+end
+
+function zc_get_abrk_mode()
+	lv_flaplever = get(zc_flaps_position_dataref)
+	return zc_flaps_position_aircraft[lv_flaplever]
 end
 
 -- ========================= aircraft specific action functions
@@ -4744,33 +4723,6 @@ end
 -- position=0,1,2,5,10,15,25,30,40
 function zc_acf_flap_set(position)
 	command_once(zc_flaps_set_commands[position])
-	-- if position == 0 then
-		-- command_once("laminar/B738/push_button/flaps_0")
-	-- end
-	-- if position == 1 then
-		-- command_once("laminar/B738/push_button/flaps_1")
-	-- end
-	-- if position == 2 then
-		-- command_once("laminar/B738/push_button/flaps_2")
-	-- end
-	-- if position == 5 then
-		-- command_once("laminar/B738/push_button/flaps_5")
-	-- end
-	-- if position == 10 then
-		-- command_once("laminar/B738/push_button/flaps_10")
-	-- end
-	-- if position == 15 then
-		-- command_once("laminar/B738/push_button/flaps_15")
-	-- end
-	-- if position == 25 then
-		-- command_once("laminar/B738/push_button/flaps_25")
-	-- end
-	-- if position == 30 then
-		-- command_once("laminar/B738/push_button/flaps_30")
-	-- end
-	-- if position == 40 then
-		-- command_once("laminar/B738/push_button/flaps_40")
-	-- end
 end
 
 -- increase/decrease flaps
@@ -4805,12 +4757,7 @@ end
 
 -- Auto Brake 0=RTO, 1=OFF, 2=1, 3=2, 4=3 5=MAX
 function zc_acf_abrk_mode(mode)
-	while get("laminar/B738/autobrake/autobrake_pos") > mode do
-		command_once("laminar/B738/knob/autobrake_dn")
-	end
-	while get("laminar/B738/autobrake/autobrake_pos") < mode do
-		command_once("laminar/B738/knob/autobrake_up")
-	end
+	command_once(zc_autobrake_set_commands[mode])
 end
 
 -- Set elevator trim to value
