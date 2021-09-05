@@ -3,7 +3,7 @@
 	Kosta Prokopiu, July 2021
 --]]
 
-ZC_VERSION = "2.1.0.2"
+ZC_VERSION = "2.1.0.1"
 
 -- stop if pre-reqs are not met
 if not SUPPORTS_FLOATING_WINDOWS then
@@ -439,7 +439,7 @@ end
 
 -- FJS Boeing 737-200
 if (PLANE_ICAO == "B732") then
-require "B732_kpcrew"
+-- require "B732_kpcrew"
 end
 
 -- Rotate MD80
@@ -535,7 +535,7 @@ lNameActiveProc = "KPCREW ".. ZC_VERSION .. " STARTING"
 -- available aircraft types
 Your_Hangar_List = {
 	 ["B738"] = B738
-	,["B732"] = B732
+--	,["B732"] = B732
 --	,["B733"] = B733
 --	,["A330"] = A330
 --	,["MD88"] = MD88
@@ -1002,8 +1002,6 @@ function zc_flightinfo_build()
 	-- ATIS frequency
 	ZC_BRIEF_GEN["freqatis"] = zc_gui_in_freq("ATIS",ZC_BRIEF_GEN["freqatis"])
 	
-	--ZC_BRIEF_GEN["freqatis"])
-
 	-- Clearance frequency
 	ZC_BRIEF_GEN["freqclr"] = zc_gui_in_freq("Clearance Delivery",ZC_BRIEF_GEN["freqclr"])
 	
@@ -1191,33 +1189,9 @@ function zc_depbrf_build ()
 	imgui.NextColumn()
 						
 	if imgui.Button("Aircraft Data") then
-		ZC_BRIEF_DEP["v1"] = zc_acf_get_V1()
-		ZC_BRIEF_DEP["vr"] = zc_acf_get_Vr()
-		ZC_BRIEF_DEP["v2"] = zc_acf_get_V2()
-		ZC_BRIEF_GEN["glarespd"] = ZC_BRIEF_DEP["v2"]
-		ZC_BRIEF_GEN["glarecrs1"] = round(zc_acf_get_TO_rwy_crs())
-		ZC_BRIEF_GEN["glarecrs2"] = round(zc_acf_get_TO_rwy_crs())
-		ZC_BRIEF_GEN["glarehdg"] = round(zc_acf_get_TO_rwy_crs())
-		ZC_BRIEF_GEN["glarealt"] = ZC_BRIEF_GEN["cruisealt"]
-		-- Trim Setting
-		ZC_BRIEF_DEP["elevtrim"] = zc_acf_get_TO_Trim()
-		-- Select Flaps Setting from List
-		for i = 1, #GENERAL_Acf:getDEP_Flaps() do
-			if GENERAL_Acf:getDEP_Flaps()[i] == tostring(math.floor(zc_acf_get_TO_Flaps())) then
-				ZC_BRIEF_DEP["toflaps"] = i
-			end
-		end
+		zc_menus_set_DEP_data()
 	end
 	imgui.NextColumn()
-		
---	imgui.Separator()		
-
--- remarks
---	imgui.SetColumnWidth(1, win_width - 50)
---	ZC_BRIEF_DEP["remarks"] = zc_gui_in_multiline("Remarks",ZC_BRIEF_DEP["remarks"],120,250)
-
-	imgui.Separator()		
-
 end
 
 -- approach briefing window
@@ -1343,24 +1317,8 @@ function zc_appbrf_build()
 	ZC_BRIEF_APP["gaalt"] = zc_gui_in_int("Go Around ALT",ZC_BRIEF_APP["gaalt"],1,170)
 
 	if imgui.Button("Aircraft Data") then
-		ZC_BRIEF_APP["vref"] = zc_acf_get_Vref()
-		ZC_BRIEF_APP["vapp"] = zc_acf_get_Vapp()
-		ZC_BRIEF_GEN["dest"] = zc_get_dest_icao()
-		-- Select Flaps Setting from List
-		for i = 1, #GENERAL_Acf:getAPP_Flaps() do
-			if GENERAL_Acf:getAPP_Flaps()[i] == tostring(math.floor(zc_acf_get_LDG_Flaps())) then
-				ZC_BRIEF_APP["ldgflaps"] = i
-			end
-		end
+		zc_menus_set_APP_data()
 	end
-
--- remarks disabled as the field does not break lines
---	imgui.Separator()		
-
---	imgui.SetColumnWidth(1, win_width - 50)
---	ZC_BRIEF_APP["remarks"] = zc_gui_in_multiline("Remarks",ZC_BRIEF_APP["remarks"],120,250)
-
-	imgui.Separator()		
 
 end
 
@@ -1539,11 +1497,11 @@ function WriteConfig()
 	fileConfig:write('	["initialalt"] = ' .. ZC_BRIEF_GEN["initialalt"] .. ',\n')
 	fileConfig:write('	["squawk"] = ' .. ZC_BRIEF_GEN["squawk"] .. ',\n')
 	fileConfig:write('	["qnh"] = ' .. ZC_BRIEF_GEN["qnh"] .. ',\n')
-	fileConfig:write('	["glarecrs1"] = "' .. ZC_BRIEF_GEN["glarecrs1"] .. '",\n')
-	fileConfig:write('	["glarespd"] = "' ..  ZC_BRIEF_GEN["glarespd"] .. '",\n')
-	fileConfig:write('	["glarehdg"] = "' ..  ZC_BRIEF_GEN["glarehdg"] .. '",\n')
-	fileConfig:write('	["glarealt"] = "' ..  ZC_BRIEF_GEN["glarealt"] .. '",\n')
-	fileConfig:write('	["glarecrs2"] = "' .. ZC_BRIEF_GEN["glarecrs2"] .. '",\n')
+	fileConfig:write('	["glarecrs1"] = ' .. ZC_BRIEF_GEN["glarecrs1"] .. ',\n')
+	fileConfig:write('	["glarespd"] = ' ..  ZC_BRIEF_GEN["glarespd"] .. ',\n')
+	fileConfig:write('	["glarehdg"] = ' ..  ZC_BRIEF_GEN["glarehdg"] .. ',\n')
+	fileConfig:write('	["glarealt"] = ' ..  ZC_BRIEF_GEN["glarealt"] .. ',\n')
+	fileConfig:write('	["glarecrs2"] = ' .. ZC_BRIEF_GEN["glarecrs2"] .. ',\n')
 	fileConfig:write('	["freqatis"] = ' .. ZC_BRIEF_GEN["freqatis"] .. ',\n')
 	fileConfig:write('	["freqclr"] = ' .. ZC_BRIEF_GEN["freqclr"] .. ',\n')
 	fileConfig:write('	["freqdep"] = ' .. ZC_BRIEF_GEN["freqdep"] .. ',\n')
