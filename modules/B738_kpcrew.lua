@@ -31,7 +31,7 @@ DEP_bleeds_list = B738:getBleeds()
 zc_flaps_position_aircraft = {[0] = 0,[0.125] = 1,[0.25] = 2,[0.375] = 5,[0.5] = 10,[0.625] = 15,[0.75] = 25,[0.875] = 30,[1] = 40}
 zc_flaps_position_dataref = "laminar/B738/flt_ctrls/flap_lever"
 zc_flaps_set_commands = {
-[0] = "laminar/B738/push_button/flaps_up",
+[0] = "laminar/B738/push_button/flaps_0",
 [1] = "laminar/B738/push_button/flaps_1",
 [2] = "laminar/B738/push_button/flaps_2",
 [5] = "laminar/B738/push_button/flaps_5",
@@ -1405,6 +1405,7 @@ ZC_PREFLIGHT_CHECKLIST = {
 	},
 	[17] = {["lefttext"] = "PREFLIGHT CHECKLIST COMPLETED", ["timerincr"] = 2,
 		["actions"] = function ()
+			zc_acf_xpdr_code_set(get_zc_brief_gen("squawk"))
 			speakNoText(0,"PREFLIGHT CHECKLIST COMPLETED")
 		end
 	},
@@ -1701,6 +1702,7 @@ ZC_BEFORE_START_CHECKLIST = {
 				zc_acf_seatbelt_onoff(1)
 				-- Beacon
 				zc_acf_light_beacon_onoff(1)
+				zc_acf_mcp_spd_set(zc_acf_get_V2())
 			end
 		end
 	},
@@ -1748,12 +1750,12 @@ ZC_BEFORE_START_CHECKLIST = {
 	[7] = {["lefttext"] = "MCP -- V2____, HEADING____, ALTITUDE___", ["timerincr"] = 1,
 		["actions"] = function ()
 			speakNoText(0,"M C P")
-			gLeftText = string.format("MCP -- V2 %i, HEADING %i, ALTITUDE %i",get("laminar/B738/autopilot/mcp_speed_dial_kts2_fo"),get("laminar/B738/autopilot/mcp_hdg_dial"),get("laminar/B738/autopilot/mcp_alt_dial"))
+			gLeftText = string.format("MCP -- V2 %i, HEADING %i, ALTITUDE %i",zc_acf_get_V2(),get("laminar/B738/autopilot/mcp_hdg_dial"),get("laminar/B738/autopilot/mcp_alt_dial"))
 		end
 	},
 	[8] = {["lefttext"] = "MCP -- V2____, HEADING____, ALTITUDE___", ["timerincr"] = 999,
 		["actions"] = function ()
-			gLeftText = string.format("MCP -- V2 %i, HEADING %i, ALTITUDE %i",get("laminar/B738/autopilot/mcp_speed_dial_kts2_fo"),get("laminar/B738/autopilot/mcp_hdg_dial"),get("laminar/B738/autopilot/mcp_alt_dial"))
+			gLeftText = string.format("MCP -- V2 %i, HEADING %i, ALTITUDE %i",zc_acf_get_V2(),get("laminar/B738/autopilot/mcp_hdg_dial"),get("laminar/B738/autopilot/mcp_alt_dial"))
 			if get_zc_config("easy") then
 				speakNoText(0,string.format("V 2 %i heading %i altitude %i",get("laminar/B738/autopilot/mcp_speed_dial_kts2_fo"),get("laminar/B738/autopilot/mcp_hdg_dial"),get("laminar/B738/autopilot/mcp_alt_dial")))
 				command_once("bgood/xchecklist/check_item")
@@ -2098,7 +2100,7 @@ ZC_BEFORE_TAXI_PROC = {
 	[7] = {["lefttext"] = "FO: TAKEOFF FLAPS -- SET", ["timerincr"] = 1,
 		["actions"] = function ()
 			speakNoText(0,"SET TAKEOFF FLAPS")
-			zc_acf_flap_set(zc_acf_getToFlap())
+			zc_acf_flap_set(zc_acf_get_TO_Flaps())
 		end
 	},
 	[8] = {["lefttext"] = "PROCEDURE FINISHED", ["timerincr"] = -1,
@@ -2318,7 +2320,7 @@ ZC_BEFORE_TAKEOFF_CHECKLIST = {
 	},
 	[2] = {["lefttext"] = "FLAPS -- FLAPS __ GREEN LIGHT", ["timerincr"] = 999,
 		["actions"] = function ()
-			gLeftText = string.format("FLAPS %i GREEN LIGHT",zc_acf_getToFlap())
+			gLeftText = string.format("FLAPS %i GREEN LIGHT",zc_acf_get_TO_Flaps())
 			if get_zc_config("easy") then
 				speakNoText(0,string.format("FLAPS %i GREEN LIGHT",zc_flaps_display[zc_get_flap_position()]))
 				command_once("bgood/xchecklist/check_item")
@@ -2571,10 +2573,10 @@ ZC_AFTER_TAKEOFF_CHECKLIST = {
 				-- Packs
 				zc_acf_air_packs_set(0,1)
 				-- Landing gear
-				zc_acf_gears(0)
+				zc_acf_gears(2)
 				-- Flaps
 				zc_acf_flap_set(0)
-				zc_acf_abrk_mode(0)
+				zc_acf_abrk_mode(1)
 			end
 			ZC_BACKGROUND_PROCS["80KTS"].status = 0
 			ZC_BACKGROUND_PROCS["GEARUP"].status = 0
@@ -2826,14 +2828,14 @@ ZC_DESCENT_CHECKLIST = {
 	[7] = {["lefttext"] = "LANDING DATA -- VREF__, MINIMUMS__FEET", ["timerincr"] = 1,
 		["actions"] = function ()
 			speakNoText(0,"LANDING DATA")
-			gLeftText = string.format("V REFERENCE %i  MINIMUMS %i FEET",get("laminar/B738/FMS/vref"),get("laminar/B738/pfd/dh_pilot"))
+			gLeftText = string.format("V REFERENCE %i  MINIMUMS %i FEET",zc_acf_get_Vref(),get("laminar/B738/pfd/dh_pilot"))
 		end
 	},
 	[8] = {["lefttext"] = "LANDING DATA -- VREF__, MINIMUMS__FEET", ["timerincr"] = 999,
 		["actions"] = function ()
-			gLeftText = string.format("V REFERENCE %i  MINIMUMS %i FEET",get("laminar/B738/FMS/vref"),get("laminar/B738/pfd/dh_pilot"))
+			gLeftText = string.format("V REFERENCE %i  MINIMUMS %i FEET",zc_acf_get_Vref(),get("laminar/B738/pfd/dh_pilot"))
 			if get_zc_config("easy") then
-				speakNoText(0,string.format("V REFERENCE %i  MINIMUMS %i FEET",get("laminar/B738/FMS/vref"),get("laminar/B738/pfd/dh_pilot")))
+				speakNoText(0,string.format("V REFERENCE %i  MINIMUMS %i FEET",zc_acf_get_Vref(),get("laminar/B738/pfd/dh_pilot")))
 				command_once("bgood/xchecklist/check_item")
 			end
 		end
@@ -3833,7 +3835,7 @@ ZC_BACKGROUND_PROCS = {
 	-- during takeoff run call V speeds
 	["V1"] = {["status"] = 0,
 		["actions"] = function ()
-			if get("laminar/B738/autopilot/airspeed") > zc_acf_getV1() then
+			if get("laminar/B738/autopilot/airspeed") > zc_acf_get_V1() then
 				speakNoText(0,"V one")
 				ZC_BACKGROUND_PROCS["V1"].status = 0
 			end
@@ -3841,7 +3843,7 @@ ZC_BACKGROUND_PROCS = {
 	},
 	["ROTATE"] = {["status"] = 0,
 		["actions"] = function ()
-			if get("laminar/B738/autopilot/airspeed") > zc_acf_getVr() then
+			if get("laminar/B738/autopilot/airspeed") > zc_acf_get_Vr() then
 				speakNoText(0,"rotate")
 				ZC_BACKGROUND_PROCS["ROTATE"].status = 0
 			end
@@ -3852,7 +3854,7 @@ ZC_BACKGROUND_PROCS = {
 		["actions"] = function ()
 			if get("sim/cockpit2/gauges/indicators/altitude_ft_pilot") > get("laminar/B738/FMS/fmc_trans_alt") then
 				speakNoText(0,"Transition altitude")
-				zc_acf_efis_baro_std_set(1)
+				zc_acf_efis_baro_std_set(0,1)
 				ZC_BACKGROUND_PROCS["TRANSALT"].status = 0
 			end
 		end
@@ -3860,9 +3862,9 @@ ZC_BACKGROUND_PROCS = {
 	-- On reaching transition level during descend switch away from STD
 	["TRANSLVL"] = {["status"] = 0,
 		["actions"] = function ()
-			if get("sim/cockpit2/gauges/indicators/altitude_ft_pilot") > get("laminar/B738/FMS/fmc_trans_lvl") then
+			if get("sim/cockpit2/gauges/indicators/altitude_ft_pilot") < get("laminar/B738/FMS/fmc_trans_lvl") then
 				speakNoText(0,"Transition level")
-				zc_acf_efis_baro_std_set(0)
+				zc_acf_efis_baro_std_set(0,0)
 				ZC_BACKGROUND_PROCS["TRANSLVL"].status = 0
 			end
 		end
@@ -3920,6 +3922,7 @@ ZC_BACKGROUND_PROCS = {
 					zc_get_flap_position() == 1 then
 					speakNoText(0,"SPEED CHECK   FLAPS UP")
 					zc_acf_flap_set(0)
+					zc_acf_gears(2)
 					ZC_BACKGROUND_PROCS["FLAPSUPSCHED"].status = 0
 				end
 			end
@@ -4346,7 +4349,7 @@ end
 
 -- get Vapp from programmed FMS
 function zc_acf_get_Vapp()
-	return zc_acf_getVref() + get("laminar/B738/FMS/approach_wind_corr")
+	return zc_acf_get_Vref() + get("laminar/B738/FMS/approach_wind_corr")
 end
 
 -- get parking stand
@@ -5275,12 +5278,12 @@ end
 -- Autothrottle  mode 0=OFF 1=ARMED 2=toggle
 function zc_acf_mcp_at_onoff(mode)
 	if mode == 0 then
-		if get("laminar/B738/autopilot/autothrottle_status") == 1 then
+		if get("laminar/B738/autopilot/autothrottle_status1") == 1 then
 			command_once("laminar/B738/autopilot/autothrottle_arm_toggle")
 		end
 	end
 	if mode == 1 then
-		if get("laminar/B738/autopilot/autothrottle_status") == 0 then
+		if get("laminar/B738/autopilot/autothrottle_status1") == 0 then
 			command_once("laminar/B738/autopilot/autothrottle_arm_toggle")
 		end
 	end
@@ -5528,12 +5531,18 @@ function zc_acf_efis_baro_std_set(side,mode)
 		if mode == 1 and get("laminar/B738/EFIS/baro_set_std_pilot") == 0 then
 			command_once("laminar/B738/EFIS_control/capt/push_button/std_press")
 		end
+		if mode == 2 then
+			command_once("laminar/B738/EFIS_control/capt/push_button/std_press")
+		end
 	end
 	if side == 0 or side == 2 then
 		if mode == 0 and get("laminar/B738/EFIS/baro_set_std_copilot") == 1 then
 			command_once("laminar/B738/EFIS_control/fo/push_button/std_press")
 		end
 		if mode == 1 and get("laminar/B738/EFIS/baro_set_std_copilot") == 0 then
+			command_once("laminar/B738/EFIS_control/fo/push_button/std_press")
+		end
+		if mode == 2 then
 			command_once("laminar/B738/EFIS_control/fo/push_button/std_press")
 		end
 	end
@@ -5544,7 +5553,9 @@ function zc_acf_efis_baro_std_set(side,mode)
 		if mode == 1 and get("laminar/B738/gauges/standby_alt_std_mode") == 0 then
 			command_once("laminar/B738/toggle_switch/standby_alt_baro_std")
 		end
-	
+		if mode == 2 then
+			command_once("laminar/B738/toggle_switch/standby_alt_baro_std")
+		end
 	end
 end
 
@@ -6210,8 +6221,8 @@ function zc_menus_set_DEP_data()
 	set_zc_brief_gen("glarespd",zc_acf_get_V2())
 	set_zc_brief_gen("glarecrs1",round(zc_acf_get_TO_rwy_crs()))
 	set_zc_brief_gen("glarecrs2",round(zc_acf_get_TO_rwy_crs()))
-	set_zc_brief_gen("glarehdg"],round(zc_acf_get_TO_rwy_crs()))
-	set_zc_brief_gen("glarealt"],get_zc_brief_gen("initialalt"))
+	set_zc_brief_gen("glarehdg",round(zc_acf_get_TO_rwy_crs()))
+	set_zc_brief_gen("glarealt",get_zc_brief_gen("initialalt"))
 end
 
 function zc_menus_set_APP_data()
@@ -6272,7 +6283,7 @@ create_command("kp/xsp/pitch_trim_down",			"Pitch Trim Down",		"zc_acf_elev_trim
 
 -- A/P and NAV related commands
 create_command("kp/xsp/toggle_both_fd",				"Toggle Both FD",		"zc_acf_mcp_fds_set(0,2)", "", "")
-create_command("kp/xsp/toggle_all_std",				"Toggle Both STD",		"zc_acf_efis_baro_std_set(0)", "", "")
+create_command("kp/xsp/toggle_all_std",				"Toggle Both STD",		"zc_acf_efis_baro_std_set(0,2)", "", "")
 create_command("kp/xsp/toggle_baro_modes",			"Toggle Baro inch/mb",	"zc_acf_efis_baro_in_mb(0,2)", "", "")
 create_command("kp/xsp/all_baro_down",				"All baro down",		"zc_acf_efis_baro_up_down(0,0)", "", "")
 create_command("kp/xsp/all_baro_up",				"All baro up",			"zc_acf_efis_baro_up_down(0,1)", "", "")
