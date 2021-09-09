@@ -1405,6 +1405,7 @@ ZC_PREFLIGHT_CHECKLIST = {
 	},
 	[17] = {["lefttext"] = "PREFLIGHT CHECKLIST COMPLETED", ["timerincr"] = 2,
 		["actions"] = function ()
+			zc_acf_xpdr_code_set(get_zc_brief_gen("squawk"))
 			speakNoText(0,"PREFLIGHT CHECKLIST COMPLETED")
 		end
 	},
@@ -1701,6 +1702,7 @@ ZC_BEFORE_START_CHECKLIST = {
 				zc_acf_seatbelt_onoff(1)
 				-- Beacon
 				zc_acf_light_beacon_onoff(1)
+				zc_acf_mcp_spd_set(zc_acf_get_V2())
 			end
 		end
 	},
@@ -1748,12 +1750,12 @@ ZC_BEFORE_START_CHECKLIST = {
 	[7] = {["lefttext"] = "MCP -- V2____, HEADING____, ALTITUDE___", ["timerincr"] = 1,
 		["actions"] = function ()
 			speakNoText(0,"M C P")
-			gLeftText = string.format("MCP -- V2 %i, HEADING %i, ALTITUDE %i",get("laminar/B738/autopilot/mcp_speed_dial_kts2_fo"),get("laminar/B738/autopilot/mcp_hdg_dial"),get("laminar/B738/autopilot/mcp_alt_dial"))
+			gLeftText = string.format("MCP -- V2 %i, HEADING %i, ALTITUDE %i",zc_acf_get_V2(),get("laminar/B738/autopilot/mcp_hdg_dial"),get("laminar/B738/autopilot/mcp_alt_dial"))
 		end
 	},
 	[8] = {["lefttext"] = "MCP -- V2____, HEADING____, ALTITUDE___", ["timerincr"] = 999,
 		["actions"] = function ()
-			gLeftText = string.format("MCP -- V2 %i, HEADING %i, ALTITUDE %i",get("laminar/B738/autopilot/mcp_speed_dial_kts2_fo"),get("laminar/B738/autopilot/mcp_hdg_dial"),get("laminar/B738/autopilot/mcp_alt_dial"))
+			gLeftText = string.format("MCP -- V2 %i, HEADING %i, ALTITUDE %i",zc_acf_get_V2(),get("laminar/B738/autopilot/mcp_hdg_dial"),get("laminar/B738/autopilot/mcp_alt_dial"))
 			if get_zc_config("easy") then
 				speakNoText(0,string.format("V 2 %i heading %i altitude %i",get("laminar/B738/autopilot/mcp_speed_dial_kts2_fo"),get("laminar/B738/autopilot/mcp_hdg_dial"),get("laminar/B738/autopilot/mcp_alt_dial")))
 				command_once("bgood/xchecklist/check_item")
@@ -3920,6 +3922,7 @@ ZC_BACKGROUND_PROCS = {
 					zc_get_flap_position() == 1 then
 					speakNoText(0,"SPEED CHECK   FLAPS UP")
 					zc_acf_flap_set(0)
+					zc_acf_gears(2)
 					ZC_BACKGROUND_PROCS["FLAPSUPSCHED"].status = 0
 				end
 			end
