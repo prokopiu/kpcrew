@@ -308,7 +308,7 @@ ZC_COLD_AND_DARK = {
 			command_once("laminar/B738/tab/menu2")
 			zc_acf_eng_starter_mode(0,1)
 			zc_acf_xpdr_mode(1)
-			zc_acf_abrk_mode(0)
+			zc_acf_abrk_mode(1)
 			zc_acf_mcp_fds_set(0,0)
 		end
 	},
@@ -759,6 +759,7 @@ ZC_TURN_AROUND_STATE = {
 			zc_acf_eng_starter_mode(0,1)
 			zc_acf_xpdr_mode(1)
 			zc_acf_abrk_mode(1)
+			zc_acf_irs_mode(0,0)
 		end
 	},
 	[30] = {["lefttext"] = "IRSs ON", ["timerincr"] = 1,
@@ -844,7 +845,11 @@ ZC_PRE_FLIGHT_PROC = {
 	}, 
 	[10] = {["lefttext"] = "CAPT: EFIS CONTROL PANEL SETUP", ["timerincr"] = 1, 
 		["actions"] = function ()
-			zc_acf_efis_dhda_mode(0,0)
+			if (ZC_CONFIG["dhda"] == true) then
+				zc_acf_efis_dhda_mode(0,0)
+			else
+				zc_acf_efis_dhda_mode(0,1)
+			end
 		end
 	}, 
 	[11] = {["lefttext"] = "CAPT: EFIS CONTROL PANEL SETUP", ["timerincr"] = 1,
@@ -939,6 +944,7 @@ ZC_PRE_FLIGHT_PROC = {
 	[27] = {["lefttext"] = "CAPT: RADIO TUNING PANEL SET", ["timerincr"] = 1,
 		["actions"] = function ()
 			gLeftText = "SET RADIOS"
+			zc_acf_xpdr_code_set(get_zc_brief_gen("squawk"))
 		end
 	}, 
 	[28] = {["lefttext"] = "CAPT: RADIO TUNING PANEL SET", ["timerincr"] = 997,
@@ -1062,7 +1068,6 @@ ZC_PRE_FLIGHT_PROC = {
 	}, 
 	[50] = {["lefttext"] = "FO: WEATHER RADAR AND TERRAIN SET", ["timerincr"] = 1,
 		["actions"] = function ()
-			zc_acf_nd_wxr_onoff(0,1)
 			if get("laminar/B738/EFIS_control/fo/terr_on") == 0 then
 				command_once("laminar/B738/EFIS_control/fo/push_button/terr_press")
 			end
@@ -1159,7 +1164,7 @@ ZC_PRE_FLIGHT_PROC = {
 	}, 
 	[64] = {["lefttext"] = "FO: AUTOBRAKE RTO", ["timerincr"] = 1,
 		["actions"] = function ()
-			zc_acf_abrk_mode(0)
+			zc_acf_abrk_mode(1)
 		end
 	}, 
 	[65] = {["lefttext"] = "FO: FUEL FLOW RESET", ["timerincr"] = 1,
@@ -1294,6 +1299,7 @@ ZC_PREFLIGHT_CHECKLIST = {
 				zc_acf_parking_break_onoff(1)
 				-- fuel cutoff switches
 				zc_acf_fuel_lever_set(0,0)
+				zc_acf_xpdr_code_set(get_zc_brief_gen("squawk"))
 			end
 		end
 	},
@@ -1405,7 +1411,6 @@ ZC_PREFLIGHT_CHECKLIST = {
 	},
 	[17] = {["lefttext"] = "PREFLIGHT CHECKLIST COMPLETED", ["timerincr"] = 2,
 		["actions"] = function ()
-			zc_acf_xpdr_code_set(get_zc_brief_gen("squawk"))
 			speakNoText(0,"PREFLIGHT CHECKLIST COMPLETED")
 		end
 	},
@@ -1618,11 +1623,13 @@ ZC_BEFORE_START_PROC = {
 	[8] = {["lefttext"] = "FO: HYDRAULIC PANEL SET", ["timerincr"] = 1,
 		["actions"] = function ()
 			zc_acf_hyd_pumps_onoff(1,0)
+			zc_acf_hyd_pumps_onoff(3,1)
 		end
 	}, 
 	[9] = {["lefttext"] = "FO: HYDRAULIC PANEL SET", ["timerincr"] = 1,
 		["actions"] = function ()
 			zc_acf_hyd_pumps_onoff(2,0)
+			zc_acf_hyd_pumps_onoff(4,1)
 		end
 	},
 	[10] = {["lefttext"] = "FO: BEACON ON", ["timerincr"] = 1,
@@ -2409,7 +2416,8 @@ ZC_BEFORE_TAKEOFF_PROC = {
 		["actions"] = function ()
 			zc_acf_xpdr_code_set(get_zc_brief_gen("squawk"))
 			zc_acf_xpdr_mode(5)
-			zc_acf_nd_wxr_onoff(1,0)
+			zc_acf_nd_wxr_onoff(1,1)
+			zc_acf_nd_terr_onoff(2,1)
 			zc_acf_seatbelt_onoff(1)
 			zc_acf_et_timer_startstop(1)
 			zc_acf_lower_eicas_mode(1)
@@ -2432,6 +2440,7 @@ ZC_CLIMB_PROC = {
 				zc_acf_mcp_hdgsel_onoff(1)
 			end
 			zc_acf_nd_wxr_onoff(1,1)
+			zc_acf_nd_terr_onoff(2,1)
 			if get_zc_brief_dep("lnavvnav") then
 				zc_acf_mcp_lnav_onoff(1)
 			end
@@ -2532,13 +2541,13 @@ ZC_CLIMB_PROC = {
 			zc_acf_flap_set(0)
 		end
 	},
-	[14] = {["lefttext"] = "GEAR OFF", ["timerincr"] = 1,
+	[14] = {["lefttext"] = "GEAR OFF", ["timerincr"] = 10,
 		["actions"] = function ()
-			zc_acf_gears(2)
 		end
 	}, 
 	[15] = {["lefttext"] = "AFTER TAKEOFF ITEMS", ["timerincr"] = 1,
 		["actions"] = function ()
+			zc_acf_gears(2)
 			zc_acf_eng_starter_mode(0,1)
 			zc_acf_light_rwyto_onoff(0)
 			zc_acf_light_landing_mode(2,0)
@@ -2773,7 +2782,7 @@ ZC_DESCENT_CHECKLIST = {
 			if get_zc_config("easy") then
 				setchecklist(7)
 				-- autobrake
-				zc_acf_abrk_mode(get_zc_brief_app("autobrake")-1)
+				zc_acf_abrk_mode(get_zc_brief_app("autobrake"))
 				-- Switch MFD to ENG
 				zc_acf_lower_eicas_mode(1)
 				zc_acf_mcp_crs_set(0,zc_get_dest_runway_crs())
@@ -2933,7 +2942,7 @@ ZC_LANDING_PROC = {
 			ZC_BACKGROUND_PROCS["TRANSLVL"].status = 0
 			ZC_BACKGROUND_PROCS["TENTHOUSANDDN"].status = 0
 			setchecklist(92)
-			if (ZC_CONFIG["dhda"]) then
+			if (ZC_CONFIG["dhda"] == true) then
 				zc_acf_efis_dhda_mode(0,0)
 				zc_acf_efis_minimum(0, get_zc_brief_app("dh"))
 			else
@@ -3195,7 +3204,7 @@ ZC_FINAL_PROC = {
 ZC_AFTER_LANDING_PROC = {
 	[0] = {["lefttext"] = "CLEANUP", ["timerincr"] = 3,
 		["actions"] = function ()
-			speakNoText(0,"it is OK TO CLEAN UP")
+			gLeftText = "IT IS OK TO CLEAN UP"
 		end
 	},
 	[1] = {["lefttext"] = "CAPT: SPEED BRAKES -- UP", ["timerincr"] = 1,
@@ -3216,7 +3225,7 @@ ZC_AFTER_LANDING_PROC = {
 	},
 	[4] = {["lefttext"] = "FO: APU -- ON", ["timerincr"] = 5,
 		["actions"] = function ()
-		zc_acf_elec_apu_start()
+			zc_acf_elec_apu_start()
 		end
 	}, 
 	[5] = {["lefttext"] = "FO: APU -- SET", ["timerincr"] = 1,
@@ -5100,10 +5109,20 @@ end
 -- Set IRS switches 0=OFF, 1=ALIGN, 2=NAV, 3=ATT
 function zc_acf_irs_mode(unit,mode)
 	if (unit == 0 or unit == 1) then
-		set("laminar/B738/toggle_switch/irs_left",mode)
+		while get("laminar/B738/toggle_switch/irs_left") > mode do
+			command_once("laminar/B738/toggle_switch/irs_L_left")
+		end
+		while get("laminar/B738/toggle_switch/irs_left") < mode do
+			command_once("laminar/B738/toggle_switch/irs_L_right")
+		end
 	end
 	if (unit == 0 or unit == 2) then
-		set("laminar/B738/toggle_switch/irs_right",mode)
+		while get("laminar/B738/toggle_switch/irs_right") > mode do
+			command_once("laminar/B738/toggle_switch/irs_R_left")
+		end
+		while get("laminar/B738/toggle_switch/irs_right") < mode do
+			command_once("laminar/B738/toggle_switch/irs_R_right")
+		end
 	end
 end
 
@@ -5361,7 +5380,8 @@ function zc_acf_external_doors(door,openclose)
 			if get("737u/doors/L1") ~= 1 then
 				command_once("laminar/B738/door/fwd_L_toggle")
 			end
-		else
+		end
+		if (openclose == 0) then
 			if get("737u/doors/L1") == 1 then
 				command_once("laminar/B738/door/fwd_L_toggle")
 			end
@@ -5372,7 +5392,8 @@ function zc_acf_external_doors(door,openclose)
 			if get("737u/doors/Fwd_Cargo") == 0 then
 				command_once("laminar/B738/door/fwd_cargo_toggle")
 			end			
-		else
+		end
+		if (openclose == 0) then
 			if get("737u/doors/Fwd_Cargo") == 1 then
 				command_once("laminar/B738/door/fwd_cargo_toggle")
 			end			
@@ -5383,7 +5404,8 @@ function zc_acf_external_doors(door,openclose)
 			if get("737u/doors/aft_Cargo") == 0 then
 				command_once("laminar/B738/door/aft_cargo_toggle")
 			end
-		else
+		end
+		if (openclose == 0) then
 			if get("737u/doors/aft_Cargo") == 1 then
 				command_once("laminar/B738/door/aft_cargo_toggle")
 			end
@@ -5648,18 +5670,16 @@ end
 -- EFIS: Set mode of minimums side 0=ALL,1=CAPT,2=FO mode 0=RADIO,1=BARO
 function zc_acf_efis_dhda_mode(side,mode)
 	if side == 0 or side == 1 then
-		if mode == 0 then
-			command_once("laminar/B738/EFIS_control/cpt/minimums_dn")
-		else
-			command_once("laminar/B738/EFIS_control/cpt/minimums_up")
-		end
+		command_once("laminar/B738/EFIS_control/capt/push_button/rst_press")
+		set("laminar/B738/EFIS_control/cpt/minimums",mode)
+		set("laminar/B738/EFIS_control/cpt/minimums_pfd",mode)
+		set("laminar/B738/EFIS_control/cpt/minimums_show",1)
 	end
 	if side == 0 or side == 2 then
-		if mode == 0 then
-			command_once("laminar/B738/EFIS_control/fo/minimums_dn")
-		else
-			command_once("laminar/B738/EFIS_control/fo/minimums_up")
-		end
+		command_once("laminar/B738/EFIS_control/fo/push_button/rst_press")
+		set("laminar/B738/EFIS_control/fo/minimums",mode)
+		set("laminar/B738/EFIS_control/fo/minimums_pfd",mode)
+		set("laminar/B738/EFIS_control/fo/minimums_show",1)
 	end
 end
 
@@ -5780,21 +5800,21 @@ end
 
 -- ND WX nd: 0=both, 1=LEFT, 2=RIGHT, mode: 0=OFF, 1=ON, 2=toggle
 function zc_acf_nd_wxr_onoff(nd,mode)
-	if ap == 0 or ap == 1 then
+	if nd == 0 or nd == 1 then
 		if mode == 2 then
-			command_once("laminar/B738/EFIS_control/capt/push_button/wxr")
+			command_once("laminar/B738/EFIS_control/capt/push_button/wxr_press")
 		else
 			if get("laminar/B738/EFIS/EFIS_wx_on") ~= mode then
-				command_once("laminar/B738/EFIS_control/capt/push_button/wxr")
+				command_once("laminar/B738/EFIS_control/capt/push_button/wxr_press")
 			end
 		end
 	end
-	if ap == 0 or ap == 2 then
+	if nd == 0 or nd == 2 then
 		if mode == 2 then
-			command_once("laminar/B738/EFIS_control/fo/push_button/wxr")
+			command_once("laminar/B738/EFIS_control/fo/push_button/wxr_press")
 		else
 			if get("laminar/B738/EFIS/fo/EFIS_wx_on") ~= mode then
-				command_once("laminar/B738/EFIS_control/fo/push_button/wxr")
+				command_once("laminar/B738/EFIS_control/fo/push_button/wxr_press")
 			end
 		end
 	end
@@ -5913,7 +5933,7 @@ function zc_acf_nd_terr_onoff(nd,mode)
 		if mode == 2 then
 			command_once("laminar/B738/EFIS_control/capt/push_button/terr_press")
 		else
-			if get("laminar/B738/EFIS_control/capt/terr_on") ~= mode then
+			if get("laminar/B738/EFIS/EFIS_capt_wxr_terr") ~= mode % 1 then
 				command_once("laminar/B738/EFIS_control/capt/push_button/terr_press")
 			end
 		end
@@ -5922,7 +5942,7 @@ function zc_acf_nd_terr_onoff(nd,mode)
 		if mode == 2 then
 			command_once("laminar/B738/EFIS_control/fo/push_button/terr_press")
 		else
-			if get("laminar/B738/EFIS_control/fo/terr_on") ~= mode then
+			if get("laminar/B738/EFIS/EFIS_fo_wxr_terr") ~= mode % 1 then
 				command_once("laminar/B738/EFIS_control/fo/push_button/terr_press")
 			end
 		end
