@@ -1,9 +1,9 @@
 --[[
-	*** KPCREW 2.1.0.2
+	*** KPCREW 2.1.0
 	Kosta Prokopiu, July 2021
 --]]
 
-ZC_VERSION = "2.1.0.1"
+ZC_VERSION = "2.1.0.1.2
 
 -- stop if pre-reqs are not met
 if not SUPPORTS_FLOATING_WINDOWS then
