@@ -308,7 +308,7 @@ ZC_COLD_AND_DARK = {
 			command_once("laminar/B738/tab/menu2")
 			zc_acf_eng_starter_mode(0,1)
 			zc_acf_xpdr_mode(1)
-			zc_acf_abrk_mode(0)
+			zc_acf_abrk_mode(1)
 			zc_acf_mcp_fds_set(0,0)
 		end
 	},
@@ -758,7 +758,8 @@ ZC_TURN_AROUND_STATE = {
 			command_once("laminar/B738/tab/menu2")
 			zc_acf_eng_starter_mode(0,1)
 			zc_acf_xpdr_mode(1)
-			zc_acf_abrk_mode(0)
+			zc_acf_abrk_mode(1)
+			zc_acf_irs_mode(0,0)
 		end
 	},
 	[30] = {["lefttext"] = "IRSs ON", ["timerincr"] = 1,
@@ -804,7 +805,7 @@ ZC_PRE_FLIGHT_PROC = {
 	}, 
 	[2] = {["lefttext"] = "CAPT: STALL WARNING TEST", ["timerincr"] = 1,
 		["actions"] = function ()
-			zc_acf_stall_warnings()
+--			zc_acf_stall_warnings()
 		end
 	}, 
 	[3] = {["lefttext"] = "CAPT: STALL WARNING TEST", ["timerincr"] = 1,
@@ -844,7 +845,11 @@ ZC_PRE_FLIGHT_PROC = {
 	}, 
 	[10] = {["lefttext"] = "CAPT: EFIS CONTROL PANEL SETUP", ["timerincr"] = 1, 
 		["actions"] = function ()
-			zc_acf_efis_dhda_mode(0,0)
+			if (ZC_CONFIG["dhda"] == true) then
+				zc_acf_efis_dhda_mode(0,0)
+			else
+				zc_acf_efis_dhda_mode(0,1)
+			end
 		end
 	}, 
 	[11] = {["lefttext"] = "CAPT: EFIS CONTROL PANEL SETUP", ["timerincr"] = 1,
@@ -939,6 +944,7 @@ ZC_PRE_FLIGHT_PROC = {
 	[27] = {["lefttext"] = "CAPT: RADIO TUNING PANEL SET", ["timerincr"] = 1,
 		["actions"] = function ()
 			gLeftText = "SET RADIOS"
+			zc_acf_xpdr_code_set(get_zc_brief_gen("squawk"))
 		end
 	}, 
 	[28] = {["lefttext"] = "CAPT: RADIO TUNING PANEL SET", ["timerincr"] = 997,
@@ -1062,7 +1068,6 @@ ZC_PRE_FLIGHT_PROC = {
 	}, 
 	[50] = {["lefttext"] = "FO: WEATHER RADAR AND TERRAIN SET", ["timerincr"] = 1,
 		["actions"] = function ()
-			zc_acf_nd_wxr_onoff(0,1)
 			if get("laminar/B738/EFIS_control/fo/terr_on") == 0 then
 				command_once("laminar/B738/EFIS_control/fo/push_button/terr_press")
 			end
@@ -1159,7 +1164,7 @@ ZC_PRE_FLIGHT_PROC = {
 	}, 
 	[64] = {["lefttext"] = "FO: AUTOBRAKE RTO", ["timerincr"] = 1,
 		["actions"] = function ()
-			zc_acf_abrk_mode(0)
+			zc_acf_abrk_mode(1)
 		end
 	}, 
 	[65] = {["lefttext"] = "FO: FUEL FLOW RESET", ["timerincr"] = 1,
@@ -1294,6 +1299,7 @@ ZC_PREFLIGHT_CHECKLIST = {
 				zc_acf_parking_break_onoff(1)
 				-- fuel cutoff switches
 				zc_acf_fuel_lever_set(0,0)
+				zc_acf_xpdr_code_set(get_zc_brief_gen("squawk"))
 			end
 		end
 	},
@@ -1405,7 +1411,6 @@ ZC_PREFLIGHT_CHECKLIST = {
 	},
 	[17] = {["lefttext"] = "PREFLIGHT CHECKLIST COMPLETED", ["timerincr"] = 2,
 		["actions"] = function ()
-			zc_acf_xpdr_code_set(get_zc_brief_gen("squawk"))
 			speakNoText(0,"PREFLIGHT CHECKLIST COMPLETED")
 		end
 	},
@@ -1618,11 +1623,13 @@ ZC_BEFORE_START_PROC = {
 	[8] = {["lefttext"] = "FO: HYDRAULIC PANEL SET", ["timerincr"] = 1,
 		["actions"] = function ()
 			zc_acf_hyd_pumps_onoff(1,0)
+			zc_acf_hyd_pumps_onoff(3,1)
 		end
 	}, 
 	[9] = {["lefttext"] = "FO: HYDRAULIC PANEL SET", ["timerincr"] = 1,
 		["actions"] = function ()
 			zc_acf_hyd_pumps_onoff(2,0)
+			zc_acf_hyd_pumps_onoff(4,1)
 		end
 	},
 	[10] = {["lefttext"] = "FO: BEACON ON", ["timerincr"] = 1,
@@ -1739,7 +1746,7 @@ ZC_BEFORE_START_CHECKLIST = {
 			speakNoText(0,"WINDOWS")
 		end
 	},
-	[6] = {["lefttext"] = "WINDOWS -- LOCKED", ["timerincr"] = 997,
+	[6] = {["lefttext"] = "WINDOWS -- LOCKED", ["timerincr"] = 2,
 		["actions"] = function ()
 			if get_zc_config("easy") then
 				speakNoText(0,"LOCKED")
@@ -2409,7 +2416,8 @@ ZC_BEFORE_TAKEOFF_PROC = {
 		["actions"] = function ()
 			zc_acf_xpdr_code_set(get_zc_brief_gen("squawk"))
 			zc_acf_xpdr_mode(5)
-			zc_acf_nd_wxr_onoff(1,0)
+			zc_acf_nd_wxr_onoff(1,1)
+			zc_acf_nd_terr_onoff(2,1)
 			zc_acf_seatbelt_onoff(1)
 			zc_acf_et_timer_startstop(1)
 			zc_acf_lower_eicas_mode(1)
@@ -2432,6 +2440,7 @@ ZC_CLIMB_PROC = {
 				zc_acf_mcp_hdgsel_onoff(1)
 			end
 			zc_acf_nd_wxr_onoff(1,1)
+			zc_acf_nd_terr_onoff(2,1)
 			if get_zc_brief_dep("lnavvnav") then
 				zc_acf_mcp_lnav_onoff(1)
 			end
@@ -2532,13 +2541,13 @@ ZC_CLIMB_PROC = {
 			zc_acf_flap_set(0)
 		end
 	},
-	[14] = {["lefttext"] = "GEAR OFF", ["timerincr"] = 1,
+	[14] = {["lefttext"] = "GEAR OFF", ["timerincr"] = 10,
 		["actions"] = function ()
-			zc_acf_gears(2)
 		end
 	}, 
 	[15] = {["lefttext"] = "AFTER TAKEOFF ITEMS", ["timerincr"] = 1,
 		["actions"] = function ()
+			zc_acf_gears(2)
 			zc_acf_eng_starter_mode(0,1)
 			zc_acf_light_rwyto_onoff(0)
 			zc_acf_light_landing_mode(2,0)
@@ -2773,9 +2782,10 @@ ZC_DESCENT_CHECKLIST = {
 			if get_zc_config("easy") then
 				setchecklist(7)
 				-- autobrake
-				zc_acf_abrk_mode(get_zc_brief_app("autobrake")-1)
+				zc_acf_abrk_mode(get_zc_brief_app("autobrake"))
 				-- Switch MFD to ENG
 				zc_acf_lower_eicas_mode(1)
+				zc_acf_mcp_crs_set(0,zc_get_dest_runway_crs())
 			end
 			ZC_BACKGROUND_PROCS["TRANSALT"].status = 0
 			ZC_BACKGROUND_PROCS["TENTHOUSANDUP"].status = 0
@@ -2890,10 +2900,10 @@ ZC_APPROACH_CHECKLIST = {
 			speakNoText(0,"ALTIMETERS")
 		end
 	},
-	[2] = {["lefttext"] = "ALTIMETERS -- QNH___", ["timerincr"] = 997,
+	[2] = {["lefttext"] = "ALTIMETERS -- QNH___", ["timerincr"] = 999,
 		["actions"] = function ()
-			speakNoText(0,string.format("QNH %i",get("laminar/B738/EFIS/baro_sel_in_hg_pilot"),"*","33.86389"))
-			gLeftText = string.format("QNH %i",get("laminar/B738/EFIS/baro_sel_in_hg_pilot"),"*","33.86389")
+			speakNoText(0,string.format("QNH %i",get("laminar/B738/EFIS/baro_sel_in_hg_pilot")*33.86389))
+			gLeftText = string.format("QNH %i",get("laminar/B738/EFIS/baro_sel_in_hg_pilot")*33.86389)
 			command_once("bgood/xchecklist/check_item")
 		end
 	},
@@ -2932,7 +2942,7 @@ ZC_LANDING_PROC = {
 			ZC_BACKGROUND_PROCS["TRANSLVL"].status = 0
 			ZC_BACKGROUND_PROCS["TENTHOUSANDDN"].status = 0
 			setchecklist(92)
-			if (ZC_CONFIG["dhda"]) then
+			if (ZC_CONFIG["dhda"] == true) then
 				zc_acf_efis_dhda_mode(0,0)
 				zc_acf_efis_minimum(0, get_zc_brief_app("dh"))
 			else
@@ -2943,49 +2953,49 @@ ZC_LANDING_PROC = {
 			zc_acf_abrk_mode(get_zc_brief_app("autobrake"))
 		end
 	},
-	[1] = {["lefttext"] = "AT 210 KTS - FLAPS 1", ["timerincr"] = 1,
+	[1] = {["lefttext"] = string.format("AT %i KTS - FLAPS 1",get("laminar/B738/pfd/flaps_1")), ["timerincr"] = 1,
 		["actions"] = function ()
-			gLeftText = "AT 210 KTS - FLAPS 1"
+			gLeftText = string.format("AT %i KTS - FLAPS 1",get("laminar/B738/pfd/flaps_1"))
 		end
 	},
-	[2] = {["lefttext"] = "AT 210 KTS - FLAPS 1", ["timerincr"] = 997,
+	[2] = {["lefttext"] = string.format("AT %i KTS - FLAPS 1",get("laminar/B738/pfd/flaps_1")), ["timerincr"] = 997,
 		["actions"] = function ()
 			speakNoText(0,"FLAPS 1")
 		end
 	},
-	[3] = {["lefttext"] = "AT 210 KTS - FLAPS 1", ["timerincr"] = 5,
+	[3] = {["lefttext"] = string.format("AT %i KTS - FLAPS 1",get("laminar/B738/pfd/flaps_1")), ["timerincr"] = 5,
 		["actions"] = function ()
 			speakNoText(0,"SPEED CHECK FLAPS 1")
 			zc_acf_flap_set(1)
 		end
 	},
-	[4] = {["lefttext"] = "AT 180 KTS - FLAPS 5", ["timerincr"] = 1,
+	[4] = {["lefttext"] = string.format("AT %i KTS - FLAPS 5",get("laminar/B738/pfd/flaps_5")), ["timerincr"] = 1,
 		["actions"] = function ()
-			gLeftText = "AT 180 KTS - FLAPS 5"
+			gLeftText = string.format("AT %i KTS - FLAPS 5",get("laminar/B738/pfd/flaps_5"))
 		end
 	},
-	[5] = {["lefttext"] = "AT 180 KTS - FLAPS 5", ["timerincr"] = 997,
+	[5] = {["lefttext"] = string.format("AT %i KTS - FLAPS 5",get("laminar/B738/pfd/flaps_5")), ["timerincr"] = 997,
 		["actions"] = function ()
 			speakNoText(0,"FLAPS 5")
 		end
 	},
-	[6] = {["lefttext"] = "AT 180 KTS - FLAPS 5", ["timerincr"] = 5,
+	[6] = {["lefttext"] = string.format("AT %i KTS - FLAPS 5",get("laminar/B738/pfd/flaps_5")), ["timerincr"] = 5,
 		["actions"] = function ()
 			speakNoText(0,"SPEED CHECK FLAPS 5")
 			zc_acf_flap_set(5)
 		end
 	},
-	[7] = {["lefttext"] = "AT 160 KTS -- FLAPS 15 GEAR DOWN", ["timerincr"] = 1,
+	[7] = {["lefttext"] = string.format("AT %i KTS - FLAPS 15",get("laminar/B738/pfd/flaps_15")), ["timerincr"] = 1,
 		["actions"] = function ()
-			gLeftText = "AT 160 KTS -- FLAPS 15 GEAR DOWN"
+			gLeftText = string.format("AT %i KTS - FLAPS 15",get("laminar/B738/pfd/flaps_15"))
 		end
 	},
-	[8] = {["lefttext"] = "AT 160 KTS -- FLAPS 15 GEAR DOWN", ["timerincr"] = 997,
+	[8] = {["lefttext"] = string.format("AT %i KTS - FLAPS 15",get("laminar/B738/pfd/flaps_15")), ["timerincr"] = 997,
 		["actions"] = function ()
 			speakNoText(0,"FLAPS 15  GEAR DOWN")
 		end
 	},
-	[9] = {["lefttext"] = "AT 160 KTS -- FLAPS 15 GEAR DOWN", ["timerincr"] = 5,
+	[9] = {["lefttext"] = string.format("AT %i KTS - FLAPS 15",get("laminar/B738/pfd/flaps_15")), ["timerincr"] = 5,
 		["actions"] = function ()
 			speakNoText(0,"SPEED CHECK   FLAPS 15   Gear Down")
 			zc_acf_flap_set(15)
@@ -3002,17 +3012,17 @@ ZC_LANDING_PROC = {
 			zc_acf_speed_break_set(1)
 		end
 	},
-	[12] = {["lefttext"] = "AT 155 KTS - FLAPS 30", ["timerincr"] = 1,
+	[12] = {["lefttext"] = string.format("AT %i KTS - FLAPS 30",get("laminar/B738/pfd/flaps_25")), ["timerincr"] = 1,
 		["actions"] = function ()
-			gLeftText = "FLAPS 30"
+			gLeftText = string.format("AT %i KTS - FLAPS 30",get("laminar/B738/pfd/flaps_25"))
 		end
 	},
-	[13] = {["lefttext"] = "AT 155 KTS - FLAPS 30", ["timerincr"] = 997,
+	[13] = {["lefttext"] = string.format("AT %i KTS - FLAPS 30",get("laminar/B738/pfd/flaps_25")), ["timerincr"] = 997,
 		["actions"] = function ()
 			speakNoText(0,"FLAPS 30")
 		end
 	},
-	[14] = {["lefttext"] = "AT 155 KTS - FLAPS 30", ["timerincr"] = 5,
+	[14] = {["lefttext"] = string.format("AT %i KTS - FLAPS 30",get("laminar/B738/pfd/flaps_25")), ["timerincr"] = 5,
 		["actions"] = function ()
 			speakNoText(0,"SPEED CHECK   FLAPS 30")
 			zc_acf_flap_set(30)
@@ -3194,7 +3204,7 @@ ZC_FINAL_PROC = {
 ZC_AFTER_LANDING_PROC = {
 	[0] = {["lefttext"] = "CLEANUP", ["timerincr"] = 3,
 		["actions"] = function ()
-			speakNoText(0,"it is OK TO CLEAN UP")
+			gLeftText = "IT IS OK TO CLEAN UP"
 		end
 	},
 	[1] = {["lefttext"] = "CAPT: SPEED BRAKES -- UP", ["timerincr"] = 1,
@@ -3215,7 +3225,7 @@ ZC_AFTER_LANDING_PROC = {
 	},
 	[4] = {["lefttext"] = "FO: APU -- ON", ["timerincr"] = 5,
 		["actions"] = function ()
-		zc_acf_elec_apu_start()
+			zc_acf_elec_apu_start()
 		end
 	}, 
 	[5] = {["lefttext"] = "FO: APU -- SET", ["timerincr"] = 1,
@@ -3273,6 +3283,7 @@ ZC_AFTER_LANDING_PROC = {
 	[15] = {["lefttext"] = "FO: TRANSPONDER -- STBY", ["timerincr"] = 1,
 		["actions"] = function ()
 			zc_acf_xpdr_mode(1)
+			zc_acf_mcp_fds_set(0,0)
 		end
 	},
 	[16] = {["lefttext"] = "CLEANUP FINISHED", ["timerincr"] = -1,
@@ -3903,22 +3914,22 @@ ZC_BACKGROUND_PROCS = {
 	["FLAPSUPSCHED"] = {["status"] = 0,
 		["actions"] = function ()
 			if get("sim/flightmodel/position/y_agl") > 50 then
-				if get("laminar/B738/autopilot/airspeed") > 140.0 and 
+				if get("laminar/B738/autopilot/airspeed") > get("laminar/B738/pfd/flaps_15") and 
 					zc_get_flap_position() >= 15 then
 					speakNoText(0,"SPEED CHECK   FLAPS 10")
 					zc_acf_flap_set(10)
 				end
-				if get("laminar/B738/autopilot/airspeed") > 160.0 and 
+				if get("laminar/B738/autopilot/airspeed") > get("laminar/B738/pfd/flaps_10") and 
 					zc_get_flap_position() == 10 then
 					speakNoText(0,"SPEED CHECK   FLAPS 5")
 					zc_acf_flap_set(5)
 				end
-				if get("laminar/B738/autopilot/airspeed") > 180.0 and 
+				if get("laminar/B738/autopilot/airspeed") > get("laminar/B738/pfd/flaps_5") and 
 					zc_get_flap_position() == 5 then
 					speakNoText(0,"SPEED CHECK   FLAPS 1")
 					zc_acf_flap_set(1)
 				end
-				if get("laminar/B738/autopilot/airspeed") > 190.0 and 
+				if get("laminar/B738/autopilot/airspeed") > get("laminar/B738/pfd/flaps_1") and 
 					zc_get_flap_position() == 1 then
 					speakNoText(0,"SPEED CHECK   FLAPS UP")
 					zc_acf_flap_set(0)
@@ -4177,6 +4188,12 @@ function zc_get_procedure()
 	end
 	incnt=incnt+1
 	if lProcIndex == incnt then
+		lActiveProc = ZC_PREPARE_PUSH
+		lNameActiveProc = incnt.." PUSHBACK - OPTIONAL"
+		lChecklistMode = 1
+	end
+	incnt=incnt+1
+	if lProcIndex == incnt then
 		lActiveProc = ZC_BEFORE_START_PROC
 		lNameActiveProc = incnt.." BEFORE START PROCEDURE"
 		lChecklistMode = 0
@@ -4189,27 +4206,21 @@ function zc_get_procedure()
 	end
 	incnt=incnt+1
 	if lProcIndex == incnt then
-		lActiveProc = ZC_PREPARE_PUSH
-		lNameActiveProc = incnt.." PUSHBACK - OPTIONAL"
-		lChecklistMode = 1
-	end
-	incnt=incnt+1
-	if lProcIndex == incnt then
 		lActiveProc = ZC_STARTENGINE_PROC
 		lNameActiveProc = incnt.." START ENGINES"
 		lChecklistMode = 1
 	end
 	incnt=incnt+1
 	if lProcIndex == incnt then
-		lActiveProc = ZC_FLIGHT_CONTROLS_CHECK
-		lNameActiveProc = incnt.." FLIGHT CONTROLS CHECK"
-		lChecklistMode = 1
-	end	
-	incnt=incnt+1
-	if lProcIndex == incnt then
 		lActiveProc = ZC_BEFORE_TAXI_PROC
 		lNameActiveProc = incnt.." BEFORE TAXI PROCEDURE"
 		lChecklistMode = 0
+	end	
+	incnt=incnt+1
+	if lProcIndex == incnt then
+		lActiveProc = ZC_FLIGHT_CONTROLS_CHECK
+		lNameActiveProc = incnt.." FLIGHT CONTROLS CHECK"
+		lChecklistMode = 1
 	end	
 	incnt=incnt+1
 	if lProcIndex == incnt then
@@ -5098,10 +5109,20 @@ end
 -- Set IRS switches 0=OFF, 1=ALIGN, 2=NAV, 3=ATT
 function zc_acf_irs_mode(unit,mode)
 	if (unit == 0 or unit == 1) then
-		set("laminar/B738/toggle_switch/irs_left",mode)
+		while get("laminar/B738/toggle_switch/irs_left") > mode do
+			command_once("laminar/B738/toggle_switch/irs_L_left")
+		end
+		while get("laminar/B738/toggle_switch/irs_left") < mode do
+			command_once("laminar/B738/toggle_switch/irs_L_right")
+		end
 	end
 	if (unit == 0 or unit == 2) then
-		set("laminar/B738/toggle_switch/irs_right",mode)
+		while get("laminar/B738/toggle_switch/irs_right") > mode do
+			command_once("laminar/B738/toggle_switch/irs_R_left")
+		end
+		while get("laminar/B738/toggle_switch/irs_right") < mode do
+			command_once("laminar/B738/toggle_switch/irs_R_right")
+		end
 	end
 end
 
@@ -5343,7 +5364,7 @@ function zc_acf_gears(mode)
 		command_once("sim/flight_controls/landing_gear_down")
 	end
 	if mode == 2 then
-		command_once("sim/flight_controls/landing_gear_off")
+		command_once("laminar/B738/push_button/gear_off")
 	end
 end
 
@@ -5359,7 +5380,8 @@ function zc_acf_external_doors(door,openclose)
 			if get("737u/doors/L1") ~= 1 then
 				command_once("laminar/B738/door/fwd_L_toggle")
 			end
-		else
+		end
+		if (openclose == 0) then
 			if get("737u/doors/L1") == 1 then
 				command_once("laminar/B738/door/fwd_L_toggle")
 			end
@@ -5370,7 +5392,8 @@ function zc_acf_external_doors(door,openclose)
 			if get("737u/doors/Fwd_Cargo") == 0 then
 				command_once("laminar/B738/door/fwd_cargo_toggle")
 			end			
-		else
+		end
+		if (openclose == 0) then
 			if get("737u/doors/Fwd_Cargo") == 1 then
 				command_once("laminar/B738/door/fwd_cargo_toggle")
 			end			
@@ -5381,7 +5404,8 @@ function zc_acf_external_doors(door,openclose)
 			if get("737u/doors/aft_Cargo") == 0 then
 				command_once("laminar/B738/door/aft_cargo_toggle")
 			end
-		else
+		end
+		if (openclose == 0) then
 			if get("737u/doors/aft_Cargo") == 1 then
 				command_once("laminar/B738/door/aft_cargo_toggle")
 			end
@@ -5646,18 +5670,16 @@ end
 -- EFIS: Set mode of minimums side 0=ALL,1=CAPT,2=FO mode 0=RADIO,1=BARO
 function zc_acf_efis_dhda_mode(side,mode)
 	if side == 0 or side == 1 then
-		if mode == 0 then
-			command_once("laminar/B738/EFIS_control/cpt/minimums_dn")
-		else
-			command_once("laminar/B738/EFIS_control/cpt/minimums_up")
-		end
+		command_once("laminar/B738/EFIS_control/capt/push_button/rst_press")
+		set("laminar/B738/EFIS_control/cpt/minimums",mode)
+		set("laminar/B738/EFIS_control/cpt/minimums_pfd",mode)
+		set("laminar/B738/EFIS_control/cpt/minimums_show",1)
 	end
 	if side == 0 or side == 2 then
-		if mode == 0 then
-			command_once("laminar/B738/EFIS_control/fo/minimums_dn")
-		else
-			command_once("laminar/B738/EFIS_control/fo/minimums_up")
-		end
+		command_once("laminar/B738/EFIS_control/fo/push_button/rst_press")
+		set("laminar/B738/EFIS_control/fo/minimums",mode)
+		set("laminar/B738/EFIS_control/fo/minimums_pfd",mode)
+		set("laminar/B738/EFIS_control/fo/minimums_show",1)
 	end
 end
 
@@ -5778,21 +5800,21 @@ end
 
 -- ND WX nd: 0=both, 1=LEFT, 2=RIGHT, mode: 0=OFF, 1=ON, 2=toggle
 function zc_acf_nd_wxr_onoff(nd,mode)
-	if ap == 0 or ap == 1 then
+	if nd == 0 or nd == 1 then
 		if mode == 2 then
-			command_once("laminar/B738/EFIS_control/capt/push_button/wxr")
+			command_once("laminar/B738/EFIS_control/capt/push_button/wxr_press")
 		else
 			if get("laminar/B738/EFIS/EFIS_wx_on") ~= mode then
-				command_once("laminar/B738/EFIS_control/capt/push_button/wxr")
+				command_once("laminar/B738/EFIS_control/capt/push_button/wxr_press")
 			end
 		end
 	end
-	if ap == 0 or ap == 2 then
+	if nd == 0 or nd == 2 then
 		if mode == 2 then
-			command_once("laminar/B738/EFIS_control/fo/push_button/wxr")
+			command_once("laminar/B738/EFIS_control/fo/push_button/wxr_press")
 		else
 			if get("laminar/B738/EFIS/fo/EFIS_wx_on") ~= mode then
-				command_once("laminar/B738/EFIS_control/fo/push_button/wxr")
+				command_once("laminar/B738/EFIS_control/fo/push_button/wxr_press")
 			end
 		end
 	end
@@ -5911,7 +5933,7 @@ function zc_acf_nd_terr_onoff(nd,mode)
 		if mode == 2 then
 			command_once("laminar/B738/EFIS_control/capt/push_button/terr_press")
 		else
-			if get("laminar/B738/EFIS_control/capt/terr_on") ~= mode then
+			if get("laminar/B738/EFIS/EFIS_capt_wxr_terr") ~= mode % 1 then
 				command_once("laminar/B738/EFIS_control/capt/push_button/terr_press")
 			end
 		end
@@ -5920,7 +5942,7 @@ function zc_acf_nd_terr_onoff(nd,mode)
 		if mode == 2 then
 			command_once("laminar/B738/EFIS_control/fo/push_button/terr_press")
 		else
-			if get("laminar/B738/EFIS_control/fo/terr_on") ~= mode then
+			if get("laminar/B738/EFIS/EFIS_fo_wxr_terr") ~= mode % 1 then
 				command_once("laminar/B738/EFIS_control/fo/push_button/terr_press")
 			end
 		end
@@ -6219,9 +6241,9 @@ function zc_menus_set_DEP_data()
 		end
 	end
 	set_zc_brief_gen("glarespd",zc_acf_get_V2())
-	set_zc_brief_gen("glarecrs1",round(zc_acf_get_TO_rwy_crs()))
-	set_zc_brief_gen("glarecrs2",round(zc_acf_get_TO_rwy_crs()))
-	set_zc_brief_gen("glarehdg",round(zc_acf_get_TO_rwy_crs()))
+	set_zc_brief_gen("glarecrs1",zc_acf_get_TO_rwy_crs())
+	set_zc_brief_gen("glarecrs2",zc_acf_get_TO_rwy_crs())
+	set_zc_brief_gen("glarehdg",zc_acf_get_TO_rwy_crs())
 	set_zc_brief_gen("glarealt",get_zc_brief_gen("initialalt"))
 end
 
