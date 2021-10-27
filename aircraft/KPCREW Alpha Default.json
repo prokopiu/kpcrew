@@ -588,7 +588,7 @@
         {
           "Variables": [
             {
-              "Variable": "sim/lights/beacon_lights_on",
+              "Variable": "kp/xsp/lights/beacon_switch_on",
               "Value": "",
               "VariableIsCustom": false,
               "VariableBoundaries": {
@@ -627,7 +627,7 @@
       "PressEvent": [
         {
           "Variables": [],
-          "Variable": "kp/xsp/beacon_lights_switch_off",
+          "Variable": "kp/xsp/lights/beacon_switch_off",
           "Value": "",
           "Name": "",
           "Condition": "",
@@ -671,7 +671,7 @@
         {
           "Variables": [
             {
-              "Variable": "kp/xsp/landing_lights_switch_on",
+              "Variable": "kp/xsp/lights/landing_switch_on",
               "Value": "",
               "VariableIsCustom": true,
               "VariableBoundaries": {
@@ -711,7 +711,7 @@
         {
           "Variables": [
             {
-              "Variable": "kp/xsp/landing_lights_switch_off",
+              "Variable": "kp/xsp/lights/landing_switch_off",
               "Value": "",
               "VariableIsCustom": true,
               "VariableBoundaries": {
@@ -751,7 +751,7 @@
         {
           "Variables": [
             {
-              "Variable": "kp/xsp/taxi_lights_switch_on",
+              "Variable": "kp/xsp/lights/taxi_switch_on",
               "Value": "",
               "VariableIsCustom": true,
               "VariableBoundaries": {
@@ -791,7 +791,7 @@
         {
           "Variables": [
             {
-              "Variable": "kp/xsp/taxi_lights_switch_off",
+              "Variable": "kp/xsp/lights/taxi_switch_off",
               "Value": "",
               "VariableIsCustom": true,
               "VariableBoundaries": {
@@ -831,7 +831,7 @@
         {
           "Variables": [
             {
-              "Variable": "kp/xsp/nav_lights_switch_on",
+              "Variable": "kp/xsp/lights/nav_switch_on",
               "Value": "",
               "VariableIsCustom": true,
               "VariableBoundaries": {
@@ -871,7 +871,7 @@
         {
           "Variables": [
             {
-              "Variable": "kp/xsp/nav_lights_switch_off",
+              "Variable": "kp/xsp/lights/nav_switch_off",
               "Value": "",
               "VariableIsCustom": true,
               "VariableBoundaries": {
@@ -911,7 +911,7 @@
         {
           "Variables": [
             {
-              "Variable": "kp/xsp/strobe_lights_switch_on",
+              "Variable": "kp/xsp/lights/strobe_switch_on",
               "Value": "",
               "VariableIsCustom": true,
               "VariableBoundaries": {
@@ -951,7 +951,7 @@
         {
           "Variables": [
             {
-              "Variable": "kp/xsp/strobe_lights_switch_off",
+              "Variable": "kp/xsp/lights/strobe_switch_off",
               "Value": "",
               "VariableIsCustom": true,
               "VariableBoundaries": {
