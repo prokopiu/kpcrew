@@ -8,7 +8,7 @@
         {
           "Variables": [
             {
-              "Variable": "kp/xsp/toggle_hdg",
+              "Variable": "kp/xsp/bravo_button_hdg",
               "Value": "",
               "VariableIsCustom": true,
               "VariableBoundaries": {
@@ -48,7 +48,7 @@
         {
           "Variables": [
             {
-              "Variable": "kp/xsp/toggle_nav",
+              "Variable": "kp/xsp/bravo_button_nav",
               "Value": "",
               "VariableIsCustom": true,
               "VariableBoundaries": {
@@ -88,7 +88,7 @@
         {
           "Variables": [
             {
-              "Variable": "kp/xsp/toggle_app",
+              "Variable": "kp/xsp/bravo_button_apr",
               "Value": "",
               "VariableIsCustom": true,
               "VariableBoundaries": {
@@ -126,7 +126,18 @@
       "ButtonNumber": 3,
       "PressEvent": [
         {
-          "Variables": [],
+          "Variables": [
+            {
+              "Variable": "kp/xsp/bravo_button_rev",
+              "Value": "",
+              "VariableIsCustom": true,
+              "VariableBoundaries": {
+                "MinValue": "",
+                "MaxValue": "",
+                "Clamp": false
+              }
+            }
+          ],
           "Variable": "",
           "Value": "",
           "Name": "",
@@ -157,7 +168,7 @@
         {
           "Variables": [
             {
-              "Variable": "kp/xsp/toggle_alt",
+              "Variable": "kp/xsp/bravo_button_alt",
               "Value": "",
               "VariableIsCustom": true,
               "VariableBoundaries": {
@@ -197,7 +208,7 @@
         {
           "Variables": [
             {
-              "Variable": "kp/xsp/toggle_vs",
+              "Variable": "kp/xsp/bravo_button_vsp",
               "Value": "",
               "VariableIsCustom": true,
               "VariableBoundaries": {
@@ -237,7 +248,7 @@
         {
           "Variables": [
             {
-              "Variable": "kp/xsp/toggle_ias",
+              "Variable": "kp/xsp/bravo_button_ias",
               "Value": "",
               "VariableIsCustom": true,
               "VariableBoundaries": {
@@ -277,7 +288,7 @@
         {
           "Variables": [
             {
-              "Variable": "kp/xsp/toggle_ap",
+              "Variable": "kp/xsp/bravo_button_ap",
               "Value": "",
               "VariableIsCustom": true,
               "VariableBoundaries": {
@@ -344,7 +355,18 @@
       "ButtonNumber": 9,
       "PressEvent": [
         {
-          "Variables": [],
+          "Variables": [
+            {
+              "Variable": "kp/xsp/engines/reverse_on",
+              "Value": "",
+              "VariableIsCustom": true,
+              "VariableBoundaries": {
+                "MinValue": "",
+                "MaxValue": "",
+                "Clamp": false
+              }
+            }
+          ],
           "Variable": "",
           "Value": "",
           "Name": "",
@@ -357,7 +379,18 @@
       ],
       "ReleaseEvent": [
         {
-          "Variables": [],
+          "Variables": [
+            {
+              "Variable": "kp/xsp/engines/reverse_off",
+              "Value": "",
+              "VariableIsCustom": true,
+              "VariableBoundaries": {
+                "MinValue": "",
+                "MaxValue": "",
+                "Clamp": false
+              }
+            }
+          ],
           "Variable": "",
           "Value": "",
           "Name": "",
@@ -431,7 +464,18 @@
       "ButtonNumber": 12,
       "PressEvent": [
         {
-          "Variables": [],
+          "Variables": [
+            {
+              "Variable": "kp/xsp/bravo_knob_up",
+              "Value": "",
+              "VariableIsCustom": true,
+              "VariableBoundaries": {
+                "MinValue": "",
+                "MaxValue": "",
+                "Clamp": false
+              }
+            }
+          ],
           "Variable": "",
           "Value": "",
           "Name": "",
@@ -460,7 +504,18 @@
       "ButtonNumber": 13,
       "PressEvent": [
         {
-          "Variables": [],
+          "Variables": [
+            {
+              "Variable": "kp/xsp/bravo_knob_dn",
+              "Value": "",
+              "VariableIsCustom": true,
+              "VariableBoundaries": {
+                "MinValue": "",
+                "MaxValue": "",
+                "Clamp": false
+              }
+            }
+          ],
           "Variable": "",
           "Value": "",
           "Name": "",
@@ -491,7 +546,7 @@
         {
           "Variables": [
             {
-              "Variable": "kp/xsp/flaps_down",
+              "Variable": "kp/xsp/controls/flaps_down",
               "Value": "",
               "VariableIsCustom": true,
               "VariableBoundaries": {
@@ -531,7 +586,7 @@
         {
           "Variables": [
             {
-              "Variable": "kp/xsp/flaps_up",
+              "Variable": "kp/xsp/controls/flaps_up",
               "Value": "",
               "VariableIsCustom": true,
               "VariableBoundaries": {
@@ -569,7 +624,18 @@
       "ButtonNumber": 16,
       "PressEvent": [
         {
-          "Variables": [],
+          "Variables": [
+            {
+              "Variable": "kp/xsp/bravo_mode_ias",
+              "Value": "",
+              "VariableIsCustom": true,
+              "VariableBoundaries": {
+                "MinValue": "",
+                "MaxValue": "",
+                "Clamp": false
+              }
+            }
+          ],
           "Variable": "",
           "Value": "",
           "Name": "",
@@ -598,7 +664,18 @@
       "ButtonNumber": 17,
       "PressEvent": [
         {
-          "Variables": [],
+          "Variables": [
+            {
+              "Variable": "kp/xsp/bravo_mode_crs",
+              "Value": "",
+              "VariableIsCustom": true,
+              "VariableBoundaries": {
+                "MinValue": "",
+                "MaxValue": "",
+                "Clamp": false
+              }
+            }
+          ],
           "Variable": "",
           "Value": "",
           "Name": "",
@@ -627,7 +704,18 @@
       "ButtonNumber": 18,
       "PressEvent": [
         {
-          "Variables": [],
+          "Variables": [
+            {
+              "Variable": "kp/xsp/bravo_mode_hdg",
+              "Value": "",
+              "VariableIsCustom": true,
+              "VariableBoundaries": {
+                "MinValue": "",
+                "MaxValue": "",
+                "Clamp": false
+              }
+            }
+          ],
           "Variable": "",
           "Value": "",
           "Name": "",
@@ -656,7 +744,18 @@
       "ButtonNumber": 19,
       "PressEvent": [
         {
-          "Variables": [],
+          "Variables": [
+            {
+              "Variable": "kp/xsp/bravo_mode_vs",
+              "Value": "",
+              "VariableIsCustom": true,
+              "VariableBoundaries": {
+                "MinValue": "",
+                "MaxValue": "",
+                "Clamp": false
+              }
+            }
+          ],
           "Variable": "",
           "Value": "",
           "Name": "",
@@ -685,7 +784,18 @@
       "ButtonNumber": 20,
       "PressEvent": [
         {
-          "Variables": [],
+          "Variables": [
+            {
+              "Variable": "kp/xsp/bravo_mode_alt",
+              "Value": "",
+              "VariableIsCustom": true,
+              "VariableBoundaries": {
+                "MinValue": "",
+                "MaxValue": "",
+                "Clamp": false
+              }
+            }
+          ],
           "Variable": "",
           "Value": "",
           "Name": "",
@@ -714,7 +824,18 @@
       "ButtonNumber": 21,
       "PressEvent": [
         {
-          "Variables": [],
+          "Variables": [
+            {
+              "Variable": "kp/xsp/controls/pitch_trim_down",
+              "Value": "",
+              "VariableIsCustom": true,
+              "VariableBoundaries": {
+                "MinValue": "",
+                "MaxValue": "",
+                "Clamp": false
+              }
+            }
+          ],
           "Variable": "",
           "Value": "",
           "Name": "",
@@ -743,7 +864,18 @@
       "ButtonNumber": 22,
       "PressEvent": [
         {
-          "Variables": [],
+          "Variables": [
+            {
+              "Variable": "kp/xsp/controls/pitch_trim_up",
+              "Value": "",
+              "VariableIsCustom": true,
+              "VariableBoundaries": {
+                "MinValue": "",
+                "MaxValue": "",
+                "Clamp": false
+              }
+            }
+          ],
           "Variable": "",
           "Value": "",
           "Name": "",
@@ -801,7 +933,18 @@
       "ButtonNumber": 24,
       "PressEvent": [
         {
-          "Variables": [],
+          "Variables": [
+            {
+              "Variable": "kp/xsp/autopilot/at_off",
+              "Value": "",
+              "VariableIsCustom": true,
+              "VariableBoundaries": {
+                "MinValue": "",
+                "MaxValue": "",
+                "Clamp": false
+              }
+            }
+          ],
           "Variable": "",
           "Value": "",
           "Name": "",
@@ -830,7 +973,18 @@
       "ButtonNumber": 25,
       "PressEvent": [
         {
-          "Variables": [],
+          "Variables": [
+            {
+              "Variable": "kp/xsp/engines/reverse_on",
+              "Value": "",
+              "VariableIsCustom": true,
+              "VariableBoundaries": {
+                "MinValue": "",
+                "MaxValue": "",
+                "Clamp": false
+              }
+            }
+          ],
           "Variable": "",
           "Value": "",
           "Name": "",
@@ -838,12 +992,23 @@
           "ConditionValue": "",
           "ConditionLogic": "",
           "Conditions": [],
-          "Repeat": 0
+          "Repeat": 2
         }
       ],
       "ReleaseEvent": [
         {
-          "Variables": [],
+          "Variables": [
+            {
+              "Variable": "kp/xsp/engines/reverse_off",
+              "Value": "",
+              "VariableIsCustom": true,
+              "VariableBoundaries": {
+                "MinValue": "",
+                "MaxValue": "",
+                "Clamp": false
+              }
+            }
+          ],
           "Variable": "",
           "Value": "",
           "Name": "",
@@ -917,7 +1082,18 @@
       "ButtonNumber": 28,
       "PressEvent": [
         {
-          "Variables": [],
+          "Variables": [
+            {
+              "Variable": "kp/xsp/autopilot/toga_press",
+              "Value": "",
+              "VariableIsCustom": true,
+              "VariableBoundaries": {
+                "MinValue": "",
+                "MaxValue": "",
+                "Clamp": false
+              }
+            }
+          ],
           "Variable": "",
           "Value": "",
           "Name": "",
@@ -946,7 +1122,18 @@
       "ButtonNumber": 29,
       "PressEvent": [
         {
-          "Variables": [],
+          "Variables": [
+            {
+              "Variable": "kp/xsp/autopilot/toga_press",
+              "Value": "",
+              "VariableIsCustom": true,
+              "VariableBoundaries": {
+                "MinValue": "",
+                "MaxValue": "",
+                "Clamp": false
+              }
+            }
+          ],
           "Variable": "",
           "Value": "",
           "Name": "",
@@ -977,7 +1164,7 @@
         {
           "Variables": [
             {
-              "Variable": "kp/xsp/gears_up",
+              "Variable": "kp/xsp/systems/gears_up",
               "Value": "",
               "VariableIsCustom": true,
               "VariableBoundaries": {
@@ -1017,7 +1204,7 @@
         {
           "Variables": [
             {
-              "Variable": "kp/xsp/gears_down",
+              "Variable": "kp/xsp/systems/gears_down",
               "Value": "",
               "VariableIsCustom": true,
               "VariableBoundaries": {
@@ -1086,7 +1273,7 @@
         {
           "Variables": [
             {
-              "Variable": "kp/xsp/parking_brake_on",
+              "Variable": "kp/xsp/systems/parking_brake_on",
               "Value": "",
               "VariableIsCustom": true,
               "VariableBoundaries": {
@@ -1126,7 +1313,7 @@
         {
           "Variables": [
             {
-              "Variable": "kp/xsp/parking_brake_off",
+              "Variable": "kp/xsp/systems/parking_brake_off",
               "Value": "",
               "VariableIsCustom": true,
               "VariableBoundaries": {
@@ -1454,7 +1641,18 @@
       "ButtonNumber": 45,
       "PressEvent": [
         {
-          "Variables": [],
+          "Variables": [
+            {
+              "Variable": "kp/xsp/bravo_layer_multi",
+              "Value": "",
+              "VariableIsCustom": true,
+              "VariableBoundaries": {
+                "MinValue": "",
+                "MaxValue": "",
+                "Clamp": false
+              }
+            }
+          ],
           "Variable": "",
           "Value": "",
           "Name": "",
@@ -1483,7 +1681,18 @@
       "ButtonNumber": 46,
       "PressEvent": [
         {
-          "Variables": [],
+          "Variables": [
+            {
+              "Variable": "kp/xsp/bravo_layer_ap",
+              "Value": "",
+              "VariableIsCustom": true,
+              "VariableBoundaries": {
+                "MinValue": "",
+                "MaxValue": "",
+                "Clamp": false
+              }
+            }
+          ],
           "Variable": "",
           "Value": "",
           "Name": "",
@@ -1545,12 +1754,7 @@
       "ConditionLogic": "",
       "Conditions": [
         {
-          "Condition": "",
-          "ConditionValue": "",
-          "ConditionIsCustom": true
-        },
-        {
-          "Condition": "kp/xsp/mcp_hdg",
+          "Condition": "kp/xsp/autopilot/mcp_hdg",
           "ConditionValue": "1",
           "ConditionIsCustom": true
         }
@@ -1560,7 +1764,13 @@
       "ByteIndex": 0,
       "BitIndex": 0,
       "ConditionLogic": "",
-      "Conditions": []
+      "Conditions": [
+        {
+          "Condition": "",
+          "ConditionValue": "",
+          "ConditionIsCustom": true
+        }
+      ]
     },
     {
       "ByteIndex": 2,
@@ -1568,7 +1778,7 @@
       "ConditionLogic": "",
       "Conditions": [
         {
-          "Condition": "laminar/B738/annunciator/left_gear_safe",
+          "Condition": "kp/xsp/systems/gear_light_on_l",
           "ConditionValue": "1",
           "ConditionIsCustom": true
         }
@@ -1580,7 +1790,7 @@
       "ConditionLogic": "",
       "Conditions": [
         {
-          "Condition": "laminar/B738/annunciator/left_gear_transit",
+          "Condition": "kp/xsp/systems/gear_light_trans_l",
           "ConditionValue": "1",
           "ConditionIsCustom": true
         }
@@ -1592,7 +1802,7 @@
       "ConditionLogic": "",
       "Conditions": [
         {
-          "Condition": "laminar/B738/annunciator/nose_gear_safe",
+          "Condition": "kp/xsp/systems/gear_light_on_n",
           "ConditionValue": "1",
           "ConditionIsCustom": true
         }
@@ -1604,7 +1814,7 @@
       "ConditionLogic": "",
       "Conditions": [
         {
-          "Condition": "laminar/B738/annunciator/right_gear_safe",
+          "Condition": "kp/xsp/systems/gear_light_on_r",
           "ConditionValue": "1",
           "ConditionIsCustom": true
         }
@@ -1616,7 +1826,7 @@
       "ConditionLogic": "",
       "Conditions": [
         {
-          "Condition": "laminar/B738/annunciator/right_gear_transit",
+          "Condition": "kp/xsp/systems/gear_light_trans_r",
           "ConditionValue": "1",
           "ConditionIsCustom": true
         }
@@ -1628,7 +1838,7 @@
       "ConditionLogic": "",
       "Conditions": [
         {
-          "Condition": "laminar/B738/annunciator/nose_gear_transit",
+          "Condition": "kp/xsp/systems/gear_light_trans_n",
           "ConditionValue": "1",
           "ConditionIsCustom": true
         }
@@ -1640,7 +1850,7 @@
       "ConditionLogic": "",
       "Conditions": [
         {
-          "Condition": "kp/xsp/parking_brake",
+          "Condition": "kp/xsp/systems/parking_brake",
           "ConditionValue": "1",
           "ConditionIsCustom": true
         }
@@ -1652,7 +1862,7 @@
       "ConditionLogic": "",
       "Conditions": [
         {
-          "Condition": "sim/cockpit2/electrical/APU_running",
+          "Condition": "kp/xsp/electric/apu_running",
           "ConditionValue": "1",
           "ConditionIsCustom": false
         }
@@ -1664,7 +1874,7 @@
       "ConditionLogic": "",
       "Conditions": [
         {
-          "Condition": "kp/xsp/master_caution",
+          "Condition": "kp/xsp/systems/master_caution",
           "ConditionValue": "1",
           "ConditionIsCustom": true
         }
@@ -1676,7 +1886,7 @@
       "ConditionLogic": "",
       "Conditions": [
         {
-          "Condition": "kp/xsp/mcp_nav",
+          "Condition": "kp/xsp/autopilot/mcp_nav",
           "ConditionValue": "1",
           "ConditionIsCustom": true
         }
@@ -1688,7 +1898,7 @@
       "ConditionLogic": "",
       "Conditions": [
         {
-          "Condition": "kp/xsp/mcp_ias",
+          "Condition": "kp/xsp/autopilot/mcp_ias",
           "ConditionValue": "1",
           "ConditionIsCustom": true
         }
@@ -1700,7 +1910,7 @@
       "ConditionLogic": "",
       "Conditions": [
         {
-          "Condition": "kp/xsp/mcp_app",
+          "Condition": "kp/xsp/autopilot/mcp_app",
           "ConditionValue": "1",
           "ConditionIsCustom": true
         }
@@ -1712,7 +1922,7 @@
       "ConditionLogic": "",
       "Conditions": [
         {
-          "Condition": "kp/xsp/mcp_vsp",
+          "Condition": "kp/xsp/autopilot/mcp_vsp",
           "ConditionValue": "1",
           "ConditionIsCustom": true
         }
@@ -1724,7 +1934,7 @@
       "ConditionLogic": "",
       "Conditions": [
         {
-          "Condition": "kp/xsp/mcp_alt",
+          "Condition": "kp/xsp/autopilot/mcp_alt",
           "ConditionValue": "1",
           "ConditionIsCustom": true
         }
@@ -1736,7 +1946,7 @@
       "ConditionLogic": "",
       "Conditions": [
         {
-          "Condition": "kp/xsp/mcp_ap1",
+          "Condition": "kp/xsp/autopilot/mcp_ap1",
           "ConditionValue": "1",
           "ConditionIsCustom": true
         }
@@ -1748,7 +1958,7 @@
       "ConditionLogic": "",
       "Conditions": [
         {
-          "Condition": "kp/xsp/doors",
+          "Condition": "kp/xsp/systems/doors",
           "ConditionValue": "1",
           "ConditionIsCustom": true
         }
@@ -1760,7 +1970,7 @@
       "ConditionLogic": "",
       "Conditions": [
         {
-          "Condition": "kp/xsp/anc_hyd",
+          "Condition": "kp/xsp/hydraulic/anc_hyd",
           "ConditionValue": "1",
           "ConditionIsCustom": true
         }
@@ -1772,7 +1982,7 @@
       "ConditionLogic": "",
       "Conditions": [
         {
-          "Condition": "kp/xsp/anc_fuel",
+          "Condition": "kp/xsp/fuel/anc_fuel",
           "ConditionValue": "1",
           "ConditionIsCustom": true
         }
@@ -1784,7 +1994,7 @@
       "ConditionLogic": "",
       "Conditions": [
         {
-          "Condition": "kp/xsp/anc_oil",
+          "Condition": "kp/xsp/engines/anc_oil",
           "ConditionValue": "1",
           "ConditionIsCustom": true
         }
@@ -1796,7 +2006,7 @@
       "ConditionLogic": "",
       "Conditions": [
         {
-          "Condition": "kp/xsp/anc_starter",
+          "Condition": "kp/xsp/engines/anc_starter",
           "ConditionValue": "1",
           "ConditionIsCustom": true
         }
@@ -1808,7 +2018,79 @@
       "ConditionLogic": "",
       "Conditions": [
         {
-          "Condition": "kp/xsp/anc_aice",
+          "Condition": "kp/xsp/aice/anc_aice",
+          "ConditionValue": "1",
+          "ConditionIsCustom": true
+        }
+      ]
+    },
+    {
+      "ByteIndex": 4,
+      "BitIndex": 2,
+      "ConditionLogic": "",
+      "Conditions": [
+        {
+          "Condition": "kp/xsp/electric/low_volts",
+          "ConditionValue": "1",
+          "ConditionIsCustom": true
+        }
+      ]
+    },
+    {
+      "ByteIndex": 4,
+      "BitIndex": 0,
+      "ConditionLogic": "",
+      "Conditions": [
+        {
+          "Condition": "kp/xsp/fuel/fuel_pumps",
+          "ConditionValue": "1",
+          "ConditionIsCustom": true
+        }
+      ]
+    },
+    {
+      "ByteIndex": 3,
+      "BitIndex": 6,
+      "ConditionLogic": "",
+      "Conditions": [
+        {
+          "Condition": "kp/xsp/air/vacuum",
+          "ConditionValue": "1",
+          "ConditionIsCustom": true
+        }
+      ]
+    },
+    {
+      "ByteIndex": 2,
+      "BitIndex": 7,
+      "ConditionLogic": "",
+      "Conditions": [
+        {
+          "Condition": "kp/xsp/engines/engine_fire",
+          "ConditionValue": "1",
+          "ConditionIsCustom": true
+        }
+      ]
+    },
+    {
+      "ByteIndex": 2,
+      "BitIndex": 6,
+      "ConditionLogic": "",
+      "Conditions": [
+        {
+          "Condition": "kp/xsp/systems/master_warning",
+          "ConditionValue": "1",
+          "ConditionIsCustom": true
+        }
+      ]
+    },
+    {
+      "ByteIndex": 1,
+      "BitIndex": 3,
+      "ConditionLogic": "",
+      "Conditions": [
+        {
+          "Condition": "kp/xsp/autopilot/mcp_rev",
           "ConditionValue": "1",
           "ConditionIsCustom": true
         }
