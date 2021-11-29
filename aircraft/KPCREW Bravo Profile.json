@@ -933,18 +933,7 @@
       "ButtonNumber": 24,
       "PressEvent": [
         {
-          "Variables": [
-            {
-              "Variable": "kp/xsp/autopilot/at_off",
-              "Value": "",
-              "VariableIsCustom": true,
-              "VariableBoundaries": {
-                "MinValue": "",
-                "MaxValue": "",
-                "Clamp": false
-              }
-            }
-          ],
+          "Variables": [],
           "Variable": "",
           "Value": "",
           "Name": "",
@@ -1351,7 +1340,18 @@
       "ButtonNumber": 35,
       "PressEvent": [
         {
-          "Variables": [],
+          "Variables": [
+            {
+              "Variable": "kp/xsp/autopilot/at_arm",
+              "Value": "",
+              "VariableIsCustom": true,
+              "VariableBoundaries": {
+                "MinValue": "",
+                "MaxValue": "",
+                "Clamp": false
+              }
+            }
+          ],
           "Variable": "",
           "Value": "",
           "Name": "",
@@ -1380,7 +1380,18 @@
       "ButtonNumber": 36,
       "PressEvent": [
         {
-          "Variables": [],
+          "Variables": [
+            {
+              "Variable": "kp/xsp/autopilot/at_off",
+              "Value": "",
+              "VariableIsCustom": true,
+              "VariableBoundaries": {
+                "MinValue": "",
+                "MaxValue": "",
+                "Clamp": false
+              }
+            }
+          ],
           "Variable": "",
           "Value": "",
           "Name": "",

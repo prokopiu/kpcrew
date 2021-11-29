@@ -4,32 +4,8 @@
   "Data": [
     {
       "ButtonNumber": 0,
-      "PressEvent": [
-        {
-          "Variables": [],
-          "Variable": "",
-          "Value": "",
-          "Name": "",
-          "Condition": "",
-          "ConditionValue": "",
-          "ConditionLogic": "",
-          "Conditions": [],
-          "Repeat": 0
-        }
-      ],
-      "ReleaseEvent": [
-        {
-          "Variables": [],
-          "Variable": "",
-          "Value": "",
-          "Name": "",
-          "Condition": "",
-          "ConditionValue": "",
-          "ConditionLogic": "",
-          "Conditions": [],
-          "Repeat": 0
-        }
-      ]
+      "PressEvent": [],
+      "ReleaseEvent": []
     },
     {
       "ButtonNumber": 1,
