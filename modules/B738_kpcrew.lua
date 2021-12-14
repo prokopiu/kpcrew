@@ -66,6 +66,10 @@ kc_transponder_set_commands = {
 [5] = "laminar/B738/knob/transponder_tara"}
 kc_transponder_display = {[0]="TEST",[1]="STBY",[2]="ALT OFF",[3]="ALT ON",[4]="TA",[5]="TA RA"}
 
+-- fuel datarefs
+kc_total_fuel_kgs_dataref = "laminar/B738/fuel/total_tank_kgs"
+kc_total_fuel_lbs_dataref = "laminar/B738/fuel/total_tank_lbs"
+
 -- overwrite approach types if necessary - "---" for unsupported
 APP_apptype_list = {"ILS CAT 1","ILS CAT 2 OR 3","VOR","NDB","RNAV","VISUAL","TOUCH AND GO","CIRCLING"}
 
@@ -3133,9 +3137,9 @@ end
 -- return total fuel loaded from aircraft or x-plane
 function kc_get_total_fuel()
 	if get_kpcrew_config("config_kglbs") then
-		return get("laminar/B738/fuel/total_tank_kgs")
+		return get(kc_total_fuel_kgs_dataref)
 	else
-		return get("laminar/B738/fuel/total_tank_lbs")
+		return get(kc_total_fuel_lbs_dataref)
 	end
 end
 
