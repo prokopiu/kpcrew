@@ -333,8 +333,6 @@ end
 
 -- initialize a new flight
 function initFlight()
-	set_kpcrew_config("acf_icao",PLANE_ICAO)
-	
 	-- Aircraft with no icao in aircraft.cfg need to be identfied individually
 	if (PLANE_TAILNUMBER == "N956OV") then	
 		set_kpcrew_config("acf_icao","B146")
@@ -367,12 +365,14 @@ end
 
 -- Zibo B738
 if (PLANE_ICAO == "B738") then
+  set_kpcrew_config("acf_icao","B738")
   require "B738_kpcrew"
 end
 
 -- FJS Boeing 737-200
 if (PLANE_ICAO == "B732") then
--- require "B732_kpcrew"
+--   set_kpcrew_config("acf_icao","B732")
+--   require "B732_kpcrew"
 end
 
 -- Rotate MD80
