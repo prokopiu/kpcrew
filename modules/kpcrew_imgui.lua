@@ -784,7 +784,7 @@ function kc_flightinfo_build()
 
 		briefing = briefing .. "We will take off from runway "..get_kpcrew_config("dep_rwy") .. ",runway condition is "..DEP_rwystate_list[get_kpcrew_config("dep_rwy_condition")].."\n\n"
 		briefing = briefing .. "Our take off thrust is "..DEP_takeofthrust_list[get_kpcrew_config("dep_to_thrust")] .. "\n\n"
-		briefing = briefing .. "We will use Flaps "..B738:getDEP_Flaps()[get_kpcrew_config("dep_to_flaps")] .. " for takeoff\n\n"
+		briefing = briefing .. "We will use Flaps "..GENERAL_Acf:getDEP_Flaps()[get_kpcrew_config("dep_to_flaps")] .. " for takeoff\n\n"
 		briefing = briefing .. "Anti Ice is " .. DEP_aice_list[get_kpcrew_config("dep_anti_ice")] .. ",bleeds will be "..DEP_bleeds_list[get_kpcrew_config("dep_bleeds")] .. "\n\n"
 		briefing = briefing .. "Minimum Safe Altitude along our initial route is ".. get_kpcrew_config("dep_msa") .. "ft\n\n"
 		briefing = briefing .. "In case of forced return we are ".. DEP_forced_return[get_kpcrew_config("dep_forced_return")] .. "\n\n"
