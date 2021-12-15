@@ -19,27 +19,3 @@ Will there be other aircraft? Yes, it will also contain the FJS B737-200 and man
 KPCrew went through several iterations, initially I called it Zibocrew. The initial concept was clunky and inflexible. I think I now have a good enough concept to easily extend the scripts. I even have now background events. As it is with Lua, you can see all that I did but when you change code you are on your own – I will not have the time to support this or hold hands with the installation. This is one of the reasons why I hesitated to release this publicly.
 
 I am also working on a way to make the checklists more intelligent. At the moment, using the Easy mode will set all checklist items correctly and tick the box for you. In the future and when using manual mode, the checklist will pause at certain steps until you have corrected the item.
-
-## Installation
-### The KPCrew Zip-file
-KPCrew comes in a Zip-file and needs to be manually installed under your X-Plane-11 folder.
-
-Modules and Scripts are FlyWithLua specific folders, B738 is the Zibo specific folder. Other aircraft folders will follow in future versions. It also contains this manual.
-
-### Prerequisites
-You need to have the freeware FlyWithLua NG plugin minimum version 2.7 but I recommend the latest version. See [https://forums.x-plane.org/index.php?/files/file/38445-flywithlua-ng-next-generation-edition-for-x-plane-11-win-lin-mac/].
-
-I also use Xchecklist to display and automatize my own clist.txt for each supported aircraft. See [https://forums.x-plane.org/index.php?/files/file/20785-xchecklist-linwinmac3264/].
-
-And get yourself BetterPushbackC if you really are one of those that have missed out on this great tool :-) [https://github.com/skiselkov/BetterPushbackC/releases]
-
-Read the instructions for each of those plugins. I will not support them.
-
-### Unpacking and Installing
-The Modules and Scripting folders need to be placed in <your x-plane root folder>\Resources\plugins\FlyWithLua . If you have older versions of KPCrew files just overwrite them. Please also overwrite your kpcrewconfig.lua file as it may change in the future and KPCrew will not load if it is incomplete (at least until I found a way to handle missing items). 
-
-In the aircraft specific folder you will find aircraft specific options. Normally I offer a special clist.txt which works in conjunction with KPCrew.
-If you want to use that clist.txt you have to place it in the aircraft folder (e.g. wherever you have your Zibo installed under the <your x-plane root folder>\Aircraft folder. You also need the Xchecklist plugin as mentioned above.
-
-### Uninstall
-To uninstall remove the lua files from Scripts and Modules and replace the clist.txt with the original.
