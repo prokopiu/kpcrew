@@ -1854,7 +1854,7 @@ KC_AFTER_TAKEOFF_CHECKLIST = { ["name"] = "AFTER TAKEOFF CHECKLIST (PM)", ["mode
 		end		
 	},
 	[7] = { ["actor"] = "", ["chkl_item"] = "AFTER TAKEOFF CHECKLIST", ["chkl_response"] = "COMPLETED", ["chkl_state"] = false, ["chkl_color"] = color_white, ["validated"] = 0, ["wait"] = 2, ["interactive"] = 0, ["ask"] = 0, ["end"] = 1,
-		["speak"] = function () return "before take off checklist completed" end,
+		["speak"] = function () return "after take off checklist completed" end,
 		["answer"] = function () return "" end
 	}
 }
