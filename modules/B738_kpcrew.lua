@@ -818,8 +818,7 @@ KC_PREFLIGHT_PROCEDURE = { ["name"] = "PREFLIGHT PROCEDURE", ["mode"]="p", ["wnd
 			set("laminar/B738/toggle_switch/main_pnl_du_capt",0)
 			set("laminar/B738/toggle_switch/main_pnl_du_fo",0)
 		end,
-		["checks"] = function() return get("laminar/B738/toggle_switch/lower_du_capt") == 0 and get("laminar/B738/toggle_switch/lower_du_fo") == 0 and get("laminar/B738/toggle_switch/main_pnl_du_capt") and get("laminar/B738/toggle_switch/main_pnl_du_fo") == 0
- end
+		["checks"] = function() return get("laminar/B738/toggle_switch/lower_du_capt") == 0 and get("laminar/B738/toggle_switch/lower_du_fo") == 0 and get("laminar/B738/toggle_switch/main_pnl_du_capt") and get("laminar/B738/toggle_switch/main_pnl_du_fo") == 0 end
 	},
 	[7] = {["activity"] = "SPD BRAKE LEVER -- DOWN DETENT", ["wait"] = 1, ["interactive"] = 0, ["actor"] = "CPT:", ["validated"] = 0, ["chkl_color"] = color_white, ["end"] = 0,
 		["actions"] = function ()
@@ -1222,7 +1221,6 @@ KC_BEFORE_START_PROC = { ["name"] = "BEFORE START PROCEDURE", ["mode"]="p", ["wn
 			kc_acf_external_doors(0,0)
 			kc_acf_lower_eicas_mode(0)
 			kc_acf_lower_eicas_mode(1)
-			kc_acf_elec_gpu_stop()
 		end,
 		["checks"] = function() return get("laminar/B738/air/isolation_valve_pos") == 2 end
 	},
@@ -1535,6 +1533,8 @@ KC_STARTUP_AND_PUSH_PROC = { ["name"] = "STARTUP AND PUSHBACK", ["mode"]="p", ["
 		["actions"] = function ()
 			kc_acf_lower_eicas_mode(3)
 			kc_set_background_proc_status("FLIGHTCTRLELEV1",1)
+			kc_set_background_proc_status("FLIGHTCTRLAIL1",1)
+			kc_set_background_proc_status("FLIGHTCTRLRUD1",1)
 		end
 	},
 	[21] = {["activity"] = "FLIGHT CONTROL CHECKS FINISHED", ["wait"] = 1, ["interactive"] = 1, ["actor"] = "CPT:", ["validated"] = 0, ["chkl_color"] = color_white, ["end"] = 0,
@@ -1771,6 +1771,7 @@ KC_TAKEOFF_CLIMB_PROCEDURE = { ["name"] = "TAKEOFF & CLIMB", ["mode"]="p", ["wnd
 		["actions"] = function () 
 			kc_set_background_proc_status("TAKEOFFRUN",1)
 			kc_acf_et_timer_startstop(1)
+			kc_acf_mcp_fds_set(0,1)
 		end,
 		["speak"] = function () return "" end
 	},
@@ -1793,21 +1794,28 @@ KC_TAKEOFF_CLIMB_PROCEDURE = { ["name"] = "TAKEOFF & CLIMB", ["mode"]="p", ["wnd
 		["speak"] = function () return "" end
 	},
 	[4] = {["activity"] = "SET TAKEOFF THRUST", ["wait"] = 1, ["interactive"] = 1, ["actor"] = "CPT:", ["validated"] = 0, ["chkl_color"] = color_white, ["end"] = 0,
+		["speak"] = function () return "" end
+	},
+	[5] = {["activity"] = "SET TAKEOFF THRUST", ["wait"] = 1, ["interactive"] = 0, ["actor"] = "CPT:", ["validated"] = 0, ["chkl_color"] = color_white, ["end"] = 0,
 		["actions"] = function ()
 			if get_kpcrew_config("dep_ap_modes") == 2 then
 				kc_acf_mcp_n1_onoff(1)
 			end
+			set("laminar/B738/yoke_disco_ap",0)
 			kc_acf_mcp_toga()			
 		end,
 		["speak"] = function () return "" end
 	},
-	[5] = {["activity"] = "CMD A", ["wait"] = 1, ["interactive"] = 1, ["actor"] = "CPT:", ["validated"] = 0, ["chkl_color"] = color_white, ["end"] = 0,
+	[6] = {["activity"] = "CMD A", ["wait"] = 1, ["interactive"] = 1, ["actor"] = "CPT:", ["validated"] = 0, ["chkl_color"] = color_white, ["end"] = 0,
+		["speak"] = function () return "" end
+	},
+	[7] = {["activity"] = "CMD A", ["wait"] = 1, ["interactive"] = 0, ["actor"] = "CPT:", ["validated"] = 0, ["chkl_color"] = color_white, ["end"] = 0,
 		["actions"] = function ()
 			kc_acf_mcp_ap_set(1,1)
 		end,
 		["speak"] = function () return "" end
 	},
-	[6] = {["activity"] = "TAKEOFF & CLIMB FINISHED | AFTER TAKEOFF CHECKLIST", ["wait"] = 1, ["interactive"] = 0, ["actor"] = "CPT:", ["validated"] = 0, ["chkl_color"] = color_white, ["end"] = 1
+	[8] = {["activity"] = "TAKEOFF & CLIMB FINISHED | AFTER TAKEOFF CHECKLIST", ["wait"] = 1, ["interactive"] = 0, ["actor"] = "CPT:", ["validated"] = 0, ["chkl_color"] = color_white, ["end"] = 1
 	}
 }
 
@@ -2529,6 +2537,7 @@ KC_BACKGROUND_PROCS = {
 				kc_acf_elec_apu_on_bus(0,1)
 				kc_acf_air_apu_bleed_onoff(1)
 				kc_set_background_proc_status("APUBUSON",0)
+				kc_acf_elec_gpu_stop()
 			end
 		end
 	},
@@ -2735,7 +2744,6 @@ KC_BACKGROUND_PROCS = {
 					kc_acf_mcp_lvlchg_onoff(1)
 				end
 				kc_set_background_proc_status("APMODES",0)
-				kc_set_background_proc_status("GEARUP",1)
 			end
 		end
 	},
@@ -2744,22 +2752,21 @@ KC_BACKGROUND_PROCS = {
 			if get("sim/cockpit2/tcas/targets/position/vertical_speed",0) > 150 then
 				speakNoText(0,"positive rate")
 				kc_set_background_proc_status("POSITIVERATE",0)
-				kc_set_background_proc_status("GEARUP",1)
 			end
 		end
 	},
 	-- easy mode call for gear up at 200ft AGL
 	["GEARUP"] = {["status"] = 0,
 		["actions"] = function ()
-			if get("sim/flightmodel/position/y_agl") > 150 then
+			if get("sim/flightmodel/position/y_agl") > 100 then
 				kc_acf_gears(0)
-				speakNoText(0,"gear coming up")
+				speakNoText(0,"gear up")
 				kc_set_background_proc_status("GEARUP",0)
 				kc_set_background_proc_status("FLAPSUPSCHED",1)
+				kc_set_background_proc_status("GEAROFF",20)
 			end
 		end
 	},
---				kc_set_background_proc_status("GEAROFF",20)
 	-- Flapsup schedule
 	["FLAPSUPSCHED"] = {["status"] = 0,
 		["actions"] = function ()
@@ -2789,9 +2796,18 @@ KC_BACKGROUND_PROCS = {
 			end
 		end
 	},
+	-- easy mode call for gear OFF
+	["GEAROFF"] = {["status"] = 0,
+		["actions"] = function ()
+			kc_set_background_proc_status("GEAROFF",kc_get_background_proc_status("GEAROFF")-1)
+			if kc_get_background_proc_status("GEAROFF") == 1 then
+				kc_acf_gears(2)
+				kc_set_background_proc_status("GEAROFF",0)
+			end
+		end
+	},
 	["AFTERTAKEOFF"] = {["status"] = 0,
 		["actions"] = function ()
-			kc_acf_gears(2)
 			kc_acf_eng_starter_mode(0,1)
 			kc_acf_abrk_mode(1)
 			kc_acf_air_bleeds_onoff(0,1)
@@ -2934,7 +2950,7 @@ KC_BACKGROUND_PROCS = {
 	["FLIGHTCTRLELEV1"] = {["status"] = 0,
 		["actions"] = function ()
 			if get("laminar/B738/axis/pitch") > 0.95 then
-				speakNoText(0,"Full Up")
+				speakNoText(0,"Elevator Full Up")
 				kc_set_background_proc_status("FLIGHTCTRLELEV1",0)
 				kc_set_background_proc_status("FLIGHTCTRLELEV2",1)
 			end
@@ -2954,14 +2970,13 @@ KC_BACKGROUND_PROCS = {
 			if get("laminar/B738/axis/pitch") > -0.05 and get("laminar/B738/axis/pitch") < 0.05 then
 				speakNoText(0,"Neutral")
 				kc_set_background_proc_status("FLIGHTCTRLELEV3",0)
-				kc_set_background_proc_status("FLIGHTCTRLAIL1",1)
 			end
 		end
 	},	
 	["FLIGHTCTRLAIL1"] = {["status"] = 0,
 		["actions"] = function ()
 			if get("laminar/B738/axis/roll") < -0.95 then
-				speakNoText(0,"Full Left")
+				speakNoText(0,"Aileron Full Left")
 				kc_set_background_proc_status("FLIGHTCTRLAIL1",0)
 				kc_set_background_proc_status("FLIGHTCTRLAIL2",1)
 			end
@@ -2979,16 +2994,15 @@ KC_BACKGROUND_PROCS = {
 	["FLIGHTCTRLAIL3"] = {["status"] = 0,
 		["actions"] = function ()
 			if get("laminar/B738/axis/roll") > -0.05 and get("laminar/B738/axis/roll") < 0.05 then
-				speakNoText(0,"Center")
+				speakNoText(0,"Neutral")
 				kc_set_background_proc_status("FLIGHTCTRLAIL3",0)
-				kc_set_background_proc_status("FLIGHTCTRLRUD1",1)
 			end
 		end
 	},	
 	["FLIGHTCTRLRUD1"] = {["status"] = 0,
 		["actions"] = function ()
 			if get("laminar/B738/axis/heading") < -0.95 then
-				speakNoText(0,"Full Left")
+				speakNoText(0,"Rudder Full Left")
 				kc_set_background_proc_status("FLIGHTCTRLRUD1",0)
 				kc_set_background_proc_status("FLIGHTCTRLRUD2",1)
 			end
@@ -3006,7 +3020,7 @@ KC_BACKGROUND_PROCS = {
 	["FLIGHTCTRLRUD3"] = {["status"] = 0,
 		["actions"] = function ()
 			if get("laminar/B738/axis/heading") > -0.05 and get("laminar/B738/axis/heading") < 0.05 then
-				speakNoText(0,"Center")
+				speakNoText(0,"Neutral")
 				kc_set_background_proc_status("FLIGHTCTRLRUD3",0)
 			end
 		end
@@ -4204,12 +4218,12 @@ end
 -- Autothrottle  mode 0=OFF 1=ARMED 2=toggle
 function kc_acf_mcp_at_onoff(mode)
 	if mode == 0 then
-		if get("laminar/B738/autopilot/autothrottle_status1") == 1 then
+		if get("laminar/B738/autopilot/autothrottle_status") == 1 then
 			command_once("laminar/B738/autopilot/autothrottle_arm_toggle")
 		end
 	end
 	if mode == 1 then
-		if get("laminar/B738/autopilot/autothrottle_status1") == 0 then
+		if get("laminar/B738/autopilot/autothrottle_status") == 0 then
 			command_once("laminar/B738/autopilot/autothrottle_arm_toggle")
 		end
 	end
@@ -5318,7 +5332,7 @@ function xsp_set_lightvars()
 		xsp_anc_fuel[0] = 1
 	end
 
-	if get("laminar/B738/engine/eicas_oil_press1") == 0 or get("laminar/B738/engine/eicas_oil_press2") == 0 then
+	if get("laminar/B738/engine/eng1_oil_press") == 0 or get("laminar/B738/engine/eng2_oil_press") == 0 then
 		xsp_anc_oil[0] = 1
 	else
 		xsp_anc_oil[0] = 0
