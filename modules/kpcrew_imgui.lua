@@ -526,10 +526,10 @@ function kc_flightinfo_build()
 		end
 		imgui.SameLine()
 		local lcolor = color_white
-		if get("laminar/B738/clock/captain/et_mode") == 1 then
+		if get("sim/cockpit2/clock_timer/timer_running") == 1 then
 			lcolor = color_green
 		end
-		kc_gui_out_text("ELAPSED",kc_display_timehhmm(get("laminar/B738/clock/captain/et")*3600 + get("laminar/B738/clock/captain/et_minutes")*60),lcolor,true)
+		kc_gui_out_text("ELAPSED",kc_display_timehhmmss(kc_acf_get_elapsed_seconds()),lcolor,true)
 		imgui.SameLine()
 		if imgui.Button("ET RESET") then
 			kc_acf_et_timer_reset(1)
@@ -1190,4 +1190,11 @@ function kc_display_timehhmm(timeseconds)
 	local lhours = math.floor(timeseconds/3600)
 	local lminutes = math.floor((timeseconds - lhours * 3600)/60)
 	return string.format("%2.2i:%2.2i",lhours,lminutes)
+end
+
+function kc_display_timehhmmss(timeseconds)
+	local lhours = math.floor(timeseconds/3600)
+	local lminutes = math.floor((timeseconds - lhours * 3600)/60)
+	local lseconds = math.floor((timeseconds - (lhours * 3600 + lminutes * 60)))
+	return string.format("%2.2i:%2.2i:%2.2i",lhours,lminutes,lseconds)
 end
