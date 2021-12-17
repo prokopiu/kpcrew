@@ -4053,6 +4053,9 @@ end
 
 -- Reset elapsed timer 0=ALL, 1=CAPT, 2=FO
 function kc_acf_et_timer_reset(timer)
+	if get("sim/cockpit2/clock_timer/timer_running") == 0 then 
+		command_once("sim/instruments/timer_reset")
+	end
 	if timer == 0 or timer == 1 then
 		command_once("laminar/B738/push_button/et_reset_capt")
 	end
@@ -4063,6 +4066,7 @@ end
 
 -- Start/Stop ET timer
 function kc_acf_et_timer_startstop(timer)
+	command_once("sim/instruments/timer_start_stop")
 	if timer == 0 or timer == 1 then
 		command_once("laminar/B738/push_button/chrono_capt_et_mode")
 	end
@@ -4072,7 +4076,7 @@ function kc_acf_et_timer_startstop(timer)
 end
 
 function kc_acf_get_elapsed_seconds()
-	return get("laminar/B738/clock/captain/et_seconds")
+	return get("sim/time/timer_elapsed_time_sec")
 end
 
 -- AP Disconnect button mode 0=OFF, 1=ON
