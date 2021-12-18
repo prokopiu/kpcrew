@@ -2253,6 +2253,7 @@ KC_SHUTDOWN_PROC = { ["name"] = "SHUTDOWN", ["mode"]="p", ["wnd_width"] = 380, [
 	[2] = {["activity"] = "TAXI LIGHTS -- OFF", ["wait"] = 1, ["interactive"] = 0, ["actor"] = "CPT:", ["validated"] = 0, ["chkl_color"] = color_white, ["end"] = 0,
 		["actions"] = function ()
 			kc_acf_light_taxi_mode(0)
+			set_kpcrew_config("flight_on_block",get("sim/time/zulu_time_sec"))			
 		end
 	},
 	[3] = {["activity"] = "SHUTDOWN ENGINES!", ["wait"] = 1, ["interactive"] = 1, ["actor"] = "CPT:", ["validated"] = 0, ["chkl_color"] = color_white, ["end"] = 0,
@@ -2335,9 +2336,7 @@ KC_SHUTDOWN_PROC = { ["name"] = "SHUTDOWN", ["mode"]="p", ["wnd_width"] = 380, [
 	},
 	[16] = {["activity"] = "RESET ELAPSED TIME", ["wait"] = 1, ["interactive"] = 0, ["actor"] = "F/O:", ["validated"] = 0, ["chkl_color"] = color_white, ["end"] = 0,
 		["actions"] = function ()
---			kc_acf_et_timer_reset(0)
 			kc_acf_lower_eicas_mode(0)
-			set_kpcrew_config("flight_on_block",get("sim/time/zulu_time_sec"))			
 		end
 	},
 	[17] = {["activity"] = "NEXT SHUTDOWN CHECKLIST", ["wait"] = 1, ["interactive"] = 0, ["actor"] = "CPT:", ["validated"] = 0, ["chkl_color"] = color_white, ["end"] = 1
@@ -2366,7 +2365,7 @@ KC_SHUTDOWN_CHECKLIST = { ["name"] = "SHUTDOWN CHECKLIST (F/O)", ["mode"]="c", [
 			kc_acf_hyd_pumps_onoff(3,0)
 			kc_acf_hyd_pumps_onoff(4,0)
 		end,
-		["checks"] = function() return get("laminar/B738/toggle_switch/hydro_pumps1_pos") == 0 and get("laminar/B738/toggle_switch/hydro_pumps2_pos") == 0 and get("laminar/B738/toggle_switch/electric_hydro_pumps1_pos") == 0 and get("laminar/B738/toggle_switch/electric_hydro_pumps2_pos") == 0 end,		
+		["checks"] = function() return get("laminar/B738/toggle_switch/hydro_pumps1_pos") == 0 and get("laminar/B738/toggle_switch/hydro_pumps2_pos") == 0 and get("laminar/B738/toggle_switch/electric_hydro_pumps1_pos") == 1 and get("laminar/B738/toggle_switch/electric_hydro_pumps2_pos") == 1 end,		
 		["answer"] = function () return "" end
 	},
 	[3] = { ["actor"] = "CPT:", ["chkl_item"] = "PROBE HEAT", ["chkl_response"] = "AUTO/OFF", ["chkl_state"] = false, ["chkl_color"] = color_white, ["validated"] = 0,  ["wait"] = 2, ["interactive"] = 1, ["ask"] = 0, ["end"] = 0,
