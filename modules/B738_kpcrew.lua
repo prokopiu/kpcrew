@@ -1545,6 +1545,7 @@ KC_STARTUP_AND_PUSH_PROC = { ["name"] = "STARTUP AND PUSHBACK", ["mode"]="p", ["
 	[22] = {["activity"] = "STARTUP FINISHED | CALL BEFORE TAXI CHECKLIST", ["wait"] = 1, ["interactive"] = 0, ["actor"] = "CPT:", ["validated"] = 0, ["chkl_color"] = color_white, ["end"] = 1,
 		["actions"] = function ()
 			kc_acf_lower_eicas_mode(0)
+			kc_acf_light_cockpit_mode(0)
 		end
 	}
 	
@@ -1668,7 +1669,10 @@ KC_BEFORE_TAXI_CHECKLIST = { ["name"] = "BEFORE TAXI CHECKLIST (F/O)", ["mode"]=
 		["answer"] = function () return "" end
 	},
 	[11] = { ["actor"] = "CPT:", ["chkl_item"] = "GROUND EQUIPMENT", ["chkl_response"] = "CLEAR", ["chkl_state"] = false, ["chkl_color"] = color_white, ["validated"] = 0,  ["wait"] = 2, ["interactive"] = 1, ["ask"] = 0, ["end"] = 0,
-		["answer"] = function () return "clear" end
+		["answer"] = function () return "clear" end,
+		["actions"] = function () 
+			kc_acf_light_cockpit_mode(0)
+		end
 	},
 	[12] = { ["actor"] = "", ["chkl_item"] = "BEFORE TAXI CHECKLIST", ["chkl_response"] = "COMPLETED", ["chkl_state"] = false, ["chkl_color"] = color_white, ["validated"] = 0, ["wait"] = 2, ["interactive"] = 0, ["ask"] = 0, ["end"] = 1,
 		["speak"] = function () return "before taxi checklist completed" end,
@@ -1930,6 +1934,21 @@ KC_DESCEND_CHECKLIST = { ["name"] = "DESCEND CHECKLIST (PM)", ["mode"]="c", ["wn
 		["answer"] = function () return string.format("V REFERENCE %i  MINIMUMS %i FEET",get("laminar/B738/FMS/vref"),get("laminar/B738/pfd/dh_pilot")) end,
 		["display"] = function () 
 			return string.format("V REFERENCE %i  MINIMUMS %i FEET",get("laminar/B738/FMS/vref"),get("laminar/B738/pfd/dh_pilot"))
+		end,
+		["actions"] = function () 
+			if (get_kpcrew_config("config_dhda") == true) then
+				set("laminar/B738/pfd/dh_pilot",get_kpcrew_config("arr_dh"))
+			else
+				set("laminar/B738/pfd/dh_pilot",get_kpcrew_config("arr_da"))
+			end
+			set("laminar/B738/EFIS_control/cpt/minimums_show",1)
+		end,		
+		["checks"] = function () 
+			if (get_kpcrew_config("config_dhda") == true) then
+				return get("laminar/B738/FMS/vref") > 0 and get("laminar/B738/pfd/dh_pilot") == get_kpcrew_config("arr_dh")
+			else
+				return get("laminar/B738/FMS/vref") > 0 and get("laminar/B738/pfd/dh_pilot") == get_kpcrew_config("arr_da")
+			end
 		end		
 	},
 	[6] = { ["actor"] = " PM:", ["chkl_item"] = "APPROACH BRIEFING", ["chkl_response"] = "COMPLETED", ["chkl_state"] = false, ["chkl_color"] = color_white, ["validated"] = 0,  ["wait"] = 2, ["interactive"] = 0, ["ask"] = 0, ["end"] = 0
@@ -2094,29 +2113,29 @@ KC_LANDING_PROC = { ["name"] = "LANDING", ["mode"]="p", ["wnd_width"] = 380, ["w
 
 -- function KC_LANDING_CHECKLIST() end
 KC_LANDING_CHECKLIST = { ["name"] = "LANDING CHECKLIST (PM)", ["mode"]="c", ["wnd_width1"] = 300,["wnd_width2"] = 350, ["wnd_height"] = 32*7, 
-	[1] = { ["actor"] = "", ["chkl_item"] = "LANDING CHECKLIST", ["chkl_response"] = " ", ["chkl_state"] = false, ["chkl_color"] = color_white, ["validated"] = 0, ["wait"] = 2, ["interactive"] = 0, ["ask"] = 0, ["end"] = 0,
+	[1] = { ["actor"] = "", ["chkl_item"] = "LANDING CHECKLIST", ["chkl_response"] = " ", ["chkl_state"] = false, ["chkl_color"] = color_white, ["validated"] = 0, ["wait"] = 1, ["interactive"] = 0, ["ask"] = 0, ["end"] = 0,
 		["speak"] = function () return "" end,
 		["answer"] = function () return "landing checklist" end
 	},
-	[2] = { ["actor"] = " PF:", ["chkl_item"] = "CABIN", ["chkl_response"] = "SECURE", ["chkl_state"] = false, ["chkl_color"] = color_white, ["validated"] = 0,  ["wait"] = 2, ["interactive"] = 1, ["ask"] = 0, ["end"] = 0,
+	[2] = { ["actor"] = " PF:", ["chkl_item"] = "CABIN", ["chkl_response"] = "SECURE", ["chkl_state"] = false, ["chkl_color"] = color_white, ["validated"] = 0,  ["wait"] = 1, ["interactive"] = 1, ["ask"] = 0, ["end"] = 0,
 		["answer"] = function () return "" end
 	},
-	[3] = { ["actor"] = " PF:", ["chkl_item"] = "ENGINE START SWITCHES", ["chkl_response"] = "CONT", ["chkl_state"] = false, ["chkl_color"] = color_white, ["validated"] = 0,  ["wait"] = 3, ["interactive"] = 1, ["ask"] = 0, ["end"] = 0,
+	[3] = { ["actor"] = " PF:", ["chkl_item"] = "ENGINE START SWITCHES", ["chkl_response"] = "CONT", ["chkl_state"] = false, ["chkl_color"] = color_white, ["validated"] = 0,  ["wait"] = 1, ["interactive"] = 1, ["ask"] = 0, ["end"] = 0,
 		["actions"] = function () kc_acf_eng_starter_mode(0,2) end,
 		["checks"] = function () return get("laminar/B738/engine/starter1_pos") == 2 and get("laminar/B738/engine/starter2_pos") == 2 end,		
 		["answer"] = function () return "" end
 	},
-	[4] = { ["actor"] = " PF:", ["chkl_item"] = "SPEEDBRAKE", ["chkl_response"] = "ARMED", ["chkl_state"] = false, ["chkl_color"] = color_white, ["validated"] = 0,  ["wait"] = 3, ["interactive"] = 1, ["ask"] = 0, ["end"] = 0,
+	[4] = { ["actor"] = " PF:", ["chkl_item"] = "SPEEDBRAKE", ["chkl_response"] = "ARMED", ["chkl_state"] = false, ["chkl_color"] = color_white, ["validated"] = 0,  ["wait"] = 1, ["interactive"] = 1, ["ask"] = 0, ["end"] = 0,
 		["actions"] = function () kc_acf_speed_break_set(1) end,
 		["checks"] = function () return get("sim/multiplayer/controls/speed_brake_request",0) == -0.5 end,
 		["answer"] = function () return "" end
 	},
-	[5] = { ["actor"] = " PF:", ["chkl_item"] = "LANDING GEAR", ["chkl_response"] = "DOWN", ["chkl_state"] = false, ["chkl_color"] = color_white, ["validated"] = 0,  ["wait"] = 2, ["interactive"] = 1, ["ask"] = 0, ["end"] = 0,
+	[5] = { ["actor"] = " PF:", ["chkl_item"] = "LANDING GEAR", ["chkl_response"] = "DOWN", ["chkl_state"] = false, ["chkl_color"] = color_white, ["validated"] = 0,  ["wait"] = 1, ["interactive"] = 1, ["ask"] = 0, ["end"] = 0,
 		["actions"] = function () kc_acf_gears(1) end,
 		["checks"] = function () return get("laminar/B738/controls/gear_handle_down") == 1 end,
 		["answer"] = function () return "" end
 	},
-	[6] = { ["actor"] = " PF:", ["chkl_item"] = "FLAPS", ["chkl_response"] = "___ ,GREEN LIGHT", ["chkl_state"] = false, ["chkl_color"] = color_white, ["validated"] = 0,  ["wait"] = 2, ["interactive"] = 1, ["ask"] = 0, ["end"] = 0,
+	[6] = { ["actor"] = " PF:", ["chkl_item"] = "FLAPS", ["chkl_response"] = "___ ,GREEN LIGHT", ["chkl_state"] = false, ["chkl_color"] = color_white, ["validated"] = 0,  ["wait"] = 1, ["interactive"] = 1, ["ask"] = 0, ["end"] = 0,
 		["answer"] = function () return "" end,
 		["actions"] = function () 
 			kc_acf_controls_flaps_set(kc_get_landing_flaps())
@@ -2144,13 +2163,14 @@ KC_FINAL_PROC = { ["name"] = "FINAL", ["mode"]="p", ["wnd_width"] = 380, ["wnd_h
 	},
 	[4] = {["activity"] = "AUTOPILOT DISCONNECTED", ["wait"] = 4, ["interactive"] = 0, ["actor"] = "F/O:", ["validated"] = 0, ["chkl_color"] = color_white, ["end"] = 0,
 		["actions"] = function () 
-			command_once("laminar/B738/autopilot/capt_disco_press")
+			kc_set_background_proc_status("APDISCONNECT1",1)
 		end	
 	},
 	[5] = {["activity"] = "AUTOTHROTTLE OFF", ["wait"] = 1, ["interactive"] = 1, ["actor"] = "CPT:", ["validated"] = 0, ["chkl_color"] = color_white, ["end"] = 0
 	},
 	[6] = {["activity"] = "AUTOTHROTTLE DISCONNECTED", ["wait"] = 3, ["interactive"] = 0, ["actor"] = "F/O:", ["validated"] = 0, ["chkl_color"] = color_white, ["end"] = 0,
 		["actions"] = function () 
+			kc_set_background_proc_status("APDISCONNECT1",1)
 			kc_acf_mcp_at_onoff(0)
 		end	
 	},
@@ -2757,7 +2777,7 @@ KC_BACKGROUND_PROCS = {
 	-- easy mode call for gear up at 200ft AGL
 	["GEARUP"] = {["status"] = 0,
 		["actions"] = function ()
-			if get("sim/flightmodel/position/y_agl") > 100 then
+			if get("sim/flightmodel/position/y_agl") > 20 then
 				kc_acf_gears(0)
 				speakNoText(0,"gear up")
 				kc_set_background_proc_status("GEARUP",0)
@@ -3022,6 +3042,19 @@ KC_BACKGROUND_PROCS = {
 				speakNoText(0,"Neutral")
 				kc_set_background_proc_status("FLIGHTCTRLRUD3",0)
 			end
+		end
+	},	
+	["APDISCONNECT1"] = {["status"] = 0,
+		["actions"] = function ()
+			kc_acf_mcp_ap_disconnect()
+			kc_set_background_proc_status("APDISCONNECT1",0)
+			kc_set_background_proc_status("APDISCONNECT2",1)
+		end
+	},	
+	["APDISCONNECT2"] = {["status"] = 0,
+		["actions"] = function ()
+			kc_acf_mcp_ap_disconnect()
+			kc_set_background_proc_status("APDISCONNECT2",0)
 		end
 	},	
 	
@@ -3662,13 +3695,21 @@ end
 
 -- dome lights 0=off, 1=on, 2=tgl
 function kc_acf_light_cockpit_mode(mode)
-	if mode ~= 2 then
-		set("laminar/B738/toggle_switch/cockpit_dome_pos",mode)
-	else
-		if mode == 0 then
-			set("laminar/B738/toggle_switch/cockpit_dome_pos",1)
+	if mode == 0 and get("laminar/B738/toggle_switch/cockpit_dome_pos") ~= 0 then
+		command_once("laminar/B738/toggle_switch/cockpit_dome_up")
+		command_once("laminar/B738/toggle_switch/cockpit_dome_up")
+		command_once("laminar/B738/toggle_switch/cockpit_dome_dn")
+	end
+	if mode == 1 and get("laminar/B738/toggle_switch/cockpit_dome_pos") == 0 then
+		command_once("laminar/B738/toggle_switch/cockpit_dome_dn")
+	end
+	if mode == 2 then 
+	  if get("laminar/B738/toggle_switch/cockpit_dome_pos") == 0 then
+			command_once("laminar/B738/toggle_switch/cockpit_dome_dn")
 		else
-			set("laminar/B738/toggle_switch/cockpit_dome_pos",0)
+			command_once("laminar/B738/toggle_switch/cockpit_dome_up")
+			command_once("laminar/B738/toggle_switch/cockpit_dome_up")
+			command_once("laminar/B738/toggle_switch/cockpit_dome_dn")
 		end
 	end
 end
@@ -4256,6 +4297,10 @@ end
 function kc_acf_mcp_toga()
 	command_once("laminar/B738/autopilot/left_toga_press")
 end 
+
+function kc_acf_mcp_ap_disconnect()
+	command_once("laminar/B738/autopilot/capt_disco_press")
+end
 
 --- Tests
 
