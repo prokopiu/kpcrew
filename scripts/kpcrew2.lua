@@ -353,9 +353,6 @@ function initFlight()
 		set_kpcrew_config("acf_icao","A345")
 	end
 	
-	-- B738 knows, otherwise "---"
-	set_kpcrew_config("flight_parkpos",kc_get_parking_position())
-	
 	-- pull current airport from navaid index
 	next_airport_index = XPLMFindNavAid( nil, nil, LATITUDE, LONGITUDE, nil, xplm_Nav_Airport)
 --	_, _, _, _, _, _, get_kpcrew_config("flight_origin"), _ = XPLMGetNavAidInfo( next_airport_index )	
