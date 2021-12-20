@@ -19,3 +19,5 @@ Will there be other aircraft? Yes, it will also contain the FJS B737-200 and man
 KPCrew went through several iterations, initially I called it Zibocrew. The initial concept was clunky and inflexible. I think I now have a good enough concept to easily extend the scripts. I even have now background events. As it is with Lua, you can see all that I did but when you change code you are on your own – I will not have the time to support this or hold hands with the installation. This is one of the reasons why I hesitated to release this publicly.
 
 I am also working on a way to make the checklists more intelligent. At the moment, using the Easy mode will set all checklist items correctly and tick the box for you. In the future and when using manual mode, the checklist will pause at certain steps until you have corrected the item.
+
+**[Go to the manual](documentation/manual.md)**
