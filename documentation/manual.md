@@ -74,3 +74,37 @@ Simply remove all the above lua files from the **scripts** and **modules** folde
 Once you have installed the lua files in the correct places, next time your X-Plane starts it will also automatically start KPCrew. If you have loaded one of the supported aircraft add-ons (currently the Zibo Mod B738) you will see the control window showing on the bottom of the XP11 screen. By default it is a floating window you can move and even bring out onto another screen.
 
 ![Control Window](images/controlwindow.png)
+
+### The Control Window
+
+These are the elements of the Control Window:
+
+ - **[M]**: Master button; the most used button in KPCrew, start procedures and move through the steps with a click
+ - **[Left instructions & checklist item display]**: Shows the current step/instruction. Blinks when interactive item
+ - **[P]**: Pause button; pauses the execution of a procedure or checklist
+ - **[S]**: Stop button; Cancels the execution of procedure or checklist
+ - **[<]**: Previous button; Allows you to move through the available procedures/checklists, in this case backward
+ - **[>]**: Next button; Allows you to move through the available procedures/checklists, in this case forward
+ - **[@]**: Flight Information/Configuration Window; Open the window to enter data, read briefings and configure KPCrew
+ - **[L]**: Procedure List Item window: Debug window to see content of procedures while they are being executed
+	
+### X-Plane Commands
+
+You can assign commands to buttons or keys for most of the above items:
+
+ - **kp/crew/master_button** = KPCrew Master Button
+ - **kp/crew/secondary_button** = KPCrew Secondary Button
+ - **kp/crew/next_button** = KPCrew Next Button
+ - **kp/crew/previous_button** = KPCrew Previous Button
+ - **kp/crew/info_window** = KPCrew Information Window
+	
+### FlyWithLua Macros
+
+You can also perform certain actions from the FlyWithLua Macro section:
+
+![FlyWithLua Macros](images/flywithluamacros.PNG)
+
+ - **KPCrew Re-Start** starts the whole script again
+ - **KPCrew Open Master Window** Opens the Control Window
+ - **KPCrew Open Flight Info** opens the Flight information/configuration window
+	
