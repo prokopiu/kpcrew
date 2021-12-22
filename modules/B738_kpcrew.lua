@@ -976,7 +976,7 @@ KC_PREFLIGHT_PROCEDURE = { ["name"] = "PREFLIGHT PROCEDURE", ["mode"]="p", ["wnd
 	},
 	[26] = {["activity"] = "AUTO BRAKE -- RTO", ["wait"] = 1, ["interactive"] = 0, ["actor"] = "F/O:", ["validated"] = 0, ["chkl_color"] = color_white, ["end"] = 0,
 		["actions"] = function ()
-			kc_acf_abrk_mode(1)
+			kc_acf_abrk_mode(0)
 		end,
 		["checks"] = function() return get(kc_autobrake_position_dataref) == 1 end
 	},
@@ -1095,10 +1095,10 @@ KC_PREFLIGHT_CHECKLIST = { ["name"] = "PREFLIGHT CHECKLIST (PM)", ["mode"]="c", 
 	},
 	[6] = { ["actor"] = "ALL:", ["chkl_item"] = "FLIGHT INSTRUMENTS", ["chkl_response"] = "HEADING _, ALTIMETER _", ["chkl_state"] = false, ["chkl_color"] = color_white, ["validated"] = 0,  ["wait"] = 5, ["interactive"] = 1, ["ask"] = 0, ["end"] = 0,
 		["display"] = function ()
-			return string.format("HEADING %i, ALTIMETER %i",get("sim/cockpit2/gauges/indicators/heading_electric_deg_mag_pilot"),get("laminar/B738/autopilot/altitude"))
+			return string.format("HEADING %i, ALTIMETER %i",math.floor(get("sim/cockpit2/gauges/indicators/heading_electric_deg_mag_pilot")),math.floor(get("laminar/B738/autopilot/altitude")))
 		end,
 		["answer"] = function () 
-			return string.format("HEADING %i and ALTIMETER %i",get("sim/cockpit2/gauges/indicators/heading_electric_deg_mag_pilot"),get("laminar/B738/autopilot/altitude"))
+			return "HEADING "..convertNato(math.floor(get("sim/cockpit2/gauges/indicators/heading_electric_deg_mag_pilot"))).." and ALTIMETER "..convertNato(math.floor(get("laminar/B738/autopilot/altitude")))
 		end
 	},
 	[7] = { ["actor"] = " PF:", ["chkl_item"] = "PARKING BRAKE", ["chkl_response"] = "SET", ["chkl_state"] = false, ["chkl_color"] = color_white, ["validated"] = 0,  ["wait"] = 1, ["interactive"] = 1, ["ask"] = 0, ["end"] = 0,
