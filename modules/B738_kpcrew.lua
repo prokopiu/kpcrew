@@ -1800,12 +1800,12 @@ KC_TAKEOFF_CLIMB_PROCEDURE = { ["name"] = "TAKEOFF & CLIMB", ["mode"]="p", ["wnd
 	[4] = {["activity"] = "SET TAKEOFF THRUST", ["wait"] = 1, ["interactive"] = 1, ["actor"] = "CPT:", ["validated"] = 0, ["chkl_color"] = color_white, ["end"] = 0,
 		["speak"] = function () return "" end
 	},
-	[5] = {["activity"] = "SET TAKEOFF THRUST", ["wait"] = 1, ["interactive"] = 0, ["actor"] = "CPT:", ["validated"] = 0, ["chkl_color"] = color_white, ["end"] = 0,
+	[5] = {["activity"] = "SETTING TAKEOFF THRUST", ["wait"] = 1, ["interactive"] = 0, ["actor"] = "CPT:", ["validated"] = 0, ["chkl_color"] = color_white, ["end"] = 0,
 		["actions"] = function ()
 			if get_kpcrew_config("dep_ap_modes") == 2 then
 				kc_acf_mcp_n1_onoff(1)
 			end
-			set("laminar/B738/yoke_disco_ap",0)
+			--set("laminar/B738/yoke_disco_ap",0)
 			kc_acf_mcp_toga()			
 		end,
 		["speak"] = function () return "" end
@@ -1813,7 +1813,7 @@ KC_TAKEOFF_CLIMB_PROCEDURE = { ["name"] = "TAKEOFF & CLIMB", ["mode"]="p", ["wnd
 	[6] = {["activity"] = "CMD A", ["wait"] = 1, ["interactive"] = 1, ["actor"] = "CPT:", ["validated"] = 0, ["chkl_color"] = color_white, ["end"] = 0,
 		["speak"] = function () return "" end
 	},
-	[7] = {["activity"] = "CMD A", ["wait"] = 1, ["interactive"] = 0, ["actor"] = "CPT:", ["validated"] = 0, ["chkl_color"] = color_white, ["end"] = 0,
+	[7] = {["activity"] = "SETTING CMD A", ["wait"] = 1, ["interactive"] = 0, ["actor"] = "CPT:", ["validated"] = 0, ["chkl_color"] = color_white, ["end"] = 0,
 		["actions"] = function ()
 			kc_acf_mcp_ap_set(1,1)
 		end,
@@ -2385,7 +2385,7 @@ KC_SHUTDOWN_CHECKLIST = { ["name"] = "SHUTDOWN CHECKLIST (F/O)", ["mode"]="c", [
 			kc_acf_hyd_pumps_onoff(3,0)
 			kc_acf_hyd_pumps_onoff(4,0)
 		end,
-		["checks"] = function() return get("laminar/B738/toggle_switch/hydro_pumps1_pos") == 0 and get("laminar/B738/toggle_switch/hydro_pumps2_pos") == 0 and get("laminar/B738/toggle_switch/electric_hydro_pumps1_pos") == 1 and get("laminar/B738/toggle_switch/electric_hydro_pumps2_pos") == 1 end,		
+		["checks"] = function() return get("laminar/B738/toggle_switch/hydro_pumps1_pos") == 1 and get("laminar/B738/toggle_switch/hydro_pumps2_pos") == 1 and get("laminar/B738/toggle_switch/electric_hydro_pumps1_pos") == 0 and get("laminar/B738/toggle_switch/electric_hydro_pumps2_pos") == 0 end,		
 		["answer"] = function () return "" end
 	},
 	[3] = { ["actor"] = "CPT:", ["chkl_item"] = "PROBE HEAT", ["chkl_response"] = "AUTO/OFF", ["chkl_state"] = false, ["chkl_color"] = color_white, ["validated"] = 0,  ["wait"] = 2, ["interactive"] = 1, ["ask"] = 0, ["end"] = 0,
