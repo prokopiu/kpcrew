@@ -1334,7 +1334,7 @@ KC_BEFORE_START_CHECKLIST = { ["name"] = "BEFORE START CHECKLIST (F/O)", ["mode"
 }
 
 -- function KC_STARTUP_AND_PUSH_PROC() end
-KC_STARTUP_AND_PUSH_PROC = { ["name"] = "STARTUP AND PUSHBACK", ["mode"]="p", ["wnd_width"] = 380, ["wnd_height"] = 31*20,
+KC_STARTUP_AND_PUSH_PROC = { ["name"] = "STARTUP AND PUSHBACK", ["mode"]="p", ["wnd_width"] = 380, ["wnd_height"] = 31*21,
 	[1] = {["activity"] = "PERFORMING BEFORE START ITEMS", ["wait"] = 2, ["interactive"] = 0, ["actor"] = "SYS:", ["validated"] = 0, ["chkl_color"] = color_white, ["end"] = 0,
 		["actions"] = function () 
 			kc_acf_chocks_mode(0)
@@ -1564,7 +1564,7 @@ KC_STARTUP_AND_PUSH_PROC = { ["name"] = "STARTUP AND PUSHBACK", ["mode"]="p", ["
 -- Ground equipment . . . . . . . . . . . . . . 	Clear
 
 -- function KC_BEFORE_TAXI_CHECKLIST() end
-KC_BEFORE_TAXI_CHECKLIST = { ["name"] = "BEFORE TAXI CHECKLIST (F/O)", ["mode"]="c", ["wnd_width1"] = 300,["wnd_width2"] = 350, ["wnd_height"] = 32*12, 
+KC_BEFORE_TAXI_CHECKLIST = { ["name"] = "BEFORE TAXI CHECKLIST (F/O)", ["mode"]="c", ["wnd_width1"] = 300,["wnd_width2"] = 350, ["wnd_height"] = 32*10, 
 	[1] = { ["actor"] = "", ["chkl_item"] = "BEFORE TAXI CHECKLIST", ["chkl_response"] = " ", ["chkl_state"] = false, ["chkl_color"] = color_white, ["validated"] = 0, ["wait"] = 4, ["interactive"] = 0, ["ask"] = 0, ["end"] = 0,
 		["speak"] = function () return "" end,
 		["answer"] = function () return "before taxi checklist" end
@@ -1687,7 +1687,7 @@ KC_BEFORE_TAXI_CHECKLIST = { ["name"] = "BEFORE TAXI CHECKLIST (F/O)", ["mode"]=
 -- Cabin. . . . . . . . . . . . . . . . . . .		Secure
 
 -- function KC_BEFORE_TAKEOFF_CHECKLIST() end
-KC_BEFORE_TAKEOFF_CHECKLIST = { ["name"] = "BEFORE TAKEOFF CHECKLIST (F/O)", ["mode"]="c", ["wnd_width1"] = 300,["wnd_width2"] = 350, ["wnd_height"] = 32*6, 
+KC_BEFORE_TAKEOFF_CHECKLIST = { ["name"] = "BEFORE TAKEOFF CHECKLIST (F/O)", ["mode"]="c", ["wnd_width1"] = 300,["wnd_width2"] = 350, ["wnd_height"] = 32*5, 
 	[1] = { ["actor"] = "", ["chkl_item"] = "BEFORE TAKEOFF CHECKLIST", ["chkl_response"] = " ", ["chkl_state"] = false, ["chkl_color"] = color_white, ["validated"] = 0, ["wait"] = 4, ["interactive"] = 0, ["ask"] = 0, ["end"] = 0,
 		["speak"] = function () return "" end,
 		["answer"] = function () return "before take off checklist" end
@@ -1770,7 +1770,7 @@ KC_ENTERING_RUNWAY_PROC = { ["name"] = "ENTERING RUNWAY PROCEDURE", ["mode"]="p"
 }
 
 -- function KC_TAKEOFF_CLIMB_PROCEDURE() end
-KC_TAKEOFF_CLIMB_PROCEDURE = { ["name"] = "TAKEOFF & CLIMB", ["mode"]="p", ["wnd_width"] = 380, ["wnd_height"] = 31*7,
+KC_TAKEOFF_CLIMB_PROCEDURE = { ["name"] = "TAKEOFF & CLIMB", ["mode"]="p", ["wnd_width"] = 380, ["wnd_height"] = 31*8,
 	[1] = {["activity"] = "TAKEOFF AND CLIMB", ["wait"] = 2, ["interactive"] = 0, ["actor"] = "SYS:", ["validated"] = 0, ["chkl_color"] = color_white, ["end"] = 0,
 		["actions"] = function () 
 			kc_set_background_proc_status("TAKEOFFRUN",1)
@@ -1982,7 +1982,7 @@ KC_APPROACH_CHECKLIST = { ["name"] = "APPROACH CHECKLIST (PM)", ["mode"]="c", ["
 }
 
 -- function KC_LANDING_PROC() end
-KC_LANDING_PROC = { ["name"] = "LANDING", ["mode"]="p", ["wnd_width"] = 380, ["wnd_height"] = 31*17,
+KC_LANDING_PROC = { ["name"] = "LANDING", ["mode"]="p", ["wnd_width"] = 380, ["wnd_height"] = 31*15,
 	[1] = {["activity"] = "PREPARING FOR LANDING", ["wait"] = 2, ["interactive"] = 0, ["actor"] = "SYS:", ["validated"] = 0, ["chkl_color"] = color_white, ["end"] = 0,
 		["actions"] = function () 
 			kc_acf_light_taxi_mode(0)
@@ -2112,7 +2112,7 @@ KC_LANDING_PROC = { ["name"] = "LANDING", ["mode"]="p", ["wnd_width"] = 380, ["w
 -- Flaps . . . . . . . . . . . . . . . . . .		___, green light
 
 -- function KC_LANDING_CHECKLIST() end
-KC_LANDING_CHECKLIST = { ["name"] = "LANDING CHECKLIST (PM)", ["mode"]="c", ["wnd_width1"] = 300,["wnd_width2"] = 350, ["wnd_height"] = 32*7, 
+KC_LANDING_CHECKLIST = { ["name"] = "LANDING CHECKLIST (PM)", ["mode"]="c", ["wnd_width1"] = 300,["wnd_width2"] = 350, ["wnd_height"] = 32*6, 
 	[1] = { ["actor"] = "", ["chkl_item"] = "LANDING CHECKLIST", ["chkl_response"] = " ", ["chkl_state"] = false, ["chkl_color"] = color_white, ["validated"] = 0, ["wait"] = 1, ["interactive"] = 0, ["ask"] = 0, ["end"] = 0,
 		["speak"] = function () return "" end,
 		["answer"] = function () return "landing checklist" end
@@ -2154,7 +2154,7 @@ KC_LANDING_CHECKLIST = { ["name"] = "LANDING CHECKLIST (PM)", ["mode"]="c", ["wn
 }
 
 -- function KC_FINAL_PROC() end
-KC_FINAL_PROC = { ["name"] = "FINAL", ["mode"]="p", ["wnd_width"] = 380, ["wnd_height"] = 31*17,
+KC_FINAL_PROC = { ["name"] = "FINAL", ["mode"]="p", ["wnd_width"] = 380, ["wnd_height"] = 31*7,
 	[1] = {["activity"] = "ON FINAL", ["wait"] = 2, ["interactive"] = 0, ["actor"] = "SYS:", ["validated"] = 0, ["chkl_color"] = color_white, ["end"] = 0
 	},
 	[2] = {["activity"] = "CLEARED FOR LANDING?", ["wait"] = 1, ["interactive"] = 1, ["actor"] = "CPT:", ["validated"] = 0, ["chkl_color"] = color_white, ["end"] = 0
@@ -2179,7 +2179,7 @@ KC_FINAL_PROC = { ["name"] = "FINAL", ["mode"]="p", ["wnd_width"] = 380, ["wnd_h
 }
 
 -- function KC_CLEANUP_PROC() end
-KC_CLEANUP_PROC = { ["name"] = "CLEANUP", ["mode"]="p", ["wnd_width"] = 380, ["wnd_height"] = 31*16,
+KC_CLEANUP_PROC = { ["name"] = "CLEANUP", ["mode"]="p", ["wnd_width"] = 380, ["wnd_height"] = 31*14,
 	[1] = {["activity"] = "AFTER LANDING ITEMS", ["wait"] = 2, ["interactive"] = 0, ["actor"] = "SYS:", ["validated"] = 0, ["chkl_color"] = color_white, ["end"] = 0,
 		["actions"] = function () end,
 		["answer"] = function () return "it is ok to clean up " end
@@ -2255,12 +2255,7 @@ KC_CLEANUP_PROC = { ["name"] = "CLEANUP", ["mode"]="p", ["wnd_width"] = 380, ["w
 			kc_acf_mcp_fds_set(0,0)			
 		end
 	},
-	[15] = {["activity"] = "", ["wait"] = 1, ["interactive"] = 0, ["actor"] = "F/O:", ["validated"] = 0, ["chkl_color"] = color_white, ["end"] = 0,
-		["actions"] = function ()
-			
-		end
-	},
-	[16] = {["activity"] = "AIRCRAFT CLEANED UP | NEXT SHUTDOWN AT STAND", ["wait"] = 1, ["interactive"] = 0, ["actor"] = "CPT:", ["validated"] = 0, ["chkl_color"] = color_white, ["end"] = 1
+	[15] = {["activity"] = "AIRCRAFT CLEANED UP | NEXT SHUTDOWN AT STAND", ["wait"] = 1, ["interactive"] = 0, ["actor"] = "CPT:", ["validated"] = 0, ["chkl_color"] = color_white, ["end"] = 1
 	}
 }
 
@@ -2373,7 +2368,7 @@ KC_SHUTDOWN_PROC = { ["name"] = "SHUTDOWN", ["mode"]="p", ["wnd_width"] = 380, [
 -- Parking brake . . . . . . . . . . . . .			___
 
 -- function KC_SHUTDOWN_CHECKLIST() end
-KC_SHUTDOWN_CHECKLIST = { ["name"] = "SHUTDOWN CHECKLIST (F/O)", ["mode"]="c", ["wnd_width1"] = 300,["wnd_width2"] = 350, ["wnd_height"] = 32*9, 
+KC_SHUTDOWN_CHECKLIST = { ["name"] = "SHUTDOWN CHECKLIST (F/O)", ["mode"]="c", ["wnd_width1"] = 300,["wnd_width2"] = 350, ["wnd_height"] = 32*8, 
 	[1] = { ["actor"] = "", ["chkl_item"] = "SHUTDOWN CHECKLIST", ["chkl_response"] = " ", ["chkl_state"] = false, ["chkl_color"] = color_white, ["validated"] = 0, ["wait"] = 2, ["interactive"] = 0, ["ask"] = 0, ["end"] = 0,
 		["speak"] = function () return "" end,
 		["answer"] = function () return "shutdown checklist" end
@@ -2432,7 +2427,7 @@ KC_SHUTDOWN_CHECKLIST = { ["name"] = "SHUTDOWN CHECKLIST (F/O)", ["mode"]="c", [
 }
 
 -- function KC_SECURE_AIRCRAFT_PROC() end
-KC_SECURE_AIRCRAFT_PROC = { ["name"] = "SECURE AIRCRAFT", ["mode"]="p", ["wnd_width"] = 380, ["wnd_height"] = 31*17,
+KC_SECURE_AIRCRAFT_PROC = { ["name"] = "SECURE AIRCRAFT", ["mode"]="p", ["wnd_width"] = 380, ["wnd_height"] = 31*10,
 	[1] = {["activity"] = "SECURE AIRCRAFT", ["wait"] = 2, ["interactive"] = 0, ["actor"] = "SYS:", ["validated"] = 0, ["chkl_color"] = color_white, ["end"] = 0,
 		["actions"] = function () end,
 		["answer"] = function () return "" end
@@ -2491,7 +2486,7 @@ KC_SECURE_AIRCRAFT_PROC = { ["name"] = "SECURE AIRCRAFT", ["mode"]="p", ["wnd_wi
 -- Packs . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .Off
 
 -- function KC_SECURE_CHECKLIST() end
-KC_SECURE_CHECKLIST = { ["name"] = "SECURE AIRCRAFT CHECKLIST (F/O)", ["mode"]="c", ["wnd_width1"] = 300,["wnd_width2"] = 350, ["wnd_height"] = 32*9, 
+KC_SECURE_CHECKLIST = { ["name"] = "SECURE AIRCRAFT CHECKLIST (F/O)", ["mode"]="c", ["wnd_width1"] = 300,["wnd_width2"] = 350, ["wnd_height"] = 32*5, 
 	[1] = { ["actor"] = "", ["chkl_item"] = "SECURE CHECKLIST", ["chkl_response"] = " ", ["chkl_state"] = false, ["chkl_color"] = color_white, ["validated"] = 0, ["wait"] = 2, ["interactive"] = 0, ["ask"] = 0, ["end"] = 0,
 		["speak"] = function () return "" end,
 		["answer"] = function () return "secure checklist" end
