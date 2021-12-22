@@ -2491,7 +2491,7 @@ KC_SECURE_AIRCRAFT_PROC = { ["name"] = "SECURE AIRCRAFT", ["mode"]="p", ["wnd_wi
 -- Packs . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .Off
 
 -- function KC_SECURE_CHECKLIST() end
-KC_SECURE_CHECKLIST = { ["name"] = "SECURE (F/O)", ["mode"]="c", ["wnd_width1"] = 300,["wnd_width2"] = 350, ["wnd_height"] = 32*9, 
+KC_SECURE_CHECKLIST = { ["name"] = "SECURE AIRCRAFT CHECKLIST (F/O)", ["mode"]="c", ["wnd_width1"] = 300,["wnd_width2"] = 350, ["wnd_height"] = 32*9, 
 	[1] = { ["actor"] = "", ["chkl_item"] = "SECURE CHECKLIST", ["chkl_response"] = " ", ["chkl_state"] = false, ["chkl_color"] = color_white, ["validated"] = 0, ["wait"] = 2, ["interactive"] = 0, ["ask"] = 0, ["end"] = 0,
 		["speak"] = function () return "" end,
 		["answer"] = function () return "secure checklist" end
@@ -4011,7 +4011,7 @@ end
 
 -- MCP set speed
 function kc_acf_mcp_spd_set(value)
-	set("sim/cockpit2/autopilot/airspeed_dial_kts",value)
+	set("laminar/B738/autopilot/mcp_speed_dial_kts_mach",value)
 end
 
 -- MCP set altitude
