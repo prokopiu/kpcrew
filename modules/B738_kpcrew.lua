@@ -1235,6 +1235,7 @@ KC_BEFORE_START_CHECKLIST = { ["name"] = "BEFORE START CHECKLIST (F/O)", ["mode"
 		end,
 		["actions"] = function () 
 			kc_acf_cockpit_door(0)
+			kc_acf_external_doors(0,0)
 		end
 	},
 	[3] = { ["actor"] = "CPT:", ["chkl_item"] = "FUEL", ["chkl_response"] = "___ KGS, PUMPS ON", ["chkl_state"] = false, ["chkl_color"] = color_white, ["validated"] = 0,  ["wait"] = 2, ["interactive"] = 1, ["ask"] = 0, ["end"] = 0,
@@ -1323,6 +1324,7 @@ KC_STARTUP_AND_PUSH_PROC = { ["name"] = "STARTUP AND PUSHBACK", ["mode"]="p", ["
 			kc_acf_parking_break_mode(0)
 			kc_acf_light_beacon_mode(1)
 			kc_acf_parking_break_mode(1)
+			kc_acf_external_doors(0,0)
 		end,
 		["speak"] = function () return "" end
 	},
@@ -1558,6 +1560,7 @@ KC_BEFORE_TAXI_CHECKLIST = { ["name"] = "BEFORE TAXI CHECKLIST (F/O)", ["mode"]=
 		end,
 		["actions"] = function () 
 			kc_acf_elec_gen_on_bus(0,1)
+			kc_acf_external_doors(0,0)
 		end
 	},
 	[3] = { ["actor"] = "CPT:", ["chkl_item"] = "PROBE HEAT", ["chkl_response"] = "ON", ["chkl_state"] = false, ["chkl_color"] = color_white, ["validated"] = 0,  ["wait"] = 2, ["interactive"] = 1, ["ask"] = 0, ["end"] = 0,
