@@ -724,6 +724,9 @@ function kc_flightinfo_build()
 
 		-- T/O flaps
 		set_kpcrew_config("dep_to_flaps",kc_gui_in_dropdown("T/O Flaps",get_kpcrew_config("dep_to_flaps"),GENERAL_Acf:getDEP_Flaps(),200))
+
+		-- Manual T/O Flaps
+		set_kpcrew_config("dep_manual_flaps",kc_gui_in_trb("Manual Flaps", get_kpcrew_config("dep_manual_flaps"), "MANUAL", "AUTO",150))
 		
 		-- Anti Ice
 		set_kpcrew_config("dep_anti_ice",kc_gui_in_dropdown("Anti Ice",get_kpcrew_config("dep_anti_ice"),GENERAL_Acf:getAIce(),200))
