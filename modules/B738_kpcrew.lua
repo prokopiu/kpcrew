@@ -1757,8 +1757,10 @@ KC_ENTERING_RUNWAY_PROC = { ["name"] = "ENTERING RUNWAY PROCEDURE", ["mode"]="p"
 -- function KC_TAKEOFF_CLIMB_PROCEDURE() end
 KC_TAKEOFF_CLIMB_PROCEDURE = { ["name"] = "TAKEOFF & CLIMB", ["mode"]="p", ["wnd_width"] = 380, ["wnd_height"] = 31*8,
 	[1] = {["activity"] = "TAKEOFF AND CLIMB", ["wait"] = 2, ["interactive"] = 0, ["actor"] = "SYS:", ["validated"] = 0, ["chkl_color"] = color_white, ["end"] = 0,
-		["actions"] = function () 
-			kc_set_background_proc_status("TAKEOFFRUN",1)
+		["actions"] = function ()
+			if not get_kpcrew_config("dep_manual_flaps") then
+				kc_set_background_proc_status("TAKEOFFRUN",1)
+			end
 			kc_acf_et_timer_startstop(1)
 			kc_acf_mcp_fds_set(0,1)
 		end,
@@ -1790,21 +1792,102 @@ KC_TAKEOFF_CLIMB_PROCEDURE = { ["name"] = "TAKEOFF & CLIMB", ["mode"]="p", ["wnd
 			if get_kpcrew_config("dep_ap_modes") == 2 then
 				kc_acf_mcp_n1_onoff(1)
 			end
-			--set("laminar/B738/yoke_disco_ap",0)
 			kc_acf_mcp_toga()			
 		end,
 		["speak"] = function () return "" end
 	},
-	[6] = {["activity"] = "CMD A", ["wait"] = 1, ["interactive"] = 1, ["actor"] = "CPT:", ["validated"] = 0, ["chkl_color"] = color_white, ["end"] = 0,
+	[6] = {["activity"] = "FLAPS 10", ["wait"] = 1, ["interactive"] = 1, ["actor"] = "CPT:", ["validated"] = 0, ["chkl_color"] = color_white, ["end"] = 0,
+		["skip"] = function () 
+			return not get_kpcrew_config("dep_manual_flaps") or kc_get_controls_flaps_position() < 15
+		end,
+		["display"] = function () 
+			return string.format("AT %i KTS - FLAPS 10",get("laminar/B738/pfd/flaps_15")) 
+		end
+	},
+	[7] = {["activity"] = "SPEED CHECK FLAPS 10", ["wait"] = 1, ["interactive"] = 0, ["actor"] = "F/O:", ["validated"] = 0, ["chkl_color"] = color_white, ["end"] = 0,
+		["skip"] = function () 
+			return not get_kpcrew_config("dep_manual_flaps") or kc_get_controls_flaps_position() < 15
+		end,
+		["actions"] = function () 
+			kc_acf_controls_flaps_set(10)
+		end,
+		["speak"] = function () 
+			return "Speed check. Flaps ten"
+		end	
+	},
+	[8] = {["activity"] = "FLAPS 5", ["wait"] = 1, ["interactive"] = 1, ["actor"] = "CPT:", ["validated"] = 0, ["chkl_color"] = color_white, ["end"] = 0,
+		["skip"] = function () 
+			return not get_kpcrew_config("dep_manual_flaps") or kc_get_controls_flaps_position() < 10
+		end,
+		["display"] = function () 
+			return string.format("AT %i KTS - FLAPS 5",get("laminar/B738/pfd/flaps_10")) 
+		end
+	},
+	[9] = {["activity"] = "SPEED CHECK FLAPS 5", ["wait"] = 1, ["interactive"] = 0, ["actor"] = "F/O:", ["validated"] = 0, ["chkl_color"] = color_white, ["end"] = 0,
+		["skip"] = function () 
+			return not get_kpcrew_config("dep_manual_flaps") or kc_get_controls_flaps_position() < 10
+		end,
+		["actions"] = function () 
+			kc_acf_controls_flaps_set(5)
+		end,
+		["speak"] = function () 
+			return "Speed check. Flaps five"
+		end	
+	},
+	[10] = {["activity"] = "FLAPS 1", ["wait"] = 1, ["interactive"] = 1, ["actor"] = "CPT:", ["validated"] = 0, ["chkl_color"] = color_white, ["end"] = 0,
+		["skip"] = function () 
+			return not get_kpcrew_config("dep_manual_flaps") or kc_get_controls_flaps_position() <= 1
+		end,
+		["display"] = function () 
+			return string.format("AT %i KTS - FLAPS 1",get("laminar/B738/pfd/flaps_5")) 
+		end
+	},
+	[11] = {["activity"] = "SPEED CHECK FLAPS 1", ["wait"] = 1, ["interactive"] = 0, ["actor"] = "F/O:", ["validated"] = 0, ["chkl_color"] = color_white, ["end"] = 0,
+		["skip"] = function () 
+			return not get_kpcrew_config("dep_manual_flaps") or kc_get_controls_flaps_position() <= 1
+		end,
+		["actions"] = function () 
+			kc_acf_controls_flaps_set(1)
+		end,
+		["speak"] = function () 
+			return "Speed check. Flaps one"
+		end	
+	},
+	[12] = {["activity"] = "FLAPS UP", ["wait"] = 1, ["interactive"] = 1, ["actor"] = "CPT:", ["validated"] = 0, ["chkl_color"] = color_white, ["end"] = 0,
+		["skip"] = function () 
+			return not get_kpcrew_config("dep_manual_flaps") or kc_get_controls_flaps_position() == 0
+		end,
+		["display"] = function () 
+			return "FLAPS UP" 
+		end
+	},
+	[13] = {["activity"] = "FLAPS UP", ["wait"] = 1, ["interactive"] = 0, ["actor"] = "F/O:", ["validated"] = 0, ["chkl_color"] = color_white, ["end"] = 0,
+		["skip"] = function () 
+			return not get_kpcrew_config("dep_manual_flaps") or kc_get_controls_flaps_position() == 0
+		end,
+		["actions"] = function () 
+			kc_acf_controls_flaps_set(0)
+		end,
+		["speak"] = function () 
+			return "Flaps up"
+		end	
+	},
+	[14] = {["activity"] = "CMD A", ["wait"] = 1, ["interactive"] = 1, ["actor"] = "CPT:", ["validated"] = 0, ["chkl_color"] = color_white, ["end"] = 0,
+		["skip"] = function () 
+			return true
+		end,
 		["speak"] = function () return "" end
 	},
-	[7] = {["activity"] = "SETTING CMD A", ["wait"] = 1, ["interactive"] = 0, ["actor"] = "CPT:", ["validated"] = 0, ["chkl_color"] = color_white, ["end"] = 0,
+	[15] = {["activity"] = "SETTING CMD A", ["wait"] = 1, ["interactive"] = 0, ["actor"] = "CPT:", ["validated"] = 0, ["chkl_color"] = color_white, ["end"] = 0,
+		["skip"] = function () 
+			return true
+		end,
 		["actions"] = function ()
 			kc_acf_mcp_ap_set(1,1)
 		end,
 		["speak"] = function () return "" end
 	},
-	[8] = {["activity"] = "TAKEOFF & CLIMB FINISHED | AFTER TAKEOFF CHECKLIST", ["wait"] = 1, ["interactive"] = 0, ["actor"] = "CPT:", ["validated"] = 0, ["chkl_color"] = color_white, ["end"] = 1
+	[16] = {["activity"] = "TAKEOFF & CLIMB FINISHED | AFTER TAKEOFF CHECKLIST", ["wait"] = 1, ["interactive"] = 0, ["actor"] = "CPT:", ["validated"] = 0, ["chkl_color"] = color_white, ["end"] = 1
 	}
 }
 
@@ -2697,7 +2780,6 @@ KC_BACKGROUND_PROCS = {
 			end
 		end
 	},	
-
 
 	-- TAKEOFF PROCEDURE
 	["TAKEOFFRUN"] = {["status"] = 0,
