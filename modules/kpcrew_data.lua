@@ -75,6 +75,7 @@ KPCREW_CONFIG = {
 	["dep_n1"] = 99.9,
 	["dep_msa"] = 1000,
 	["dep_remarks"] = "New",
+	["dep_manual_flaps"] = true,
 	["arr_freq_atis"] = 122.8,
 	["arr_freq_app"] =  122.8,
 	["arr_freq_twr"] = 122.8,
@@ -183,6 +184,7 @@ function newFlight()
 	set_kpcrew_config("dep_transalt",5000)
 	set_kpcrew_config("dep_n1",99.9)
 	set_kpcrew_config("dep_msa",1000)
+	set_kpcrew_config("dep_manual_flaps",false)
 	set_kpcrew_config("dep_remarks","New")
 	set_kpcrew_config("arr_freq_atis",122.8)
 	set_kpcrew_config("arr_freq_app", 122.8)
@@ -303,6 +305,7 @@ function kc_write_config(module)
 	fileConfig:write('set_kpcrew_config("dep_transalt",' .. 		        get_kpcrew_config("dep_transalt") .. ')\n')
 	fileConfig:write('set_kpcrew_config("dep_n1",' .. 		       			get_kpcrew_config("dep_n1") .. ')\n')
 	fileConfig:write('set_kpcrew_config("dep_msa",' .. 		       			get_kpcrew_config("dep_msa") .. ')\n')
+	fileConfig:write('set_kpcrew_config("dep_manual_flaps",' .. 		   	tostring(get_kpcrew_config("dep_manual_flaps")) .. ')\n')
 	fileConfig:write('set_kpcrew_config("dep_remarks","' ..					string.gsub(get_kpcrew_config("dep_remarks"),'\n','\\n') .. '")\n')
 	fileConfig:write('set_kpcrew_config("arr_freq_atis",' .. 		    	get_kpcrew_config("arr_freq_atis") .. ')\n')
 	fileConfig:write('set_kpcrew_config("arr_freq_app",' .. 		        get_kpcrew_config("arr_freq_app") .. ')\n')
