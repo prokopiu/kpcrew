@@ -43,17 +43,37 @@ if (acf_icao == "DFLT") then
 	sysLights = require "kpcrew.systems.DFLT.sysLights"	
 end
 
-genutils.logInfo("TEST",acf_icao)
+sysLights.setRwyLightsMode(sysLights.modeToggle)
 
+-- ============ aircraft specific joystick/key commands (e.g. for Alpha Yoke)
+-- ------------------ Lights
+create_command("kp/xsp/lights/beacon_switch_on",	"Beacon Lights On",		"sysLights.setBeaconMode(sysLights.modeOn)", "", "")
+create_command("kp/xsp/lights/beacon_switch_off",	"Beacon Lights Off",	"sysLights.setBeaconMode(sysLights.modeOff)", "", "")
+create_command("kp/xsp/lights/beacon_switch_tgl",	"Beacon Lights Toggle",	"sysLights.setBeaconMode(sysLights.modeToggle)", "", "")
 
-genutils.speakNoText(1,"TEST")
-genutils.logInfo("TEST Single",genutils.singleLetters("test"))
-genutils.logInfo("TEST Nato",genutils.convertNato("test"))
-genutils.logInfo("TEST RWY",genutils.convertRwy("08C"))
-genutils.logInfo("TEST time",genutils.display_timefull(10))
+create_command("kp/xsp/lights/nav_switch_on",		"Navigation Lights On",		"sysLights.setNavLightMode(sysLights.modeOn)", "", "")
+create_command("kp/xsp/lights/nav_switch_off",		"Navigation Lights Off",	"sysLights.setNavLightMode(sysLights.modeOff)", "", "")
+create_command("kp/xsp/lights/nav_switch_tgl",		"Navigation Lights Toggle",	"sysLights.setNavLightMode(sysLights.modeToggle)", "", "")
 
-sysLights.setBeaconMode(1)
+create_command("kp/xsp/lights/strobe_switch_on",	"Strobe Lights On",		"sysLights.setStrobeLightMode(sysLights.modeOn)", "", "")
+create_command("kp/xsp/lights/strobe_switch_off",	"Strobe Lights Off",	"sysLights.setStrobeLightMode(sysLights.modeOff)", "", "")
+create_command("kp/xsp/lights/strobe_switch_tgl",	"Strobe Lights Toggle",	"sysLights.setStrobeLightMode(sysLights.modeToggle)", "", "")
 
+create_command("kp/xsp/lights/taxi_switch_on",		"Taxi Lights On",		"sysLights.setTaxiLightMode(sysLights.modeOn)", "", "")
+create_command("kp/xsp/lights/taxi_switch_off",		"Taxi Lights Off",		"sysLights.setTaxiLightMode(sysLights.modeOff)", "", "")
+create_command("kp/xsp/lights/taxi_switch_tgl",		"Taxi Lights Toggle",	"sysLights.setTaxiLightMode(sysLights.modeToggle)", "", "")
+
+create_command("kp/xsp/lights/landing_switch_on",	"Landing Lights On",	"sysLights.setLandingLightsMode(sysLights.modeOn)", "", "")
+create_command("kp/xsp/lights/landing_switch_off",	"Landing Lights Off",	"sysLights.setLandingLightsMode(sysLights.modeOff)", "", "")
+create_command("kp/xsp/lights/landing_switch_tgl",	"Landing Lights Toggle","sysLights.setLandingLightsMode(sysLights.modeToggle)", "", "")
+
+create_command("kp/xsp/lights/wing_switch_on",		"Wing Lights On",		"sysLights.setWingLightsMode(sysLights.modeOn)", "", "")
+create_command("kp/xsp/lights/wing_switch_off",		"Wing Lights Off",		"sysLights.setWingLightsMode(sysLights.modeOff)", "", "")
+create_command("kp/xsp/lights/wing_switch_tgl",		"Wing Lights Toggle",	"sysLights.setWingLightsMode(sysLights.modeToggle)", "", "")
+
+create_command("kp/xsp/lights/logo_switch_on",		"Logo Lights On",		"sysLights.setLogoLightsMode(sysLights.modeOn)", "", "")
+create_command("kp/xsp/lights/logo_switch_off",		"Logo Lights Off",		"sysLights.setLogoLightsMode(sysLights.modeOff)", "", "")
+create_command("kp/xsp/lights/logo_switch_tgl",		"Logo Lights Toggle",	"sysLights.setLogoLightsMode(sysLights.modeToggle)", "", "")
 
 -- in FlyWithLua menu
 --add_macro("KPCrew Re-Start", "kc_init_kpcrew()")
