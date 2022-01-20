@@ -17,19 +17,25 @@ local cmdBeaconOn = "sim/lights/beacon_lights_on"
 local cmdBeaconOff = "sim/lights/beacon_lights_off"
 local cmdBeaconToggle = "sim/lights/beacon_lights_toggle"
 
-local drefNavigationLight = "laminar/B738/toggle_switch/position_light_pos"
-local cmdNavLightsOn = "laminar/B738/toggle_switch/position_light_dn"
+local drefNavigationLight = "sim/cockpit/electrical/nav_lights_on"
+local cmdNavLightsOn = "laminar/B738/toggle_switch/position_light_down"
 local cmdNavLightsOff = "laminar/B738/toggle_switch/position_light_up"
 
-local drefStrobeLights = "laminar/B738/toggle_switch/position_light_pos"
+local drefStrobeLights = "sim/cockpit/electrical/strobe_lights_on"
 local cmdStrobeLightsOn = "laminar/B738/toggle_switch/position_light_up"
-local cmdStrobeLightsOff = "laminar/B738/toggle_switch/position_light_dn"
+local cmdStrobeLightsOff = "laminar/B738/toggle_switch/position_light_down"
 
 local drefTaxiLights = "laminar/B738/toggle_switch/taxi_light_brightness_pos"
 local cmdTaxiLightsUp = "laminar/B738/toggle_switch/taxi_light_brightness_pos_up"
 local cmdTaxiLightsDn = "laminar/B738/toggle_switch/taxi_light_brightness_pos_dn"
 
-local drefLandingLights = "laminar/B738/switch/land_lights_left_pos"
+local drefLandingLights = {
+	["RetLeft"] = "laminar/B738/switch/land_lights_ret_left_pos",
+	["RetRight"] = "laminar/B738/switch/land_lights_ret_right_pos",
+	["Left"] = "laminar/B738/switch/land_lights_right_pos",
+	["Right"] = "laminar/B738/switch/land_lights_right_pos"
+}
+
 local cmdLandingLightsOn = { 
 	["RetLeft"] = "laminar/B738/switch/land_lights_ret_left_dn", 
 	["RetRight"] = "laminar/B738/switch/land_lights_ret_right_dn", 
@@ -38,7 +44,7 @@ local cmdLandingLightsOn = {
 }
 local cmdLandingLightsOff = {
 	["RetLeft"] = "laminar/B738/switch/land_lights_ret_left_up", 
-	["RetRight"] = "laminar/B738/switch/land_lights_ret_right_dn", 
+	["RetRight"] = "laminar/B738/switch/land_lights_ret_right_up", 
 	["Left"] = "laminar/B738/switch/land_lights_left_off", 
 	["Right"] = "laminar/B738/switch/land_lights_right_off"
 }
@@ -55,6 +61,8 @@ local drefCockpitLights = "laminar/B738/toggle_switch/cockpit_dome_pos"
 local cmdCockpitLightsUp = "laminar/B738/toggle_switch/cockpit_dome_up"
 local cmdCockpitLightsDn = "laminar/B738/toggle_switch/cockpit_dome_dn"
 
+local drefLogoLight = "laminar/B738/toggle_switch/logo_light"
+
 local cmdRwyLightsOn = { ["Left"] = "laminar/B738/switch/rwy_light_left_on", ["Right"] = "laminar/B738/switch/rwy_light_right_on" }
 local cmdRwyLightsOff = { ["Left"] = "laminar/B738/switch/rwy_light_left_off", ["Right"] = "laminar/B738/switch/rwy_light_right_off" }
 local cmdRwyLightsToggle = { ["Left"] = "laminar/B738/switch/rwy_light_left_toggle", ["Right"] = "laminar/B738/switch/rwy_light_right_toggle" }
@@ -70,15 +78,6 @@ local function getGenericLight(index)
 end
 -- allocations of generic lights (differs from aircraft to aircraft)
 local GenLights = { ["Logo"] = 0, ["Wing"] = 3, ["Wheel"] = 5, ["RwyLeft"] = 1, ["RwyRight"] = 2 }
-
--- a cluster of instrument lights in this array
-local drefInstrumentLight = "sim/cockpit2/switches/instrument_brightness_ratio"
-local function setInstrumentLight(index,mode)
-	set_array(drefInstrumentLight,index,mode)
-end
-local function getInstrumentLight(index)
-	return get(drefInstrumentLight,index)
-end
 
 -- Beacon/Anticollision light
 function sysLights.setBeaconMode(mode)
@@ -99,17 +98,17 @@ end
 
 -- Navigation Lights
 function sysLights.setNavLightMode(mode)
-	if mode == sysLights.modeOff and get(drefNavigationLight) == -1 then
+	if mode == sysLights.modeOff and get(drefNavigationLight) == 1 then
 		command_once(cmdNavLightsOff)
 	end
-	if mode == sysLights.modeOn and get(drefStrobeLights) == 0 then
+	if mode == sysLights.modeOn and get(drefNavigationLight) == 0 then
 		command_once(cmdNavLightsOn)
 	end
 	if mode == sysLights.modeToggle then	
-		if get(drefStrobeLights) == -1 then
+		if get(drefNavigationLight) == 1 then
 			command_once(cmdNavLightsOff)
 		end
-		if get(drefStrobeLights) == 0 then
+		if get(drefNavigationLight) == 0 then
 			command_once(cmdNavLightsOn)
 		end
 	end
@@ -125,9 +124,6 @@ function sysLights.setStrobeLightMode(mode)
 		command_once(cmdStrobeLightsOff)
 	end
 	if mode == sysLights.modeOn and get(drefStrobeLights) == 0 then
-		command_once(cmdStrobeLightsOn)
-	end
-	if mode == sysLights.modeOn and get(drefStrobeLights) == -1 then
 		command_once(cmdStrobeLightsOn)
 		command_once(cmdStrobeLightsOn)
 	end
@@ -187,7 +183,7 @@ function sysLights.isetLandingLightsMode(light,mode)
 			command_once(cmdLandingLightsOn["Left"])
 		end
 		if mode == sysLights.modeToggle then 
-			if get(drefLandingLights) == 0 then
+			if get(drefLandingLights["Left"]) == 0 then
 				command_once(cmdLandingLightsOn["Left"])
 			else
 				command_once(cmdLandingLightsOff["Left"])
@@ -202,7 +198,7 @@ function sysLights.isetLandingLightsMode(light,mode)
 			command_once(cmdLandingLightsOn["Right"])
 		end
 		if mode == sysLights.modeToggle then 
-			if get(drefLandingLights) == 0 then
+			if get(drefLandingLights["Right"]) == 0 then
 				command_once(cmdLandingLightsOn["Right"])
 			else
 				command_once(cmdLandingLightsOff["Right"])
@@ -219,7 +215,7 @@ function sysLights.isetLandingLightsMode(light,mode)
 			command_once(cmdLandingLightsOn["RetLeft"])
 		end
 		if mode == sysLights.modeToggle then 
-			if get(drefLandingLights) == 0 then
+			if get(drefLandingLights["RetLeft"]) == 0 then
 				command_once(cmdLandingLightsOn["RetLeft"])
 				command_once(cmdLandingLightsOn["RetLeft"])
 			else
@@ -247,7 +243,7 @@ function sysLights.isetLandingLightsMode(light,mode)
 			command_once(cmdLandingLightsOn["RetRight"])
 		end
 		if mode == sysLights.modeToggle then 
-			if get(drefLandingLights) == 0 then
+			if get(drefLandingLights["RetRight"]) == 0 then
 				command_once(cmdLandingLightsOn["RetRight"])
 				command_once(cmdLandingLightsOn["RetRight"])
 			else
@@ -280,22 +276,22 @@ end
 -- Logo Lights
 function sysLights.setLogoLightsMode(mode)
 	if mode == sysLights.modeOff then
-		setGenericLight(GenLights["Logo"],0)
+		set(drefLogoLight,0)
 	end
 	if mode == sysLights.modeOn then
-		setGenericLight(GenLights["Logo"],1)
+		set(drefLogoLight,1)
 	end
 	if mode == sysLights.modeToggle then
-		if getGenericLight(GenLights["Logo"]) == 0 then 
-			setGenericLight(GenLights["Logo"],1)
+		if get(drefLogoLight) == 0  then 
+			set(drefLogoLight,1)
 		else
-			setGenericLight(GenLights["Logo"],0)
+			set(drefLogoLight,0)
 		end
 	end
 end
 
 function sysLights.getLogoLightMode()
-	return getGenericLight(GenLights["Logo"])
+	return get(drefLogoLight)
 end
 
 -- Wing Lights
@@ -382,13 +378,13 @@ function sysLights.isetInstrumentLightsMode(light, mode)
 		set_array(drefInstrumentLights,light,0)
 	end
 	if mode == sysLights.modeOn then
-		set(drefInstrumentLights,1)
+		set_array(drefInstrumentLights,light,1)
 	end
 	if mode == sysLights.modeToggle then
-		if get(drefInstrumentLights) == 0 then 
-			set(drefInstrumentLights,1)
+		if get(drefInstrumentLights,light) == 0 then 
+			set_array(drefInstrumentLights,light,1)
 		else
-			set(drefInstrumentLights,0)
+			set_array(drefInstrumentLights,light,0)
 		end
 	end
 end
