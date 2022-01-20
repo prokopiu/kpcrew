@@ -67,18 +67,6 @@ local cmdRwyLightsOn = { ["Left"] = "laminar/B738/switch/rwy_light_left_on", ["R
 local cmdRwyLightsOff = { ["Left"] = "laminar/B738/switch/rwy_light_left_off", ["Right"] = "laminar/B738/switch/rwy_light_right_off" }
 local cmdRwyLightsToggle = { ["Left"] = "laminar/B738/switch/rwy_light_left_toggle", ["Right"] = "laminar/B738/switch/rwy_light_right_toggle" }
 
--- many lights are in the generic lights array
--- unfortunately these datarefs vary from Laminar plane to plane
-local drefGenericLights = "sim/cockpit2/switches/generic_lights_switch"
-local function setGenericLight(index,mode)
-	set_array(drefGenericLights,index,mode)
-end
-local function getGenericLight(index)
-	return get(drefGenericLights,index)
-end
--- allocations of generic lights (differs from aircraft to aircraft)
-local GenLights = { ["Logo"] = 0, ["Wing"] = 3, ["Wheel"] = 5, ["RwyLeft"] = 1, ["RwyRight"] = 2 }
-
 -- Beacon/Anticollision light
 function sysLights.setBeaconMode(mode)
 	if mode == sysLights.modeOff then

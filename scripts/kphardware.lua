@@ -41,9 +41,11 @@ end
 local syslights = nil
 if (acf_icao == "DFLT") then
 	sysLights = require "kpcrew.systems.DFLT.sysLights"	
+	sysGeneral = require "kpcrew.systems.DFLT.sysGeneral"	
 end
 if (acf_icao == "B738") then
 	sysLights = require "kpcrew.systems.B738.sysLights"	
+	sysGeneral = require "kpcrew.systems.B738.sysGeneral"	
 end
 
 -- ============ aircraft specific joystick/key commands (e.g. for Alpha Yoke)
@@ -92,3 +94,12 @@ create_command("kp/xsp/lights/wheel_switch_on",		"Wheel Lights On",		"sysLights.
 create_command("kp/xsp/lights/wheel_switch_off",	"Wheel Lights Off",		"sysLights.setWheelLightsMode(sysLights.modeOff)", "", "")
 create_command("kp/xsp/lights/wheel_switch_tgl",	"Wheel Lights Toggle",	"sysLights.setWheelLightsMode(sysLights.modeToggle)", "", "")
 
+---------------- General Systems ---------------------
+
+create_command("kp/xsp/systems/parking_brake_on",	"Parking Brake On",		"sysGeneral.setParkBrakeMode(sysGeneral.modeOn)", "", "")
+create_command("kp/xsp/systems/parking_brake_off",	"Parking Brake Off",	"sysGeneral.setParkBrakeMode(sysGeneral.modeOff)", "", "")
+create_command("kp/xsp/systems/parking_brake_tgl",	"Parking Brake Toggle",	"sysGeneral.setParkBrakeMode(sysGeneral.modeToggle)", "", "")
+
+create_command("kp/xsp/systems/gears_up",			"Gears Up",				"sysGeneral.setGearMode(sysGeneral.modeGearUp)", "", "")
+create_command("kp/xsp/systems/gears_down",			"Gears Down",			"sysGeneral.setGearMode(sysGeneral.modeGearDown)", "", "")
+create_command("kp/xsp/systems/gears_off",			"Gears OFF",			"sysGeneral.setGearMode(sysGeneral.modeGearOff)", "", "")
