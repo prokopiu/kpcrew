@@ -82,7 +82,7 @@ xsp_fine_coarse = 1
 
 -- set aircraft into cold and dark mode
 -- function KC_COLD_AND_DARK() end
-KC_COLD_AND_DARK = { ["name"] = "SET AIRCRAFT TO COLD & DARK", ["mode"]="p", ["wnd_width"] = 350, ["wnd_height"] = 31*9,   
+KC_COLD_AND_DARK = { ["name"] = "SET AIRCRAFT TO COLD & DARK", ["mode"]="s", ["wnd_width"] = 350, ["wnd_height"] = 31*9,   
 	[1] = {["activity"] = "OVERHEAD TOP", ["wait"] = 2, ["interactive"] = 0, ["actor"] = "SYS:", ["validated"] = 0, ["chkl_color"] = color_white, ["end"] = 0,
 		["actions"] = function ()
 			kc_acf_irs_mode(0,0)
@@ -248,7 +248,7 @@ KC_COLD_AND_DARK = { ["name"] = "SET AIRCRAFT TO COLD & DARK", ["mode"]="p", ["w
 
 -- Set aircraft in mode for turn around between flights
 -- function KC_TURN_AROUND_STATE() end
-KC_TURN_AROUND_STATE = { ["name"] = "SET TURN AROUND STATE", ["mode"]="p", ["wnd_width"] = 350, ["wnd_height"] = 31*16, 
+KC_TURN_AROUND_STATE = { ["name"] = "SET TURN AROUND STATE", ["mode"]="s", ["wnd_width"] = 350, ["wnd_height"] = 31*16, 
 	[1] = {["activity"] = "CONFIGURING AIRCRAFT FOR TURNAOUND", ["wait"] = 2, ["interactive"] = 0, ["actor"] = "SYS", ["validated"] = 0, ["chkl_color"] = color_white, ["end"] = 0,
 		["actions"] = function ()
 		end,
@@ -554,7 +554,8 @@ KC_PREL_PREFLIGHT_PROC = { ["name"] = "PRELIMINARY PREFLIGHT PROCEDURE", ["mode"
 	[4] = {["activity"] = "BATTERY -- ON", ["wait"] = 1, ["interactive"] = 0, ["actor"] = "F/O:", ["validated"] = 0, ["chkl_color"] = color_white, ["end"] = 0,
 		["actions"] = function ()
 			kc_acf_elec_battery_onoff(1)
-		end
+		end,
+		["checks"] = function () return get("laminar/B738/electric/battery_pos") == 1 end
 	},
 	[5] = {["activity"] = "POWER -- ON", ["wait"] = 3, ["interactive"] = 0, ["actor"] = "F/O:", ["validated"] = 0, ["chkl_color"] = color_white, ["end"] = 0,
 		["actions"] = function ()
@@ -575,29 +576,38 @@ KC_PREL_PREFLIGHT_PROC = { ["name"] = "PRELIMINARY PREFLIGHT PROCEDURE", ["mode"
 	[6] = {["activity"] = "STANDBY POWER -- ON", ["wait"] = 1, ["interactive"] = 0, ["actor"] = "F/O:", ["validated"] = 0, ["chkl_color"] = color_white, ["end"] = 0,
 		["actions"] = function ()
 			kc_acf_elec_stby_power(1)
-		end
+		end,
+		["checks"] = function () return get("laminar/B738/electric/standby_bat_pos") == 1 end
 	},
 	[7] = {["activity"] = "FIRE TESTS -- RUN", ["wait"] = 4, ["interactive"] = 0, ["actor"] = "F/O:", ["validated"] = 0, ["chkl_color"] = color_white, ["end"] = 0,
 		["actions"] = function ()
 			kc_acf_firetests()
 		end
 	},
-	[8] = {["activity"] = "WING LIGHTS -- AS REQUIRED", ["wait"] = 1, ["interactive"] = 0, ["actor"] = "F/O:", ["validated"] = 0, ["chkl_color"] = color_white, ["end"] = 0,
+	[8] = {["activity"] = "WING & WHEEL WELL LIGHTS -- AS REQUIRED", ["wait"] = 1, ["interactive"] = 0, ["actor"] = "F/O:", ["validated"] = 0, ["chkl_color"] = color_white, ["end"] = 0,
 		["actions"] = function ()
 			if kc_get_daylight() == 0 then
 				kc_acf_light_wing_mode(1)
-				kc_acf_light_wheel_mode(0)
+				kc_acf_light_wheel_mode(1)
 			else
 				kc_acf_light_wing_mode(0)
-				kc_acf_light_wheel_mode(1)
+				kc_acf_light_wheel_mode(0)
 			end
 			kc_acf_light_emer_mode(1)
 		end,
 		["display"] = function()
 			if kc_get_daylight() == 0 then
-				return "WING LIGHTS -- ON"
+				return "WING & WHEEL WELL LIGHTS -- ON"
 			else
-				return "WING LIGHTS -- OFF"
+				return "WING & WHEEL WELL LIGHTS -- OFF"
+			end
+		end,
+		["checks"] = function () 
+			Light_Status = dataref_table("sim/flightmodel2/lights/generic_lights_brightness_ratio")
+			if kc_get_daylight() == 0 then
+				return Light_Status[0] == 1 and Light_Status[5] == 1 
+			else
+				return Light_Status[0] == 0 and Light_Status[5] == 0 
 			end
 		end
 	},
@@ -5518,47 +5528,6 @@ function kc_menus_set_APP_data()
 end
 
 -- ============ aircraft specific joystick/key commands (e.g. for Alpha Yoke)
--- ------------------ Lights
-create_command("kp/xsp/lights/beacon_switch_on",	"Anti-Collision Lights On",		"kc_acf_light_beacon_mode(1)", "", "")
-create_command("kp/xsp/lights/beacon_switch_off",	"Anti-Collision Lights Off",	"kc_acf_light_beacon_mode(0)", "", "")
-create_command("kp/xsp/lights/beacon_switch_tgl",	"Anti-Collision Lights Toggle",	"kc_acf_light_beacon_mode(2)", "", "")
-
-create_command("kp/xsp/lights/dome_switch_on",		"Dome Lights On",		"kc_acf_light_cockpit_mode(1)", "", "")
-create_command("kp/xsp/lights/dome_switch_off",		"Dome Lights Off",		"kc_acf_light_cockpit_mode(0)", "", "")
-create_command("kp/xsp/lights/dome_switch_tgl",		"Dome Lights Toggle",	"kc_acf_light_cockpit_mode(2)", "", "")
-
-create_command("kp/xsp/lights/nav_switch_on",		"Position Lights On",	"kc_acf_light_nav_mode(1)", "", "")
-create_command("kp/xsp/lights/nav_switch_off",		"Position Lights Off",	"kc_acf_light_nav_mode(0)", "", "")
-create_command("kp/xsp/lights/nav_switch_off",		"Position Lights Toggle inop",	"kc_acf_light_nav_mode(3)", "", "")
-
-create_command("kp/xsp/lights/strobe_switch_on",	"Strobe Lights On",		"kc_acf_light_strobe_mode(2)", "", "")
-create_command("kp/xsp/lights/strobe_switch_off",	"Strobe Lights Off",	"kc_acf_light_strobe_mode(0)", "", "")
-create_command("kp/xsp/lights/strobe_switch_tgl",	"Strobe Lights Toggle inop",	"kc_acf_light_strobe_mode(3)", "", "")
-
-create_command("kp/xsp/lights/taxi_switch_on",		"Taxi Lights On",		"kc_acf_light_taxi_mode(2)", "", "")
-create_command("kp/xsp/lights/taxi_switch_off",		"Taxi Lights Off",		"kc_acf_light_taxi_mode(0)", "", "")
-create_command("kp/xsp/lights/taxi_switch_tgl",		"Taxi Lights Toggle",	"kc_acf_light_taxi_mode(3)", "", "")
-
-create_command("kp/xsp/lights/landing_switch_on",	"Landing Lights On",	"kc_acf_light_landing_mode(0,1)", "", "")
-create_command("kp/xsp/lights/landing_switch_off",	"Landing Lights Off",	"kc_acf_light_landing_mode(0,0)", "", "")
-create_command("kp/xsp/lights/landing_switch_tgl",	"Landing Lights Toggle inop",	"kc_acf_light_landing_mode(0,4)", "", "")
-
-create_command("kp/xsp/lights/wing_switch_on",		"Wing Lights On",		"kc_acf_light_wing_mode(1)", "", "")
-create_command("kp/xsp/lights/wing_switch_off",		"Wing Lights Off",		"kc_acf_light_wing_mode(0)", "", "")
-create_command("kp/xsp/lights/wing_switch_tgl",		"Wing Lights Toggle inop",		"kc_acf_light_wing_mode(2)", "", "")
-
-create_command("kp/xsp/lights/wheel_switch_on",		"Wheel Lights On",		"kc_acf_light_wheel_mode(1)", "", "")
-create_command("kp/xsp/lights/wheel_switch_off",	"Wheel Lights Off",		"kc_acf_light_wheel_mode(0)", "", "")
-create_command("kp/xsp/lights/wheel_switch_tgl",	"Wheel Lights Toggle inop",		"kc_acf_light_wheel_mode(2)", "", "")
-
-create_command("kp/xsp/lights/logo_switch_on",		"Logo Lights On",		"kc_acf_light_logo_mode(1)", "", "")
-create_command("kp/xsp/lights/logo_switch_off",		"Logo Lights Off",		"kc_acf_light_logo_mode(0)", "", "")
-create_command("kp/xsp/lights/logo_switch_tgl",		"Logo Lights Toggle",	"kc_acf_light_logo_mode(2)", "", "")
-
-create_command("kp/xsp/lights/rwyto_switch_on",		"Runway Lights On",		"kc_acf_light_rwyto_mode(1)", "", "")
-create_command("kp/xsp/lights/rwyto_switch_off",	"Runway Lights Off",	"kc_acf_light_rwyto_mode(0)", "", "")
-create_command("kp/xsp/lights/rwyto_switch_tgl",	"Runway Lights Toggle",	"kc_acf_light_rwyto_mode(2)", "", "")
-
 -- --------------- System
 create_command("kp/xsp/systems/parking_brake_on",	"Parking Brake On",		"kc_acf_parking_break_mode(1)", "", "")
 create_command("kp/xsp/systems/parking_brake_off",	"Parking Brake Off",	"kc_acf_parking_break_mode(0)", "", "")

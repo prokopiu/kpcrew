@@ -43,8 +43,6 @@ if (acf_icao == "DFLT") then
 	sysLights = require "kpcrew.systems.DFLT.sysLights"	
 end
 
-sysLights.setRwyLightsMode(sysLights.modeToggle)
-
 -- ============ aircraft specific joystick/key commands (e.g. for Alpha Yoke)
 -- ------------------ Lights
 create_command("kp/xsp/lights/beacon_switch_on",	"Beacon Lights On",		"sysLights.setBeaconMode(sysLights.modeOn)", "", "")
@@ -75,10 +73,19 @@ create_command("kp/xsp/lights/logo_switch_on",		"Logo Lights On",		"sysLights.se
 create_command("kp/xsp/lights/logo_switch_off",		"Logo Lights Off",		"sysLights.setLogoLightsMode(sysLights.modeOff)", "", "")
 create_command("kp/xsp/lights/logo_switch_tgl",		"Logo Lights Toggle",	"sysLights.setLogoLightsMode(sysLights.modeToggle)", "", "")
 
--- in FlyWithLua menu
---add_macro("KPCrew Re-Start", "kc_init_kpcrew()")
+create_command("kp/xsp/lights/rwyto_switch_on",		"Runway Lights On",		"sysLights.setRwyLightsMode(sysLights.modeOn)", "", "")
+create_command("kp/xsp/lights/rwyto_switch_off",	"Runway Lights Off",	"sysLights.setRwyLightsMode(sysLights.modeOff)", "", "")
+create_command("kp/xsp/lights/rwyto_switch_tgl",	"Runway Lights Toggle",	"sysLights.setRwyLightsMode(sysLights.modeToggle)", "", "")
 
--- ---------------------------------- KPCrew commands ----------------------------------
---create_command("kp/crew/master_button",		"KPCrew Master Button",		"kc_master_button()", "", "")
+create_command("kp/xsp/lights/instruments_on",		"Instrument Lights On",		"sysLights.setInstrumentLightsMode(sysLights.modeOn)", "", "")
+create_command("kp/xsp/lights/instruments_off",		"Instrument Lights Off",	"sysLights.setInstrumentLightsMode(sysLights.modeOff)", "", "")
+create_command("kp/xsp/lights/instruments_tgl",		"Instrument Lights Toggle",	"sysLights.setInstrumentLightsMode(sysLights.modeToggle)", "", "")
 
---do_often("kc_proc_activities()")
+create_command("kp/xsp/lights/dome_switch_on",		"Cockpit Lights On",		"sysLights.setCockpitLightsMode(sysLights.modeOn)", "", "")
+create_command("kp/xsp/lights/dome_switch_off",		"Cockpit Lights Off",		"sysLights.setCockpitLightsMode(sysLights.modeOff)", "", "")
+create_command("kp/xsp/lights/dome_switch_tgl",		"Cockpit Lights Toggle",	"sysLights.setCockpitLightsMode(sysLights.modeToggle)", "", "")
+
+create_command("kp/xsp/lights/wheel_switch_on",		"Wheel Lights On",		"sysLights.setWheelLightsMode(sysLights.modeOn)", "", "")
+create_command("kp/xsp/lights/wheel_switch_off",	"Wheel Lights Off",		"sysLights.setWheelLightsMode(sysLights.modeOff)", "", "")
+create_command("kp/xsp/lights/wheel_switch_tgl",	"Wheel Lights Toggle",	"sysLights.setWheelLightsMode(sysLights.modeToggle)", "", "")
+

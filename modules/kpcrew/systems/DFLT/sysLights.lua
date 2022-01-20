@@ -32,14 +32,27 @@ local cmdLandingLightsOff = "sim/lights/landing_lights_off"
 local cmdLandingLightsToggle = "sim/lights/landing_lights_toggle"
 
 local drefInstrumentLights = "sim/cockpit/electrical/instrument_brightness"
+local drefCockpitLights = "sim/cockpit/electrical/cockpit_lights"
 
 -- many lights are in the generic lights array
+-- unfortunately these datarefs vary from Laminar plane to plane
 local drefGenericLights = "sim/cockpit2/switches/generic_lights_switch"
 local function setGenericLight(index,mode)
 	set_array(drefGenericLights,index,mode)
 end
 local function getGenericLight(index)
 	return get(drefGenericLights,index)
+end
+-- allocations of generic lights (differs from aircraft to aircraft)
+local GenLights = { ["Logo"] = 0, ["Wing"] = 3, ["Wheel"] = 5, ["RwyLeft"] = 1, ["RwyRight"] = 2 }
+
+-- a cluster of instrument lights in this array
+local drefInstrumentLight = "sim/cockpit2/switches/instrument_brightness_ratio"
+local function setInstrumentLight(index,mode)
+	set_array(drefInstrumentLight,index,mode)
+end
+local function getInstrumentLight(index)
+	return get(drefInstrumentLight,index)
 end
 
 -- Beacon/Anticollision light
@@ -127,71 +140,136 @@ function sysLights.getLandingLightMode()
 	return get(drefLandingLights)
 end
 
+----------- GENERIC LIGHTS might nit work the same way on all default planes -------------
+
 -- Logo Lights
 function sysLights.setLogoLightsMode(mode)
 	if mode == sysLights.modeOff then
-		setGenericLight(0,0)
+		setGenericLight(GenLights["Logo"],0)
 	end
 	if mode == sysLights.modeOn then
-		setGenericLight(0,1)
+		setGenericLight(GenLights["Logo"],1)
 	end
 	if mode == sysLights.modeToggle then
-		if getGenericLight(0) == 0 then 
-			setGenericLight(0,1)
+		if getGenericLight(GenLights["Logo"]) == 0 then 
+			setGenericLight(GenLights["Logo"],1)
 		else
-			setGenericLight(0,0)
+			setGenericLight(GenLights["Logo"],0)
 		end
 	end
 end
 
 function sysLights.getLogoLightMode()
-	return getGenericLight(0)
+	return getGenericLight(GenLights["Logo"])
 end
 
 -- Wing Lights
 function sysLights.setWingLightsMode(mode)
 	if mode == sysLights.modeOff then
-		setGenericLight(3,0)
+		setGenericLight(GenLights["Wing"],0)
 	end
 	if mode == sysLights.modeOn then
-		setGenericLight(3,1)
+		setGenericLight(GenLights["Wing"],1)
 	end
 	if mode == sysLights.modeToggle then
-		if getGenericLight(3) == 0 then 
-			setGenericLight(3,1)
+		if getGenericLight(GenLights["Wing"]) == 0 then 
+			setGenericLight(GenLights["Wing"],1)
 		else
-			setGenericLight(3,0)
+			setGenericLight(GenLights["Wing"],0)
 		end
 	end
 end
 
 function sysLights.getWingLightsMode()
-	return getGenericLight(3)
+	return getGenericLight(GenLights["Wing"])
+end
+
+-- Wheel well Lights
+function sysLights.setWheelLightsMode(mode)
+	if mode == sysLights.modeOff then
+		setGenericLight(GenLights["Wheel"],0)
+	end
+	if mode == sysLights.modeOn then
+		setGenericLight(GenLights["Wheel"],1)
+	end
+	if mode == sysLights.modeToggle then
+		if getGenericLight(GenLights["Wheel"]) == 0 then 
+			setGenericLight(GenLights["Wheel"],1)
+		else
+			setGenericLight(GenLights["Wheel"],0)
+		end
+	end
+end
+
+function sysLights.getWheelLightsMode()
+	return getGenericLight(GenLights["Wheel"])
 end
 
 -- RWY Turnoff Lights
 function sysLights.setRwyLightsMode(mode)
 	if mode == sysLights.modeOff then
-		setGenericLight(1,0)
-		setGenericLight(2,0)
+		setGenericLight(GenLights["RwyLeft"],0)
+		setGenericLight(GenLights["RwyRight"],0)
 	end
 	if mode == sysLights.modeOn then
-		setGenericLight(1,1)
-		setGenericLight(2,1)
+		setGenericLight(GenLights["RwyLeft"],1)
+		setGenericLight(GenLights["RwyRight"],1)
 	end
 	if mode == sysLights.modeToggle then
-		if getGenericLight(1) == 0 then 
-			setGenericLight(1,1)
-			setGenericLight(2,1)
+		if getGenericLight(GenLights["RwyLeft"]) == 0 then 
+			setGenericLight(GenLights["RwyLeft"],1)
+			setGenericLight(GenLights["RwyRight"],1)
 		else
-			setGenericLight(1,0)
-			setGenericLight(2,0)
+			setGenericLight(GenLights["RwyLeft"],0)
+			setGenericLight(GenLights["RwyRight"],0)
 		end
 	end
 end
 
 function sysLights.getRwyLightsMode()
-	return getGenericLight(1)
+	return getGenericLight(GenLights["RwyLeft"])
+end
+
+-- Instrument Lights - switch them all on or off
+function sysLights.setInstrumentLightsMode(mode)
+	if mode == sysLights.modeOff then
+		set(drefInstrumentLights,0)
+	end
+	if mode == sysLights.modeOn then
+		set(drefInstrumentLights,1)
+	end
+	if mode == sysLights.modeToggle then
+		if get(drefInstrumentLights) == 0 then 
+			set(drefInstrumentLights,1)
+		else
+			set(drefInstrumentLights,0)
+		end
+	end
+end
+
+function sysLights.getInstrumentLightsMode()
+	return get(drefInstrumentLights)
+end
+
+-- Cockpit Lights - switch them all on or off
+function sysLights.setCockpitLightsMode(mode)
+	if mode == sysLights.modeOff then
+		set(drefCockpitLights,0)
+	end
+	if mode == sysLights.modeOn then
+		set(drefCockpitLights,1)
+	end
+	if mode == sysLights.modeToggle then
+		if get(drefCockpitLights) == 0 then 
+			set(drefCockpitLights,1)
+		else
+			set(drefCockpitLights,0)
+		end
+	end
+end
+
+function sysLights.getCockpitLightsMode()
+	return get(drefCockpitLights)
 end
 
 return sysLights
