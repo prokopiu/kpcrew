@@ -12,24 +12,24 @@ logMsg ( "FWL: ** Starting KPHARDWARE version " .. ZC_VERSION .." **" )
 local acf_icao = "DFLT"
 
 -- Aircraft with no icao in aircraft.cfg need to be identfied individually
-if (PLANE_TAILNUMBER == "N956OV") then	
-	acf_icao="B146"
-end
-if (PLANE_TAILNUMBER == "PT-SSG") then	
-	acf_icao="E170"
-end
-if (PLANE_TAILNUMBER == "PP-SSG") then	
-	acf_icao="E195"
-end
-if (PLANE_TAILNUMBER == "E175") then	
-	acf_icao="E175"
-end
-if (PLANE_TAILNUMBER == "C-GTLX") then	
-	acf_icao = "A346"
-end
-if (PLANE_TAILNUMBER == "A345") then	
-	acf_icao="A345"
-end
+-- if (PLANE_TAILNUMBER == "N956OV") then	
+	-- acf_icao="B146"
+-- end
+-- if (PLANE_TAILNUMBER == "PT-SSG") then	
+	-- acf_icao="E170"
+-- end
+-- if (PLANE_TAILNUMBER == "PP-SSG") then	
+	-- acf_icao="E195"
+-- end
+-- if (PLANE_TAILNUMBER == "E175") then	
+	-- acf_icao="E175"
+-- end
+-- if (PLANE_TAILNUMBER == "C-GTLX") then	
+	-- acf_icao = "A346"
+-- end
+-- if (PLANE_TAILNUMBER == "A345") then	
+	-- acf_icao="A345"
+-- end
 	
 -- Load plane specific module from Modules folder
 
@@ -41,6 +41,9 @@ end
 local syslights = nil
 if (acf_icao == "DFLT") then
 	sysLights = require "kpcrew.systems.DFLT.sysLights"	
+end
+if (acf_icao == "B738") then
+	sysLights = require "kpcrew.systems.B738.sysLights"	
 end
 
 -- ============ aircraft specific joystick/key commands (e.g. for Alpha Yoke)
