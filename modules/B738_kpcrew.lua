@@ -5537,8 +5537,6 @@ create_command("kp/xsp/systems/all_baro_up",		"All baro up",			"kc_acf_efis_baro
 
 -- --------------- Controls
 
-create_command("kp/xsp/controls/flaps_up",			"Flaps 1 Up",			"kc_acf_controls_flaps_dec()", "", "")
-create_command("kp/xsp/controls/flaps_down",		"Flaps 1 Down",			"kc_acf_controls_flaps_inc()", "", "")
 create_command("kp/xsp/controls/pitch_trim_up",		"Pitch Trim Up",		"kc_acf_elev_trim_up()", "", "")
 create_command("kp/xsp/controls/pitch_trim_down",	"Pitch Trim Down",		"kc_acf_elev_trim_dn()", "", "")
 

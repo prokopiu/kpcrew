@@ -103,3 +103,40 @@ create_command("kp/xsp/systems/parking_brake_tgl",	"Parking Brake Toggle",	"sysG
 create_command("kp/xsp/systems/gears_up",			"Gears Up",				"sysGeneral.setGearMode(sysGeneral.modeGearUp)", "", "")
 create_command("kp/xsp/systems/gears_down",			"Gears Down",			"sysGeneral.setGearMode(sysGeneral.modeGearDown)", "", "")
 create_command("kp/xsp/systems/gears_off",			"Gears OFF",			"sysGeneral.setGearMode(sysGeneral.modeGearOff)", "", "")
+
+create_command("kp/xsp/controls/flaps_up",			"Flaps 1 Up",			"sysGeneral.actFlapLever(sysGeneral.modeFlapsUp)", "", "")
+create_command("kp/xsp/controls/flaps_down",		"Flaps 1 Down",			"sysGeneral.actFlapLever(sysGeneral.modeFlapsDown)", "", "")
+
+
+--------------- Datarefs for hardware annunciators (e.g. honeycomb) -----------
+
+xsp_parking_brake = create_dataref_table("kp/xsp/systems/parking_brake", "Int")
+xsp_parking_brake[0] = 0
+
+xsp_gear_light_on_n	= create_dataref_table("kp/xsp/systems/gear_light_on_n", "Int")
+xsp_gear_light_on_n[0] = 0
+xsp_gear_light_on_l	= create_dataref_table("kp/xsp/systems/gear_light_on_l", "Int")
+xsp_gear_light_on_l[0] = 0
+xsp_gear_light_on_r	= create_dataref_table("kp/xsp/systems/gear_light_on_r", "Int")
+xsp_gear_light_on_r[0] = 0
+xsp_gear_light_trans_n = create_dataref_table("kp/xsp/systems/gear_light_trans_n", "Int")
+xsp_gear_light_trans_n[0] = 0
+xsp_gear_light_trans_l = create_dataref_table("kp/xsp/systems/gear_light_trans_l", "Int")
+xsp_gear_light_trans_l[0] = 0
+xsp_gear_light_trans_r = create_dataref_table("kp/xsp/systems/gear_light_trans_r", "Int")
+xsp_gear_light_trans_r[0] = 0
+
+function xsp_set_lightvars()
+
+	-- PARKING BRAKE 0=off 1=set
+	xsp_parking_brake[0] = sysGeneral.getParkBrakeMode()
+
+	-- GEAR LIGHTS
+	xsp_gear_light_on_l[0] = sysGeneral.getGearLight(sysGeneral.GearLightGreenLeft)
+	xsp_gear_light_on_r[0] = sysGeneral.getGearLight(sysGeneral.GearLightGreenRight)
+	xsp_gear_light_on_n[0] = sysGeneral.getGearLight(sysGeneral.GearLightGreenNose)
+	xsp_gear_light_trans_l[0] =  sysGeneral.getGearLight(sysGeneral.GearLightRedLeft)
+	xsp_gear_light_trans_r[0] =  sysGeneral.getGearLight(sysGeneral.GearLightRedRight)
+	xsp_gear_light_trans_n[0] =  sysGeneral.getGearLight(sysGeneral.GearLightRedNose)
+
+end
