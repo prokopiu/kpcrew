@@ -1743,7 +1743,7 @@ KC_ENTERING_RUNWAY_PROC = { ["name"] = "ENTERING RUNWAY PROCEDURE", ["mode"]="p"
 	},
 	[4] = {["activity"] = "FIXED LANDING LIGHTS -- ON", ["wait"] = 1, ["interactive"] = 0, ["actor"] = "CPT:", ["validated"] = 0, ["chkl_color"] = color_white, ["end"] = 0,
 		["actions"] = function ()
-			kc_acf_light_landing_mode(5,1)
+			kc_acf_light_landing_mode(1,1)
 		end,
 		["checks"] = function() return get("laminar/B738/switch/land_lights_left_pos") == 1 and get("laminar/B738/switch/land_lights_right_pos") == 1 end
 	},
@@ -2933,7 +2933,7 @@ KC_BACKGROUND_PROCS = {
 		["actions"] = function ()
 			if get("sim/cockpit2/gauges/indicators/altitude_ft_pilot") > 10000.0 then
 				speakNoText(0,"ten thousand")
-				kc_acf_light_landing_mode(5,0)
+				kc_acf_light_landing_mode(1,0)
 				kc_acf_light_rwyto_mode(0)
 				kc_set_background_proc_status("TENTHOUSANDUP",0)
 			end
@@ -2957,7 +2957,7 @@ KC_BACKGROUND_PROCS = {
 		["actions"] = function ()
 			if get("sim/cockpit2/gauges/indicators/altitude_ft_pilot") <= 10000.0 then
 				speakNoText(0,"ten thousand")
-				kc_acf_light_landing_mode(5,1)
+				kc_acf_light_landing_mode(1,1)
 				kc_set_background_proc_status("TENTHOUSANDDN",0)
 			end
 		end
@@ -3930,22 +3930,22 @@ function kc_acf_light_rwyto_mode(mode)
 	end
 end
 
--- taxi lights 0=OFF 1=HIGH 2=toggle 3=LOW
+-- taxi lights 0=OFF 1=LOW 2=HIGH 3=toggle high
 function kc_acf_light_taxi_mode(mode)
 	if mode == 0 then
 		command_once("laminar/B738/toggle_switch/taxi_light_brightness_pos_up")
 		command_once("laminar/B738/toggle_switch/taxi_light_brightness_pos_up")
 	end
-	if mode == 3 then
-		command_once("laminar/B738/toggle_switch/taxi_light_brightness_pos_up")
-		command_once("laminar/B738/toggle_switch/taxi_light_brightness_pos_up")
-		command_once("laminar/B738/toggle_switch/taxi_light_brightness_pos_dn")
-	end
 	if mode == 1 then
-		command_once("laminar/B738/toggle_switch/taxi_light_brightness_pos_dn")
+		command_once("laminar/B738/toggle_switch/taxi_light_brightness_pos_up")
+		command_once("laminar/B738/toggle_switch/taxi_light_brightness_pos_up")
 		command_once("laminar/B738/toggle_switch/taxi_light_brightness_pos_dn")
 	end
 	if mode == 2 then
+		command_once("laminar/B738/toggle_switch/taxi_light_brightness_pos_dn")
+		command_once("laminar/B738/toggle_switch/taxi_light_brightness_pos_dn")
+	end
+	if mode == 3 then
 		if kc_get_light_taxi_mode() < 2 then
 			command_once("laminar/B738/toggle_switch/taxi_light_brightness_pos_up")
 			command_once("laminar/B738/toggle_switch/taxi_light_brightness_pos_up")
@@ -3957,8 +3957,8 @@ function kc_acf_light_taxi_mode(mode)
 	
 end
 
--- Landing Lights 0=ALL, 1=RETLEFT, 2=RETRIGHT, 3=LEFT, 4=RIGHT, 5=FIXED, 6=RET,
--- Mode 0=OFF, 1=ON, 2=TOGGLE 3=EXTEND RETs
+-- Landing Lights 0=ALL,1=FIXED,2=RET, 3=RETLEFT, 4=RETRIGHT, 5=LEFT, 6=RIGHT
+-- Mode 0=OFF, 1=ON, 2=EXTEND RETs
 function kc_acf_light_landing_mode(light,mode)
 	if light == 0 or light == 1 or light == 5 then
 		if mode == 0 then
@@ -3989,7 +3989,7 @@ function kc_acf_light_landing_mode(light,mode)
 			command_once("laminar/B738/switch/land_lights_ret_left_dn")
 			command_once("laminar/B738/switch/land_lights_ret_left_dn")
 		end
-		if mode == 3 then
+		if mode == 2 then
 			command_once("laminar/B738/switch/land_lights_ret_left_up")
 			command_once("laminar/B738/switch/land_lights_ret_left_up")
 			command_once("laminar/B738/switch/land_lights_ret_left_dn")
@@ -4004,7 +4004,7 @@ function kc_acf_light_landing_mode(light,mode)
 			command_once("laminar/B738/switch/land_lights_ret_right_dn")
 			command_once("laminar/B738/switch/land_lights_ret_right_dn")
 		end
-		if mode == 3 then
+		if mode == 2 then
 			command_once("laminar/B738/switch/land_lights_ret_right_up")
 			command_once("laminar/B738/switch/land_lights_ret_right_up")
 			command_once("laminar/B738/switch/land_lights_ret_right_dn")
@@ -5529,13 +5529,6 @@ end
 
 -- ============ aircraft specific joystick/key commands (e.g. for Alpha Yoke)
 -- --------------- System
-create_command("kp/xsp/systems/parking_brake_on",	"Parking Brake On",		"kc_acf_parking_break_mode(1)", "", "")
-create_command("kp/xsp/systems/parking_brake_off",	"Parking Brake Off",	"kc_acf_parking_break_mode(0)", "", "")
-create_command("kp/xsp/systems/parking_brake_tgl",	"Parking Brake Toggle",	"kc_acf_parking_break_mode(2)", "", "")
-
-create_command("kp/xsp/systems/gears_up",			"Gears Up",				"kc_acf_gears(0)", "", "")
-create_command("kp/xsp/systems/gears_down",			"Gears Down",			"kc_acf_gears(1)", "", "")
-create_command("kp/xsp/systems/gears_off",			"Gears OFF",			"kc_acf_gears(2)", "", "")
 
 create_command("kp/xsp/systems/all_alt_std",		"ALTS STD/QNH toggle",	"kc_acf_efis_baro_std_set(0,2)", "", "")
 create_command("kp/xsp/systems/baro_mode_tgl",	    "Baro inch/mb toggle",	"kc_acf_efis_baro_in_mb(0,2)", "", "")
