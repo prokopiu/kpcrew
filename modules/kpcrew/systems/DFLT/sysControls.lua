@@ -1,4 +1,4 @@
--- B738 airplane 
+-- DFLT airplane 
 -- Flight Controls functionality
 local sysControls = {
 	modeOff = 0,
@@ -8,7 +8,7 @@ local sysControls = {
 	actFlapsDown = 1
 }
 
-local drefFlapPos = "laminar/B738/flt_ctrls/flap_lever"
+local drefFlapPos = "sim/flightmodel2/controls/flap_ratio"
 local cmdFlapsUp = "sim/flight_controls/flaps_up"
 local cmdFlapsDown = "sim/flight_controls/flaps_down"
 

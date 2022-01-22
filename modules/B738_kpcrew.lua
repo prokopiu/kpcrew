@@ -5528,13 +5528,6 @@ function kc_menus_set_APP_data()
 end
 
 -- ============ aircraft specific joystick/key commands (e.g. for Alpha Yoke)
--- --------------- System
-
-create_command("kp/xsp/systems/all_alt_std",		"ALTS STD/QNH toggle",	"kc_acf_efis_baro_std_set(0,2)", "", "")
-create_command("kp/xsp/systems/baro_mode_tgl",	    "Baro inch/mb toggle",	"kc_acf_efis_baro_in_mb(0,2)", "", "")
-create_command("kp/xsp/systems/all_baro_down",		"All baro down",		"kc_acf_efis_baro_up_down(0,0)", "", "")
-create_command("kp/xsp/systems/all_baro_up",		"All baro up",			"kc_acf_efis_baro_up_down(0,1)", "", "")
-
 -- --------------- Controls
 
 create_command("kp/xsp/controls/pitch_trim_up",		"Pitch Trim Up",		"kc_acf_elev_trim_up()", "", "")
