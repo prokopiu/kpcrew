@@ -1,15 +1,15 @@
 -- B738 airplane (X-Plane 11 default)
 -- aircraft lights specific functionality
 local sysLights = {
-	modeOff = 0,
-	modeOn = 1,
-	modeToggle = 2,
-	modeTaxiLow = 3,
-	modeLLExtend = 3,
-	modeLLRetract = 4,
-	modeStrobePosOff = 0,
-	modeStrobePosRed = -1,
-	modeStrobePosWhite = 1
+	Off = 0,
+	On = 1,
+	Toggle = 2,
+	TaxiLow = 3,
+	Extend = 3,
+	Retract = 4,
+	PosOff = 0,
+	PosRed = -1,
+	PosWhite = 1
 }
 
 local drefBeacon = "sim/cockpit/electrical/beacon_lights_on"
@@ -69,13 +69,13 @@ local cmdRwyLightsToggle = { ["Left"] = "laminar/B738/switch/rwy_light_left_togg
 
 -- Beacon/Anticollision light
 function sysLights.setBeaconMode(mode)
-	if mode == sysLights.modeOff then
+	if mode == sysLights.Off then
 		command_once(cmdBeaconOff)
 	end
-	if mode == sysLights.modeOn then
+	if mode == sysLights.On then
 		command_once(cmdBeaconOn)
 	end
-	if mode == sysLights.modeToggle then
+	if mode == sysLights.Toggle then
 		command_once(cmdBeaconToggle)
 	end
 end
@@ -86,13 +86,13 @@ end
 
 -- Navigation Lights
 function sysLights.setNavLightMode(mode)
-	if mode == sysLights.modeOff and get(drefNavigationLight) == 1 then
+	if mode == sysLights.Off and get(drefNavigationLight) == 1 then
 		command_once(cmdNavLightsOff)
 	end
-	if mode == sysLights.modeOn and get(drefNavigationLight) == 0 then
+	if mode == sysLights.On and get(drefNavigationLight) == 0 then
 		command_once(cmdNavLightsOn)
 	end
-	if mode == sysLights.modeToggle then	
+	if mode == sysLights.Toggle then	
 		if get(drefNavigationLight) == 1 then
 			command_once(cmdNavLightsOff)
 		end
@@ -108,14 +108,14 @@ end
 
 -- Strobe Lights
 function sysLights.setStrobeLightMode(mode)
-	if mode == sysLights.modeOff and get(drefStrobeLights) == 1 then
+	if mode == sysLights.Off and get(drefStrobeLights) == 1 then
 		command_once(cmdStrobeLightsOff)
 	end
-	if mode == sysLights.modeOn and get(drefStrobeLights) == 0 then
+	if mode == sysLights.On and get(drefStrobeLights) == 0 then
 		command_once(cmdStrobeLightsOn)
 		command_once(cmdStrobeLightsOn)
 	end
-	if mode == sysLights.modeToggle then	
+	if mode == sysLights.Toggle then	
 		if get(drefStrobeLights) == 1 then
 			command_once(cmdStrobeLightsOff)
 		end
@@ -131,15 +131,15 @@ end
 
 -- Taxi Lights 0=off 1=HIGH 2=TOGGLE HIGH 3=LOW
 function sysLights.setTaxiLightMode(mode)
-	if mode == sysLights.modeOff then	
+	if mode == sysLights.Off then	
 		command_once(cmdTaxiLightsUp)
 		command_once(cmdTaxiLightsUp)
 	end
-	if mode == sysLights.modeOn then
+	if mode == sysLights.On then
 		command_once(cmdTaxiLightsDn)
 		command_once(cmdTaxiLightsDn)
 	end
-	if mode == sysLights.modeToggle then
+	if mode == sysLights.Toggle then
 		if get(drefTaxiLights) < 2 then
 			command_once(cmdTaxiLightsUp)
 			command_once(cmdTaxiLightsUp)
@@ -148,7 +148,7 @@ function sysLights.setTaxiLightMode(mode)
 			command_once(cmdTaxiLightsDn)
 		end
 	end
-	if mode == sysLights.modeTaxiLow then
+	if mode == sysLights.TaxiLow then
 		command_once(cmdTaxiLightsUp)
 		command_once(cmdTaxiLightsUp)
 		command_once(cmdTaxiLightsDn)
@@ -164,13 +164,13 @@ end
 -- mode: 0=OFF, 1=ON, 2=TOGGLE 3=EXTEND RETs 4=RETRACT RETs
 function sysLights.isetLandingLightsMode(light,mode)
 	if light == 0 or light == 3 or light == 5 then
-		if mode == sysLights.modeOff then 
+		if mode == sysLights.Off then 
 			command_once(cmdLandingLightsOff["Left"])
 		end
-		if mode == sysLights.modeOn then 
+		if mode == sysLights.On then 
 			command_once(cmdLandingLightsOn["Left"])
 		end
-		if mode == sysLights.modeToggle then 
+		if mode == sysLights.Toggle then 
 			if get(drefLandingLights["Left"]) == 0 then
 				command_once(cmdLandingLightsOn["Left"])
 			else
@@ -179,13 +179,13 @@ function sysLights.isetLandingLightsMode(light,mode)
 		end
 	end
 	if light == 0 or light == 4 or light == 5 then
-		if mode == sysLights.modeOff then 
+		if mode == sysLights.Off then 
 			command_once(cmdLandingLightsOff["Right"])
 		end
-		if mode == sysLights.modeOn then 
+		if mode == sysLights.On then 
 			command_once(cmdLandingLightsOn["Right"])
 		end
-		if mode == sysLights.modeToggle then 
+		if mode == sysLights.Toggle then 
 			if get(drefLandingLights["Right"]) == 0 then
 				command_once(cmdLandingLightsOn["Right"])
 			else
@@ -194,15 +194,15 @@ function sysLights.isetLandingLightsMode(light,mode)
 		end
 	end
 	if light == 0 or light == 1 or light == 6 then
-		if mode == sysLights.modeOff then 
+		if mode == sysLights.Off then 
 			command_once(cmdLandingLightsOff["RetLeft"])
 			command_once(cmdLandingLightsOff["RetLeft"])
 		end
-		if mode == sysLights.modeOn then 
+		if mode == sysLights.On then 
 			command_once(cmdLandingLightsOn["RetLeft"])
 			command_once(cmdLandingLightsOn["RetLeft"])
 		end
-		if mode == sysLights.modeToggle then 
+		if mode == sysLights.Toggle then 
 			if get(drefLandingLights["RetLeft"]) == 0 then
 				command_once(cmdLandingLightsOn["RetLeft"])
 				command_once(cmdLandingLightsOn["RetLeft"])
@@ -211,26 +211,26 @@ function sysLights.isetLandingLightsMode(light,mode)
 				command_once(cmdLandingLightsOff["RetLeft"])
 			end
 		end
-		if mode == sysLights.modeLLExtend then 
+		if mode == sysLights.Extend then 
 			command_once(cmdLandingLightsOff["RetLeft"])
 			command_once(cmdLandingLightsOff["RetLeft"])
 			command_once(cmdLandingLightsOn["RetLeft"])
 		end
-		if mode == sysLights.modeLLRetract then 
+		if mode == sysLights.Retract then 
 			command_once(cmdLandingLightsOff["RetLeft"])
 			command_once(cmdLandingLightsOff["RetLeft"])
 		end
 	end
 	if light == 0 or light == 2 or light == 6 then
-		if mode == sysLights.modeOff then 
+		if mode == sysLights.Off then 
 			command_once(cmdLandingLightsOff["RetRight"])
 			command_once(cmdLandingLightsOff["RetRight"])
 		end
-		if mode == sysLights.modeOn then 
+		if mode == sysLights.On then 
 			command_once(cmdLandingLightsOn["RetRight"])
 			command_once(cmdLandingLightsOn["RetRight"])
 		end
-		if mode == sysLights.modeToggle then 
+		if mode == sysLights.Toggle then 
 			if get(drefLandingLights["RetRight"]) == 0 then
 				command_once(cmdLandingLightsOn["RetRight"])
 				command_once(cmdLandingLightsOn["RetRight"])
@@ -239,12 +239,12 @@ function sysLights.isetLandingLightsMode(light,mode)
 				command_once(cmdLandingLightsOff["RetRight"])
 			end
 		end
-		if mode == sysLights.modeLLExtend then 
+		if mode == sysLights.Extend then 
 			command_once(cmdLandingLightsOff["RetRight"])
 			command_once(cmdLandingLightsOff["RetRight"])
 			command_once(cmdLandingLightsOn["RetRight"])
 		end
-		if mode == sysLights.modeLLRetract then 
+		if mode == sysLights.Retract then 
 			command_once(cmdLandingLightsOff["RetRight"])
 			command_once(cmdLandingLightsOff["RetRight"])
 		end
@@ -263,13 +263,13 @@ end
 
 -- Logo Lights
 function sysLights.setLogoLightsMode(mode)
-	if mode == sysLights.modeOff then
+	if mode == sysLights.Off then
 		set(drefLogoLight,0)
 	end
-	if mode == sysLights.modeOn then
+	if mode == sysLights.On then
 		set(drefLogoLight,1)
 	end
-	if mode == sysLights.modeToggle then
+	if mode == sysLights.Toggle then
 		if get(drefLogoLight) == 0  then 
 			set(drefLogoLight,1)
 		else
@@ -284,13 +284,13 @@ end
 
 -- Wing Lights
 function sysLights.setWingLightsMode(mode)
-	if mode == sysLights.modeOff then
+	if mode == sysLights.Off then
 		setGenericLight(GenLights["Wing"],0)
 	end
-	if mode == sysLights.modeOn then
+	if mode == sysLights.On then
 		setGenericLight(GenLights["Wing"],1)
 	end
-	if mode == sysLights.modeToggle then
+	if mode == sysLights.Toggle then
 		if getGenericLight(GenLights["Wing"]) == 0 then 
 			setGenericLight(GenLights["Wing"],1)
 		else
@@ -305,13 +305,13 @@ end
 
 -- Wheel well Lights
 function sysLights.setWheelLightsMode(mode)
-	if mode == sysLights.modeOff then
+	if mode == sysLights.Off then
 		setGenericLight(GenLights["Wheel"],0)
 	end
-	if mode == sysLights.modeOn then
+	if mode == sysLights.On then
 		setGenericLight(GenLights["Wheel"],1)
 	end
-	if mode == sysLights.modeToggle then
+	if mode == sysLights.Toggle then
 		if getGenericLight(GenLights["Wheel"]) == 0 then 
 			setGenericLight(GenLights["Wheel"],1)
 		else
@@ -328,24 +328,24 @@ end
 -- light 0=all, 1=left, 2=right
 function sysLights.isetRwyLightsMode(light, mode)
 	if light == 0 or light == 1 then
-		if mode == sysLights.modeOff then
+		if mode == sysLights.Off then
 			command_once(cmdRwyLightsOff["Left"])
 		end
-		if mode == sysLights.modeOn then
+		if mode == sysLights.On then
 			command_once(cmdRwyLightsOn["Left"])
 		end
-		if mode == sysLights.modeToggle then
+		if mode == sysLights.Toggle then
 			command_once(cmdRwyLightsToggle["Left"])
 		end
 	end
 	if light == 0 or light == 2 then
-		if mode == sysLights.modeOff then
+		if mode == sysLights.Off then
 			command_once(cmdRwyLightsOff["Right"])
 		end
-		if mode == sysLights.modeOn then
+		if mode == sysLights.On then
 			command_once(cmdRwyLightsOn["Right"])
 		end
-		if mode == sysLights.modeToggle then
+		if mode == sysLights.Toggle then
 			command_once(cmdRwyLightsToggle["Right"])
 		end
 	end
@@ -362,13 +362,13 @@ end
 -- Instrument Lights - switch them all on or off
 -- light: 
 function sysLights.isetInstrumentLightsMode(light, mode)
-	if mode == sysLights.modeOff then
+	if mode == sysLights.Off then
 		set_array(drefInstrumentLights,light,0)
 	end
-	if mode == sysLights.modeOn then
+	if mode == sysLights.On then
 		set_array(drefInstrumentLights,light,1)
 	end
-	if mode == sysLights.modeToggle then
+	if mode == sysLights.Toggle then
 		if get(drefInstrumentLights,light) == 0 then 
 			set_array(drefInstrumentLights,light,1)
 		else
@@ -390,16 +390,16 @@ end
 
 -- Cockpit Lights - switch them all on or off
 function sysLights.setCockpitLightsMode(mode)
-	if mode == sysLights.modeOff then
+	if mode == sysLights.Off then
 		command_once(cmdCockpitLightsUp)
 		command_once(cmdCockpitLightsUp)
 		command_once(cmdCockpitLightsDn)
 	end
-	if mode == sysLights.modeOn then
+	if mode == sysLights.On then
 		command_once(cmdCockpitLightsDn)
 		command_once(cmdCockpitLightsDn)
 	end
-	if mode == sysLights.modeToggle then
+	if mode == sysLights.Toggle then
 		if get(drefCockpitLights) == 0 then 
 			command_once(cmdCockpitLightsDn)
 			command_once(cmdCockpitLightsDn)

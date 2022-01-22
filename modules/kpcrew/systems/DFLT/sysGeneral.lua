@@ -1,12 +1,12 @@
 -- DFLT airplane 
 -- aircraft general systems
 local sysGeneral = {
-	modeOff = 0,
-	modeOn = 1,
-	modeToggle = 2,
-	modeGearUp = 0,
-	modeGearDown = 1,
-	modeGearOff = 3,
+	Off = 0,
+	On = 1,
+	Toggle = 2,
+ 	Up = 1,
+	Down = 0,
+	GearOff = 3,
     GearLightGreenLeft = "greenLeft", 
 	GearLightGreenRight = "greenRight", 
 	GearLightGreenNose = "greenNose", 
@@ -19,8 +19,6 @@ local sysGeneral = {
 	BaroAll = "All",
 	BaroModeNormal = 0,
 	BaroModeStandard = 1,
-	BaroUp = 1,
-	BaroDown = 0,
 	BaroInHg = 0,
 	BaroMbar = 1
 }
@@ -49,13 +47,13 @@ local drefBaroStdNorm = {
 	["Standby"] = "laminar/B738/gauges/standby_alt_std_mode"
 }
 
-local cmdBaroDown = {
+local cmdDown = {
 	["Left"] 	= "sim/instruments/barometer_down",
 	["Right"] 	= "sim/instruments/barometer_copilot_down",
 	["Standby"] = "sim/instruments/barometer_stby_down"
 }
 
-local cmdBaroUp = {
+local cmdUp = {
 	["Left"] 	= "sim/instruments/barometer_up",
 	["Right"] 	= "sim/instruments/barometer_copilot_up",
 	["Standby"] = "sim/instruments/barometer_stby_up"
@@ -96,7 +94,7 @@ function sysGeneral.actBaroStd(side, mode)
 	if mode == sysGeneral.BaroModeNormal then
 		sysGeneral.syncAllBaro()	
 	end
-	if mode == sysGeneral.modeToggle then
+	if mode == sysGeneral.Toggle then
 		if math.floor(get(drefBaro[sysGeneral.BaroLeft])*100) ~= 2992 then
 			command_once(cmdBaroStd["Left"])
 		else
@@ -108,29 +106,29 @@ end
 -- baro up/down 1 unit "All","Left"=CAPT,"Right"=FO,"Standby"=STB, mode 0=dn,1=up
 function sysGeneral.actBaroUpDown(side, mode)
 	if side == sysGeneral.BaroAll or side == sysGeneral.BaroLeft then
-		if mode == sysGeneral.BaroDown then
-			command_once(cmdBaroDown[sysGeneral.BaroLeft])
+		if mode == sysGeneral.Down then
+			command_once(cmdDown[sysGeneral.BaroLeft])
 		end
-		if mode == sysGeneral.BaroUp then
-			command_once(cmdBaroUp[sysGeneral.BaroLeft])
+		if mode == sysGeneral.Up then
+			command_once(cmdUp[sysGeneral.BaroLeft])
 		end
 	end
 
 	if side == sysGeneral.BaroAll or side == sysGeneral.BaroRight then
-		if mode == sysGeneral.BaroDown then
-			command_once(cmdBaroDown[sysGeneral.BaroRight])
+		if mode == sysGeneral.Down then
+			command_once(cmdDown[sysGeneral.BaroRight])
 		end
-		if mode == sysGeneral.BaroUp then
-			command_once(cmdBaroUp[sysGeneral.BaroRight])
+		if mode == sysGeneral.Up then
+			command_once(cmdUp[sysGeneral.BaroRight])
 		end
 	end
 
 	if side == sysGeneral.BaroStandby then -- stby == left
-		if mode == sysGeneral.BaroDown then
-			command_once(cmdBaroDown[sysGeneral.BaroStandby])
+		if mode == sysGeneral.Down then
+			command_once(cmdDown[sysGeneral.BaroStandby])
 		end
-		if mode == sysGeneral.BaroUp then
-			command_once(cmdBaroUp[sysGeneral.BaroStandby])
+		if mode == sysGeneral.Up then
+			command_once(cmdUp[sysGeneral.BaroStandby])
 		end
 	end
 end
@@ -166,7 +164,7 @@ function sysGeneral.setBaroMode(side,mode)
 		if mode == sysGeneral.BaroMbar and get(drefBaroMode[sysGeneral.BaroLeft]) == 0 then
 			command_once(cmdBaroModeUp[sysGeneral.BaroLeft])
 		end
-		if mode == sysGeneral.modeToggle then
+		if mode == sysGeneral.Toggle then
 			if get(drefBaroMode[sysGeneral.BaroLeft]) == 1 then
 				command_once(cmdBaroModeDown[sysGeneral.BaroLeft])
 			else
@@ -182,7 +180,7 @@ function sysGeneral.setBaroMode(side,mode)
 		if mode == sysGeneral.BaroMbar and get(drefBaroMode[sysGeneral.BaroRight]) == 0 then
 			command_once(cmdBaroModeUp[sysGeneral.BaroRight])
 		end
-		if mode == sysGeneral.modeToggle then
+		if mode == sysGeneral.Toggle then
 			if get(drefBaroMode[sysGeneral.BaroRight]) == 1 then
 				command_once(cmdBaroModeDown[sysGeneral.BaroRight])
 			else
@@ -198,7 +196,7 @@ function sysGeneral.setBaroMode(side,mode)
 		if mode == sysGeneral.BaroMbar and get(drefBaroMode[sysGeneral.BaroStandby]) == 0 then
 			command_once(cmdBaroModeUp[sysGeneral.BaroStandby])
 		end
-		if mode == sysGeneral.modeToggle then
+		if mode == sysGeneral.Toggle then
 			if get(drefBaroMode[sysGeneral.BaroStandby]) == 1 then
 				command_once(cmdBaroModeDown[sysGeneral.BaroStandby])
 			else
@@ -212,13 +210,13 @@ end
 -- Gears
 -- mode 0=UP 1=DOWN 2=TOGGLE
 function sysGeneral.setGearMode(mode)
-	if mode == sysGeneral.modeGearUp then
+	if mode == sysGeneral.Up then
 		command_once(cmdGearUp)
 	end
-	if mode == sysGeneral.modeGearDown then
+	if mode == sysGeneral.Down then
 		command_once(cmdGearDown)
 	end
-	if mode == sysGeneral.modeToggle then
+	if mode == sysGeneral.Toggle then
 		if get(drefGearHandle) == 0 then
 			command_once(cmdGearDown)
 		else
@@ -279,13 +277,13 @@ end
 
 -- Park Brake
 function sysGeneral.setParkBrakeMode(mode)
-	if mode == sysGeneral.modeOff then
+	if mode == sysGeneral.Off then
 		set(drefParkBrake,0)
 	end
-	if mode == sysGeneral.modeOn then
+	if mode == sysGeneral.On then
 		set(drefParkBrake,1)
 	end
-	if mode == sysGeneral.modeToggle then
+	if mode == sysGeneral.Toggle then
 		if get(drefParkBrake) == 0 then
 			set(drefParkBrake,1) 
 		else	

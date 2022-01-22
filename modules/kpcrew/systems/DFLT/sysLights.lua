@@ -1,9 +1,9 @@
 -- DFLT airplane (X-Plane 11 default)
 -- aircraft lights specific functionality
 local sysLights = {
-	modeOff = 0,
-	modeOn = 1,
-	modeToggle = 2
+	Off = 0,
+	On = 1,
+	Toggle = 2
 }
 
 local drefBeacon = "sim/cockpit/electrical/beacon_lights_on"
@@ -57,13 +57,13 @@ end
 
 -- Beacon/Anticollision light
 function sysLights.setBeaconMode(mode)
-	if mode == sysLights.modeOff then
+	if mode == sysLights.Off then
 		command_once(cmdBeaconOff)
 	end
-	if mode == sysLights.modeOn then
+	if mode == sysLights.On then
 		command_once(cmdBeaconOn)
 	end
-	if mode == sysLights.modeToggle then
+	if mode == sysLights.Toggle then
 		command_once(cmdBeaconToggle)
 	end
 end
@@ -74,13 +74,13 @@ end
 
 -- Navigation Lights
 function sysLights.setNavLightMode(mode)
-	if mode == sysLights.modeOff then
+	if mode == sysLights.Off then
 		command_once(cmdNavLightsOff)
 	end
-	if mode == sysLights.modeOn then
+	if mode == sysLights.On then
 		command_once(cmdNavLightsOn)
 	end
-	if mode == sysLights.modeToggle then
+	if mode == sysLights.Toggle then
 		command_once(cmdNavLightsToggle)
 	end
 end
@@ -91,13 +91,13 @@ end
 
 -- Strobe Lights
 function sysLights.setStrobeLightMode(mode)
-	if mode == sysLights.modeOff then
+	if mode == sysLights.Off then
 		command_once(cmdStrobeLightsOff)
 	end
-	if mode == sysLights.modeOn then
+	if mode == sysLights.On then
 		command_once(cmdStrobeLightsOn)
 	end
-	if mode == sysLights.modeToggle then
+	if mode == sysLights.Toggle then
 		command_once(cmdStrobeLightsToggle)
 	end
 end
@@ -108,13 +108,13 @@ end
 
 -- Taxi Lights
 function sysLights.setTaxiLightMode(mode)
-	if mode == sysLights.modeOff then
+	if mode == sysLights.Off then
 		command_once(cmdTaxiLightsOff)
 	end
-	if mode == sysLights.modeOn then
+	if mode == sysLights.On then
 		command_once(cmdTaxiLightsOn)
 	end
-	if mode == sysLights.modeToggle then
+	if mode == sysLights.Toggle then
 		command_once(cmdTaxiLightsToggle)
 	end
 end
@@ -125,13 +125,13 @@ end
 
 -- Landing Lights
 function sysLights.setLandingLightsMode(mode)
-	if mode == sysLights.modeOff then
+	if mode == sysLights.Off then
 		command_once(cmdLandingLightsOff)
 	end
-	if mode == sysLights.modeOn then
+	if mode == sysLights.On then
 		command_once(cmdLandingLightsOn)
 	end
-	if mode == sysLights.modeToggle then
+	if mode == sysLights.Toggle then
 		command_once(cmdLandingLightsToggle)
 	end
 end
@@ -144,13 +144,13 @@ end
 
 -- Logo Lights
 function sysLights.setLogoLightsMode(mode)
-	if mode == sysLights.modeOff then
+	if mode == sysLights.Off then
 		setGenericLight(GenLights["Logo"],0)
 	end
-	if mode == sysLights.modeOn then
+	if mode == sysLights.On then
 		setGenericLight(GenLights["Logo"],1)
 	end
-	if mode == sysLights.modeToggle then
+	if mode == sysLights.Toggle then
 		if getGenericLight(GenLights["Logo"]) == 0 then 
 			setGenericLight(GenLights["Logo"],1)
 		else
@@ -165,13 +165,13 @@ end
 
 -- Wing Lights
 function sysLights.setWingLightsMode(mode)
-	if mode == sysLights.modeOff then
+	if mode == sysLights.Off then
 		setGenericLight(GenLights["Wing"],0)
 	end
-	if mode == sysLights.modeOn then
+	if mode == sysLights.On then
 		setGenericLight(GenLights["Wing"],1)
 	end
-	if mode == sysLights.modeToggle then
+	if mode == sysLights.Toggle then
 		if getGenericLight(GenLights["Wing"]) == 0 then 
 			setGenericLight(GenLights["Wing"],1)
 		else
@@ -186,13 +186,13 @@ end
 
 -- Wheel well Lights
 function sysLights.setWheelLightsMode(mode)
-	if mode == sysLights.modeOff then
+	if mode == sysLights.Off then
 		setGenericLight(GenLights["Wheel"],0)
 	end
-	if mode == sysLights.modeOn then
+	if mode == sysLights.On then
 		setGenericLight(GenLights["Wheel"],1)
 	end
-	if mode == sysLights.modeToggle then
+	if mode == sysLights.Toggle then
 		if getGenericLight(GenLights["Wheel"]) == 0 then 
 			setGenericLight(GenLights["Wheel"],1)
 		else
@@ -207,15 +207,15 @@ end
 
 -- RWY Turnoff Lights
 function sysLights.setRwyLightsMode(mode)
-	if mode == sysLights.modeOff then
+	if mode == sysLights.Off then
 		setGenericLight(GenLights["RwyLeft"],0)
 		setGenericLight(GenLights["RwyRight"],0)
 	end
-	if mode == sysLights.modeOn then
+	if mode == sysLights.On then
 		setGenericLight(GenLights["RwyLeft"],1)
 		setGenericLight(GenLights["RwyRight"],1)
 	end
-	if mode == sysLights.modeToggle then
+	if mode == sysLights.Toggle then
 		if getGenericLight(GenLights["RwyLeft"]) == 0 then 
 			setGenericLight(GenLights["RwyLeft"],1)
 			setGenericLight(GenLights["RwyRight"],1)
@@ -232,13 +232,13 @@ end
 
 -- Instrument Lights - switch them all on or off
 function sysLights.setInstrumentLightsMode(mode)
-	if mode == sysLights.modeOff then
+	if mode == sysLights.Off then
 		set(drefInstrumentLights,0)
 	end
-	if mode == sysLights.modeOn then
+	if mode == sysLights.On then
 		set(drefInstrumentLights,1)
 	end
-	if mode == sysLights.modeToggle then
+	if mode == sysLights.Toggle then
 		if get(drefInstrumentLights) == 0 then 
 			set(drefInstrumentLights,1)
 		else
@@ -253,13 +253,13 @@ end
 
 -- Cockpit Lights - switch them all on or off
 function sysLights.setCockpitLightsMode(mode)
-	if mode == sysLights.modeOff then
+	if mode == sysLights.Off then
 		set(drefCockpitLights,0)
 	end
-	if mode == sysLights.modeOn then
+	if mode == sysLights.On then
 		set(drefCockpitLights,1)
 	end
-	if mode == sysLights.modeToggle then
+	if mode == sysLights.Toggle then
 		if get(drefCockpitLights) == 0 then 
 			set(drefCockpitLights,1)
 		else
