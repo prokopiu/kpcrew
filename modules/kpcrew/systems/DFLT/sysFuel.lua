@@ -1,4 +1,4 @@
--- B738 airplane 
+-- DFLT airplane 
 -- Fuel related functionality
 local sysFuel = {
 	Off = 0,

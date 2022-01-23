@@ -1,4 +1,4 @@
--- B738 airplane 
+-- DFLT  airplane 
 -- Electric system functionality
 local sysElectric = {
 	Off = 0,

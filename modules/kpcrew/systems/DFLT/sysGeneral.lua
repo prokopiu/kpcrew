@@ -85,6 +85,46 @@ local drefBaro = {
 
 local drefCurrentBaro = "sim/weather/barometer_sealevel_inhg"
 
+local drefMasterCaution = "sim/cockpit2/annunciators/master_caution"
+local drefMasterWarning = "sim/cockpit2/annunciators/master_warning"
+
+local drefDoorStatus = "sim/cockpit2/switches/door_open"
+
+local drefDoors = {
+	["LeftForward"] 	= 0,
+	["RightForward"] 	= 4,
+	["LeftAft"] 		= 3,
+	["RightAft"] 		= 7,
+	["CargoForward"]	= 8,
+	["CargoAft"]		= 9
+}
+
+-- Honeycomb doors light
+function sysGeneral.getDoorsLight()
+	local sumit = get(drefDoorStatus,drefDoors["LeftForward"]) + 
+		get(drefDoorStatus,drefDoors["RightForward"]) +
+		get(drefDoorStatus,drefDoors["LeftAft"]) +
+		get(drefDoorStatus,drefDoors["RightAft"]) + 	
+		get(drefDoorStatus,drefDoors["CargoForward"]) +
+		get(drefDoorStatus,drefDoors["CargoAft"])
+	
+	if sumit > 0 then 
+		return 1
+	else
+		return 0
+	end
+end
+
+-- Master warning
+function sysGeneral.getMasterWarningLight()
+	return get(drefMasterWarning)
+end
+
+-- Master caution
+function sysGeneral.getMasterCautionLight()
+	return get(drefMasterCaution)
+end
+
 -- Baro
 -- Set STD baro side "All","Left"=CAPT,"Right"=FO,"Standby"=STB mode 0=NORM, 1=STD 2=Toggle
 function sysGeneral.actBaroStd(side, mode)

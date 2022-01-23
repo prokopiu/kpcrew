@@ -20,7 +20,13 @@ local sysGeneral = {
 	BaroModeNormal = 0,
 	BaroModeStandard = 1,
 	BaroInHg = 0,
-	BaroMbar = 1
+	BaroMbar = 1,
+	DoorLeftForward = "LeftForward",
+	DoorRightForward = "RightForward",
+	DoorLeftAft = "LeftAft",
+	DoorRightAft = "RightAft",
+	DoorCargoForward = "CargoForward",
+	DoorCargoAft = "CargoAft"
 }
 
 local drefParkBrake = "sim/cockpit2/controls/parking_brake_ratio"
@@ -88,6 +94,53 @@ local drefBaro = {
 }
 
 local drefCurrentBaro = "sim/weather/barometer_sealevel_inhg"
+
+local drefMasterCaution = "laminar/B738/annunciator/master_caution_light"
+local drefMasterWarning = "sim/cockpit2/annunciators/master_warning"
+
+local drefDoors = {
+	["LeftForward"] 	= "737u/doors/L1",
+	["RightForward"] 	= "737u/doors/L2",
+	["LeftAft"] 		= "737u/doors/R1",
+	["RightAft"] 		= "737u/doors/R2",
+	["CargoForward"]	= "737u/doors/Fwd_Cargo",
+	["CargoAft"]		= "737u/doors/aft_Cargo"
+}
+
+local cmdDoorsToggle = {
+	["LeftForward"] 	= "laminar/B738/door/fwd_L_toggle",
+	["RightForward"] 	= "laminar/B738/door/fwd_R_toggle",
+	["LeftAft"] 		= "laminar/B738/door/aft_L_toggle",
+	["RightAft"] 		= "laminar/B738/door/aft_R_toggle",
+	["CargoForward"]	= "laminar/B738/door/fwd_cargo_toggle",
+	["CargoAft"]		= "laminar/B738/door/aft_cargo_toggle"
+}
+
+-- Honeycomb doors light
+function sysGeneral.getDoorsLight()
+	local sumit = get(drefDoors["LeftForward"]) + 
+		get(drefDoors["RightForward"]) +
+		get(drefDoors["LeftAft"]) +
+		get(drefDoors["RightAft"]) + 	
+		get(drefDoors["CargoForward"]) +
+		get(drefDoors["CargoAft"])
+	
+	if sumit > 0 then 
+		return 1
+	else
+		return 0
+	end
+end
+
+-- Master warning
+function sysGeneral.getMasterWarningLight()
+	return get(drefMasterWarning)
+end
+
+-- Master caution
+function sysGeneral.getMasterCautionLight()
+	return get(drefMasterCaution)
+end
 
 -- Baro
 -- Set STD baro side "All","Left"=CAPT,"Right"=FO,"Standby"=STB mode 0=NORM, 1=STD 2=Toggle

@@ -5288,30 +5288,30 @@ end
 
 
 -- ========== Set up Bravo throttle generic datarefs
-xsp_parking_brake 		= create_dataref_table("kp/xsp/systems/parking_brake", "Int")
-xsp_master_caution 		= create_dataref_table("kp/xsp/systems/master_caution", "Int")
-xsp_master_warning 		= create_dataref_table("kp/xsp/systems/master_warning", "Int")
-xsp_gear_light_on_n		= create_dataref_table("kp/xsp/systems/gear_light_on_n", "Int")
-xsp_gear_light_on_l		= create_dataref_table("kp/xsp/systems/gear_light_on_l", "Int")
-xsp_gear_light_on_r		= create_dataref_table("kp/xsp/systems/gear_light_on_r", "Int")
-xsp_gear_light_trans_n	= create_dataref_table("kp/xsp/systems/gear_light_trans_n", "Int")
-xsp_gear_light_trans_l	= create_dataref_table("kp/xsp/systems/gear_light_trans_l", "Int")
-xsp_gear_light_trans_r	= create_dataref_table("kp/xsp/systems/gear_light_trans_r", "Int")
-xsp_doors 				= create_dataref_table("kp/xsp/systems/doors", "Int")
+-- xsp_parking_brake 		= create_dataref_table("kp/xsp/systems/parking_brake", "Int")
+-- xsp_master_caution 		= create_dataref_table("kp/xsp/systems/master_caution", "Int")
+-- xsp_master_warning 		= create_dataref_table("kp/xsp/systems/master_warning", "Int")
+-- xsp_gear_light_on_n		= create_dataref_table("kp/xsp/systems/gear_light_on_n", "Int")
+-- xsp_gear_light_on_l		= create_dataref_table("kp/xsp/systems/gear_light_on_l", "Int")
+-- xsp_gear_light_on_r		= create_dataref_table("kp/xsp/systems/gear_light_on_r", "Int")
+-- xsp_gear_light_trans_n	= create_dataref_table("kp/xsp/systems/gear_light_trans_n", "Int")
+-- xsp_gear_light_trans_l	= create_dataref_table("kp/xsp/systems/gear_light_trans_l", "Int")
+-- xsp_gear_light_trans_r	= create_dataref_table("kp/xsp/systems/gear_light_trans_r", "Int")
+-- xsp_doors 				= create_dataref_table("kp/xsp/systems/doors", "Int")
 
-xsp_engine_fire 		= create_dataref_table("kp/xsp/engines/engine_fire", "Int")
-xsp_anc_starter 		= create_dataref_table("kp/xsp/engines/anc_starter", "Int")
-xsp_anc_oil 			= create_dataref_table("kp/xsp/engines/anc_oil", "Int")
+-- xsp_engine_fire 		= create_dataref_table("kp/xsp/engines/engine_fire", "Int")
+-- xsp_anc_starter 		= create_dataref_table("kp/xsp/engines/anc_starter", "Int")
+-- xsp_anc_oil 			= create_dataref_table("kp/xsp/engines/anc_oil", "Int")
 	
 xsp_vacuum 				= create_dataref_table("kp/xsp/air/vacuum", "Int")
 	
-xsp_fuel_pumps 			= create_dataref_table("kp/xsp/fuel/fuel_pumps", "Int")
+-- xsp_fuel_pumps 			= create_dataref_table("kp/xsp/fuel/fuel_pumps", "Int")
 xsp_anc_fuel 			= create_dataref_table("kp/xsp/fuel/anc_fuel", "Int")
 	
-xsp_low_volts 			= create_dataref_table("kp/xsp/electric/low_volts", "Int")
-xsp_apu_running			= create_dataref_table("kp/xsp/electric/apu_running", "Int")
+-- xsp_low_volts 			= create_dataref_table("kp/xsp/electric/low_volts", "Int")
+-- xsp_apu_running			= create_dataref_table("kp/xsp/electric/apu_running", "Int")
 	
-xsp_anc_hyd 			= create_dataref_table("kp/xsp/hydraulic/anc_hyd", "Int")
+-- xsp_anc_hyd 			= create_dataref_table("kp/xsp/hydraulic/anc_hyd", "Int")
 	
 xsp_anc_aice 			= create_dataref_table("kp/xsp/aice/anc_aice", "Int")
 	
@@ -5324,13 +5324,13 @@ xsp_mcp_alt 			= create_dataref_table("kp/xsp/autopilot/mcp_alt", "Int")
 xsp_mcp_ap1 			= create_dataref_table("kp/xsp/autopilot/mcp_ap1", "Int")
 xsp_mcp_rev 			= create_dataref_table("kp/xsp/autopilot/mcp_rev", "Int")
 
-xsp_parking_brake[0] = 0
-xsp_master_caution[0] = 0
-xsp_master_warning[0] = 0
-xsp_engine_fire[0] = 0
+-- xsp_parking_brake[0] = 0
+-- xsp_master_caution[0] = 0
+-- xsp_master_warning[0] = 0
+-- xsp_engine_fire[0] = 0
 xsp_vacuum[0] = 0
-xsp_fuel_pumps[0] = 0
-xsp_low_volts[0] = 0
+-- xsp_fuel_pumps[0] = 0
+-- xsp_low_volts[0] = 0
 
 xsp_mcp_hdg[0] = 0
 xsp_mcp_nav[0] = 0
@@ -5341,12 +5341,12 @@ xsp_mcp_alt[0] = 0
 xsp_mcp_ap1[0] = 0
 xsp_mcp_rev[0] = 0
 
-xsp_doors[0] = 0
-xsp_anc_hyd[0] = 0
+-- xsp_doors[0] = 0
+-- xsp_anc_hyd[0] = 0
 xsp_anc_fuel[0] = 0
-xsp_anc_oil[0] = 0
+-- xsp_anc_oil[0] = 0
 xsp_anc_aice[0] = 0
-xsp_anc_starter[0] = 0
+-- xsp_anc_starter[0] = 0
 
 function xsp_set_lightvars()
 
@@ -5411,23 +5411,23 @@ function xsp_set_lightvars()
 	end
 
 	
-	xsp_gear_light_on_l[0] = get("laminar/B738/annunciator/left_gear_safe")
-	xsp_gear_light_on_r[0] = get("laminar/B738/annunciator/right_gear_safe")
-	xsp_gear_light_on_n[0] = get("laminar/B738/annunciator/nose_gear_safe")
-	xsp_gear_light_trans_l[0] = get("laminar/B738/annunciator/left_gear_transit")
-	xsp_gear_light_trans_r[0] = get("laminar/B738/annunciator/right_gear_transit")
-	xsp_gear_light_trans_n[0] = get("laminar/B738/annunciator/nose_gear_transit")
+	-- xsp_gear_light_on_l[0] = get("laminar/B738/annunciator/left_gear_safe")
+	-- xsp_gear_light_on_r[0] = get("laminar/B738/annunciator/right_gear_safe")
+	-- xsp_gear_light_on_n[0] = get("laminar/B738/annunciator/nose_gear_safe")
+	-- xsp_gear_light_trans_l[0] = get("laminar/B738/annunciator/left_gear_transit")
+	-- xsp_gear_light_trans_r[0] = get("laminar/B738/annunciator/right_gear_transit")
+	-- xsp_gear_light_trans_n[0] = get("laminar/B738/annunciator/nose_gear_transit")
 
-	xsp_parking_brake[0] = kc_get_controls_parkbrake_mode()
+	-- xsp_parking_brake[0] = kc_get_controls_parkbrake_mode()
 
-	xsp_apu_running[0] = get("sim/cockpit2/electrical/APU_running")
+	-- xsp_apu_running[0] = get("sim/cockpit2/electrical/APU_running")
 
 	-- Master Caution light
-	if get("laminar/B738/annunciator/master_caution_light") > 0 then
-		xsp_master_caution[0] = 1
-	else
-		xsp_master_caution[0] = 0
-	end
+	-- if get("laminar/B738/annunciator/master_caution_light") > 0 then
+		-- xsp_master_caution[0] = 1
+	-- else
+		-- xsp_master_caution[0] = 0
+	-- end
 
 
 
@@ -5448,17 +5448,17 @@ function xsp_set_lightvars()
 
 	xsp_mcp_ap1[0] = get("laminar/B738/autopilot/cmd_a_status")
 
-	if get("737u/doors/aft1") == 0 and get("737u/doors/aft1") == 0 and get("737u/doors/aft_Cargo") == 0 and get(		"737u/doors/Fwd_Cargo")  == 0 and get("737u/doors/L1") == 0 and get("737u/doors/L2") == 0 and get(			"737u/doors/R1") == 0 and get("737u/doors/R2") then
-		xsp_doors[0] = 0
-	else
-		xsp_doors[0] = 1
-	end
+	-- if get("737u/doors/aft1") == 0 and get("737u/doors/aft1") == 0 and get("737u/doors/aft_Cargo") == 0 and get(		"737u/doors/Fwd_Cargo")  == 0 and get("737u/doors/L1") == 0 and get("737u/doors/L2") == 0 and get(			"737u/doors/R1") == 0 and get("737u/doors/R2") then
+		-- xsp_doors[0] = 0
+	-- else
+		-- xsp_doors[0] = 1
+	-- end
 
-	if get("laminar/B738/annunciator/hyd_el_press_a") == 0 and get("laminar/B738/annunciator/hyd_el_press_b") == 0 then
-		xsp_anc_hyd[0] = 0
-	else
-		xsp_anc_hyd[0] = 1
-	end
+	-- if get("laminar/B738/annunciator/hyd_el_press_a") == 0 and get("laminar/B738/annunciator/hyd_el_press_b") == 0 then
+		-- xsp_anc_hyd[0] = 0
+	-- else
+		-- xsp_anc_hyd[0] = 1
+	-- end
 	
 	if get("laminar/B738/annunciator/low_fuel_press_c1") == 0 and get("laminar/B738/annunciator/low_fuel_press_c2") == 0 and get("laminar/B738/annunciator/low_fuel_press_l1") == 0 and get("laminar/B738/annunciator/low_fuel_press_l2") == 0 and get("laminar/B738/annunciator/low_fuel_press_r1") == 0 and get("laminar/B738/annunciator/low_fuel_press_r2") == 0 then
 		xsp_anc_fuel[0] = 0
@@ -5466,17 +5466,17 @@ function xsp_set_lightvars()
 		xsp_anc_fuel[0] = 1
 	end
 
-	if get("laminar/B738/engine/eng1_oil_press") == 0 or get("laminar/B738/engine/eng2_oil_press") == 0 then
-		xsp_anc_oil[0] = 1
-	else
-		xsp_anc_oil[0] = 0
-	end
+	-- if get("laminar/B738/engine/eng1_oil_press") == 0 or get("laminar/B738/engine/eng2_oil_press") == 0 then
+		-- xsp_anc_oil[0] = 1
+	-- else
+		-- xsp_anc_oil[0] = 0
+	-- end
 
-	if get("laminar/B738/air/engine1/starter_valve") == 0 and get("laminar/B738/air/engine2/starter_valve") == 0 then
-		xsp_anc_starter[0] = 0
-	else
-		xsp_anc_starter[0] = 1
-	end
+	-- if get("laminar/B738/air/engine1/starter_valve") == 0 and get("laminar/B738/air/engine2/starter_valve") == 0 then
+		-- xsp_anc_starter[0] = 0
+	-- else
+		-- xsp_anc_starter[0] = 1
+	-- end
 
 	if get("laminar/B738/annunciator/wing_ice_on_L") == 0 and get("laminar/B738/annunciator/wing_ice_on_R") == 0 and get("laminar/B738/annunciator/cowl_ice_on_0") == 0 and get("laminar/B738/annunciator/cowl_ice_on_1") == 0  then
 		xsp_anc_aice[0] = 0
@@ -5484,7 +5484,7 @@ function xsp_set_lightvars()
 		xsp_anc_aice[0] = 1
 	end
 
-	xsp_master_warning[0] = get("laminar/B738/flt_ctrls/reverse_lever12")
+	-- xsp_master_warning[0] = get("laminar/B738/flt_ctrls/reverse_lever12")
 	
 	if get("laminar/B738/annunciator/pack_left") > 0 or get("laminar/B738/annunciator/pack_right") > 0 then
 		xsp_vacuum[0] = 1
@@ -5528,14 +5528,6 @@ function kc_menus_set_APP_data()
 end
 
 -- ============ aircraft specific joystick/key commands (e.g. for Alpha Yoke)
--- --------------- Controls
-
-create_command("kp/xsp/controls/pitch_trim_up",		"Pitch Trim Up",		"kc_acf_elev_trim_up()", "", "")
-create_command("kp/xsp/controls/pitch_trim_down",	"Pitch Trim Down",		"kc_acf_elev_trim_dn()", "", "")
-
--- --------------- Engines
-create_command("kp/xsp/engines/reverse_on",			"Reverse Thrust on",	"kc_acf_reverse_onoff(1)", "", "")
-create_command("kp/xsp/engines/reverse_off",		"Reverse Thrust off",	"kc_acf_reverse_onoff(0)", "", "")
 
 -- ------------ A/P MCP functions
 create_command("kp/xsp/autopilot/both_fd_tgl",		"All FDs Toggle",		"kc_acf_mcp_fds_set(0,2)", "", "")
@@ -5578,4 +5570,4 @@ create_command("kp/xsp/bravo_button_ap",			"Bravo Autopilot Button","xsp_bravo_b
 
 -- ========== Background processing
 -- Set the datarefs for the Bravo throttle lights or SAITEK display
-do_often("xsp_set_lightvars()")
+-- do_often("xsp_set_lightvars()")

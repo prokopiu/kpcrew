@@ -29,6 +29,9 @@ local acf_icao = "DFLT"
 	-- acf_icao="A345"
 -- end
 	
+-- Laminar MD82 -> MD82
+-- Laminar 747 -> B744
+
 -- Load plane specific module from Modules folder
 
 -- Zibo B738 - use different module for default Laminar B738
@@ -36,7 +39,7 @@ if PLANE_ICAO == "B738" then
 	if PLANE_TAILNUMBER ~= "ZB738" then
 		acf_icao = "DFLT" -- add L738 module later
 	else
-		acf_icao="B738" -- Zibo Mod
+		acf_icao = "B738" -- Zibo Mod
 	end
 end
 
@@ -44,6 +47,9 @@ sysLights = require("kpcrew.systems." .. acf_icao .. ".sysLights")
 sysGeneral = require("kpcrew.systems." .. acf_icao .. ".sysGeneral")	
 sysControls = require("kpcrew.systems." .. acf_icao .. ".sysControls")	
 sysEngines = require("kpcrew.systems." .. acf_icao .. ".sysEngines")	
+sysElectric = require("kpcrew.systems." .. acf_icao .. ".sysElectric")	
+sysHydraulic = require("kpcrew.systems." .. acf_icao .. ".sysHydraulic")	
+sysFuel = require("kpcrew.systems." .. acf_icao .. ".sysFuel")	
 
 -- ============ aircraft specific joystick/key commands (e.g. for Alpha Yoke)
 -- ------------------ Lights
@@ -153,6 +159,27 @@ xsp_anc_starter[0] = 0
 xsp_anc_oil = create_dataref_table("kp/xsp/engines/anc_oil", "Int")
 xsp_anc_oil[0] = 0
 
+xsp_master_caution = create_dataref_table("kp/xsp/systems/master_caution", "Int")
+xsp_master_caution[0] = 0
+
+xsp_master_warning = create_dataref_table("kp/xsp/systems/master_warning", "Int")
+xsp_master_warning[0] = 0
+
+xsp_doors = create_dataref_table("kp/xsp/systems/doors", "Int")
+xsp_doors[0] = 0
+
+xsp_apu_running	= create_dataref_table("kp/xsp/electric/apu_running", "Int")
+xsp_apu_running[0] = 0
+
+xsp_low_volts = create_dataref_table("kp/xsp/electric/low_volts", "Int")
+xsp_low_volts[0] = 0
+
+xsp_anc_hyd = create_dataref_table("kp/xsp/hydraulic/anc_hyd", "Int")
+xsp_anc_hyd[0] = 0
+
+xsp_fuel_pumps = create_dataref_table("kp/xsp/fuel/fuel_pumps", "Int")
+xsp_fuel_pumps[0] = 0
+
 -- background function every 1 sec to set lights/annunciators for hardware (honeycomb)
 function xsp_set_light_drefs()
 
@@ -172,7 +199,30 @@ function xsp_set_light_drefs()
 
 	-- OIL PRESSURE annunciator
 	xsp_anc_oil[0] = sysEngines.getOilLight()
+	
+	-- ENGINE FIRE annunciator
+	xsp_engine_fire[0] = sysEngines.getFireLight()
+	
+	-- MASTER CAUTION annunciator
+	xsp_master_caution[0] = sysGeneral.getMasterCautionLight()
 
+	-- MASTER WARNING annunciator
+	xsp_master_warning[0] = sysGeneral.getMasterWarningLight()
+
+	-- DOORS annunciator
+	xsp_doors[0] = sysGeneral.getDoorsLight()
+	
+	-- APU annunciator
+	xsp_apu_running[0] = sysElectric.getAPULight()
+	
+	-- LOW VOLTAGE annunciator
+	xsp_low_volts[0] = sysElectric.getLowVoltageLight()
+	
+	-- LOW HYD PRESSURE annunciator
+	xsp_anc_hyd[0] = sysHydraulic.getLowHydPressLight()
+	
+	-- LOW FUEL PRESSURE annunciator
+	xsp_fuel_pumps[0] = sysFuel.getFuelPressLowLight()
 end
 
 -- regularly update the drefs for annunciators and lights 
