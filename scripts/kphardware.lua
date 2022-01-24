@@ -9,28 +9,8 @@ logMsg ( "FWL: ** Starting KPHARDWARE version " .. KPH_VERSION .." **" )
 
 local acf_icao = "DFLT"
 
--- Aircraft with no ICAO in aircraft.cfg need to be identified individually
--- if (PLANE_TAILNUMBER == "N956OV") then	
-	-- acf_icao="B146"
--- end
--- if (PLANE_TAILNUMBER == "PT-SSG") then	
-	-- acf_icao="E170"
--- end
--- if (PLANE_TAILNUMBER == "PP-SSG") then	
-	-- acf_icao="E195"
--- end
--- if (PLANE_TAILNUMBER == "E175") then	
-	-- acf_icao="E175"
--- end
--- if (PLANE_TAILNUMBER == "C-GTLX") then	
-	-- acf_icao = "A346"
--- end
--- if (PLANE_TAILNUMBER == "A345") then	
-	-- acf_icao="A345"
--- end
-	
 -- Laminar MD82 -> MD82
--- Laminar 747 -> B744
+-- Laminar 747 -> B744, check Sparky 744
 
 -- Load plane specific module from Modules folder
 
@@ -50,6 +30,9 @@ sysEngines = require("kpcrew.systems." .. acf_icao .. ".sysEngines")
 sysElectric = require("kpcrew.systems." .. acf_icao .. ".sysElectric")	
 sysHydraulic = require("kpcrew.systems." .. acf_icao .. ".sysHydraulic")	
 sysFuel = require("kpcrew.systems." .. acf_icao .. ".sysFuel")	
+sysAir = require("kpcrew.systems." .. acf_icao .. ".sysAir")	
+sysAice = require("kpcrew.systems." .. acf_icao .. ".sysAice")	
+sysMCP = require("kpcrew.systems." .. acf_icao .. ".sysMCP")	
 
 -- ============ aircraft specific joystick/key commands (e.g. for Alpha Yoke)
 -- ------------------ Lights
@@ -180,6 +163,36 @@ xsp_anc_hyd[0] = 0
 xsp_fuel_pumps = create_dataref_table("kp/xsp/fuel/fuel_pumps", "Int")
 xsp_fuel_pumps[0] = 0
 
+xsp_vacuum = create_dataref_table("kp/xsp/air/vacuum", "Int")
+xsp_vacuum[0] = 0
+
+xsp_anc_aice = create_dataref_table("kp/xsp/aice/anc_aice", "Int")
+xsp_anc_aice[0] = 0
+
+xsp_mcp_hdg = create_dataref_table("kp/xsp/autopilot/mcp_hdg", "Int")
+xsp_mcp_hdg[0] = 0
+
+xsp_mcp_nav = create_dataref_table("kp/xsp/autopilot/mcp_nav", "Int")
+xsp_mcp_nav[0] = 0
+
+xsp_mcp_app = create_dataref_table("kp/xsp/autopilot/mcp_app", "Int")
+xsp_mcp_app[0] = 0
+
+xsp_mcp_ias = create_dataref_table("kp/xsp/autopilot/mcp_ias", "Int")
+xsp_mcp_ias[0] = 0
+
+xsp_mcp_vsp = create_dataref_table("kp/xsp/autopilot/mcp_vsp", "Int")
+xsp_mcp_vsp[0] = 0
+
+xsp_mcp_alt = create_dataref_table("kp/xsp/autopilot/mcp_alt", "Int")
+xsp_mcp_alt[0] = 0
+
+xsp_mcp_ap1 = create_dataref_table("kp/xsp/autopilot/mcp_ap1", "Int")
+xsp_mcp_ap1[0] = 0
+
+xsp_mcp_rev = create_dataref_table("kp/xsp/autopilot/mcp_rev", "Int")
+xsp_mcp_rev[0] = 0
+
 -- background function every 1 sec to set lights/annunciators for hardware (honeycomb)
 function xsp_set_light_drefs()
 
@@ -223,6 +236,37 @@ function xsp_set_light_drefs()
 	
 	-- LOW FUEL PRESSURE annunciator
 	xsp_fuel_pumps[0] = sysFuel.getFuelPressLowLight()
+	
+	-- VACUUM annunciator
+	xsp_vacuum[0] = sysAir.getVacuumLight()
+	
+	-- ANTI ICE annunciator
+	xsp_anc_aice[0] = sysAice.getAntiIceLight()
+
+	-- HDG annunciator
+	xsp_mcp_hdg[0] = sysMCP.getHDGLight()
+
+	-- NAV annunciator
+	xsp_mcp_nav[0] = sysMCP.getNAVLight()
+
+	-- APR annunciator
+	xsp_mcp_app[0] = sysMCP.getAPRLight()
+
+	-- ALT annunciator
+	xsp_mcp_alt[0] = sysMCP.getALTLight()
+
+	-- VS annunciator
+	xsp_mcp_vsp[0] = sysMCP.getVSLight()
+
+	-- IAS annunciator
+	xsp_mcp_ias[0] = sysMCP.getSPDLight()
+
+	-- AUTO PILOT annunciator
+	xsp_mcp_ap1[0] = sysMCP.getAPLight()
+
+	-- REV annunciator
+	xsp_mcp_rev[0] = sysMCP.getBCLight()
+
 end
 
 -- regularly update the drefs for annunciators and lights 

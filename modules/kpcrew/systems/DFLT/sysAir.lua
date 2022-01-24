@@ -1,4 +1,4 @@
--- B738 airplane 
+-- DFLT airplane 
 -- Air and Pneumatics functionality
 local sysAir = {
 	Off = 0,
@@ -8,12 +8,11 @@ local sysAir = {
 	Right = "Right"
 }
 
-local drefPackLeftANC = "laminar/B738/annunciator/pack_left"
-local drefPackRightANC = "laminar/B738/annunciator/pack_right"
+local drefAirANC = "sim/cockpit/warnings/annunciators/bleed_air_off"
 
 -- Vacuum light shows B738 PACK annunciator status
 function sysAir.getVacuumLight()
-	if get(drefPackLeftANC) > 0 or get(drefPackRightANC) > 0 then
+	if get(drefAirANC,0) > 0 or get(drefAirANC,1) > 0 then
 		return 1
 	else
 		return 0

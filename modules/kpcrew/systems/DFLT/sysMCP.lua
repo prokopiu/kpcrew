@@ -1,4 +1,4 @@
--- B738 airplane 
+-- DFLT airplane 
 -- MCP functionality
 local sysMCP = {
 	Off = 0,
