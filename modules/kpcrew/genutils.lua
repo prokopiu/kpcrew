@@ -1,6 +1,5 @@
 -- General utilities used in kpcrew and kphardware
 -- some new features and ideas thanks to patrickl92
-local genutils = {}
 
 local socket = require "socket"
 
@@ -11,16 +10,16 @@ local debugLoggingEnabled = false
 
 --- Writes a log message into the X-Plane log file. (patrickl92)
 local function logMessage(source, severity, message)
-    genutils.verifyType("source", source, "string")
-    genutils.verifyType("severity", severity, "string")
-    genutils.verifyType("message", message, "string")
+    verifyType("source", source, "string")
+    verifyType("severity", severity, "string")
+    verifyType("message", message, "string")
 
-    logMsg(tostring(genutils.getPCTime()) .. " kpcrew." .. source .. " [" .. severity .. "]: " .. message)
+    logMsg(tostring(getPCTime()) .. " kpcrew." .. source .. " [" .. severity .. "]: " .. message)
 end
 
 --- Verifies that a value is of the expected type. (patrickl92)
 -- An error is thrown if the type of the value does not match the expected type.
-function genutils.verifyType(valueName, value, expectedType)
+function verifyType(valueName, value, expectedType)
     if type(valueName) ~= "string" then error("valueName must be a string") end
     if type(expectedType) ~= "string" then error("expectedType must be a string") end
 
@@ -30,36 +29,36 @@ function genutils.verifyType(valueName, value, expectedType)
 end
 
 --- Writes an information log message into the X-Plane log file. (patrickl92)
-function genutils.logInfo(source, message)
+function logInfo(source, message)
     logMessage(source, "INFO", message)
 end
 
 --- Enables the logging of debug messages. (patrickl92)
-function genutils.enableDebugLogging()
+function enableDebugLogging()
     debugLoggingEnabled = true
 end
 
 --- Disables the logging of debug messages. (patrickl92)
-function genutils.disableDebugLogging()
+function disableDebugLogging()
     debugLoggingEnabled = false
 end
 
 --- Writes a debug log message into the X-Plane log file. (patrickl92)
 -- The message is only written if debug logging is enabled.
-function genutils.logDebug(source, message)
+function logDebug(source, message)
     if debugLoggingEnabled then
         logMessage(source, "DEBUG", message)
     end
 end
 
 --- Writes an error log message into the X-Plane log file. (patrickl92)
-function genutils.logError(source, message)
+function logError(source, message)
     logMessage(source, "ERROR", message)
 end
 
 -- speak text but don't show in sim, speakMode is used to prevent repetitive playing
 -- speakmode 1 will talk and show, 0 will only speak
-function genutils.speakNoText(speakMode, sText)
+function speakNoText(speakMode, sText)
 	if speakMode == 0 then
 		set(drefTextout,0)
 		XPLMSpeakString(sText)
@@ -73,7 +72,7 @@ end
 ------------- text conversion related functions ---------------
 
 -- split up text in single characters and separate by space
-function genutils.singleLetters(intext)
+function singleLetters(intext)
 	local outtext = ""
 	for i = 1, string.len(intext) do
 		local c = intext:sub(i,i)
@@ -83,7 +82,7 @@ function genutils.singleLetters(intext)
 end
 
 -- convert text into NATO alphabet words
-function genutils.convertNato(intext)
+function convertNato(intext)
 
 	-- the NATO alphabet
 	local nato = {["a"] = "Alpha", ["b"] = "Bravo", ["c"] = "Charlie", ["d"] = "Delta", ["e"] = "Echo", ["f"] = "Foxtrot",
@@ -94,7 +93,7 @@ function genutils.convertNato(intext)
 		["5"] = "Five", ["6"] = "Six", ["7"] = "Seven", ["8"] = "Eight", ["9"] = "Niner", ["-"] = "Dash", [" "] = " ", ["."] = "Point", [","] = "Comma"
 	}
 	intext = string.lower(intext)
-	intext = genutils.singleLetters(intext)
+	intext = singleLetters(intext)
 	local outtext = ""
 	for i = 1, string.len(intext) do
 		local natoword = nato[intext:sub(i,i)]
@@ -104,13 +103,13 @@ function genutils.convertNato(intext)
 end
 
 -- convert runway designators to spoken characters, translating L,C,R
-function genutils.convertRwy(intext)
+function convertRwy(intext)
 
 	local nato = {["c"] = "Center", ["l"] = "Left", ["r"] = "Right", ["0"] = "Zero", ["1"] = "One", ["2"] = "Two", ["3"] = "Tree", ["4"] = "Four", 
 		["5"] = "Five", ["6"] = "Six", ["7"] = "Seven", ["8"] = "Eight", ["9"] = "Niner", ["-"] = "Dash", [" "] = " "
 	}
 	intext = string.lower(intext)
-	intext = genutils.singleLetters(intext)
+	intext = singleLetters(intext)
 	local outtext = ""
 	for i = 1, string.len(intext) do
 		local natoword = nato[intext:sub(i,i)]
@@ -122,7 +121,7 @@ end
 ------------- file related functions ---------------
 
 -- check if external lua file exists
-function genutils.file_exists(name)
+function file_exists(name)
 	local f=io.open(name,"r")
 	if f~=nil then 
 		io.close(f) 
@@ -135,7 +134,7 @@ end
 ------------- coordinates related functions ---------------
 
 -- convert a coordinate from x-plane to deg,min,sec format
-function genutils.toDegreesMinutesAndSeconds(coordinate) 
+function toDegreesMinutesAndSeconds(coordinate) 
     local absolute = math.abs(coordinate);
     local degrees  = math.floor(absolute);
     local minutesNotTruncated = (absolute - degrees) * 60;
@@ -146,11 +145,11 @@ function genutils.toDegreesMinutesAndSeconds(coordinate)
 end
 
 -- convert position to full coordinate string with N/S and E/W
-function genutils.convert_DMS(lat, lng) 
-    local latitude = genutils.toDegreesMinutesAndSeconds(lat);
+function convert_DMS(lat, lng) 
+    local latitude = toDegreesMinutesAndSeconds(lat);
     local latitudeCardinal = (lat >= 0) and "N" or "S";
 
-    local longitude = genutils.toDegreesMinutesAndSeconds(lng);
+    local longitude = toDegreesMinutesAndSeconds(lng);
     local longitudeCardinal = (lng >= 0) and "E" or "W";
 
     return latitude .. " " .. latitudeCardinal .. " - " .. longitude .. " " .. longitudeCardinal;
@@ -159,7 +158,7 @@ end
 ------------- time related functions ---------------
 
 -- return a full time string from given time in seconds of day
-function genutils.display_timefull(timeseconds)
+function display_timefull(timeseconds)
 	local lhours = math.floor(timeseconds/3600)
 	local lminutes = math.floor((timeseconds - lhours * 3600)/60)
 	local lsec = math.floor(timeseconds - (lhours * 3600) - (lminutes * 60))
@@ -167,7 +166,7 @@ function genutils.display_timefull(timeseconds)
 end
 
 -- return a hh:mm string from given time in seconds of day
-function genutils.display_timehhmm(timeseconds)
+function display_timehhmm(timeseconds)
 	local lhours = math.floor(timeseconds/3600)
 	local lminutes = math.floor((timeseconds - lhours * 3600)/60)
 	return string.format("%2.2i:%2.2i",lhours,lminutes)
@@ -176,8 +175,6 @@ end
 --- Gets the current time. (patrickl92)
 -- The function uses the <code>gettime()</code> function of LuaSocket, which provides the current time with milliseconds resolution.
 -- @treturn number The current time.
-function genutils.getPCTime()
+function getPCTime()
 	return socket.gettime()
 end
-
-return genutils

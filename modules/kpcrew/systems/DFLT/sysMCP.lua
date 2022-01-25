@@ -6,18 +6,18 @@ local sysMCP = {
 	Toggle = 2
 }
 
-local drefHDGSelLight = "laminar/B738/autopilot/hdg_sel_status"
-local drefVORLocLight = "laminar/B738/autopilot/vorloc_status"
-local drefAPRLight = "laminar/B738/autopilot/app_status"
-local drefSPDLight = "laminar/B738/autopilot/speed_mode"
-local drefN1Light = "laminar/B738/autopilot/n1_status"
-local drefVSLight = "laminar/B738/autopilot/vs_status"
-local drefALTLight = "laminar/B738/autopilot/alt_hld_status"
-local drefAPStatusLight = "laminar/B738/autopilot/cmd_a_status"
-local drefCMDBLight = "laminar/B738/autopilot/cmd_b_status"
-local drefLVLCHGLight = "laminar/B738/autopilot/lvl_chg_status"
-local drefLNAVLight = "laminar/B738/autopilot/lnav_status"
-local drefVNAVLight = "laminar/B738/autopilot/vnav_status1"
+local drefHDGSelLight = "sim/cockpit2/autopilot/heading_mode"
+local drefVORLocLight = "sim/cockpit2/autopilot/nav_status"
+local drefAPRLight = "sim/cockpit2/autopilot/approach_status"
+local drefSPDLight = "sim/cockpit2/autopilot/autothrottle_on"
+local drefN1Light = ""
+local drefVSLight = "sim/cockpit2/autopilot/vvi_status"
+local drefALTLight = "sim/cockpit2/autopilot/altitude_hold_status"
+local drefAPStatusLight = "sim/cockpit2/autopilot/autopilot_on_or_cws"
+local drefCMDBLight = ""
+local drefLVLCHGLight = ""
+local drefLNAVLight = "sim/cockpit2/radios/actuators/HSI_source_select_pilot"
+local drefVNAVLight = "sim/cockpit2/autopilot/fms_vnav"
 local drefBCLight = ""
 
 
@@ -28,12 +28,17 @@ end
 
 -- HDG Light
 function sysMCP.getHDGLight()
-	return get(drefHDGSelLight)
+	if get(drefHDGSelLight) > 0  then
+		return 1
+	else
+		return 0
+	end
+	return 
 end
 
 -- NAV light includes VORLOC and LNAV
 function sysMCP.getNAVLight()
-	if get(drefVORLocLight) == 1 or get(drefLNAVLight) == 1 then
+	if get(drefVORLocLight) > 0 or get(drefLNAVLight) > 0 then
 		return 1
 	else
 		return 0
