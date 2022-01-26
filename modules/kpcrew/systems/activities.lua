@@ -39,6 +39,19 @@ function act(component, name, instance, activity)
 					--logMsg(item["instances"][instance]["commands"][activity])
 					command_once(item["instances"][instance]["commands"][activity])
 				end -- toggle
+				if item["toggle"] == toggleDref then
+					if activity ~= modeToggle then
+						--logMsg(item["instances"][instance]["commands"][activity])
+						command_once(item["instances"][instance]["commands"][activity])
+					else
+						local ref = item["instances"][instance]["drefStatus"] 
+						if get(ref["name"],ref["index"]) ~= modeOff then
+							command_once(item["instances"][instance]["commands"][modeOff])
+						else
+							command_once(item["instances"][instance]["commands"][modeOn])
+						end
+					end
+				end -- toggle
 			end -- cmdref actWithCmd
 			
 			-- set modes with dataref
@@ -49,7 +62,7 @@ function act(component, name, instance, activity)
 						--logMsg(ref["name"] .. "[" .. ref["index"] .. "]")
 						set_array(ref["name"],ref["index"],activity)
 					else 
-						if get(ref["name"],ref["index"]) == modeOn then
+						if get(ref["name"],ref["index"]) ~= modeOff then
 							set_array(ref["name"],ref["index"],modeOff)
 						else
 							set_array(ref["name"],ref["index"],modeOn)
