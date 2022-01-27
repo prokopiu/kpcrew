@@ -10,8 +10,7 @@ local sysLights = {
 sysLights.Lights = {
 	-- Beacons or Anticollision Lights, single, onoff, command driven
 	["beacons"] = {
-		["type"] = typeModes,
-		["modes"] = { modeOff, modeOn, modeToggle },
+		["type"] = typeOnOffTgl,
 		["cmddref"] = actWithCmd,
 		["status"] = statusDref,
 		["toggle"] = toggleCmd,
@@ -30,8 +29,7 @@ sysLights.Lights = {
 	},
 	-- Position Lights, single onoff command driven
 	["position"] = {
-		["type"] = typeModes,
-		["modes"] = { modeOff, modeOn, modeToggle },
+		["type"] = typeOnOffTgl,
 		["cmddref"] = actWithCmd,
 		["status"] = statusDref,
 		["toggle"] = toggleCmd,
@@ -50,8 +48,7 @@ sysLights.Lights = {
 	},
 	-- Strobe Lights, single onoff command driven
 	["strobes"] = {
-		["type"] = typeModes,
-		["modes"] = { modeOff, modeOn, modeToggle },
+		["type"] = typeOnOffTgl,
 		["cmddref"] = actWithCmd,
 		["status"] = statusDref,
 		["toggle"] = toggleCmd,
@@ -70,8 +67,7 @@ sysLights.Lights = {
 	},
 	-- Taxi/Nose Lights, single onoff command driven
 	["taxi"] = {
-		["type"] = typeModes,
-		["modes"] = { modeOff, modeOn, modeToggle },
+		["type"] = typeOnOffTgl,
 		["cmddref"] = actWithCmd,
 		["status"] = statusDref,
 		["toggle"] = toggleCmd,
@@ -90,8 +86,7 @@ sysLights.Lights = {
 	},
 	-- Landing Lights, single onoff command driven
 	["landing"] = {
-		["type"] = typeModes,
-		["modes"] = { modeOff, modeOn, modeToggle },
+		["type"] = typeOnOffTgl,
 		["cmddref"] = actWithDref,
 		["status"] = statusDref,
 		["toggle"] = toggleDref,
@@ -121,8 +116,7 @@ sysLights.Lights = {
 	},
 	-- Logo Light
 	["logo"] = {
-		["type"] = typeModes,
-		["modes"] = { modeOff, modeOn, modeToggle },
+		["type"] = typeOnOffTgl,
 		["cmddref"] = actWithDref,
 		["status"] = statusDref,
 		["toggle"] = toggleDref,
@@ -137,8 +131,7 @@ sysLights.Lights = {
 	},
 	-- RWY Turnoff
 	["runway"] = {
-		["type"] = typeModes,
-		["modes"] = { modeOff, modeOn, modeToggle },
+		["type"] = typeOnOffTgl,
 		["cmddref"] = actWithDref,
 		["status"] = statusDref,
 		["toggle"] = toggleDref,
@@ -158,8 +151,7 @@ sysLights.Lights = {
 	},
 	-- Wing Lights
 	["wing"] = {
-		["type"] = typeModes,
-		["modes"] = { modeOff, modeOn, modeToggle },
+		["type"] = typeOnOffTgl,
 		["cmddref"] = actWithDref,
 		["status"] = statusDref,
 		["toggle"] = toggleDref,
@@ -174,8 +166,7 @@ sysLights.Lights = {
 	},
 	-- Wheel well Lights
 	["wheel"] = {
-		["type"] = typeModes,
-		["modes"] = { modeOff, modeOn, modeToggle },
+		["type"] = typeOnOffTgl,
 		["cmddref"] = actWithDref,
 		["status"] = statusDref,
 		["toggle"] = toggleDref,
@@ -190,8 +181,7 @@ sysLights.Lights = {
 	},
 	-- Dome Light
 	["dome"] = {
-		["type"] = typeModes,
-		["modes"] = { modeOff, modeOn, modeToggle },
+		["type"] = typeOnOffTgl,
 		["cmddref"] = actWithDref,
 		["status"] = statusDref,
 		["toggle"] = toggleDref,
@@ -206,8 +196,7 @@ sysLights.Lights = {
 	},
 	-- Instrument Lights
 	["instruments"] = {
-		["type"] = typeModes,
-		["modes"] = { modeOff, modeOn, modeToggle },
+		["type"] = typeOnOffTgl,
 		["cmddref"] = actWithDref,
 		["status"] = statusDref,
 		["toggle"] = toggleDref,

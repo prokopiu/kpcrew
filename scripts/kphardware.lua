@@ -75,9 +75,9 @@ create_command("kp/xsp/lights/rwyto_switch_on","Runway Lights On","sysLights.set
 create_command("kp/xsp/lights/rwyto_switch_off","Runway Lights Off","sysLights.setSwitch(\"runway\",-1,modeOff)","","")
 create_command("kp/xsp/lights/rwyto_switch_tgl","Runway Lights Toggle","sysLights.setSwitch(\"runway\",-1,modeToggle)","","")
 
-create_command("kp/xsp/lights/instruments_on","Instrument Lights On","sysLights.setSwitch(\"instrument\",0,modeOn)","","")
-create_command("kp/xsp/lights/instruments_off","Instrument Lights Off","sysLights.setSwitch(\"instrument\",0,modeOff)","","")
-create_command("kp/xsp/lights/instruments_tgl","Instrument Lights Toggle","sysLights.setSwitch(\"instrument\",0,modeToggle)","","")
+create_command("kp/xsp/lights/instruments_on","Instrument Lights On","sysLights.setSwitch(\"instruments\",-1,modeOn)","","")
+create_command("kp/xsp/lights/instruments_off","Instrument Lights Off","sysLights.setSwitch(\"instruments\",-1,modeOff)","","")
+create_command("kp/xsp/lights/instruments_tgl","Instrument Lights Toggle","sysLights.setSwitch(\"instruments\",-1,modeToggle)","","")
 
 create_command("kp/xsp/lights/dome_switch_on","Cockpit Lights On","sysLights.setSwitch(\"dome\",0,modeOn)","","")
 create_command("kp/xsp/lights/dome_switch_off","Cockpit Lights Off","sysLights.setSwitch(\"dome\",0,modeOff)","","")
@@ -85,9 +85,9 @@ create_command("kp/xsp/lights/dome_switch_tgl","Cockpit Lights Toggle","sysLight
 
 ---------------- General Systems ---------------------
 
--- create_command("kp/xsp/systems/parking_brake_on","Parking Brake On","sysGeneral.setParkBrakeMode(modeOn)","","")
--- create_command("kp/xsp/systems/parking_brake_off","Parking Brake Off","sysGeneral.setParkBrakeMode(modeOff)","","")
--- create_command("kp/xsp/systems/parking_brake_tgl","Parking Brake Toggle","sysGeneral.setParkBrakeMode(modeToggle)","","")
+create_command("kp/xsp/systems/parking_brake_on","Parking Brake On","sysGeneral.setSwitch(\"parkbrake\",0,modeOn)","","")
+create_command("kp/xsp/systems/parking_brake_off","Parking Brake Off","sysGeneral.setSwitch(\"parkbrake\",0,modeOff)","","")
+create_command("kp/xsp/systems/parking_brake_tgl","Parking Brake Toggle","sysGeneral.setSwitch(\"parkbrake\",0,modeToggle)","","")
 
 -- create_command("kp/xsp/systems/gears_up","Gears Up","sysGeneral.setGearMode(actUp)","","")
 -- create_command("kp/xsp/systems/gears_down","Gears Down","sysGeneral.setGearMode(actDown)","","")
@@ -200,7 +200,7 @@ xsp_mcp_rev[0] = 0
 function xsp_set_light_drefs()
 
 	-- PARKING BRAKE 0=off 1=set
-	-- xsp_parking_brake[0] = sysGeneral.getParkBrakeMode()
+	xsp_parking_brake[0] = sysGeneral.getMode("parkbrake",0)
 
 	-- GEAR LIGHTS
 	-- xsp_gear_light_on_l[0] = sysGeneral.getGearLight(sysGeneral.GearLightGreenLeft)

@@ -10,8 +10,7 @@ local sysLights = {
 sysLights.Lights = {
 	-- Beacons or Anticollision Lights, single, onoff, command driven
 	["beacons"] = {
-		["type"] = typeModes,
-		["modes"] = { modeOff, modeOn, modeToggle },
+		["type"] = typeOnOffTgl,
 		["cmddref"] = actWithCmd,
 		["status"] = statusDref,
 		["toggle"] = toggleCmd,
@@ -30,8 +29,7 @@ sysLights.Lights = {
 	},
 	-- Position Lights, single onoff command driven
 	["position"] = {
-		["type"] = typeModes,
-		["modes"] = { modeOff, modeOn, modeToggle },
+		["type"] = typeOnOffTgl,
 		["cmddref"] = actWithCmd,
 		["status"] = statusDref,
 		["toggle"] = toggleDref,
@@ -49,8 +47,7 @@ sysLights.Lights = {
 	},
 	-- Strobe Lights, single onoff command driven
 	["strobes"] = {
-		["type"] = typeModes,
-		["modes"] = { modeOff, modeOn, modeToggle },
+		["type"] = typeOnOffTgl,
 		["cmddref"] = actWithCmd,
 		["status"] = statusDref,
 		["toggle"] = toggleDref,
@@ -68,8 +65,7 @@ sysLights.Lights = {
 	},
 	-- Taxi/Nose Lights, single onoff command driven
 	["taxi"] = {
-		["type"] = typeModes,
-		["modes"] = { modeOff, modeOn, modeToggle },
+		["type"] = typeOnOffTgl,
 		["cmddref"] = actWithCmd,
 		["status"] = statusDref,
 		["toggle"] = toggleCmd,
@@ -88,8 +84,7 @@ sysLights.Lights = {
 	},
 	-- Landing Lights, single onoff command driven
 	["landing"] = {
-		["type"] = typeModes,
-		["modes"] = { modeOff, modeOn, modeToggle },
+		["type"] = typeOnOffTgl,
 		["cmddref"] = actWithCmd,
 		["status"] = statusDref,
 		["toggle"] = toggleDref,
@@ -131,8 +126,7 @@ sysLights.Lights = {
 	},
 	-- Logo Light
 	["logo"] = {
-		["type"] = typeModes,
-		["modes"] = { modeOff, modeOn, modeToggle },
+		["type"] = typeOnOffTgl,
 		["cmddref"] = actWithDref,
 		["status"] = statusDref,
 		["toggle"] = toggleDref,
@@ -147,8 +141,7 @@ sysLights.Lights = {
 	},
 	-- RWY Turnoff
 	["runway"] = {
-		["type"] = typeModes,
-		["modes"] = { modeOff, modeOn, modeToggle },
+		["type"] = typeOnOffTgl,
 		["cmddref"] = actWithCmd,
 		["status"] = statusDref,
 		["toggle"] = toggleCmd,
@@ -176,8 +169,7 @@ sysLights.Lights = {
 	},
 	-- Wing Lights
 	["wing"] = {
-		["type"] = typeModes,
-		["modes"] = { modeOff, modeOn, modeToggle },
+		["type"] = typeOnOffTgl,
 		["cmddref"] = actWithCmd,
 		["status"] = statusDref,
 		["toggle"] = toggleCmd,
@@ -195,8 +187,7 @@ sysLights.Lights = {
 		}
 	},	-- Wheel well Lights
 	["wheel"] = {
-		["type"] = typeModes,
-		["modes"] = { modeOff, modeOn, modeToggle },
+		["type"] = typeOnOffTgl,
 		["cmddref"] = actWithDref,
 		["status"] = statusDref,
 		["toggle"] = toggleDref,
@@ -211,32 +202,79 @@ sysLights.Lights = {
 	},
 	-- Dome Light
 	["dome"] = {
-		["type"] = typeModes,
-		["modes"] = { modeOff, modeOn, modeToggle },
-		["cmddref"] = actWithDref,
+		["type"] = typeOnOffTgl,
+		["cmddref"] = actCustom,
 		["status"] = statusDref,
 		["toggle"] = toggleDref,
 		["instancecnt"] = 1,
 		["instances"] = {
 			[0] = {
-				["drefStatus"] = { ["name"] = "sim/cockpit/electrical/cockpit_lights", ["index"] = 0 },
-				["dataref"] = { ["name"] = "sim/cockpit/electrical/cockpit_lights", ["index"] = 0 },
-				["commands"] = { "" }
+				["drefStatus"] = { ["name"] = "laminar/B738/toggle_switch/cockpit_dome_pos", ["index"] = 0 },
+				["dataref"] = { "" },
+				["commands"] = {
+					[cmdUp] = "laminar/B738/toggle_switch/cockpit_dome_up",
+					[cmdDown] = "laminar/B738/toggle_switch/cockpit_dome_dn"
+				},
+				["custom"] = {
+					[modeOff] =	function ()
+						local cmdup = sysLights.Lights["dome"]["instances"][0]["commands"][cmdUp]
+						local cmddwn = sysLights.Lights["dome"]["instances"][0]["commands"][cmdDown]
+						command_once(cmdup)
+						command_once(cmdup)
+						command_once(cmddwn)
+					end,
+					[modeOn] = function () 
+						local cmdup = sysLights.Lights["dome"]["instances"][0]["commands"][cmdUp]
+						local cmddwn = sysLights.Lights["dome"]["instances"][0]["commands"][cmdDown]
+						logMsg(cmdUp)
+						command_once(cmddwn)
+						command_once(cmddwn)
+					end
+				}
 			}
 		}
 	},
 	-- Instrument Lights
 	["instruments"] = {
-		["type"] = typeModes,
-		["modes"] = { modeOff, modeOn, modeToggle },
+		["type"] = typeOnOffTgl,
 		["cmddref"] = actWithDref,
 		["status"] = statusDref,
 		["toggle"] = toggleDref,
-		["instancecnt"] = 1,
+		["instancecnt"] = 4,
 		["instances"] = {
 			[0] = {
-				["drefStatus"] = { ["name"] = "sim/cockpit2/switches/instrument_brightness_ratio", ["index"] = 0 },
-				["dataref"] = { ["name"] = "sim/cockpit2/switches/instrument_brightness_ratio", ["index"] = 0 },
+				["drefStatus"] = { ["name"] = "laminar/B738/electric/panel_brightness", ["index"] = 0 },
+				["dataref"] = { ["name"] = "laminar/B738/electric/panel_brightness", ["index"] = 0 },
+				["commands"] = { "" }
+			},
+			[1] = {
+				["drefStatus"] = { ["name"] = "laminar/B738/electric/panel_brightness", ["index"] = 1 },
+				["dataref"] = { ["name"] = "laminar/B738/electric/panel_brightness", ["index"] = 1 },
+				["commands"] = { "" }
+			},
+			[2] = {
+				["drefStatus"] = { ["name"] = "laminar/B738/electric/panel_brightness", ["index"] = 2 },
+				["dataref"] = { ["name"] = "laminar/B738/electric/panel_brightness", ["index"] = 2 },
+				["commands"] = { "" }
+			},
+			[3] = {
+				["drefStatus"] = { ["name"] = "laminar/B738/electric/panel_brightness", ["index"] = 3 },
+				["dataref"] = { ["name"] = "laminar/B738/electric/panel_brightness", ["index"] = 3 },
+				["commands"] = { "" }
+			},
+			[4] = {
+				["drefStatus"] = { ["name"] = "sim/cockpit2/switches/generic_lights_switch", ["index"] = 6 },
+				["dataref"] = { ["name"] = "sim/cockpit2/switches/generic_lights_switch", ["index"] = 6 },
+				["commands"] = { "" }
+			},
+			[5] = {
+				["drefStatus"] = { ["name"] = "sim/cockpit2/switches/generic_lights_switch", ["index"] = 7 },
+				["dataref"] = { ["name"] = "sim/cockpit2/switches/generic_lights_switch", ["index"] = 7 },
+				["commands"] = { "" }
+			},
+			[6] = {
+				["drefStatus"] = { ["name"] = "sim/cockpit2/switches/generic_lights_switch", ["index"] = 8 },
+				["dataref"] = { ["name"] = "sim/cockpit2/switches/generic_lights_switch", ["index"] = 8 },
 				["commands"] = { "" }
 			}
 		}
@@ -260,6 +298,18 @@ function sysLights.setSwitch(lights, instance, mode)
 		else
 			act(sysLights.Lights,lights,instance,mode)
 		end
+	elseif lights == "instruments" then
+		if instance == -1 then
+			act(sysLights.Lights,lights,0,mode)
+			act(sysLights.Lights,lights,1,mode)
+			act(sysLights.Lights,lights,2,mode)
+			act(sysLights.Lights,lights,3,mode)
+			act(sysLights.Lights,lights,4,mode)
+			act(sysLights.Lights,lights,5,mode)
+			act(sysLights.Lights,lights,6,mode)
+		else
+			act(sysLights.Lights,lights,instance,mode)
+		end
 	else
 		act(sysLights.Lights,lights,instance,mode)
 	end
@@ -269,84 +319,5 @@ function sysLights.getMode(lights,instance)
 	return status(sysLights.Lights,lights,instance)
 end
 
-
-
--- local drefInstrumentLights = "laminar/B738/electric/panel_brightness"
--- local function setInstrumentLight(index,mode)
-	-- set_array(drefInstrumentLights,index,mode)
--- end
--- local function getInstrumentLight(index)
-	-- return get(drefInstrumentLights,index)
--- end
-
--- local drefCockpitLights = "laminar/B738/toggle_switch/cockpit_dome_pos"
--- local cmdCockpitLightsUp = "laminar/B738/toggle_switch/cockpit_dome_up"
--- local cmdCockpitLightsDn = "laminar/B738/toggle_switch/cockpit_dome_dn"
-
-
-
-
--- function sysLights.getLandingLightMode()
-	-- return get(drefLandingLights)
--- end
-
------------ GENERIC LIGHTS might nit work the same way on all default planes -------------
-
-
--- Instrument Lights - switch them all on or off
--- light: 
--- function sysLights.isetInstrumentLightsMode(light, mode)
-	-- if mode == sysLights.Off then
-		-- set_array(drefInstrumentLights,light,0)
-	-- end
-	-- if mode == sysLights.On then
-		-- set_array(drefInstrumentLights,light,1)
-	-- end
-	-- if mode == sysLights.Toggle then
-		-- if get(drefInstrumentLights,light) == 0 then 
-			-- set_array(drefInstrumentLights,light,1)
-		-- else
-			-- set_array(drefInstrumentLights,light,0)
-		-- end
-	-- end
--- end
-
--- function sysLights.setInstrumentLightsMode(mode)
-	-- sysLights.isetInstrumentLightsMode(0,mode)
-	-- sysLights.isetInstrumentLightsMode(1,mode)
-	-- sysLights.isetInstrumentLightsMode(2,mode)
-	-- sysLights.isetInstrumentLightsMode(3,mode)
--- end
-
--- function sysLights.getInstrumentLightsMode()
-	-- return get(drefInstrumentLights)
--- end
-
--- Cockpit Lights - switch them all on or off
--- function sysLights.setCockpitLightsMode(mode)
-	-- if mode == sysLights.Off then
-		-- command_once(cmdCockpitLightsUp)
-		-- command_once(cmdCockpitLightsUp)
-		-- command_once(cmdCockpitLightsDn)
-	-- end
-	-- if mode == sysLights.On then
-		-- command_once(cmdCockpitLightsDn)
-		-- command_once(cmdCockpitLightsDn)
-	-- end
-	-- if mode == sysLights.Toggle then
-		-- if get(drefCockpitLights) == 0 then 
-			-- command_once(cmdCockpitLightsDn)
-			-- command_once(cmdCockpitLightsDn)
-		-- else
-			-- command_once(cmdCockpitLightsUp)
-			-- command_once(cmdCockpitLightsUp)
-			-- command_once(cmdCockpitLightsDn)
-		-- end
-	-- end
--- end
-
--- function sysLights.getCockpitLightsMode()
-	-- return get(drefCockpitLights)
--- end
 
 return sysLights

@@ -4,9 +4,7 @@
 require "kpcrew.genutils"
 
 typeInop = -1
-typeModes = 0
-typeActuator = 1
-typeCustom = 2
+typeOnOffTgl = 0
 
 modeOff = 0
 modeOn = 1
@@ -14,7 +12,7 @@ modeToggle = 2
 
 actWithCmd = 0
 actWithDref = 1
-actCmdDref = 2
+actTglCmd = 2
 actCustom = 3
 
 toggleCmd = 0
@@ -24,14 +22,16 @@ toggleCustom = 2
 statusDref = 0
 statusCustom = 1
 
+cmdDown = 0
+cmdUp = 1
+
 --------------------- command execution and status retrieval  ----------------------
 -- act(name of component in system, name of element to act on, instance of element, activity like mode)
 function act(component, name, instance, activity)
 	local item = component[name]
 	if item["type"] ~= typeInop then
-
 		-- mode setting (on,off,toggle or custom)
-		if item["type"] == typeModes then
+		if item["type"] == typeOnOffTgl then
 
 			-- set modes with individual commands
 			if item["cmddref"] == actWithCmd then
@@ -54,15 +54,29 @@ function act(component, name, instance, activity)
 				end -- toggle
 			end -- cmdref actWithCmd
 			
+			-- only toggle command available
+			if item["cmddref"] == actTglCmd then
+				if activity ~= modeToggle then
+					local ref = item["instances"][instance]["drefStatus"] 
+					if get(ref["name"],ref["index"]) ~= activity then
+						command_once(item["instances"][instance]["commands"][modeToggle])
+					end
+				else
+					command_once(item["instances"][instance]["commands"][modeToggle])
+				end -- toggle
+			end -- cmdref actWithCmd
+			
 			-- set modes with dataref
 			if item["cmddref"] == actWithDref then
 				if item["toggle"] == toggleDref then
 					local ref = item["instances"][instance]["dataref"] 
+					local statusref = item["instances"][instance]["drefStatus"] 
 					if activity ~= modeToggle then
-						--logMsg(ref["name"] .. "[" .. ref["index"] .. "]")
+						--logMsg("dref: " .. ref["name"] .. "[" .. ref["index"] .. "]")
 						set_array(ref["name"],ref["index"],activity)
 					else 
-						if get(ref["name"],ref["index"]) ~= modeOff then
+						--logMsg("st: " .. statusref["name"] .. "[" .. ref["index"] .. "]")
+						if get(statusref["name"],ref["index"]) ~= modeOff then
 							set_array(ref["name"],ref["index"],modeOff)
 						else
 							set_array(ref["name"],ref["index"],modeOn)
@@ -71,7 +85,25 @@ function act(component, name, instance, activity)
 				end -- toggle
 			end -- cmdref actWithDref
 
-		end -- type modes
+			-- set modes with custom functions
+			if item["cmddref"] == actCustom then
+				if item["toggle"] == toggleDref then
+					local ref = item["instances"][instance]["drefStatus"]
+					local func = item["instances"][instance]["custom"]
+					logMsg(ref["name"] .. "[" .. ref["index"] .. "]")
+					if activity ~= modeToggle then
+						func[activity]()
+					else 
+						if get(ref["name"],ref["index"]) ~= modeOff then
+							func[modeOff]()
+						else
+							func[modeOn]()
+						end
+					end 
+				end -- toggle
+			end -- cmdref actCustom
+
+		end -- type onofftgl
 	end -- not inop
 end
 
