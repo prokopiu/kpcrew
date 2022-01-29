@@ -5,20 +5,24 @@ require "kpcrew.genutils"
 
 typeInop = -1
 typeOnOffTgl = 0
+typeAnnunciator = 1
 
 modeOff = 0
 modeOn = 1
 modeToggle = 2
 
+actNone = -1
 actWithCmd = 0
 actWithDref = 1
 actTglCmd = 2
 actCustom = 3
 
+toggleNone = -1
 toggleCmd = 0
 toggleDref = 1
 toggleCustom = 2
 
+statusNone = -1
 statusDref = 0
 statusCustom = 1
 
@@ -35,76 +39,101 @@ function act(component, name, instance, activity)
 
 			-- set modes with individual commands
 			if item["cmddref"] == actWithCmd then
+
+				-- there is a command for toggle beside the other modes (on, off and toggle)
 				if item["toggle"] == toggleCmd then
-					--logMsg(item["instances"][instance]["commands"][activity])
 					command_once(item["instances"][instance]["commands"][activity])
 				end -- toggle
+
+				-- toggle is based on the statud dref
 				if item["toggle"] == toggleDref then
+				
 					if activity ~= modeToggle then
-						--logMsg(item["instances"][instance]["commands"][activity])
 						command_once(item["instances"][instance]["commands"][activity])
 					else
-						local ref = item["instances"][instance]["drefStatus"] 
-						if get(ref["name"],ref["index"]) ~= modeOff then
+						local statusref = item["instances"][instance]["drefStatus"] 
+						if get(statusref["name"],statusref["index"]) ~= modeOff then
 							command_once(item["instances"][instance]["commands"][modeOff])
 						else
 							command_once(item["instances"][instance]["commands"][modeOn])
 						end
 					end
+				
 				end -- toggle
+
+				-- no toggle required, only simple commands
+				if item["toggle"] == toggleNone then
+					command_once(item["instances"][instance]["commands"][activity])
+				end -- toggle
+
 			end -- cmdref actWithCmd
 			
 			-- only toggle command available
 			if item["cmddref"] == actTglCmd then
+
+				-- if mode not modeToggle
 				if activity ~= modeToggle then
-					local ref = item["instances"][instance]["drefStatus"] 
-					if get(ref["name"],ref["index"]) ~= activity then
+					local statusref = item["instances"][instance]["drefStatus"] 
+					if get(statusref["name"],statusref["index"]) ~= activity then
 						command_once(item["instances"][instance]["commands"][modeToggle])
 					end
 				else
 					command_once(item["instances"][instance]["commands"][modeToggle])
 				end -- toggle
+				
 			end -- cmdref actWithCmd
 			
 			-- set modes with dataref
 			if item["cmddref"] == actWithDref then
+			
+				-- toggle mode based on statusDref
 				if item["toggle"] == toggleDref then
 					local ref = item["instances"][instance]["dataref"] 
 					local statusref = item["instances"][instance]["drefStatus"] 
+
 					if activity ~= modeToggle then
-						--logMsg("dref: " .. ref["name"] .. "[" .. ref["index"] .. "]")
 						set_array(ref["name"],ref["index"],activity)
 					else 
-						--logMsg("st: " .. statusref["name"] .. "[" .. ref["index"] .. "]")
 						if get(statusref["name"],ref["index"]) ~= modeOff then
 							set_array(ref["name"],ref["index"],modeOff)
 						else
 							set_array(ref["name"],ref["index"],modeOn)
 						end
 					end 
+
 				end -- toggle
+
 			end -- cmdref actWithDref
 
 			-- set modes with custom functions
 			if item["cmddref"] == actCustom then
+
+				-- toggle based on status dref
 				if item["toggle"] == toggleDref then
-					local ref = item["instances"][instance]["drefStatus"]
-					local func = item["instances"][instance]["custom"]
-					logMsg(ref["name"] .. "[" .. ref["index"] .. "]")
+					local statusref = item["instances"][instance]["drefStatus"]
+					local func = item["instances"][instance]["customcmd"]
 					if activity ~= modeToggle then
 						func[activity]()
 					else 
-						if get(ref["name"],ref["index"]) ~= modeOff then
+						if get(statusref["name"],ref["index"]) ~= modeOff then
 							func[modeOff]()
 						else
 							func[modeOn]()
 						end
 					end 
 				end -- toggle
+				
+				if item["toggle"] == toggleCmd then
+					local func = item["instances"][instance]["customcmd"]
+					func[activity]()
+				end -- toggle
+
 			end -- cmdref actCustom
 
 		end -- type onofftgl
+		
 	end -- not inop
+	
 end
 
 -- get status from dref or custim function
@@ -113,8 +142,11 @@ function status(component, name, instance)
 	if item["type"] ~= typeInop then
 		if item["status"] == statusDref then
 			local ref = item["instances"][instance]["drefStatus"] 
-			--logMsg(ref["name"] .. "[" .. ref["index"] .. "]")
 			return get(ref["name"],ref["index"])
+		end --status dref
+		if item["status"] == statusCustom then
+			local ref = item["instances"][instance]["customdref"] 
+			return ref()
 		end --status dref
 	else -- inop
 		return typeInop

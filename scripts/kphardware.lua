@@ -89,15 +89,18 @@ create_command("kp/xsp/systems/parking_brake_on","Parking Brake On","sysGeneral.
 create_command("kp/xsp/systems/parking_brake_off","Parking Brake Off","sysGeneral.setSwitch(\"parkbrake\",0,modeOff)","","")
 create_command("kp/xsp/systems/parking_brake_tgl","Parking Brake Toggle","sysGeneral.setSwitch(\"parkbrake\",0,modeToggle)","","")
 
--- create_command("kp/xsp/systems/gears_up","Gears Up","sysGeneral.setGearMode(actUp)","","")
--- create_command("kp/xsp/systems/gears_down","Gears Down","sysGeneral.setGearMode(actDown)","","")
--- create_command("kp/xsp/systems/gears_off","Gears OFF","sysGeneral.setGearMode(sysGeneral.GearOff)","","")
+create_command("kp/xsp/systems/gears_up","Gears Up","sysGeneral.setSwitch(\"landinggear\",0,sysGeneral.GearUp)","","")
+create_command("kp/xsp/systems/gears_down","Gears Down","sysGeneral.setSwitch(\"landinggear\",0,sysGeneral.GearDown)","","")
+create_command("kp/xsp/systems/gears_off","Gears OFF","sysGeneral.setSwitch(\"landinggear\",0,sysGeneral.GearOff)","","")
 
 
--- create_command("kp/xsp/systems/all_alt_std","ALTS STD/QNH toggle","sysGeneral.actBaroStd(sysGeneral.BaroAll,modeToggle)","","")
--- create_command("kp/xsp/systems/baro_mode_tgl","Baro inch/mb toggle","sysGeneral.setBaroMode(sysGeneral.BaroAll,modeToggle)","","")
--- create_command("kp/xsp/systems/all_baro_down","All baro down","sysGeneral.actBaroUpDown(sysGeneral.BaroAll,actDown)","","")
--- create_command("kp/xsp/systems/all_baro_up","All baro up","sysGeneral.actBaroUpDown(sysGeneral.BaroAll,actUp)","","")
+create_command("kp/xsp/systems/all_alt_std","ALTS STD/QNH toggle","sysGeneral.setSwitch(\"barostd\",-1,modeToggle)","","")
+create_command("kp/xsp/systems/baro_mode_tgl","Baro inch/mb toggle","sysGeneral.setSwitch(\"baromode\",-1,modeToggle)","","")
+create_command("kp/xsp/systems/all_baro_down","All baro down","sysGeneral.setSwitch(\"barovalue\",-1,cmdDown)","","")
+create_command("kp/xsp/systems/all_baro_up","All baro up","sysGeneral.setSwitch(\"barovalue\",-1,cmdUp)","","")
+
+create_command("kp/xsp/systems/test","TEST","sysGeneral.setSwitch(\"doors\",-1,modeToggle)","","")
+
 
 ----------------- Flight Controls --------------------
 -- create_command("kp/xsp/controls/flaps_up","Flaps 1 Up","sysControls.actFlapLever(actUp)","","")
@@ -203,12 +206,12 @@ function xsp_set_light_drefs()
 	xsp_parking_brake[0] = sysGeneral.getMode("parkbrake",0)
 
 	-- GEAR LIGHTS
-	-- xsp_gear_light_on_l[0] = sysGeneral.getGearLight(sysGeneral.GearLightGreenLeft)
-	-- xsp_gear_light_on_r[0] = sysGeneral.getGearLight(sysGeneral.GearLightGreenRight)
-	-- xsp_gear_light_on_n[0] = sysGeneral.getGearLight(sysGeneral.GearLightGreenNose)
-	-- xsp_gear_light_trans_l[0] =  sysGeneral.getGearLight(sysGeneral.GearLightRedLeft)
-	-- xsp_gear_light_trans_r[0] =  sysGeneral.getGearLight(sysGeneral.GearLightRedRight)
-	-- xsp_gear_light_trans_n[0] =  sysGeneral.getGearLight(sysGeneral.GearLightRedNose)
+	xsp_gear_light_on_l[0] 		= sysGeneral.getMode("gearlights",0)
+	xsp_gear_light_on_r[0] 		= sysGeneral.getMode("gearlights",1)
+	xsp_gear_light_on_n[0] 		= sysGeneral.getMode("gearlights",2)
+	xsp_gear_light_trans_l[0] 	= sysGeneral.getMode("gearlights",3)
+	xsp_gear_light_trans_r[0] 	= sysGeneral.getMode("gearlights",4)
+	xsp_gear_light_trans_n[0] 	= sysGeneral.getMode("gearlights",5)
 	
 	-- STARTER annunciator
 	-- xsp_anc_starter[0] = sysEngines.getStarterLight()
@@ -220,13 +223,13 @@ function xsp_set_light_drefs()
 	-- xsp_engine_fire[0] = sysEngines.getFireLight()
 	
 	-- MASTER CAUTION annunciator
-	-- xsp_master_caution[0] = sysGeneral.getMasterCautionLight()
+	xsp_master_caution[0] = sysGeneral.getMode("mastercaution",0)
 
 	-- MASTER WARNING annunciator
-	-- xsp_master_warning[0] = sysGeneral.getMasterWarningLight()
+	xsp_master_warning[0] = sysGeneral.getMode("masterwarning",0)
 
 	-- DOORS annunciator
-	-- xsp_doors[0] = sysGeneral.getDoorsLight()
+	xsp_doors[0] = sysGeneral.getMode("doorstatus",0)
 	
 	-- APU annunciator
 	-- xsp_apu_running[0] = sysElectric.getAPULight()

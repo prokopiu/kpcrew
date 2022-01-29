@@ -215,7 +215,7 @@ sysLights.Lights = {
 					[cmdUp] = "laminar/B738/toggle_switch/cockpit_dome_up",
 					[cmdDown] = "laminar/B738/toggle_switch/cockpit_dome_dn"
 				},
-				["custom"] = {
+				["customcmd"] = {
 					[modeOff] =	function ()
 						local cmdup = sysLights.Lights["dome"]["instances"][0]["commands"][cmdUp]
 						local cmddwn = sysLights.Lights["dome"]["instances"][0]["commands"][cmdDown]
@@ -281,43 +281,20 @@ sysLights.Lights = {
 	}
 }	
 
-function sysLights.setSwitch(lights, instance, mode)
-	if lights == "runway" then
-		if instance == -1 then
-			act(sysLights.Lights,lights,0,mode)
-			act(sysLights.Lights,lights,1,mode)
-		else
-			act(sysLights.Lights,lights,instance,mode)
-		end
-	elseif lights == "landing" then
-		if instance == -1 then
-			act(sysLights.Lights,lights,0,mode)
-			act(sysLights.Lights,lights,1,mode)
-			act(sysLights.Lights,lights,2,mode)
-			act(sysLights.Lights,lights,3,mode)
-		else
-			act(sysLights.Lights,lights,instance,mode)
-		end
-	elseif lights == "instruments" then
-		if instance == -1 then
-			act(sysLights.Lights,lights,0,mode)
-			act(sysLights.Lights,lights,1,mode)
-			act(sysLights.Lights,lights,2,mode)
-			act(sysLights.Lights,lights,3,mode)
-			act(sysLights.Lights,lights,4,mode)
-			act(sysLights.Lights,lights,5,mode)
-			act(sysLights.Lights,lights,6,mode)
-		else
-			act(sysLights.Lights,lights,instance,mode)
+function sysLights.setSwitch(element, instance, mode)
+	if instance == -1 then
+		local item = sysLights.Lights[element]
+		instances = item["instancecnt"]
+		for iloop = 0,instances-1 do
+			act(sysLights.Lights,element,iloop,mode)	
 		end
 	else
-		act(sysLights.Lights,lights,instance,mode)
+		act(sysLights.Lights,element,instance,mode)
 	end
 end
 
-function sysLights.getMode(lights,instance)
-	return status(sysLights.Lights,lights,instance)
+function sysLights.getMode(element,instance)
+	return status(sysLights.Lights,element,instance)
 end
-
 
 return sysLights
