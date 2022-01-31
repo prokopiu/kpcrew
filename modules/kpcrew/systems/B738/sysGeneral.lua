@@ -295,7 +295,7 @@ sysGeneral.GenSystems = {
 	},
 	-- Baro value
 	["barovalue"] = {
-		["type"] = typeOnOffTgl,
+		["type"] = typeActuator,
 		["cmddref"] = actWithCmd,
 		["status"] = statusDref,
 		["toggle"] = toggleNone,

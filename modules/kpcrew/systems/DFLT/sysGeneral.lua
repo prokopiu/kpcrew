@@ -57,7 +57,7 @@ sysGeneral.GenSystems = {
 			[0] = {
 				["drefStatus"] = { ["name"] = "sim/flightmodel/movingparts/gear1def", ["index"] = 0 },
 				["dataref"] = { "" },
-				["customdref"] = function ()
+				["customdref"] = function () 
 						local statusdref = sysGeneral.GenSystems["gearlights"]["instances"][0]["drefStatus"]
 						return get(statusdref["name"],statusdref["index"])
 					end,
@@ -403,37 +403,21 @@ sysGeneral.GenSystems = {
 		["cmddref"] = actWithCmd,
 		["status"] = statusDref,
 		["toggle"] = toggleDref,
-		["instancecnt"] = 3,
+		["instancecnt"] = 1,
 		["instances"] = {
 			[0] = {
-				["drefStatus"] = { ["name"] = "sim/cockpit2/gauges/actuators/barometer_setting_in_hg_pilot", ["index"] = 0 },
+				["drefStatus"] = { ["name"] = "", ["index"] = 0 },
 				["dataref"] = { "" },
 				["commands"] = {
-					[cmdDown]	 = "sim/instruments/barometer_down",
-					[cmdUp] 	 = "sim/instruments/barometer_up"
-				}
-			},
-			[1] = {
-				["drefStatus"] = { ["name"] = "sim/cockpit2/gauges/actuators/barometer_setting_in_hg_copilot", ["index"] = 0 },
-				["dataref"] = { "" },
-				["commands"] = {
-					[cmdDown]	 = "sim/instruments/barometer_copilot_down",
-					[cmdUp] 	 = "sim/instruments/barometer_copilot_up"
-				}
-			},
-			[2] = {
-				["drefStatus"] = { ["name"] = "laminar/B738/EFIS_control/fo/baro_in_hpa", ["index"] = 0 },
-				["dataref"] = { "" },
-				["commands"] = {
-					[cmdDown]	 = "sim/instruments/barometer_stby_down",
-					[cmdUp] 	 = "sim/instruments/barometer_stby_up"
+					[cmdDown]	 = "",
+					[cmdUp] 	 = ""
 				}
 			}
 		}
 	},
 	-- Baro value
 	["barovalue"] = {
-		["type"] = typeOnOffTgl,
+		["type"] = typeActuator,
 		["cmddref"] = actWithCmd,
 		["status"] = statusDref,
 		["toggle"] = toggleNone,

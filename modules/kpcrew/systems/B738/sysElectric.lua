@@ -1,23 +1,55 @@
 -- B738 airplane 
 -- Electric system functionality
 local sysElectric = {
-	Off = 0,
-	On = 1,
-	Toggle = 2
 }
 
-local drefAPURunning = "sim/cockpit2/electrical/APU_running"
+sysElectric.electric = {
+	-- LOW VOLTAGE annunciator
+	["lowvoltage"] = {
+		["type"] = typeAnnunciator,
+		["cmddref"] = actNone,
+		["status"] = statusDref,
+		["toggle"] = toggleNone,
+		["instancecnt"] = 1,
+		["instances"] = {
+			[0] = {
+				["drefStatus"] = { ["name"] = "sim/cockpit2/annunciators/low_voltage", ["index"] = 0 },
+				["dataref"] = { "" },
+				["commands"] = { "" }
+			}		
+		}
+	},
+	-- APU RUNNING annunciator
+	["apurunning"] = {
+		["type"] = typeAnnunciator,
+		["cmddref"] = actNone,
+		["status"] = statusDref,
+		["toggle"] = toggleNone,
+		["instancecnt"] = 1,
+		["instances"] = {
+			[0] = {
+				["drefStatus"] = { ["name"] = "sim/cockpit2/electrical/APU_running", ["index"] = 0 },
+				["dataref"] = { "" },
+				["commands"] = { "" }
+			}		
+		}
+	}
+}
 
-local drefLowVoltage = "sim/cockpit2/annunciators/low_voltage"
-
--- LOW VOLTAGE 0=off 1=running
-function sysElectric.getLowVoltageLight()
-	return get(drefLowVoltage)
+function sysElectric.setSwitch(element, instance, mode)
+	if instance == -1 then
+		local item = sysElectric.electric[element]
+		instances = item["instancecnt"]
+		for iloop = 0,instances-1 do
+			act(sysElectric.electric,element,iloop,mode)	
+		end
+	else
+		act(sysElectric.electric,element,instance,mode)
+	end
 end
 
--- APU status 0=off 1=running
-function sysElectric.getAPULight()
-	return get(drefAPURunning)
+function sysElectric.getMode(element,instance)
+		return status(sysElectric.electric,element,instance)
 end
 
 return sysElectric

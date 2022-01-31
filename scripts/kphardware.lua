@@ -103,25 +103,25 @@ create_command("kp/xsp/systems/test","TEST","sysGeneral.setSwitch(\"doors\",-1,m
 
 
 ----------------- Flight Controls --------------------
--- create_command("kp/xsp/controls/flaps_up","Flaps 1 Up","sysControls.actFlapLever(actUp)","","")
--- create_command("kp/xsp/controls/flaps_down","Flaps 1 Down","sysControls.actFlapLever(actDown)","","")
+create_command("kp/xsp/controls/flaps_up","Flaps 1 Up","sysControls.setSwitch(\"flaps\",0,cmdUp)","","")
+create_command("kp/xsp/controls/flaps_down","Flaps 1 Down","sysControls.setSwitch(\"flaps\",0,cmdDown)","","")
 
--- create_command("kp/xsp/controls/pitch_trim_up","Pitch Trim Up",	"sysControls.actElevatorTrim(actUp)", "", "")
--- create_command("kp/xsp/controls/pitch_trim_down","Pitch Trim Down",	"sysControls.actElevatorTrim(actDown)", "", "")
+create_command("kp/xsp/controls/pitch_trim_up","Pitch Trim Up","sysControls.setSwitch(\"pitchtrim\",0,cmdUp)", "", "")
+create_command("kp/xsp/controls/pitch_trim_down","Pitch Trim Down","sysControls.setSwitch(\"pitchtrim\",0,cmdDown)", "", "")
 
--- create_command("kp/xsp/controls/rudder_trim_left","Rudder Trim Left",	"sysControls.actRudderTrim(actLeft)", "", "")
--- create_command("kp/xsp/controls/rudder_trim_right","Rudder Trim Right",	"sysControls.actRudderTrim(actRight)", "", "")
--- create_command("kp/xsp/controls/rudder_trim_center","Rudder Trim Center",	"sysControls.actRudderTrim(sysControls.Center)", "", "")
+create_command("kp/xsp/controls/rudder_trim_left","Rudder Trim Left","sysControls.setSwitch(\"ailerontrim\",0,cmdLeft)", "", "")
+create_command("kp/xsp/controls/rudder_trim_right","Rudder Trim Right","sysControls.setSwitch(\"ailerontrim\",0,cmdRight)", "", "")
+create_command("kp/xsp/controls/rudder_trim_center","Rudder Trim Center","sysControls.setSwitch(\"ailerontrim\",0,sysControls.trimCenter)", "", "")
 
--- create_command("kp/xsp/controls/aileron_trim_left","Aileron Trim Left",	"sysControls.actAileronTrim(actLeft)", "", "")
--- create_command("kp/xsp/controls/aileron_trim_right","Aileron Trim Right",	"sysControls.actAileronTrim(actRight)", "", "")
--- create_command("kp/xsp/controls/aileron_trim_center","Aileron Trim Center",	"sysControls.actAileronTrim(sysControls.Center)", "", "")
+create_command("kp/xsp/controls/aileron_trim_left","Aileron Trim Left","sysControls.setSwitch(\"ruddertrim\",0,cmdLeft)", "", "")
+create_command("kp/xsp/controls/aileron_trim_right","Aileron Trim Right","sysControls.setSwitch(\"ruddertrim\",0,cmdRight)", "", "")
+create_command("kp/xsp/controls/aileron_trim_center","Aileron Trim Center","sysControls.setSwitch(\"ruddertrim\",0,sysControls.trimCenter)", "", "")
 
 -- --------------- Engines
--- create_command("kp/xsp/engines/reverse_on", "Reverse Thrust Full", "sysEngines.setReverseThrust(modeOn)", "", "")
+create_command("kp/xsp/engines/reverse_on", "Reverse Thrust Full", "sysEngines.setSwitch(\"reversethrust\",-1,modeOn)", "", "")
 -- create_command("kp/xsp/engines/reverse_off", "Reverse Thrust Off", "sysEngines.setReverseThrust(modeOff)", "", "")
 
---------------- Instantiate Datarefs for hardware annunciators (e.g. honeycomb) -----------
+--------------- Instantiate Datarefs for hardware annunciators (e.g. honeycomb) ----------- 
 
 xsp_parking_brake = create_dataref_table("kp/xsp/systems/parking_brake", "Int")
 xsp_parking_brake[0] = 0
@@ -214,13 +214,13 @@ function xsp_set_light_drefs()
 	xsp_gear_light_trans_n[0] 	= sysGeneral.getMode("gearlights",5)
 	
 	-- STARTER annunciator
-	-- xsp_anc_starter[0] = sysEngines.getStarterLight()
+	xsp_anc_starter[0] = sysEngines.getMode("starter",0)
 
 	-- OIL PRESSURE annunciator
-	-- xsp_anc_oil[0] = sysEngines.getOilLight()
+	xsp_anc_oil[0] = sysEngines.getMode("oilpressure",0)
 	
 	-- ENGINE FIRE annunciator
-	-- xsp_engine_fire[0] = sysEngines.getFireLight()
+	xsp_engine_fire[0] = sysEngines.getMode("enginefire",0)
 	
 	-- MASTER CAUTION annunciator
 	xsp_master_caution[0] = sysGeneral.getMode("mastercaution",0)
@@ -232,22 +232,22 @@ function xsp_set_light_drefs()
 	xsp_doors[0] = sysGeneral.getMode("doorstatus",0)
 	
 	-- APU annunciator
-	-- xsp_apu_running[0] = sysElectric.getAPULight()
+	xsp_apu_running[0] = sysElectric.getMode("apurunning",0)
 	
 	-- LOW VOLTAGE annunciator
-	-- xsp_low_volts[0] = sysElectric.getLowVoltageLight()
+	xsp_low_volts[0] = sysElectric.getMode("lowvoltage",0)
 	
 	-- LOW HYD PRESSURE annunciator
-	-- xsp_anc_hyd[0] = sysHydraulic.getLowHydPressLight()
+	xsp_anc_hyd[0] = sysHydraulic.getMode("lowhydraulic",0)
 	
 	-- LOW FUEL PRESSURE annunciator
-	-- xsp_fuel_pumps[0] = sysFuel.getFuelPressLowLight()
+	xsp_fuel_pumps[0] = sysFuel.getMode("fuelprslow",0)
 	
 	-- VACUUM annunciator
-	-- xsp_vacuum[0] = sysAir.getVacuumLight()
+	xsp_vacuum[0] = sysAir.getMode("vacuum",0)
 	
 	-- ANTI ICE annunciator
-	-- xsp_anc_aice[0] = sysAice.getAntiIceLight()
+	xsp_anc_aice[0] = sysAice.getMode("antiice",0)
 
 	-- HDG annunciator
 	-- xsp_mcp_hdg[0] = sysMCP.getHDGLight()
