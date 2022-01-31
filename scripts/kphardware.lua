@@ -250,28 +250,28 @@ function xsp_set_light_drefs()
 	xsp_anc_aice[0] = sysAice.getMode("antiice",0)
 
 	-- HDG annunciator
-	-- xsp_mcp_hdg[0] = sysMCP.getHDGLight()
+	xsp_mcp_hdg[0] = sysMCP.getMode("hdganc",0)
 
 	-- NAV annunciator
-	-- xsp_mcp_nav[0] = sysMCP.getNAVLight()
+	xsp_mcp_nav[0] = sysMCP.getMode("navanc",0)
 
 	-- APR annunciator
-	-- xsp_mcp_app[0] = sysMCP.getAPRLight()
+	xsp_mcp_app[0] = sysMCP.getMode("apranc",0)
 
 	-- ALT annunciator
-	-- xsp_mcp_alt[0] = sysMCP.getALTLight()
+	xsp_mcp_alt[0] = sysMCP.getMode("altanc",0)
 
 	-- VS annunciator
-	-- xsp_mcp_vsp[0] = sysMCP.getVSLight()
+	xsp_mcp_vsp[0] = sysMCP.getMode("vspanc",0)
 
 	-- IAS annunciator
-	-- xsp_mcp_ias[0] = sysMCP.getSPDLight()
+	xsp_mcp_ias[0] = sysMCP.getMode("spdanc",0)
 
 	-- AUTO PILOT annunciator
-	-- xsp_mcp_ap1[0] = sysMCP.getAPLight()
+	xsp_mcp_ap1[0] = sysMCP.getMode("autopilotanc",0)
 
 	-- REV annunciator
-	-- xsp_mcp_rev[0] = sysMCP.getBCLight()
+	xsp_mcp_rev[0] = sysMCP.getMode("bcanc",0)
 
 end
 

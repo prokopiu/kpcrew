@@ -46,13 +46,5 @@ end
 function sysAice.getMode(element,instance)
 		return status(sysAice.ice,element,instance)
 end
--- Honeycomb anti ice annunciatir
-function sysAice.getAntiIceLight()
-	if get(drefAiceWingLeft) > 0 or get(drefAiceEng1) > 0 then
-		return 1
-	else
-		return 0
-	end
-end
 
 return sysAice

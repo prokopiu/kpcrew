@@ -1,86 +1,166 @@
 -- DFLT airplane 
 -- MCP functionality
 local sysMCP = {
-	Off = 0,
-	On = 1,
-	Toggle = 2
 }
 
-local drefHDGSelLight = "sim/cockpit2/autopilot/heading_mode"
 local drefVORLocLight = "sim/cockpit2/autopilot/nav_status"
-local drefAPRLight = "sim/cockpit2/autopilot/approach_status"
-local drefSPDLight = "sim/cockpit2/autopilot/autothrottle_on"
-local drefN1Light = ""
-local drefVSLight = "sim/cockpit2/autopilot/vvi_status"
-local drefALTLight = "sim/cockpit2/autopilot/altitude_hold_status"
-local drefAPStatusLight = "sim/cockpit2/autopilot/autopilot_on_or_cws"
-local drefCMDBLight = ""
-local drefLVLCHGLight = ""
 local drefLNAVLight = "sim/cockpit2/radios/actuators/HSI_source_select_pilot"
+local drefSPDLight = "sim/cockpit2/autopilot/autothrottle_on"
+local drefVSLight = "sim/cockpit2/autopilot/vvi_status"
 local drefVNAVLight = "sim/cockpit2/autopilot/fms_vnav"
-local drefBCLight = ""
 
+sysMCP.autopilot = {
+	-- HDG Select/mode annunciator
+	["hdganc"] = {
+		["type"] = typeAnnunciator,
+		["cmddref"] = actNone,
+		["status"] = statusDref,
+		["toggle"] = toggleNone,
+		["instancecnt"] = 1,
+		["instances"] = {
+			[0] = {
+				["drefStatus"] = { ["name"] = "sim/cockpit2/autopilot/heading_mode", ["index"] = 0 },
+				["dataref"] = { "" },
+				["commands"] = { "" }
+			}		
+		}
+	},
+	-- NAV mode annunciator
+	["navanc"] = {
+		["type"] = typeAnnunciator,
+		["cmddref"] = actNone,
+		["status"] = statusCustom,
+		["toggle"] = toggleNone,
+		["instancecnt"] = 1,
+		["instances"] = {
+			[0] = {
+				["drefStatus"] = { ["name"] = "", ["index"] = 0 },
+				["customdref"] = function () 
+						if get(drefVORLocLight) > 0 or get(drefLNAVLight) > 0 then
+							return 1
+						else
+							return 0
+						end
+					end,
+				["dataref"] = { "" },
+				["commands"] = { "" }
+			}		
+		}
+	},
+	-- APR Select/mode annunciator
+	["apranc"] = {
+		["type"] = typeAnnunciator,
+		["cmddref"] = actNone,
+		["status"] = statusDref,
+		["toggle"] = toggleNone,
+		["instancecnt"] = 1,
+		["instances"] = {
+			[0] = {
+				["drefStatus"] = { ["name"] = "sim/cockpit2/autopilot/approach_status", ["index"] = 0 },
+				["dataref"] = { "" },
+				["commands"] = { "" }
+			}		
+		}
+	},
+	-- SPD mode annunciator
+	["spdanc"] = {
+		["type"] = typeAnnunciator,
+		["cmddref"] = actNone,
+		["status"] = statusDref,
+		["toggle"] = toggleNone,
+		["instancecnt"] = 1,
+		["instances"] = {
+			[0] = {
+				["drefStatus"] = { ["name"] = "sim/cockpit2/autopilot/autothrottle_on", ["index"] = 0 },
+				["dataref"] = { "" },
+				["commands"] = { "" }
+			}		
+		}
+	},
+	-- Vertical mode annunciator
+	["vspanc"] = {
+		["type"] = typeAnnunciator,
+		["cmddref"] = actNone,
+		["status"] = statusCustom,
+		["toggle"] = toggleNone,
+		["instancecnt"] = 1,
+		["instances"] = {
+			[0] = {
+				["drefStatus"] = { ["name"] = "", ["index"] = 0 },
+				["customdref"] = function () 
+						if get(drefVSLight) > 0 or get(drefVNAVLight) > 0 then
+							return 1
+						else
+							return 0
+						end
+					end,
+				["dataref"] = { "" },
+				["commands"] = { "" }
+			}		
+		}
+	},
+	-- ALT mode annunciator
+	["altanc"] = {
+		["type"] = typeAnnunciator,
+		["cmddref"] = actNone,
+		["status"] = statusDref,
+		["toggle"] = toggleNone,
+		["instancecnt"] = 1,
+		["instances"] = {
+			[0] = {
+				["drefStatus"] = { ["name"] = "sim/cockpit2/autopilot/altitude_hold_status", ["index"] = 0 },
+				["dataref"] = { "" },
+				["commands"] = { "" }
+			}		
+		}
+	},
+	-- A/P mode annunciator
+	["autopilotanc"] = {
+		["type"] = typeAnnunciator,
+		["cmddref"] = actNone,
+		["status"] = statusDref,
+		["toggle"] = toggleNone,
+		["instancecnt"] = 1,
+		["instances"] = {
+			[0] = {
+				["drefStatus"] = { ["name"] = "sim/cockpit2/autopilot/autopilot_on_or_cws", ["index"] = 0 },
+				["dataref"] = { "" },
+				["commands"] = { "" }
+			}		
+		}
+	},
+	-- BC mode annunciator
+	["bcanc"] = {
+		["type"] = typeInop,
+		["cmddref"] = actNone,
+		["status"] = statusDref,
+		["toggle"] = toggleNone,
+		["instancecnt"] = 1,
+		["instances"] = {
+			[0] = {
+				["drefStatus"] = { ["name"] = "", ["index"] = 0 },
+				["dataref"] = { "" },
+				["commands"] = { "" }
+			}		
+		}
+	}
+}
 
--- BC light not applicable in B738
-function sysMCP.getBCLight()
-	return 0
-end
-
--- HDG Light
-function sysMCP.getHDGLight()
-	if get(drefHDGSelLight) > 0  then
-		return 1
+function sysMCP.setSwitch(element, instance, mode)
+	if instance == -1 then
+		local item = sysMCP.autopilot[element]
+		instances = item["instancecnt"]
+		for iloop = 0,instances-1 do
+			act(sysMCP.autopilot,element,iloop,mode)	
+		end
 	else
-		return 0
-	end
-	return 
-end
-
--- NAV light includes VORLOC and LNAV
-function sysMCP.getNAVLight()
-	if get(drefVORLocLight) > 0 or get(drefLNAVLight) > 0 then
-		return 1
-	else
-		return 0
-	end
-end
-	
--- APR light
-function  sysMCP.getAPRLight()
-	return get(drefAPRLight)
-end
-
--- SPD Light includes N1 mode
-function sysMCP.getSPDLight()
-	if get(drefSPDLight) == 1 or get(drefN1Light) == 1 then
-		return 1
-	else
-		return 0
+		act(sysMCP.autopilot,element,instance,mode)
 	end
 end
 
--- VS Light includes VS, LVLCHG and VNAV
-function sysMCP.getVSLight()
-	if get(drefVSLight) == 1 or get(drefLVLCHGLight) == 1 or get(drefVNAVLight) == 1 then
-		return 1
-	else
-		return 0
-	end
+function sysMCP.getMode(element,instance)
+		return status(sysMCP.autopilot,element,instance)
 end
 
-
--- ALT light
-function sysMCP.getALTLight()
-	return get(drefALTLight)
-end
-
--- AUTO PILOT light (shows CMD-A or B)
-function sysMCP.getAPLight()
-	if get(drefAPStatusLight) == 1 or get(drefCMDBLight) == 1 then
-		return 1
-	else
-		return 0
-	end
-end
 
 return sysMCP
