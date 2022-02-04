@@ -5,7 +5,7 @@ local sysControls = {
 	trimCenter = 2
 }
 
-sysControls.FlightControls = {
+sysControls.Switches = {
 	-- Flaps 
 	["flaps"] = {
 		["type"] = typeActuator,

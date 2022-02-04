@@ -77,7 +77,7 @@ function act(component, name, instance, activity)
 				-- if mode not modeToggle
 				if activity ~= modeToggle then
 					local statusref = item["instances"][instance]["drefStatus"] 
-					if get(statusref["name"],statusref["index"]) ~= activity then
+					if math.floor(get(statusref["name"],statusref["index"])) ~= activity then
 						command_once(item["instances"][instance]["commands"][modeToggle])
 					end
 				else
@@ -97,7 +97,7 @@ function act(component, name, instance, activity)
 					if activity ~= modeToggle then
 						set_array(ref["name"],ref["index"],activity)
 					else 
-						if get(statusref["name"],ref["index"]) ~= modeOff then
+						if get(statusref["name"],statusref["index"]) ~= modeOff then
 							set_array(ref["name"],ref["index"],modeOff)
 						else
 							set_array(ref["name"],ref["index"],modeOn)
@@ -118,7 +118,7 @@ function act(component, name, instance, activity)
 					if activity ~= modeToggle then
 						func[activity]()
 					else 
-						if get(statusref["name"],ref["index"]) ~= modeOff then
+						if get(statusref["name"],statusref["index"]) ~= modeOff then
 							func[modeOff]()
 						else
 							func[modeOn]()

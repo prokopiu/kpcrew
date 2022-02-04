@@ -29,7 +29,7 @@ local sysGeneral = {
 
 }
 
-sysGeneral.GenSystems = {
+sysGeneral.Switches = {
 	-- Parking Brake
 	["parkbrake"] = {
 		["type"] = typeOnOffTgl,
@@ -44,116 +44,6 @@ sysGeneral.GenSystems = {
 				["commands"] = {
 					[modeToggle] = "laminar/B738/push_button/park_brake_on_off"
 				}
-			}
-		}
-	},
-	-- Gear Lights for annunciators
-	["gearlights"] = {
-		["type"] = typeAnnunciator,
-		["cmddref"] = actNone,
-		["status"] = statusDref,
-		["toggle"] = toggleNone,
-		["instancecnt"] = 6,
-		["instances"] = {
-			[0] = {
-				["drefStatus"] = { ["name"] = "laminar/B738/annunciator/left_gear_safe", ["index"] = 0 },
-				["dataref"] = { "" },
-				["commands"] = { "" }
-			},
-			[1] = {
-				["drefStatus"] = { ["name"] = "laminar/B738/annunciator/right_gear_safe", ["index"] = 0 },
-				["dataref"] = { "" },
-				["commands"] = { "" }
-			},
-			[2] = {
-				["drefStatus"] = { ["name"] = "laminar/B738/annunciator/nose_gear_safe", ["index"] = 0 },
-				["dataref"] = { "" },
-				["commands"] = { "" }
-			},
-			[3] = {
-				["drefStatus"] = { ["name"] = "laminar/B738/annunciator/left_gear_transit", ["index"] = 0 },
-				["dataref"] = { "" },
-				["commands"] = { "" }
-			},
-			[4] = {
-				["drefStatus"] = { ["name"] = "laminar/B738/annunciator/right_gear_transit", ["index"] = 0 },
-				["dataref"] = { "" },
-				["commands"] = { "" }
-			},
-			[5] = {
-				["drefStatus"] = { ["name"] = "laminar/B738/annunciator/nose_gear_transit", ["index"] = 0 },
-				["dataref"] = { "" },
-				["commands"] = { "" }
-			}
-		}
-	},
-	-- Master Caution
-	["mastercaution"] = {
-		["type"] = typeAnnunciator,
-		["cmddref"] = actNone,
-		["status"] = statusDref,
-		["toggle"] = toggleNone,
-		["instancecnt"] = 1,
-		["instances"] = {
-			[0] = {
-				["drefStatus"] = { ["name"] = "laminar/B738/annunciator/master_caution_light", ["index"] = 0 },
-				["dataref"] = { "" },
-				["commands"] = { "" }
-			}		
-		}
-	},
-	-- Master Warning
-	["masterwarning"] = {
-		["type"] = typeAnnunciator,
-		["cmddref"] = actNone,
-		["status"] = statusDref,
-		["toggle"] = toggleNone,
-		["instancecnt"] = 1,
-		["instances"] = {
-			[0] = {
-				["drefStatus"] = { ["name"] = "sim/cockpit2/annunciators/master_warning", ["index"] = 0 },
-				["dataref"] = { "" },
-				["commands"] = { "" }
-			}		
-		}
-	},
-	-- Door annunciators
-	["doorstatus"] = {
-		["type"] = typeAnnunciator,
-		["cmddref"] = actNone,
-		["status"] = statusDref,
-		["toggle"] = toggleNone,
-		["instancecnt"] = 6,
-		["instances"] = {
-			[0] = {
-				["drefStatus"] = { ["name"] = "737u/doors/L1", ["index"] = 0 },
-				["dataref"] = { "" },
-				["commands"] = { "" }
-			},
-			[1] = {
-				["drefStatus"] = { ["name"] = "737u/doors/L2", ["index"] = 0 },
-				["dataref"] = { "" },
-				["commands"] = { "" }
-			},
-			[2] = {
-				["drefStatus"] = { ["name"] = "737u/doors/R1", ["index"] = 0 },
-				["dataref"] = { "" },
-				["commands"] = { "" }
-			},
-			[3] = {
-				["drefStatus"] = { ["name"] = "737u/doors/R2", ["index"] = 0 },
-				["dataref"] = { "" },
-				["commands"] = { "" }
-			},
-			[4] = {
-				["drefStatus"] = { ["name"] = "737u/doors/Fwd_Cargo", ["index"] = 0 },
-				["dataref"] = { "" },
-				["commands"] = { "" }
-			},
-			[5] = {
-				["drefStatus"] = { ["name"] = "737u/doors/aft_Cargo", ["index"] = 0 },
-				["dataref"] = { "" },
-				["commands"] = { "" }
 			}
 		}
 	},
@@ -329,36 +219,192 @@ sysGeneral.GenSystems = {
 	}
 }	
 
+sysGeneral.Annunciators = {
+	-- Parking Brake
+	["parkbrake"] = {
+		["type"] = typeAnnunciator,
+		["cmddref"] = actNone,
+		["status"] = statusCustom,
+		["toggle"] = toggleNone,
+		["instancecnt"] = 1,
+		["instances"] = {
+			[0] = {
+				["drefStatus"] = { ["name"] = "", ["index"] = 0 },
+				["customdref"] = function () 
+						if get("sim/cockpit2/controls/parking_brake_ratio",0) > 0 then
+							return 1
+						else
+							return 0
+						end
+					end,
+				["dataref"] = { "" },
+				["commands"] = { "" }
+			}		
+		}
+	},
+	-- Gear Lights for annunciators
+	["gearlights"] = {
+		["type"] = typeAnnunciator,
+		["cmddref"] = actNone,
+		["status"] = statusDref,
+		["toggle"] = toggleNone,
+		["instancecnt"] = 6,
+		["instances"] = {
+			[-1] = {
+				["drefStatus"] = { "" },
+				["dataref"] = { "" },
+				["customdref"] = function () 
+						local sum = get(sysGeneral.Annunciators["gearlights"]["instances"][0]["drefStatus"]["name"]) +
+									get(sysGeneral.Annunciators["gearlights"]["instances"][1]["drefStatus"]["name"]) +
+									get(sysGeneral.Annunciators["gearlights"]["instances"][2]["drefStatus"]["name"]) 
+						if sum > 0 then 
+							return 1
+						else
+							return 0
+						end
+					end,
+				["commands"] = { "" }
+			},
+			[0] = {
+				["drefStatus"] = { ["name"] = "laminar/B738/annunciator/left_gear_safe", ["index"] = 0 },
+				["dataref"] = { "" },
+				["commands"] = { "" }
+			},
+			[1] = {
+				["drefStatus"] = { ["name"] = "laminar/B738/annunciator/right_gear_safe", ["index"] = 0 },
+				["dataref"] = { "" },
+				["commands"] = { "" }
+			},
+			[2] = {
+				["drefStatus"] = { ["name"] = "laminar/B738/annunciator/nose_gear_safe", ["index"] = 0 },
+				["dataref"] = { "" },
+				["commands"] = { "" }
+			},
+			[3] = {
+				["drefStatus"] = { ["name"] = "laminar/B738/annunciator/left_gear_transit", ["index"] = 0 },
+				["dataref"] = { "" },
+				["commands"] = { "" }
+			},
+			[4] = {
+				["drefStatus"] = { ["name"] = "laminar/B738/annunciator/right_gear_transit", ["index"] = 0 },
+				["dataref"] = { "" },
+				["commands"] = { "" }
+			},
+			[5] = {
+				["drefStatus"] = { ["name"] = "laminar/B738/annunciator/nose_gear_transit", ["index"] = 0 },
+				["dataref"] = { "" },
+				["commands"] = { "" }
+			}
+		}
+	},
+	-- Master Caution
+	["mastercaution"] = {
+		["type"] = typeAnnunciator,
+		["cmddref"] = actNone,
+		["status"] = statusDref,
+		["toggle"] = toggleNone,
+		["instancecnt"] = 1,
+		["instances"] = {
+			[0] = {
+				["drefStatus"] = { ["name"] = "laminar/B738/annunciator/master_caution_light", ["index"] = 0 },
+				["dataref"] = { "" },
+				["commands"] = { "" }
+			}		
+		}
+	},
+	-- Master Warning
+	["masterwarning"] = {
+		["type"] = typeAnnunciator,
+		["cmddref"] = actNone,
+		["status"] = statusDref,
+		["toggle"] = toggleNone,
+		["instancecnt"] = 1,
+		["instances"] = {
+			[0] = {
+				["drefStatus"] = { ["name"] = "sim/cockpit2/annunciators/master_warning", ["index"] = 0 },
+				["dataref"] = { "" },
+				["commands"] = { "" }
+			}		
+		}
+	},
+	-- Door annunciators
+	["doors"] = {
+		["type"] = typeAnnunciator,
+		["cmddref"] = actNone,
+		["status"] = statusDref,
+		["toggle"] = toggleNone,
+		["instancecnt"] = 6,
+		["instances"] = {
+			[-1] = {
+				["drefStatus"] = { "" },
+				["dataref"] = { "" },
+				["customdref"] = function () 
+						local sum = get(sysGeneral.Annunciators["doors"]["instances"][0]["drefStatus"]["name"]) +
+									get(sysGeneral.Annunciators["doors"]["instances"][1]["drefStatus"]["name"]) +
+									get(sysGeneral.Annunciators["doors"]["instances"][2]["drefStatus"]["name"]) +
+									get(sysGeneral.Annunciators["doors"]["instances"][3]["drefStatus"]["name"]) +
+									get(sysGeneral.Annunciators["doors"]["instances"][4]["drefStatus"]["name"]) +
+									get(sysGeneral.Annunciators["doors"]["instances"][5]["drefStatus"]["name"]) 
+						if sum > 0 then 
+							return 1
+						else
+							return 0
+						end
+					end,
+				["commands"] = { "" }
+			},
+			[0] = {
+				["drefStatus"] = { ["name"] = "737u/doors/L1", ["index"] = 0 },
+				["dataref"] = { "" },
+				["commands"] = { "" }
+			},
+			[1] = {
+				["drefStatus"] = { ["name"] = "737u/doors/L2", ["index"] = 0 },
+				["dataref"] = { "" },
+				["commands"] = { "" }
+			},
+			[2] = {
+				["drefStatus"] = { ["name"] = "737u/doors/R1", ["index"] = 0 },
+				["dataref"] = { "" },
+				["commands"] = { "" }
+			},
+			[3] = {
+				["drefStatus"] = { ["name"] = "737u/doors/R2", ["index"] = 0 },
+				["dataref"] = { "" },
+				["commands"] = { "" }
+			},
+			[4] = {
+				["drefStatus"] = { ["name"] = "737u/doors/Fwd_Cargo", ["index"] = 0 },
+				["dataref"] = { "" },
+				["commands"] = { "" }
+			},
+			[5] = {
+				["drefStatus"] = { ["name"] = "737u/doors/aft_Cargo", ["index"] = 0 },
+				["dataref"] = { "" },
+				["commands"] = { "" }
+			}
+		}
+	}
+}	
+
 function sysGeneral.setSwitch(element, instance, mode)
 	if instance == -1 then
-		local item = sysGeneral.GenSystems[element]
+		local item = sysGeneral.Switches[element]
 		instances = item["instancecnt"]
 		for iloop = 0,instances-1 do
-			act(sysGeneral.GenSystems,element,iloop,mode)	
+			act(sysGeneral.Switches,element,iloop,mode)	
 		end
 	else
-		act(sysGeneral.GenSystems,element,instance,mode)
+		act(sysGeneral.Switches,element,instance,mode)
 	end
 end
 
 function sysGeneral.getMode(element,instance)
-	if element == "doorstatus" then
-		local sumit = status(sysGeneral.GenSystems,element,0) +
-			status(sysGeneral.GenSystems,element,1) +
-			status(sysGeneral.GenSystems,element,2) +
-			status(sysGeneral.GenSystems,element,3) +
-			status(sysGeneral.GenSystems,element,4) +
-			status(sysGeneral.GenSystems,element,5)
-		if sumit > 0 then 
-			return 1
-		else
-			return 0
-		end
-	else
-		return status(sysGeneral.GenSystems,element,instance)
-	end
+		return status(sysGeneral.Switches,element,instance)
 end
 
--- local drefCurrentBaro = "sim/weather/barometer_sealevel_inhg"
+function sysGeneral.getAnnunciator(element,instance)
+	return status(sysGeneral.Annunciators,element,instance)
+end
 
 return sysGeneral

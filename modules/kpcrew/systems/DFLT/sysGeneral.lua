@@ -29,166 +29,23 @@ local sysGeneral = {
 }
 
 local drefCurrentBaro = "sim/weather/barometer_sealevel_inhg"
+local drefSlider = "sim/cockpit2/switches/custom_slider_on"
 
-sysGeneral.GenSystems = {
+sysGeneral.Switches = {
 	-- Parking Brake
 	["parkbrake"] = {
 		["type"] = typeOnOffTgl,
-		["cmddref"] = actWithDref,
+		["cmddref"] = actTglCmd,
 		["status"] = statusDref,
-		["toggle"] = toggleDref,
+		["toggle"] = toggleNone,
 		["instancecnt"] = 1,
 		["instances"] = {
 			[0] = {
 				["drefStatus"] = { ["name"] = "sim/cockpit2/controls/parking_brake_ratio", ["index"] = 0 },
-				["dataref"] = { ["name"] = "sim/cockpit2/controls/parking_brake_ratio", ["index"] = 0 },
-				["commands"] = { ""	}
-			}
-		}
-	},
-	-- Gear Lights for annunciators
-	["gearlights"] = {
-		["type"] = typeAnnunciator,
-		["cmddref"] = actNone,
-		["status"] = statusCustom,
-		["toggle"] = toggleNone,
-		["instancecnt"] = 6,
-		["instances"] = {
-			[0] = {
-				["drefStatus"] = { ["name"] = "sim/flightmodel/movingparts/gear1def", ["index"] = 0 },
 				["dataref"] = { "" },
-				["customdref"] = function () 
-						local statusdref = sysGeneral.GenSystems["gearlights"]["instances"][0]["drefStatus"]
-						return get(statusdref["name"],statusdref["index"])
-					end,
-				["commands"] = { "" }
-			},
-			[1] = {
-				["drefStatus"] = { ["name"] = "sim/flightmodel/movingparts/gear2def", ["index"] = 0 },
-				["dataref"] = { "" },
-				["customdref"] = function ()
-						local statusdref = sysGeneral.GenSystems["gearlights"]["instances"][1]["drefStatus"]["name"]
-						return get(statusdref,0)
-					end,
-				["commands"] = { "" }
-			},
-			[2] = {
-				["drefStatus"] = { ["name"] = "sim/flightmodel/movingparts/gear3def", ["index"] = 0 },
-				["dataref"] = { "" },
-				["customdref"] = function ()
-						local statusdref = sysGeneral.GenSystems["gearlights"]["instances"][2]["drefStatus"]["name"]
-						return get(statusdref,0)
-					end,
-				["commands"] = { "" }
-			},
-			[3] = {
-				["drefStatus"] = { ["name"] = "sim/flightmodel/movingparts/gear1def", ["index"] = 0 },
-				["dataref"] = { "" },
-				["customdref"] = function ()
-						local statusdref = sysGeneral.GenSystems["gearlights"]["instances"][3]["drefStatus"]["name"]
-						if get(statusdref,0) < 1.0 and get(statusdref,0) > 0.01 then
-							return 1
-						else
-							return 0
-						end
-					end,
-				["commands"] = { "" }
-			},
-			[4] = {
-				["drefStatus"] = { ["name"] = "sim/flightmodel/movingparts/gear2def", ["index"] = 0 },
-				["dataref"] = { "" },
-				["customdref"] = function ()
-						local statusdref = sysGeneral.GenSystems["gearlights"]["instances"][4]["drefStatus"]["name"]
-						if get(statusdref,0) < 1.0 and get(statusdref,0) > 0.01 then
-							return 1
-						else
-							return 0
-						end
-					end,
-				["commands"] = { "" }
-			},
-			[5] = {
-				["drefStatus"] = { ["name"] = "sim/flightmodel/movingparts/gear3def", ["index"] = 0 },
-				["dataref"] = { "" },
-				["customdref"] = function ()
-						local statusdref = sysGeneral.GenSystems["gearlights"]["instances"][5]["drefStatus"]["name"]
-						if get(statusdref,0) < 1.0 and get(statusdref,0) > 0.01 then
-							return 1
-						else
-							return 0
-						end
-					end,
-				["commands"] = { "" }
-			}
-		}
-	},
-	-- Master Caution
-	["mastercaution"] = {
-		["type"] = typeAnnunciator,
-		["cmddref"] = actNone,
-		["status"] = statusDref,
-		["toggle"] = toggleNone,
-		["instancecnt"] = 1,
-		["instances"] = {
-			[0] = {
-				["drefStatus"] = { ["name"] = "sim/cockpit2/annunciators/master_caution", ["index"] = 0 },
-				["dataref"] = { "" },
-				["commands"] = { "" }
-			}		
-		}
-	},
-	-- Master Warning
-	["masterwarning"] = {
-		["type"] = typeAnnunciator,
-		["cmddref"] = actNone,
-		["status"] = statusDref,
-		["toggle"] = toggleNone,
-		["instancecnt"] = 1,
-		["instances"] = {
-			[0] = {
-				["drefStatus"] = { ["name"] = "sim/cockpit2/annunciators/master_warning", ["index"] = 0 },
-				["dataref"] = { "" },
-				["commands"] = { "" }
-			}		
-		}
-	},
-	-- Door annunciators
-	["doorstatus"] = {
-		["type"] = typeAnnunciator,
-		["cmddref"] = actNone,
-		["status"] = statusDref,
-		["toggle"] = toggleNone,
-		["instancecnt"] = 6,
-		["instances"] = {
-			[0] = {
-				["drefStatus"] = { ["name"] = "sim/cockpit2/switches/door_open", ["index"] = 0 },
-				["dataref"] = { "" },
-				["commands"] = { "" }
-			},
-			[1] = {
-				["drefStatus"] = { ["name"] = "sim/cockpit2/switches/door_open", ["index"] = 4 },
-				["dataref"] = { "" },
-				["commands"] = { "" }
-			},
-			[2] = {
-				["drefStatus"] = { ["name"] = "sim/cockpit2/switches/door_open", ["index"] = 3 },
-				["dataref"] = { "" },
-				["commands"] = { "" }
-			},
-			[3] = {
-				["drefStatus"] = { ["name"] = "sim/cockpit2/switches/door_open2", ["index"] = 7 },
-				["dataref"] = { "" },
-				["commands"] = { "" }
-			},
-			[4] = {
-				["drefStatus"] = { ["name"] = "sim/cockpit2/switches/door_open", ["index"] = 8 },
-				["dataref"] = { "" },
-				["commands"] = { "" }
-			},
-			[5] = {
-				["drefStatus"] = { ["name"] = "sim/cockpit2/switches/door_open", ["index"] = 9 },
-				["dataref"] = { "" },
-				["commands"] = { "" }
+				["commands"] = { 
+					[modeToggle] 	= "sim/flight_controls/brakes_toggle_max"
+				}
 			}
 		}
 	},
@@ -278,42 +135,42 @@ sysGeneral.GenSystems = {
 		["instancecnt"] = 6,
 		["instances"] = {
 			[0] = {
-				["drefStatus"] = { ["name"] = "sim/flightmodel2/misc/custom_slider_ratio", ["index"] = 0 },
+				["drefStatus"] = { ["name"] = drefSlider, ["index"] = 0 },
 				["dataref"] = { "" },
 				["commands"] = { 
 					[modeToggle] 	= "sim/operation/slider_01"
 				}
 			},
 			[1] = {
-				["drefStatus"] = { ["name"] = "sim/flightmodel2/misc/custom_slider_ratio", ["index"] = 1 },
+				["drefStatus"] = { ["name"] = drefSlider, ["index"] = 1 },
 				["dataref"] = { "" },
 				["commands"] = {
 					[modeToggle] 	= "sim/operation/slider_02"
 				}
 			},
 			[2] = {
-				["drefStatus"] = { ["name"] = "sim/flightmodel2/misc/custom_slider_ratio", ["index"] = 2 },
+				["drefStatus"] = { ["name"] = drefSlider, ["index"] = 2 },
 				["dataref"] = { "" },
 				["commands"] = {
 					[modeToggle] 	= "sim/operation/slider_03"
 				}
 			},
 			[3] = {
-				["drefStatus"] = { ["name"] = "sim/flightmodel2/misc/custom_slider_ratio", ["index"] = 3 },
+				["drefStatus"] = { ["name"] = drefSlider, ["index"] = 3 },
 				["dataref"] = { "" },
 				["commands"] = {
 					[modeToggle] 	= "sim/operation/slider_04"
 				}
 			},
 			[4] = {
-				["drefStatus"] = { ["name"] = "sim/flightmodel2/misc/custom_slider_ratio", ["index"] = 4 },
+				["drefStatus"] = { ["name"] = drefSlider, ["index"] = 4 },
 				["dataref"] = { "" },
 				["commands"] = {
 					[modeToggle] 	= "sim/operation/slider_05"
 				}
 			},
 			[5] = {
-				["drefStatus"] = { ["name"] = "sim/flightmodel2/misc/custom_slider_ratio", ["index"] = 5 },
+				["drefStatus"] = { ["name"] = drefSlider, ["index"] = 5 },
 				["dataref"] = { "" },
 				["commands"] = {
 					[modeToggle] 	= "sim/operation/slider_06"
@@ -334,15 +191,15 @@ sysGeneral.GenSystems = {
 				["dataref"] = { ["name"] = "sim/cockpit2/gauges/actuators/barometer_setting_in_hg_pilot", ["index"] = 0 },
 				["customcmd"] = {
 					[modeOn] = function ()
-						local dref = sysGeneral.GenSystems["barostd"]["instances"][0]["dataref"]["name"] 
+						local dref = sysGeneral.Switches["barostd"]["instances"][0]["dataref"]["name"] 
 						set(dref,29.92)
 					end,
 					[modeOff] = function ()
-						local dref = sysGeneral.GenSystems["barostd"]["instances"][0]["dataref"]["name"] 
+						local dref = sysGeneral.Switches["barostd"]["instances"][0]["dataref"]["name"] 
 						set(dref,get(drefCurrentBaro))
 					end,
 					[modeToggle] = function ()
-						local dref = sysGeneral.GenSystems["barostd"]["instances"][0]["dataref"]["name"] 
+						local dref = sysGeneral.Switches["barostd"]["instances"][0]["dataref"]["name"] 
 						if get(dref,0) < 29.921 and get(dref,0) > 29.919 then
 							set(dref,get(drefCurrentBaro))
 						else
@@ -356,15 +213,15 @@ sysGeneral.GenSystems = {
 				["dataref"] = { ["name"] = "sim/cockpit2/gauges/actuators/barometer_setting_in_hg_copilot", ["index"] = 0 },
 				["customcmd"] = {
 					[modeOn] = function ()
-						local dref = sysGeneral.GenSystems["barostd"]["instances"][1]["dataref"]["name"] 
+						local dref = sysGeneral.Switches["barostd"]["instances"][1]["dataref"]["name"] 
 						set(dref,29.92)
 					end,
 					[modeOff] = function ()
-						local dref = sysGeneral.GenSystems["barostd"]["instances"][1]["dataref"]["name"] 
+						local dref = sysGeneral.Switches["barostd"]["instances"][1]["dataref"]["name"] 
 						set(dref,getdrefCurrentBaro)
 					end,
 					[modeToggle] = function ()
-						local dref = sysGeneral.GenSystems["barostd"]["instances"][1]["dataref"]["name"] 
+						local dref = sysGeneral.Switches["barostd"]["instances"][1]["dataref"]["name"] 
 						if get(dref,0) < 29.921 and get(dref,0) > 29.919 then
 							set(dref,get(drefCurrentBaro))
 						else
@@ -378,15 +235,15 @@ sysGeneral.GenSystems = {
 				["dataref"] = { ["name"] = "sim/cockpit2/gauges/actuators/barometer_setting_in_hg_stby", ["index"] = 0 },
 				["customcmd"] = {
 					[modeOn] = function ()
-						local dref = sysGeneral.GenSystems["barostd"]["instances"][2]["dataref"]["name"] 
+						local dref = sysGeneral.Switches["barostd"]["instances"][2]["dataref"]["name"] 
 						set(dref,29.92)
 					end,
 					[modeOff] = function ()
-						local dref = sysGeneral.GenSystems["barostd"]["instances"][2]["dataref"]["name"] 
+						local dref = sysGeneral.Switches["barostd"]["instances"][2]["dataref"]["name"] 
 						set(dref,getdrefCurrentBaro)
 					end,
 					[modeToggle] = function ()
-						local dref = sysGeneral.GenSystems["barostd"]["instances"][2]["dataref"]["name"] 
+						local dref = sysGeneral.Switches["barostd"]["instances"][2]["dataref"]["name"] 
 						if get(dref,0) < 29.921 and get(dref,0) > 29.919 then
 							set(dref,get(drefCurrentBaro))
 						else
@@ -451,20 +308,282 @@ sysGeneral.GenSystems = {
 	}
 }	
 
+sysGeneral.Annunciators = {
+	-- Parking Brake
+	["parkbrake"] = {
+		["type"] = typeAnnunciator,
+		["cmddref"] = actNone,
+		["status"] = statusCustom,
+		["toggle"] = toggleNone,
+		["instancecnt"] = 1,
+		["instances"] = {
+			[0] = {
+				["drefStatus"] = { ["name"] = "", ["index"] = 0 },
+				["customdref"] = function () 
+						if get("sim/cockpit2/controls/parking_brake_ratio",0) > 0 then
+							return 1
+						else
+							return 0
+						end
+					end,
+				["dataref"] = { "" },
+				["commands"] = { "" }
+			}		
+		}
+	},
+	-- Gear Lights for annunciators
+	["gearlights"] = {
+		["type"] = typeAnnunciator,
+		["cmddref"] = actNone,
+		["status"] = statusCustom,
+		["toggle"] = toggleNone,
+		["instancecnt"] = 6,
+		["instances"] = {
+			[-1] = {
+				["drefStatus"] = { "" },
+				["dataref"] = { "" },
+				["customdref"] = function () 
+						local sum = get(sysGeneral.Annunciators["gearlights"]["instances"][0]["drefStatus"]["name"]) +
+									get(sysGeneral.Annunciators["gearlights"]["instances"][1]["drefStatus"]["name"]) +
+									get(sysGeneral.Annunciators["gearlights"]["instances"][2]["drefStatus"]["name"]) 
+						if sum > 0 then 
+							return 1
+						else
+							return 0
+						end
+					end,
+				["commands"] = { "" }
+			},
+			[0] = {
+				["drefStatus"] = { ["name"] = "sim/flightmodel/movingparts/gear1def", ["index"] = 0 },
+				["dataref"] = { "" },
+				["customdref"] = function () 
+						local statusdref = sysGeneral.Annunciators["gearlights"]["instances"][0]["drefStatus"]
+						return get(statusdref["name"],statusdref["index"])
+					end,
+				["commands"] = { "" }
+			},
+			[1] = {
+				["drefStatus"] = { ["name"] = "sim/flightmodel/movingparts/gear2def", ["index"] = 0 },
+				["dataref"] = { "" },
+				["customdref"] = function ()
+						local statusdref = sysGeneral.Annunciators["gearlights"]["instances"][1]["drefStatus"]["name"]
+						return get(statusdref,0)
+					end,
+				["commands"] = { "" }
+			},
+			[2] = {
+				["drefStatus"] = { ["name"] = "sim/flightmodel/movingparts/gear3def", ["index"] = 0 },
+				["dataref"] = { "" },
+				["customdref"] = function ()
+						local statusdref = sysGeneral.Annunciators["gearlights"]["instances"][2]["drefStatus"]["name"]
+						return get(statusdref,0)
+					end,
+				["commands"] = { "" }
+			},
+			[3] = {
+				["drefStatus"] = { ["name"] = "sim/flightmodel/movingparts/gear1def", ["index"] = 0 },
+				["dataref"] = { "" },
+				["customdref"] = function ()
+						local statusdref = sysGeneral.Annunciators["gearlights"]["instances"][3]["drefStatus"]["name"]
+						if get(statusdref,0) < 1.0 and get(statusdref,0) > 0.01 then
+							return 1
+						else
+							return 0
+						end
+					end,
+				["commands"] = { "" }
+			},
+			[4] = {
+				["drefStatus"] = { ["name"] = "sim/flightmodel/movingparts/gear2def", ["index"] = 0 },
+				["dataref"] = { "" },
+				["customdref"] = function ()
+						local statusdref = sysGeneral.Annunciators["gearlights"]["instances"][4]["drefStatus"]["name"]
+						if get(statusdref,0) < 1.0 and get(statusdref,0) > 0.01 then
+							return 1
+						else
+							return 0
+						end
+					end,
+				["commands"] = { "" }
+			},
+			[5] = {
+				["drefStatus"] = { ["name"] = "sim/flightmodel/movingparts/gear3def", ["index"] = 0 },
+				["dataref"] = { "" },
+				["customdref"] = function ()
+						local statusdref = sysGeneral.Annunciators["gearlights"]["instances"][5]["drefStatus"]["name"]
+						if get(statusdref,0) < 1.0 and get(statusdref,0) > 0.01 then
+							return 1
+						else
+							return 0
+						end
+					end,
+				["commands"] = { "" }
+			}
+		}
+	},
+	-- Master Caution
+	["mastercaution"] = {
+		["type"] = typeAnnunciator,
+		["cmddref"] = actNone,
+		["status"] = statusDref,
+		["toggle"] = toggleNone,
+		["instancecnt"] = 1,
+		["instances"] = {
+			[0] = {
+				["drefStatus"] = { ["name"] = "sim/cockpit2/annunciators/master_caution", ["index"] = 0 },
+				["dataref"] = { "" },
+				["commands"] = { "" }
+			}		
+		}
+	},
+	-- Master Warning
+	["masterwarning"] = {
+		["type"] = typeAnnunciator,
+		["cmddref"] = actNone,
+		["status"] = statusDref,
+		["toggle"] = toggleNone,
+		["instancecnt"] = 1,
+		["instances"] = {
+			[0] = {
+				["drefStatus"] = { ["name"] = "sim/cockpit2/annunciators/master_warning", ["index"] = 0 },
+				["dataref"] = { "" },
+				["commands"] = { "" }
+			}		
+		}
+	},
+	-- Door annunciators
+	["doorscmd"] = {
+		["type"] = typeAnnunciator,
+		["cmddref"] = actNone,
+		["status"] = statusDref,
+		["toggle"] = toggleNone,
+		["instancecnt"] = 6,
+		["instances"] = {
+			[-1] = {
+				["drefStatus"] = { "" },
+				["dataref"] = { "" },
+				["customdref"] = function () 
+						local sum = get(sysGeneral.Annunciators["doors"]["instances"][0]["drefStatus"]["name"]) +
+									get(sysGeneral.Annunciators["doors"]["instances"][1]["drefStatus"]["name"]) +
+									get(sysGeneral.Annunciators["doors"]["instances"][2]["drefStatus"]["name"]) +
+									get(sysGeneral.Annunciators["doors"]["instances"][3]["drefStatus"]["name"]) +
+									get(sysGeneral.Annunciators["doors"]["instances"][4]["drefStatus"]["name"]) +
+									get(sysGeneral.Annunciators["doors"]["instances"][5]["drefStatus"]["name"]) 
+						if sum > 0 then 
+							return 1
+						else
+							return 0
+						end
+					end,
+				["commands"] = { "" }
+			},
+			[0] = {
+				["drefStatus"] = { ["name"] = "sim/cockpit2/switches/door_open", ["index"] = 0 },
+				["dataref"] = { "" },
+				["commands"] = { "" }
+			},
+			[1] = {
+				["drefStatus"] = { ["name"] = "sim/cockpit2/switches/door_open", ["index"] = 1 },
+				["dataref"] = { "" },
+				["commands"] = { "" }
+			},
+			[2] = {
+				["drefStatus"] = { ["name"] = "sim/cockpit2/switches/door_open", ["index"] = 2 },
+				["dataref"] = { "" },
+				["commands"] = { "" }
+			},
+			[3] = {
+				["drefStatus"] = { ["name"] = "sim/cockpit2/switches/door_open", ["index"] = 3 },
+				["dataref"] = { "" },
+				["commands"] = { "" }
+			},
+			[4] = {
+				["drefStatus"] = { ["name"] = "sim/cockpit2/switches/door_open", ["index"] = 4 },
+				["dataref"] = { "" },
+				["commands"] = { "" }
+			},
+			[5] = {
+				["drefStatus"] = { ["name"] = "sim/cockpit2/switches/door_open", ["index"] = 5 },
+				["dataref"] = { "" },
+				["commands"] = { "" }
+			}
+		}
+	},
+	["doors"] = {
+		["type"] = typeAnnunciator,
+		["cmddref"] = actNone,
+		["status"] = statusCustom,
+		["toggle"] = toggleNone,
+		["instancecnt"] = 6,
+		["instances"] = {
+			[-1] = {
+				["drefStatus"] = { "" },
+				["dataref"] = { "" },
+				["customdref"] = function () 
+						local sum = get(drefSlider,0) + get(drefSlider,1) + get(drefSlider,2) + get(drefSlider,3) +
+									get(drefSlider,4) + get(drefSlider,5)
+						if sum > 0.1 then 
+							return 1
+						else
+							return 0
+						end
+					end,
+				["commands"] = { "" }
+			},
+			[0] = {
+				["drefStatus"] = { ["name"] = drefSlider, ["index"] = 0 },
+				["dataref"] = { "" },
+				["commands"] = { "" }
+			},
+			[1] = {
+				["drefStatus"] = { ["name"] = drefSlider, ["index"] = 1 },
+				["dataref"] = { "" },
+				["commands"] = { "" }
+			},
+			[2] = {
+				["drefStatus"] = { ["name"] = drefSlider, ["index"] = 2 },
+				["dataref"] = { "" },
+				["commands"] = { "" }
+			},
+			[3] = {
+				["drefStatus"] = { ["name"] = drefSlider, ["index"] = 3 },
+				["dataref"] = { "" },
+				["commands"] = { "" }
+			},
+			[4] = {
+				["drefStatus"] = { ["name"] = drefSlider, ["index"] = 4 },
+				["dataref"] = { "" },
+				["commands"] = { "" }
+			},
+			[5] = {
+				["drefStatus"] = { ["name"] = drefSlider, ["index"] = 5 },
+				["dataref"] = { "" },
+				["commands"] = { "" }
+			}
+		}
+	}
+}	
+
+
 function sysGeneral.setSwitch(element, instance, mode)
 	if instance == -1 then
-		local item = sysGeneral.GenSystems[element]
+		local item = sysGeneral.Switches[element]
 		instances = item["instancecnt"]
 		for iloop = 0,instances-1 do
-			act(sysGeneral.GenSystems,element,iloop,mode)	
+			act(sysGeneral.Switches,element,iloop,mode)	
 		end
 	else
-		act(sysGeneral.GenSystems,element,instance,mode)
+		act(sysGeneral.Switches,element,instance,mode)
 	end
 end
 
 function sysGeneral.getMode(element,instance)
-		return status(sysGeneral.GenSystems,element,instance)
+		return status(sysGeneral.Switches,element,instance)
+end
+
+function sysGeneral.getAnnunciator(element,instance)
+	return status(sysGeneral.Annunciators,element,instance)
 end
 
 return sysGeneral
