@@ -14,9 +14,198 @@ local drefVSLight = "sim/cockpit2/autopilot/vvi_status"
 local drefVNAVLight = "sim/cockpit2/autopilot/fms_vnav"
 
 sysMCP.Switches = {
+	["fdir"] = {
+		["type"] = typeOnOffTgl,
+		["cmddref"] = actTglCmd,
+		["status"] = statusNone,
+		["toggle"] = toggleNone,
+		["instancecnt"] = 1,
+		["instances"] = {
+			[0] = {
+				["drefStatus"] = { ["name"] = "sim/cockpit2/annunciators/flight_director", ["index"] = 0 },
+				["dataref"] = { "" },
+				["commands"] = { 
+					[modeToggle] = "sim/autopilot/fdir_toggle" 
+				}
+			}		
+		}
+	},
+	["hdgsel"] = {
+		["type"] = typeOnOffTgl,
+		["cmddref"] = actTglCmd,
+		["status"] = statusNone,
+		["toggle"] = toggleNone,
+		["instancecnt"] = 1,
+		["instances"] = {
+			[0] = {
+				["drefStatus"] = { ["name"] = "sim/cockpit/autopilot/heading_mode", ["index"] = 0 },
+				["dataref"] = { "" },
+				["commands"] = { 
+					[modeToggle] = "sim/autopilot/heading" 
+				}
+			}		
+		}
+	},
+	["vorloc"] = {
+		["type"] = typeOnOffTgl,
+		["cmddref"] = actTglCmd,
+		["status"] = statusNone,
+		["toggle"] = toggleNone,
+		["instancecnt"] = 1,
+		["instances"] = {
+			[0] = {
+				["drefStatus"] = { ["name"] = drefVORLocLight, ["index"] = 0 },
+				["dataref"] = { "" },
+				["commands"] = { 
+					[modeToggle] = "sim/autopilot/NAV" 
+				}
+			}		
+		}
+	},
+	["althold"] = {
+		["type"] = typeOnOffTgl,
+		["cmddref"] = actTglCmd,
+		["status"] = statusNone,
+		["toggle"] = toggleNone,
+		["instancecnt"] = 1,
+		["instances"] = {
+			[0] = {
+				["drefStatus"] = { ["name"] = "sim/cockpit2/autopilot/altitude_hold_status", ["index"] = 0 },
+				["dataref"] = { "" },
+				["commands"] = { 
+					[modeToggle] = "sim/autopilot/altitude_hold" 
+				}
+			}		
+		}
+	},
+	["approach"] = {
+		["type"] = typeOnOffTgl,
+		["cmddref"] = actTglCmd,
+		["status"] = statusNone,
+		["toggle"] = toggleNone,
+		["instancecnt"] = 1,
+		["instances"] = {
+			[0] = {
+				["drefStatus"] = { ["name"] = "sim/cockpit2/autopilot/approach_status", ["index"] = 0 },
+				["dataref"] = { "" },
+				["commands"] = { 
+					[modeToggle] = "sim/autopilot/approach" 
+				}
+			}		
+		}
+	},
+	["vs"] = {
+		["type"] = typeOnOffTgl,
+		["cmddref"] = actTglCmd,
+		["status"] = statusNone,
+		["toggle"] = toggleNone,
+		["instancecnt"] = 1,
+		["instances"] = {
+			[0] = {
+				["drefStatus"] = { ["name"] = drefVSLight, ["index"] = 0 },
+				["dataref"] = { "" },
+				["commands"] = { 
+					[modeToggle] = "sim/autopilot/vertical_speed" 
+				}
+			}		
+		}
+	},
+	["speed"] = {
+		["type"] = typeOnOffTgl,
+		["cmddref"] = actTglCmd,
+		["status"] = statusNone,
+		["toggle"] = toggleNone,
+		["instancecnt"] = 1,
+		["instances"] = {
+			[0] = {
+				["drefStatus"] = { ["name"] = drefSPDLight, ["index"] = 0 },
+				["dataref"] = { "" },
+				["commands"] = { 
+					[modeToggle] = "sim/autopilot/autothrottle_toggle" 
+				}
+			}		
+		}
+	},
+	["autopilot"] = {
+		["type"] = typeOnOffTgl,
+		["cmddref"] = actTglCmd,
+		["status"] = statusNone,
+		["toggle"] = toggleNone,
+		["instancecnt"] = 1,
+		["instances"] = {
+			[0] = {
+				["drefStatus"] = { ["name"] = "sim/cockpit/autopilot/autopilot_mode", ["index"] = 0 },
+				["dataref"] = { "" },
+				["commands"] = { 
+					[modeToggle] = "sim/autopilot/servos_toggle" 
+				}
+			}		
+		}
+	},
+	["backcourse"] = {
+		["type"] = typeInop,
+		["cmddref"] = actNone,
+		["status"] = statusNone,
+		["toggle"] = toggleNone,
+		["instancecnt"] = 1,
+		["instances"] = {
+			[0] = {
+				["drefStatus"] = { "" },
+				["dataref"] = { "" },
+				["commands"] = { ""	}
+			}		
+		}
+	},
+	["togapress"] = {
+		["type"] = typeOnOffTgl,
+		["cmddref"] = actTglCmd,
+		["status"] = statusNone,
+		["toggle"] = toggleNone,
+		["instancecnt"] = 1,
+		["instances"] = {
+			[0] = {
+				["drefStatus"] = { ["name"] = "sim/cockpit2/autopilot/TOGA_status", ["index"] = 0 },
+				["dataref"] = { "" },
+				["commands"] = { 
+					[modeToggle] = "sim/autopilot/take_off_go_around" 
+				}
+			}		
+		}
+	},
+	["autothrottle"] = {
+		["type"] = typeOnOffTgl,
+		["cmddref"] = actTglCmd,
+		["status"] = statusNone,
+		["toggle"] = toggleNone,
+		["instancecnt"] = 1,
+		["instances"] = {
+			[0] = {
+				["drefStatus"] = { ["name"] = "sim/cockpit2/autopilot/autothrottle_enabled", ["index"] = 0 },
+				["dataref"] = { "" },
+				["commands"] = { 
+					[modeToggle] = "sim/autopilot/autothrottle_toggle" 
+				}
+			}		
+		}
+	}
 }
 
 sysMCP.Annunciators = {
+	-- Flight Directors annunciator
+	["fdiranc"] = {
+		["type"] = typeAnnunciator,
+		["cmddref"] = actNone,
+		["status"] = statusDref,
+		["toggle"] = toggleNone,
+		["instancecnt"] = 1,
+		["instances"] = {
+			[0] = {
+				["drefStatus"] = { ["name"] = "sim/cockpit2/annunciators/flight_director", ["index"] = 0 },
+				["dataref"] = { "" },
+				["commands"] = { "" }
+			}		
+		}
+	},  
 	-- HDG Select/mode annunciator
 	["hdganc"] = {
 		["type"] = typeAnnunciator,
@@ -152,7 +341,7 @@ sysMCP.Annunciators = {
 		}
 	}
 }
-
+	
 function sysMCP.setSwitch(element, instance, mode)
 	if instance == -1 then
 		local item = sysMCP.Switches[element]

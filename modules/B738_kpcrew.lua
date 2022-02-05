@@ -4364,12 +4364,12 @@ end
 -- Autothrottle  mode 0=OFF 1=ARMED 2=toggle
 function kc_acf_mcp_at_onoff(mode)
 	if mode == 0 then
-		if get("laminar/B738/autopilot/autothrottle_status") == 1 then
+		if get("laminar/B738/autopilot/autothrottle_status1") == 1 then
 			command_once("laminar/B738/autopilot/autothrottle_arm_toggle")
 		end
 	end
 	if mode == 1 then
-		if get("laminar/B738/autopilot/autothrottle_status") == 0 then
+		if get("laminar/B738/autopilot/autothrottle_status1") == 0 then
 			command_once("laminar/B738/autopilot/autothrottle_arm_toggle")
 		end
 	end
@@ -5322,43 +5322,29 @@ end
 
 -- ============ aircraft specific joystick/key commands (e.g. for Alpha Yoke)
 
--- ------------ A/P MCP functions
-create_command("kp/xsp/autopilot/both_fd_tgl",		"All FDs Toggle",		"kc_acf_mcp_fds_set(0,2)", "", "")
-create_command("kp/xsp/autopilot/bc_tgl",			"Toggle Reverse Appr",	"xsp_toggle_rev_course()", "", "")
-create_command("kp/xsp/autopilot/ap_tgl",			"Toggle A/P 1",			"kc_acf_mcp_ap_set(1,2)", "", "")
-create_command("kp/xsp/autopilot/alt_tgl",			"Toggle Altitude",		"kc_acf_mcp_althld_onoff(2)","","")
-create_command("kp/xsp/autopilot/hdg_tgl",			"Toggle Heading",		"kc_acf_mcp_hdgsel_onoff(2)","","")
-create_command("kp/xsp/autopilot/nav_tgl",			"Toggle Nav",			"kc_acf_mcp_vorloc_onoff(2)","","")
-create_command("kp/xsp/autopilot/app_tgl",			"Toggle Approach",		"kc_acf_mcp_app_onoff(2)","","")
-create_command("kp/xsp/autopilot/vs_tgl",			"Toggle Vertical Speed","kc_acf_mcp_vs_onoff(2)","","")
-create_command("kp/xsp/autopilot/ias_tgl",			"Toggle IAS",			"kc_acf_mcp_spd_onoff(2)","","")
-create_command("kp/xsp/autopilot/toga_press",		"Press Left TOGA",		"kc_acf_mcp_toga()","","")
-create_command("kp/xsp/autopilot/at_tgl",			"Toggle A/T",			"kc_acf_mcp_at_onoff(2)","","")
-create_command("kp/xsp/autopilot/at_arm",			"Arm A/T",				"kc_acf_mcp_at_onoff(1)","","")
-create_command("kp/xsp/autopilot/at_off",			"A/T OFF",				"kc_acf_mcp_at_onoff(0)","","")
 
 -- ------------ EFIS commands
 
 -- Honeycomb Bravo specific commands
-create_command("kp/xsp/bravo_mode_alt",				"Bravo AP Mode ALT",	"xsp_bravo_mode=1", "", "")
-create_command("kp/xsp/bravo_mode_vs",				"Bravo AP Mode VS",		"xsp_bravo_mode=2", "", "")
-create_command("kp/xsp/bravo_mode_hdg",				"Bravo AP Mode HDG",	"xsp_bravo_mode=3", "", "")
-create_command("kp/xsp/bravo_mode_crs",				"Bravo AP Mode CRS",	"xsp_bravo_mode=4", "", "")
-create_command("kp/xsp/bravo_mode_ias",				"Bravo AP Mode IAS",	"xsp_bravo_mode=5", "", "")
-create_command("kp/xsp/bravo_knob_up",				"Bravo AP Knob Up",		"xsp_bravo_knob_up()", "", "")
-create_command("kp/xsp/bravo_knob_dn",				"Bravo AP Knob Down",	"xsp_bravo_knob_dn()", "", "")
-create_command("kp/xsp/bravo_layer_multi",			"Bravo Layer MULTI",	"xsp_bravo_layer=1", "", "")
-create_command("kp/xsp/bravo_layer_ap",				"Bravo Layer A/P",		"xsp_bravo_layer=0", "", "")
-create_command("kp/xsp/bravo_fine",					"Bravo Fine",			"xsp_fine_coarse = 1", "", "")
-create_command("kp/xsp/bravo_coarse",				"Bravo Coarse",			"xsp_fine_coarse = 0", "", "")
-create_command("kp/xsp/bravo_button_hdg",			"Bravo HDG Button",		"xsp_bravo_button_hdg()", "", "")
-create_command("kp/xsp/bravo_button_nav",			"Bravo NAV Button",		"xsp_bravo_button_nav()", "", "")
-create_command("kp/xsp/bravo_button_apr",			"Bravo APR Button",		"xsp_bravo_button_apr()", "", "")
-create_command("kp/xsp/bravo_button_rev",			"Bravo REV Button",		"xsp_bravo_button_rev()", "", "")
-create_command("kp/xsp/bravo_button_alt",			"Bravo ALT Button",		"xsp_bravo_button_alt()", "", "")
-create_command("kp/xsp/bravo_button_vsp",			"Bravo VSP Button",		"xsp_bravo_button_vsp()", "", "")
-create_command("kp/xsp/bravo_button_ias",			"Bravo IAS Button",		"xsp_bravo_button_ias()", "", "")
-create_command("kp/xsp/bravo_button_ap",			"Bravo Autopilot Button","xsp_bravo_button_autopilot()", "", "")
+-- create_command("kp/xsp/bravo_mode_alt",				"Bravo AP Mode ALT",	"xsp_bravo_mode=1", "", "")
+-- create_command("kp/xsp/bravo_mode_vs",				"Bravo AP Mode VS",		"xsp_bravo_mode=2", "", "")
+-- create_command("kp/xsp/bravo_mode_hdg",				"Bravo AP Mode HDG",	"xsp_bravo_mode=3", "", "")
+-- create_command("kp/xsp/bravo_mode_crs",				"Bravo AP Mode CRS",	"xsp_bravo_mode=4", "", "")
+-- create_command("kp/xsp/bravo_mode_ias",				"Bravo AP Mode IAS",	"xsp_bravo_mode=5", "", "")
+-- create_command("kp/xsp/bravo_knob_up",				"Bravo AP Knob Up",		"xsp_bravo_knob_up()", "", "")
+-- create_command("kp/xsp/bravo_knob_dn",				"Bravo AP Knob Down",	"xsp_bravo_knob_dn()", "", "")
+-- create_command("kp/xsp/bravo_layer_multi",			"Bravo Layer MULTI",	"xsp_bravo_layer=1", "", "")
+-- create_command("kp/xsp/bravo_layer_ap",				"Bravo Layer A/P",		"xsp_bravo_layer=0", "", "")
+-- create_command("kp/xsp/bravo_fine",					"Bravo Fine",			"xsp_fine_coarse = 1", "", "")
+-- create_command("kp/xsp/bravo_coarse",				"Bravo Coarse",			"xsp_fine_coarse = 0", "", "")
+-- create_command("kp/xsp/bravo_button_hdg",			"Bravo HDG Button",		"xsp_bravo_button_hdg()", "", "")
+-- create_command("kp/xsp/bravo_button_nav",			"Bravo NAV Button",		"xsp_bravo_button_nav()", "", "")
+-- create_command("kp/xsp/bravo_button_apr",			"Bravo APR Button",		"xsp_bravo_button_apr()", "", "")
+-- create_command("kp/xsp/bravo_button_rev",			"Bravo REV Button",		"xsp_bravo_button_rev()", "", "")
+-- create_command("kp/xsp/bravo_button_alt",			"Bravo ALT Button",		"xsp_bravo_button_alt()", "", "")
+-- create_command("kp/xsp/bravo_button_vsp",			"Bravo VSP Button",		"xsp_bravo_button_vsp()", "", "")
+-- create_command("kp/xsp/bravo_button_ias",			"Bravo IAS Button",		"xsp_bravo_button_ias()", "", "")
+-- create_command("kp/xsp/bravo_button_ap",				"Bravo Autopilot Button","xsp_bravo_button_autopilot()", "", "")
 
 
 -- ========== Background processing

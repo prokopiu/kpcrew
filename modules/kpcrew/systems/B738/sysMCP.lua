@@ -18,9 +18,226 @@ local drefAPStatusLight = "laminar/B738/autopilot/cmd_a_status"
 local drefCMDBLight = "laminar/B738/autopilot/cmd_b_status"
 
 sysMCP.Switches = {
+	["fdir"] = {
+		["type"] = typeOnOffTgl,
+		["cmddref"] = actTglCmd,
+		["status"] = statusNone,
+		["toggle"] = toggleNone,
+		["instancecnt"] = 2,
+		["instances"] = {
+			[0] = {
+				["drefStatus"] = { ["name"] = "laminar/B738/autopilot/flight_director_pos", ["index"] = 0 },
+				["dataref"] = { "" },
+				["commands"] = { 
+					[modeToggle] = "laminar/B738/autopilot/flight_director_toggle" 
+				}
+			},
+			[1] = {
+				["drefStatus"] = { ["name"] = "laminar/B738/autopilot/flight_director_fo_pos", ["index"] = 0 },
+				["dataref"] = { "" },
+				["commands"] = { 
+					[modeToggle] = "laminar/B738/autopilot/flight_director_fo_toggle" 
+				}
+			}		
+		}
+	},
+	["hdgsel"] = {
+		["type"] = typeOnOffTgl,
+		["cmddref"] = actTglCmd,
+		["status"] = statusNone,
+		["toggle"] = toggleNone,
+		["instancecnt"] = 1,
+		["instances"] = {
+			[0] = {
+				["drefStatus"] = { ["name"] = "laminar/B738/autopilot/hdg_sel_status", ["index"] = 0 },
+				["dataref"] = { "" },
+				["commands"] = { 
+					[modeToggle] = "laminar/B738/autopilot/hdg_sel_press" 
+				}
+			}		
+		}
+	},
+	["vorloc"] = {
+		["type"] = typeOnOffTgl,
+		["cmddref"] = actTglCmd,
+		["status"] = statusNone,
+		["toggle"] = toggleNone,
+		["instancecnt"] = 1,
+		["instances"] = {
+			[0] = {
+				["drefStatus"] = { ["name"] = "laminar/B738/autopilot/vorloc_status", ["index"] = 0 },
+				["dataref"] = { "" },
+				["commands"] = { 
+					[modeToggle] = "laminar/B738/autopilot/vorloc_press" 
+				}
+			}		
+		}
+	},
+	["althold"] = {
+		["type"] = typeOnOffTgl,
+		["cmddref"] = actTglCmd,
+		["status"] = statusNone,
+		["toggle"] = toggleNone,
+		["instancecnt"] = 1,
+		["instances"] = {
+			[0] = {
+				["drefStatus"] = { ["name"] = "laminar/B738/autopilot/alt_hld_status", ["index"] = 0 },
+				["dataref"] = { "" },
+				["commands"] = { 
+					[modeToggle] = "laminar/B738/autopilot/alt_hld_press" 
+				}
+			}		
+		}
+	},
+	["approach"] = {
+		["type"] = typeOnOffTgl,
+		["cmddref"] = actTglCmd,
+		["status"] = statusNone,
+		["toggle"] = toggleNone,
+		["instancecnt"] = 1,
+		["instances"] = {
+			[0] = {
+				["drefStatus"] = { ["name"] = "laminar/B738/autopilot/app_status", ["index"] = 0 },
+				["dataref"] = { "" },
+				["commands"] = { 
+					[modeToggle] = "laminar/B738/autopilot/app_press" 
+				}
+			}		
+		}
+	},
+	["vs"] = {
+		["type"] = typeOnOffTgl,
+		["cmddref"] = actTglCmd,
+		["status"] = statusNone,
+		["toggle"] = toggleNone,
+		["instancecnt"] = 1,
+		["instances"] = {
+			[0] = {
+				["drefStatus"] = { ["name"] = "laminar/B738/autopilot/vs_status", ["index"] = 0 },
+				["dataref"] = { "" },
+				["commands"] = { 
+					[modeToggle] = "laminar/B738/autopilot/vs_press" 
+				}
+			}		
+		}
+	},
+	["speed"] = {
+		["type"] = typeOnOffTgl,
+		["cmddref"] = actTglCmd,
+		["status"] = statusNone,
+		["toggle"] = toggleNone,
+		["instancecnt"] = 1,
+		["instances"] = {
+			[0] = {
+				["drefStatus"] = { ["name"] = "laminar/B738/autopilot/speed_status1", ["index"] = 0 },
+				["dataref"] = { "" },
+				["commands"] = { 
+					[modeToggle] = "laminar/B738/autopilot/speed_press" 
+				}
+			}		
+		}
+	},
+	["autopilot"] = {
+		["type"] = typeOnOffTgl,
+		["cmddref"] = actTglCmd,
+		["status"] = statusNone,
+		["toggle"] = toggleNone,
+		["instancecnt"] = 2,
+		["instances"] = {
+			[0] = {
+				["drefStatus"] = { ["name"] = "laminar/B738/autopilot/cmd_a_status", ["index"] = 0 },
+				["dataref"] = { "" },
+				["commands"] = { 
+					[modeToggle] = "laminar/B738/autopilot/cmd_a_press" 
+				}
+			},		
+			[1] = {
+				["drefStatus"] = { ["name"] = "laminar/B738/autopilot/cmd_b_status", ["index"] = 0 },
+				["dataref"] = { "" },
+				["commands"] = { 
+					[modeToggle] = "laminar/B738/autopilot/cmd_b_press" 
+				}
+			}		
+		}
+	},
+	["backcourse"] = {
+		["type"] = typeInop,
+		["cmddref"] = actNone,
+		["status"] = statusNone,
+		["toggle"] = toggleNone,
+		["instancecnt"] = 1,
+		["instances"] = {
+			[0] = {
+				["drefStatus"] = { "" },
+				["dataref"] = { "" },
+				["commands"] = { ""	}
+			}		
+		}
+	},
+	["togapress"] = {
+		["type"] = typeOnOffTgl,
+		["cmddref"] = actTglCmd,
+		["status"] = statusNone,
+		["toggle"] = toggleNone,
+		["instancecnt"] = 2,
+		["instances"] = {
+			[0] = {
+				["drefStatus"] = { ["name"] = "laminar/B738/autopilot/ap_takeoff", ["index"] = 0 },
+				["dataref"] = { "" },
+				["commands"] = { 
+					[modeToggle] = "laminar/B738/autopilot/left_toga_press" 
+				}
+			},		
+			[1] = {
+				["drefStatus"] = { ["name"] = "laminar/B738/autopilot/ap_takeoff", ["index"] = 0 },
+				["dataref"] = { "" },
+				["commands"] = { 
+					[modeToggle] = "laminar/B738/autopilot/right_toga_press" 
+				}
+			}		
+		}
+	},
+	["autothrottle"] = {
+		["type"] = typeOnOffTgl,
+		["cmddref"] = actTglCmd,
+		["status"] = statusNone,
+		["toggle"] = toggleNone,
+		["instancecnt"] = 1,
+		["instances"] = {
+			[0] = {
+				["drefStatus"] = { ["name"] = "laminar/B738/autopilot/autothrottle_status1", ["index"] = 0 },
+				["dataref"] = { "" },
+				["commands"] = { 
+					[modeToggle] = "laminar/B738/autopilot/autothrottle_arm_toggle" 
+				}
+			}		
+		}
+	}
 }
 
 sysMCP.Annunciators = {
+	-- Flight Directors annunciator
+	["fdiranc"] = {
+		["type"] = typeAnnunciator,
+		["cmddref"] = actNone,
+		["status"] = statusCustom,
+		["toggle"] = toggleNone,
+		["instancecnt"] = 1,
+		["instances"] = {
+			[0] = {
+				["drefStatus"] = { ["name"] = "", ["index"] = 0 },
+				["customdref"] = function () 
+						if get("laminar/B738/autopilot/flight_director_pos") > 0 or get("laminar/B738/autopilot/flight_director_fo_pos") > 0 then
+							return 1
+						else
+							return 0
+						end
+					end,
+				["dataref"] = { "" },
+				["commands"] = { "" }
+			}		
+		}
+	},
 	-- HDG Select/mode annunciator
 	["hdganc"] = {
 		["type"] = typeAnnunciator,
@@ -170,7 +387,7 @@ sysMCP.Annunciators = {
 		}
 	}
 }
-
+	
 function sysMCP.setSwitch(element, instance, mode)
 	if instance == -1 then
 		local item = sysMCP.Switches[element]

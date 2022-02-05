@@ -119,23 +119,45 @@ create_command("kp/xsp/controls/aileron_trim_center","Aileron Trim Center","sysC
 
 -- --------------- Engines
 create_command("kp/xsp/engines/reverse_on", "Reverse Thrust Full", "sysEngines.setSwitch(\"reversethrust\",-1,modeOn)", "", "")
--- create_command("kp/xsp/engines/reverse_off", "Reverse Thrust Off", "sysEngines.setReverseThrust(modeOff)", "", "")
+create_command("kp/xsp/engines/reverse_off", "Reverse Thrust Off", "sysEngines.setSwitch(\"reversethrust\",-1,modeOff)", "", "")
 
 -- --------------- Autopilot / MCP
 -- ------------ A/P MCP functions
--- create_command("kp/xsp/autopilot/both_fd_tgl",		"All FDs Toggle",		"kc_acf_mcp_fds_set(0,2)", "", "")
--- create_command("kp/xsp/autopilot/bc_tgl",			"Toggle Reverse Appr",	"xsp_toggle_rev_course()", "", "")
--- create_command("kp/xsp/autopilot/ap_tgl",			"Toggle A/P 1",			"kc_acf_mcp_ap_set(1,2)", "", "")
--- create_command("kp/xsp/autopilot/alt_tgl",			"Toggle Altitude",		"kc_acf_mcp_althld_onoff(2)","","")
--- create_command("kp/xsp/autopilot/hdg_tgl",			"Toggle Heading",		"kc_acf_mcp_hdgsel_onoff(2)","","")
--- create_command("kp/xsp/autopilot/nav_tgl",			"Toggle Nav",			"kc_acf_mcp_vorloc_onoff(2)","","")
--- create_command("kp/xsp/autopilot/app_tgl",			"Toggle Approach",		"kc_acf_mcp_app_onoff(2)","","")
--- create_command("kp/xsp/autopilot/vs_tgl",			"Toggle Vertical Speed","kc_acf_mcp_vs_onoff(2)","","")
--- create_command("kp/xsp/autopilot/ias_tgl",			"Toggle IAS",			"kc_acf_mcp_spd_onoff(2)","","")
--- create_command("kp/xsp/autopilot/toga_press",		"Press Left TOGA",		"kc_acf_mcp_toga()","","")
--- create_command("kp/xsp/autopilot/at_tgl",			"Toggle A/T",			"kc_acf_mcp_at_onoff(2)","","")
--- create_command("kp/xsp/autopilot/at_arm",			"Arm A/T",				"kc_acf_mcp_at_onoff(1)","","")
--- create_command("kp/xsp/autopilot/at_off",			"A/T OFF",				"kc_acf_mcp_at_onoff(0)","","")
+create_command("kp/xsp/autopilot/both_fd_tgl", "All FDs Toggle", "sysMCP.setSwitch(\"fdir\",-1,modeToggle)", "", "")
+create_command("kp/xsp/autopilot/bc_tgl", "Toggle Reverse Appr", "sysMCP.setSwitch(\"backcourse\",0,modeToggle)", "", "")
+create_command("kp/xsp/autopilot/ap_tgl", "Toggle A/P 1", "sysMCP.setSwitch(\"autopilot\",0,modeToggle)", "", "")
+create_command("kp/xsp/autopilot/alt_tgl", "Toggle Altitude Hold", "sysMCP.setSwitch(\"althold\",0,modeToggle)","","")
+create_command("kp/xsp/autopilot/hdg_tgl", "Toggle Heading Select", "sysMCP.setSwitch(\"hdgsel\",0,modeToggle)","","")
+create_command("kp/xsp/autopilot/nav_tgl", "Toggle Nav Mode", "sysMCP.setSwitch(\"vorloc\",0,modeToggle)","","")
+create_command("kp/xsp/autopilot/app_tgl", "Toggle Approach", "sysMCP.setSwitch(\"approach\",0,modeToggle)","","")
+create_command("kp/xsp/autopilot/vs_tgl", "Toggle Vertical Speed", "sysMCP.setSwitch(\"vs\",0,modeToggle)","","")
+create_command("kp/xsp/autopilot/ias_tgl", "Toggle IAS/Speed mode", "sysMCP.setSwitch(\"speed\",0,modeToggle)","","")
+create_command("kp/xsp/autopilot/toga_press", "Press Left TOGA", "sysMCP.setSwitch(\"togapress\",0,modeToggle)","","")
+create_command("kp/xsp/autopilot/at_tgl", "Toggle A/T", "sysMCP.setSwitch(\"autothrottle\",0,modeToggle)","","")
+create_command("kp/xsp/autopilot/at_arm", "Arm A/T", "sysMCP.setSwitch(\"autothrottle\",0,modeOn)","","")
+create_command("kp/xsp/autopilot/at_off", "A/T OFF", "sysMCP.setSwitch(\"autothrottle\",0,modeOff)","","")
+
+
+-- create_command("kp/xsp/bravo_mode_alt",				"Bravo AP Mode ALT",	"xsp_bravo_mode=1", "", "")
+-- create_command("kp/xsp/bravo_mode_vs",				"Bravo AP Mode VS",		"xsp_bravo_mode=2", "", "")
+-- create_command("kp/xsp/bravo_mode_hdg",				"Bravo AP Mode HDG",	"xsp_bravo_mode=3", "", "")
+-- create_command("kp/xsp/bravo_mode_crs",				"Bravo AP Mode CRS",	"xsp_bravo_mode=4", "", "")
+-- create_command("kp/xsp/bravo_mode_ias",				"Bravo AP Mode IAS",	"xsp_bravo_mode=5", "", "")
+-- create_command("kp/xsp/bravo_knob_up",				"Bravo AP Knob Up",		"xsp_bravo_knob_up()", "", "")
+-- create_command("kp/xsp/bravo_knob_dn",				"Bravo AP Knob Down",	"xsp_bravo_knob_dn()", "", "")
+-- create_command("kp/xsp/bravo_layer_multi",			"Bravo Layer MULTI",	"xsp_bravo_layer=1", "", "")
+-- create_command("kp/xsp/bravo_layer_ap",				"Bravo Layer A/P",		"xsp_bravo_layer=0", "", "")
+-- create_command("kp/xsp/bravo_fine",					"Bravo Fine",			"xsp_fine_coarse = 1", "", "")
+-- create_command("kp/xsp/bravo_coarse",				"Bravo Coarse",			"xsp_fine_coarse = 0", "", "")
+-- create_command("kp/xsp/bravo_button_hdg",			"Bravo HDG Button",		"xsp_bravo_button_hdg()", "", "")
+-- create_command("kp/xsp/bravo_button_nav",			"Bravo NAV Button",		"xsp_bravo_button_nav()", "", "")
+-- create_command("kp/xsp/bravo_button_apr",			"Bravo APR Button",		"xsp_bravo_button_apr()", "", "")
+-- create_command("kp/xsp/bravo_button_rev",			"Bravo REV Button",		"xsp_bravo_button_rev()", "", "")
+-- create_command("kp/xsp/bravo_button_alt",			"Bravo ALT Button",		"xsp_bravo_button_alt()", "", "")
+-- create_command("kp/xsp/bravo_button_vsp",			"Bravo VSP Button",		"xsp_bravo_button_vsp()", "", "")
+-- create_command("kp/xsp/bravo_button_ias",			"Bravo IAS Button",		"xsp_bravo_button_ias()", "", "")
+-- create_command("kp/xsp/bravo_button_ap",			"Bravo Autopilot Button","xsp_bravo_button_autopilot()", "", "")
+
 
 --------------- Instantiate Datarefs for hardware annunciators (e.g. honeycomb) ----------- 
 
@@ -220,6 +242,9 @@ xsp_mcp_ap1[0] = 0
 
 xsp_mcp_rev = create_dataref_table("kp/xsp/autopilot/mcp_rev", "Int")
 xsp_mcp_rev[0] = 0
+
+xsp_mcp_fdir = create_dataref_table("kp/xsp/autopilot/flight_director", "Int")
+xsp_mcp_fdir[0] = 0
 
 -------- Lights Annunciators (e.g. for Go-Flight) ----------
 xsp_lights_ll = create_dataref_table("kp/xsp/lights/landing_lights", "Int")
@@ -332,6 +357,9 @@ function xsp_set_light_drefs()
 
 	-- REV annunciator
 	xsp_mcp_rev[0] = sysMCP.getAnnunciator("bcanc",0)
+
+	-- FLIGHT DIRECTOR annunciator
+	xsp_mcp_fdir[0] = sysMCP.getAnnunciator("fdiranc",0)
 	
 	-- Landing Lights status
 	xsp_lights_ll[0] = sysLights.getAnnunciator("landinglights",0)
