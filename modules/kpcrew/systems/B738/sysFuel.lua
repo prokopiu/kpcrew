@@ -1,5 +1,9 @@
 -- B738 airplane 
 -- Fuel related functionality
+
+require "kpcrew.genutils"
+require "kpcrew.systems.activities"
+
 local sysFuel = {
 }
 
@@ -10,7 +14,10 @@ local drefFuelPressL2 = "laminar/B738/annunciator/low_fuel_press_l2"
 local drefFuelPressR1 = "laminar/B738/annunciator/low_fuel_press_r1"
 local drefFuelPressR2 = "laminar/B738/annunciator/low_fuel_press_r2"
 
-sysFuel.fuel = {
+sysFuel.Switches = {
+}
+
+sysFuel.Annunciators = {
 	-- FUEL PRESSURE LOW annunciator
 	["fuelprslow"] = {
 		["type"] = typeAnnunciator,
@@ -37,18 +44,22 @@ sysFuel.fuel = {
 
 function sysFuel.setSwitch(element, instance, mode)
 	if instance == -1 then
-		local item = sysFuel.fuel[element]
+		local item = sysFuel.Switches[element]
 		instances = item["instancecnt"]
 		for iloop = 0,instances-1 do
-			act(sysFuel.fuel,element,iloop,mode)	
+			act(sysFuel.Switches,element,iloop,mode)	
 		end
 	else
-		act(sysFuel.fuel,element,instance,mode)
+		act(sysFuel.Switches,element,instance,mode)
 	end
 end
 
 function sysFuel.getMode(element,instance)
-		return status(sysFuel.fuel,element,instance)
+	return status(sysFuel.Switches,element,instance)
+end
+
+function sysFuel.getAnnunciator(element,instance)
+	return status(sysFuel.Annunciators,element,instance)
 end
 
 return sysFuel

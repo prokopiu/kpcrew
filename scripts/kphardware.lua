@@ -164,6 +164,9 @@ xsp_engine_fire[0] = 0
 xsp_anc_starter = create_dataref_table("kp/xsp/engines/anc_starter", "Int")
 xsp_anc_starter[0] = 0
 
+xsp_anc_reverse = create_dataref_table("kp/xsp/engines/anc_reverse", "Int")
+xsp_anc_reverse[0] = 0
+
 xsp_anc_oil = create_dataref_table("kp/xsp/engines/anc_oil", "Int")
 xsp_anc_oil[0] = 0
 
@@ -265,16 +268,19 @@ function xsp_set_light_drefs()
 	xsp_gear_light_trans_l[0] 	= sysGeneral.getAnnunciator("gearlights",3)
 	xsp_gear_light_trans_r[0] 	= sysGeneral.getAnnunciator("gearlights",4)
 	xsp_gear_light_trans_n[0] 	= sysGeneral.getAnnunciator("gearlights",5)
-	xsp_gear_status[0] 			= sysGeneral.getAnnunciator("gearlights",-1)
+	xsp_gear_status[0] 			= sysGeneral.getAnnunciator("gearstatus",0)
 	
 	-- STARTER annunciator
-	xsp_anc_starter[0] = sysEngines.getMode("starter",0)
+	xsp_anc_starter[0] = sysEngines.getAnnunciator("starter",0)
 
 	-- OIL PRESSURE annunciator
-	xsp_anc_oil[0] = sysEngines.getMode("oilpressure",0)
+	xsp_anc_oil[0] = sysEngines.getAnnunciator("oilpressure",0)
 	
 	-- ENGINE FIRE annunciator
-	xsp_engine_fire[0] = sysEngines.getMode("enginefire",0)
+	xsp_engine_fire[0] = sysEngines.getAnnunciator("enginefire",0)
+	
+	-- ENGINE REVERSE on
+	xsp_anc_reverse[0] = sysEngines.getAnnunciator("reversethrust",0)
 	
 	-- MASTER CAUTION annunciator
 	xsp_master_caution[0] = sysGeneral.getAnnunciator("mastercaution",0)
@@ -283,49 +289,49 @@ function xsp_set_light_drefs()
 	xsp_master_warning[0] = sysGeneral.getAnnunciator("masterwarning",0)
 
 	-- DOORS annunciator
-	xsp_doors[0] = sysGeneral.getAnnunciator("doors",-1)
+	xsp_doors[0] = sysGeneral.getAnnunciator("doorstatus",0)
 	
 	-- APU annunciator
-	xsp_apu_running[0] = sysElectric.getMode("apurunning",0)
+	xsp_apu_running[0] = sysElectric.getAnnunciator("apurunning",0)
 	
 	-- LOW VOLTAGE annunciator
-	xsp_low_volts[0] = sysElectric.getMode("lowvoltage",0)
+	xsp_low_volts[0] = sysElectric.getAnnunciator("lowvoltage",0)
 	
 	-- LOW HYD PRESSURE annunciator
-	xsp_anc_hyd[0] = sysHydraulic.getMode("lowhydraulic",0)
+	xsp_anc_hyd[0] = sysHydraulic.getAnnunciator("lowhydraulic",0)
 	
 	-- LOW FUEL PRESSURE annunciator
-	xsp_fuel_pumps[0] = sysFuel.getMode("fuelprslow",0)
+	xsp_fuel_pumps[0] = sysFuel.getAnnunciator("fuelprslow",0)
 	
 	-- VACUUM annunciator
-	xsp_vacuum[0] = sysAir.getMode("vacuum",0)
+	xsp_vacuum[0] = sysAir.getAnnunciator("vacuum",0)
 	
 	-- ANTI ICE annunciator
-	xsp_anc_aice[0] = sysAice.getMode("antiice",0)
+	xsp_anc_aice[0] = sysAice.getAnnunciator("antiice",0)
 
 	-- HDG annunciator
-	xsp_mcp_hdg[0] = sysMCP.getMode("hdganc",0)
+	xsp_mcp_hdg[0] = sysMCP.getAnnunciator("hdganc",0)
 
 	-- NAV annunciator
-	xsp_mcp_nav[0] = sysMCP.getMode("navanc",0)
+	xsp_mcp_nav[0] = sysMCP.getAnnunciator("navanc",0)
 
 	-- APR annunciator
-	xsp_mcp_app[0] = sysMCP.getMode("apranc",0)
+	xsp_mcp_app[0] = sysMCP.getAnnunciator("apranc",0)
 
 	-- ALT annunciator
-	xsp_mcp_alt[0] = sysMCP.getMode("altanc",0)
+	xsp_mcp_alt[0] = sysMCP.getAnnunciator("altanc",0)
 
 	-- VS annunciator
-	xsp_mcp_vsp[0] = sysMCP.getMode("vspanc",0)
+	xsp_mcp_vsp[0] = sysMCP.getAnnunciator("vspanc",0)
 
 	-- IAS annunciator
-	xsp_mcp_ias[0] = sysMCP.getMode("spdanc",0)
+	xsp_mcp_ias[0] = sysMCP.getAnnunciator("spdanc",0)
 
 	-- AUTO PILOT annunciator
-	xsp_mcp_ap1[0] = sysMCP.getMode("autopilotanc",0)
+	xsp_mcp_ap1[0] = sysMCP.getAnnunciator("autopilotanc",0)
 
 	-- REV annunciator
-	xsp_mcp_rev[0] = sysMCP.getMode("bcanc",0)
+	xsp_mcp_rev[0] = sysMCP.getAnnunciator("bcanc",0)
 	
 	-- Landing Lights status
 	xsp_lights_ll[0] = sysLights.getAnnunciator("landinglights",0)
@@ -359,7 +365,7 @@ function xsp_set_light_drefs()
 
 	-- instruments
 	xsp_lights_instrument[0] = sysLights.getAnnunciator("instruments",0)
-	
+
 end
 
 -- regularly update the drefs for annunciators and lights 

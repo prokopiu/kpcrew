@@ -1,11 +1,18 @@
 -- DFLT airplane 
 -- Air and Pneumatics functionality
+
+require "kpcrew.genutils"
+require "kpcrew.systems.activities"
+
 local sysAir = {
 }
 
 local drefAirANC = "sim/cockpit/warnings/annunciators/bleed_air_off"
 
-sysAir.air = {
+sysAir.Switches = {
+}
+
+sysAir.Annunciators = {
 	-- VACUUM annunciator
 	["vacuum"] = {
 		["type"] = typeAnnunciator,
@@ -32,19 +39,22 @@ sysAir.air = {
 
 function sysAir.setSwitch(element, instance, mode)
 	if instance == -1 then
-		local item = sysAir.air[element]
+		local item = sysAir.Switches[element]
 		instances = item["instancecnt"]
 		for iloop = 0,instances-1 do
-			act(sysAir.air,element,iloop,mode)	
+			act(sysAir.Switches,element,iloop,mode)	
 		end
 	else
-		act(sysAir.air,element,instance,mode)
+		act(sysAir.Switches,element,instance,mode)
 	end
 end
 
 function sysAir.getMode(element,instance)
-		return status(sysAir.air,element,instance)
+	return status(sysAir.Switches,element,instance)
 end
 
+function sysAir.getAnnunciator(element,instance)
+	return status(sysAir.Annunciators,element,instance)
+end
 
 return sysAir

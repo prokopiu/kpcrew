@@ -254,14 +254,15 @@ sysGeneral.Annunciators = {
 				["drefStatus"] = { "" },
 				["dataref"] = { "" },
 				["customdref"] = function () 
-						local sum = get(sysGeneral.Annunciators["gearlights"]["instances"][0]["drefStatus"]["name"]) +
-									get(sysGeneral.Annunciators["gearlights"]["instances"][1]["drefStatus"]["name"]) +
-									get(sysGeneral.Annunciators["gearlights"]["instances"][2]["drefStatus"]["name"]) 
-						if sum > 0 then 
+						-- local sum = get(sysGeneral.Annunciators["gearlights"]["instances"][0]["drefStatus"]["name"]) +
+									-- get(sysGeneral.Annunciators["gearlights"]["instances"][1]["drefStatus"]["name"]) +
+									-- get(sysGeneral.Annunciators["gearlights"]["instances"][2]["drefStatus"]["name"]) 
+						-- local sum = 1
+						-- if sum > 0 then 
 							return 1
-						else
-							return 0
-						end
+						-- else
+							-- return 0
+						-- end
 					end,
 				["commands"] = { "" }
 			},
@@ -293,6 +294,32 @@ sysGeneral.Annunciators = {
 			[5] = {
 				["drefStatus"] = { ["name"] = "laminar/B738/annunciator/nose_gear_transit", ["index"] = 0 },
 				["dataref"] = { "" },
+				["commands"] = { "" }
+			}
+		}
+	},
+	-- Gear Lights for annunciators
+	["gearstatus"] = {
+		["type"] = typeAnnunciator,
+		["cmddref"] = actNone,
+		["status"] = statusCustom,
+		["toggle"] = toggleNone,
+		["instancecnt"] = 1,
+		["instances"] = {
+			[0] = {
+				["drefStatus"] = { "" },
+				["dataref"] = { "" },
+				["customdref"] = function () 
+						local sum = get(sysGeneral.Annunciators["gearlights"]["instances"][0]["drefStatus"]["name"]) +
+									get(sysGeneral.Annunciators["gearlights"]["instances"][1]["drefStatus"]["name"]) +
+									get(sysGeneral.Annunciators["gearlights"]["instances"][2]["drefStatus"]["name"]) 
+						local sum = 1
+						if sum > 0 then 
+							return 1
+						else
+							return 0
+						end
+					end,
 				["commands"] = { "" }
 			}
 		}
@@ -335,24 +362,6 @@ sysGeneral.Annunciators = {
 		["toggle"] = toggleNone,
 		["instancecnt"] = 6,
 		["instances"] = {
-			[-1] = {
-				["drefStatus"] = { "" },
-				["dataref"] = { "" },
-				["customdref"] = function () 
-						local sum = get(sysGeneral.Annunciators["doors"]["instances"][0]["drefStatus"]["name"]) +
-									get(sysGeneral.Annunciators["doors"]["instances"][1]["drefStatus"]["name"]) +
-									get(sysGeneral.Annunciators["doors"]["instances"][2]["drefStatus"]["name"]) +
-									get(sysGeneral.Annunciators["doors"]["instances"][3]["drefStatus"]["name"]) +
-									get(sysGeneral.Annunciators["doors"]["instances"][4]["drefStatus"]["name"]) +
-									get(sysGeneral.Annunciators["doors"]["instances"][5]["drefStatus"]["name"]) 
-						if sum > 0 then 
-							return 1
-						else
-							return 0
-						end
-					end,
-				["commands"] = { "" }
-			},
 			[0] = {
 				["drefStatus"] = { ["name"] = "737u/doors/L1", ["index"] = 0 },
 				["dataref"] = { "" },
@@ -381,6 +390,33 @@ sysGeneral.Annunciators = {
 			[5] = {
 				["drefStatus"] = { ["name"] = "737u/doors/aft_Cargo", ["index"] = 0 },
 				["dataref"] = { "" },
+				["commands"] = { "" }
+			}
+		}
+	},
+	["doorstatus"] = {
+		["type"] = typeAnnunciator,
+		["cmddref"] = actNone,
+		["status"] = statusCustom,
+		["toggle"] = toggleNone,
+		["instancecnt"] = 1,
+		["instances"] = {
+			[0] = {
+				["drefStatus"] = { "" },
+				["dataref"] = { "" },
+				["customdref"] = function () 
+						local sum = get(sysGeneral.Annunciators["doors"]["instances"][0]["drefStatus"]["name"]) +
+									get(sysGeneral.Annunciators["doors"]["instances"][1]["drefStatus"]["name"]) +
+									get(sysGeneral.Annunciators["doors"]["instances"][2]["drefStatus"]["name"]) +
+									get(sysGeneral.Annunciators["doors"]["instances"][3]["drefStatus"]["name"]) +
+									get(sysGeneral.Annunciators["doors"]["instances"][4]["drefStatus"]["name"]) +
+									get(sysGeneral.Annunciators["doors"]["instances"][5]["drefStatus"]["name"]) 
+						if sum > 0 then 
+							return 1
+						else
+							return 0
+						end
+					end,
 				["commands"] = { "" }
 			}
 		}

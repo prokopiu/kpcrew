@@ -422,6 +422,30 @@ sysGeneral.Annunciators = {
 			}
 		}
 	},
+	["gearstatus"] = {
+		["type"] = typeAnnunciator,
+		["cmddref"] = actNone,
+		["status"] = statusCustom,
+		["toggle"] = toggleNone,
+		["instancecnt"] = 1,
+		["instances"] = {
+			[0] = {
+				["drefStatus"] = { "" },
+				["dataref"] = { "" },
+				["customdref"] = function () 
+						local sum = get(sysGeneral.Annunciators["gearlights"]["instances"][0]["drefStatus"]["name"]) +
+									get(sysGeneral.Annunciators["gearlights"]["instances"][1]["drefStatus"]["name"]) +
+									get(sysGeneral.Annunciators["gearlights"]["instances"][2]["drefStatus"]["name"]) 
+						if sum > 0 then 
+							return 1
+						else
+							return 0
+						end
+					end,
+				["commands"] = { "" }
+			}
+		}
+	},
 	-- Master Caution
 	["mastercaution"] = {
 		["type"] = typeAnnunciator,
@@ -513,24 +537,10 @@ sysGeneral.Annunciators = {
 	["doors"] = {
 		["type"] = typeAnnunciator,
 		["cmddref"] = actNone,
-		["status"] = statusCustom,
+		["status"] = statusDref,
 		["toggle"] = toggleNone,
 		["instancecnt"] = 6,
 		["instances"] = {
-			[-1] = {
-				["drefStatus"] = { "" },
-				["dataref"] = { "" },
-				["customdref"] = function () 
-						local sum = get(drefSlider,0) + get(drefSlider,1) + get(drefSlider,2) + get(drefSlider,3) +
-									get(drefSlider,4) + get(drefSlider,5)
-						if sum > 0.1 then 
-							return 1
-						else
-							return 0
-						end
-					end,
-				["commands"] = { "" }
-			},
 			[0] = {
 				["drefStatus"] = { ["name"] = drefSlider, ["index"] = 0 },
 				["dataref"] = { "" },
@@ -559,6 +569,29 @@ sysGeneral.Annunciators = {
 			[5] = {
 				["drefStatus"] = { ["name"] = drefSlider, ["index"] = 5 },
 				["dataref"] = { "" },
+				["commands"] = { "" }
+			}
+		}
+	},
+	["doorstatus"] = {
+		["type"] = typeAnnunciator,
+		["cmddref"] = actNone,
+		["status"] = statusCustom,
+		["toggle"] = toggleNone,
+		["instancecnt"] = 1,
+		["instances"] = {
+			[0] = {
+				["drefStatus"] = { "" },
+				["dataref"] = { "" },
+				["customdref"] = function () 
+						local sum = get(drefSlider,0) + get(drefSlider,1) + get(drefSlider,2) + get(drefSlider,3) +
+									get(drefSlider,4) + get(drefSlider,5)
+						if sum > 0.1 then 
+							return 1
+						else
+							return 0
+						end
+					end,
 				["commands"] = { "" }
 			}
 		}

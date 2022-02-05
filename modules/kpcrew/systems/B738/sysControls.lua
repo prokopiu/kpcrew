@@ -1,6 +1,9 @@
 -- B738 airplane 
 -- Flight Controls functionality
 
+require "kpcrew.genutils"
+require "kpcrew.systems.activities"
+ 
 local sysControls = {
 	trimCenter = 2
 }

@@ -1,5 +1,9 @@
 -- DFLT airplane 
 -- MCP functionality
+
+require "kpcrew.genutils"
+require "kpcrew.systems.activities"
+
 local sysMCP = {
 }
 
@@ -9,7 +13,10 @@ local drefSPDLight = "sim/cockpit2/autopilot/autothrottle_on"
 local drefVSLight = "sim/cockpit2/autopilot/vvi_status"
 local drefVNAVLight = "sim/cockpit2/autopilot/fms_vnav"
 
-sysMCP.autopilot = {
+sysMCP.Switches = {
+}
+
+sysMCP.Annunciators = {
 	-- HDG Select/mode annunciator
 	["hdganc"] = {
 		["type"] = typeAnnunciator,
@@ -148,19 +155,22 @@ sysMCP.autopilot = {
 
 function sysMCP.setSwitch(element, instance, mode)
 	if instance == -1 then
-		local item = sysMCP.autopilot[element]
+		local item = sysMCP.Switches[element]
 		instances = item["instancecnt"]
 		for iloop = 0,instances-1 do
-			act(sysMCP.autopilot,element,iloop,mode)	
+			act(sysMCP.Switches,element,iloop,mode)	
 		end
 	else
-		act(sysMCP.autopilot,element,instance,mode)
+		act(sysMCP.Switches,element,instance,mode)
 	end
 end
 
 function sysMCP.getMode(element,instance)
-		return status(sysMCP.autopilot,element,instance)
+	return status(sysMCP.Switches,element,instance)
 end
 
+function sysMCP.getAnnunciator(element,instance)
+	return status(sysMCP.Annunciators,element,instance)
+end
 
 return sysMCP

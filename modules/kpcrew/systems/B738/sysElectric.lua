@@ -1,9 +1,16 @@
 -- B738 airplane 
 -- Electric system functionality
+
+require "kpcrew.genutils"
+require "kpcrew.systems.activities"
+
 local sysElectric = {
 }
 
-sysElectric.electric = {
+sysElectric.Switches = {
+}
+
+sysElectric.Annunciators = {
 	-- LOW VOLTAGE annunciator
 	["lowvoltage"] = {
 		["type"] = typeAnnunciator,
@@ -38,18 +45,22 @@ sysElectric.electric = {
 
 function sysElectric.setSwitch(element, instance, mode)
 	if instance == -1 then
-		local item = sysElectric.electric[element]
+		local item = sysElectric.Switches[element]
 		instances = item["instancecnt"]
 		for iloop = 0,instances-1 do
-			act(sysElectric.electric,element,iloop,mode)	
+			act(sysElectric.Switches,element,iloop,mode)	
 		end
 	else
-		act(sysElectric.electric,element,instance,mode)
+		act(sysElectric.Switches,element,instance,mode)
 	end
 end
 
 function sysElectric.getMode(element,instance)
-		return status(sysElectric.electric,element,instance)
+	return status(sysElectric.Switches,element,instance)
+end
+
+function sysElectric.getAnnunciator(element,instance)
+	return status(sysElectric.Annunciators,element,instance)
 end
 
 return sysElectric
