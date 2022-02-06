@@ -25,6 +25,8 @@ end
 
 require "kpcrew.genutils"
 require "kpcrew.systems.activities"
+TwoStateDrefSwitch = require "kpcrew.systems.TwoStateDrefSwitch"
+TwoStateCmdSwitch = require "kpcrew.systems.TwoStateCmdSwitch"
 
 sysLights = require("kpcrew.systems." .. acf_icao .. ".sysLights")
 sysGeneral = require("kpcrew.systems." .. acf_icao .. ".sysGeneral")	
@@ -39,49 +41,49 @@ sysMCP = require("kpcrew.systems." .. acf_icao .. ".sysMCP")
 
 -- ============ aircraft specific joystick/key commands (e.g. for Alpha Yoke)
 -- ------------------ Lights
-create_command("kp/xsp/lights/beacon_switch_on", "Beacon Lights On","sysLights.setSwitch(\"beacon\",0,modeOn)","","")
-create_command("kp/xsp/lights/beacon_switch_off","Beacon Lights Off","sysLights.setSwitch(\"beacon\",0,modeOff)","","")
-create_command("kp/xsp/lights/beacon_switch_tgl","Beacon Lights Toggle","sysLights.setSwitch(\"beacon\",0,modeToggle)","","")
+create_command("kp/xsp/lights/beacon_switch_on", "Beacon Lights On","sysLights.beaconSwitch:actuate(modeOn)","","")
+create_command("kp/xsp/lights/beacon_switch_off","Beacon Lights Off","sysLights.beaconSwitch:actuate(modeOff)","","")
+create_command("kp/xsp/lights/beacon_switch_tgl","Beacon Lights Toggle","sysLights.beaconSwitch:actuate(modeToggle)","","")
 
-create_command("kp/xsp/lights/position_switch_on","Position Lights On","sysLights.setSwitch(\"position\",0,modeOn)","","")
-create_command("kp/xsp/lights/position_switch_off","Position Lights Off","sysLights.setSwitch(\"position\",0,modeOff)", "", "")
-create_command("kp/xsp/lights/position_switch_tgl","Position Lights Toggle","sysLights.setSwitch(\"position\",0,modeToggle)","","")
+create_command("kp/xsp/lights/position_switch_on","Position Lights On","sysLights.positionSwitch:actuate(modeOn)","","")
+create_command("kp/xsp/lights/position_switch_off","Position Lights Off","sysLights.positionSwitch:actuate(modeOff)", "", "")
+create_command("kp/xsp/lights/position_switch_tgl","Position Lights Toggle","sysLights.positionSwitch:actuate(modeToggle)","","")
 
-create_command("kp/xsp/lights/strobe_switch_on","Strobe Lights On","sysLights.setSwitch(\"strobes\",0,modeOn)","","")
-create_command("kp/xsp/lights/strobe_switch_off","Strobe Lights Off","sysLights.setSwitch(\"strobes\",0,modeOff)","","")
-create_command("kp/xsp/lights/strobe_switch_tgl","Strobe Lights Toggle","sysLights.setSwitch(\"strobes\",0,modeToggle)","","")
+create_command("kp/xsp/lights/strobe_switch_on","Strobe Lights On","sysLights.strobesSwitch:actuate(modeOn)","","")
+create_command("kp/xsp/lights/strobe_switch_off","Strobe Lights Off","sysLights.strobesSwitch:actuate(modeOff)","","")
+create_command("kp/xsp/lights/strobe_switch_tgl","Strobe Lights Toggle","sysLights.strobesSwitch:actuate(modeToggle)","","")
 
-create_command("kp/xsp/lights/taxi_switch_on","Taxi Lights On","sysLights.setSwitch(\"taxi\",0,modeOn)","","")
-create_command("kp/xsp/lights/taxi_switch_off","Taxi Lights Off","sysLights.setSwitch(\"taxi\",0,modeOff)","","")
-create_command("kp/xsp/lights/taxi_switch_tgl","Taxi Lights Toggle","sysLights.setSwitch(\"taxi\",0,modeToggle)","","")
+create_command("kp/xsp/lights/taxi_switch_on","Taxi Lights On","sysLights.taxiSwitch:actuate(modeOn)","","")
+create_command("kp/xsp/lights/taxi_switch_off","Taxi Lights Off","sysLights.taxiSwitch:actuate(modeOff)","","")
+create_command("kp/xsp/lights/taxi_switch_tgl","Taxi Lights Toggle","sysLights.taxiSwitch:actuate(modeToggle)","","")
 
-create_command("kp/xsp/lights/landing_switch_on","Landing Lights On","sysLights.setSwitch(\"landing\",-1,modeOn)","","")
-create_command("kp/xsp/lights/landing_switch_off","Landing Lights Off","sysLights.setSwitch(\"landing\",-1,modeOff)","","")
-create_command("kp/xsp/lights/landing_switch_tgl","Landing Lights Toggle","sysLights.setSwitch(\"landing\",-1,modeToggle)","","")
+create_command("kp/xsp/lights/landing_switch_on","Landing Lights On","sysLights.landLightGroup:actuate(modeOn)","","")
+create_command("kp/xsp/lights/landing_switch_off","Landing Lights Off","sysLights.landLightGroup:actuate(modeOff)","","")
+create_command("kp/xsp/lights/landing_switch_tgl","Landing Lights Toggle","sysLights.landLightGroup:actuate(modeToggle)","","")
 
-create_command("kp/xsp/lights/wing_switch_on","Wing Lights On","sysLights.setSwitch(\"wing\",0,modeOn)","","")
-create_command("kp/xsp/lights/wing_switch_off","Wing Lights Off","sysLights.setSwitch(\"wing\",0,modeOff)","","")
-create_command("kp/xsp/lights/wing_switch_tgl","Wing Lights Toggle","sysLights.setSwitch(\"wing\",0,modeToggle)","","")
+create_command("kp/xsp/lights/wing_switch_on","Wing Lights On","sysLights.wingSwitch:actuate(modeOn)","","")
+create_command("kp/xsp/lights/wing_switch_off","Wing Lights Off","sysLights.wingSwitch:actuate(modeOff)","","")
+create_command("kp/xsp/lights/wing_switch_tgl","Wing Lights Toggle","sysLights.wingSwitch:actuate(modeToggle)","","")
 
-create_command("kp/xsp/lights/wheel_switch_on","Wheel Lights On","sysLights.setSwitch(\"wheel\",0,modeOn)", "", "")
-create_command("kp/xsp/lights/wheel_switch_off","Wheel Lights Off","sysLights.setSwitch(\"wheel\",0,modeOff)", "", "")
-create_command("kp/xsp/lights/wheel_switch_tgl","Wheel Lights Toggle","sysLights.setSwitch(\"wheel\",0,modeToggle)", "", "")
+create_command("kp/xsp/lights/wheel_switch_on","Wheel Lights On","sysLights.wheelSwitch:actuate(modeOn)", "", "")
+create_command("kp/xsp/lights/wheel_switch_off","Wheel Lights Off","sysLights.wheelSwitch:actuate(modeOff)", "", "")
+create_command("kp/xsp/lights/wheel_switch_tgl","Wheel Lights Toggle","sysLights.wheelSwitch:actuate(modeToggle)", "", "")
 
-create_command("kp/xsp/lights/logo_switch_on","Logo Lights On","sysLights.setSwitch(\"logo\",0,modeOn)","","")
-create_command("kp/xsp/lights/logo_switch_off","Logo Lights Off","sysLights.setSwitch(\"logo\",0,modeOff)","","")
-create_command("kp/xsp/lights/logo_switch_tgl","Logo Lights Toggle","sysLights.setSwitch(\"logo\",0,modeToggle)","","")
+create_command("kp/xsp/lights/logo_switch_on","Logo Lights On","sysLights.logoSwitch:actuate(modeOn)","","")
+create_command("kp/xsp/lights/logo_switch_off","Logo Lights Off","sysLights.logoSwitch:actuate(modeOff)","","")
+create_command("kp/xsp/lights/logo_switch_tgl","Logo Lights Toggle","sysLights.logoSwitch:actuate(modeToggle)","","")
 
-create_command("kp/xsp/lights/rwyto_switch_on","Runway Lights On","sysLights.setSwitch(\"runway\",-1,modeOn)","","")
-create_command("kp/xsp/lights/rwyto_switch_off","Runway Lights Off","sysLights.setSwitch(\"runway\",-1,modeOff)","","")
-create_command("kp/xsp/lights/rwyto_switch_tgl","Runway Lights Toggle","sysLights.setSwitch(\"runway\",-1,modeToggle)","","")
+create_command("kp/xsp/lights/rwyto_switch_on","Runway Lights On","sysLights.rwyLightGroup:actuate(modeOn)","","")
+create_command("kp/xsp/lights/rwyto_switch_off","Runway Lights Off","sysLights.rwyLightGroup:actuate(modeOff)","","")
+create_command("kp/xsp/lights/rwyto_switch_tgl","Runway Lights Toggle","sysLights.rwyLightGroup:actuate(modeToggle)","","")
 
-create_command("kp/xsp/lights/instruments_on","Instrument Lights On","sysLights.setSwitch(\"instruments\",-1,modeOn)","","")
-create_command("kp/xsp/lights/instruments_off","Instrument Lights Off","sysLights.setSwitch(\"instruments\",-1,modeOff)","","")
-create_command("kp/xsp/lights/instruments_tgl","Instrument Lights Toggle","sysLights.setSwitch(\"instruments\",-1,modeToggle)","","")
+create_command("kp/xsp/lights/instruments_on","Instrument Lights On","sysLights.instrLightGroup:actuate(modeOn)","","")
+create_command("kp/xsp/lights/instruments_off","Instrument Lights Off","sysLights.instrLightGroup:actuate(modeOff)","","")
+create_command("kp/xsp/lights/instruments_tgl","Instrument Lights Toggle","sysLights.instrLightGroup:actuate(modeToggle)","","")
 
-create_command("kp/xsp/lights/dome_switch_on","Cockpit Lights On","sysLights.setSwitch(\"dome\",0,modeOn)","","")
-create_command("kp/xsp/lights/dome_switch_off","Cockpit Lights Off","sysLights.setSwitch(\"dome\",0,modeOff)","","")
-create_command("kp/xsp/lights/dome_switch_tgl","Cockpit Lights Toggle","sysLights.setSwitch(\"dome\",0,modeToggle)","","")
+create_command("kp/xsp/lights/dome_switch_on","Cockpit Lights On","sysLights.domeLightSwitch:actuate(modeOn)","","")
+create_command("kp/xsp/lights/dome_switch_off","Cockpit Lights Off","sysLights.domeLightSwitch:actuate(modeOff)","","")
+create_command("kp/xsp/lights/dome_switch_tgl","Cockpit Lights Toggle","sysLights.domeLightSwitch:actuate(modeToggle)","","")
 
 ---------------- General Systems ---------------------
 
@@ -137,6 +139,7 @@ create_command("kp/xsp/autopilot/at_tgl", "Toggle A/T", "sysMCP.setSwitch(\"auto
 create_command("kp/xsp/autopilot/at_arm", "Arm A/T", "sysMCP.setSwitch(\"autothrottle\",0,modeOn)","","")
 create_command("kp/xsp/autopilot/at_off", "A/T OFF", "sysMCP.setSwitch(\"autothrottle\",0,modeOff)","","")
 
+-- Honeycomb special commands
 
 -- create_command("kp/xsp/bravo_mode_alt",				"Bravo AP Mode ALT",	"xsp_bravo_mode=1", "", "")
 -- create_command("kp/xsp/bravo_mode_vs",				"Bravo AP Mode VS",		"xsp_bravo_mode=2", "", "")
@@ -362,37 +365,37 @@ function xsp_set_light_drefs()
 	xsp_mcp_fdir[0] = sysMCP.getAnnunciator("fdiranc",0)
 	
 	-- Landing Lights status
-	xsp_lights_ll[0] = sysLights.getAnnunciator("landinglights",0)
+	xsp_lights_ll[0] = sysLights.landingAnc:getStatus()
 
 	-- beacon light annunciator
-	xsp_lights_beacon[0] = sysLights.getAnnunciator("beacon",0)
+	xsp_lights_beacon[0] = sysLights.beaconAnc:getStatus()
 
 	-- position lights annunciator
-	xsp_lights_position[0] = sysLights.getAnnunciator("position",0)
+	xsp_lights_position[0] = sysLights.positionAnc:getStatus()
 
 	-- strobes 
-	xsp_lights_strobes[0] = sysLights.getAnnunciator("strobes",0)
+	xsp_lights_strobes[0] = sysLights.strobesAnc:getStatus()
 
 	-- taxi lights
-	xsp_lights_taxi[0] = sysLights.getAnnunciator("taxi",0)
+	xsp_lights_taxi[0] = sysLights.taxiAnc:getStatus()
 
 	-- logo lights
-	xsp_lights_logo[0] = sysLights.getAnnunciator("logo",0)
+	xsp_lights_logo[0] = sysLights.logoAnc:getStatus()
 
 	-- runway
-	xsp_lights_rwy[0] = sysLights.getAnnunciator("runway",0)
+	xsp_lights_rwy[0] = sysLights.runwayAnc:getStatus()
 
 	-- wing
-	xsp_lights_wing[0] = sysLights.getAnnunciator("wing",0)
+	xsp_lights_wing[0] = sysLights.wingAnc:getStatus()
 
 	-- wheel
-	xsp_lights_wheel[0] = sysLights.getAnnunciator("wheel",0)
+	xsp_lights_wheel[0] = sysLights.wheelAnc:getStatus()
 
 	-- dome
-	xsp_lights_dome[0] = sysLights.getAnnunciator("dome",0)
+	xsp_lights_dome[0] = sysLights.domeAnc:getStatus()
 
 	-- instruments
-	xsp_lights_instrument[0] = sysLights.getAnnunciator("instruments",0)
+	xsp_lights_instrument[0] = sysLights.instrumentAnc:getStatus()
 
 end
 

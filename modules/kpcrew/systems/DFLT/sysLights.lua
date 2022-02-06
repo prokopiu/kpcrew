@@ -1,426 +1,124 @@
 -- DFLT airplane (X-Plane 11 default)
 -- aircraft lights specific functionality
 
-require "kpcrew.genutils"
-require "kpcrew.systems.activities"
-
 local sysLights = {
 }
+
+TwoStateDrefSwitch = require "kpcrew.systems.TwoStateDrefSwitch"
+TwoStateCmdSwitch = require "kpcrew.systems.TwoStateCmdSwitch"
+TwoStateCustomSwitch = require "kpcrew.systems.TwoStateCustomSwitch"
+SwitchGroup  = require "kpcrew.systems.SwitchGroup"
+SimpleAnnunciator  = require "kpcrew.systems.SimpleAnnunciator"
+CustomAnnunciator  = require "kpcrew.systems.CustomAnnunciator"
 
 local drefLandingLights = "sim/cockpit2/switches/landing_lights_switch"	
 local drefGenericLights = "sim/cockpit2/switches/generic_lights_switch"
 
-sysLights.Switches = {
-	-- Beacons or Anticollision Lights, single, onoff, command driven
-	["beacon"] = {
-		["type"] = typeOnOffTgl,
-		["cmddref"] = actWithCmd,
-		["status"] = statusDref,
-		["toggle"] = toggleCmd,
-		["instancecnt"] = 1,
-		["instances"] = {
-			[0] = {
-				["drefStatus"] = { ["name"] = "sim/cockpit/electrical/beacon_lights_on", ["index"] = 0 },
-				["dataref"] = { "" },
-				["commands"] = {
-					[modeOff] = "sim/lights/beacon_lights_off",
-					[modeOn] = "sim/lights/beacon_lights_on",
-					[modeToggle] = "sim/lights/beacon_lights_toggle"
-				}
-			}
-		}
-	},
-	-- Position Lights, single onoff command driven
-	["position"] = {
-		["type"] = typeOnOffTgl,
-		["cmddref"] = actWithCmd,
-		["status"] = statusDref,
-		["toggle"] = toggleCmd,
-		["instancecnt"] = 1,
-		["instances"] = {
-			[0] = {
-				["drefStatus"] = { ["name"] = "sim/cockpit2/switches/navigation_lights_on", ["index"] = 0 },
-				["dataref"] = { "" },
-				["commands"] = {
-					[modeOff] =	"sim/lights/nav_lights_off",
-					[modeOn] = "sim/lights/nav_lights_on",
-					[modeToggle] = "sim/lights/nav_lights_toggle"
-				}
-			}
-		}
-	},
-	-- Strobe Lights, single onoff command driven
-	["strobes"] = {
-		["type"] = typeOnOffTgl,
-		["cmddref"] = actWithCmd,
-		["status"] = statusDref,
-		["toggle"] = toggleCmd,
-		["instancecnt"] = 1,
-		["instances"] = {
-			[0] = {
-				["drefStatus"] = { ["name"] = "sim/cockpit2/switches/strobe_lights_on", ["index"] = 0 },
-				["dataref"] = { "" },
-				["commands"] = {
-					[modeOff] =	"sim/lights/strobe_lights_off",
-					[modeOn] = "sim/lights/strobe_lights_on",
-					[modeToggle] = "sim/lights/strobe_lights_toggle"
-				}
-			}
-		}
-	},
-	-- Taxi/Nose Lights, single onoff command driven
-	["taxi"] = {
-		["type"] = typeOnOffTgl,
-		["cmddref"] = actWithCmd,
-		["status"] = statusDref,
-		["toggle"] = toggleCmd,
-		["instancecnt"] = 1,
-		["instances"] = {
-			[0] = {
-				["drefStatus"] = { ["name"] = "sim/cockpit2/switches/taxi_light_on", ["index"] = 0 },
-				["dataref"] = { "" },
-				["commands"] = {
-					[modeOff] =	"sim/lights/taxi_lights_off",
-					[modeOn] = "sim/lights/taxi_lights_on",
-					[modeToggle] = "sim/lights/taxi_lights_toggle"
-				}
-			}
-		}
-	},
-	-- Landing Lights, single onoff command driven
-	["landing"] = {
-		["type"] = typeOnOffTgl,
-		["cmddref"] = actWithDref,
-		["status"] = statusDref,
-		["toggle"] = toggleDref,
-		["instancecnt"] = 4,
-		["instances"] = {
-			[0] = {
-				["drefStatus"] = { ["name"] = drefLandingLights, ["index"] = 0 },
-				["dataref"] = { ["name"] = drefLandingLights, ["index"] = 0 },
-				["commands"] = { "" }
-			},
-			[1] = {
-				["drefStatus"] = { ["name"] = drefLandingLights, ["index"] = 1 },
-				["dataref"] = { ["name"] = drefLandingLights, ["index"] = 1 },
-				["commands"] = { "" }
-			},
-			[2] = {
-				["drefStatus"] = { ["name"] = drefLandingLights, ["index"] = 2 },
-				["dataref"] = { ["name"] = drefLandingLights, ["index"] = 2 },
-				["commands"] = { "" }
-			},
-			[3] = {
-				["drefStatus"] = { ["name"] = drefLandingLights, ["index"] = 3 },
-				["dataref"] = { ["name"] = drefLandingLights, ["index"] = 3 },
-				["commands"] = { "" }
-			}
-		}
-	},
-	-- Logo Light
-	["logo"] = {
-		["type"] = typeOnOffTgl,
-		["cmddref"] = actWithDref,
-		["status"] = statusDref,
-		["toggle"] = toggleDref,
-		["instancecnt"] = 1,
-		["instances"] = {
-			[0] = {
-				["drefStatus"] = { ["name"] = drefGenericLights, ["index"] = 0 },
-				["dataref"] = { ["name"] = drefGenericLights, ["index"] = 0 },
-				["commands"] = { "" }
-			}
-		}
-	},
-	-- RWY Turnoff
-	["runway"] = {
-		["type"] = typeOnOffTgl,
-		["cmddref"] = actWithDref,
-		["status"] = statusDref,
-		["toggle"] = toggleDref,
-		["instancecnt"] = 2,
-		["instances"] = {
-			[0] = {
-				["drefStatus"] = { ["name"] = drefGenericLights, ["index"] = 1 },
-				["dataref"] = { ["name"] = drefGenericLights, ["index"] = 1 },
-				["commands"] = { "" }
-			},
-			[1] = {
-				["drefStatus"] = { ["name"] = drefGenericLights, ["index"] = 2 },
-				["dataref"] = { ["name"] = drefGenericLights, ["index"] = 2 },
-				["commands"] = { "" }
-			}
-		}
-	},
-	-- Wing Lights
-	["wing"] = {
-		["type"] = typeOnOffTgl,
-		["cmddref"] = actWithDref,
-		["status"] = statusDref,
-		["toggle"] = toggleDref,
-		["instancecnt"] = 1,
-		["instances"] = {
-			[0] = {
-				["drefStatus"] = { ["name"] = drefGenericLights, ["index"] = 3 },
-				["dataref"] = { ["name"] = drefGenericLights, ["index"] = 3 },
-				["commands"] = { "" }
-			}
-		}
-	},
-	-- Wheel well Lights
-	["wheel"] = {
-		["type"] = typeOnOffTgl,
-		["cmddref"] = actWithDref,
-		["status"] = statusDref,
-		["toggle"] = toggleDref,
-		["instancecnt"] = 1,
-		["instances"] = {
-			[0] = {
-				["drefStatus"] = { ["name"] = drefGenericLights, ["index"] = 5 },
-				["dataref"] = { ["name"] = drefGenericLights, ["index"] = 5 },
-				["commands"] = { "" }
-			}
-		}
-	},
-	-- Dome Light
-	["dome"] = {
-		["type"] = typeOnOffTgl,
-		["cmddref"] = actWithDref,
-		["status"] = statusDref,
-		["toggle"] = toggleDref,
-		["instancecnt"] = 1,
-		["instances"] = {
-			[0] = {
-				["drefStatus"] = { ["name"] = "sim/cockpit/electrical/cockpit_lights", ["index"] = 0 },
-				["dataref"] = { ["name"] = "sim/cockpit/electrical/cockpit_lights", ["index"] = 0 },
-				["commands"] = { "" }
-			}
-		}
-	},
-	-- Instrument Lights
-	["instruments"] = {
-		["type"] = typeOnOffTgl,
-		["cmddref"] = actWithDref,
-		["status"] = statusDref,
-		["toggle"] = toggleDref,
-		["instancecnt"] = 1,
-		["instances"] = {
-			[0] = {
-				["drefStatus"] = { ["name"] = "sim/cockpit2/switches/instrument_brightness_ratio", ["index"] = 0 },
-				["dataref"] = { ["name"] = "sim/cockpit2/switches/instrument_brightness_ratio", ["index"] = 0 },
-				["commands"] = { "" }
-			}
-		}
-	}
-}	
+----------- Switches
 
-sysLights.Annunciators = {
-	-- annunciator to mark any landing lights on
-	["landinglights"] = { 
-		["type"] = typeAnnunciator,
-		["cmddref"] = actNone,
-		["status"] = statusCustom,
-		["toggle"] = toggleNone,
-		["instancecnt"] = 1,
-		["instances"] = {
-			[0] = {
-				["drefStatus"] = { ["name"] = "", ["index"] = 0 },
-				["customdref"] = function () 
-						if get(drefLandingLights,0) > 0 or get(drefLandingLights,1) > 0  or get(drefLandingLights,2) > 0 or get(drefLandingLights,3) > 0 then
-							return 1
-						else
-							return 0
-						end
-					end,
-				["dataref"] = { "" },
-				["commands"] = { "" }
-			}		
-		}
-	},
-	-- Beacons or Anticollision Light(s) status
-	["beacon"] = {
-		["type"] = typeAnnunciator,
-		["cmddref"] = actNone,
-		["status"] = statusDref,
-		["toggle"] = toggleNone,
-		["instancecnt"] = 1,
-		["instances"] = {
-			[0] = {
-				["drefStatus"] = { ["name"] = "sim/cockpit/electrical/beacon_lights_on", ["index"] = 0 },
-				["dataref"] = { "" },
-				["commands"] = { "" }
-			}
-		}
-	},
-	-- Position Light(s) status
-	["position"] = {
-		["type"] = typeAnnunciator,
-		["cmddref"] = actNone,
-		["status"] = statusDref,
-		["toggle"] = toggleNone,
-		["instancecnt"] = 1,
-		["instances"] = {
-			[0] = {
-				["drefStatus"] = { ["name"] = "sim/cockpit2/switches/navigation_lights_on", ["index"] = 0 },
-				["dataref"] = { "" },
-				["commands"] = { "" }
-			}
-		}
-	},
-	-- Strobe Light(s) status
-	["strobes"] = {
-		["type"] = typeAnnunciator,
-		["cmddref"] = actNone,
-		["status"] = statusDref,
-		["toggle"] = toggleNone,
-		["instancecnt"] = 1,
-		["instances"] = {
-			[0] = {
-				["drefStatus"] = { ["name"] = "sim/cockpit2/switches/strobe_lights_on", ["index"] = 0 },
-				["dataref"] = { "" },
-				["commands"] = { "" }
-			}
-		}
-	},
-	-- Taxi Light(s) status
-	["taxi"] = {
-		["type"] = typeAnnunciator,
-		["cmddref"] = actNone,
-		["status"] = statusDref,
-		["toggle"] = toggleNone,
-		["instancecnt"] = 1,
-		["instances"] = {
-			[0] = {
-				["drefStatus"] = { ["name"] = "sim/cockpit2/switches/taxi_light_on", ["index"] = 0 },
-				["dataref"] = { "" },
-				["commands"] = { "" }
-			}
-		}
-	},
-	-- Logo Light(s) status
-	["logo"] = {
-		["type"] = typeAnnunciator,
-		["cmddref"] = actNone,
-		["status"] = statusDref,
-		["toggle"] = toggleNone,
-		["instancecnt"] = 1,
-		["instances"] = {
-			[0] = {
-				["drefStatus"] = { ["name"] = "sim/cockpit2/switches/generic_lights_switch", ["index"] = 0 },
-				["dataref"] = { "" },
-				["commands"] = { "" }
-			}
-		}
-	},
-	-- runway turnoff lights
-	["runway"] = { 
-		["type"] = typeAnnunciator,
-		["cmddref"] = actNone,
-		["status"] = statusCustom,
-		["toggle"] = toggleNone,
-		["instancecnt"] = 1,
-		["instances"] = {
-			[0] = {
-				["drefStatus"] = { ["name"] = "", ["index"] = 0 },
-				["customdref"] = function () 
-						if get(drefGenericLights,1) > 0 or get(drefGenericLights,2) > 0 then
-							return 1
-						else
-							return 0
-						end
-					end,
-				["dataref"] = { "" },
-				["commands"] = { "" }
-			}		
-		}
-	},
-	-- Wing Light(s) status
-	["wing"] = {
-		["type"] = typeAnnunciator,
-		["cmddref"] = actNone,
-		["status"] = statusDref,
-		["toggle"] = toggleNone,
-		["instancecnt"] = 1,
-		["instances"] = {
-			[0] = {
-				["drefStatus"] = { ["name"] = drefGenericLights, ["index"] = 3 },
-				["dataref"] = { "" },
-				["commands"] = { "" }
-			}
-		}
-	},
-	-- Wheel well Light(s) status
-	["wheel"] = {
-		["type"] = typeAnnunciator,
-		["cmddref"] = actNone,
-		["status"] = statusDref,
-		["toggle"] = toggleNone,
-		["instancecnt"] = 1,
-		["instances"] = {
-			[0] = {
-				["drefStatus"] = { ["name"] = drefGenericLights, ["index"] = 5 },
-				["dataref"] = { "" },
-				["commands"] = { "" }
-			}
-		}
-	},
-	-- Dome Light(s) status
-	["dome"] = {
-		["type"] = typeAnnunciator,
-		["cmddref"] = actNone,
-		["status"] = statusCustom,
-		["toggle"] = toggleNone,
-		["instancecnt"] = 1,
-		["instances"] = {
-			[0] = {
-				["drefStatus"] = { ["name"] = "", ["index"] = 0 },
-				["customdref"] = function () 
-						if get( "sim/cockpit/electrical/cockpit_lights",0) ~= 0 then
-							return 1
-						else
-							return 0
-						end
-					end,
-				["dataref"] = { "" },
-				["commands"] = { "" }
-			}		
-		}
-	},
-	-- Instrument Light(s) status
-	["instruments"] = {
-		["type"] = typeAnnunciator,
-		["cmddref"] = actNone,
-		["status"] = statusDref,
-		["toggle"] = toggleNone,
-		["instancecnt"] = 1,
-		["instances"] = {
-			[0] = {
-				["drefStatus"] = { ["name"] = "sim/cockpit2/switches/instrument_brightness_ratio", ["index"] = 0 },
-				["dataref"] = { "" },
-				["commands"] = { "" }
-			}
-		}
-	}
-}
+-- Beacons or Anticollision Lights, single, onoff, command driven
+sysLights.beaconSwitch = TwoStateCmdSwitch:new("beacon","sim/cockpit/electrical/beacon_lights_on",0,"sim/lights/beacon_lights_on","sim/lights/beacon_lights_off","sim/lights/beacon_lights_toggle")
 
-function sysLights.setSwitch(element, instance, mode)
-	if instance == -1 then
-		local item = sysLights.Switches[element]
-		instances = item["instancecnt"]
-		for iloop = 0,instances-1 do
-			act(sysLights.Switches,element,iloop,mode)	
-		end
+-- Position Lights, single onoff command driven
+sysLights.positionSwitch = TwoStateCmdSwitch:new("position","sim/cockpit2/switches/navigation_lights_on",0,"sim/lights/nav_lights_on","sim/lights/nav_lights_off","sim/lights/nav_lights_toggle")
+
+-- Strobe Lights, single onoff command driven
+sysLights.strobesSwitch = TwoStateCmdSwitch:new("strobes","sim/cockpit2/switches/strobe_lights_on",0,"sim/lights/strobe_lights_on","sim/lights/strobe_lights_off","sim/lights/strobe_lights_toggle")
+
+-- Taxi/Nose Lights, single onoff command driven
+sysLights.taxiSwitch = TwoStateCmdSwitch:new("taxi","sim/cockpit2/switches/taxi_light_on",0,"sim/lights/taxi_lights_on","sim/lights/taxi_lights_off","sim/lights/taxi_lights_toggle")
+
+-- Landing Lights, single onoff command driven
+sysLights.llRetLeftSwitch = TwoStateDrefSwitch:new("llretleft",drefLandingLights,0)
+sysLights.llRetRightSwitch = TwoStateDrefSwitch:new("llretright",drefLandingLights,1)
+sysLights.llLeftSwitch = TwoStateDrefSwitch:new("llleft",drefLandingLights,2)
+sysLights.llRightSwitch = TwoStateDrefSwitch:new("llright",drefLandingLights,3)
+
+sysLights.landLightGroup = SwitchGroup:new("landinglights")
+sysLights.landLightGroup:addSwitch(sysLights.llRetLeftSwitch)
+sysLights.landLightGroup:addSwitch(sysLights.llRetRightSwitch)
+sysLights.landLightGroup:addSwitch(sysLights.llLeftSwitch)
+sysLights.landLightGroup:addSwitch(sysLights.llRightSwitch)
+
+-- Logo Light
+sysLights.logoSwitch = TwoStateDrefSwitch:new("logo",drefGenericLights,0)
+
+-- RWY Turnoff Lights (2)
+sysLights.rwyLeftSwitch = TwoStateDrefSwitch:new("rwyleft",drefGenericLights,1)
+sysLights.rwyRightSwitch = TwoStateDrefSwitch:new("rwyright",drefGenericLights,2)
+
+sysLights.rwyLightGroup = SwitchGroup:new("runwaylights")
+sysLights.rwyLightGroup:addSwitch(sysLights.rwyLeftSwitch)
+sysLights.rwyLightGroup:addSwitch(sysLights.rwyRightSwitch)
+
+-- Wing Lights
+sysLights.wingSwitch = TwoStateDrefSwitch:new("wing",drefGenericLights,3)
+
+-- Wheel well Lights
+sysLights.wheelSwitch = TwoStateDrefSwitch:new("wheel",drefGenericLights,5)
+
+-- Dome Light
+sysLights.domeLightSwitch = TwoStateDrefSwitch:new("wheel","sim/cockpit/electrical/cockpit_lights",0)
+
+-- Instrument Lights
+sysLights.instr1Light = TwoStateDrefSwitch:new("instr1","sim/cockpit2/switches/instrument_brightness_ratio",0)
+
+sysLights.instrLightGroup = SwitchGroup:new("instrumentlights")
+sysLights.instrLightGroup:addSwitch(sysLights.instr1Light)
+
+--------- Annunciators
+-- annunciator to mark any landing lights on
+sysLights.landingAnc = CustomAnnunciator:new("landinglights",
+function () 
+	if get(drefLandingLights,0) > 0 or get(drefLandingLights,1) > 0  or get(drefLandingLights,2) > 0 or get(drefLandingLights,3) > 0 then
+		return 1
 	else
-		act(sysLights.Switches,element,instance,mode)
+		return 0
 	end
-end
+end)
 
-function sysLights.getMode(element,instance)
-	return status(sysLights.Switches,element,instance)
-end
+-- Beacons or Anticollision Light(s) status
+sysLights.beaconAnc = SimpleAnnunciator:new("beaconlights","sim/cockpit/electrical/beacon_lights_on",0)
 
-function sysLights.getAnnunciator(element,instance)
-	return status(sysLights.Annunciators,element,instance)
-end
+-- Position Light(s) status
+sysLights.positionAnc = SimpleAnnunciator:new("positionlights","sim/cockpit2/switches/navigation_lights_on",0)
+
+-- Strobe Light(s) status
+sysLights.strobesAnc = SimpleAnnunciator:new("strobelights","sim/cockpit2/switches/strobe_lights_on",0)
+
+-- Taxi Light(s) status
+sysLights.taxiAnc = SimpleAnnunciator:new("strobelights","sim/cockpit2/switches/taxi_light_on",0)
+
+-- Logo Light(s) status
+sysLights.logoAnc = SimpleAnnunciator:new("logolights","sim/cockpit2/switches/generic_lights_switch",0)
+
+-- runway turnoff lights
+sysLights.runwayAnc = CustomAnnunciator:new("runwaylights",
+function () 
+	if get(drefGenericLights,1) > 0 or get(drefGenericLights,2) > 0 then
+		return 1
+	else
+		return 0
+	end
+end)
+
+-- Wing Light(s) status
+sysLights.wingAnc = SimpleAnnunciator:new("winglights",drefGenericLights, 3)
+
+-- Wheel well Light(s) status
+sysLights.wheelAnc = SimpleAnnunciator:new("wheellights",drefGenericLights,5)
+
+-- Dome Light(s) status
+sysLights.domeAnc = CustomAnnunciator:new("domelights",
+function () 
+	if get( "sim/cockpit/electrical/cockpit_lights",0) ~= 0 then
+		return 1
+	else
+		return 0
+	end
+end)
+
+-- Instrument Light(s) status
+sysLights.instrumentAnc = SimpleAnnunciator:new("instrumentlights", "sim/cockpit2/switches/instrument_brightness_ratio")
 
 return sysLights

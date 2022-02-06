@@ -1,11 +1,15 @@
 -- B738 airplane (X-Plane 11 default)
 -- aircraft lights specific functionality
 
-require "kpcrew.genutils"
-require "kpcrew.systems.activities"
-
 local sysLights = {
 }
+
+TwoStateDrefSwitch = require "kpcrew.systems.TwoStateDrefSwitch"
+TwoStateCmdSwitch = require "kpcrew.systems.TwoStateCmdSwitch"
+TwoStateCustomSwitch = require "kpcrew.systems.TwoStateCustomSwitch"
+SwitchGroup  = require "kpcrew.systems.SwitchGroup"
+SimpleAnnunciator  = require "kpcrew.systems.SimpleAnnunciator"
+CustomAnnunciator  = require "kpcrew.systems.CustomAnnunciator"
 
 local drefLLRetLeft = "laminar/B738/lights/land_ret_left_pos"
 local drefLLRetRight = "laminar/B738/lights/land_ret_right_pos"
@@ -15,505 +19,146 @@ local drefRWYLeft = "laminar/B738/toggle_switch/rwy_light_left"
 local drefRWYRight = "laminar/B738/toggle_switch/rwy_light_right"
 local drefPanelBright = "laminar/B738/electric/panel_brightness"
 local drefGenericLights = "sim/cockpit2/switches/generic_lights_switch"
-	
-sysLights.Switches = {
-	-- Beacons or Anticollision Lights, single, onoff, command driven
-	["beacon"] = {
-		["type"] = typeOnOffTgl,
-		["cmddref"] = actWithCmd,
-		["status"] = statusDref,
-		["toggle"] = toggleCmd,
-		["instancecnt"] = 1,
-		["instances"] = {
-			[0] = {
-				["drefStatus"] = { ["name"] = "sim/cockpit/electrical/beacon_lights_on", ["index"] = 0 },
-				["dataref"] = { "" },
-				["commands"] = {
-					[modeOff] = "sim/lights/beacon_lights_off",
-					[modeOn] = "sim/lights/beacon_lights_on",
-					[modeToggle] = "sim/lights/beacon_lights_toggle"
-				}
-			}
-		}
-	},
-	-- Position Lights, single onoff command driven
-	["position"] = {
-		["type"] = typeOnOffTgl,
-		["cmddref"] = actWithCmd,
-		["status"] = statusDref,
-		["toggle"] = toggleDref,
-		["instancecnt"] = 1,
-		["instances"] = {
-			[0] = {
-				["drefStatus"] = { ["name"] = "sim/cockpit2/switches/navigation_lights_on", ["index"] = 0 },
-				["dataref"] = { "" },
-				["commands"] = {
-					[modeOff] =	"laminar/B738/toggle_switch/position_light_off",
-					[modeOn] = "laminar/B738/toggle_switch/position_light_steady"
-				}
-			}
-		}
-	},
-	-- Strobe Lights, single onoff command driven
-	["strobes"] = {
-		["type"] = typeOnOffTgl,
-		["cmddref"] = actWithCmd,
-		["status"] = statusDref,
-		["toggle"] = toggleDref,
-		["instancecnt"] = 1,
-		["instances"] = {
-			[0] = {
-				["drefStatus"] = { ["name"] = "sim/cockpit2/switches/navigation_lights_on", ["index"] = 0 },
-				["dataref"] = { "" },
-				["commands"] = {
-					[modeOff] =	"laminar/B738/toggle_switch/position_light_off",
-					[modeOn] = "laminar/B738/toggle_switch/position_light_strobe"
-				}
-			}
-		}
-	},
-	-- Taxi/Nose Lights, single onoff command driven
-	["taxi"] = {
-		["type"] = typeOnOffTgl,
-		["cmddref"] = actWithCmd,
-		["status"] = statusDref,
-		["toggle"] = toggleCmd,
-		["instancecnt"] = 1,
-		["instances"] = {
-			[0] = {
-				["drefStatus"] = { ["name"] = "laminar/B738/toggle_switch/taxi_light_brightness_pos", ["index"] = 0 },
-				["dataref"] = { "" },
-				["commands"] = {
-					[modeOff] =	"laminar/B738/toggle_switch/taxi_light_brightness_off",
-					[modeOn] = "laminar/B738/toggle_switch/taxi_light_brightness_on",
-					[modeToggle] = "laminar/B738/toggle_switch/taxi_light_brigh_toggle"
-				}
-			}
-		}
-	},
-	-- Landing Lights, single onoff command driven
-	["landing"] = {
-		["type"] = typeOnOffTgl,
-		["cmddref"] = actWithCmd,
-		["status"] = statusDref,
-		["toggle"] = toggleDref,
-		["instancecnt"] = 4,
-		["instances"] = {
-			[0] = {
-				["drefStatus"] = { ["name"] = drefLLRetLeft, ["index"] = 0 },
-				["dataref"] = { ["name"] = drefLLRetLeft, ["index"] = 0 },
-				["commands"] = {
-					[modeOff] =	"laminar/B738/switch/land_lights_ret_left_off",
-					[modeOn] = "laminar/B738/switch/land_lights_ret_left_on"
-				}
-			},
-			[1] = {
-				["drefStatus"] = { ["name"] = drefLLRetRight, ["index"] = 0 },
-				["dataref"] = { ["name"] = drefLLRetRight, ["index"] = 0 },
-				["commands"] = {
-					[modeOff] =	"laminar/B738/switch/land_lights_ret_right_off",
-					[modeOn] = "laminar/B738/switch/land_lights_ret_right_on"
-				}
-			},
-			[2] = {
-				["drefStatus"] = { ["name"] = drefLLLeft, ["index"] = 0 },
-				["dataref"] = { ["name"] = drefLLLeft, ["index"] = 0 },
-				["commands"] = {
-					[modeOff] =	"laminar/B738/switch/land_lights_left_off",
-					[modeOn] = "laminar/B738/switch/land_lights_left_on"
-				}
-			},
-			[3] = {
-				["drefStatus"] = { ["name"] = drefLLRight, ["index"] = 0 },
-				["dataref"] = { ["name"] = drefLLRight, ["index"] = 0 },
-				["commands"] = {
-					[modeOff] =	"laminar/B738/switch/land_lights_right_off",
-					[modeOn] = "laminar/B738/switch/land_lights_right_on"
-				}
-			}
-		}
-	},
-	-- Logo Light
-	["logo"] = {
-		["type"] = typeOnOffTgl,
-		["cmddref"] = actWithCmd,
-		["status"] = statusDref,
-		["toggle"] = toggleCmd,
-		["instancecnt"] = 1,
-		["instances"] = {
-			[0] = {
-				["drefStatus"] = { ["name"] = "laminar/B738/toggle_switch/logo_light", ["index"] = 0 },
-				["dataref"] = { "" },
-				["commands"] = {
-					[modeOff] =	"laminar/B738/switch/logo_light_off",
-					[modeOn] = "laminar/B738/switch/logo_light_on",
-					[modeToggle] = "laminar/B738/switch/logo_light_toggle"
-				}
-			}
-		}
-	},
-	-- RWY Turnoff
-	["runway"] = {
-		["type"] = typeOnOffTgl,
-		["cmddref"] = actWithCmd,
-		["status"] = statusDref,
-		["toggle"] = toggleCmd,
-		["instancecnt"] = 2,
-		["instances"] = {
-			[0] = {
-				["drefStatus"] = { ["name"] = drefRWYLeft, ["index"] = 0 },
-				["dataref"] = { "" },
-				["commands"] = {
-					[modeOff] =	"laminar/B738/switch/rwy_light_left_off",
-					[modeOn] = "laminar/B738/switch/rwy_light_left_on",
-					[modeToggle] = "laminar/B738/switch/rwy_light_left_toggle"
-				}
-			},
-			[1] = {
-				["drefStatus"] = { ["name"] = drefRWYRight, ["index"] = 0 },
-				["dataref"] = { "" },
-				["commands"] = {
-					[modeOff] =	"laminar/B738/switch/rwy_light_right_off",
-					[modeOn] = "laminar/B738/switch/rwy_light_right_on",
-					[modeToggle] = "laminar/B738/switch/rwy_light_right_toggle"
-				}
-			}
-		}
-	},
-	-- Wing Lights
-	["wing"] = {
-		["type"] = typeOnOffTgl,
-		["cmddref"] = actWithCmd,
-		["status"] = statusDref,
-		["toggle"] = toggleCmd,
-		["instancecnt"] = 1,
-		["instances"] = {
-			[0] = {
-				["drefStatus"] = { ["name"] = "sim/cockpit2/switches/generic_lights_switch", ["index"] = 0 },
-				["dataref"] = { "" },
-				["commands"] = {
-					[modeOff] 	 = "laminar/B738/switch/wing_light_off",
-					[modeOn] 	 = "laminar/B738/switch/wing_light_on",
-					[modeToggle] = "laminar/B738/switch/wing_light_toggle"
-				}
-			}
-		}
-	},	-- Wheel well Lights
-	["wheel"] = {
-		["type"] = typeOnOffTgl,
-		["cmddref"] = actWithDref,
-		["status"] = statusDref,
-		["toggle"] = toggleDref,
-		["instancecnt"] = 1,
-		["instances"] = {
-			[0] = {
-				["drefStatus"] = { ["name"] = "sim/cockpit2/switches/generic_lights_switch", ["index"] = 5 },
-				["dataref"] = { ["name"] = "sim/cockpit2/switches/generic_lights_switch", ["index"] = 5 },
-				["commands"] = { "" }
-			}
-		}
-	},
-	-- Dome Light
-	["dome"] = {
-		["type"] = typeOnOffTgl,
-		["cmddref"] = actCustom,
-		["status"] = statusDref,
-		["toggle"] = toggleDref,
-		["instancecnt"] = 1,
-		["instances"] = {
-			[0] = {
-				["drefStatus"] = { ["name"] = "laminar/B738/toggle_switch/cockpit_dome_pos", ["index"] = 0 },
-				["dataref"] = { "" },
-				["commands"] = {
-					[cmdUp] = "laminar/B738/toggle_switch/cockpit_dome_up",
-					[cmdDown] = "laminar/B738/toggle_switch/cockpit_dome_dn"
-				},
-				["customcmd"] = {
-					[modeOff] =	function ()
-						local cmdup = sysLights.Switches["dome"]["instances"][0]["commands"][cmdUp]
-						local cmddwn = sysLights.Switches["dome"]["instances"][0]["commands"][cmdDown]
-						command_once(cmdup)
-						command_once(cmdup)
-						command_once(cmddwn)
-					end,
-					[modeOn] = function () 
-						local cmdup = sysLights.Switches["dome"]["instances"][0]["commands"][cmdUp]
-						local cmddwn = sysLights.Switches["dome"]["instances"][0]["commands"][cmdDown]
-						command_once(cmddwn)
-						command_once(cmddwn)
-					end
-				}
-			}
-		}
-	},
-	-- Instrument Lights
-	["instruments"] = {
-		["type"] = typeOnOffTgl,
-		["cmddref"] = actWithDref,
-		["status"] = statusDref,
-		["toggle"] = toggleDref,
-		["instancecnt"] = 4,
-		["instances"] = {
-			[0] = {
-				["drefStatus"] = { ["name"] = drefPanelBright, ["index"] = 0 },
-				["dataref"] = { ["name"] = drefPanelBright, ["index"] = 0 },
-				["commands"] = { "" }
-			},
-			[1] = {
-				["drefStatus"] = { ["name"] = drefPanelBright, ["index"] = 1 },
-				["dataref"] = { ["name"] = drefPanelBright, ["index"] = 1 },
-				["commands"] = { "" }
-			},
-			[2] = {
-				["drefStatus"] = { ["name"] = drefPanelBright, ["index"] = 2 },
-				["dataref"] = { ["name"] = drefPanelBright, ["index"] = 2 },
-				["commands"] = { "" }
-			},
-			[3] = {
-				["drefStatus"] = { ["name"] = drefPanelBright, ["index"] = 3 },
-				["dataref"] = { ["name"] = drefPanelBright, ["index"] = 3 },
-				["commands"] = { "" }
-			},
-			[4] = {
-				["drefStatus"] = { ["name"] = drefGenericLights, ["index"] = 6 },
-				["dataref"] = { ["name"] = drefGenericLights, ["index"] = 6 },
-				["commands"] = { "" }
-			},
-			[5] = {
-				["drefStatus"] = { ["name"] = drefGenericLights, ["index"] = 7 },
-				["dataref"] = { ["name"] = drefGenericLights, ["index"] = 7 },
-				["commands"] = { "" }
-			},
-			[6] = {
-				["drefStatus"] = { ["name"] = drefGenericLights, ["index"] = 8 },
-				["dataref"] = { ["name"] = drefGenericLights, ["index"] = 8 },
-				["commands"] = { "" }
-			}
-		}
-	}
-}
 
-sysLights.Annunciators = {
-	-- annunciator to mark any landing lights on
-	["landinglights"] = { 
-		["type"] = typeAnnunciator,
-		["cmddref"] = actNone,
-		["status"] = statusCustom,
-		["toggle"] = toggleNone,
-		["instancecnt"] = 1,
-		["instances"] = {
-			[0] = {
-				["drefStatus"] = { ["name"] = "", ["index"] = 0 },
-				["customdref"] = function () 
-						if get(drefLLLeft) > 0 or get(drefLLRight) > 0  or get(drefLLRetRight) > 0 or get(drefLLRetRight) > 0 then
-							return 1
-						else
-							return 0
-						end
-					end,
-				["dataref"] = { "" },
-				["commands"] = { "" }
-			}		
-		}
-	},
-	-- Beacons or Anticollision Light(s) status
-	["beacon"] = {
-		["type"] = typeAnnunciator,
-		["cmddref"] = actNone,
-		["status"] = statusDref,
-		["toggle"] = toggleNone,
-		["instancecnt"] = 1,
-		["instances"] = {
-			[0] = {
-				["drefStatus"] = { ["name"] = "sim/cockpit/electrical/beacon_lights_on", ["index"] = 0 },
-				["dataref"] = { "" },
-				["commands"] = { "" }
-			}
-		}
-	},
-	-- Position Light(s) status
-	["position"] = {
-		["type"] = typeAnnunciator,
-		["cmddref"] = actNone,
-		["status"] = statusDref,
-		["toggle"] = toggleNone,
-		["instancecnt"] = 1,
-		["instances"] = {
-			[0] = {
-				["drefStatus"] = { ["name"] = "sim/cockpit2/switches/navigation_lights_on", ["index"] = 0 },
-				["dataref"] = { "" },
-				["commands"] = { "" }
-			}
-		}
-	},
-	-- Strobe Light(s) status
-	["strobes"] = {
-		["type"] = typeAnnunciator,
-		["cmddref"] = actNone,
-		["status"] = statusDref,
-		["toggle"] = toggleNone,
-		["instancecnt"] = 1,
-		["instances"] = {
-			[0] = {
-				["drefStatus"] = { ["name"] = "sim/cockpit2/switches/navigation_lights_on", ["index"] = 0 },
-				["dataref"] = { "" },
-				["commands"] = { "" }
-			}
-		}
-	},
-	-- Taxi Light(s) status
-	["taxi"] = {
-		["type"] = typeAnnunciator,
-		["cmddref"] = actNone,
-		["status"] = statusCustom,
-		["toggle"] = toggleNone,
-		["instancecnt"] = 1,
-		["instances"] = {
-			[0] = {
-				["drefStatus"] = { ["name"] = "", ["index"] = 0 },
-				["customdref"] = function () 
-						if get("laminar/B738/toggle_switch/taxi_light_brightness_pos") > 0 then
-							return 1
-						else
-							return 0
-						end
-					end,
-				["dataref"] = { "" },
-				["commands"] = { "" }
-			}		
-		}
-	},
-	-- Logo Light(s) status
-	["logo"] = {
-		["type"] = typeAnnunciator,
-		["cmddref"] = actNone,
-		["status"] = statusDref,
-		["toggle"] = toggleNone,
-		["instancecnt"] = 1,
-		["instances"] = {
-			[0] = {
-				["drefStatus"] = { ["name"] = "laminar/B738/toggle_switch/logo_light", ["index"] = 0 },
-				["dataref"] = { "" },
-				["commands"] = { "" }
-			}
-		}
-	},
-	-- runway turnoff lights
-	["runway"] = { 
-		["type"] = typeAnnunciator,
-		["cmddref"] = actNone,
-		["status"] = statusCustom,
-		["toggle"] = toggleNone,
-		["instancecnt"] = 1,
-		["instances"] = {
-			[0] = {
-				["drefStatus"] = { ["name"] = "", ["index"] = 0 },
-				["customdref"] = function () 
-						if get(drefRWYLeft) > 0 or get(drefRWYRight) > 0 then
-							return 1
-						else
-							return 0
-						end
-					end,
-				["dataref"] = { "" },
-				["commands"] = { "" }
-			}		
-		}
-	},
-	-- Wing Light(s) status
-	["wing"] = {
-		["type"] = typeAnnunciator,
-		["cmddref"] = actNone,
-		["status"] = statusDref,
-		["toggle"] = toggleNone,
-		["instancecnt"] = 1,
-		["instances"] = {
-			[0] = {
-				["drefStatus"] = { ["name"] = "sim/cockpit2/switches/generic_lights_switch", ["index"] = 0 },
-				["dataref"] = { "" },
-				["commands"] = { "" }
-			}
-		}
-	},
-	-- Wheel well Light(s) status
-	["wheel"] = {
-		["type"] = typeAnnunciator,
-		["cmddref"] = actNone,
-		["status"] = statusDref,
-		["toggle"] = toggleNone,
-		["instancecnt"] = 1,
-		["instances"] = {
-			[0] = {
-				["drefStatus"] = { ["name"] = "sim/cockpit2/switches/generic_lights_switch", ["index"] = 5 },
-				["dataref"] = { "" },
-				["commands"] = { "" }
-			}
-		}
-	},
-	-- Dome Light(s) status
-	["dome"] = {
-		["type"] = typeAnnunciator,
-		["cmddref"] = actNone,
-		["status"] = statusCustom,
-		["toggle"] = toggleNone,
-		["instancecnt"] = 1,
-		["instances"] = {
-			[0] = {
-				["drefStatus"] = { ["name"] = "", ["index"] = 0 },
-				["customdref"] = function () 
-						if get( "laminar/B738/toggle_switch/cockpit_dome_pos",0) ~= 0 then
-							return 1
-						else
-							return 0
-						end
-					end,
-				["dataref"] = { "" },
-				["commands"] = { "" }
-			}		
-		}
-	},
-	-- Instrument Light(s) status
-	["instruments"] = {
-		["type"] = typeAnnunciator,
-		["cmddref"] = actNone,
-		["status"] = statusCustom,
-		["toggle"] = toggleNone,
-		["instancecnt"] = 1,
-		["instances"] = {
-			[0] = {
-				["drefStatus"] = { ["name"] = "", ["index"] = 0 },
-				["customdref"] = function () 
-						if get(drefPanelBright,0) > 0 or get(drefPanelBright,1) > 0  or get(drefPanelBright,2) > 0  or get(drefPanelBright,3) > 0 or get(drefGenericLights,6) > 0  or get(drefGenericLights,7) > 0  or get(drefGenericLights,8) > 0 then
-							return 1
-						else
-							return 0
-						end
-					end,
-				["dataref"] = { "" },
-				["commands"] = { "" }
-			}		
-		}
-	}
-}
+-- Beacons or Anticollision Lights, single, onoff, command driven
+sysLights.beaconSwitch = TwoStateCmdSwitch:new("beacon","sim/cockpit/electrical/beacon_lights_on",0,"sim/lights/beacon_lights_on","sim/lights/beacon_lights_off","sim/lights/beacon_lights_toggle")
 
-function sysLights.setSwitch(element, instance, mode)
-	if instance == -1 then
-		local item = sysLights.Switches[element]
-		instances = item["instancecnt"]
-		for iloop = 0,instances-1 do
-			act(sysLights.Switches,element,iloop,mode)	
-		end
+-- Position Lights, single onoff command driven
+sysLights.positionSwitch = TwoStateCmdSwitch:new("position","sim/cockpit2/switches/navigation_lights_on",0,"laminar/B738/toggle_switch/position_light_steady","laminar/B738/toggle_switch/position_light_off","nocommand")
+
+-- Strobe Lights, single onoff command driven
+sysLights.strobesSwitch = TwoStateCmdSwitch:new("strobes","sim/cockpit2/switches/navigation_lights_on",0,"laminar/B738/toggle_switch/position_light_strobe","laminar/B738/toggle_switch/position_light_off","nocommand")
+
+-- Taxi/Nose Lights, single onoff command driven
+sysLights.taxiSwitch = TwoStateCmdSwitch:new("taxi","laminar/B738/toggle_switch/taxi_light_brightness_pos",0,"laminar/B738/toggle_switch/taxi_light_brightness_on","laminar/B738/toggle_switch/taxi_light_brightness_off","laminar/B738/toggle_switch/taxi_light_brigh_toggle")
+
+-- Landing Lights, single onoff command driven
+sysLights.llRetLeftSwitch = TwoStateCmdSwitch:new("llretleft",drefLLRetLeft,0,"laminar/B738/switch/land_lights_ret_left_on","laminar/B738/switch/land_lights_ret_left_off","nocommand")
+sysLights.llRetRightSwitch = TwoStateCmdSwitch:new("llretright",drefLLRetRight,0,"laminar/B738/switch/land_lights_ret_right_on","laminar/B738/switch/land_lights_ret_right_off","nocommand")
+sysLights.llLeftSwitch = TwoStateCmdSwitch:new("llleft",drefLLLeft,0,"laminar/B738/switch/land_lights_left_on","laminar/B738/switch/land_lights_left_off","nocommand")
+sysLights.llRightSwitch = TwoStateCmdSwitch:new("llright",drefLLRight,0,"laminar/B738/switch/land_lights_right_on","laminar/B738/switch/land_lights_right_off","nocommand")
+
+sysLights.landLightGroup = SwitchGroup:new("landinglights")
+sysLights.landLightGroup:addSwitch(sysLights.llRetLeftSwitch)
+sysLights.landLightGroup:addSwitch(sysLights.llRetRightSwitch)
+sysLights.landLightGroup:addSwitch(sysLights.llLeftSwitch)
+sysLights.landLightGroup:addSwitch(sysLights.llRightSwitch)
+
+-- Logo Light
+sysLights.logoSwitch = TwoStateCmdSwitch:new("logo","laminar/B738/toggle_switch/logo_light",0,"laminar/B738/switch/logo_light_on","laminar/B738/switch/logo_light_off","laminar/B738/switch/logo_light_toggle")
+
+-- RWY Turnoff Lights (2)
+sysLights.rwyLeftSwitch = TwoStateCmdSwitch:new("rwyleft",drefRWYLeft,0,"laminar/B738/switch/rwy_light_left_on","laminar/B738/switch/rwy_light_left_off","laminar/B738/switch/rwy_light_left_toggle")
+sysLights.rwyRightSwitch = TwoStateCmdSwitch:new("rwyright",drefRWYRight,0,"laminar/B738/switch/rwy_light_right_on","laminar/B738/switch/rwy_light_right_off","laminar/B738/switch/rwy_light_right_toggle")
+
+sysLights.rwyLightGroup = SwitchGroup:new("runwaylights")
+sysLights.rwyLightGroup:addSwitch(sysLights.rwyLeftSwitch)
+sysLights.rwyLightGroup:addSwitch(sysLights.rwyRightSwitch)
+
+-- Wing Lights
+sysLights.wingSwitch = TwoStateCmdSwitch:new("wing",drefGenericLights,0,"laminar/B738/switch/wing_light_on","laminar/B738/switch/wing_light_off","laminar/B738/switch/wing_light_toggle")
+
+-- Wheel well Lights
+sysLights.wheelSwitch = TwoStateDrefSwitch:new("wheel",drefGenericLights,5)
+
+-- Dome Light
+sysLights.domeLightSwitch = TwoStateCustomSwitch:new("dome","laminar/B738/toggle_switch/cockpit_dome_pos",0,
+function ()
+	command_once("laminar/B738/toggle_switch/cockpit_dome_dn")
+	command_once("laminar/B738/toggle_switch/cockpit_dome_dn")
+end,
+function ()
+	command_once("laminar/B738/toggle_switch/cockpit_dome_up")
+	command_once("laminar/B738/toggle_switch/cockpit_dome_up")
+	command_once("laminar/B738/toggle_switch/cockpit_dome_dn")
+end,
+nil)
+
+-- Instrument Lights
+sysLights.instr1Light = TwoStateDrefSwitch:new("instr1",drefPanelBright,0)
+sysLights.instr2Light = TwoStateDrefSwitch:new("instr2",drefPanelBright,1)
+sysLights.instr3Light = TwoStateDrefSwitch:new("instr3",drefPanelBright,2)
+sysLights.instr4Light = TwoStateDrefSwitch:new("instr4",drefPanelBright,3)
+sysLights.instr5Light = TwoStateDrefSwitch:new("instr5",drefGenericLights,6)
+sysLights.instr6Light = TwoStateDrefSwitch:new("instr6",drefGenericLights,7)
+sysLights.instr7Light = TwoStateDrefSwitch:new("instr7",drefGenericLights,8)
+
+sysLights.instrLightGroup = SwitchGroup:new("instrumentlights")
+sysLights.instrLightGroup:addSwitch(sysLights.instr1Light)
+sysLights.instrLightGroup:addSwitch(sysLights.instr2Light)
+sysLights.instrLightGroup:addSwitch(sysLights.instr3Light)
+sysLights.instrLightGroup:addSwitch(sysLights.instr4Light)
+sysLights.instrLightGroup:addSwitch(sysLights.instr5Light)
+sysLights.instrLightGroup:addSwitch(sysLights.instr6Light)
+sysLights.instrLightGroup:addSwitch(sysLights.instr7Light)
+
+--------- Annunciators
+-- annunciator to mark any landing lights on
+sysLights.landingAnc = CustomAnnunciator:new("landinglights",
+function () 
+	if get(drefLLLeft) > 0 or get(drefLLRight) > 0  or get(drefLLRetRight) > 0 or get(drefLLRetRight) > 0 then
+		return 1
 	else
-		act(sysLights.Switches,element,instance,mode)
+		return 0
 	end
-end
+end)
 
-function sysLights.getMode(element,instance)
-	return status(sysLights.Switches,element,instance)
-end
+-- Beacons or Anticollision Light(s) status
+sysLights.beaconAnc = SimpleAnnunciator:new("beaconlights","sim/cockpit/electrical/beacon_lights_on",0)
 
-function sysLights.getAnnunciator(element,instance)
-	return status(sysLights.Annunciators,element,instance)
-end
+-- Position Light(s) status
+sysLights.positionAnc = SimpleAnnunciator:new("positionlights","sim/cockpit2/switches/navigation_lights_on",0)
+
+-- Strobe Light(s) status
+sysLights.strobesAnc = SimpleAnnunciator:new("strobelights","sim/cockpit2/switches/navigation_lights_on",0)
+
+-- Taxi Light(s) status
+sysLights.taxiAnc = CustomAnnunciator:new("taxilights",
+function () 
+	if get("laminar/B738/toggle_switch/taxi_light_brightness_pos") > 0 then
+		return 1
+	else
+		return 0
+	end
+end)
+
+-- Logo Light(s) status
+sysLights.logoAnc = SimpleAnnunciator:new("logolights","laminar/B738/toggle_switch/logo_light",0)
+
+-- runway turnoff lights
+sysLights.runwayAnc = CustomAnnunciator:new("runwaylights",
+function () 
+	if get(drefRWYLeft) > 0 or get(drefRWYRight) > 0 then
+		return 1
+	else
+		return 0
+	end
+end)
+
+-- Wing Light(s) status
+sysLights.wingAnc = SimpleAnnunciator:new("winglights",drefGenericLights,0)
+
+-- Wheel well Light(s) status
+sysLights.wheelAnc = SimpleAnnunciator:new("wheellights",drefGenericLights,5)
+
+-- Dome Light(s) status
+sysLights.domeAnc = CustomAnnunciator:new("domelights",
+function () 
+	if get( "laminar/B738/toggle_switch/cockpit_dome_pos",0) ~= 0 then
+		return 1
+	else
+		return 0
+	end
+end)
+
+-- Instrument Light(s) status
+sysLights.instrumentAnc = CustomAnnunciator:new("instrumentlights",
+function () 
+	if get(drefPanelBright,0) > 0 or get(drefPanelBright,1) > 0  or get(drefPanelBright,2) > 0  or get(drefPanelBright,3) > 0 or get(drefGenericLights,6) > 0  or get(drefGenericLights,7) > 0  or get(drefGenericLights,8) > 0 then
+		return 1
+	else
+		return 0
+	end
+end)
 
 return sysLights
