@@ -2,7 +2,9 @@
 local Switch = {
 	modeOn = 1,
 	modeOff = 0,
-	modeToggle = 2
+	modeToggle = 2,
+	decrease = 0,
+	increase = 1
 }
 
 local utils = require "kpcrew.genutils"
