@@ -1,11 +1,18 @@
 -- DFLT airplane 
 -- MCP functionality
 
-require "kpcrew.genutils"
-require "kpcrew.systems.activities"
-
 local sysMCP = {
 }
+
+TwoStateDrefSwitch = require "kpcrew.systems.TwoStateDrefSwitch"
+TwoStateCmdSwitch = require "kpcrew.systems.TwoStateCmdSwitch"
+TwoStateCustomSwitch = require "kpcrew.systems.TwoStateCustomSwitch"
+SwitchGroup  = require "kpcrew.systems.SwitchGroup"
+SimpleAnnunciator = require "kpcrew.systems.SimpleAnnunciator"
+CustomAnnunciator = require "kpcrew.systems.CustomAnnunciator"
+TwoStateToggleSwitch = require "kpcrew.systems.TwoStateToggleSwitch"
+MultiStateCmdSwitch = require "kpcrew.systems.MultiStateCmdSwitch"
+InopSwitch = require "kpcrew.systems.InopSwitch"
 
 local drefVORLocLight = "sim/cockpit2/autopilot/nav_status"
 local drefLNAVLight = "sim/cockpit2/radios/actuators/HSI_source_select_pilot"
@@ -13,353 +20,83 @@ local drefSPDLight = "sim/cockpit2/autopilot/autothrottle_on"
 local drefVSLight = "sim/cockpit2/autopilot/vvi_status"
 local drefVNAVLight = "sim/cockpit2/autopilot/fms_vnav"
 
-sysMCP.Switches = {
-	["fdir"] = {
-		["type"] = typeOnOffTgl,
-		["cmddref"] = actTglCmd,
-		["status"] = statusNone,
-		["toggle"] = toggleNone,
-		["instancecnt"] = 1,
-		["instances"] = {
-			[0] = {
-				["drefStatus"] = { ["name"] = "sim/cockpit2/annunciators/flight_director", ["index"] = 0 },
-				["dataref"] = { "" },
-				["commands"] = { 
-					[modeToggle] = "sim/autopilot/fdir_toggle" 
-				}
-			}		
-		}
-	},
-	["hdgsel"] = {
-		["type"] = typeOnOffTgl,
-		["cmddref"] = actTglCmd,
-		["status"] = statusNone,
-		["toggle"] = toggleNone,
-		["instancecnt"] = 1,
-		["instances"] = {
-			[0] = {
-				["drefStatus"] = { ["name"] = "sim/cockpit/autopilot/heading_mode", ["index"] = 0 },
-				["dataref"] = { "" },
-				["commands"] = { 
-					[modeToggle] = "sim/autopilot/heading" 
-				}
-			}		
-		}
-	},
-	["vorloc"] = {
-		["type"] = typeOnOffTgl,
-		["cmddref"] = actTglCmd,
-		["status"] = statusNone,
-		["toggle"] = toggleNone,
-		["instancecnt"] = 1,
-		["instances"] = {
-			[0] = {
-				["drefStatus"] = { ["name"] = drefVORLocLight, ["index"] = 0 },
-				["dataref"] = { "" },
-				["commands"] = { 
-					[modeToggle] = "sim/autopilot/NAV" 
-				}
-			}		
-		}
-	},
-	["althold"] = {
-		["type"] = typeOnOffTgl,
-		["cmddref"] = actTglCmd,
-		["status"] = statusNone,
-		["toggle"] = toggleNone,
-		["instancecnt"] = 1,
-		["instances"] = {
-			[0] = {
-				["drefStatus"] = { ["name"] = "sim/cockpit2/autopilot/altitude_hold_status", ["index"] = 0 },
-				["dataref"] = { "" },
-				["commands"] = { 
-					[modeToggle] = "sim/autopilot/altitude_hold" 
-				}
-			}		
-		}
-	},
-	["approach"] = {
-		["type"] = typeOnOffTgl,
-		["cmddref"] = actTglCmd,
-		["status"] = statusNone,
-		["toggle"] = toggleNone,
-		["instancecnt"] = 1,
-		["instances"] = {
-			[0] = {
-				["drefStatus"] = { ["name"] = "sim/cockpit2/autopilot/approach_status", ["index"] = 0 },
-				["dataref"] = { "" },
-				["commands"] = { 
-					[modeToggle] = "sim/autopilot/approach" 
-				}
-			}		
-		}
-	},
-	["vs"] = {
-		["type"] = typeOnOffTgl,
-		["cmddref"] = actTglCmd,
-		["status"] = statusNone,
-		["toggle"] = toggleNone,
-		["instancecnt"] = 1,
-		["instances"] = {
-			[0] = {
-				["drefStatus"] = { ["name"] = drefVSLight, ["index"] = 0 },
-				["dataref"] = { "" },
-				["commands"] = { 
-					[modeToggle] = "sim/autopilot/vertical_speed" 
-				}
-			}		
-		}
-	},
-	["speed"] = {
-		["type"] = typeOnOffTgl,
-		["cmddref"] = actTglCmd,
-		["status"] = statusNone,
-		["toggle"] = toggleNone,
-		["instancecnt"] = 1,
-		["instances"] = {
-			[0] = {
-				["drefStatus"] = { ["name"] = drefSPDLight, ["index"] = 0 },
-				["dataref"] = { "" },
-				["commands"] = { 
-					[modeToggle] = "sim/autopilot/autothrottle_toggle" 
-				}
-			}		
-		}
-	},
-	["autopilot"] = {
-		["type"] = typeOnOffTgl,
-		["cmddref"] = actTglCmd,
-		["status"] = statusNone,
-		["toggle"] = toggleNone,
-		["instancecnt"] = 1,
-		["instances"] = {
-			[0] = {
-				["drefStatus"] = { ["name"] = "sim/cockpit/autopilot/autopilot_mode", ["index"] = 0 },
-				["dataref"] = { "" },
-				["commands"] = { 
-					[modeToggle] = "sim/autopilot/servos_toggle" 
-				}
-			}		
-		}
-	},
-	["backcourse"] = {
-		["type"] = typeInop,
-		["cmddref"] = actNone,
-		["status"] = statusNone,
-		["toggle"] = toggleNone,
-		["instancecnt"] = 1,
-		["instances"] = {
-			[0] = {
-				["drefStatus"] = { "" },
-				["dataref"] = { "" },
-				["commands"] = { ""	}
-			}		
-		}
-	},
-	["togapress"] = {
-		["type"] = typeOnOffTgl,
-		["cmddref"] = actTglCmd,
-		["status"] = statusNone,
-		["toggle"] = toggleNone,
-		["instancecnt"] = 1,
-		["instances"] = {
-			[0] = {
-				["drefStatus"] = { ["name"] = "sim/cockpit2/autopilot/TOGA_status", ["index"] = 0 },
-				["dataref"] = { "" },
-				["commands"] = { 
-					[modeToggle] = "sim/autopilot/take_off_go_around" 
-				}
-			}		
-		}
-	},
-	["autothrottle"] = {
-		["type"] = typeOnOffTgl,
-		["cmddref"] = actTglCmd,
-		["status"] = statusNone,
-		["toggle"] = toggleNone,
-		["instancecnt"] = 1,
-		["instances"] = {
-			[0] = {
-				["drefStatus"] = { ["name"] = "sim/cockpit2/autopilot/autothrottle_enabled", ["index"] = 0 },
-				["dataref"] = { "" },
-				["commands"] = { 
-					[modeToggle] = "sim/autopilot/autothrottle_toggle" 
-				}
-			}		
-		}
-	}
-}
+--------- Switches
 
-sysMCP.Annunciators = {
-	-- Flight Directors annunciator
-	["fdiranc"] = {
-		["type"] = typeAnnunciator,
-		["cmddref"] = actNone,
-		["status"] = statusDref,
-		["toggle"] = toggleNone,
-		["instancecnt"] = 1,
-		["instances"] = {
-			[0] = {
-				["drefStatus"] = { ["name"] = "sim/cockpit2/annunciators/flight_director", ["index"] = 0 },
-				["dataref"] = { "" },
-				["commands"] = { "" }
-			}		
-		}
-	},  
-	-- HDG Select/mode annunciator
-	["hdganc"] = {
-		["type"] = typeAnnunciator,
-		["cmddref"] = actNone,
-		["status"] = statusDref,
-		["toggle"] = toggleNone,
-		["instancecnt"] = 1,
-		["instances"] = {
-			[0] = {
-				["drefStatus"] = { ["name"] = "sim/cockpit2/autopilot/heading_mode", ["index"] = 0 },
-				["dataref"] = { "" },
-				["commands"] = { "" }
-			}		
-		}
-	},
-	-- NAV mode annunciator
-	["navanc"] = {
-		["type"] = typeAnnunciator,
-		["cmddref"] = actNone,
-		["status"] = statusCustom,
-		["toggle"] = toggleNone,
-		["instancecnt"] = 1,
-		["instances"] = {
-			[0] = {
-				["drefStatus"] = { ["name"] = "", ["index"] = 0 },
-				["customdref"] = function () 
-						if get(drefVORLocLight) > 0 or get(drefLNAVLight) > 0 then
-							return 1
-						else
-							return 0
-						end
-					end,
-				["dataref"] = { "" },
-				["commands"] = { "" }
-			}		
-		}
-	},
-	-- APR Select/mode annunciator
-	["apranc"] = {
-		["type"] = typeAnnunciator,
-		["cmddref"] = actNone,
-		["status"] = statusDref,
-		["toggle"] = toggleNone,
-		["instancecnt"] = 1,
-		["instances"] = {
-			[0] = {
-				["drefStatus"] = { ["name"] = "sim/cockpit2/autopilot/approach_status", ["index"] = 0 },
-				["dataref"] = { "" },
-				["commands"] = { "" }
-			}		
-		}
-	},
-	-- SPD mode annunciator
-	["spdanc"] = {
-		["type"] = typeAnnunciator,
-		["cmddref"] = actNone,
-		["status"] = statusDref,
-		["toggle"] = toggleNone,
-		["instancecnt"] = 1,
-		["instances"] = {
-			[0] = {
-				["drefStatus"] = { ["name"] = "sim/cockpit2/autopilot/autothrottle_on", ["index"] = 0 },
-				["dataref"] = { "" },
-				["commands"] = { "" }
-			}		
-		}
-	},
-	-- Vertical mode annunciator
-	["vspanc"] = {
-		["type"] = typeAnnunciator,
-		["cmddref"] = actNone,
-		["status"] = statusCustom,
-		["toggle"] = toggleNone,
-		["instancecnt"] = 1,
-		["instances"] = {
-			[0] = {
-				["drefStatus"] = { ["name"] = "", ["index"] = 0 },
-				["customdref"] = function () 
-						if get(drefVSLight) > 0 or get(drefVNAVLight) > 0 then
-							return 1
-						else
-							return 0
-						end
-					end,
-				["dataref"] = { "" },
-				["commands"] = { "" }
-			}		
-		}
-	},
-	-- ALT mode annunciator
-	["altanc"] = {
-		["type"] = typeAnnunciator,
-		["cmddref"] = actNone,
-		["status"] = statusDref,
-		["toggle"] = toggleNone,
-		["instancecnt"] = 1,
-		["instances"] = {
-			[0] = {
-				["drefStatus"] = { ["name"] = "sim/cockpit2/autopilot/altitude_hold_status", ["index"] = 0 },
-				["dataref"] = { "" },
-				["commands"] = { "" }
-			}		
-		}
-	},
-	-- A/P mode annunciator
-	["autopilotanc"] = {
-		["type"] = typeAnnunciator,
-		["cmddref"] = actNone,
-		["status"] = statusDref,
-		["toggle"] = toggleNone,
-		["instancecnt"] = 1,
-		["instances"] = {
-			[0] = {
-				["drefStatus"] = { ["name"] = "sim/cockpit2/autopilot/autopilot_on_or_cws", ["index"] = 0 },
-				["dataref"] = { "" },
-				["commands"] = { "" }
-			}		
-		}
-	},
-	-- BC mode annunciator
-	["bcanc"] = {
-		["type"] = typeInop,
-		["cmddref"] = actNone,
-		["status"] = statusDref,
-		["toggle"] = toggleNone,
-		["instancecnt"] = 1,
-		["instances"] = {
-			[0] = {
-				["drefStatus"] = { ["name"] = "", ["index"] = 0 },
-				["dataref"] = { "" },
-				["commands"] = { "" }
-			}		
-		}
-	}
-}
-	
-function sysMCP.setSwitch(element, instance, mode)
-	if instance == -1 then
-		local item = sysMCP.Switches[element]
-		instances = item["instancecnt"]
-		for iloop = 0,instances-1 do
-			act(sysMCP.Switches,element,iloop,mode)	
-		end
+-- Flight Directors
+sysMCP.fdirPilotSwitch = TwoStateToggleSwitch:new("fdir","sim/cockpit2/annunciators/flight_director",0,"sim/autopilot/fdir_toggle")
+
+sysMCP.fdirGroup = SwitchGroup:new("fdirs")
+sysMCP.fdirGroup:addSwitch(sysMCP.fdirPilotSwitch)
+
+-- HDG SEL
+sysMCP.hdgselSwitch = TwoStateToggleSwitch:new("hdgsel","sim/cockpit/autopilot/heading_mode",0,"sim/autopilot/heading")
+
+-- VORLOC
+sysMCP.vorlocSwitch = TwoStateToggleSwitch:new("vorloc",drefVORLocLight,0,"sim/autopilot/NAV")
+
+-- ALTHOLD
+sysMCP.altholdSwitch = TwoStateToggleSwitch:new("althold","sim/cockpit2/autopilot/altitude_hold_status",0,"sim/autopilot/altitude_hold")
+
+-- APPROACH
+sysMCP.approachSwitch = TwoStateToggleSwitch:new("approach","sim/cockpit2/autopilot/approach_status",0,"sim/autopilot/approach")
+
+-- VS
+sysMCP.vsSwitch = TwoStateToggleSwitch:new("vs",drefVSLight,0,"sim/autopilot/vertical_speed")
+
+-- SPEED
+sysMCP.speedSwitch = TwoStateToggleSwitch:new("speed",drefSPDLight,0,"sim/autopilot/autothrottle_toggle")
+
+-- AUTOPILOT
+sysMCP.ap1Switch = TwoStateToggleSwitch:new("autopilot1","sim/cockpit/autopilot/autopilot_mode",0,"sim/autopilot/servos_toggle")
+
+-- BACKCOURSE
+sysMCP.backcourse = InopSwitch:new("backcourse")
+
+-- TOGA
+sysMCP.togaPilotSwitch = TwoStateToggleSwitch:new("togapilot","sim/cockpit2/autopilot/TOGA_status",0,"sim/autopilot/take_off_go_around")
+
+-- ATHR
+sysMCP.athrSwitch = TwoStateToggleSwitch:new("athr","sim/cockpit2/autopilot/autothrottle_enabled",0,"sim/autopilot/autothrottle_toggle")
+
+-- Flight Directors annunciator
+sysMCP.fdirAnc = SimpleAnnunciator:new("fdiranc","sim/cockpit2/annunciators/flight_director",0)
+
+-- HDG Select/mode annunciator
+sysMCP.hdgAnc = SimpleAnnunciator:new("hdganc","sim/cockpit2/autopilot/heading_mode",0)
+
+-- NAV mode annunciator
+sysMCP.navAnc = CustomAnnunciator:new("navanc",
+function () 
+	if get(drefVORLocLight) > 0 or get(drefLNAVLight) > 0 then
+		return 1
 	else
-		act(sysMCP.Switches,element,instance,mode)
+		return 0
 	end
-end
+end)
 
-function sysMCP.getMode(element,instance)
-	return status(sysMCP.Switches,element,instance)
-end
+-- APR Select/mode annunciator
+sysMCP.aprAnc = SimpleAnnunciator:new("apranc","sim/cockpit2/autopilot/approach_status",0)
 
-function sysMCP.getAnnunciator(element,instance)
-	return status(sysMCP.Annunciators,element,instance)
-end
+-- SPD mode annunciator
+sysMCP.spdAnc = SimpleAnnunciator:new("spdanc","sim/cockpit2/autopilot/autothrottle_on",0)
+
+-- Vertical mode annunciator
+sysMCP.vspAnc = CustomAnnunciator:new("vspanc",
+function () 
+	if get(drefVSLight) > 0 or get(drefVNAVLight) > 0 then
+		return 1
+	else
+		return 0
+	end
+end)
+
+-- ALT mode annunciator
+sysMCP.altAnc = SimpleAnnunciator:new("altanc","sim/cockpit2/autopilot/altitude_hold_status",0)
+
+-- A/P mode annunciator
+sysMCP.apAnc = SimpleAnnunciator:new("autopilotanc","sim/cockpit2/autopilot/autopilot_on_or_cws",0)
+
+-- BC mode annunciator
+sysMCP.bcAnc = InopSwitch:new("bc")
 
 return sysMCP

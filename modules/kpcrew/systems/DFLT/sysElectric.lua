@@ -1,66 +1,22 @@
 -- DFLT  airplane 
 -- Electric system functionality
 
-require "kpcrew.genutils"
-require "kpcrew.systems.activities"
-
 local sysElectric = {
 }
 
-sysElectric.Switches = {
-}
+TwoStateDrefSwitch = require "kpcrew.systems.TwoStateDrefSwitch"
+TwoStateCmdSwitch = require "kpcrew.systems.TwoStateCmdSwitch"
+TwoStateCustomSwitch = require "kpcrew.systems.TwoStateCustomSwitch"
+SwitchGroup  = require "kpcrew.systems.SwitchGroup"
+SimpleAnnunciator = require "kpcrew.systems.SimpleAnnunciator"
+CustomAnnunciator = require "kpcrew.systems.CustomAnnunciator"
+TwoStateToggleSwitch = require "kpcrew.systems.TwoStateToggleSwitch"
+MultiStateCmdSwitch = require "kpcrew.systems.MultiStateCmdSwitch"
 
-sysElectric.Annunciators = {
-	-- LOW VOLTAGE annunciator
-	["lowvoltage"] = {
-		["type"] = typeAnnunciator,
-		["cmddref"] = actNone,
-		["status"] = statusDref,
-		["toggle"] = toggleNone,
-		["instancecnt"] = 1,
-		["instances"] = {
-			[0] = {
-				["drefStatus"] = { ["name"] = "sim/cockpit2/annunciators/low_voltage", ["index"] = 0 },
-				["dataref"] = { "" },
-				["commands"] = { "" }
-			}		
-		}
-	},
-	-- APU RUNNING annunciator
-	["apurunning"] = {
-		["type"] = typeAnnunciator,
-		["cmddref"] = actNone,
-		["status"] = statusDref,
-		["toggle"] = toggleNone,
-		["instancecnt"] = 1,
-		["instances"] = {
-			[0] = {
-				["drefStatus"] = { ["name"] = "sim/cockpit2/electrical/APU_running", ["index"] = 0 },
-				["dataref"] = { "" },
-				["commands"] = { "" }
-			}		
-		}
-	}
-}
+-- LOW VOLTAGE annunciator
+sysElectric.lowVoltageAnc = SimpleAnnunciator:new("lowvoltage","sim/cockpit2/annunciators/low_voltage",0)
 
-function sysElectric.setSwitch(element, instance, mode)
-	if instance == -1 then
-		local item = sysElectric.Switches[element]
-		instances = item["instancecnt"]
-		for iloop = 0,instances-1 do
-			act(sysElectric.Switches,element,iloop,mode)	
-		end
-	else
-		act(sysElectric.Switches,element,instance,mode)
-	end
-end
-
-function sysElectric.getMode(element,instance)
-	return status(sysElectric.Switches,element,instance)
-end
-
-function sysElectric.getAnnunciator(element,instance)
-	return status(sysElectric.Annunciators,element,instance)
-end
+-- APU RUNNING annunciator
+sysElectric.apuRunningAnc = SimpleAnnunciator:new("apurunning","sim/cockpit2/electrical/APU_running",0)
 
 return sysElectric

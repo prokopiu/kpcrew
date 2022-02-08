@@ -1,11 +1,18 @@
 -- B738 airplane 
 -- MCP functionality
 
-require "kpcrew.genutils"
-require "kpcrew.systems.activities"
-
 local sysMCP = {
 }
+
+TwoStateDrefSwitch = require "kpcrew.systems.TwoStateDrefSwitch"
+TwoStateCmdSwitch = require "kpcrew.systems.TwoStateCmdSwitch"
+TwoStateCustomSwitch = require "kpcrew.systems.TwoStateCustomSwitch"
+SwitchGroup  = require "kpcrew.systems.SwitchGroup"
+SimpleAnnunciator = require "kpcrew.systems.SimpleAnnunciator"
+CustomAnnunciator = require "kpcrew.systems.CustomAnnunciator"
+TwoStateToggleSwitch = require "kpcrew.systems.TwoStateToggleSwitch"
+MultiStateCmdSwitch = require "kpcrew.systems.MultiStateCmdSwitch"
+InopSwitch = require "kpcrew.systems.InopSwitch"
 
 local drefVORLocLight = "laminar/B738/autopilot/vorloc_status"
 local drefLNAVLight = "laminar/B738/autopilot/lnav_status"
@@ -17,395 +24,110 @@ local drefVNAVLight = "laminar/B738/autopilot/vnav_status1"
 local drefAPStatusLight = "laminar/B738/autopilot/cmd_a_status"
 local drefCMDBLight = "laminar/B738/autopilot/cmd_b_status"
 
-sysMCP.Switches = {
-	["fdir"] = {
-		["type"] = typeOnOffTgl,
-		["cmddref"] = actTglCmd,
-		["status"] = statusNone,
-		["toggle"] = toggleNone,
-		["instancecnt"] = 2,
-		["instances"] = {
-			[0] = {
-				["drefStatus"] = { ["name"] = "laminar/B738/autopilot/flight_director_pos", ["index"] = 0 },
-				["dataref"] = { "" },
-				["commands"] = { 
-					[modeToggle] = "laminar/B738/autopilot/flight_director_toggle" 
-				}
-			},
-			[1] = {
-				["drefStatus"] = { ["name"] = "laminar/B738/autopilot/flight_director_fo_pos", ["index"] = 0 },
-				["dataref"] = { "" },
-				["commands"] = { 
-					[modeToggle] = "laminar/B738/autopilot/flight_director_fo_toggle" 
-				}
-			}		
-		}
-	},
-	["hdgsel"] = {
-		["type"] = typeOnOffTgl,
-		["cmddref"] = actTglCmd,
-		["status"] = statusNone,
-		["toggle"] = toggleNone,
-		["instancecnt"] = 1,
-		["instances"] = {
-			[0] = {
-				["drefStatus"] = { ["name"] = "laminar/B738/autopilot/hdg_sel_status", ["index"] = 0 },
-				["dataref"] = { "" },
-				["commands"] = { 
-					[modeToggle] = "laminar/B738/autopilot/hdg_sel_press" 
-				}
-			}		
-		}
-	},
-	["vorloc"] = {
-		["type"] = typeOnOffTgl,
-		["cmddref"] = actTglCmd,
-		["status"] = statusNone,
-		["toggle"] = toggleNone,
-		["instancecnt"] = 1,
-		["instances"] = {
-			[0] = {
-				["drefStatus"] = { ["name"] = "laminar/B738/autopilot/vorloc_status", ["index"] = 0 },
-				["dataref"] = { "" },
-				["commands"] = { 
-					[modeToggle] = "laminar/B738/autopilot/vorloc_press" 
-				}
-			}		
-		}
-	},
-	["althold"] = {
-		["type"] = typeOnOffTgl,
-		["cmddref"] = actTglCmd,
-		["status"] = statusNone,
-		["toggle"] = toggleNone,
-		["instancecnt"] = 1,
-		["instances"] = {
-			[0] = {
-				["drefStatus"] = { ["name"] = "laminar/B738/autopilot/alt_hld_status", ["index"] = 0 },
-				["dataref"] = { "" },
-				["commands"] = { 
-					[modeToggle] = "laminar/B738/autopilot/alt_hld_press" 
-				}
-			}		
-		}
-	},
-	["approach"] = {
-		["type"] = typeOnOffTgl,
-		["cmddref"] = actTglCmd,
-		["status"] = statusNone,
-		["toggle"] = toggleNone,
-		["instancecnt"] = 1,
-		["instances"] = {
-			[0] = {
-				["drefStatus"] = { ["name"] = "laminar/B738/autopilot/app_status", ["index"] = 0 },
-				["dataref"] = { "" },
-				["commands"] = { 
-					[modeToggle] = "laminar/B738/autopilot/app_press" 
-				}
-			}		
-		}
-	},
-	["vs"] = {
-		["type"] = typeOnOffTgl,
-		["cmddref"] = actTglCmd,
-		["status"] = statusNone,
-		["toggle"] = toggleNone,
-		["instancecnt"] = 1,
-		["instances"] = {
-			[0] = {
-				["drefStatus"] = { ["name"] = "laminar/B738/autopilot/vs_status", ["index"] = 0 },
-				["dataref"] = { "" },
-				["commands"] = { 
-					[modeToggle] = "laminar/B738/autopilot/vs_press" 
-				}
-			}		
-		}
-	},
-	["speed"] = {
-		["type"] = typeOnOffTgl,
-		["cmddref"] = actTglCmd,
-		["status"] = statusNone,
-		["toggle"] = toggleNone,
-		["instancecnt"] = 1,
-		["instances"] = {
-			[0] = {
-				["drefStatus"] = { ["name"] = "laminar/B738/autopilot/speed_status1", ["index"] = 0 },
-				["dataref"] = { "" },
-				["commands"] = { 
-					[modeToggle] = "laminar/B738/autopilot/speed_press" 
-				}
-			}		
-		}
-	},
-	["autopilot"] = {
-		["type"] = typeOnOffTgl,
-		["cmddref"] = actTglCmd,
-		["status"] = statusNone,
-		["toggle"] = toggleNone,
-		["instancecnt"] = 2,
-		["instances"] = {
-			[0] = {
-				["drefStatus"] = { ["name"] = "laminar/B738/autopilot/cmd_a_status", ["index"] = 0 },
-				["dataref"] = { "" },
-				["commands"] = { 
-					[modeToggle] = "laminar/B738/autopilot/cmd_a_press" 
-				}
-			},		
-			[1] = {
-				["drefStatus"] = { ["name"] = "laminar/B738/autopilot/cmd_b_status", ["index"] = 0 },
-				["dataref"] = { "" },
-				["commands"] = { 
-					[modeToggle] = "laminar/B738/autopilot/cmd_b_press" 
-				}
-			}		
-		}
-	},
-	["backcourse"] = {
-		["type"] = typeInop,
-		["cmddref"] = actNone,
-		["status"] = statusNone,
-		["toggle"] = toggleNone,
-		["instancecnt"] = 1,
-		["instances"] = {
-			[0] = {
-				["drefStatus"] = { "" },
-				["dataref"] = { "" },
-				["commands"] = { ""	}
-			}		
-		}
-	},
-	["togapress"] = {
-		["type"] = typeOnOffTgl,
-		["cmddref"] = actTglCmd,
-		["status"] = statusNone,
-		["toggle"] = toggleNone,
-		["instancecnt"] = 2,
-		["instances"] = {
-			[0] = {
-				["drefStatus"] = { ["name"] = "laminar/B738/autopilot/ap_takeoff", ["index"] = 0 },
-				["dataref"] = { "" },
-				["commands"] = { 
-					[modeToggle] = "laminar/B738/autopilot/left_toga_press" 
-				}
-			},		
-			[1] = {
-				["drefStatus"] = { ["name"] = "laminar/B738/autopilot/ap_takeoff", ["index"] = 0 },
-				["dataref"] = { "" },
-				["commands"] = { 
-					[modeToggle] = "laminar/B738/autopilot/right_toga_press" 
-				}
-			}		
-		}
-	},
-	["autothrottle"] = {
-		["type"] = typeOnOffTgl,
-		["cmddref"] = actTglCmd,
-		["status"] = statusNone,
-		["toggle"] = toggleNone,
-		["instancecnt"] = 1,
-		["instances"] = {
-			[0] = {
-				["drefStatus"] = { ["name"] = "laminar/B738/autopilot/autothrottle_status1", ["index"] = 0 },
-				["dataref"] = { "" },
-				["commands"] = { 
-					[modeToggle] = "laminar/B738/autopilot/autothrottle_arm_toggle" 
-				}
-			}		
-		}
-	}
-}
+--------- Switches
 
-sysMCP.Annunciators = {
-	-- Flight Directors annunciator
-	["fdiranc"] = {
-		["type"] = typeAnnunciator,
-		["cmddref"] = actNone,
-		["status"] = statusCustom,
-		["toggle"] = toggleNone,
-		["instancecnt"] = 1,
-		["instances"] = {
-			[0] = {
-				["drefStatus"] = { ["name"] = "", ["index"] = 0 },
-				["customdref"] = function () 
-						if get("laminar/B738/autopilot/flight_director_pos") > 0 or get("laminar/B738/autopilot/flight_director_fo_pos") > 0 then
-							return 1
-						else
-							return 0
-						end
-					end,
-				["dataref"] = { "" },
-				["commands"] = { "" }
-			}		
-		}
-	},
-	-- HDG Select/mode annunciator
-	["hdganc"] = {
-		["type"] = typeAnnunciator,
-		["cmddref"] = actNone,
-		["status"] = statusDref,
-		["toggle"] = toggleNone,
-		["instancecnt"] = 1,
-		["instances"] = {
-			[0] = {
-				["drefStatus"] = { ["name"] = "laminar/B738/autopilot/hdg_sel_status", ["index"] = 0 },
-				["dataref"] = { "" },
-				["commands"] = { "" }
-			}		
-		}
-	},
-	-- NAV mode annunciator
-	["navanc"] = {
-		["type"] = typeAnnunciator,
-		["cmddref"] = actNone,
-		["status"] = statusCustom,
-		["toggle"] = toggleNone,
-		["instancecnt"] = 1,
-		["instances"] = {
-			[0] = {
-				["drefStatus"] = { ["name"] = "", ["index"] = 0 },
-				["customdref"] = function () 
-						if get(drefVORLocLight) > 0 or get(drefLNAVLight) > 0 then
-							return 1
-						else
-							return 0
-						end
-					end,
-				["dataref"] = { "" },
-				["commands"] = { "" }
-			}		
-		}
-	},
-	-- APR Select/mode annunciator
-	["apranc"] = {
-		["type"] = typeAnnunciator,
-		["cmddref"] = actNone,
-		["status"] = statusDref,
-		["toggle"] = toggleNone,
-		["instancecnt"] = 1,
-		["instances"] = {
-			[0] = {
-				["drefStatus"] = { ["name"] = "laminar/B738/autopilot/app_status", ["index"] = 0 },
-				["dataref"] = { "" },
-				["commands"] = { "" }
-			}		
-		}
-	},
-	-- SPD mode annunciator
-	["spdanc"] = {
-		["type"] = typeAnnunciator,
-		["cmddref"] = actNone,
-		["status"] = statusCustom,
-		["toggle"] = toggleNone,
-		["instancecnt"] = 1,
-		["instances"] = {
-			[0] = {
-				["drefStatus"] = { ["name"] = "", ["index"] = 0 },
-				["customdref"] = function () 
-						if get(drefSPDLight) > 0 or get(drefN1Light) > 0 then
-							return 1
-						else
-							return 0
-						end
-					end,
-				["dataref"] = { "" },
-				["commands"] = { "" }
-			}		
-		}
-	},
-	-- Vertical mode annunciator
-	["vspanc"] = {
-		["type"] = typeAnnunciator,
-		["cmddref"] = actNone,
-		["status"] = statusCustom,
-		["toggle"] = toggleNone,
-		["instancecnt"] = 1,
-		["instances"] = {
-			[0] = {
-				["drefStatus"] = { ["name"] = "", ["index"] = 0 },
-				["customdref"] = function () 
-					if get(drefVSLight) > 0 or get(drefLVLCHGLight) > 0 or get(drefVNAVLight) > 0 then
-							return 1
-						else
-							return 0
-						end
-					end,
-				["dataref"] = { "" },
-				["commands"] = { "" }
-			}		
-		}
-	},
-	-- ALT mode annunciator
-	["altanc"] = {
-		["type"] = typeAnnunciator,
-		["cmddref"] = actNone,
-		["status"] = statusDref,
-		["toggle"] = toggleNone,
-		["instancecnt"] = 1,
-		["instances"] = {
-			[0] = {
-				["drefStatus"] = { ["name"] = "laminar/B738/autopilot/alt_hld_status", ["index"] = 0 },
-				["dataref"] = { "" },
-				["commands"] = { "" }
-			}		
-		}
-	},
-	-- A/P mode annunciator
-	["autopilotanc"] = {
-		["type"] = typeAnnunciator,
-		["cmddref"] = actNone,
-		["status"] = statusCustom,
-		["toggle"] = toggleNone,
-		["instancecnt"] = 1,
-		["instances"] = {
-			[0] = {
-				["drefStatus"] = { ["name"] = "", ["index"] = 0 },
-				["customdref"] = function () 
-					if get(drefAPStatusLight) > 0 or get(drefCMDBLight) > 0 then
-							return 1
-						else
-							return 0
-						end
-					end,
-				["dataref"] = { "" },
-				["commands"] = { "" }
-			}		
-		}
-	},
-	-- BC mode annunciator
-	["bcanc"] = {
-		["type"] = typeInop,
-		["cmddref"] = actNone,
-		["status"] = statusDref,
-		["toggle"] = toggleNone,
-		["instancecnt"] = 1,
-		["instances"] = {
-			[0] = {
-				["drefStatus"] = { ["name"] = "", ["index"] = 0 },
-				["dataref"] = { "" },
-				["commands"] = { "" }
-			}		
-		}
-	}
-}
-	
-function sysMCP.setSwitch(element, instance, mode)
-	if instance == -1 then
-		local item = sysMCP.Switches[element]
-		instances = item["instancecnt"]
-		for iloop = 0,instances-1 do
-			act(sysMCP.Switches,element,iloop,mode)	
-		end
+-- Flight Directors
+sysMCP.fdirPilotSwitch = TwoStateToggleSwitch:new("fdirpilot","laminar/B738/autopilot/flight_director_pos",0,"laminar/B738/autopilot/flight_director_toggle")
+sysMCP.fdirCoPilotSwitch = TwoStateToggleSwitch:new("fdircopilot","laminar/B738/autopilot/flight_director_fo_pos",0,"laminar/B738/autopilot/flight_director_fo_toggle")
+
+sysMCP.fdirGroup = SwitchGroup:new("fdirs")
+sysMCP.fdirGroup:addSwitch(sysMCP.fdirPilotSwitch)
+sysMCP.fdirGroup:addSwitch(sysMCP.fdirCoPilotSwitch)
+
+-- HDG SEL
+sysMCP.hdgselSwitch = TwoStateToggleSwitch:new("hdgsel","laminar/B738/autopilot/hdg_sel_status",0,"laminar/B738/autopilot/hdg_sel_press")
+
+-- VORLOC
+sysMCP.vorlocSwitch = TwoStateToggleSwitch:new("vorloc","laminar/B738/autopilot/vorloc_status",0,"laminar/B738/autopilot/vorloc_press")
+
+-- ALTHOLD
+sysMCP.altholdSwitch = TwoStateToggleSwitch:new("althold","laminar/B738/autopilot/alt_hld_status",0,"laminar/B738/autopilot/alt_hld_press")
+
+-- APPROACH
+sysMCP.approachSwitch = TwoStateToggleSwitch:new("approach","laminar/B738/autopilot/app_status",0,"laminar/B738/autopilot/app_press")
+
+-- VS
+sysMCP.vsSwitch = TwoStateToggleSwitch:new("vs","laminar/B738/autopilot/vs_status",0,"laminar/B738/autopilot/vs_press")
+
+-- SPEED
+sysMCP.speedSwitch = TwoStateToggleSwitch:new("speed","laminar/B738/autopilot/speed_status1",0,"laminar/B738/autopilot/speed_press")
+
+-- AUTOPILOT
+sysMCP.ap1Switch = TwoStateToggleSwitch:new("autopilot1","laminar/B738/autopilot/cmd_a_status",0,"laminar/B738/autopilot/cmd_a_press")
+sysMCP.ap2Switch = TwoStateToggleSwitch:new("autopilot2","laminar/B738/autopilot/cmd_b_status",0,"laminar/B738/autopilot/cmd_b_press")
+
+-- BACKCOURSE
+sysMCP.backcourse = InopSwitch:new("backcourse")
+
+-- TOGA
+sysMCP.togaPilotSwitch = TwoStateToggleSwitch:new("togapilot","laminar/B738/autopilot/ap_takeoff",0,"laminar/B738/autopilot/left_toga_press")
+sysMCP.togaCopilotSwitch = TwoStateToggleSwitch:new("togacopilot","laminar/B738/autopilot/ap_takeoff",0,"laminar/B738/autopilot/right_toga_press")
+
+-- ATHR
+sysMCP.athrSwitch = TwoStateToggleSwitch:new("athr","laminar/B738/autopilot/autothrottle_status1",0,"laminar/B738/autopilot/autothrottle_arm_toggle")
+
+---------- Annunciators
+
+-- Flight Directors annunciator
+sysMCP.fdirAnc = CustomAnnunciator:new("fdiranc",
+function ()
+	if get("laminar/B738/autopilot/flight_director_pos") > 0 or get("laminar/B738/autopilot/flight_director_fo_pos") > 0 then
+		return 1
 	else
-		act(sysMCP.Switches,element,instance,mode)
+		return 0
 	end
-end
+end)
 
-function sysMCP.getMode(element,instance)
-	return status(sysMCP.Switches,element,instance)
-end
+-- HDG Select/mode annunciator
+sysMCP.hdgAnc = SimpleAnnunciator:new("hdganc","laminar/B738/autopilot/hdg_sel_status",0)
 
-function sysMCP.getAnnunciator(element,instance)
-	return status(sysMCP.Annunciators,element,instance)
-end
+-- NAV mode annunciator
+sysMCP.navAnc = CustomAnnunciator:new("navanc",
+function () 
+	if get(drefVORLocLight) > 0 or get(drefLNAVLight) > 0 then
+		return 1
+	else
+		return 0
+	end
+end)
 
+-- APR Select/mode annunciator
+sysMCP.aprAnc = SimpleAnnunciator:new("apranc","laminar/B738/autopilot/app_status",0)
+
+-- SPD mode annunciator
+sysMCP.spdAnc = CustomAnnunciator:new("spdanc",
+function () 
+	if get(drefSPDLight) > 0 or get(drefN1Light) > 0 then
+		return 1
+	else
+		return 0
+	end
+end)
+
+-- Vertical mode annunciator
+sysMCP.vspAnc = CustomAnnunciator:new("vspanc",
+function () 
+	if get(drefVSLight) > 0 or get(drefLVLCHGLight) > 0 or get(drefVNAVLight) > 0 then
+		return 1
+	else
+		return 0
+	end
+end)
+
+-- ALT mode annunciator
+sysMCP.altAnc = SimpleAnnunciator:new("altanc","laminar/B738/autopilot/alt_hld_status",0)
+
+-- A/P mode annunciator
+sysMCP.apAnc = CustomAnnunciator:new("autopilotanc",
+function () 
+if get(drefAPStatusLight) > 0 or get(drefCMDBLight) > 0 then
+		return 1
+	else
+		return 0
+	end
+end)
+
+-- BC mode annunciator
+sysMCP.bcAnc = InopSwitch:new("bc")
+	
 return sysMCP

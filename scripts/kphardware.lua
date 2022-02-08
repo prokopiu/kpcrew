@@ -104,39 +104,38 @@ create_command("kp/xsp/systems/all_baro_up","All baro up","sysGeneral.baroGroup:
 
 ----------------- Flight Controls --------------------
 
-create_command("kp/xsp/controls/flaps_up","Flaps 1 Up","sysControls.setSwitch(\"flaps\",0,cmdUp)","","")
-create_command("kp/xsp/controls/flaps_down","Flaps 1 Down","sysControls.setSwitch(\"flaps\",0,cmdDown)","","")
+create_command("kp/xsp/controls/flaps_up","Flaps 1 Up","sysControls.flapsSwitch:actuate(sysControls.flapsUp)","","")
+create_command("kp/xsp/controls/flaps_down","Flaps 1 Down","sysControls.flapsSwitch:actuate(sysControls.flapsDown)","","")
 
-create_command("kp/xsp/controls/pitch_trim_up","Pitch Trim Up","sysControls.setSwitch(\"pitchtrim\",0,cmdUp)", "", "")
-create_command("kp/xsp/controls/pitch_trim_down","Pitch Trim Down","sysControls.setSwitch(\"pitchtrim\",0,cmdDown)", "", "")
+create_command("kp/xsp/controls/pitch_trim_up","Pitch Trim Up","sysControls.pitchTrimSwitch:actuate(sysControls.trimUp)", "", "")
+create_command("kp/xsp/controls/pitch_trim_down","Pitch Trim Down","sysControls.pitchTrimSwitch:actuate(sysControls.trimDown)", "", "")
 
-create_command("kp/xsp/controls/rudder_trim_left","Rudder Trim Left","sysControls.setSwitch(\"ailerontrim\",0,cmdLeft)", "", "")
-create_command("kp/xsp/controls/rudder_trim_right","Rudder Trim Right","sysControls.setSwitch(\"ailerontrim\",0,cmdRight)", "", "")
-create_command("kp/xsp/controls/rudder_trim_center","Rudder Trim Center","sysControls.setSwitch(\"ailerontrim\",0,sysControls.trimCenter)", "", "")
+create_command("kp/xsp/controls/rudder_trim_left","Rudder Trim Left","sysControls.rudderTrimSwitch:actuate(sysControls.trimLeft)", "", "")
+create_command("kp/xsp/controls/rudder_trim_right","Rudder Trim Right","sysControls.rudderTrimSwitch:actuate(sysControls.trimRight)", "", "")
+create_command("kp/xsp/controls/rudder_trim_center","Rudder Trim Center","sysControls.rudderReset:actuate(sysControls.trimCenter)", "", "")
 
-create_command("kp/xsp/controls/aileron_trim_left","Aileron Trim Left","sysControls.setSwitch(\"ruddertrim\",0,cmdLeft)", "", "")
-create_command("kp/xsp/controls/aileron_trim_right","Aileron Trim Right","sysControls.setSwitch(\"ruddertrim\",0,cmdRight)", "", "")
-create_command("kp/xsp/controls/aileron_trim_center","Aileron Trim Center","sysControls.setSwitch(\"ruddertrim\",0,sysControls.trimCenter)", "", "")
+create_command("kp/xsp/controls/aileron_trim_left","Aileron Trim Left","sysControls.aileronTrimSwitch:actuate(sysControls.trimLeft)", "", "")
+create_command("kp/xsp/controls/aileron_trim_right","Aileron Trim Right","sysControls.aileronTrimSwitch:actuate(sysControls.trimRight)", "", "")
+create_command("kp/xsp/controls/aileron_trim_center","Aileron Trim Center","sysControls.aileronReset:actuate(sysControls.trimCenter)", "", "")
 
 -- --------------- Engines
-create_command("kp/xsp/engines/reverse_on", "Reverse Thrust Full", "sysEngines.setSwitch(\"reversethrust\",-1,modeOn)", "", "")
-create_command("kp/xsp/engines/reverse_off", "Reverse Thrust Off", "sysEngines.setSwitch(\"reversethrust\",-1,modeOff)", "", "")
+create_command("kp/xsp/engines/reverse_tgl", "Reverse Thrust Toggle", "sysEngines.reverseToggle:actuate(modeToggle)", "", "")
 
 -- --------------- Autopilot / MCP
 -- ------------ A/P MCP functions
-create_command("kp/xsp/autopilot/both_fd_tgl", "All FDs Toggle", "sysMCP.setSwitch(\"fdir\",-1,modeToggle)", "", "")
-create_command("kp/xsp/autopilot/bc_tgl", "Toggle Reverse Appr", "sysMCP.setSwitch(\"backcourse\",0,modeToggle)", "", "")
-create_command("kp/xsp/autopilot/ap_tgl", "Toggle A/P 1", "sysMCP.setSwitch(\"autopilot\",0,modeToggle)", "", "")
-create_command("kp/xsp/autopilot/alt_tgl", "Toggle Altitude Hold", "sysMCP.setSwitch(\"althold\",0,modeToggle)","","")
-create_command("kp/xsp/autopilot/hdg_tgl", "Toggle Heading Select", "sysMCP.setSwitch(\"hdgsel\",0,modeToggle)","","")
-create_command("kp/xsp/autopilot/nav_tgl", "Toggle Nav Mode", "sysMCP.setSwitch(\"vorloc\",0,modeToggle)","","")
-create_command("kp/xsp/autopilot/app_tgl", "Toggle Approach", "sysMCP.setSwitch(\"approach\",0,modeToggle)","","")
-create_command("kp/xsp/autopilot/vs_tgl", "Toggle Vertical Speed", "sysMCP.setSwitch(\"vs\",0,modeToggle)","","")
-create_command("kp/xsp/autopilot/ias_tgl", "Toggle IAS/Speed mode", "sysMCP.setSwitch(\"speed\",0,modeToggle)","","")
-create_command("kp/xsp/autopilot/toga_press", "Press Left TOGA", "sysMCP.setSwitch(\"togapress\",0,modeToggle)","","")
-create_command("kp/xsp/autopilot/at_tgl", "Toggle A/T", "sysMCP.setSwitch(\"autothrottle\",0,modeToggle)","","")
-create_command("kp/xsp/autopilot/at_arm", "Arm A/T", "sysMCP.setSwitch(\"autothrottle\",0,modeOn)","","")
-create_command("kp/xsp/autopilot/at_off", "A/T OFF", "sysMCP.setSwitch(\"autothrottle\",0,modeOff)","","")
+create_command("kp/xsp/autopilot/both_fd_tgl", "All FDs Toggle", "sysMCP.fdirGroup:actuate(modeToggle)", "", "")
+create_command("kp/xsp/autopilot/bc_tgl", "Toggle Reverse Appr", "sysMCP.backcourse:actuate(modeToggle)", "", "")
+create_command("kp/xsp/autopilot/ap_tgl", "Toggle A/P 1", "sysMCP.ap1Switch:actuate(modeToggle)", "", "")
+create_command("kp/xsp/autopilot/alt_tgl", "Toggle Altitude Hold", "sysMCP.altholdSwitch:actuate(modeToggle)","","")
+create_command("kp/xsp/autopilot/hdg_tgl", "Toggle Heading Select", "sysMCP.hdgselSwitch:actuate(modeToggle)","","")
+create_command("kp/xsp/autopilot/nav_tgl", "Toggle Nav Mode", "sysMCP.vorlocSwitch:actuate(modeToggle)","","")
+create_command("kp/xsp/autopilot/app_tgl", "Toggle Approach", "sysMCP.approachSwitch:actuate(modeToggle)","","")
+create_command("kp/xsp/autopilot/vs_tgl", "Toggle Vertical Speed", "sysMCP.vsSwitch:actuate(modeToggle)","","")
+create_command("kp/xsp/autopilot/ias_tgl", "Toggle IAS/Speed mode", "sysMCP.speedSwitch:actuate(modeToggle)","","")
+create_command("kp/xsp/autopilot/toga_press", "Press Left TOGA", "sysMCP.togaPilotSwitch:actuate(modeToggle)","","")
+create_command("kp/xsp/autopilot/at_tgl", "Toggle A/T", "sysMCP.athrSwitch:actuate(modeToggle)","","")
+create_command("kp/xsp/autopilot/at_arm", "Arm A/T", "sysMCP.athrSwitch:actuate(modeOn)","","")
+create_command("kp/xsp/autopilot/at_off", "A/T OFF", "sysMCP.athrSwitch:actuate(modeOff)","","")
 
 -- Honeycomb special commands
 
@@ -298,16 +297,16 @@ function xsp_set_light_drefs()
 	xsp_gear_status[0] 			= sysGeneral.gearLightsAnc:getStatus()
 	
 	-- STARTER annunciator
-	xsp_anc_starter[0] = sysEngines.getAnnunciator("starter",0)
+	xsp_anc_starter[0] = sysEngines.engineStarterAnc:getStatus()
 
 	-- OIL PRESSURE annunciator
-	xsp_anc_oil[0] = sysEngines.getAnnunciator("oilpressure",0)
+	xsp_anc_oil[0] = sysEngines.OilPressureAnc:getStatus()
 	
 	-- ENGINE FIRE annunciator
-	xsp_engine_fire[0] = sysEngines.getAnnunciator("enginefire",0)
+	xsp_engine_fire[0] = sysEngines.engineFireAnc:getStatus()
 	
 	-- ENGINE REVERSE on
-	xsp_anc_reverse[0] = sysEngines.getAnnunciator("reversethrust",0)
+	xsp_anc_reverse[0] = sysEngines.reverseAnc:getStatus()
 	
 	-- MASTER CAUTION annunciator
 	xsp_master_caution[0] = sysGeneral.masterCautionAnc:getStatus()
@@ -319,49 +318,49 @@ function xsp_set_light_drefs()
 	xsp_doors[0] = sysGeneral.doorsAnc:getStatus()
 	
 	-- APU annunciator
-	xsp_apu_running[0] = sysElectric.getAnnunciator("apurunning",0)
+	xsp_apu_running[0] = sysElectric.apuRunningAnc:getStatus()
 	
 	-- LOW VOLTAGE annunciator
-	xsp_low_volts[0] = sysElectric.getAnnunciator("lowvoltage",0)
+	xsp_low_volts[0] = sysElectric.lowVoltageAnc:getStatus()
 	
 	-- LOW HYD PRESSURE annunciator
-	xsp_anc_hyd[0] = sysHydraulic.getAnnunciator("lowhydraulic",0)
+	xsp_anc_hyd[0] = sysHydraulic.hydraulicLowAnc:getStatus()
 	
 	-- LOW FUEL PRESSURE annunciator
-	xsp_fuel_pumps[0] = sysFuel.getAnnunciator("fuelprslow",0)
+	xsp_fuel_pumps[0] = sysFuel.fuelLowAnc:getStatus()
 	
 	-- VACUUM annunciator
-	xsp_vacuum[0] = sysAir.getAnnunciator("vacuum",0)
+	xsp_vacuum[0] = sysAir.vacuumAnc:getStatus()
 	
 	-- ANTI ICE annunciator
-	xsp_anc_aice[0] = sysAice.getAnnunciator("antiice",0)
+	xsp_anc_aice[0] = sysAice.antiiceAnc:getStatus()
 
 	-- HDG annunciator
-	xsp_mcp_hdg[0] = sysMCP.getAnnunciator("hdganc",0)
+	xsp_mcp_hdg[0] = sysMCP.hdgAnc:getStatus()
 
 	-- NAV annunciator
-	xsp_mcp_nav[0] = sysMCP.getAnnunciator("navanc",0)
+	xsp_mcp_nav[0] = sysMCP.navAnc:getStatus()
 
 	-- APR annunciator
-	xsp_mcp_app[0] = sysMCP.getAnnunciator("apranc",0)
+	xsp_mcp_app[0] = sysMCP.aprAnc:getStatus()
 
 	-- ALT annunciator
-	xsp_mcp_alt[0] = sysMCP.getAnnunciator("altanc",0)
+	xsp_mcp_alt[0] = sysMCP.altAnc:getStatus()
 
 	-- VS annunciator
-	xsp_mcp_vsp[0] = sysMCP.getAnnunciator("vspanc",0)
+	xsp_mcp_vsp[0] = sysMCP.vspAnc:getStatus()
 
 	-- IAS annunciator
-	xsp_mcp_ias[0] = sysMCP.getAnnunciator("spdanc",0)
+	xsp_mcp_ias[0] = sysMCP.spdAnc:getStatus()
 
 	-- AUTO PILOT annunciator
-	xsp_mcp_ap1[0] = sysMCP.getAnnunciator("autopilotanc",0)
+	xsp_mcp_ap1[0] = sysMCP.apAnc:getStatus()
 
 	-- REV annunciator
-	xsp_mcp_rev[0] = sysMCP.getAnnunciator("bcanc",0)
+	xsp_mcp_rev[0] = sysMCP.bcAnc:getStatus()
 
 	-- FLIGHT DIRECTOR annunciator
-	xsp_mcp_fdir[0] = sysMCP.getAnnunciator("fdiranc",0)
+	xsp_mcp_fdir[0] = sysMCP.fdirAnc:getStatus()
 	
 	-- Landing Lights status
 	xsp_lights_ll[0] = sysLights.landingAnc:getStatus()
