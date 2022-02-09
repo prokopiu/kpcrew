@@ -25,8 +25,6 @@ end
 
 require "kpcrew.genutils"
 require "kpcrew.systems.activities"
-TwoStateDrefSwitch = require "kpcrew.systems.TwoStateDrefSwitch"
-TwoStateCmdSwitch = require "kpcrew.systems.TwoStateCmdSwitch"
 
 sysLights = require("kpcrew.systems." .. acf_icao .. ".sysLights")
 sysGeneral = require("kpcrew.systems." .. acf_icao .. ".sysGeneral")	
@@ -38,6 +36,7 @@ sysFuel = require("kpcrew.systems." .. acf_icao .. ".sysFuel")
 sysAir = require("kpcrew.systems." .. acf_icao .. ".sysAir")	
 sysAice = require("kpcrew.systems." .. acf_icao .. ".sysAice")	
 sysMCP = require("kpcrew.systems." .. acf_icao .. ".sysMCP")	
+sysEFIS = require("kpcrew.systems." .. acf_icao .. ".sysEFIS")	
 
 -- ============ aircraft specific joystick/key commands (e.g. for Alpha Yoke)
 -- ------------------ Lights
@@ -122,6 +121,7 @@ create_command("kp/xsp/controls/aileron_trim_center","Aileron Trim Center","sysC
 create_command("kp/xsp/engines/reverse_tgl", "Reverse Thrust Toggle", "sysEngines.reverseToggle:actuate(modeToggle)", "", "")
 
 -- --------------- Autopilot / MCP
+
 -- ------------ A/P MCP functions
 create_command("kp/xsp/autopilot/both_fd_tgl", "All FDs Toggle", "sysMCP.fdirGroup:actuate(modeToggle)", "", "")
 create_command("kp/xsp/autopilot/bc_tgl", "Toggle Reverse Appr", "sysMCP.backcourse:actuate(modeToggle)", "", "")
@@ -136,6 +136,53 @@ create_command("kp/xsp/autopilot/toga_press", "Press Left TOGA", "sysMCP.togaPil
 create_command("kp/xsp/autopilot/at_tgl", "Toggle A/T", "sysMCP.athrSwitch:actuate(modeToggle)","","")
 create_command("kp/xsp/autopilot/at_arm", "Arm A/T", "sysMCP.athrSwitch:actuate(modeOn)","","")
 create_command("kp/xsp/autopilot/at_off", "A/T OFF", "sysMCP.athrSwitch:actuate(modeOff)","","")
+
+-- --------------- EFIS all captain side
+
+create_command("kp/xsp/efis/map_zoom_dn", "EFIS Map Zoom In", "sysEFIS.mapZoomPilot:actuate(Switch.decrease)","","")
+create_command("kp/xsp/efis/map_zoom_up", "EFIS Map Zoom Out", "sysEFIS.mapZoomPilot:actuate(Switch.increase)","","")
+
+create_command("kp/xsp/efis/map_mode_dn", "EFIS Map Mode Left", "sysEFIS.mapModePilot:actuate(Switch.decrease)","","")
+create_command("kp/xsp/efis/map_mode_up", "EFIS Map Mode Right", "sysEFIS.mapModePilot:actuate(Switch.increase)","","")
+
+-- CTR Boeing
+create_command("kp/xsp/efis/ctr_toggle", "EFIS CTR Toggle", "sysEFIS.ctrPilot:actuate(modeToggle)","","")
+
+create_command("kp/xsp/efis/tfc_toggle", "EFIS TFC Toggle", "sysEFIS.tfcPilot:actuate(modeToggle)","","")
+
+create_command("kp/xsp/efis/wxr_toggle", "EFIS Weather Toggle", "sysEFIS.wxrPilot:actuate(modeToggle)","","")
+-- STA Boeing / VOR DFLT
+create_command("kp/xsp/efis/sta_toggle", "EFIS STA Toggle", "sysEFIS.staPilot:actuate(modeToggle)","","")
+-- WPT / FIX
+create_command("kp/xsp/efis/wpt_toggle", "EFIS WPT Toggle", "sysEFIS.wptPilot:actuate(modeToggle)","","")
+
+create_command("kp/xsp/efis/apt_toggle", "EFIS Airport Toggle", "sysEFIS.arptPilot:actuate(modeToggle)","","")
+-- DATA Boeing
+create_command("kp/xsp/efis/dat_toggle", "EFIS DATA Toggle", "sysEFIS.dataPilot:actuate(modeToggle)","","")
+-- POS Boeing / NAV DFLT
+create_command("kp/xsp/efis/pos_toggle", "EFIS POS Toggle", "sysEFIS.posPilot:actuate(modeToggle)","","")
+
+create_command("kp/xsp/efis/ter_toggle", "EFIS Terrain Toggle", "sysEFIS.terrPilot:actuate(modeToggle)","","")
+-- FPV Boeing
+create_command("kp/xsp/efis/fpv_toggle", "EFIS FPV Toggle", "sysEFIS.fpvPilot:actuate(modeToggle)","","")
+-- MTRS Boeing
+create_command("kp/xsp/efis/mtr_toggle", "EFIS FPV Toggle", "sysEFIS.mtrsPilot:actuate(modeToggle)","","")
+
+-- MINS type Boeing RADIO/BARO
+create_command("kp/xsp/efis/mins_type_dn", "EFIS Mins Type Knob Left", "sysEFIS.minsTypePilot:actuate(Switch.decrease)","","")
+create_command("kp/xsp/efis/mins_type_up", "EFIS Mins Type Knob Right", "sysEFIS.minsTypePilot:actuate(Switch.increase)","","")
+-- MINS RESET/ON OFF Boeing
+create_command("kp/xsp/efis/mins_toggle", "EFIS Minimums Reset", "sysEFIS.minsResetPilot:actuate(modeToggle)","","")
+-- MINS SET or DH/DA
+create_command("kp/xsp/efis/mins_dn", "EFIS Minimums Down", "sysEFIS.minsPilot:actuate(Switch.decrease)","","")
+create_command("kp/xsp/efis/mins_up", "EFIS Minimums Up", "sysEFIS.minsPilot:actuate(Switch.increase)","","")
+
+-- VOR/ADF 1
+create_command("kp/xsp/efis/voradf_1_dn", "EFIS VORADF1 Down/Left", "sysEFIS.voradf1Pilot:actuate(Switch.decrease)","","")
+create_command("kp/xsp/efis/voradf_1_up", "EFIS VORADF1 Up/Right", "sysEFIS.voradf1Pilot:actuate(Switch.increase)","","")
+-- VOR/ADF 2
+create_command("kp/xsp/efis/voradf_2_dn", "EFIS VORADF2 Down/Left", "sysEFIS.voradf2Pilot:actuate(Switch.decrease)","","")
+create_command("kp/xsp/efis/voradf_2_up", "EFIS VORADF2 Up/Right", "sysEFIS.voradf2Pilot:actuate(Switch.increase)","","")
 
 -- Honeycomb special commands
 
