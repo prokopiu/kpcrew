@@ -137,6 +137,32 @@ create_command("kp/xsp/autopilot/at_tgl", "Toggle A/T", "sysMCP.athrSwitch:actua
 create_command("kp/xsp/autopilot/at_arm", "Arm A/T", "sysMCP.athrSwitch:actuate(modeOn)","","")
 create_command("kp/xsp/autopilot/at_off", "A/T OFF", "sysMCP.athrSwitch:actuate(modeOff)","","")
 
+-- N1 Boeing
+create_command("kp/xsp/autopilot/n1_tgl", "Toggle N1", "sysMCP.n1Switch:actuate(modeToggle)","","")
+-- LVL CHG Boeing
+create_command("kp/xsp/autopilot/lvlchg_tgl", "Toggle Level Change", "sysMCP.lvlchgSwitch:actuate(modeToggle)","","")
+
+create_command("kp/xsp/autopilot/vnav_tgl", "Toggle VNAV", "sysMCP.vnavSwitch:actuate(modeToggle)","","")
+create_command("kp/xsp/autopilot/lnav_tgl", "Toggle LNAV", "sysMCP.lnavSwitch:actuate(modeToggle)","","")
+
+create_command("kp/xsp/autopilot/crs1_dn", "CRS 1 decrease", "sysMCP.crs1Selector:actuate(Switch.decrease)","","")
+create_command("kp/xsp/autopilot/crs1_up", "CRS 1 increase", "sysMCP.crs1Selector:actuate(Switch.increase)","","")
+create_command("kp/xsp/autopilot/crs2_dn", "CRS 2 decrease", "sysMCP.crs2Selector:actuate(Switch.decrease)","","")
+create_command("kp/xsp/autopilot/crs2_up", "CRS 2 increase", "sysMCP.crs2Selector:actuate(Switch.increase)","","")
+
+create_command("kp/xsp/autopilot/spd_dn", "Speed decrease", "sysMCP.iasSelector:actuate(Switch.decrease)","","")
+create_command("kp/xsp/autopilot/spd_up", "Speed increase", "sysMCP.iasSelector:actuate(Switch.increase)","","")
+
+create_command("kp/xsp/autopilot/hdg_dn", "Heading decrease", "sysMCP.hdgSelector:actuate(Switch.decrease)","","")
+create_command("kp/xsp/autopilot/hdg_up", "Heading increase", "sysMCP.hdgSelector:actuate(Switch.increase)","","")
+
+create_command("kp/xsp/autopilot/alt_dn", "Altitude decrease", "sysMCP.altSelector:actuate(Switch.decrease)","","")
+create_command("kp/xsp/autopilot/alt_up", "Altitude increase", "sysMCP.altSelector:actuate(Switch.increase)","","")
+
+create_command("kp/xsp/autopilot/vsp_dn", "Vertical Speed decrease", "sysMCP.vspSelector:actuate(Switch.decrease)","","")
+create_command("kp/xsp/autopilot/vsp_up", "Vertical Speed increase", "sysMCP.vspSelector:actuate(Switch.increase)","","")
+
+
 -- --------------- EFIS all captain side
 
 create_command("kp/xsp/efis/map_zoom_dn", "EFIS Map Zoom In", "sysEFIS.mapZoomPilot:actuate(Switch.decrease)","","")
@@ -408,6 +434,8 @@ function xsp_set_light_drefs()
 
 	-- FLIGHT DIRECTOR annunciator
 	xsp_mcp_fdir[0] = sysMCP.fdirAnc:getStatus()
+	
+	---------- Lights -----------
 	
 	-- Landing Lights status
 	xsp_lights_ll[0] = sysLights.landingAnc:getStatus()
