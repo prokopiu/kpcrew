@@ -38,6 +38,8 @@ sysAice = require("kpcrew.systems." .. acf_icao .. ".sysAice")
 sysMCP = require("kpcrew.systems." .. acf_icao .. ".sysMCP")	
 sysEFIS = require("kpcrew.systems." .. acf_icao .. ".sysEFIS")	
 
+require "kpcrew.hardware.honeycombBravo"
+
 -- ============ aircraft specific joystick/key commands (e.g. for Alpha Yoke)
 -- ------------------ Lights
 create_command("kp/xsp/lights/beacon_switch_on", "Beacon Lights On","sysLights.beaconSwitch:actuate(modeOn)","","")
@@ -209,29 +211,6 @@ create_command("kp/xsp/efis/voradf_1_up", "EFIS VORADF1 Up/Right", "sysEFIS.vora
 -- VOR/ADF 2
 create_command("kp/xsp/efis/voradf_2_dn", "EFIS VORADF2 Down/Left", "sysEFIS.voradf2Pilot:actuate(Switch.decrease)","","")
 create_command("kp/xsp/efis/voradf_2_up", "EFIS VORADF2 Up/Right", "sysEFIS.voradf2Pilot:actuate(Switch.increase)","","")
-
--- Honeycomb special commands
-
--- create_command("kp/xsp/bravo_mode_alt",				"Bravo AP Mode ALT",	"xsp_bravo_mode=1", "", "")
--- create_command("kp/xsp/bravo_mode_vs",				"Bravo AP Mode VS",		"xsp_bravo_mode=2", "", "")
--- create_command("kp/xsp/bravo_mode_hdg",				"Bravo AP Mode HDG",	"xsp_bravo_mode=3", "", "")
--- create_command("kp/xsp/bravo_mode_crs",				"Bravo AP Mode CRS",	"xsp_bravo_mode=4", "", "")
--- create_command("kp/xsp/bravo_mode_ias",				"Bravo AP Mode IAS",	"xsp_bravo_mode=5", "", "")
--- create_command("kp/xsp/bravo_knob_up",				"Bravo AP Knob Up",		"xsp_bravo_knob_up()", "", "")
--- create_command("kp/xsp/bravo_knob_dn",				"Bravo AP Knob Down",	"xsp_bravo_knob_dn()", "", "")
--- create_command("kp/xsp/bravo_layer_multi",			"Bravo Layer MULTI",	"xsp_bravo_layer=1", "", "")
--- create_command("kp/xsp/bravo_layer_ap",				"Bravo Layer A/P",		"xsp_bravo_layer=0", "", "")
--- create_command("kp/xsp/bravo_fine",					"Bravo Fine",			"xsp_fine_coarse = 1", "", "")
--- create_command("kp/xsp/bravo_coarse",				"Bravo Coarse",			"xsp_fine_coarse = 0", "", "")
--- create_command("kp/xsp/bravo_button_hdg",			"Bravo HDG Button",		"xsp_bravo_button_hdg()", "", "")
--- create_command("kp/xsp/bravo_button_nav",			"Bravo NAV Button",		"xsp_bravo_button_nav()", "", "")
--- create_command("kp/xsp/bravo_button_apr",			"Bravo APR Button",		"xsp_bravo_button_apr()", "", "")
--- create_command("kp/xsp/bravo_button_rev",			"Bravo REV Button",		"xsp_bravo_button_rev()", "", "")
--- create_command("kp/xsp/bravo_button_alt",			"Bravo ALT Button",		"xsp_bravo_button_alt()", "", "")
--- create_command("kp/xsp/bravo_button_vsp",			"Bravo VSP Button",		"xsp_bravo_button_vsp()", "", "")
--- create_command("kp/xsp/bravo_button_ias",			"Bravo IAS Button",		"xsp_bravo_button_ias()", "", "")
--- create_command("kp/xsp/bravo_button_ap",			"Bravo Autopilot Button","xsp_bravo_button_autopilot()", "", "")
-
 
 --------------- Instantiate Datarefs for hardware annunciators (e.g. honeycomb) ----------- 
 

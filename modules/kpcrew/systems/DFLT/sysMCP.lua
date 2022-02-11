@@ -58,6 +58,62 @@ sysMCP.togaPilotSwitch = TwoStateToggleSwitch:new("togapilot","sim/cockpit2/auto
 -- ATHR
 sysMCP.athrSwitch = TwoStateToggleSwitch:new("athr","sim/cockpit2/autopilot/autothrottle_enabled",0,"sim/autopilot/autothrottle_toggle")
 
+
+-- CRS 1&2
+
+sysMCP.crs1Selector = MultiStateCmdSwitch:new("crs1","sim/cockpit2/radios/actuators/nav1_obs_deg_mag_pilot",0,"sim/radios/obs1_down","sim/radios/obs1_up")
+sysMCP.crs2Selector = MultiStateCmdSwitch:new("crs2","sim/cockpit2/radios/actuators/nav2_obs_deg_mag_pilot",0,"sim/radios/obs2_down","sim/radios/obs2_up")
+
+sysMCP.crsSelectorGroup = SwitchGroup:new("crs")
+sysMCP.crsSelectorGroup:addSwitch(sysMCP.crs1Selector)
+sysMCP.crsSelectorGroup:addSwitch(sysMCP.crs2Selector)
+
+-- N1 Boeing
+sysMCP.n1Switch = InopSwitch:new("n1")
+
+-- IAS
+sysMCP.iasSelector = MultiStateCmdSwitch:new("ias","sim/cockpit/autopilot/airspeed",0,"sim/autopilot/airspeed_down","sim/autopilot/airspeed_up")
+
+-- KTS/MACH C/O
+sysMCP.machSwitch = InopSwitch:new("mach")
+
+-- SPD INTV
+sysMCP.spdIntvSwitch = InopSwitch:new("spdintv")
+
+-- VNAV
+sysMCP.vnavSwitch = TwoStateToggleSwitch:new("vnav",drefVNAVLight,0,"sim/autopilot/FMS")
+
+-- LVL CHG
+sysMCP.lvlchgSwitch = InopSwitch:new("lvlchg")
+
+-- HDG
+sysMCP.hdgSelector = MultiStateCmdSwitch:new("hdg","sim/cockpit2/autopilot/heading_dial_deg_mag_pilot",0,"sim/autopilot/heading_down","sim/autopilot/heading_up")
+
+-- TURNRATE
+sysMCP.turnRateSelector = InopSwitch:new("turnrate")
+
+-- LNAV
+sysMCP.lnavSwitch = InopSwitch:new("lnav")
+
+-- ALT
+sysMCP.altSelector = MultiStateCmdSwitch:new("alt","sim/cockpit2/autopilot/altitude_dial_ft",0,"sim/autopilot/altitude_down","sim/autopilot/altitude_up")
+
+-- ALT INTV
+sysMCP.altintvSwitch = InopSwitch:new("altintv")
+
+-- VSP
+sysMCP.vspSelector = MultiStateCmdSwitch:new("vsp","sim/cockpit2/autopilot/vvi_dial_fpm",0,"sim/autopilot/vertical_speed_down","sim/autopilot/vertical_speed_up")
+
+-- CWS Boeing only
+sysMCP.cwsaSwitch = TwoStateToggleSwitch:new("cwsa","sim/cockpit2/autopilot/servos_on",0,"sim/autopilot/fdir_servos_toggle")
+sysMCP.cwsbSwitch = InopSwitch:new("cwsb")
+
+-- A/P DISENGAGE
+sysMCP.discAPSwitch = TwoStateToggleSwitch:new("apdisc","sim/cockpit2/annunciators/autopilot_disconnect",0,"sim/autopilot/disconnect")
+
+
+------- Annunciators
+
 -- Flight Directors annunciator
 sysMCP.fdirAnc = SimpleAnnunciator:new("fdiranc","sim/cockpit2/annunciators/flight_director",0)
 
