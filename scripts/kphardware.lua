@@ -38,9 +38,8 @@ sysAice = require("kpcrew.systems." .. acf_icao .. ".sysAice")
 sysMCP = require("kpcrew.systems." .. acf_icao .. ".sysMCP")	
 sysEFIS = require("kpcrew.systems." .. acf_icao .. ".sysEFIS")	
 
-require "kpcrew.hardware.honeycombBravo"
+-- ============ aircraft generic joystick/key commands
 
--- ============ aircraft specific joystick/key commands (e.g. for Alpha Yoke)
 -- ------------------ Lights
 create_command("kp/xsp/lights/beacon_switch_on", "Beacon Lights On","sysLights.beaconSwitch:actuate(modeOn)","","")
 create_command("kp/xsp/lights/beacon_switch_off","Beacon Lights Off","sysLights.beaconSwitch:actuate(modeOff)","","")
@@ -122,8 +121,6 @@ create_command("kp/xsp/controls/aileron_trim_center","Aileron Trim Center","sysC
 -- --------------- Engines
 create_command("kp/xsp/engines/reverse_tgl", "Reverse Thrust Toggle", "sysEngines.reverseToggle:actuate(modeToggle)", "", "")
 
--- --------------- Autopilot / MCP
-
 -- ------------ A/P MCP functions
 create_command("kp/xsp/autopilot/both_fd_tgl", "All FDs Toggle", "sysMCP.fdirGroup:actuate(modeToggle)", "", "")
 create_command("kp/xsp/autopilot/bc_tgl", "Toggle Reverse Appr", "sysMCP.backcourse:actuate(modeToggle)", "", "")
@@ -141,9 +138,11 @@ create_command("kp/xsp/autopilot/at_off", "A/T OFF", "sysMCP.athrSwitch:actuate(
 
 -- N1 Boeing
 create_command("kp/xsp/autopilot/n1_tgl", "Toggle N1", "sysMCP.n1Switch:actuate(modeToggle)","","")
+
 -- LVL CHG Boeing
 create_command("kp/xsp/autopilot/lvlchg_tgl", "Toggle Level Change", "sysMCP.lvlchgSwitch:actuate(modeToggle)","","")
 
+-- LNAV VNAV Boeing
 create_command("kp/xsp/autopilot/vnav_tgl", "Toggle VNAV", "sysMCP.vnavSwitch:actuate(modeToggle)","","")
 create_command("kp/xsp/autopilot/lnav_tgl", "Toggle LNAV", "sysMCP.lnavSwitch:actuate(modeToggle)","","")
 
@@ -163,7 +162,6 @@ create_command("kp/xsp/autopilot/alt_up", "Altitude increase", "sysMCP.altSelect
 
 create_command("kp/xsp/autopilot/vsp_dn", "Vertical Speed decrease", "sysMCP.vspSelector:actuate(Switch.decrease)","","")
 create_command("kp/xsp/autopilot/vsp_up", "Vertical Speed increase", "sysMCP.vspSelector:actuate(Switch.increase)","","")
-
 
 -- --------------- EFIS all captain side
 
@@ -212,89 +210,13 @@ create_command("kp/xsp/efis/voradf_1_up", "EFIS VORADF1 Up/Right", "sysEFIS.vora
 create_command("kp/xsp/efis/voradf_2_dn", "EFIS VORADF2 Down/Left", "sysEFIS.voradf2Pilot:actuate(Switch.decrease)","","")
 create_command("kp/xsp/efis/voradf_2_up", "EFIS VORADF2 Up/Right", "sysEFIS.voradf2Pilot:actuate(Switch.increase)","","")
 
---------------- Instantiate Datarefs for hardware annunciators (e.g. honeycomb) ----------- 
+-- comment out if you do not need this
+require("kpcrew.hardware.honeycombBravo")
 
-xsp_parking_brake = create_dataref_table("kp/xsp/systems/parking_brake", "Int")
-xsp_parking_brake[0] = 0
+--------------- Instantiate Datarefs for general annunciators ----------- 
 
 xsp_gear_status	= create_dataref_table("kp/xsp/systems/gear_status", "Int")
 xsp_gear_status[0] = 0
-
-xsp_gear_light_on_n	= create_dataref_table("kp/xsp/systems/gear_light_on_n", "Int")
-xsp_gear_light_on_n[0] = 0
-xsp_gear_light_on_l	= create_dataref_table("kp/xsp/systems/gear_light_on_l", "Int")
-xsp_gear_light_on_l[0] = 0
-xsp_gear_light_on_r	= create_dataref_table("kp/xsp/systems/gear_light_on_r", "Int")
-xsp_gear_light_on_r[0] = 0
-xsp_gear_light_trans_n = create_dataref_table("kp/xsp/systems/gear_light_trans_n", "Int")
-xsp_gear_light_trans_n[0] = 0
-xsp_gear_light_trans_l = create_dataref_table("kp/xsp/systems/gear_light_trans_l", "Int")
-xsp_gear_light_trans_l[0] = 0
-xsp_gear_light_trans_r = create_dataref_table("kp/xsp/systems/gear_light_trans_r", "Int")
-xsp_gear_light_trans_r[0] = 0
-
-xsp_engine_fire = create_dataref_table("kp/xsp/engines/engine_fire", "Int")
-xsp_engine_fire[0] = 0
-
-xsp_anc_starter = create_dataref_table("kp/xsp/engines/anc_starter", "Int")
-xsp_anc_starter[0] = 0
-
-xsp_anc_reverse = create_dataref_table("kp/xsp/engines/anc_reverse", "Int")
-xsp_anc_reverse[0] = 0
-
-xsp_anc_oil = create_dataref_table("kp/xsp/engines/anc_oil", "Int")
-xsp_anc_oil[0] = 0
-
-xsp_master_caution = create_dataref_table("kp/xsp/systems/master_caution", "Int")
-xsp_master_caution[0] = 0
-
-xsp_master_warning = create_dataref_table("kp/xsp/systems/master_warning", "Int")
-xsp_master_warning[0] = 0
-
-xsp_doors = create_dataref_table("kp/xsp/systems/doors", "Int")
-xsp_doors[0] = 0
-
-xsp_apu_running	= create_dataref_table("kp/xsp/electric/apu_running", "Int")
-xsp_apu_running[0] = 0
-
-xsp_low_volts = create_dataref_table("kp/xsp/electric/low_volts", "Int")
-xsp_low_volts[0] = 0
-
-xsp_anc_hyd = create_dataref_table("kp/xsp/hydraulic/anc_hyd", "Int")
-xsp_anc_hyd[0] = 0
-
-xsp_fuel_pumps = create_dataref_table("kp/xsp/fuel/fuel_pumps", "Int")
-xsp_fuel_pumps[0] = 0
-
-xsp_vacuum = create_dataref_table("kp/xsp/air/vacuum", "Int")
-xsp_vacuum[0] = 0
-
-xsp_anc_aice = create_dataref_table("kp/xsp/aice/anc_aice", "Int")
-xsp_anc_aice[0] = 0
-
-xsp_mcp_hdg = create_dataref_table("kp/xsp/autopilot/mcp_hdg", "Int")
-xsp_mcp_hdg[0] = 0
-
-xsp_mcp_nav = create_dataref_table("kp/xsp/autopilot/mcp_nav", "Int")
-xsp_mcp_nav[0] = 0
-
-xsp_mcp_app = create_dataref_table("kp/xsp/autopilot/mcp_app", "Int")
-xsp_mcp_app[0] = 0
-
-xsp_mcp_ias = create_dataref_table("kp/xsp/autopilot/mcp_ias", "Int")
-xsp_mcp_ias[0] = 0
-
-xsp_mcp_vsp = create_dataref_table("kp/xsp/autopilot/mcp_vsp", "Int")
-xsp_mcp_vsp[0] = 0
-
-xsp_mcp_alt = create_dataref_table("kp/xsp/autopilot/mcp_alt", "Int")
-xsp_mcp_alt[0] = 0
-
-xsp_mcp_ap1 = create_dataref_table("kp/xsp/autopilot/mcp_ap1", "Int")
-xsp_mcp_ap1[0] = 0
-
-xsp_mcp_rev = create_dataref_table("kp/xsp/autopilot/mcp_rev", "Int")
-xsp_mcp_rev[0] = 0
 
 xsp_mcp_fdir = create_dataref_table("kp/xsp/autopilot/flight_director", "Int")
 xsp_mcp_fdir[0] = 0
@@ -336,80 +258,8 @@ xsp_lights_instrument[0] = 0
 -- background function every 1 sec to set lights/annunciators for hardware (honeycomb)
 function xsp_set_light_drefs()
 
-	-- PARKING BRAKE 0=off 1=set
-	xsp_parking_brake[0] = sysGeneral.parkbrakeAnc:getStatus()
-
-	-- GEAR LIGHTS
-	xsp_gear_light_on_l[0] 		= sysGeneral.gearLeftGreenAnc:getStatus()
-	xsp_gear_light_on_r[0] 		= sysGeneral.gearRightGreenAnc:getStatus()
-	xsp_gear_light_on_n[0] 		= sysGeneral.gearNodeGreenAnc:getStatus()
-	xsp_gear_light_trans_l[0] 	= sysGeneral.gearLeftRedAnc:getStatus()
-	xsp_gear_light_trans_r[0] 	= sysGeneral.gearRightRedAnc:getStatus()
-	xsp_gear_light_trans_n[0] 	= sysGeneral.gearNodeRedAnc:getStatus()
-	xsp_gear_status[0] 			= sysGeneral.gearLightsAnc:getStatus()
-	
-	-- STARTER annunciator
-	xsp_anc_starter[0] = sysEngines.engineStarterAnc:getStatus()
-
-	-- OIL PRESSURE annunciator
-	xsp_anc_oil[0] = sysEngines.OilPressureAnc:getStatus()
-	
-	-- ENGINE FIRE annunciator
-	xsp_engine_fire[0] = sysEngines.engineFireAnc:getStatus()
-	
-	-- ENGINE REVERSE on
-	xsp_anc_reverse[0] = sysEngines.reverseAnc:getStatus()
-	
-	-- MASTER CAUTION annunciator
-	xsp_master_caution[0] = sysGeneral.masterCautionAnc:getStatus()
-
-	-- MASTER WARNING annunciator
-	xsp_master_warning[0] = sysGeneral.masterWarningAnc:getStatus()
-
-	-- DOORS annunciator
-	xsp_doors[0] = sysGeneral.doorsAnc:getStatus()
-	
-	-- APU annunciator
-	xsp_apu_running[0] = sysElectric.apuRunningAnc:getStatus()
-	
-	-- LOW VOLTAGE annunciator
-	xsp_low_volts[0] = sysElectric.lowVoltageAnc:getStatus()
-	
-	-- LOW HYD PRESSURE annunciator
-	xsp_anc_hyd[0] = sysHydraulic.hydraulicLowAnc:getStatus()
-	
-	-- LOW FUEL PRESSURE annunciator
-	xsp_fuel_pumps[0] = sysFuel.fuelLowAnc:getStatus()
-	
-	-- VACUUM annunciator
-	xsp_vacuum[0] = sysAir.vacuumAnc:getStatus()
-	
-	-- ANTI ICE annunciator
-	xsp_anc_aice[0] = sysAice.antiiceAnc:getStatus()
-
-	-- HDG annunciator
-	xsp_mcp_hdg[0] = sysMCP.hdgAnc:getStatus()
-
-	-- NAV annunciator
-	xsp_mcp_nav[0] = sysMCP.navAnc:getStatus()
-
-	-- APR annunciator
-	xsp_mcp_app[0] = sysMCP.aprAnc:getStatus()
-
-	-- ALT annunciator
-	xsp_mcp_alt[0] = sysMCP.altAnc:getStatus()
-
-	-- VS annunciator
-	xsp_mcp_vsp[0] = sysMCP.vspAnc:getStatus()
-
-	-- IAS annunciator
-	xsp_mcp_ias[0] = sysMCP.spdAnc:getStatus()
-
-	-- AUTO PILOT annunciator
-	xsp_mcp_ap1[0] = sysMCP.apAnc:getStatus()
-
-	-- REV annunciator
-	xsp_mcp_rev[0] = sysMCP.bcAnc:getStatus()
+	-- General Gear Status In=0 Out=1
+	xsp_gear_status[0] = sysGeneral.gearLightsAnc:getStatus()
 
 	-- FLIGHT DIRECTOR annunciator
 	xsp_mcp_fdir[0] = sysMCP.fdirAnc:getStatus()
