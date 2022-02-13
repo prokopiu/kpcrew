@@ -74,15 +74,12 @@ kc_total_fuel_lbs_dataref = "laminar/B738/fuel/total_tank_lbs"
 APP_apptype_list = {"ILS CAT 1","ILS CAT 2 OR 3","VOR","NDB","RNAV","VISUAL","TOUCH AND GO","CIRCLING"}
 
 zibo_save_counter = 30
-xsp_bravo_mode = 1
-xsp_bravo_layer = 0
-xsp_fine_coarse = 1
 
 -- =========== Procedure definitions
 
 -- set aircraft into cold and dark mode
 -- function KC_COLD_AND_DARK() end
-KC_COLD_AND_DARK = { ["name"] = "SET AIRCRAFT TO COLD & DARK", ["mode"]="p", ["wnd_width"] = 350, ["wnd_height"] = 31*9,   
+KC_COLD_AND_DARK = { ["name"] = "SET AIRCRAFT TO COLD & DARK", ["mode"]="s", ["wnd_width"] = 350, ["wnd_height"] = 31*9,   
 	[1] = {["activity"] = "OVERHEAD TOP", ["wait"] = 2, ["interactive"] = 0, ["actor"] = "SYS:", ["validated"] = 0, ["chkl_color"] = color_white, ["end"] = 0,
 		["actions"] = function ()
 			kc_acf_irs_mode(0,0)
@@ -248,7 +245,7 @@ KC_COLD_AND_DARK = { ["name"] = "SET AIRCRAFT TO COLD & DARK", ["mode"]="p", ["w
 
 -- Set aircraft in mode for turn around between flights
 -- function KC_TURN_AROUND_STATE() end
-KC_TURN_AROUND_STATE = { ["name"] = "SET TURN AROUND STATE", ["mode"]="p", ["wnd_width"] = 350, ["wnd_height"] = 31*16, 
+KC_TURN_AROUND_STATE = { ["name"] = "SET TURN AROUND STATE", ["mode"]="s", ["wnd_width"] = 350, ["wnd_height"] = 31*16, 
 	[1] = {["activity"] = "CONFIGURING AIRCRAFT FOR TURNAOUND", ["wait"] = 2, ["interactive"] = 0, ["actor"] = "SYS", ["validated"] = 0, ["chkl_color"] = color_white, ["end"] = 0,
 		["actions"] = function ()
 		end,
@@ -554,7 +551,8 @@ KC_PREL_PREFLIGHT_PROC = { ["name"] = "PRELIMINARY PREFLIGHT PROCEDURE", ["mode"
 	[4] = {["activity"] = "BATTERY -- ON", ["wait"] = 1, ["interactive"] = 0, ["actor"] = "F/O:", ["validated"] = 0, ["chkl_color"] = color_white, ["end"] = 0,
 		["actions"] = function ()
 			kc_acf_elec_battery_onoff(1)
-		end
+		end,
+		["checks"] = function () return get("laminar/B738/electric/battery_pos") == 1 end
 	},
 	[5] = {["activity"] = "POWER -- ON", ["wait"] = 3, ["interactive"] = 0, ["actor"] = "F/O:", ["validated"] = 0, ["chkl_color"] = color_white, ["end"] = 0,
 		["actions"] = function ()
@@ -575,29 +573,38 @@ KC_PREL_PREFLIGHT_PROC = { ["name"] = "PRELIMINARY PREFLIGHT PROCEDURE", ["mode"
 	[6] = {["activity"] = "STANDBY POWER -- ON", ["wait"] = 1, ["interactive"] = 0, ["actor"] = "F/O:", ["validated"] = 0, ["chkl_color"] = color_white, ["end"] = 0,
 		["actions"] = function ()
 			kc_acf_elec_stby_power(1)
-		end
+		end,
+		["checks"] = function () return get("laminar/B738/electric/standby_bat_pos") == 1 end
 	},
 	[7] = {["activity"] = "FIRE TESTS -- RUN", ["wait"] = 4, ["interactive"] = 0, ["actor"] = "F/O:", ["validated"] = 0, ["chkl_color"] = color_white, ["end"] = 0,
 		["actions"] = function ()
 			kc_acf_firetests()
 		end
 	},
-	[8] = {["activity"] = "WING LIGHTS -- AS REQUIRED", ["wait"] = 1, ["interactive"] = 0, ["actor"] = "F/O:", ["validated"] = 0, ["chkl_color"] = color_white, ["end"] = 0,
+	[8] = {["activity"] = "WING & WHEEL WELL LIGHTS -- AS REQUIRED", ["wait"] = 1, ["interactive"] = 0, ["actor"] = "F/O:", ["validated"] = 0, ["chkl_color"] = color_white, ["end"] = 0,
 		["actions"] = function ()
 			if kc_get_daylight() == 0 then
 				kc_acf_light_wing_mode(1)
-				kc_acf_light_wheel_mode(0)
+				kc_acf_light_wheel_mode(1)
 			else
 				kc_acf_light_wing_mode(0)
-				kc_acf_light_wheel_mode(1)
+				kc_acf_light_wheel_mode(0)
 			end
 			kc_acf_light_emer_mode(1)
 		end,
 		["display"] = function()
 			if kc_get_daylight() == 0 then
-				return "WING LIGHTS -- ON"
+				return "WING & WHEEL WELL LIGHTS -- ON"
 			else
-				return "WING LIGHTS -- OFF"
+				return "WING & WHEEL WELL LIGHTS -- OFF"
+			end
+		end,
+		["checks"] = function () 
+			Light_Status = dataref_table("sim/flightmodel2/lights/generic_lights_brightness_ratio")
+			if kc_get_daylight() == 0 then
+				return Light_Status[0] == 1 and Light_Status[5] == 1 
+			else
+				return Light_Status[0] == 0 and Light_Status[5] == 0 
 			end
 		end
 	},
@@ -4354,12 +4361,12 @@ end
 -- Autothrottle  mode 0=OFF 1=ARMED 2=toggle
 function kc_acf_mcp_at_onoff(mode)
 	if mode == 0 then
-		if get("laminar/B738/autopilot/autothrottle_status") == 1 then
+		if get("laminar/B738/autopilot/autothrottle_status1") == 1 then
 			command_once("laminar/B738/autopilot/autothrottle_arm_toggle")
 		end
 	end
 	if mode == 1 then
-		if get("laminar/B738/autopilot/autothrottle_status") == 0 then
+		if get("laminar/B738/autopilot/autothrottle_status1") == 0 then
 			command_once("laminar/B738/autopilot/autothrottle_arm_toggle")
 		end
 	end
@@ -5116,373 +5123,6 @@ function xsp_toggle_rev_course()
 	command_once("sim/autopilot/back_course")
 end
 
--- generic up function depending on mode and layer
-function xsp_bravo_knob_up()
-
-	-- normal A/P mode
-	if xsp_bravo_layer == 0 then
-		if xsp_bravo_mode == 1 then
-			command_once("laminar/B738/autopilot/altitude_up")
-		end
-		if xsp_bravo_mode == 2 then
-			command_once("sim/autopilot/vertical_speed_up")
-		end
-		if xsp_bravo_mode == 3 then
-			command_once("laminar/B738/autopilot/heading_up")
-		end
-		if xsp_bravo_mode == 4 then
-			command_once("laminar/B738/autopilot/course_pilot_up")
-		end
-		if xsp_bravo_mode == 5 then
-			command_once("sim/autopilot/airspeed_up")
-		end
-	end
-	
-	-- MULTI mode 
-	if xsp_bravo_layer == 1 then
-		if xsp_bravo_mode == 1 then -- COM1 Freq
-			if xsp_fine_coarse == 0 then
-				command_once("sim/radios/stby_com1_coarse_up")
-			else
-				command_once("sim/radios/stby_com1_fine_up_833")
-			end
-		end
-		if xsp_bravo_mode == 2 then -- COM2 Freq
-			if xsp_fine_coarse == 0 then
-				command_once("sim/radios/stby_com2_coarse_up")
-			else
-				command_once("sim/radios/stby_com2_fine_up_833")
-			end
-		end
-		if xsp_bravo_mode == 3 then -- ALL BARO UP/DOWN
-			kc_acf_efis_baro_up_down(0,1)
-		end
-		if xsp_bravo_mode == 4 then -- ND ZOOM OUT
-			kc_acf_efis_nd_zoom(1,1)
-		end
-		if xsp_bravo_mode == 5 then -- ND MODE UP
-			kc_acf_efis_nd_mode(1,1)
-		end
-	end
-end
-
--- generic down function depending on mode and layer
-function xsp_bravo_knob_dn()
-
-	-- normal A/P mode
-	if xsp_bravo_layer == 0 then
-		if xsp_bravo_mode == 1 then
-			command_once("laminar/B738/autopilot/altitude_dn")
-		end
-		if xsp_bravo_mode == 2 then
-			command_once("sim/autopilot/vertical_speed_down")
-		end
-		if xsp_bravo_mode == 3 then
-			command_once("laminar/B738/autopilot/heading_dn")
-		end
-		if xsp_bravo_mode == 4 then
-			command_once("laminar/B738/autopilot/course_pilot_dn")
-		end
-		if xsp_bravo_mode == 5 then
-			command_once("sim/autopilot/airspeed_down")
-		end
-	end
-
-	-- MULTI mode 
-	if xsp_bravo_layer == 1 then
-		if xsp_bravo_mode == 1 then
-			if xsp_fine_coarse == 0 then
-				command_once("sim/radios/stby_com1_coarse_down")
-			else
-				command_once("sim/radios/stby_com1_fine_down_833")
-			end
-		end
-	end
-	if xsp_bravo_layer == 1 then
-		if xsp_bravo_mode == 2 then
-			if xsp_fine_coarse == 0 then
-				command_once("sim/radios/stby_com2_coarse_down")
-			else
-				command_once("sim/radios/stby_com2_fine_down_833")
-			end
-		end
-		if xsp_bravo_mode == 3 then -- ALL BARO UP/DOWN
-			kc_acf_efis_baro_up_down(0,0)
-		end
-		if xsp_bravo_mode == 4 then -- ND ZOOM IN
-			kc_acf_efis_nd_zoom(1,0)
-		end
-		if xsp_bravo_mode == 5 then -- ND MODE DN
-			kc_acf_efis_nd_mode(1,0)
-		end
-	end
-end
-
-function xsp_bravo_button_hdg()
-	if xsp_bravo_layer == 0 then
-		kc_acf_mcp_hdgsel_onoff(2)
-	end
-end                
-
-function xsp_bravo_button_nav()
-	if xsp_bravo_layer == 0 then
-		kc_acf_mcp_vorloc_onoff(2)
-	end
-end                
-
-function xsp_bravo_button_apr()
-	if xsp_bravo_layer == 0 then
-		kc_acf_mcp_app_onoff(2)
-	end
-end                
-
-function xsp_bravo_button_rev()
-	if xsp_fine_coarse == 0 then
-		xsp_fine_coarse = 1
-	else
-		xsp_fine_coarse = 0
-	end
-end                
-
-function xsp_bravo_button_alt()
-	if xsp_bravo_layer == 0 then
-		kc_acf_mcp_althld_onoff(2)
-	end
-end                
-
-function xsp_bravo_button_vsp()
-	if xsp_bravo_layer == 0 then
-		kc_acf_mcp_vs_onoff(2)
-	end
-end                
-
-function xsp_bravo_button_ias()
-	if xsp_bravo_layer == 0 then
-		kc_acf_mcp_spd_onoff(2)
-	end
-end
-
-function xsp_bravo_button_autopilot()
-	if xsp_bravo_layer == 0 then
-		kc_acf_mcp_ap_set(1,2)
-	end
-	if xsp_bravo_layer == 1 then
-		if xsp_bravo_mode == 1 then -- switch COM1 freq
-			command_once("sim/radios/com1_standy_flip")
-		end
-		if xsp_bravo_mode == 2 then -- Switch COM 2 freq
-			command_once("sim/radios/com2_standy_flip")
-		end
-	end
-end
-
-
--- ========== Set up Bravo throttle generic datarefs
-xsp_parking_brake 		= create_dataref_table("kp/xsp/systems/parking_brake", "Int")
-xsp_master_caution 		= create_dataref_table("kp/xsp/systems/master_caution", "Int")
-xsp_master_warning 		= create_dataref_table("kp/xsp/systems/master_warning", "Int")
-xsp_gear_light_on_n		= create_dataref_table("kp/xsp/systems/gear_light_on_n", "Int")
-xsp_gear_light_on_l		= create_dataref_table("kp/xsp/systems/gear_light_on_l", "Int")
-xsp_gear_light_on_r		= create_dataref_table("kp/xsp/systems/gear_light_on_r", "Int")
-xsp_gear_light_trans_n	= create_dataref_table("kp/xsp/systems/gear_light_trans_n", "Int")
-xsp_gear_light_trans_l	= create_dataref_table("kp/xsp/systems/gear_light_trans_l", "Int")
-xsp_gear_light_trans_r	= create_dataref_table("kp/xsp/systems/gear_light_trans_r", "Int")
-xsp_doors 				= create_dataref_table("kp/xsp/systems/doors", "Int")
-
-xsp_engine_fire 		= create_dataref_table("kp/xsp/engines/engine_fire", "Int")
-xsp_anc_starter 		= create_dataref_table("kp/xsp/engines/anc_starter", "Int")
-xsp_anc_oil 			= create_dataref_table("kp/xsp/engines/anc_oil", "Int")
-	
-xsp_vacuum 				= create_dataref_table("kp/xsp/air/vacuum", "Int")
-	
-xsp_fuel_pumps 			= create_dataref_table("kp/xsp/fuel/fuel_pumps", "Int")
-xsp_anc_fuel 			= create_dataref_table("kp/xsp/fuel/anc_fuel", "Int")
-	
-xsp_low_volts 			= create_dataref_table("kp/xsp/electric/low_volts", "Int")
-xsp_apu_running			= create_dataref_table("kp/xsp/electric/apu_running", "Int")
-	
-xsp_anc_hyd 			= create_dataref_table("kp/xsp/hydraulic/anc_hyd", "Int")
-	
-xsp_anc_aice 			= create_dataref_table("kp/xsp/aice/anc_aice", "Int")
-	
-xsp_mcp_hdg 			= create_dataref_table("kp/xsp/autopilot/mcp_hdg", "Int")
-xsp_mcp_nav 			= create_dataref_table("kp/xsp/autopilot/mcp_nav", "Int")
-xsp_mcp_app 			= create_dataref_table("kp/xsp/autopilot/mcp_app", "Int")
-xsp_mcp_ias 			= create_dataref_table("kp/xsp/autopilot/mcp_ias", "Int")
-xsp_mcp_vsp 			= create_dataref_table("kp/xsp/autopilot/mcp_vsp", "Int")
-xsp_mcp_alt 			= create_dataref_table("kp/xsp/autopilot/mcp_alt", "Int")
-xsp_mcp_ap1 			= create_dataref_table("kp/xsp/autopilot/mcp_ap1", "Int")
-xsp_mcp_rev 			= create_dataref_table("kp/xsp/autopilot/mcp_rev", "Int")
-
-xsp_parking_brake[0] = 0
-xsp_master_caution[0] = 0
-xsp_master_warning[0] = 0
-xsp_engine_fire[0] = 0
-xsp_vacuum[0] = 0
-xsp_fuel_pumps[0] = 0
-xsp_low_volts[0] = 0
-
-xsp_mcp_hdg[0] = 0
-xsp_mcp_nav[0] = 0
-xsp_mcp_app[0] = 0
-xsp_mcp_ias[0] = 0
-xsp_mcp_vsp[0] = 0
-xsp_mcp_alt[0] = 0
-xsp_mcp_ap1[0] = 0
-xsp_mcp_rev[0] = 0
-
-xsp_doors[0] = 0
-xsp_anc_hyd[0] = 0
-xsp_anc_fuel[0] = 0
-xsp_anc_oil[0] = 0
-xsp_anc_aice[0] = 0
-xsp_anc_starter[0] = 0
-
-function xsp_set_lightvars()
-
-	-- REV button light blinks when in multi mode
-	if xsp_bravo_layer == 1 then
-		if xsp_mcp_rev[0] == 0 then
-			xsp_mcp_rev[0] = 1
-		else
-			xsp_mcp_rev[0] = 0
-		end
-	else
-		xsp_mcp_rev[0] = 0
-	end
-
-	-- HDG button light will light when in HDG SEL mode
-	if xsp_bravo_layer == 1 then
-		xsp_mcp_hdg[0] = 0
-	else
-		if xsp_bravo_mode == 3 and get("laminar/B738/autopilot/hdg_sel_status") == 1 then
-			if xsp_mcp_hdg[0] == 0 then
-				xsp_mcp_hdg[0] = 1
-			else
-				xsp_mcp_hdg[0] = 0
-			end
-		else
-			xsp_mcp_hdg[0] = get("laminar/B738/autopilot/hdg_sel_status")
-		end
-	end
-	
-	-- NAV button light will light when in NAV modes
-	if xsp_bravo_layer == 1 then
-		xsp_mcp_nav[0] = 0
-	else
-		if xsp_bravo_mode == 4 and (get("laminar/B738/autopilot/vorloc_status") == 1 or get("laminar/B738/autopilot/lnav_status") == 1) then
-			if xsp_mcp_nav[0] == 0 then
-				xsp_mcp_nav[0] = 1
-			else
-				xsp_mcp_nav[0] = 0
-			end
-		else
-			if get("laminar/B738/autopilot/vorloc_status") == 0 and get("laminar/B738/autopilot/lnav_status") == 0 then
-				xsp_mcp_nav[0] = 0
-			else
-				xsp_mcp_nav[0] = 1
-			end
-		end
-	end
-
-	-- APR button light will light when in APR
-	if xsp_bravo_layer == 1 then
-		xsp_mcp_app[0] = 0
-	else
-		if get("laminar/B738/autopilot/app_status") == 1 then
-			if xsp_mcp_app[0] == 0 then
-				xsp_mcp_app[0] = 1
-			else
-				xsp_mcp_app[0] = 0
-			end
-		else
-			xsp_mcp_app[0] = get("laminar/B738/autopilot/app_status")
-		end
-	end
-
-	
-	xsp_gear_light_on_l[0] = get("laminar/B738/annunciator/left_gear_safe")
-	xsp_gear_light_on_r[0] = get("laminar/B738/annunciator/right_gear_safe")
-	xsp_gear_light_on_n[0] = get("laminar/B738/annunciator/nose_gear_safe")
-	xsp_gear_light_trans_l[0] = get("laminar/B738/annunciator/left_gear_transit")
-	xsp_gear_light_trans_r[0] = get("laminar/B738/annunciator/right_gear_transit")
-	xsp_gear_light_trans_n[0] = get("laminar/B738/annunciator/nose_gear_transit")
-
-	xsp_parking_brake[0] = kc_get_controls_parkbrake_mode()
-
-	xsp_apu_running[0] = get("sim/cockpit2/electrical/APU_running")
-
-	-- Master Caution light
-	if get("laminar/B738/annunciator/master_caution_light") > 0 then
-		xsp_master_caution[0] = 1
-	else
-		xsp_master_caution[0] = 0
-	end
-
-
-
-
-	if get("laminar/B738/autopilot/n1_status") == 0 and get("laminar/B738/autopilot/speed_mode") == 0 then
-		xsp_mcp_ias[0] = 0
-	else
-		xsp_mcp_ias[0] = 1
-	end
-
-	if get("laminar/B738/autopilot/lvl_chg_status") == 0 and get("laminar/B738/autopilot/vs_status") == 0 and get("laminar/B738/autopilot/vnav_status1") == 0 then
-		xsp_mcp_vsp[0] = 0
-	else
-		xsp_mcp_vsp[0] = 1
-	end
-
-	xsp_mcp_alt[0] = get("laminar/B738/autopilot/alt_hld_status")
-
-	xsp_mcp_ap1[0] = get("laminar/B738/autopilot/cmd_a_status")
-
-	if get("737u/doors/aft1") == 0 and get("737u/doors/aft1") == 0 and get("737u/doors/aft_Cargo") == 0 and get(		"737u/doors/Fwd_Cargo")  == 0 and get("737u/doors/L1") == 0 and get("737u/doors/L2") == 0 and get(			"737u/doors/R1") == 0 and get("737u/doors/R2") then
-		xsp_doors[0] = 0
-	else
-		xsp_doors[0] = 1
-	end
-
-	if get("laminar/B738/annunciator/hyd_el_press_a") == 0 and get("laminar/B738/annunciator/hyd_el_press_b") == 0 then
-		xsp_anc_hyd[0] = 0
-	else
-		xsp_anc_hyd[0] = 1
-	end
-	
-	if get("laminar/B738/annunciator/low_fuel_press_c1") == 0 and get("laminar/B738/annunciator/low_fuel_press_c2") == 0 and get("laminar/B738/annunciator/low_fuel_press_l1") == 0 and get("laminar/B738/annunciator/low_fuel_press_l2") == 0 and get("laminar/B738/annunciator/low_fuel_press_r1") == 0 and get("laminar/B738/annunciator/low_fuel_press_r2") == 0 then
-		xsp_anc_fuel[0] = 0
-	else
-		xsp_anc_fuel[0] = 1
-	end
-
-	if get("laminar/B738/engine/eng1_oil_press") == 0 or get("laminar/B738/engine/eng2_oil_press") == 0 then
-		xsp_anc_oil[0] = 1
-	else
-		xsp_anc_oil[0] = 0
-	end
-
-	if get("laminar/B738/air/engine1/starter_valve") == 0 and get("laminar/B738/air/engine2/starter_valve") == 0 then
-		xsp_anc_starter[0] = 0
-	else
-		xsp_anc_starter[0] = 1
-	end
-
-	if get("laminar/B738/annunciator/wing_ice_on_L") == 0 and get("laminar/B738/annunciator/wing_ice_on_R") == 0 and get("laminar/B738/annunciator/cowl_ice_on_0") == 0 and get("laminar/B738/annunciator/cowl_ice_on_1") == 0  then
-		xsp_anc_aice[0] = 0
-	else
-		xsp_anc_aice[0] = 1
-	end
-
-	xsp_master_warning[0] = get("laminar/B738/flt_ctrls/reverse_lever12")
-	
-	if get("laminar/B738/annunciator/pack_left") > 0 or get("laminar/B738/annunciator/pack_right") > 0 then
-		xsp_vacuum[0] = 1
-	else
-		xsp_vacuum[0] = 0
-	end
-end
-
 -- ============= Menu related functions
 function kc_menus_set_DEP_data()
 	set_kpcrew_config("dep_v1",kc_get_V1())
@@ -5517,112 +5157,3 @@ function kc_menus_set_APP_data()
 	end
 end
 
--- ============ aircraft specific joystick/key commands (e.g. for Alpha Yoke)
--- ------------------ Lights
-create_command("kp/xsp/lights/beacon_switch_on",	"Anti-Collision Lights On",		"kc_acf_light_beacon_mode(1)", "", "")
-create_command("kp/xsp/lights/beacon_switch_off",	"Anti-Collision Lights Off",	"kc_acf_light_beacon_mode(0)", "", "")
-create_command("kp/xsp/lights/beacon_switch_tgl",	"Anti-Collision Lights Toggle",	"kc_acf_light_beacon_mode(2)", "", "")
-
-create_command("kp/xsp/lights/dome_switch_on",		"Dome Lights On",		"kc_acf_light_cockpit_mode(1)", "", "")
-create_command("kp/xsp/lights/dome_switch_off",		"Dome Lights Off",		"kc_acf_light_cockpit_mode(0)", "", "")
-create_command("kp/xsp/lights/dome_switch_tgl",		"Dome Lights Toggle",	"kc_acf_light_cockpit_mode(2)", "", "")
-
-create_command("kp/xsp/lights/nav_switch_on",		"Position Lights On",	"kc_acf_light_nav_mode(1)", "", "")
-create_command("kp/xsp/lights/nav_switch_off",		"Position Lights Off",	"kc_acf_light_nav_mode(0)", "", "")
-create_command("kp/xsp/lights/nav_switch_off",		"Position Lights Toggle inop",	"kc_acf_light_nav_mode(3)", "", "")
-
-create_command("kp/xsp/lights/strobe_switch_on",	"Strobe Lights On",		"kc_acf_light_strobe_mode(2)", "", "")
-create_command("kp/xsp/lights/strobe_switch_off",	"Strobe Lights Off",	"kc_acf_light_strobe_mode(0)", "", "")
-create_command("kp/xsp/lights/strobe_switch_tgl",	"Strobe Lights Toggle inop",	"kc_acf_light_strobe_mode(3)", "", "")
-
-create_command("kp/xsp/lights/taxi_switch_on",		"Taxi Lights On",		"kc_acf_light_taxi_mode(2)", "", "")
-create_command("kp/xsp/lights/taxi_switch_off",		"Taxi Lights Off",		"kc_acf_light_taxi_mode(0)", "", "")
-create_command("kp/xsp/lights/taxi_switch_tgl",		"Taxi Lights Toggle",	"kc_acf_light_taxi_mode(3)", "", "")
-
-create_command("kp/xsp/lights/landing_switch_on",	"Landing Lights On",	"kc_acf_light_landing_mode(0,1)", "", "")
-create_command("kp/xsp/lights/landing_switch_off",	"Landing Lights Off",	"kc_acf_light_landing_mode(0,0)", "", "")
-create_command("kp/xsp/lights/landing_switch_tgl",	"Landing Lights Toggle inop",	"kc_acf_light_landing_mode(0,4)", "", "")
-
-create_command("kp/xsp/lights/wing_switch_on",		"Wing Lights On",		"kc_acf_light_wing_mode(1)", "", "")
-create_command("kp/xsp/lights/wing_switch_off",		"Wing Lights Off",		"kc_acf_light_wing_mode(0)", "", "")
-create_command("kp/xsp/lights/wing_switch_tgl",		"Wing Lights Toggle inop",		"kc_acf_light_wing_mode(2)", "", "")
-
-create_command("kp/xsp/lights/wheel_switch_on",		"Wheel Lights On",		"kc_acf_light_wheel_mode(1)", "", "")
-create_command("kp/xsp/lights/wheel_switch_off",	"Wheel Lights Off",		"kc_acf_light_wheel_mode(0)", "", "")
-create_command("kp/xsp/lights/wheel_switch_tgl",	"Wheel Lights Toggle inop",		"kc_acf_light_wheel_mode(2)", "", "")
-
-create_command("kp/xsp/lights/logo_switch_on",		"Logo Lights On",		"kc_acf_light_logo_mode(1)", "", "")
-create_command("kp/xsp/lights/logo_switch_off",		"Logo Lights Off",		"kc_acf_light_logo_mode(0)", "", "")
-create_command("kp/xsp/lights/logo_switch_tgl",		"Logo Lights Toggle",	"kc_acf_light_logo_mode(2)", "", "")
-
-create_command("kp/xsp/lights/rwyto_switch_on",		"Runway Lights On",		"kc_acf_light_rwyto_mode(1)", "", "")
-create_command("kp/xsp/lights/rwyto_switch_off",	"Runway Lights Off",	"kc_acf_light_rwyto_mode(0)", "", "")
-create_command("kp/xsp/lights/rwyto_switch_tgl",	"Runway Lights Toggle",	"kc_acf_light_rwyto_mode(2)", "", "")
-
--- --------------- System
-create_command("kp/xsp/systems/parking_brake_on",	"Parking Brake On",		"kc_acf_parking_break_mode(1)", "", "")
-create_command("kp/xsp/systems/parking_brake_off",	"Parking Brake Off",	"kc_acf_parking_break_mode(0)", "", "")
-create_command("kp/xsp/systems/parking_brake_tgl",	"Parking Brake Toggle",	"kc_acf_parking_break_mode(2)", "", "")
-
-create_command("kp/xsp/systems/gears_up",			"Gears Up",				"kc_acf_gears(0)", "", "")
-create_command("kp/xsp/systems/gears_down",			"Gears Down",			"kc_acf_gears(1)", "", "")
-create_command("kp/xsp/systems/gears_off",			"Gears OFF",			"kc_acf_gears(2)", "", "")
-
-create_command("kp/xsp/systems/all_alt_std",		"ALTS STD/QNH toggle",	"kc_acf_efis_baro_std_set(0,2)", "", "")
-create_command("kp/xsp/systems/baro_mode_tgl",	    "Baro inch/mb toggle",	"kc_acf_efis_baro_in_mb(0,2)", "", "")
-create_command("kp/xsp/systems/all_baro_down",		"All baro down",		"kc_acf_efis_baro_up_down(0,0)", "", "")
-create_command("kp/xsp/systems/all_baro_up",		"All baro up",			"kc_acf_efis_baro_up_down(0,1)", "", "")
-
--- --------------- Controls
-
-create_command("kp/xsp/controls/flaps_up",			"Flaps 1 Up",			"kc_acf_controls_flaps_dec()", "", "")
-create_command("kp/xsp/controls/flaps_down",		"Flaps 1 Down",			"kc_acf_controls_flaps_inc()", "", "")
-create_command("kp/xsp/controls/pitch_trim_up",		"Pitch Trim Up",		"kc_acf_elev_trim_up()", "", "")
-create_command("kp/xsp/controls/pitch_trim_down",	"Pitch Trim Down",		"kc_acf_elev_trim_dn()", "", "")
-
--- --------------- Engines
-create_command("kp/xsp/engines/reverse_on",			"Reverse Thrust on",	"kc_acf_reverse_onoff(1)", "", "")
-create_command("kp/xsp/engines/reverse_off",		"Reverse Thrust off",	"kc_acf_reverse_onoff(0)", "", "")
-
--- ------------ A/P MCP functions
-create_command("kp/xsp/autopilot/both_fd_tgl",		"All FDs Toggle",		"kc_acf_mcp_fds_set(0,2)", "", "")
-create_command("kp/xsp/autopilot/bc_tgl",			"Toggle Reverse Appr",	"xsp_toggle_rev_course()", "", "")
-create_command("kp/xsp/autopilot/ap_tgl",			"Toggle A/P 1",			"kc_acf_mcp_ap_set(1,2)", "", "")
-create_command("kp/xsp/autopilot/alt_tgl",			"Toggle Altitude",		"kc_acf_mcp_althld_onoff(2)","","")
-create_command("kp/xsp/autopilot/hdg_tgl",			"Toggle Heading",		"kc_acf_mcp_hdgsel_onoff(2)","","")
-create_command("kp/xsp/autopilot/nav_tgl",			"Toggle Nav",			"kc_acf_mcp_vorloc_onoff(2)","","")
-create_command("kp/xsp/autopilot/app_tgl",			"Toggle Approach",		"kc_acf_mcp_app_onoff(2)","","")
-create_command("kp/xsp/autopilot/vs_tgl",			"Toggle Vertical Speed","kc_acf_mcp_vs_onoff(2)","","")
-create_command("kp/xsp/autopilot/ias_tgl",			"Toggle IAS",			"kc_acf_mcp_spd_onoff(2)","","")
-create_command("kp/xsp/autopilot/toga_press",		"Press Left TOGA",		"kc_acf_mcp_toga()","","")
-create_command("kp/xsp/autopilot/at_tgl",			"Toggle A/T",			"kc_acf_mcp_at_onoff(2)","","")
-create_command("kp/xsp/autopilot/at_arm",			"Arm A/T",				"kc_acf_mcp_at_onoff(1)","","")
-create_command("kp/xsp/autopilot/at_off",			"A/T OFF",				"kc_acf_mcp_at_onoff(0)","","")
-
--- ------------ EFIS commands
-
--- Honeycomb Bravo specific commands
-create_command("kp/xsp/bravo_mode_alt",				"Bravo AP Mode ALT",	"xsp_bravo_mode=1", "", "")
-create_command("kp/xsp/bravo_mode_vs",				"Bravo AP Mode VS",		"xsp_bravo_mode=2", "", "")
-create_command("kp/xsp/bravo_mode_hdg",				"Bravo AP Mode HDG",	"xsp_bravo_mode=3", "", "")
-create_command("kp/xsp/bravo_mode_crs",				"Bravo AP Mode CRS",	"xsp_bravo_mode=4", "", "")
-create_command("kp/xsp/bravo_mode_ias",				"Bravo AP Mode IAS",	"xsp_bravo_mode=5", "", "")
-create_command("kp/xsp/bravo_knob_up",				"Bravo AP Knob Up",		"xsp_bravo_knob_up()", "", "")
-create_command("kp/xsp/bravo_knob_dn",				"Bravo AP Knob Down",	"xsp_bravo_knob_dn()", "", "")
-create_command("kp/xsp/bravo_layer_multi",			"Bravo Layer MULTI",	"xsp_bravo_layer=1", "", "")
-create_command("kp/xsp/bravo_layer_ap",				"Bravo Layer A/P",		"xsp_bravo_layer=0", "", "")
-create_command("kp/xsp/bravo_fine",					"Bravo Fine",			"xsp_fine_coarse = 1", "", "")
-create_command("kp/xsp/bravo_coarse",				"Bravo Coarse",			"xsp_fine_coarse = 0", "", "")
-create_command("kp/xsp/bravo_button_hdg",			"Bravo HDG Button",		"xsp_bravo_button_hdg()", "", "")
-create_command("kp/xsp/bravo_button_nav",			"Bravo NAV Button",		"xsp_bravo_button_nav()", "", "")
-create_command("kp/xsp/bravo_button_apr",			"Bravo APR Button",		"xsp_bravo_button_apr()", "", "")
-create_command("kp/xsp/bravo_button_rev",			"Bravo REV Button",		"xsp_bravo_button_rev()", "", "")
-create_command("kp/xsp/bravo_button_alt",			"Bravo ALT Button",		"xsp_bravo_button_alt()", "", "")
-create_command("kp/xsp/bravo_button_vsp",			"Bravo VSP Button",		"xsp_bravo_button_vsp()", "", "")
-create_command("kp/xsp/bravo_button_ias",			"Bravo IAS Button",		"xsp_bravo_button_ias()", "", "")
-create_command("kp/xsp/bravo_button_ap",			"Bravo Autopilot Button","xsp_bravo_button_autopilot()", "", "")
-
-
--- ========== Background processing
--- Set the datarefs for the Bravo throttle lights or SAITEK display
-do_often("xsp_set_lightvars()")

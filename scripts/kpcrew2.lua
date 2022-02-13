@@ -519,7 +519,7 @@ function kc_master_button()
 
 	-- if gProcStatus 0 then initiate the current procedure 
 	if gProcStatus == 0 then
-		if KC_PROCEDURES_DEFS[gActiveProc]["mode"] == "p" or KC_PROCEDURES_DEFS[gActiveProc]["mode"] == "b" then
+		if KC_PROCEDURES_DEFS[gActiveProc]["mode"] == "p" or KC_PROCEDURES_DEFS[gActiveProc]["mode"] == "b" or KC_PROCEDURES_DEFS[gActiveProc]["mode"] == "s" then
 			kc_procedure_reset(KC_PROCEDURES_DEFS[gActiveProc])
 		end
 		gProcStatus = 1
@@ -661,6 +661,11 @@ function kc_proc_activities()
 			kc_open_procedure(lCurr_proc,gProcStep==1)
 		end
 
+		if lCurr_proc["mode"] == "s" and kc_checklist_wnd == 0 and gShowProcList then
+			gActiveChecklist = lCurr_proc
+			kc_open_procedure(lCurr_proc,gProcStep==1)
+		end
+
 		if lCurr_proc["mode"] == "b" and kc_checklist_wnd == 0 then
 			gActiveChecklist = lCurr_proc
 			kc_open_procedure(lCurr_proc,gProcStep==1)
@@ -698,18 +703,17 @@ function kc_proc_activities()
 		-- continue with steps
 		-- type activity (switch things in the cockpit)
 		if lCurr_step["actions"] ~= nil then
-			-- if lCurr_proc["mode"] == "c" then
-				-- if get_kpcrew_config("config_complexity") and lCurr_step["validated"] == 0 then
-					-- lCurr_step["actions"]()
-					-- lCurr_step["validated"] = 1
-				-- end
-			-- end
---			if lCurr_proc["mode"] == "p" then
+			if lCurr_proc["mode"] ~= "s" then
 				if get_kpcrew_config("config_complexity") and lCurr_step["validated"] == 0 then
 					lCurr_step["actions"]()
 					lCurr_step["validated"] = 1
 				end
---			end
+			else
+				if lCurr_step["validated"] == 0 then
+					lCurr_step["actions"]()
+					lCurr_step["validated"] = 1
+				end
+			end
 		end -- execute actions
 		
 		-- speak text if function added and returning a string
