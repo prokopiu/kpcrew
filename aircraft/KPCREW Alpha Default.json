@@ -69,7 +69,18 @@
       "ButtonNumber": 3,
       "PressEvent": [
         {
-          "Variables": [],
+          "Variables": [
+            {
+              "Variable": "kp/xsp/alpha/AP_DISC",
+              "Value": "",
+              "VariableIsCustom": true,
+              "VariableBoundaries": {
+                "MinValue": "",
+                "MaxValue": "",
+                "Clamp": false
+              }
+            }
+          ],
           "Variable": "",
           "Value": "",
           "Name": "",
@@ -330,7 +341,18 @@
       "ButtonNumber": 12,
       "PressEvent": [
         {
-          "Variables": [],
+          "Variables": [
+            {
+              "Variable": "kp/xsp/alpha/ALT_on",
+              "Value": "",
+              "VariableIsCustom": true,
+              "VariableBoundaries": {
+                "MinValue": "",
+                "MaxValue": "",
+                "Clamp": false
+              }
+            }
+          ],
           "Variable": "",
           "Value": "",
           "Name": "",
@@ -359,7 +381,18 @@
       "ButtonNumber": 13,
       "PressEvent": [
         {
-          "Variables": [],
+          "Variables": [
+            {
+              "Variable": "kp/xsp/alpha/ALT_off",
+              "Value": "",
+              "VariableIsCustom": true,
+              "VariableBoundaries": {
+                "MinValue": "",
+                "MaxValue": "",
+                "Clamp": false
+              }
+            }
+          ],
           "Variable": "",
           "Value": "",
           "Name": "",
@@ -388,7 +421,18 @@
       "ButtonNumber": 14,
       "PressEvent": [
         {
-          "Variables": [],
+          "Variables": [
+            {
+              "Variable": "kp/xsp/alpha/BAT_on",
+              "Value": "",
+              "VariableIsCustom": true,
+              "VariableBoundaries": {
+                "MinValue": "",
+                "MaxValue": "",
+                "Clamp": false
+              }
+            }
+          ],
           "Variable": "",
           "Value": "",
           "Name": "",
@@ -417,7 +461,18 @@
       "ButtonNumber": 15,
       "PressEvent": [
         {
-          "Variables": [],
+          "Variables": [
+            {
+              "Variable": "kp/xsp/alpha/BAT_off",
+              "Value": "",
+              "VariableIsCustom": true,
+              "VariableBoundaries": {
+                "MinValue": "",
+                "MaxValue": "",
+                "Clamp": false
+              }
+            }
+          ],
           "Variable": "",
           "Value": "",
           "Name": "",
@@ -446,7 +501,18 @@
       "ButtonNumber": 16,
       "PressEvent": [
         {
-          "Variables": [],
+          "Variables": [
+            {
+              "Variable": "kp/xsp/alpha/AVIONICS_BUS1_on",
+              "Value": "",
+              "VariableIsCustom": true,
+              "VariableBoundaries": {
+                "MinValue": "",
+                "MaxValue": "",
+                "Clamp": false
+              }
+            }
+          ],
           "Variable": "",
           "Value": "",
           "Name": "",
@@ -475,7 +541,18 @@
       "ButtonNumber": 17,
       "PressEvent": [
         {
-          "Variables": [],
+          "Variables": [
+            {
+              "Variable": "kp/xsp/alpha/AVIONICS_BUS1_off",
+              "Value": "",
+              "VariableIsCustom": true,
+              "VariableBoundaries": {
+                "MinValue": "",
+                "MaxValue": "",
+                "Clamp": false
+              }
+            }
+          ],
           "Variable": "",
           "Value": "",
           "Name": "",
@@ -504,7 +581,18 @@
       "ButtonNumber": 18,
       "PressEvent": [
         {
-          "Variables": [],
+          "Variables": [
+            {
+              "Variable": "kp/xsp/alpha/AVIONICS_BUS2_on",
+              "Value": "",
+              "VariableIsCustom": true,
+              "VariableBoundaries": {
+                "MinValue": "",
+                "MaxValue": "",
+                "Clamp": false
+              }
+            }
+          ],
           "Variable": "",
           "Value": "",
           "Name": "",
@@ -533,7 +621,18 @@
       "ButtonNumber": 19,
       "PressEvent": [
         {
-          "Variables": [],
+          "Variables": [
+            {
+              "Variable": "kp/xsp/alpha/AVIONICS_BUS2_off",
+              "Value": "",
+              "VariableIsCustom": true,
+              "VariableBoundaries": {
+                "MinValue": "",
+                "MaxValue": "",
+                "Clamp": false
+              }
+            }
+          ],
           "Variable": "",
           "Value": "",
           "Name": "",
@@ -564,7 +663,7 @@
         {
           "Variables": [
             {
-              "Variable": "kp/xsp/lights/beacon_switch_on",
+              "Variable": "kp/xsp/alpha/BCN_on",
               "Value": "",
               "VariableIsCustom": false,
               "VariableBoundaries": {
@@ -603,7 +702,7 @@
       "PressEvent": [
         {
           "Variables": [],
-          "Variable": "kp/xsp/lights/beacon_switch_off",
+          "Variable": "kp/xsp/alpha/BCN_off",
           "Value": "",
           "Name": "",
           "Condition": "",
@@ -647,7 +746,7 @@
         {
           "Variables": [
             {
-              "Variable": "kp/xsp/lights/landing_switch_on",
+              "Variable": "kp/xsp/alpha/LAND_on",
               "Value": "",
               "VariableIsCustom": true,
               "VariableBoundaries": {
@@ -687,7 +786,7 @@
         {
           "Variables": [
             {
-              "Variable": "kp/xsp/lights/landing_switch_off",
+              "Variable": "kp/xsp/alpha/LAND_off",
               "Value": "",
               "VariableIsCustom": true,
               "VariableBoundaries": {
@@ -727,7 +826,7 @@
         {
           "Variables": [
             {
-              "Variable": "kp/xsp/lights/taxi_switch_on",
+              "Variable": "kp/xsp/alpha/TAXI_on",
               "Value": "",
               "VariableIsCustom": true,
               "VariableBoundaries": {
@@ -767,7 +866,7 @@
         {
           "Variables": [
             {
-              "Variable": "kp/xsp/lights/taxi_switch_off",
+              "Variable": "kp/xsp/alpha/TAXI_off",
               "Value": "",
               "VariableIsCustom": true,
               "VariableBoundaries": {
@@ -807,7 +906,7 @@
         {
           "Variables": [
             {
-              "Variable": "kp/xsp/lights/nav_switch_on",
+              "Variable": "kp/xsp/alpha/NAV_on",
               "Value": "",
               "VariableIsCustom": true,
               "VariableBoundaries": {
@@ -847,7 +946,7 @@
         {
           "Variables": [
             {
-              "Variable": "kp/xsp/lights/nav_switch_off",
+              "Variable": "kp/xsp/alpha/NAV_off",
               "Value": "",
               "VariableIsCustom": true,
               "VariableBoundaries": {
@@ -887,7 +986,7 @@
         {
           "Variables": [
             {
-              "Variable": "kp/xsp/lights/strobe_switch_on",
+              "Variable": "kp/xsp/alpha/STROBE_on",
               "Value": "",
               "VariableIsCustom": true,
               "VariableBoundaries": {
@@ -927,7 +1026,7 @@
         {
           "Variables": [
             {
-              "Variable": "kp/xsp/lights/strobe_switch_off",
+              "Variable": "kp/xsp/alpha/STROBE_off",
               "Value": "",
               "VariableIsCustom": true,
               "VariableBoundaries": {
@@ -965,7 +1064,18 @@
       "ButtonNumber": 30,
       "PressEvent": [
         {
-          "Variables": [],
+          "Variables": [
+            {
+              "Variable": "kp/xsp/alpha/MAGNETO_OFF",
+              "Value": "",
+              "VariableIsCustom": true,
+              "VariableBoundaries": {
+                "MinValue": "",
+                "MaxValue": "",
+                "Clamp": false
+              }
+            }
+          ],
           "Variable": "",
           "Value": "",
           "Name": "",
@@ -994,7 +1104,18 @@
       "ButtonNumber": 31,
       "PressEvent": [
         {
-          "Variables": [],
+          "Variables": [
+            {
+              "Variable": "kp/xsp/alpha/MAGNETO_R",
+              "Value": "",
+              "VariableIsCustom": true,
+              "VariableBoundaries": {
+                "MinValue": "",
+                "MaxValue": "",
+                "Clamp": false
+              }
+            }
+          ],
           "Variable": "",
           "Value": "",
           "Name": "",
@@ -1023,7 +1144,18 @@
       "ButtonNumber": 32,
       "PressEvent": [
         {
-          "Variables": [],
+          "Variables": [
+            {
+              "Variable": "kp/xsp/alpha/MAGNETO_L",
+              "Value": "",
+              "VariableIsCustom": true,
+              "VariableBoundaries": {
+                "MinValue": "",
+                "MaxValue": "",
+                "Clamp": false
+              }
+            }
+          ],
           "Variable": "",
           "Value": "",
           "Name": "",
@@ -1052,7 +1184,18 @@
       "ButtonNumber": 33,
       "PressEvent": [
         {
-          "Variables": [],
+          "Variables": [
+            {
+              "Variable": "kp/xsp/alpha/MAGNETO_BOTH",
+              "Value": "",
+              "VariableIsCustom": true,
+              "VariableBoundaries": {
+                "MinValue": "",
+                "MaxValue": "",
+                "Clamp": false
+              }
+            }
+          ],
           "Variable": "",
           "Value": "",
           "Name": "",
@@ -1081,7 +1224,18 @@
       "ButtonNumber": 34,
       "PressEvent": [
         {
-          "Variables": [],
+          "Variables": [
+            {
+              "Variable": "kp/xsp/alpha/MAGNETO_BOTH",
+              "Value": "",
+              "VariableIsCustom": true,
+              "VariableBoundaries": {
+                "MinValue": "",
+                "MaxValue": "",
+                "Clamp": false
+              }
+            }
+          ],
           "Variable": "",
           "Value": "",
           "Name": "",

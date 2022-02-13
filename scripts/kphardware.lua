@@ -119,6 +119,8 @@ create_command("kp/xsp/controls/aileron_trim_right","Aileron Trim Right","sysCon
 create_command("kp/xsp/controls/aileron_trim_center","Aileron Trim Center","sysControls.aileronReset:actuate(sysControls.trimCenter)", "", "")
 
 -- --------------- Engines
+create_command("kp/xsp/engines/reverse_on", "Reverse Thrust Toggle", "sysEngines.reverseToggle:actuate(modeOn)", "", "")
+create_command("kp/xsp/engines/reverse_off", "Reverse Thrust Toggle", "sysEngines.reverseToggle:actuate(modeOff)", "", "")
 create_command("kp/xsp/engines/reverse_tgl", "Reverse Thrust Toggle", "sysEngines.reverseToggle:actuate(modeToggle)", "", "")
 
 -- ------------ A/P MCP functions
@@ -212,6 +214,7 @@ create_command("kp/xsp/efis/voradf_2_up", "EFIS VORADF2 Up/Right", "sysEFIS.vora
 
 -- comment out if you do not need this
 require("kpcrew.hardware.honeycombBravo")
+require("kpcrew.hardware.honeycombAlpha")
 
 --------------- Instantiate Datarefs for general annunciators ----------- 
 

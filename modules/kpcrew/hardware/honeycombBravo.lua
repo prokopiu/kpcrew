@@ -84,6 +84,25 @@ create_command("kp/xsp/bravo/button_ias","Bravo IAS Button","sysMCP.speedSwitch:
 -- larger AUTO PILOT switch
 create_command("kp/xsp/bravo/button_ap", "Bravo Autopilot Button",	"sysMCP.ap1Switch:actuate(2)", "", "")
 
+create_command("kp/xsp/bravo/toga_press", "Bravo Press Left TOGA", "sysMCP.togaPilotSwitch:actuate(modeToggle)","","")
+
+-- prepare for other switches
+create_command("kp/xsp/bravo/switch1_on","Bravo Switch 1 On","","","")
+create_command("kp/xsp/bravo/switch2_on","Bravo Switch 2 On","","","")
+create_command("kp/xsp/bravo/switch3_on","Bravo Switch 3 On","","","")
+create_command("kp/xsp/bravo/switch4_on","Bravo Switch 4 On","","","")
+create_command("kp/xsp/bravo/switch5_on","Bravo Switch 5 On","","","")
+create_command("kp/xsp/bravo/switch6_on","Bravo Switch 6 On","","","")
+create_command("kp/xsp/bravo/switch7_on","Bravo Switch 7 On","","","")
+
+create_command("kp/xsp/bravo/switch1_off","Bravo Switch 1 Off","","","")
+create_command("kp/xsp/bravo/switch2_off","Bravo Switch 2 Off","","","")
+create_command("kp/xsp/bravo/switch3_off","Bravo Switch 3 Off","","","")
+create_command("kp/xsp/bravo/switch4_off","Bravo Switch 4 Off","","","")
+create_command("kp/xsp/bravo/switch5_off","Bravo Switch 5 Off","","","")
+create_command("kp/xsp/bravo/switch6_off","Bravo Switch 6 Off","","","")
+create_command("kp/xsp/bravo/switch7_off","Bravo Switch 7 Off","","","")
+
 -- Honeycomb Bravo Lights
 
 xsp_parking_brake = create_dataref_table("kp/xsp/bravo/parking_brake", "Int")
@@ -132,7 +151,7 @@ xsp_low_volts[0] = 0
 xsp_anc_hyd = create_dataref_table("kp/xsp/bravo/anc_hyd", "Int")
 xsp_anc_hyd[0] = 0
 
-xsp_fuel_pumps = create_dataref_table("kp/xsp/bravo/fuel_pumps", "Int")
+xsp_fuel_pumps = create_dataref_table("kp/xsp/bravo/anc_fuel", "Int")
 xsp_fuel_pumps[0] = 0
 
 xsp_vacuum = create_dataref_table("kp/xsp/bravo/vacuum", "Int")

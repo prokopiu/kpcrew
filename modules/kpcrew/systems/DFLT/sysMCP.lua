@@ -110,7 +110,7 @@ sysMCP.cwsbSwitch = InopSwitch:new("cwsb")
 
 -- A/P DISENGAGE
 sysMCP.discAPSwitch = TwoStateToggleSwitch:new("apdisc","sim/cockpit2/annunciators/autopilot_disconnect",0,"sim/autopilot/disconnect")
-
+sysMCP.apDiscYoke = TwoStateToggleSwitch:new("discapyoke","sim/cockpit2/annunciators/autopilot_disconnect",0,"sim/autopilot/disconnect")
 
 ------- Annunciators
 

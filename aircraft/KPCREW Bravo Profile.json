@@ -8,7 +8,7 @@
         {
           "Variables": [
             {
-              "Variable": "kp/xsp/bravo_button_hdg",
+              "Variable": "kp/xsp/bravo/button_hdg",
               "Value": "",
               "VariableIsCustom": true,
               "VariableBoundaries": {
@@ -48,7 +48,7 @@
         {
           "Variables": [
             {
-              "Variable": "kp/xsp/bravo_button_nav",
+              "Variable": "kp/xsp/bravo/button_nav",
               "Value": "",
               "VariableIsCustom": true,
               "VariableBoundaries": {
@@ -88,7 +88,7 @@
         {
           "Variables": [
             {
-              "Variable": "kp/xsp/bravo_button_apr",
+              "Variable": "kp/xsp/bravo/button_apr",
               "Value": "",
               "VariableIsCustom": true,
               "VariableBoundaries": {
@@ -128,7 +128,7 @@
         {
           "Variables": [
             {
-              "Variable": "kp/xsp/bravo_button_rev",
+              "Variable": "kp/xsp/bravo/button_rev",
               "Value": "",
               "VariableIsCustom": true,
               "VariableBoundaries": {
@@ -168,7 +168,7 @@
         {
           "Variables": [
             {
-              "Variable": "kp/xsp/bravo_button_alt",
+              "Variable": "kp/xsp/bravo/button_alt",
               "Value": "",
               "VariableIsCustom": true,
               "VariableBoundaries": {
@@ -208,7 +208,7 @@
         {
           "Variables": [
             {
-              "Variable": "kp/xsp/bravo_button_vsp",
+              "Variable": "kp/xsp/bravo/button_vsp",
               "Value": "",
               "VariableIsCustom": true,
               "VariableBoundaries": {
@@ -248,7 +248,7 @@
         {
           "Variables": [
             {
-              "Variable": "kp/xsp/bravo_button_ias",
+              "Variable": "kp/xsp/bravo/button_ias",
               "Value": "",
               "VariableIsCustom": true,
               "VariableBoundaries": {
@@ -288,7 +288,7 @@
         {
           "Variables": [
             {
-              "Variable": "kp/xsp/bravo_button_ap",
+              "Variable": "kp/xsp/bravo/button_ap",
               "Value": "",
               "VariableIsCustom": true,
               "VariableBoundaries": {
@@ -326,7 +326,18 @@
       "ButtonNumber": 8,
       "PressEvent": [
         {
-          "Variables": [],
+          "Variables": [
+            {
+              "Variable": "kp/xsp/bravo/toga_press",
+              "Value": "",
+              "VariableIsCustom": true,
+              "VariableBoundaries": {
+                "MinValue": "",
+                "MaxValue": "",
+                "Clamp": false
+              }
+            }
+          ],
           "Variable": "",
           "Value": "",
           "Name": "",
@@ -357,7 +368,7 @@
         {
           "Variables": [
             {
-              "Variable": "kp/xsp/engines/reverse_on",
+              "Variable": "kp/xsp/engines/reverse_tgl",
               "Value": "",
               "VariableIsCustom": true,
               "VariableBoundaries": {
@@ -377,30 +388,7 @@
           "Repeat": 0
         }
       ],
-      "ReleaseEvent": [
-        {
-          "Variables": [
-            {
-              "Variable": "kp/xsp/engines/reverse_off",
-              "Value": "",
-              "VariableIsCustom": true,
-              "VariableBoundaries": {
-                "MinValue": "",
-                "MaxValue": "",
-                "Clamp": false
-              }
-            }
-          ],
-          "Variable": "",
-          "Value": "",
-          "Name": "",
-          "Condition": "",
-          "ConditionValue": "",
-          "ConditionLogic": "",
-          "Conditions": [],
-          "Repeat": 0
-        }
-      ]
+      "ReleaseEvent": []
     },
     {
       "ButtonNumber": 10,
@@ -466,7 +454,7 @@
         {
           "Variables": [
             {
-              "Variable": "kp/xsp/bravo_knob_up",
+              "Variable": "kp/xsp/bravo/knob_up",
               "Value": "",
               "VariableIsCustom": true,
               "VariableBoundaries": {
@@ -506,7 +494,7 @@
         {
           "Variables": [
             {
-              "Variable": "kp/xsp/bravo_knob_dn",
+              "Variable": "kp/xsp/bravo/knob_dn",
               "Value": "",
               "VariableIsCustom": true,
               "VariableBoundaries": {
@@ -626,7 +614,7 @@
         {
           "Variables": [
             {
-              "Variable": "kp/xsp/bravo_mode_ias",
+              "Variable": "kp/xsp/bravo/mode_ias",
               "Value": "",
               "VariableIsCustom": true,
               "VariableBoundaries": {
@@ -666,7 +654,7 @@
         {
           "Variables": [
             {
-              "Variable": "kp/xsp/bravo_mode_crs",
+              "Variable": "kp/xsp/bravo/mode_crs",
               "Value": "",
               "VariableIsCustom": true,
               "VariableBoundaries": {
@@ -706,7 +694,7 @@
         {
           "Variables": [
             {
-              "Variable": "kp/xsp/bravo_mode_hdg",
+              "Variable": "kp/xsp/bravo/mode_hdg",
               "Value": "",
               "VariableIsCustom": true,
               "VariableBoundaries": {
@@ -746,7 +734,7 @@
         {
           "Variables": [
             {
-              "Variable": "kp/xsp/bravo_mode_vs",
+              "Variable": "kp/xsp/bravo/mode_vs",
               "Value": "",
               "VariableIsCustom": true,
               "VariableBoundaries": {
@@ -786,7 +774,7 @@
         {
           "Variables": [
             {
-              "Variable": "kp/xsp/bravo_mode_alt",
+              "Variable": "kp/xsp/bravo/mode_alt",
               "Value": "",
               "VariableIsCustom": true,
               "VariableBoundaries": {
@@ -962,18 +950,7 @@
       "ButtonNumber": 25,
       "PressEvent": [
         {
-          "Variables": [
-            {
-              "Variable": "kp/xsp/engines/reverse_on",
-              "Value": "",
-              "VariableIsCustom": true,
-              "VariableBoundaries": {
-                "MinValue": "",
-                "MaxValue": "",
-                "Clamp": false
-              }
-            }
-          ],
+          "Variables": [],
           "Variable": "",
           "Value": "",
           "Name": "",
@@ -984,30 +961,7 @@
           "Repeat": 2
         }
       ],
-      "ReleaseEvent": [
-        {
-          "Variables": [
-            {
-              "Variable": "kp/xsp/engines/reverse_off",
-              "Value": "",
-              "VariableIsCustom": true,
-              "VariableBoundaries": {
-                "MinValue": "",
-                "MaxValue": "",
-                "Clamp": false
-              }
-            }
-          ],
-          "Variable": "",
-          "Value": "",
-          "Name": "",
-          "Condition": "",
-          "ConditionValue": "",
-          "ConditionLogic": "",
-          "Conditions": [],
-          "Repeat": 0
-        }
-      ]
+      "ReleaseEvent": []
     },
     {
       "ButtonNumber": 26,
@@ -1073,7 +1027,7 @@
         {
           "Variables": [
             {
-              "Variable": "kp/xsp/autopilot/toga_press",
+              "Variable": "kp/xsp/bravo/toga_press",
               "Value": "",
               "VariableIsCustom": true,
               "VariableBoundaries": {
@@ -1113,7 +1067,7 @@
         {
           "Variables": [
             {
-              "Variable": "kp/xsp/autopilot/toga_press",
+              "Variable": "kp/xsp/bravo/toga_press",
               "Value": "",
               "VariableIsCustom": true,
               "VariableBoundaries": {
@@ -1652,18 +1606,7 @@
       "ButtonNumber": 45,
       "PressEvent": [
         {
-          "Variables": [
-            {
-              "Variable": "kp/xsp/bravo_layer_multi",
-              "Value": "",
-              "VariableIsCustom": true,
-              "VariableBoundaries": {
-                "MinValue": "",
-                "MaxValue": "",
-                "Clamp": false
-              }
-            }
-          ],
+          "Variables": [],
           "Variable": "",
           "Value": "",
           "Name": "",
@@ -1694,7 +1637,7 @@
         {
           "Variables": [
             {
-              "Variable": "kp/xsp/bravo_layer_ap",
+              "Variable": "",
               "Value": "",
               "VariableIsCustom": true,
               "VariableBoundaries": {
@@ -1765,7 +1708,7 @@
       "ConditionLogic": "",
       "Conditions": [
         {
-          "Condition": "kp/xsp/autopilot/mcp_hdg",
+          "Condition": "kp/xsp/bravo/mcp_hdg",
           "ConditionValue": "1",
           "ConditionIsCustom": true
         }
@@ -1789,7 +1732,7 @@
       "ConditionLogic": "",
       "Conditions": [
         {
-          "Condition": "kp/xsp/systems/gear_light_on_l",
+          "Condition": "kp/xsp/bravo/gear_light_on_l",
           "ConditionValue": "1",
           "ConditionIsCustom": true
         }
@@ -1801,7 +1744,7 @@
       "ConditionLogic": "",
       "Conditions": [
         {
-          "Condition": "kp/xsp/systems/gear_light_trans_l",
+          "Condition": "kp/xsp/bravo/gear_light_trans_l",
           "ConditionValue": "1",
           "ConditionIsCustom": true
         }
@@ -1813,7 +1756,7 @@
       "ConditionLogic": "",
       "Conditions": [
         {
-          "Condition": "kp/xsp/systems/gear_light_on_n",
+          "Condition": "kp/xsp/bravo/gear_light_on_n",
           "ConditionValue": "1",
           "ConditionIsCustom": true
         }
@@ -1825,7 +1768,7 @@
       "ConditionLogic": "",
       "Conditions": [
         {
-          "Condition": "kp/xsp/systems/gear_light_on_r",
+          "Condition": "kp/xsp/bravo/gear_light_on_r",
           "ConditionValue": "1",
           "ConditionIsCustom": true
         }
@@ -1837,7 +1780,7 @@
       "ConditionLogic": "",
       "Conditions": [
         {
-          "Condition": "kp/xsp/systems/gear_light_trans_r",
+          "Condition": "kp/xsp/bravo/gear_light_trans_r",
           "ConditionValue": "1",
           "ConditionIsCustom": true
         }
@@ -1849,7 +1792,7 @@
       "ConditionLogic": "",
       "Conditions": [
         {
-          "Condition": "kp/xsp/systems/gear_light_trans_n",
+          "Condition": "kp/xsp/bravo/gear_light_trans_n",
           "ConditionValue": "1",
           "ConditionIsCustom": true
         }
@@ -1861,7 +1804,7 @@
       "ConditionLogic": "",
       "Conditions": [
         {
-          "Condition": "kp/xsp/systems/parking_brake",
+          "Condition": "kp/xsp/bravo/parking_brake",
           "ConditionValue": "1",
           "ConditionIsCustom": true
         }
@@ -1873,9 +1816,9 @@
       "ConditionLogic": "",
       "Conditions": [
         {
-          "Condition": "kp/xsp/electric/apu_running",
+          "Condition": "kp/xsp/bravo/apu_running",
           "ConditionValue": "1",
-          "ConditionIsCustom": false
+          "ConditionIsCustom": true
         }
       ]
     },
@@ -1885,7 +1828,7 @@
       "ConditionLogic": "",
       "Conditions": [
         {
-          "Condition": "kp/xsp/systems/master_caution",
+          "Condition": "kp/xsp/bravo/master_caution",
           "ConditionValue": "1",
           "ConditionIsCustom": true
         }
@@ -1897,7 +1840,7 @@
       "ConditionLogic": "",
       "Conditions": [
         {
-          "Condition": "kp/xsp/autopilot/mcp_nav",
+          "Condition": "kp/xsp/bravo/mcp_nav",
           "ConditionValue": "1",
           "ConditionIsCustom": true
         }
@@ -1909,7 +1852,7 @@
       "ConditionLogic": "",
       "Conditions": [
         {
-          "Condition": "kp/xsp/autopilot/mcp_ias",
+          "Condition": "kp/xsp/bravo/mcp_ias",
           "ConditionValue": "1",
           "ConditionIsCustom": true
         }
@@ -1921,7 +1864,7 @@
       "ConditionLogic": "",
       "Conditions": [
         {
-          "Condition": "kp/xsp/autopilot/mcp_app",
+          "Condition": "kp/xsp/bravo/mcp_app",
           "ConditionValue": "1",
           "ConditionIsCustom": true
         }
@@ -1933,7 +1876,7 @@
       "ConditionLogic": "",
       "Conditions": [
         {
-          "Condition": "kp/xsp/autopilot/mcp_vsp",
+          "Condition": "kp/xsp/bravo/mcp_vsp",
           "ConditionValue": "1",
           "ConditionIsCustom": true
         }
@@ -1945,7 +1888,7 @@
       "ConditionLogic": "",
       "Conditions": [
         {
-          "Condition": "kp/xsp/autopilot/mcp_alt",
+          "Condition": "kp/xsp/bravo/mcp_alt",
           "ConditionValue": "1",
           "ConditionIsCustom": true
         }
@@ -1957,7 +1900,7 @@
       "ConditionLogic": "",
       "Conditions": [
         {
-          "Condition": "kp/xsp/autopilot/mcp_ap1",
+          "Condition": "kp/xsp/bravo/mcp_ap1",
           "ConditionValue": "1",
           "ConditionIsCustom": true
         }
@@ -1969,7 +1912,7 @@
       "ConditionLogic": "",
       "Conditions": [
         {
-          "Condition": "kp/xsp/systems/doors",
+          "Condition": "kp/xsp/bravo/doors",
           "ConditionValue": "1",
           "ConditionIsCustom": true
         }
@@ -1981,7 +1924,7 @@
       "ConditionLogic": "",
       "Conditions": [
         {
-          "Condition": "kp/xsp/hydraulic/anc_hyd",
+          "Condition": "kp/xsp/bravo/anc_hyd",
           "ConditionValue": "1",
           "ConditionIsCustom": true
         }
@@ -1993,7 +1936,7 @@
       "ConditionLogic": "",
       "Conditions": [
         {
-          "Condition": "kp/xsp/fuel/anc_fuel",
+          "Condition": "kp/xsp/bravo/anc_fuel",
           "ConditionValue": "1",
           "ConditionIsCustom": true
         }
@@ -2005,7 +1948,7 @@
       "ConditionLogic": "",
       "Conditions": [
         {
-          "Condition": "kp/xsp/engines/anc_oil",
+          "Condition": "kp/xsp/bravo/anc_oil",
           "ConditionValue": "1",
           "ConditionIsCustom": true
         }
@@ -2017,7 +1960,7 @@
       "ConditionLogic": "",
       "Conditions": [
         {
-          "Condition": "kp/xsp/engines/anc_starter",
+          "Condition": "kp/xsp/bravo/anc_starter",
           "ConditionValue": "1",
           "ConditionIsCustom": true
         }
@@ -2029,7 +1972,7 @@
       "ConditionLogic": "",
       "Conditions": [
         {
-          "Condition": "kp/xsp/aice/anc_aice",
+          "Condition": "kp/xsp/bravo/anc_aice",
           "ConditionValue": "1",
           "ConditionIsCustom": true
         }
@@ -2041,7 +1984,7 @@
       "ConditionLogic": "",
       "Conditions": [
         {
-          "Condition": "kp/xsp/electric/low_volts",
+          "Condition": "kp/xsp/bravo/low_volts",
           "ConditionValue": "1",
           "ConditionIsCustom": true
         }
@@ -2053,7 +1996,7 @@
       "ConditionLogic": "",
       "Conditions": [
         {
-          "Condition": "kp/xsp/fuel/fuel_pumps",
+          "Condition": "kp/xsp/bravo/anc_fuel",
           "ConditionValue": "1",
           "ConditionIsCustom": true
         }
@@ -2065,7 +2008,7 @@
       "ConditionLogic": "",
       "Conditions": [
         {
-          "Condition": "kp/xsp/air/vacuum",
+          "Condition": "kp/xsp/bravo/vacuum",
           "ConditionValue": "1",
           "ConditionIsCustom": true
         }
@@ -2077,7 +2020,7 @@
       "ConditionLogic": "",
       "Conditions": [
         {
-          "Condition": "kp/xsp/engines/engine_fire",
+          "Condition": "kp/xsp/bravo/engine_fire",
           "ConditionValue": "1",
           "ConditionIsCustom": true
         }
@@ -2089,7 +2032,7 @@
       "ConditionLogic": "",
       "Conditions": [
         {
-          "Condition": "kp/xsp/systems/master_warning",
+          "Condition": "kp/xsp/bravo/master_warning",
           "ConditionValue": "1",
           "ConditionIsCustom": true
         }
@@ -2101,7 +2044,7 @@
       "ConditionLogic": "",
       "Conditions": [
         {
-          "Condition": "kp/xsp/autopilot/mcp_rev",
+          "Condition": "kp/xsp/bravo/mcp_rev",
           "ConditionValue": "1",
           "ConditionIsCustom": true
         }
