@@ -25,5 +25,11 @@ end
 function InopSwitch:actuate(action)
 end
 
-return InopSwitch
+-- set the value
+function InopSwitch:setValue(value)
+end
 
+function InopSwitch:adjustValue(value,min,max)
+end
+
+return InopSwitch

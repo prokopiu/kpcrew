@@ -33,4 +33,16 @@ function SwitchGroup:actuate(action)
     end	
 end
 
+function SwitchGroup:setValue(value)
+    for _, switch in ipairs(self.switches) do
+        switch:setValue(value)
+    end	
+end
+
+function SwitchGroup:adjustValue(value,min,max)
+    for _, switch in ipairs(self.switches) do
+        switch:adjustValue(value,min,max)
+    end	
+end
+
 return SwitchGroup

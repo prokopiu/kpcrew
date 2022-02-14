@@ -38,9 +38,25 @@ function MultiStateCmdSwitch:actuate(action)
 	end
 end
 
--- set the value
+-- set the value directly where possible (dref can be written)
 function MultiStateCmdSwitch:setValue(value)
-	set_array(self.statusDref,self.statusDrefIdx)
+	if self.statusDrefIdx > 0 then
+		set_array(self.statusDref,self.statusDrefIdx,value)
+	else
+		set(self.statusDref,value)
+	end
+end
+
+-- set the value directly where possible (dref can be written)
+function MultiStateCmdSwitch:adjustValue(value,min,max)
+	if value <= max and value >= min then
+		while value < math.floor(get(self.statusDref,self.statusDrefIdx)) and math.floor(get(self.statusDref,self.statusDrefIdx)) > min do
+			command_once(self.decrcmd)
+		end
+		while value > math.floor(get(self.statusDref,self.statusDrefIdx)) and math.floor(get(self.statusDref,self.statusDrefIdx)) < max do
+			command_once(self.incrcmd)
+		end
+	end
 end
 
 return MultiStateCmdSwitch

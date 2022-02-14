@@ -30,13 +30,25 @@ end
 function TwoStateDrefSwitch:actuate(action)
 	if action ~= Switch.modeToggle then
 		if self:getStatus() ~= action then
-			set_array(self.dataref,self.datarefidx,action)
+			if self.datarefidx == 0 then
+				set(self.dataref,action)
+			else
+				set_array(self.dataref,self.datarefidx,action)
+			end
 		end
 	else
 		if self:getStatus() ~= modeOff then
-			set_array(self.dataref,self.datarefidx,Switch.modeOff)
+			if self.datarefidx == 0 then
+				set(self.dataref,Switch.modeOff)
+			else
+				set_array(self.dataref,self.datarefidx,Switch.modeOff)
+			end
 		else
-			set_array(self.dataref,self.datarefidx,Switch.modeOn)
+			if self.datarefidx == 0 then
+				set(self.dataref,Switch.modeOn)
+			else
+				set_array(self.dataref,self.datarefidx,Switch.modeOn)
+			end
 		end
 	end
 end

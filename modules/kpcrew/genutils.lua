@@ -178,3 +178,15 @@ end
 function getPCTime()
 	return socket.gettime()
 end
+
+dataref("TEXTOUT", "sim/operation/prefs/text_out", "writeable")
+function speakNoText(speakMode, sText)
+	if speakMode == 0 then
+		TEXTOUT=false
+		XPLMSpeakString(sText)
+		TEXTOUT=true
+	else	
+		TEXTOUT=true
+		XPLMSpeakString(sText)
+	end
+end
