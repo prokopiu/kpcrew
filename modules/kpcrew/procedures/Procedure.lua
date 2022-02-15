@@ -71,4 +71,22 @@ function Procedure:reset()
     end
 end
 
+function Procedure:getHeadline(lineLength)
+	local eqsigns = lineLength - string.len(self.name) - 2
+	local line = {}
+	
+	for i=0,math.floor((eqsigns / 2) + 0.5) - 1,1 do
+		line[#line + 1] = "="
+	end
+	
+	line[#line + 1] = " "
+	line[#line + 1] = self.name
+	line[#line + 1] = " "
+	
+	for i=0,(eqsigns / 2) - 1,1 do
+		line[#line + 1] = "="
+	end
+	return table.concat(line)
+end
+
 return Procedure

@@ -86,4 +86,22 @@ function ProcedureItem:speakResponse()
 	speakNoText(0,self:getResponseText())
 end
 	
+function ProcedureItem:getLine(lineLength)
+	local line = {}
+	-- if self.responseText ~= "" then
+		local dots = lineLength - string.len(self.challengeText) - string.len(self.responseText) - 5
+		line[#line + 1] = self.challengeText
+		for i=0,dots-1,1 do
+			line[#line + 1] = "."
+		end
+		line[#line + 1] = self.responseText
+		line[#line + 1] = " "
+		line[#line + 1] = self.actor
+	
+		return table.concat(line)
+	-- else
+		-- line[#line + 1] = self.challengeText
+	-- end
+end
+
 return ProcedureItem

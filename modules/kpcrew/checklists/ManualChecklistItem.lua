@@ -7,8 +7,9 @@ local ManualChecklistItem = {
 }
 
 require "kpcrew.genutils"
+local ChecklistItem = require "kpcrew.checklists.ChecklistItem"
 
-function ManualChecklistItem:new(challengeText, responseText)
+function ManualChecklistItem:new(challengeText, responseText, actor, waittime)
 
     ManualChecklistItem.__index = ManualChecklistItem
     setmetatable(ManualChecklistItem, {
@@ -20,36 +21,10 @@ function ManualChecklistItem:new(challengeText, responseText)
 
     obj.challengeText = challengeText
     obj.responseText = responseText
+	obj.actor = actor
+	obj.waittime = waittime
 
     return obj
-end
-
-function ManualChecklistItem:getChallengeText()
-    return nil
-end
-
-function ManualChecklistItem:getActor()
-	return nil
-end
-
-function ManualChecklistItem:getResponseText()
-	return nil
-end
-
-function ManualChecklistItem:getWaitTime()
-	return 0
-end
-
-function ManualChecklistItem:setState(state)
-    self.state = state
-end
-
-function ManualChecklistItem:getState()
-    return self.state
-end
-
-function ManualChecklistItem:reset()
-    self:setState(ChecklistItem.stateNotStarted)
 end
 
 function ManualChecklistItem:validate()
@@ -57,7 +32,7 @@ function ManualChecklistItem:validate()
 end
 
 function ManualChecklistItem:isManualItem()
-    return false
+    return true
 end
 
 function ManualChecklistItem:isAutomaticItem()
@@ -68,12 +43,4 @@ function ManualChecklistItem:hasResponse()
     return false
 end
 
-function ManualChecklistItem:speakChallenge()
-	speakNoText(0,self:getChallengeText())
-end
-	
-function ManualChecklistItem:speakResponse()
-	speakNoText(0,self:getResponseText())
-end
-	
 return ManualChecklistItem
