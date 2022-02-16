@@ -119,6 +119,13 @@ sysMCP.cwsbSwitch = TwoStateToggleSwitch:new("cwsb","laminar/B738/autopilot/cws_
 sysMCP.discAPSwitch = TwoStateToggleSwitch:new("apdisc","laminar/B738/autopilot/disconnect_pos",0,"laminar/B738/autopilot/disconnect_toggle")
 sysMCP.apDiscYoke = TwoStateToggleSwitch:new("discapyoke","laminar/B738/autopilot/disconnect_pos",0,"laminar/B738/autopilot/capt_disco_press")
 
+-- NAVIGATION SWITCHES
+sysMCP.vhfNavSwitch = MultiStateCmdSwitch:new("vhfnav","laminar/B738/toggle_switch/vhf_nav_source",0,"laminar/B738/toggle_switch/vhf_nav_source_lft","laminar/B738/toggle_switch/vhf_nav_source_rgt")
+sysMCP.irsNavSwitch = MultiStateCmdSwitch:new("irsnav","laminar/B738/toggle_switch/irs_source",0,"laminar/B738/toggle_switch/irs_source_left","laminar/B738/toggle_switch/irs_source_right")
+sysMCP.fmcNavSwitch = MultiStateCmdSwitch:new("fmcnav","laminar/B738/toggle_switch/fmc_source",0,"laminar/B738/toggle_switch/fmc_source_left","laminar/B738/toggle_switch/fmc_source_right")
+sysMCP.displaySourceSwitch = MultiStateCmdSwitch:new("dispsrc","laminar/B738/toggle_switch/dspl_source",0,"laminar/B738/toggle_switch/dspl_source_left","laminar/B738/toggle_switch/dspl_source_right")
+sysMCP.displayControlSwitch = MultiStateCmdSwitch:new("dispctrl","laminar/B738/toggle_switch/dspl_ctrl_pnl",0,"laminar/B738/toggle_switch/dspl_ctrl_pnl_left","laminar/B738/toggle_switch/dspl_ctrl_pnl_right")
+
 ---------- Annunciators
 
 -- Flight Directors annunciator

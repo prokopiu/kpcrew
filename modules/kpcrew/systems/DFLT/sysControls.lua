@@ -19,6 +19,7 @@ SimpleAnnunciator = require "kpcrew.systems.SimpleAnnunciator"
 CustomAnnunciator = require "kpcrew.systems.CustomAnnunciator"
 TwoStateToggleSwitch = require "kpcrew.systems.TwoStateToggleSwitch"
 MultiStateCmdSwitch = require "kpcrew.systems.MultiStateCmdSwitch"
+InopSwitch = require "kpcrew.systems.InopSwitch"
 
 --------- Switches
 
@@ -38,6 +39,9 @@ sysControls.rudderTrimSwitch = MultiStateCmdSwitch:new("ailerontrim","sim/cockpi
 
 sysControls.rudderReset = TwoStateToggleSwitch:new("rudderreset","sim/cockpit2/controls/rudder_trim",0,"sim/flight_controls/rudder_trim_center")
 
+sysControls.yawDamper = TwoStateToggleSwitch:new("yawdamper","sim/cockpit2/switches/yaw_damper_on",0,"sim/systems/yaw_damper_toggle")
+
+sysControls.altFlapsCtrl = InopSwitch:new("altflapsctrl")
 
 --------- Annunciators
 

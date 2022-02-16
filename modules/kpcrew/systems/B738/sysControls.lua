@@ -19,6 +19,7 @@ SimpleAnnunciator = require "kpcrew.systems.SimpleAnnunciator"
 CustomAnnunciator = require "kpcrew.systems.CustomAnnunciator"
 TwoStateToggleSwitch = require "kpcrew.systems.TwoStateToggleSwitch"
 MultiStateCmdSwitch = require "kpcrew.systems.MultiStateCmdSwitch"
+InopSwitch = require "kpcrew.systems.InopSwitch"
 
 --------- Switches
 
@@ -37,6 +38,10 @@ sysControls.aileronReset = TwoStateToggleSwitch:new("aileronreset","sim/cockpit2
 sysControls.rudderTrimSwitch = MultiStateCmdSwitch:new("ailerontrim","sim/cockpit2/controls/rudder_trim",0,"sim/flight_controls/rudder_trim_right","sim/flight_controls/rudder_trim_left")
 
 sysControls.rudderReset = TwoStateToggleSwitch:new("rudderreset","sim/cockpit2/controls/rudder_trim",0,"sim/flight_controls/rudder_trim_center")
+
+sysControls.yawDamper = TwoStateToggleSwitch:new("yawdamper","laminar/B738/toggle_switch/yaw_dumper_pos",0,"laminar/B738/toggle_switch/yaw_dumper")
+
+sysControls.altFlapsCtrl = MultiStateCmdSwitch:new("altflapsctrl","laminar/B738/toggle_switch/alt_flaps_ctrl",0,"laminar/B738/toggle_switch/alt_flaps_ctrl_dn","laminar/B738/toggle_switch/alt_flaps_ctrl_up")
 
 --------- Annunciators
 

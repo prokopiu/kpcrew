@@ -6,6 +6,17 @@ local socket = require "socket"
 local drefTextout = "sim/operation/prefs/text_out"
 local debugLoggingEnabled = false
 
+-- color definitions
+color_red 			= 0xFF0000FF
+color_green 		= 0xFF00FF00
+color_dark_green 	= 0xFF007f00
+color_white 		= 0xFFFFFFFF
+color_light_blue 	= 0xFFFFFF00
+color_orange 		= 0xFF004FCF
+color_grey 			= 0xFFA0A0A0
+color_left_display 	= 0xFFA0AFFF
+color_ocean_blue 	= 0xFFEC652B
+
 ------------- logging related functions ---------------
 
 --- Writes a log message into the X-Plane log file. (patrickl92)
@@ -177,4 +188,16 @@ end
 -- @treturn number The current time.
 function getPCTime()
 	return socket.gettime()
+end
+
+dataref("TEXTOUT", "sim/operation/prefs/text_out", "writeable")
+function speakNoText(speakMode, sText)
+	if speakMode == 0 then
+		TEXTOUT=false
+		XPLMSpeakString(sText)
+		TEXTOUT=true
+	else	
+		TEXTOUT=true
+		XPLMSpeakString(sText)
+	end
 end

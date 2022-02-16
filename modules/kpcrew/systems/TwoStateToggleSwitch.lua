@@ -44,5 +44,10 @@ function TwoStateToggleSwitch:actuate(action)
 	end
 end
 
+-- set the value
+function TwoStateToggleSwitch:setValue(value)
+	set_array(self.statusDref,self.statusDrefIdx)
+end
+
 return TwoStateToggleSwitch
 

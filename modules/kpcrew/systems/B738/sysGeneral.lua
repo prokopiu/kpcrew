@@ -2,6 +2,12 @@
 -- aircraft general systems
 
 local sysGeneral = {
+	irsUnitMin = 0,
+	irsUnitMax = 3,
+	irsUnitOFF = 0,
+	irsUnitALIGN = 1,
+	irsUnitNAV = 2,
+	irsUnitATT = 3
 }
 
 TwoStateDrefSwitch = require "kpcrew.systems.TwoStateDrefSwitch"
@@ -12,6 +18,7 @@ SimpleAnnunciator = require "kpcrew.systems.SimpleAnnunciator"
 CustomAnnunciator = require "kpcrew.systems.CustomAnnunciator"
 TwoStateToggleSwitch = require "kpcrew.systems.TwoStateToggleSwitch"
 MultiStateCmdSwitch = require "kpcrew.systems.MultiStateCmdSwitch"
+InopSwitch = require "kpcrew.systems.InopSwitch"
 
 -- Parking Brake
 sysGeneral.parkBrakeSwitch = TwoStateToggleSwitch:new("parkbrake","sim/cockpit2/controls/parking_brake_ratio",0,"laminar/B738/push_button/park_brake_on_off")
@@ -65,6 +72,17 @@ sysGeneral.baroGroup = SwitchGroup:new("barogroup")
 sysGeneral.baroGroup:addSwitch(sysGeneral.baroPilot)
 sysGeneral.baroGroup:addSwitch(sysGeneral.baroCoPilot)
 sysGeneral.baroGroup:addSwitch(sysGeneral.baroStandby)
+
+--- systems not used by kphardware
+
+sysGeneral.irsUnit1Switch = MultiStateCmdSwitch:new("irsunit1","laminar/B738/toggle_switch/irs_left",0,"laminar/B738/toggle_switch/irs_L_left","laminar/B738/toggle_switch/irs_L_right")
+sysGeneral.irsUnit2Switch = MultiStateCmdSwitch:new("irsunit2","laminar/B738/toggle_switch/irs_right",0,"laminar/B738/toggle_switch/irs_R_left","laminar/B738/toggle_switch/irs_R_right")
+sysGeneral.irsUnit3Switch = InopSwitch:new("irsunit3")
+
+sysGeneral.irsUnitGroup = SwitchGroup:new("irsunits")
+sysGeneral.irsUnitGroup:addSwitch(sysGeneral.irsUnit1Switch)
+sysGeneral.irsUnitGroup:addSwitch(sysGeneral.irsUnit2Switch)
+sysGeneral.irsUnitGroup:addSwitch(sysGeneral.irsUnit3Switch)
 
 ------------ Annunciators
 -- park brake

@@ -68,6 +68,15 @@ sysGeneral.baroGroup:addSwitch(sysGeneral.baroPilot)
 sysGeneral.baroGroup:addSwitch(sysGeneral.baroCoPilot)
 sysGeneral.baroGroup:addSwitch(sysGeneral.baroStandby)
 
+sysGeneral.irsUnit1Switch = InopSwitch:new("irsunit1")
+sysGeneral.irsUnit2Switch = InopSwitch:new("irsunit2")
+sysGeneral.irsUnit3Switch = InopSwitch:new("irsunit3")
+
+sysGeneral.irsUnitGroup = SwitchGroup:new("irsunits")
+sysGeneral.irsUnitGroup:addSwitch(sysGeneral.irsUnit1Switch)
+sysGeneral.irsUnitGroup:addSwitch(sysGeneral.irsUnit2Switch)
+sysGeneral.irsUnitGroup:addSwitch(sysGeneral.irsUnit3Switch)
+
 ------------ Annunciators
 -- park brake
 sysGeneral.parkbrakeAnc = CustomAnnunciator:new("parkbrake",

@@ -112,6 +112,13 @@ sysMCP.cwsbSwitch = InopSwitch:new("cwsb")
 sysMCP.discAPSwitch = TwoStateToggleSwitch:new("apdisc","sim/cockpit2/annunciators/autopilot_disconnect",0,"sim/autopilot/disconnect")
 sysMCP.apDiscYoke = TwoStateToggleSwitch:new("discapyoke","sim/cockpit2/annunciators/autopilot_disconnect",0,"sim/autopilot/disconnect")
 
+-- NAVIGATION SWITCHES
+sysMCP.vhfNavSwitch = InopSwitch:new("vhfnav")
+sysMCP.irsNavSwitch = InopSwitch:new("irsnav")
+sysMCP.fmcNavSwitch = InopSwitch:new("fmcnav")
+sysMCP.displaySourceSwitch = InopSwitch:new("dispsrc")
+sysMCP.displayControlSwitch = InopSwitch:new("dispctrl")
+
 ------- Annunciators
 
 -- Flight Directors annunciator

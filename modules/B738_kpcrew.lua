@@ -3,6 +3,18 @@
 	Kosta Prokopiu, October 2021
 --]]
 
+sysLights = require("kpcrew.systems.B738.sysLights")
+sysGeneral = require("kpcrew.systems.B738.sysGeneral")	
+sysControls = require("kpcrew.systems.B738.sysControls")	
+sysEngines = require("kpcrew.systems.B738.sysEngines")	
+sysElectric = require("kpcrew.systems.B738.sysElectric")	
+sysHydraulic = require("kpcrew.systems.B738.sysHydraulic")	
+sysFuel = require("kpcrew.systems.B738.sysFuel")	
+sysAir = require("kpcrew.systems.B738.sysAir")	
+sysAice = require("kpcrew.systems.B738.sysAice")	
+sysMCP = require("kpcrew.systems.B738.sysMCP")	
+sysEFIS = require("kpcrew.systems.B738.sysEFIS")	
+
 -- =========== Aircraft specific details
 B738 = Class_ACF:Create()
 B738:setDEP_Flaps({"1","2","5","10","15","25","",""})
@@ -82,71 +94,36 @@ zibo_save_counter = 30
 KC_COLD_AND_DARK = { ["name"] = "SET AIRCRAFT TO COLD & DARK", ["mode"]="s", ["wnd_width"] = 350, ["wnd_height"] = 31*9,   
 	[1] = {["activity"] = "OVERHEAD TOP", ["wait"] = 2, ["interactive"] = 0, ["actor"] = "SYS:", ["validated"] = 0, ["chkl_color"] = color_white, ["end"] = 0,
 		["actions"] = function ()
-			kc_acf_irs_mode(0,0)
-			kc_acf_external_doors(0,0)
-			kc_acf_light_cockpit_mode(0)
+			sysGeneral.irsUnitGroup:adjustValue(sysGeneral.irsUnitOFF,sysGeneral.irsUnitMin,sysGeneral.irsUnitMax)
+			sysGeneral.doorGroup:actuate(modeOff)
+			sysLights.domeLightSwitch:actuate(modeOff)
 			-- increase shadow resolution to prevent ugly steps
 			set("sim/private/controls/shadow/cockpit_near_adjust",0.09)
 		end
 	},
 	[2] = {["activity"] = "OVERHEAD COLUMN 1", ["wait"] = 4, ["interactive"] = 0, ["actor"] = "SYS:", ["validated"] = 0, ["chkl_color"] = color_white, ["end"] = 0,
 		["actions"] = function ()
-			kc_acf_yaw_damper_onoff(0)
-			set("laminar/B738/toggle_switch/alt_flaps_ctrl",0)
-			if get("laminar/B738/toggle_switch/vhf_nav_source") == -1 then
-				command_once("laminar/B738/toggle_switch/vhf_nav_source_rgt")
-			end
-			if get("laminar/B738/toggle_switch/vhf_nav_source") == 1 then
-				command_once("laminar/B738/toggle_switch/vhf_nav_source_lft")
-			end
-			if get("laminar/B738/toggle_switch/irs_source") == -1 then
-				command_once("laminar/B738/toggle_switch/irs_source_right")
-			end
-			if get("laminar/B738/toggle_switch/irs_source") == 1 then
-				command_once("laminar/B738/toggle_switch/irs_source_left")
-			end
-			if get("laminar/B738/toggle_switch/fmc_source") == -1 then
-				command_once("laminar/B738/toggle_switch/fmc_source_right")
-			end
-			if get("laminar/B738/toggle_switch/fmc_source") == 1 then
-				command_once("laminar/B738/toggle_switch/fmc_source_left")
-			end
-			if get("laminar/B738/toggle_switch/dspl_source") == -1 then
-				command_once("laminar/B738/toggle_switch/dspl_source_right")
-			end
-			if get("laminar/B738/toggle_switch/dspl_source") == 1 then
-				command_once("laminar/B738/toggle_switch/dspl_source_left")
-			end
-			if get("laminar/B738/toggle_switch/dspl_ctrl_pnl") == -1 then
-				command_once("laminar/B738/toggle_switch/dspl_ctrl_pnl_right")
-			end
-			if get("laminar/B738/toggle_switch/dspl_ctrl_pnl") == 1 then
-				command_once("laminar/B738/toggle_switch/dspl_ctrl_pnl_left")
-			end
-			kc_acf_fuel_pumps_onoff(0,0)
-			kc_acf_fuel_xfeed_mode(0)
+			sysControls.yawDamper:actuate(modeOff)
+			sysControls.altFlapsCtrl:setValue(modeOff)
+			sysMCP.vhfNavSwitch:adjustValue(0,-1,1)
+			sysMCP.irsNavSwitch:setValue(0)
+			sysMCP.fmcNavSwitch:setValue(0)
+			sysMCP.displaySourceSwitch:setValue(0)
+			sysMCP.displayControlSwitch:setValue(0)
+			sysFuel.fuelPumpGroup:actuate(modeOff)
+			sysFuel.crossFeed:actuate(modeOff)
 		end
 	},
 	[3] = {["activity"] = "OVERHEAD COLUMN 2", ["wait"] = 3, ["interactive"] = 0, ["actor"] = "SYS:", ["validated"] = 0, ["chkl_color"] = color_white, ["end"] = 0,
 		["actions"] = function ()
 			command_once("sim/electrical/APU_off")
 			command_once("sim/electrical/GPU_off")
-			kc_acf_elec_battery_onoff(0)
-			kc_acf_elec_cabin_power(0)
-			kc_acf_elec_ife_power(0)
-			kc_acf_external_doors(1,1)
-			command_once("laminar/B738/knob/dc_power_dn")
-			command_once("laminar/B738/knob/dc_power_dn")
-			command_once("laminar/B738/knob/dc_power_dn")
-			command_once("laminar/B738/knob/dc_power_dn")
-			command_once("laminar/B738/knob/dc_power_dn")
-			command_once("laminar/B738/knob/dc_power_dn")
-			command_once("laminar/B738/knob/ac_power_dn")
-			command_once("laminar/B738/knob/ac_power_dn")
-			command_once("laminar/B738/knob/ac_power_dn")
-			command_once("laminar/B738/knob/ac_power_dn")
-			command_once("laminar/B738/knob/ac_power_dn")
-			command_once("laminar/B738/knob/ac_power_dn")
+			sysElectric.batterySwitch:actuate(modeOff)
+			sysElectric.cabUtilPwr:actuate(modeOff)
+			sysElectric.ifePwr:actuate(modeOff)
+			sysGeneral.doorL1:actuate(modeOn)
+			sysElectric.dcPowerSwitch:adjustValue(0,0,6)
+			sysElectric.acPowerSwitch:adjustValue(0,0,6)			
 			kc_acf_elec_gpu_stop()
 			kc_acf_elec_stby_power(0)
 			kc_acf_wipers_mode(0,0)
