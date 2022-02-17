@@ -38,6 +38,10 @@ function Procedure:getAllItems()
     return self.items
 end
 
+function Procedure:getNumberOfItems()
+	return table.getn(self.items)
+end
+
 function Procedure:getActiveItem()
     return self.items[self.activeItemNumber]
 end

@@ -1,9 +1,11 @@
 -- ChecklistItem: base class for a "line" item in a checklist which is part of a SOP
 -- Instantiate assert
--- ChecklistItem:new(challengeText, responseText, actor)
+-- ChecklistItem:new(challengeText, responseText, actor,validFunc,responseFunc)
 --   challengeText is the left hand text which asks for a check
 --   responseText is the expected answer
 --   actor is the actor for the item; see list below
+--   validFunc shall return true or false to verify if condition is met
+--   responseFunc will overwrite the responseText with simulator values
 require "kpcrew.genutils"
 
 local ChecklistItem = {
@@ -12,13 +14,15 @@ local ChecklistItem = {
     stateSuccess = 2,
     stateFailed = 3,
     stateSkipped = 4,
-	actorPF 	= "PF",
-	actorPNF 	= "PNF",
-	actorBOTH 	= "BOTH",
-	actorFO 	= "F/O",
-	actorCPT 	= "CPT",
-	actorLHS 	= "LHS",
-	actorRHS 	= "RHS",
+	actorPF 	= "PF",		-- pilot flying (you)
+	actorPNF 	= "PNF",	-- pilot not flying (virtual)
+	actorPM 	= "PM",		-- pilot monitoring (virtual)
+	actorBOTH 	= "BOTH",	-- both have responses
+	actorFO 	= "F/O",	-- first officer (virtual)
+	actorCPT 	= "CPT",	-- captain (you)
+	actorLHS 	= "LHS",	-- left hand seat (you)
+	actorRHS 	= "RHS",	-- right hand seat (virtual)
+	actorFE		= "FE",		-- flight engineer on some aircraft (virtual)
 	actorNONE 	= "",
 	colorInitial= color_grey,
 	colorActive = color_white,
@@ -27,7 +31,7 @@ local ChecklistItem = {
 	colorSkipped= color_dark_green
 }
 
-function ChecklistItem:new(challengeText,responseText,actor)
+function ChecklistItem:new(challengeText,responseText,actor,validFunc,responseFunc)
     ChecklistItem.__index = ChecklistItem
 
     local obj = {}
@@ -44,6 +48,8 @@ function ChecklistItem:new(challengeText,responseText,actor)
 	obj.waittime = 1 -- second
 	obj.valid = true
 	obj.color = ChecklistItem.colorInitial
+	obj.validFunc = validFunc
+	obj.responseFunc = responseFunc
 
     return obj
 end
@@ -76,6 +82,9 @@ end
 
 -- get the right hand response text to display
 function ChecklistItem:getResponseText()
+	if type(self.responseFunc) == 'function' then
+		self.responseText = self.responseFunc(self)
+	end
 	return self.responseText
 end
 
@@ -112,28 +121,27 @@ function ChecklistItem:getState()
 end
 
 -- change the state of the checklist item
--- also sets the color of the checklist item
 function ChecklistItem:setState(state)
     self.state = state
-	if state == ChecklistItem.stateInitial then
-		self.color = ChecklistItem.colorInitial
-	end
-	if state == ChecklistItem.stateActive then
-		self.color = ChecklistItem.colorActive
-	end 
-	if state == ChecklistItem.stateSuccess then
-		self.color = ChecklistItem.colorSkipped
-	end 
-	if state == ChecklistItem.stateFailed then
-		self.color = ChecklistItem.colorFailed
-	end 
-	if state == ChecklistItem.stateSkipped then
-		self.color = ChecklistItem.colorSkipped
-	end
 end
 
 -- get current color of the checklist item
 function ChecklistItem:getColor()
+	if self.state == ChecklistItem.stateInitial then
+		self.color = ChecklistItem.colorInitial
+	end
+	if self.state == ChecklistItem.stateActive then
+		self.color = ChecklistItem.colorActive
+	end 
+	if self.state == ChecklistItem.stateSuccess then
+		self.color = ChecklistItem.colorSuccess
+	end 
+	if self.state == ChecklistItem.stateFailed then
+		self.color = ChecklistItem.colorFailed
+	end 
+	if self.state == ChecklistItem.stateSkipped then
+		self.color = ChecklistItem.colorSkipped
+	end
 	return self.color
 end
 
@@ -154,6 +162,9 @@ end
 
 -- are the conditions for this item met?
 function ChecklistItem:isValid()
+	if type(self.validFunc) == 'function' then
+		self.valid = self.validFunc(self)
+	end
     return self.valid
 end
 
@@ -166,7 +177,7 @@ end
 	
 -- speak the response text (not with all items and sop modes)
 function ChecklistItem:speakResponse()
-	if speakResponseText ~= "" then
+	if self.speakResponseText ~= "" then
 		speakNoText(0,self.speakResponseText)
 	end
 end
@@ -183,7 +194,7 @@ function ChecklistItem:getLine(lineLength)
 	for i=0,dots-1,1 do
 		line[#line + 1] = dotchar
 	end
-	line[#line + 1] = self.responseText
+	line[#line + 1] = self:getResponseText()
 	if self.actor ~= "" then
 		line[#line + 1] = " ("
 		line[#line + 1] = self.actor
