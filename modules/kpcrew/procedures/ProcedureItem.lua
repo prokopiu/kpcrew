@@ -8,29 +8,28 @@
 require "kpcrew.genutils"
 
 local ProcedureItem = {
-    stateNotStarted = 0,
-    stateInProgress = 1,
-    stateSuccess = 2,
-    stateFailed = 3,
-    stateDoneManually = 4,
-	actorPF 	= "PF",		-- pilot flying (you)
-	actorPNF 	= "PNF",	-- pilot not flying (virtual)
-	actorPM 	= "PM",		-- pilot monitoring (virtual)
-	actorBOTH 	= "BOTH",	-- both have responses
-	actorFO 	= "F/O",	-- first officer (virtual)
-	actorCPT 	= "CPT",	-- captain (you)
-	actorLHS 	= "LHS",	-- left hand seat (you)
-	actorRHS 	= "RHS",	-- right hand seat (virtual)
-	actorFE		= "FE",		-- flight engineer on some aircraft (virtual)
-	actorNONE 	= "",
-	colorInitial= color_grey,
-	colorActive = color_white,
-	colorSuccess= color_green,
-	colorFailed = color_red,
-	colorSkipped= color_dark_green
+    stateInitial 		= 0,
+    stateInProgress 	= 1,
+    stateSuccess 		= 2,
+    stateFailed 		= 3,
+    stateDoneManually 	= 4,
+	actorPF 			= "PF",		-- pilot flying (you)
+	actorPNF 			= "PNF",	-- pilot not flying (virtual)
+	actorPM 			= "PM",		-- pilot monitoring (virtual)
+	actorBOTH 			= "BOTH",	-- both have responses
+	actorFO 			= "F/O",	-- first officer (virtual)
+	actorCPT 			= "CPT",	-- captain (you)
+	actorLHS 			= "LHS",	-- left hand seat (you)
+	actorRHS 			= "RHS",	-- right hand seat (virtual)
+	actorFE				= "FE",		-- flight engineer on some aircraft (virtual)
+	actorNONE 			= "",
+	colorInitial		= color_grey,
+	colorActive 		= color_white,
+	colorSuccess		= color_green,
+	colorFailed 		= color_red,
+	colorManual			= color_dark_green
 }
 
-require "kpcrew.genutils"
 
 function ProcedureItem:new(challengeText,responseText,actor,waittime,validFunc,actionFunc,responseFunc)
     ProcedureItem.__index = ProcedureItem
@@ -38,7 +37,7 @@ function ProcedureItem:new(challengeText,responseText,actor,waittime,validFunc,a
     local obj = {}
     setmetatable(obj, ProcedureItem)
 
-	obj.state = ProcedureItem.stateNotStarted
+	obj.state = ProcedureItem.stateInitial
 	obj.challengeText = challengeText
 	obj.responseText = responseText	
 	obj.origResponseText = responseText
@@ -100,21 +99,6 @@ end
 
 -- get current color of the procedure item
 function ProcedureItem:getColor()
-	if self.state == ProcedureItem.stateNotStarted then
-		self.color = ProcedureItem.colorInitial
-	end
-	if self.state == ProcedureItem.stateInProgress then
-		self.color = ProcedureItem.colorActive
-	end 
-	if self.state == ProcedureItem.stateSuccess then
-		self.color = ProcedureItem.colorSuccess
-	end 
-	if self.state == ProcedureItem.stateFailed then
-		self.color = ProcedureItem.colorFailed
-	end 
-	if self.state == ProcedureItem.stateDoneManually then
-		self.color = ProcedureItem.colorSkipped
-	end
 	return self.color
 end
 
@@ -123,9 +107,13 @@ function ProcedureItem:setColor(color)
 	self.color = color
 end
 
+function ProcedureItem:getStateColor()
+	local statecolors = { ChecklistItem.colorInitial, ChecklistItem.colorActive, ChecklistItem.colorSuccess, ChecklistItem.colorFailed, ChecklistItem.colorManual }
+	return statecolors[self.state + 1]
+end
 -- reset the item to its initial state
 function ProcedureItem:reset()
-    self:setState(ProcedureItem.stateNotStarted)
+    self:setState(ProcedureItem.stateInitial)
 	self.challengeText = self.origChallengeText
 	self.responseText = self.origResponseText
 	self.valid = true
@@ -133,7 +121,7 @@ function ProcedureItem:reset()
 end
 
 -- are the conditions for this item met?
-function ProcedureItem:validate()
+function ProcedureItem:isValid()
 	if type(self.validFunc) == 'function' then
 		self.valid = self.validFunc(self)
 	end

@@ -9,26 +9,26 @@
 require "kpcrew.genutils"
 
 local ChecklistItem = {
-    stateInitial = 0,
-    stateActive = 1,
-    stateSuccess = 2,
-    stateFailed = 3,
-    stateSkipped = 4,
-	actorPF 	= "PF",		-- pilot flying (you)
-	actorPNF 	= "PNF",	-- pilot not flying (virtual)
-	actorPM 	= "PM",		-- pilot monitoring (virtual)
-	actorBOTH 	= "BOTH",	-- both have responses
-	actorFO 	= "F/O",	-- first officer (virtual)
-	actorCPT 	= "CPT",	-- captain (you)
-	actorLHS 	= "LHS",	-- left hand seat (you)
-	actorRHS 	= "RHS",	-- right hand seat (virtual)
-	actorFE		= "FE",		-- flight engineer on some aircraft (virtual)
-	actorNONE 	= "",
-	colorInitial= color_grey,
-	colorActive = color_white,
-	colorSuccess= color_green,
-	colorFailed = color_red,
-	colorSkipped= color_dark_green
+    stateInitial 	= 0,
+    stateActive 	= 1,
+    stateSuccess 	= 2,
+    stateFailed 	= 3,
+    stateSkipped 	= 4,
+	actorPF 		= "PF",		-- pilot flying (you)
+	actorPNF 		= "PNF",	-- pilot not flying (virtual)
+	actorPM 		= "PM",		-- pilot monitoring (virtual)
+	actorBOTH 		= "BOTH",	-- both have responses
+	actorFO 		= "F/O",	-- first officer (virtual)
+	actorCPT 		= "CPT",	-- captain (you)
+	actorLHS 		= "LHS",	-- left hand seat (you)
+	actorRHS 		= "RHS",	-- right hand seat (virtual)
+	actorFE			= "FE",		-- flight engineer on some aircraft (virtual)
+	actorNONE 		= "",
+	colorInitial	= color_grey,
+	colorActive 	= color_white,
+	colorSuccess	= color_green,
+	colorFailed 	= color_red,
+	colorSkipped	= color_dark_green
 }
 
 function ChecklistItem:new(challengeText,responseText,actor,validFunc,responseFunc)
@@ -121,33 +121,23 @@ function ChecklistItem:getState()
 end
 
 -- change the state of the checklist item
-function ChecklistItem:setState(state)
-    self.state = state
+function ChecklistItem:setState(newstate)
+    self.state = newstate
 end
 
 -- get current color of the checklist item
 function ChecklistItem:getColor()
-	if self.state == ChecklistItem.stateInitial then
-		self.color = ChecklistItem.colorInitial
-	end
-	if self.state == ChecklistItem.stateActive then
-		self.color = ChecklistItem.colorActive
-	end 
-	if self.state == ChecklistItem.stateSuccess then
-		self.color = ChecklistItem.colorSuccess
-	end 
-	if self.state == ChecklistItem.stateFailed then
-		self.color = ChecklistItem.colorFailed
-	end 
-	if self.state == ChecklistItem.stateSkipped then
-		self.color = ChecklistItem.colorSkipped
-	end
 	return self.color
 end
 
 -- set the color of the checklist item
 function ChecklistItem:setColor(color)
 	self.color = color
+end
+
+function ChecklistItem:getStateColor()
+	local statecolors = { ChecklistItem.colorInitial, ChecklistItem.colorActive, ChecklistItem.colorSuccess, ChecklistItem.colorFailed, ChecklistItem.colorSkipped }
+	return statecolors[self.state + 1]
 end
 
 -- reset the item to its initial state

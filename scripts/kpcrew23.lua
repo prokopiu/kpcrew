@@ -31,31 +31,50 @@ ProcedureItem = require "kpcrew.procedures.ProcedureItem"
 Procedure = require "kpcrew.procedures.Procedure"
 SOP = require "kpcrew.sops.SOP"
 
--- Define the variables used for displaying the checklist window
-local checklist_wnd = nil
-local procedure_wnd = nil
+-- ============ UIs ==========
+------ Checklist Window
+local chkl_wnd = nil
+local proc_wnd = nil
 
-local lineLength = 55
-
-function init_checklist_window (height, width, name)
-	if checklist_wnd == 0 or checklist_wnd == nil then	
-		checklist_wnd = float_wnd_create(width, height, 1, true)
-		float_wnd_set_title(checklist_wnd, name)
-		float_wnd_set_position(checklist_wnd, 30, 80)
-		float_wnd_set_imgui_builder(checklist_wnd, "checklist_build")
-		float_wnd_set_onclose(checklist_wnd, "close_checklist_window")
+function init_checklist_window(height, width, name)
+	if chkl_wnd == 0 or chkl_wnd == nil then	
+		chkl_wnd = float_wnd_create(width, height, 1, true)
+		float_wnd_set_title(chkl_wnd, name)
+		float_wnd_set_position(chkl_wnd, 30, 80)
+		float_wnd_set_imgui_builder(chkl_wnd, "checklist_builder")
+		float_wnd_set_onclose(chkl_wnd, "close_checklist_window")
 	end
+end
+
+function checklist_builder()
+	Checklist:renderChecklist(activeChecklist)
+end
+
+function close_checklist_window()
+	chkl_wnd = 0
 end
 
 function init_procedure_window (height, width, name)
-	if procedure_wnd == 0 or procedure_wnd == nil then	
-		procedure_wnd = float_wnd_create(width, height, 1, true)
-		float_wnd_set_title(procedure_wnd, name)
-		float_wnd_set_position(procedure_wnd, 30, 80)
-		float_wnd_set_imgui_builder(procedure_wnd, "procedure_build")
-		float_wnd_set_onclose(procedure_wnd, "close_procedure_window")
+	if proc_wnd == 0 or proc_wnd == nil then	
+		proc_wnd = float_wnd_create(width, height, 1, true)
+		float_wnd_set_title(proc_wnd, name)
+		float_wnd_set_position(proc_wnd, 30, 80)
+		float_wnd_set_imgui_builder(proc_wnd, "procedure_build")
+		float_wnd_set_onclose(proc_wnd, "close_procedure_window")
 	end
 end
+
+function procedure_build()
+	Procedure:renderProcedure(activeProcedure)
+end
+
+function close_procedure_window()
+	proc_wnd = 0
+end
+
+-- Define the variables used for displaying the checklist window
+
+local lineLength = 55
 
 local testSOP = SOP:new("B738 SOP")
 
@@ -90,148 +109,39 @@ secureChkl:addItem(ChecklistItem:new(		"  BAT SWITCH",					"OFF",ChecklistItem.a
 
 -- ============ Procedures =============
 local prelPreflightProc = Procedure:new("PRELIMINARY PREFLIGHT PROCEDURE")
-prelPreflightProc:addItem(ProcedureItem:new("XPDR","SET 2000","F/O",1,nil,nil,nil))
+prelPreflightProc:addItem(ProcedureItem:new("XPDR","SET 2000","F/O",1,
+function (self) return get("sim/cockpit/radios/transponder_code") == 2000 end,nil,nil))
 prelPreflightProc:addItem(ProcedureItem:new("COCKPIT LIGHTS","SET AS NEEDED","F/O",1,nil,nil,nil))
-prelPreflightProc:addItem(ProcedureItem:new("BATTERIES","ON","F/O",1,nil,nil))
-prelPreflightProc:addItem(ProcedureItem:new("POWER","ON","F/O",1,nil,nil))
-prelPreflightProc:addItem(ProcedureItem:new("STANDBY POWER","ON","F/O",1,nil,nil))
-prelPreflightProc:addItem(ProcedureItem:new("FIRE TESTS","PERFORM","F/O",1,nil,nil))
-prelPreflightProc:addItem(ProcedureItem:new("WING & WHEEL WELL LIGHTS","AS REQUIRED","F/O",1,nil,nil))
-prelPreflightProc:addItem(ProcedureItem:new("FUEL PUMPS","ALL OFF","F/O",1,nil,nil))
-prelPreflightProc:addItem(ProcedureItem:new("FUEL PUMP FOR APU","AS REQUIRED","F/O",1,nil,nil))
-prelPreflightProc:addItem(ProcedureItem:new("FUEL CROSS FEED","OFF","F/O",1,nil,nil))
-prelPreflightProc:addItem(ProcedureItem:new("ELEC HYD PUMPS","ON","F/O",1,nil,nil))
-prelPreflightProc:addItem(ProcedureItem:new("POSITION LIGHTS","ON","F/O",1,nil,nil))
-prelPreflightProc:addItem(ProcedureItem:new("IRSs","OFF","F/O",1,nil,nil))
-prelPreflightProc:addItem(ProcedureItem:new("MCP","INITIALIZE","F/O",1,nil,nil))
-prelPreflightProc:addItem(ProcedureItem:new("PARKING BRAKE","SET","F/O",1,nil,nil))
-prelPreflightProc:addItem(ProcedureItem:new("IFE & GALLEY POWER","ON","F/O",1,nil,nil))
-prelPreflightProc:addItem(ProcedureItem:new("MACH OVERSPEED TEST","PERFORM","F/O",1,nil,nil))
-prelPreflightProc:addItem(ProcedureItem:new("STALL WARNING TEST","PERFORM","F/O",1,nil,nil))
+prelPreflightProc:addItem(ProcedureItem:new("BATTERIES","ON","F/O",1,
+function (self) return get("laminar/B738/electric/battery_pos") == 1 end,nil,nil))
+prelPreflightProc:addItem(ProcedureItem:new("POWER","ON","F/O",1,nil,nil,nil))
+prelPreflightProc:addItem(ProcedureItem:new("STANDBY POWER","ON","F/O",1,
+function (state) return get("laminar/B738/electric/standby_bat_pos") == 1 end,nil,nil))
+prelPreflightProc:addItem(ProcedureItem:new("FIRE TESTS","PERFORM","F/O",1,nil,nil,nil))
+prelPreflightProc:addItem(ProcedureItem:new("WING & WHEEL WELL LIGHTS","AS REQUIRED","F/O",1,nil,nil,nil))
+prelPreflightProc:addItem(ProcedureItem:new("FUEL PUMPS","ALL OFF","F/O",1,
+function (self) return get("laminar/B738/fuel/fuel_tank_pos_lft1") == 0 and get("laminar/B738/fuel/fuel_tank_pos_lft2") == 0 and get("laminar/B738/fuel/fuel_tank_pos_rgt1") == 0 and get("laminar/B738/fuel/fuel_tank_pos_rgt2") == 0 and get("laminar/B738/fuel/fuel_tank_pos_ctr1") == 0 and get("laminar/B738/fuel/fuel_tank_pos_ctr2") == 0 end,nil,nil))
+prelPreflightProc:addItem(ProcedureItem:new("FUEL PUMP FOR APU","AS REQUIRED","F/O",1,nil,nil,nil))
+prelPreflightProc:addItem(ProcedureItem:new("FUEL CROSS FEED","OFF","F/O",1,
+function (self) return get("laminar/B738/knobs/cross_feed_pos") == 0 end,nil,nil))
+prelPreflightProc:addItem(ProcedureItem:new("ELEC HYD PUMPS","ON","F/O",1,
+function (self) return get("laminar/B738/toggle_switch/electric_hydro_pumps1_pos") == 1 and get("laminar/B738/toggle_switch/electric_hydro_pumps2_pos") == 1 end,nil,nil))
+prelPreflightProc:addItem(ProcedureItem:new("POSITION LIGHTS","ON","F/O",1,
+function (self) return get("laminar/B738/toggle_switch/position_light_pos") ~= 0 end,nil,nil))
+prelPreflightProc:addItem(ProcedureItem:new("IRSs","OFF","F/O",1,nil,nil,nil))
+prelPreflightProc:addItem(ProcedureItem:new("MCP","INITIALIZE","F/O",1,nil,nil,nil))
+prelPreflightProc:addItem(ProcedureItem:new("PARKING BRAKE","SET","F/O",1,nil,nil,nil))
+prelPreflightProc:addItem(ProcedureItem:new("IFE & GALLEY POWER","ON","F/O",1,nil,nil,nil))
+prelPreflightProc:addItem(ProcedureItem:new("MACH OVERSPEED TEST","PERFORM","F/O",1,nil,nil,nil))
+prelPreflightProc:addItem(ProcedureItem:new("STALL WARNING TEST","PERFORM","F/O",1,nil,nil,nil))
 
 -- add the checklists and procedures to the sop
 testSOP:addProcedure(prelPreflightProc)
-testSOP:addChecklist(secureChkl)
 testSOP:addChecklist(preflightChkl)
+testSOP:addChecklist(secureChkl)
 
 activeChecklist = testSOP:getActiveChecklist()
 activeProcedure = testSOP:getActiveProcedure()
 
-function checklist_build()
-	renderChecklist(activeChecklist,lineLength)
-end
-
-function procedure_build()
-	renderProcedure(activeProcedure,lineLength)
-end
-
-function close_checklist_window()
-	checklist_wnd = 0
-end
-
-function close_procedure_window()
-	procedure_wnd = 0
-end
-
-function renderChecklist(activeChecklist,lineLength)
-	imgui.SetCursorPosX(10)
-	imgui.SetCursorPosY(10)
-
-	if imgui.Button("Stop", 70, 25) then
-	end
-	
-	imgui.SameLine()
-	imgui.SetCursorPosX(130)
-	
-	local checklistPaused = false
-	if checklistPaused then
-		-- The current checklist execution is paused, so show a button to resume the execution
-		if imgui.Button("Resume", 70, 25) then
-		end
-	else
-		-- The current checklist execution is not paused, so show a button to pause the execution
-		if imgui.Button("Pause", 70, 25) then
-		end
-	end
-
-	imgui.SetCursorPosY(50)
-
-	imgui.PushStyleColor(imgui.constant.Col.Text, color_white)
-		imgui.TextUnformatted(activeChecklist:getHeadline(lineLength))
-	imgui.PopStyleColor()
-
-	imgui.SetCursorPosY(65)
-	
-	local items = activeChecklist:getAllItems()
-	for _, item in ipairs(items) do
-		-- item:validate()
-		imgui.SetCursorPosY(imgui.GetCursorPosY() + 5)
-		imgui.PushStyleColor(imgui.constant.Col.Text,item:getColor()) 
-			imgui.TextUnformatted(item:getLine(lineLength))
-		imgui.PopStyleColor()		
-	end
-
-	imgui.SetCursorPosY(imgui.GetCursorPosY() + 5)
-	local line = {}
-	for i=0,lineLength,1 do
-		line[#line + 1] = "="
-	end
-	imgui.PushStyleColor(imgui.constant.Col.Text, color_white)
-		imgui.TextUnformatted(table.concat(line))
-	imgui.PopStyleColor()
-
-
-end
-
-function renderProcedure(activeProcedure,lineLength)
-	imgui.SetCursorPosX(10)
-	imgui.SetCursorPosY(10)
-
-	if imgui.Button("Stop", 70, 25) then
-	end
-	
-	imgui.SameLine()
-	imgui.SetCursorPosX(130)
-	
-	local procedurePaused = false
-	if procedurePaused then
-		-- The current checklist execution is paused, so show a button to resume the execution
-		if imgui.Button("Resume", 70, 25) then
-		end
-	else
-		-- The current checklist execution is not paused, so show a button to pause the execution
-		if imgui.Button("Pause", 70, 25) then
-		end
-	end
-
-	imgui.SetCursorPosY(50)
-
-	imgui.PushStyleColor(imgui.constant.Col.Text, color_white)
-		imgui.TextUnformatted(activeProcedure:getHeadline(lineLength))
-	imgui.PopStyleColor()
-
-	imgui.SetCursorPosY(65)
-	
-	local items = activeProcedure:getAllItems()
-	for _, item in ipairs(items) do
-		-- item:validate()
-		imgui.SetCursorPosY(imgui.GetCursorPosY() + 5)
-		imgui.PushStyleColor(imgui.constant.Col.Text,item:getColor()) 
-			imgui.TextUnformatted(item:getLine(lineLength))
-		imgui.PopStyleColor()		
-	end
-
-	imgui.SetCursorPosY(imgui.GetCursorPosY() + 5)
-	local line = {}
-	for i=0,lineLength,1 do
-		line[#line + 1] = "="
-	end
-	imgui.PushStyleColor(imgui.constant.Col.Text, color_white)
-		imgui.TextUnformatted(table.concat(line))
-	imgui.PopStyleColor()
-
-
-end
-
--- init_checklist_window((activeProcedure:getNumberOfItems()+2)*22+50,410,"CHECKLIST")
-init_procedure_window((activeProcedure:getNumberOfItems()+2)*22+50,410,"PROCEDURE")
+init_checklist_window(Checklist:getChklWndHeight(activeChecklist),Checklist:getChklWndWidth(activeChecklist),"CHECKLIST")
+init_procedure_window(Procedure:getProcWndHeight(activeProcedure),Procedure:getProcWndWidth(activeProcedure),"PROCEDURE")
