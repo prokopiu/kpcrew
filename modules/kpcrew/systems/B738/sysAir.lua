@@ -16,6 +16,12 @@ MultiStateCmdSwitch = require "kpcrew.systems.MultiStateCmdSwitch"
 local drefPackLeftANC = "laminar/B738/annunciator/pack_left"
 local drefPackRightANC = "laminar/B738/annunciator/pack_right"
 
+-- ======= Switches
+
+sysAir.pressModeSelector = MultiStateCmdSwitch:new("","laminar/B738/toggle_switch/air_valve_ctrl",0,"laminar/B738/toggle_switch/air_valve_ctrl_left","laminar/B738/toggle_switch/air_valve_ctrl_right")
+
+-- ======= Annunciators
+
 -- VACUUM annunciator
 sysAir.vacuumAnc = CustomAnnunciator:new("vacuum",
 function ()

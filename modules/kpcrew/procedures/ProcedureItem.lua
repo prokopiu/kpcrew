@@ -23,7 +23,7 @@ local ProcedureItem = {
 	actorRHS 			= "RHS",	-- right hand seat (virtual)
 	actorFE				= "FE",		-- flight engineer on some aircraft (virtual)
 	actorNONE 			= "",
-	colorInitial		= color_grey,
+	colorInitial		= color_green,
 	colorActive 		= color_white,
 	colorSuccess		= color_green,
 	colorFailed 		= color_red,
@@ -108,7 +108,7 @@ function ProcedureItem:setColor(color)
 end
 
 function ProcedureItem:getStateColor()
-	local statecolors = { ChecklistItem.colorInitial, ChecklistItem.colorActive, ChecklistItem.colorSuccess, ChecklistItem.colorFailed, ChecklistItem.colorManual }
+	local statecolors = { ProcedureItem.colorInitial, ProcedureItem.colorActive, ProcedureItem.colorSuccess, ProcedureItem.colorFailed, ProcedureItem.colorManual }
 	return statecolors[self.state + 1]
 end
 -- reset the item to its initial state
@@ -117,7 +117,7 @@ function ProcedureItem:reset()
 	self.challengeText = self.origChallengeText
 	self.responseText = self.origResponseText
 	self.valid = true
-	self.color = ChecklistItem.colorInitial
+	self.color = ProcedureItem.colorInitial
 end
 
 -- are the conditions for this item met?

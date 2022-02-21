@@ -1,3 +1,5 @@
+require "kpcrew.genutils"
+
 local SOP = {}
 
 function SOP:new(name)
@@ -46,6 +48,14 @@ function SOP:getAllFlows()
 	return self.flows
 end
 
+function SOP:getFlowNames()
+	local names = {}
+	for _, flow in ipairs(self.flows) do
+		table.insert(names, flow:getName())
+	end
+	return names
+end
+
 function SOP:setActiveFlowNumber(flowNumber)   
 	if flowNumber >= 1 and flowNumber <= #self.flows then
 		self.activeFlowNumber = flowNumber
@@ -71,7 +81,7 @@ function SOP:setActiveProcedureNumber(flowNumber)
 end
 
 function SOP:getActiveFlow()
-	return self.procedures[self.activeFlowNumber]
+	return self.flows[self.activeFlowNumber]
 end
 
 function SOP:getActiveChecklist()
@@ -79,6 +89,11 @@ function SOP:getActiveChecklist()
 		return self.checklists[self.activeChecklistNumber]
 	end
 end
+
+function SOP:getNumberOfFlows()
+	return table.getn(self.flows)
+end
+
 
 function SOP:getActiveProcedure()
 	return self.flows[self.activeProcedureNumber]
@@ -92,6 +107,56 @@ function SOP:reset()
     for _, flow in ipairs(self.flows) do
         flow:reset()
     end
+end
+
+function SOP:render()
+	local flows = self:getAllFlows()
+	for _, flow in ipairs(flows) do
+		imgui.SetCursorPosY(imgui.GetCursorPosY() + 1)
+		local color = color_procedure
+		if flow:getType() == "Checklist" then	
+			color = color_checklist
+		end
+		if indexOf(flows,flow) == self.activeFlowNumber then
+			color = color_red
+		end
+        imgui.PushStyleColor(imgui.constant.Col.Button, color)
+		if imgui.Button(flow:getName(), self:getBtnWidth(), 18) then
+			self:setActiveFlowNumber(indexOf(flows,flow))
+			wnd_flow_action = 1
+		end
+        imgui.PopStyleColor()
+	end
+end
+
+-- get the calculated height for the window
+function SOP:getWndHeight()
+	return self:getNumberOfFlows() * 23 + 12
+end
+
+function SOP:getBtnWidth()
+	local namelen = 0
+	local flows = self:getAllFlows()
+	for _, flow in ipairs(flows) do
+		local nrchars = string.len(flow:getName())
+		if nrchars > namelen then
+			namelen = nrchars
+		end
+	end
+	return namelen * 8
+end
+-- get the calculated width for the checklist window
+function SOP:getWndWidth()
+	return self:getBtnWidth() + 15
+end
+
+function SOP:getWndXPos()
+	local win_width = get("sim/graphics/view/window_width")
+	return win_width - self:getWndWidth() - 50
+end
+
+function SOP:getWndYPos()
+	return 50
 end
 
 return SOP

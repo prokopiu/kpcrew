@@ -14,8 +14,11 @@ color_white 		= 0xFFFFFFFF
 color_light_blue 	= 0xFFFFFF00
 color_orange 		= 0xFF004FCF
 color_grey 			= 0xFFA0A0A0
+color_dark_grey 	= 0xFF606060
 color_left_display 	= 0xFFA0AFFF
 color_ocean_blue 	= 0xFFEC652B
+color_checklist		= 0xFF2F4F4F
+color_procedure		= 0xFF808000
 
 ------------- logging related functions ---------------
 
@@ -201,3 +204,34 @@ function speakNoText(speakMode, sText)
 		XPLMSpeakString(sText)
 	end
 end
+
+function indexOf(array, value)
+    for i, v in ipairs(array) do
+        if v == value then
+            return i
+        end
+    end
+    return nil
+end
+
+-- input field dropdown
+function gui_in_dropdown(lable, srcval, list, width)
+	imgui.BeginChild(lable, width, 20)
+		imgui.Columns(2,lable,false)
+		imgui.SetColumnWidth(0, 1)
+		imgui.SetColumnWidth(1, width)
+		imgui.TextUnformatted(lable .. ":")
+		imgui.NextColumn()
+		if imgui.BeginCombo("                                    " .. lable, list[srcval]) then
+			for i = 1, #list do
+				if imgui.Selectable(list[i], srcval == i) then
+					srcval = i
+				end
+			end
+			imgui.EndCombo()
+		end
+		imgui.NextColumn()
+	imgui.EndChild()
+	return srcval
+end
+

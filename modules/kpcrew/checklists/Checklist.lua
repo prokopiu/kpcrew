@@ -20,8 +20,13 @@ function Checklist:new(name)
     obj.activeItemNumber = 1
 	obj.wnd = nil
 	obj.lineLength = 55
+	obj.classtype = "Checklist"
 
     return obj
+end
+
+function Checklist:getType()
+	return self.classtype
 end
 
 -- get name of checklist
@@ -143,7 +148,7 @@ end
 
 -- ==== window related functions ===
 
-function Checklist:renderChecklist(chkl)
+function Checklist:render()
 	-- start position in window
 	imgui.SetCursorPosX(10)
 	imgui.SetCursorPosY(10)
@@ -154,39 +159,45 @@ function Checklist:renderChecklist(chkl)
 	-- ==================
 
 	imgui.PushStyleColor(imgui.constant.Col.Text, color_white)
-		imgui.TextUnformatted(chkl:getHeadline())
+		imgui.TextUnformatted(self:getHeadline())
 	imgui.PopStyleColor()
 
 	imgui.SetCursorPosY(imgui.GetCursorPosY() + 5)
-	local items = chkl:getAllItems()
+	local items = self:getAllItems()
 	for _, item in ipairs(items) do
-		-- mark an item red if the validation failed
 		if item:isValid() ~= true then
 			item:setColor(ChecklistItem.colorFailed)
 		else
-			-- revert the red color to the current state color
 			item:setColor(item:getStateColor()) 
 		end
 		imgui.SetCursorPosY(imgui.GetCursorPosY() + 5)
 		imgui.PushStyleColor(imgui.constant.Col.Text,item:getColor()) 
-			imgui.TextUnformatted(item:getLine(chkl:getLineLength()))
+			imgui.TextUnformatted(item:getLine(self:getLineLength()))
 		imgui.PopStyleColor()		
 	end
 
 	imgui.SetCursorPosY(imgui.GetCursorPosY() + 5)
 	imgui.PushStyleColor(imgui.constant.Col.Text, color_white)
-		imgui.TextUnformatted(chkl:getBottomline())
+		imgui.TextUnformatted(self:getBottomline())
 	imgui.PopStyleColor()
 end
 
 -- get the calculated height for the checklist window
-function Checklist:getChklWndHeight(chkl)
-	return (chkl:getNumberOfItems() + 2) * 22 + 15
+function Checklist:getWndHeight()
+	return (self:getNumberOfItems() + 2) * 22 + 15
 end
 
 -- get the calculated width for the checklist window
-function Checklist:getChklWndWidth(chkl)
-	return chkl:getLineLength() * 7 + 20
+function Checklist:getWndWidth()
+	return self:getLineLength() * 7 + 20
+end
+
+function Checklist:getWndXPos()
+	return 30
+end
+
+function Checklist:getWndYPos()
+	return 70
 end
 
 return Checklist

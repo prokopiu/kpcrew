@@ -20,8 +20,13 @@ function Procedure:new(name)
     obj.activeItemNumber = 1
 	obj.wnd = nil
 	obj.lineLength = 55
+	obj.classtype = "Procedure"
 
     return obj
+end
+
+function Procedure:getType()
+	return self.classtype
 end
 
 -- get name of procedure
@@ -144,7 +149,7 @@ end
 
 -- ==== window related functions ===
 
-function Procedure:renderProcedure(proc)
+function Procedure:render()
 	-- start position in window
 	imgui.SetCursorPosX(10)
 	imgui.SetCursorPosY(10)
@@ -155,39 +160,43 @@ function Procedure:renderProcedure(proc)
 	-- ==================
 
 	imgui.PushStyleColor(imgui.constant.Col.Text, color_white)
-		imgui.TextUnformatted(proc:getHeadline())
+		imgui.TextUnformatted(self:getHeadline())
 	imgui.PopStyleColor()
+	
 	imgui.SetCursorPosY(imgui.GetCursorPosY() + 5)
-	local items = proc:getAllItems()
+	local items = self:getAllItems()
 	for _, item in ipairs(items) do
-		-- mark an item red if the validation failed
 		if item:isValid() ~= true then
 			item:setColor(ProcedureItem.colorFailed)
 		else
-			-- revert the red color to the current state color
 			item:setColor(item:getStateColor())
 		end
 		imgui.SetCursorPosY(imgui.GetCursorPosY() + 5)
 		imgui.PushStyleColor(imgui.constant.Col.Text,item:getColor()) 
-			imgui.TextUnformatted(item:getLine(proc:getLineLength()))
+			imgui.TextUnformatted(item:getLine(self:getLineLength()))
 		imgui.PopStyleColor()		
 	end
 
 	imgui.SetCursorPosY(imgui.GetCursorPosY() + 5)
 	imgui.PushStyleColor(imgui.constant.Col.Text, color_white)
-		imgui.TextUnformatted(proc:getBottomline())
+		imgui.TextUnformatted(self:getBottomline())
 	imgui.PopStyleColor()
-
 end
 
--- get the calculated height for the checklist window
-function Procedure:getProcWndHeight(proc)
-	return (proc:getNumberOfItems() + 2) * 22 + 15
+function Procedure:getWndHeight()
+	return (self:getNumberOfItems() + 2) * 22 + 15
 end
 
--- get the calculated width for the checklist window
-function Procedure:getProcWndWidth(proc)
-	return proc:getLineLength() * 7 + 20
+function Procedure:getWndWidth()
+	return self:getLineLength() * 7 + 20
+end
+
+function Procedure:getWndXPos()
+	return 30
+end
+
+function Procedure:getWndYPos()
+	return 70
 end
 
 return Procedure

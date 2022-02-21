@@ -49,4 +49,24 @@ function SimpleChecklistItem:isValid()
 	return true
 end
 
+function SimpleChecklistItem:getWaitTime()
+	return 0
+end
+
+function SimpleChecklistItem:getState()
+    return ChecklistItem.stateInitials
+end
+
+
+function SimpleChecklistItem:getStateColor()
+	return color_white
+end
+
+function SimpleChecklistItem:reset()
+    self:setState(ChecklistItem.stateInitial)
+	self.valid = true
+	self.color = ChecklistItem.colorInitial
+end
+
+
 return SimpleChecklistItem
