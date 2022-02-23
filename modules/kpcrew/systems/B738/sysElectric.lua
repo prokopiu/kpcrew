@@ -67,6 +67,7 @@ sysElectric.cabUtilPwr = TwoStateToggleSwitch:new("cabutil","laminar/B738/toggle
 sysElectric.ifePwr = TwoStateToggleSwitch:new("ifepwr","laminar/B738/toggle_switch/ife_pass_seat_pos",0,"laminar/B738/autopilot/ife_pass_seat_toggle")
 
 -- Standby Power
+sysElectric.stbyPowerSwitch = MultiStateCmdSwitch:new("","laminar/B738/electric/standby_bat_pos",0,"laminar/B738/switch/standby_bat_left","laminar/B738/switch/standby_bat_right")
 sysElectric.stbyPowerCover = TwoStateToggleSwitch:new("","laminar/B738/button_switch/cover_position",3,"laminar/B738/button_switch_cover03")
 
 -- Ground Power

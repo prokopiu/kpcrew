@@ -32,15 +32,19 @@ end
 -- actuate the switch with given mode
 function TwoStateCustomSwitch:actuate(action)
 	if action == Switch.modeOn then
-		self.funcOn()
+		if type(self.funcOn) == 'function' then
+			self.funcOn()
+		end
 	end
 	
 	if action == Switch.modeOff then
-		self.funcOff()
+		if type(self.funcOff) == 'function' then
+			self.funcOff()
+		end
 	end
 	
 	if action == Switch.modeToggle then
-		if self.funcToggle ~= nil then
+		if type(self.funcToggle) == 'function' then
 			self.funcToggle()
 		else
 			if self:getStatus() ~= modeOff then

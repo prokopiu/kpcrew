@@ -109,6 +109,8 @@ function SOP:reset()
     end
 end
 
+-- ============ SOP specific UIs ================
+-- render the SOP button list
 function SOP:render()
 	local flows = self:getAllFlows()
 	for _, flow in ipairs(flows) do

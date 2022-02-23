@@ -7,7 +7,11 @@ local sysGeneral = {
 	irsUnitOFF = 0,
 	irsUnitALIGN = 1,
 	irsUnitNAV = 2,
-	irsUnitATT = 3
+	irsUnitATT = 3;
+	wiperPark = 0,
+	wiperInt = 1,
+	wiperLow = 2,
+	wiperHigh = 3
 }
 
 TwoStateDrefSwitch = require "kpcrew.systems.TwoStateDrefSwitch"
@@ -89,7 +93,7 @@ sysGeneral.irsUnit3Switch = InopSwitch:new("irsunit3")
 sysGeneral.irsUnitGroup = SwitchGroup:new("irsunits")
 sysGeneral.irsUnitGroup:addSwitch(sysGeneral.irsUnit1Switch)
 sysGeneral.irsUnitGroup:addSwitch(sysGeneral.irsUnit2Switch)
-sysGeneral.irsUnitGroup:addSwitch(sysGeneral.irsUnit3Switch)
+-- sysGeneral.irsUnitGroup:addSwitch(sysGeneral.irsUnit3Switch)
 
 -- Wipers
 

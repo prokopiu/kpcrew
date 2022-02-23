@@ -167,7 +167,7 @@ function Procedure:render()
 	local items = self:getAllItems()
 	for _, item in ipairs(items) do
 		if item:isValid() ~= true then
-			item:setColor(ProcedureItem.colorFailed)
+			item:setColor(item.colorFailed)
 		else
 			item:setColor(item:getStateColor())
 		end

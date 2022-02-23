@@ -22,7 +22,7 @@ function SimpleProcedureItem:new(challengeText)
     obj.responseText = ""
 	obj.actor = ""
 	obj.waittime = 0
-	obj.color = color_white
+	obj.color = color_grey
 	obj.valid = true
 	obj.state = ProcedureItem.stateInitial
 	
@@ -41,7 +41,7 @@ end
 
 -- color is always white
 function SimpleProcedureItem:getColor()
-	return color_white
+	return self.color
 end
 
 -- item is always valid
@@ -54,18 +54,18 @@ function SimpleProcedureItem:getWaitTime()
 end
 
 function SimpleProcedureItem:getState()
-    return ProcedureItem.stateInitials
+    return ProcedureItem.stateInitial
 end
 
 
 function SimpleProcedureItem:getStateColor()
-	return color_white
+	return self.color
 end
 
 function SimpleProcedureItem:reset()
     self:setState(ProcedureItem.stateInitial)
 	self.valid = true
-	self.color = ProcedureItem.colorInitial
+	self.color = color_grey
 end
 
 

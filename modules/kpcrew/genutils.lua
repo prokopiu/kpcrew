@@ -8,12 +8,12 @@ local debugLoggingEnabled = false
 
 -- color definitions
 color_red 			= 0xFF0000FF
-color_green 		= 0xFF00FF00
+color_green 		= 0xFF558817
 color_dark_green 	= 0xFF007f00
 color_white 		= 0xFFFFFFFF
 color_light_blue 	= 0xFFFFFF00
-color_orange 		= 0xFF004FCF
-color_grey 			= 0xFFA0A0A0
+color_orange 		= 0xFF003FBF
+color_grey 			= 0xFFC0C0C0
 color_dark_grey 	= 0xFF606060
 color_left_display 	= 0xFFA0AFFF
 color_ocean_blue 	= 0xFFEC652B

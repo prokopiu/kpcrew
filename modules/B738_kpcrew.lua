@@ -105,6 +105,7 @@ KC_COLD_AND_DARK = { ["name"] = "SET AIRCRAFT TO COLD & DARK", ["mode"]="s", ["w
 		["actions"] = function ()
 			sysControls.yawDamper:actuate(modeOff)
 			sysControls.altFlapsCtrl:setValue(modeOff)
+			sysControls.altFlapsCover:actuate(modeOn)
 			sysMCP.vhfNavSwitch:adjustValue(0,-1,1)
 			sysMCP.irsNavSwitch:setValue(0)
 			sysMCP.fmcNavSwitch:setValue(0)
@@ -125,8 +126,9 @@ KC_COLD_AND_DARK = { ["name"] = "SET AIRCRAFT TO COLD & DARK", ["mode"]="s", ["w
 			sysElectric.dcPowerSwitch:adjustValue(0,0,6)
 			sysElectric.acPowerSwitch:adjustValue(0,0,6)			
 			kc_acf_elec_gpu_stop()
-			kc_acf_elec_stby_power(0)
-			kc_acf_wipers_mode(0,0)
+			sysElectric.stbyPowerCover:actuate(modeOn)
+			sysElectric.stbyPowerSwitch:actuate(modeOff)
+			sysGeneral.wiperGroup:actuate(modeOff)
 			kc_acf_elec_gen_on_bus(0,0)
 			if get_kpcrew_config("dep_stand") > 1 then
 				kc_acf_airstair_onoff(1)
@@ -149,7 +151,7 @@ KC_COLD_AND_DARK = { ["name"] = "SET AIRCRAFT TO COLD & DARK", ["mode"]="s", ["w
 			kc_acf_aice_probe_heat_onoff(0,0)
 			kc_acf_aice_wing_onoff(0)
 			kc_acf_aice_eng_onoff(0,0)
-			kc_acf_hyd_pumps_onoff(0,0)
+			sysHydraulic.hydPumpGroup:actuate(modeOff)
 		end
 	},
 	[6] = {["activity"] = "OVERHEAD COLUMN 5", ["wait"] = 2, ["interactive"] = 0, ["actor"] = "SYS:", ["validated"] = 0, ["chkl_color"] = color_white, ["end"] = 0,
@@ -461,20 +463,119 @@ KC_TURN_AROUND_STATE = { ["name"] = "SET TURN AROUND STATE", ["mode"]="s", ["wnd
 }
 
 -- power up the aircraft from initial or cold and dark
--- function KC_PREL_PREFLIGHT_PROC() end
-KC_PREL_PREFLIGHT_PROC = { ["name"] = "PRELIMINARY PREFLIGHT PROCEDURE", ["mode"]="p", ["wnd_width"] = 350, ["wnd_height"] = 31*21,
+KC_ELEC_POWERUP_PROC = { ["name"] = "ELECTRICAL POWER UP (F/O)", ["mode"]="p", ["wnd_width"] = 350, ["wnd_height"] = 31*21,
+	[1] = {["activity"] = "POWERING UP THE AIRCRAFT", ["wait"] = 2, ["interactive"] = 0, ["actor"] = "SYS", ["validated"] = 0, ["chkl_color"] = color_white, ["end"] = 0,
+		["actions"] = function ()
+		end,
+		["speak"] = function () return "powering up the aircraft" end
+	},
+	[2] = {["activity"] = "BATTERY -- ON", ["wait"] = 1, ["interactive"] = 0, ["actor"] = "F/O:", ["validated"] = 0, ["chkl_color"] = color_white, ["end"] = 0,
+		["actions"] = function ()
+			sysElectric.batterySwitch:actuate(modeOn)
+		end,
+		["checks"] = function () return get("laminar/B738/electric/battery_pos") == 1 end
+	},
+	[3] = {["activity"] = "STANDBY POWER SWITCH -- GUARD CLOSED", ["wait"] = 1, ["interactive"] = 0, ["actor"] = "F/O:", ["validated"] = 0, ["chkl_color"] = color_white, ["end"] = 0,
+		["actions"] = function ()
+			sysElectric.stbyPowerCover:actuate(modeOff)
+		end
+	},
+	[4] = {["activity"] = "ALTERNATE FLAPS MASTER SWITCH -- GUARD CLOSED", ["wait"] = 1, ["interactive"] = 0, ["actor"] = "F/O:", ["validated"] = 0, ["chkl_color"] = color_white, ["end"] = 0,
+		["actions"] = function ()
+			sysControls.altFlapsCover:actuate(modeOff)
+		end
+	},
+	[5] = {["activity"] = "WINDSHIELD WIPER SELECTORS -- PARK", ["wait"] = 1, ["interactive"] = 0, ["actor"] = "F/O:", ["validated"] = 0, ["chkl_color"] = color_white, ["end"] = 0,
+		["actions"] = function ()
+			sysGeneral.wiperGroup:adjustValue(sysGeneral.wiperPark,0,3)
+		end
+	},
+	[6] = {["activity"] = "ELECTRIC HYDRAULIC PUMP SWITCHES-- OFF", ["wait"] = 1, ["interactive"] = 0, ["actor"] = "F/O:", ["validated"] = 0, ["chkl_color"] = color_white, ["end"] = 0,
+		["actions"] = function ()
+			sysHydraulic.elecHydPumpGroup:actuate(modeOff)
+		end
+	},
+	[7] = {["activity"] = "LANDING GEAR LEVER -- DOWN", ["wait"] = 1, ["interactive"] = 0, ["actor"] = "F/O:", ["validated"] = 0, ["chkl_color"] = color_white, ["end"] = 0,
+		["actions"] = function ()
+			sysGeneral.GearSwitch:actuate(modeOn)
+		end
+	},
+	[8] = {["activity"] = "FIRE TESTS -- RUN", ["wait"] = 4, ["interactive"] = 0, ["actor"] = "F/O:", ["validated"] = 0, ["chkl_color"] = color_white, ["end"] = 0,
+		["actions"] = function ()
+			kc_acf_firetests()
+		end
+	},
+	[9] = {["activity"] = "POWER -- ON", ["wait"] = 3, ["interactive"] = 0, ["actor"] = "F/O:", ["validated"] = 0, ["chkl_color"] = color_white, ["end"] = 0,
+		["actions"] = function ()
+			if get_kpcrew_config("config_apuinit") == false then
+				kc_acf_elec_gpu_start()
+			else
+				kc_acf_elec_apu_activate()
+			end
+		end,
+		["display"] = function()
+			if get_kpcrew_config("config_apuinit") == false then
+				return "GROUND POWER -- ON"
+			else
+				return "APU -- ON"
+			end
+		end
+	},
+	[10] = {["activity"] = "POWER UP FINISHED", ["wait"] = 1, ["interactive"] = 0, ["actor"] = "F/O:", ["validated"] = 0, ["chkl_color"] = color_white, ["end"] = 1,
+		["answer"] = function() return "power up finished" end
+	}
+}
+
+-- perform preliminary preflight after power up
+KC_PREL_PREFLIGHT_PROC = { ["name"] = "PRELIMINARY PREFLIGHT PROCEDURE (F/O)", ["mode"]="p", ["wnd_width"] = 350, ["wnd_height"] = 31*21,
 	[1] = {["activity"] = "SETTING UP THE AIRCRAFT", ["wait"] = 2, ["interactive"] = 0, ["actor"] = "SYS", ["validated"] = 0, ["chkl_color"] = color_white, ["end"] = 0,
 		["actions"] = function ()
 		end,
 		["speak"] = function () return " " end
 	},
-	[2] = {["activity"] = "XPDR TO 2000", ["wait"] = 1, ["interactive"] = 0, ["actor"] = "SYS", ["validated"] = 0, ["chkl_color"] = color_white, ["end"] = 0,
+	[2] = {["activity"] = "EMERGENCY EXIT LIGHT -- ARM/ON GUARD CLOSED", ["wait"] = 1, ["interactive"] = 0, ["actor"] = "F/O", ["validated"] = 0, ["chkl_color"] = color_white, ["end"] = 0,
+		["actions"] = function ()
+			sysGeneral.emerExitLightsSwitch:actuate(modeOn)
+			sysGeneral.emerExitLightsCover:actuate(modeOff)
+		end
+	},
+	[3] = {["activity"] = "ATTENDENCE BUTTON -- PRESS", ["wait"] = 3, ["interactive"] = 0, ["actor"] = "F/O", ["validated"] = 0, ["chkl_color"] = color_white, ["end"] = 0,
+		["actions"] = function ()
+		-- needs background proc
+		end
+	},
+	[4] = {["activity"] = "IRS MODE SELECTORS -- OFF", ["wait"] = 3, ["interactive"] = 0, ["actor"] = "F/O", ["validated"] = 0, ["chkl_color"] = color_white, ["end"] = 0,
+		["actions"] = function ()
+			sysGeneral.irsUnitGroup:adjustValue(0,0,3)
+		end
+	},
+	[5] = {["activity"] = "IRS MODE SELECTORS -- THEN NAV", ["wait"] = 1, ["interactive"] = 0, ["actor"] = "F/O", ["validated"] = 0, ["chkl_color"] = color_white, ["end"] = 0,
+		["actions"] = function ()
+			sysGeneral.irsUnitGroup:adjustValue(2,0,3)
+		end
+	},
+	[6] = {["activity"] = "VOICE RECORDER SWITCH -- AUTO", ["wait"] = 1, ["interactive"] = 0, ["actor"] = "F/O", ["validated"] = 0, ["chkl_color"] = color_white, ["end"] = 0,
+		["actions"] = function ()
+			sysGeneral.voiceRecSwitch:actuate(1)
+		end
+	},
+	[7] = {["activity"] = "MACH OVERSPEED TEST -- PERFORM", ["wait"] = 7, ["interactive"] = 0, ["actor"] = "F/O:", ["validated"] = 0, ["chkl_color"] = color_white, ["end"] = 0,
+		["actions"] = function ()
+			kc_acf_overspeed()
+		end
+	},
+	[8] = {["activity"] = "STALL WARNING TEST -- PERFORM", ["wait"] = 7, ["interactive"] = 0, ["actor"] = "F/O:", ["validated"] = 0, ["chkl_color"] = color_white, ["end"] = 0,
+		["actions"] = function ()
+			kc_acf_stall_warnings()
+		end
+	},
+	[9] = {["activity"] = "XPDR -- SET 2000", ["wait"] = 1, ["interactive"] = 0, ["actor"] = "SYS", ["validated"] = 0, ["chkl_color"] = color_white, ["end"] = 0,
 		["actions"] = function ()
 			kc_acf_xpdr_code_set(2000)
 			set("sim/private/controls/shadow/cockpit_near_adjust",0.09)
 		end
 	},
-	[3] = {["activity"] = "COCKPIT LIGHTS", ["wait"] = 1, ["interactive"] = 0, ["actor"] = "SYS", ["validated"] = 0, ["chkl_color"] = color_white, ["end"] = 0,
+	[10] = {["activity"] = "COCKPIT LIGHTS --  AS REQUIRED", ["wait"] = 1, ["interactive"] = 0, ["actor"] = "SYS", ["validated"] = 0, ["chkl_color"] = color_white, ["end"] = 0,
 		["actions"] = function ()
 			if kc_get_daylight() == 0 then
 				set_array("sim/cockpit2/switches/generic_lights_switch",0,1)
@@ -525,40 +626,7 @@ KC_PREL_PREFLIGHT_PROC = { ["name"] = "PRELIMINARY PREFLIGHT PROCEDURE", ["mode"
 			kc_acf_light_logo_mode(0)
 		end
 	},
-	[4] = {["activity"] = "BATTERY -- ON", ["wait"] = 1, ["interactive"] = 0, ["actor"] = "F/O:", ["validated"] = 0, ["chkl_color"] = color_white, ["end"] = 0,
-		["actions"] = function ()
-			kc_acf_elec_battery_onoff(1)
-		end,
-		["checks"] = function () return get("laminar/B738/electric/battery_pos") == 1 end
-	},
-	[5] = {["activity"] = "POWER -- ON", ["wait"] = 3, ["interactive"] = 0, ["actor"] = "F/O:", ["validated"] = 0, ["chkl_color"] = color_white, ["end"] = 0,
-		["actions"] = function ()
-			if get_kpcrew_config("config_apuinit") == false then
-				kc_acf_elec_gpu_start()
-			else
-				kc_acf_elec_apu_activate()
-			end
-		end,
-		["display"] = function()
-			if get_kpcrew_config("config_apuinit") == false then
-				return "GROUND POWER -- ON"
-			else
-				return "APU -- ON"
-			end
-		end
-	},
-	[6] = {["activity"] = "STANDBY POWER -- ON", ["wait"] = 1, ["interactive"] = 0, ["actor"] = "F/O:", ["validated"] = 0, ["chkl_color"] = color_white, ["end"] = 0,
-		["actions"] = function ()
-			kc_acf_elec_stby_power(1)
-		end,
-		["checks"] = function () return get("laminar/B738/electric/standby_bat_pos") == 1 end
-	},
-	[7] = {["activity"] = "FIRE TESTS -- RUN", ["wait"] = 4, ["interactive"] = 0, ["actor"] = "F/O:", ["validated"] = 0, ["chkl_color"] = color_white, ["end"] = 0,
-		["actions"] = function ()
-			kc_acf_firetests()
-		end
-	},
-	[8] = {["activity"] = "WING & WHEEL WELL LIGHTS -- AS REQUIRED", ["wait"] = 1, ["interactive"] = 0, ["actor"] = "F/O:", ["validated"] = 0, ["chkl_color"] = color_white, ["end"] = 0,
+	[11] = {["activity"] = "WING & WHEEL WELL LIGHTS -- AS REQUIRED", ["wait"] = 1, ["interactive"] = 0, ["actor"] = "F/O:", ["validated"] = 0, ["chkl_color"] = color_white, ["end"] = 0,
 		["actions"] = function ()
 			if kc_get_daylight() == 0 then
 				kc_acf_light_wing_mode(1)
@@ -585,40 +653,29 @@ KC_PREL_PREFLIGHT_PROC = { ["name"] = "PRELIMINARY PREFLIGHT PROCEDURE", ["mode"
 			end
 		end
 	},
-	[9] = {["activity"] = "FUEL PUMPS -- ALL OFF", ["wait"] = 1, ["interactive"] = 0, ["actor"] = "F/O:", ["validated"] = 0, ["chkl_color"] = color_white, ["end"] = 0,
+	[12] = {["activity"] = "FUEL PUMPS -- ALL OFF", ["wait"] = 1, ["interactive"] = 0, ["actor"] = "F/O:", ["validated"] = 0, ["chkl_color"] = color_white, ["end"] = 0,
 		["actions"] = function ()
-			kc_acf_fuel_pumps_onoff(0,0)
+			sysFuel.fuelPumpGroup:actuate(modeOff)
 		end
 	},
-	[10] = {["activity"] = "FUEL PUMP -- SET FOR APU", ["wait"] = 1, ["interactive"] = 0, ["actor"] = "F/O:", ["validated"] = 0, ["chkl_color"] = color_white, ["end"] = 0,
+	[13] = {["activity"] = "FUEL PUMP -- SET FOR APU", ["wait"] = 1, ["interactive"] = 0, ["actor"] = "F/O:", ["validated"] = 0, ["chkl_color"] = color_white, ["end"] = 0,
 		["actions"] = function ()
 			if get_kpcrew_config("config_apuinit") then
-				kc_acf_fuel_pumps_onoff(1,1)
+				sysFuel.fuelPumpLeftAft:actuate(modeOn)
 			end
 		end
 	},
-	[11] = {["activity"] = "CROSS FEED -- OFF", ["wait"] = 1, ["interactive"] = 0, ["actor"] = "F/O:", ["validated"] = 0, ["chkl_color"] = color_white, ["end"] = 0,
+	[14] = {["activity"] = "CROSS FEED -- OFF", ["wait"] = 1, ["interactive"] = 0, ["actor"] = "F/O:", ["validated"] = 0, ["chkl_color"] = color_white, ["end"] = 0,
 		["actions"] = function ()
-			kc_acf_fuel_xfeed_mode(0)
+			sysFuel.crossFeed:actuate(modeOff)
 		end
 	},
-	[12] = {["activity"] = "ELEC HYD PUMPS -- ON", ["wait"] = 1, ["interactive"] = 0, ["actor"] = "F/O:", ["validated"] = 0, ["chkl_color"] = color_white, ["end"] = 0,
-		["actions"] = function ()
-			kc_acf_hyd_pumps_onoff(1,1)
-			kc_acf_hyd_pumps_onoff(2,1)
-		end
-	},
-	[13] = {["activity"] = "POSITION LIGHTS -- ON", ["wait"] = 1, ["interactive"] = 0, ["actor"] = "F/O:", ["validated"] = 0, ["chkl_color"] = color_white, ["end"] = 0,
+	[15] = {["activity"] = "POSITION LIGHTS -- ON", ["wait"] = 1, ["interactive"] = 0, ["actor"] = "F/O:", ["validated"] = 0, ["chkl_color"] = color_white, ["end"] = 0,
 		["actions"] = function ()
 			kc_acf_light_nav_mode(1)
 		end
 	},
-	[14] = {["activity"] = "IRS -- OFF", ["wait"] = 1, ["interactive"] = 0, ["actor"] = "CAPT", ["validated"] = 0, ["chkl_color"] = color_white, ["end"] = 0,
-		["actions"] = function ()
-			kc_acf_irs_mode(0,0)
-		end
-	},
-	[15] = {["activity"] = "MCP - INITIALIZE", ["wait"] = 1, ["interactive"] = 0, ["actor"] = "F/O:", ["validated"] = 0, ["chkl_color"] = color_white, ["end"] = 0,
+	[16] = {["activity"] = "MCP - INITIALIZE", ["wait"] = 1, ["interactive"] = 0, ["actor"] = "F/O:", ["validated"] = 0, ["chkl_color"] = color_white, ["end"] = 0,
 		["actions"] = function ()
 			kc_acf_mcp_spd_set(get_kpcrew_config("default_ap_spd"))
 			kc_acf_mcp_hdg_set(get_kpcrew_config("default_ap_hdg"))
@@ -631,16 +688,11 @@ KC_PREL_PREFLIGHT_PROC = { ["name"] = "PRELIMINARY PREFLIGHT PROCEDURE", ["mode"
 			end
 		end
 	},
-	[16] = {["activity"] = "PARKING BRAKE -- SET", ["wait"] = 1, ["interactive"] = 0, ["actor"] = "F/O:", ["validated"] = 0, ["chkl_color"] = color_white, ["end"] = 0,
+	[17] = {["activity"] = "PARKING BRAKE -- SET", ["wait"] = 1, ["interactive"] = 0, ["actor"] = "F/O:", ["validated"] = 0, ["chkl_color"] = color_white, ["end"] = 0,
 		["actions"] = function ()
 			kc_acf_parking_break_mode(1)
 		end,
 		["checks"] = function() return kc_get_controls_parkbrake_mode() == 1 end
-	},
-	[17] = {["activity"] = "FUEL CONTROLS -- CUTOFF", ["wait"] = 1, ["interactive"] = 0, ["actor"] = "F/O:", ["validated"] = 0, ["chkl_color"] = color_white, ["end"] = 0,
-		["actions"] = function ()
-			kc_acf_fuel_lever_set(0,0)
-		end
 	},
 	[18] = {["activity"] = "IFE & GALLEY POWER -- ON", ["wait"] = 1, ["interactive"] = 0, ["actor"] = "F/O:", ["validated"] = 0, ["chkl_color"] = color_white, ["end"] = 0,
 		["actions"] = function ()
@@ -648,21 +700,8 @@ KC_PREL_PREFLIGHT_PROC = { ["name"] = "PRELIMINARY PREFLIGHT PROCEDURE", ["mode"
 			kc_acf_elec_cabin_power(1)
 		end
 	},
-	[19] = {["activity"] = "MACH OVERSPEED TEST", ["wait"] = 7, ["interactive"] = 0, ["actor"] = "F/O:", ["validated"] = 0, ["chkl_color"] = color_white, ["end"] = 0,
-		["actions"] = function ()
-			kc_acf_overspeed()
-		end
-	},
-	[20] = {["activity"] = "STALL WARNING TEST", ["wait"] = 7, ["interactive"] = 0, ["actor"] = "F/O:", ["validated"] = 0, ["chkl_color"] = color_white, ["end"] = 0,
-		["actions"] = function ()
-			kc_acf_stall_warnings()
-		end
-	},
-	[21] = {["activity"] = "POWER UP FINISHED", ["wait"] = 1, ["interactive"] = 0, ["actor"] = "F/O:", ["validated"] = 0, ["chkl_color"] = color_white, ["end"] = 1,
-		["actions"] = function ()
-			kc_acf_irs_mode(0,2)
-		end,
-		["answer"] = function() return "power up finished" end
+	[19] = {["activity"] = "PRELIMINARY PREFLIGHT SETUP FINISHED", ["wait"] = 1, ["interactive"] = 0, ["actor"] = "F/O:", ["validated"] = 0, ["chkl_color"] = color_white, ["end"] = 1,
+		["answer"] = function() return "preliminary pre flight finished" end
 	}
 }
 
@@ -750,6 +789,17 @@ KC_FLIGHT_PREPARATIONS = { ["name"] = "FLIGHT PREPARATIONS", ["mode"]="c", ["wnd
 -- Pre-Flight Procedure
 -- function KC_PREFLIGHT_PROCEDURE() end
 KC_PREFLIGHT_PROCEDURE = { ["name"] = "PREFLIGHT PROCEDURE", ["mode"]="p", ["wnd_width"] = 430, ["wnd_height"] = 31*32,
+	-- [12] = {["activity"] = "ELEC HYD PUMPS -- ON", ["wait"] = 1, ["interactive"] = 0, ["actor"] = "F/O:", ["validated"] = 0, ["chkl_color"] = color_white, ["end"] = 0,
+		-- ["actions"] = function ()
+			-- kc_acf_hyd_pumps_onoff(1,1)
+			-- kc_acf_hyd_pumps_onoff(2,1)
+		-- end
+	-- },
+	-- [17] = {["activity"] = "FUEL CONTROLS -- CUTOFF", ["wait"] = 1, ["interactive"] = 0, ["actor"] = "F/O:", ["validated"] = 0, ["chkl_color"] = color_white, ["end"] = 0,
+		-- ["actions"] = function ()
+			-- kc_acf_fuel_lever_set(0,0)
+		-- end
+	-- },
 	[1] = {["activity"] = "PERFORMING PREFLIGHT ITEMS", ["wait"] = 2, ["interactive"] = 0, ["actor"] = "SYS:", ["validated"] = 0, ["chkl_color"] = color_white, ["end"] = 0,
 		["actions"] = function ()
 		end,
@@ -2577,8 +2627,8 @@ KC_SECURE_CHECKLIST = { ["name"] = "SECURE AIRCRAFT CHECKLIST (F/O)", ["mode"]="
 }
 
 
-KC_PROCEDURES_DEFS = { KC_PREL_PREFLIGHT_PROC, KC_FLIGHT_PREPARATIONS, KC_PREFLIGHT_PROCEDURE, KC_PREFLIGHT_CHECKLIST,	KC_FLIGHT_BRIEFINGS, KC_BEFORE_START_PROC, KC_BEFORE_START_CHECKLIST, KC_STARTUP_AND_PUSH_PROC, KC_BEFORE_TAXI_CHECKLIST, KC_BEFORE_TAKEOFF_CHECKLIST, KC_ENTERING_RUNWAY_PROC, KC_TAKEOFF_CLIMB_PROCEDURE, KC_AFTER_TAKEOFF_CHECKLIST, KC_APPROACH_BRIEFINGS, KC_DESCEND_CHECKLIST, KC_APPROACH_CHECKLIST, KC_LANDING_PROC, KC_LANDING_CHECKLIST, KC_FINAL_PROC, KC_CLEANUP_PROC, KC_SHUTDOWN_PROC, KC_SHUTDOWN_CHECKLIST, KC_SECURE_AIRCRAFT_PROC, KC_SECURE_CHECKLIST, KC_TURN_AROUND_STATE, KC_COLD_AND_DARK }
-KC_PROCEDURE_NAMES = { KC_PROCEDURES_DEFS[1]["name"], KC_PROCEDURES_DEFS[2]["name"], KC_PROCEDURES_DEFS[3]["name"], KC_PROCEDURES_DEFS[4]["name"], KC_PROCEDURES_DEFS[5]["name"], KC_PROCEDURES_DEFS[6]["name"], KC_PROCEDURES_DEFS[7]["name"], KC_PROCEDURES_DEFS[8]["name"], KC_PROCEDURES_DEFS[9]["name"], KC_PROCEDURES_DEFS[10]["name"], KC_PROCEDURES_DEFS[11]["name"], KC_PROCEDURES_DEFS[12]["name"], KC_PROCEDURES_DEFS[12]["name"], KC_PROCEDURES_DEFS[13]["name"], KC_PROCEDURES_DEFS[14]["name"], KC_PROCEDURES_DEFS[15]["name"], KC_PROCEDURES_DEFS[16]["name"], KC_PROCEDURES_DEFS[17]["name"], KC_PROCEDURES_DEFS[18]["name"], KC_PROCEDURES_DEFS[19]["name"], KC_PROCEDURES_DEFS[20]["name"], KC_PROCEDURES_DEFS[21]["name"], KC_PROCEDURES_DEFS[22]["name"], KC_PROCEDURES_DEFS[23]["name"], KC_PROCEDURES_DEFS[24]["name"], KC_PROCEDURES_DEFS[25]["name"] }
+KC_PROCEDURES_DEFS = { KC_ELEC_POWERUP_PROC, KC_PREL_PREFLIGHT_PROC, KC_FLIGHT_PREPARATIONS, KC_PREFLIGHT_PROCEDURE, KC_PREFLIGHT_CHECKLIST,	KC_FLIGHT_BRIEFINGS, KC_BEFORE_START_PROC, KC_BEFORE_START_CHECKLIST, KC_STARTUP_AND_PUSH_PROC, KC_BEFORE_TAXI_CHECKLIST, KC_BEFORE_TAKEOFF_CHECKLIST, KC_ENTERING_RUNWAY_PROC, KC_TAKEOFF_CLIMB_PROCEDURE, KC_AFTER_TAKEOFF_CHECKLIST, KC_APPROACH_BRIEFINGS, KC_DESCEND_CHECKLIST, KC_APPROACH_CHECKLIST, KC_LANDING_PROC, KC_LANDING_CHECKLIST, KC_FINAL_PROC, KC_CLEANUP_PROC, KC_SHUTDOWN_PROC, KC_SHUTDOWN_CHECKLIST, KC_SECURE_AIRCRAFT_PROC, KC_SECURE_CHECKLIST, KC_TURN_AROUND_STATE, KC_COLD_AND_DARK }
+KC_PROCEDURE_NAMES = { KC_PROCEDURES_DEFS[1]["name"], KC_PROCEDURES_DEFS[2]["name"], KC_PROCEDURES_DEFS[3]["name"], KC_PROCEDURES_DEFS[4]["name"], KC_PROCEDURES_DEFS[5]["name"], KC_PROCEDURES_DEFS[6]["name"], KC_PROCEDURES_DEFS[7]["name"], KC_PROCEDURES_DEFS[8]["name"], KC_PROCEDURES_DEFS[9]["name"], KC_PROCEDURES_DEFS[10]["name"], KC_PROCEDURES_DEFS[11]["name"], KC_PROCEDURES_DEFS[12]["name"], KC_PROCEDURES_DEFS[12]["name"], KC_PROCEDURES_DEFS[13]["name"], KC_PROCEDURES_DEFS[14]["name"], KC_PROCEDURES_DEFS[15]["name"], KC_PROCEDURES_DEFS[16]["name"], KC_PROCEDURES_DEFS[17]["name"], KC_PROCEDURES_DEFS[18]["name"], KC_PROCEDURES_DEFS[19]["name"], KC_PROCEDURES_DEFS[20]["name"], KC_PROCEDURES_DEFS[21]["name"], KC_PROCEDURES_DEFS[22]["name"], KC_PROCEDURES_DEFS[23]["name"], KC_PROCEDURES_DEFS[24]["name"], KC_PROCEDURES_DEFS[25]["name"], KC_PROCEDURES_DEFS[26]["name"] }
 
 -- ============ Background procedures
 -- function KC_BACKGROUND_PROCS()
@@ -2942,8 +2992,9 @@ KC_BACKGROUND_PROCS = {
 		["actions"] = function ()
 			kc_set_background_proc_status("FIRETESTLEFTSTOP",kc_get_background_proc_status("FIRETESTLEFTSTOP")-1)
 			if kc_get_background_proc_status("FIRETESTLEFTSTOP") == 1 then
-				command_end("laminar/B738/toggle_switch/fire_test_lft")
-				command_begin("laminar/B738/toggle_switch/fire_test_rgt")
+				command_end("laminar/B738/toggle_switch/fire_test_rgt")
+				command_begin("laminar/B738/toggle_switch/exting_test_rgt")
+				-- command_begin("laminar/B738/toggle_switch/fire_test_lft")
 				kc_set_background_proc_status("FIRETESTLEFTSTOP",0)
 				kc_set_background_proc_status("FIRETESTRGTSTOP",4)
 			end
@@ -2953,8 +3004,10 @@ KC_BACKGROUND_PROCS = {
 		["actions"] = function ()
 			kc_set_background_proc_status("FIRETESTRGTSTOP",kc_get_background_proc_status("FIRETESTRGTSTOP")-1)
 			if kc_get_background_proc_status("FIRETESTRGTSTOP") == 1 then
-				command_end("laminar/B738/toggle_switch/fire_test_rgt")
+				-- command_end("laminar/B738/toggle_switch/fire_test_lft")
+				command_end("laminar/B738/toggle_switch/exting_test_rgt")
 				command_begin("laminar/B738/toggle_switch/exting_test_lft")
+				command_once("laminar/B738/push_button/fire_bell_light1")
 				kc_set_background_proc_status("FIRETESTRGTSTOP",0)
 				kc_set_background_proc_status("EXTINGSTOP",4)
 			end
@@ -4382,7 +4435,7 @@ end
 
 -- trigger fire tests
 function kc_acf_firetests()
-	command_begin("laminar/B738/toggle_switch/fire_test_lft")
+	command_begin("laminar/B738/toggle_switch/fire_test_rgt")
 	KC_BACKGROUND_PROCS["FIRETESTLEFTSTOP"].status = 4
 end
 

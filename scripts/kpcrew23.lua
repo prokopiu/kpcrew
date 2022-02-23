@@ -146,18 +146,16 @@ function bckWindowOpen()
 	if wnd_sop_action == 1 then
 		wnd_sop_action = 0
 		if loadedSOP ~= nil then
-			if sop_wnd then
-				if float_wnd_get_visible(sop_wnd) == 0 then
-					float_wnd_set_visible(sop_wnd, 1)
-				end
-			else
-				init_sop_window(getActiveSOP())
-			end
+			init_sop_window(getActiveSOP())
 		end
 	end
 	if wnd_flow_action == 1 then
 		if loadedSOP ~= nil then
-			init_flow_window(getActiveSOP():getActiveFlow())
+			if flow_wnd then 
+				resize_flow_window(getActiveSOP():getActiveFlow())
+			else
+				init_flow_window(getActiveSOP():getActiveFlow())
+			end
 		end
 		wnd_flow_action = 0
 	end
