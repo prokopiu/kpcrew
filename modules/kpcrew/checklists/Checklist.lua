@@ -168,6 +168,7 @@ function Checklist:render()
 		if item:isValid() ~= true then
 			item:setColor(ChecklistItem.colorFailed)
 		else
+			item:setState(item.stateSuccess)
 			item:setColor(item:getStateColor()) 
 		end
 		imgui.SetCursorPosY(imgui.GetCursorPosY() + 5)

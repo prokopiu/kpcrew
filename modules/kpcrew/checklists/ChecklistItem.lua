@@ -14,6 +14,7 @@ local ChecklistItem = {
     stateSuccess 	= 2,
     stateFailed 	= 3,
     stateSkipped 	= 4,
+	actorALL		= "ALL",
 	actorPF 		= "PF",		-- pilot flying (you)
 	actorPNF 		= "PNF",	-- pilot not flying (virtual)
 	actorPM 		= "PM",		-- pilot monitoring (virtual)
@@ -31,7 +32,7 @@ local ChecklistItem = {
 	colorSkipped	= color_dark_green
 }
 
-function ChecklistItem:new(challengeText,responseText,actor,validFunc,responseFunc)
+function ChecklistItem:new(challengeText,responseText,actor,waittime,validFunc,responseFunc)
     ChecklistItem.__index = ChecklistItem
 
     local obj = {}
@@ -45,7 +46,7 @@ function ChecklistItem:new(challengeText,responseText,actor,validFunc,responseFu
 	obj.origResponseText = responseText
 	obj.speakResponseText = responseText
 	obj.actor = actor
-	obj.waittime = 1 -- second
+	obj.waittime = waittime -- second
 	obj.valid = true
 	obj.color = ChecklistItem.colorInitial
 	obj.validFunc = validFunc
@@ -158,6 +159,18 @@ function ChecklistItem:isValid()
     return self.valid
 end
 
+function ChecklistItem:isManualItem()
+    return false
+end
+
+function ChecklistItem:isAutomaticItem()
+    return false
+end
+
+function ChecklistItem:hasResponse()
+    return true
+end
+
 -- speak the challenge text with the XP11 speech engine
 function ChecklistItem:speakChallenge()
 	if self.speakChallengeText ~= "" then
@@ -175,10 +188,10 @@ end
 -- return the visual line to put in the checklist displays
 function ChecklistItem:getLine(lineLength)
 	local line = {}
-	local dots = lineLength - string.len(self.challengeText) - string.len(self.responseText) - 7
+	local dots = lineLength - string.len(self.challengeText) - string.len(self:getResponseText()) - 7
 	line[#line + 1] = self.challengeText
 	local dotchar = "."
-	if self.responseText == "" then
+	if self:getResponseText() == "" then
 		dotchar = " "
 	end
 	for i=0,dots-1,1 do

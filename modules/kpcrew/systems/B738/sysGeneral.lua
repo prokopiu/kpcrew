@@ -86,6 +86,7 @@ sysGeneral.baroGroup:addSwitch(sysGeneral.baroStandby)
 
 --- systems not used by kphardware
 
+-- IRS
 sysGeneral.irsUnit1Switch = MultiStateCmdSwitch:new("irsunit1","laminar/B738/toggle_switch/irs_left",0,"laminar/B738/toggle_switch/irs_L_left","laminar/B738/toggle_switch/irs_L_right")
 sysGeneral.irsUnit2Switch = MultiStateCmdSwitch:new("irsunit2","laminar/B738/toggle_switch/irs_right",0,"laminar/B738/toggle_switch/irs_R_left","laminar/B738/toggle_switch/irs_R_right")
 sysGeneral.irsUnit3Switch = InopSwitch:new("irsunit3")
@@ -114,6 +115,14 @@ sysGeneral.voiceRecSwitch = TwoStateCmdSwitch:new("","laminar/B738/toggle_switch
 
 -- Attendence button 
 sysGeneral.attendanceButton = TwoStateToggleSwitch:new("","laminar/B738/push_button/attend_pos",0,"laminar/B738/push_button/attend")
+
+-- Equipment Cooling
+sysGeneral.equipCoolExhaust = TwoStateToggleSwitch:new("","laminar/B738/toggle_switch/eq_cool_exhaust",0,"laminar/B738/toggle_switch/eq_cool_exhaust")
+sysGeneral.equipCoolSupply = TwoStateToggleSwitch:new("","laminar/B738/toggle_switch/eq_cool_supply",0,"laminar/B738/toggle_switch/eq_cool_supply")
+
+-- Passenger lights
+sysGeneral.noSmokingSwitch = MultiStateCmdSwitch:new("","laminar/B738/toggle_switch/no_smoking_pos",0,"laminar/B738/toggle_switch/no_smoking_dn","laminar/B738/toggle_switch/no_smoking_up")
+sysGeneral.seatBeltSwitch = MultiStateCmdSwitch:new("","laminar/B738/toggle_switch/seatbelt_sign_pos",0,"laminar/B738/toggle_switch/seatbelt_sign_dn","laminar/B738/toggle_switch/seatbelt_sign_up")
 
 ------------ Annunciators
 -- park brake

@@ -37,13 +37,27 @@ sysControls.aileronReset = TwoStateToggleSwitch:new("aileronreset","sim/cockpit2
 -- Rudder Trim
 sysControls.rudderTrimSwitch = MultiStateCmdSwitch:new("ailerontrim","sim/cockpit2/controls/rudder_trim",0,"sim/flight_controls/rudder_trim_right","sim/flight_controls/rudder_trim_left")
 
+-- ruder reset
 sysControls.rudderReset = TwoStateToggleSwitch:new("rudderreset","sim/cockpit2/controls/rudder_trim",0,"sim/flight_controls/rudder_trim_center")
 
+-- Yaw damper
 sysControls.yawDamper = TwoStateToggleSwitch:new("yawdamper","laminar/B738/toggle_switch/yaw_dumper_pos",0,"laminar/B738/toggle_switch/yaw_dumper")
 
+-- flaps ctrl
 sysControls.altFlapsCtrl = MultiStateCmdSwitch:new("altflapsctrl","laminar/B738/toggle_switch/alt_flaps_ctrl",0,"laminar/B738/toggle_switch/alt_flaps_ctrl_dn","laminar/B738/toggle_switch/alt_flaps_ctrl_up")
-
 sysControls.altFlapsCover = TwoStateToggleSwitch:new("altflapscover","laminar/B738/switches/alt_flaps_cover_pos",0,"laminar/B738/toggle_switch/alt_flaps_cover")
+
+-- flight controls
+sysControls.fltCtrlASwitch = MultiStateCmdSwitch:new("","laminar/B738/switches/flt_ctr_A_pos",0,"laminar/B738/toggle_switch/flt_ctr_A_dn","laminar/B738/toggle_switch/flt_ctr_A_up")
+sysControls.fltCtrlBSwitch = MultiStateCmdSwitch:new("","laminar/B738/switches/flt_ctr_B_pos",0,"laminar/B738/toggle_switch/flt_ctr_B_dn","laminar/B738/toggle_switch/flt_ctr_B_up")
+sysControls.fltCtrlACover = TwoStateToggleSwitch:new("","laminar/B738/switches/flt_ctr_A_cover_pos",0,"laminar/B738/toggle_switch/flt_ctr_A_cover")
+sysControls.fltCtrlBCover = TwoStateToggleSwitch:new("","laminar/B738/switches/flt_ctr_B_cover_pos",0,"laminar/B738/toggle_switch/flt_ctr_B_cover")
+
+-- Spoilers
+sysControls.spoilerASwitch = TwoStateToggleSwitch:new("","laminar/B738/switches/spoiler_A_pos",0,"laminar/B738/toggle_switch/spoiler_A")
+sysControls.spoilerBSwitch = TwoStateToggleSwitch:new("","laminar/B738/switches/spoiler_B_pos",0,"laminar/B738/toggle_switch/spoiler_B")
+sysControls.spoilerACover = TwoStateToggleSwitch:new("","laminar/B738/switches/spoiler_A_cover_pos",0,"laminar/B738/toggle_switch/spoiler_A_cover")
+sysControls.spoilerBCover = TwoStateToggleSwitch:new("","laminar/B738/switches/spoiler_B_cover_pos",0,"laminar/B738/toggle_switch/spoiler_B_cover")
 
 --------- Annunciators
 

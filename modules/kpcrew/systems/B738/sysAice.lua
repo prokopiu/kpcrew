@@ -31,6 +31,26 @@ sysAice.windowHeatGroup:addSwitch(sysAice.windowHeatLeftFwd)
 sysAice.windowHeatGroup:addSwitch(sysAice.windowHeatRightSide)
 sysAice.windowHeatGroup:addSwitch(sysAice.windowHeatRightFwd) 
 
+-- probe heat
+sysAice.probeHeatASwitch = TwoStateToggleSwitch:new("","laminar/B738/toggle_switch/capt_probes_pos",0,"laminar/B738/toggle_switch/capt_probes_pos")
+sysAice.probeHeatBSwitch = TwoStateToggleSwitch:new("","laminar/B738/toggle_switch/fo_probes_pos",0,"laminar/B738/toggle_switch/fo_probes_pos")
+
+sysAice.probeHeatGroup = SwitchGroup:new("probeHeat")
+sysAice.probeHeatGroup:addSwitch(sysAice.probeHeatASwitch)
+sysAice.probeHeatGroup:addSwitch(sysAice.probeHeatBSwitch)
+
+-- Wing anti ice
+sysAice.wingAntiIce = TwoStateToggleSwitch:new("","laminar/B738/ice/wing_heat_pos",0,"laminar/B738/toggle_switch/wing_heat")
+
+-- ENG anti ice
+sysAice.engAntiIce1 = TwoStateToggleSwitch:new("","laminar/B738/ice/eng1_heat_pos",0,"laminar/B738/toggle_switch/eng1_heat")
+sysAice.engAntiIce2 = TwoStateToggleSwitch:new("","laminar/B738/ice/eng2_heat_pos",0,"laminar/B738/toggle_switch/eng2_heat")
+
+sysAice.engAntiIceGroup = SwitchGroup:new("engantiice")
+sysAice.engAntiIceGroup:addSwitch(sysAice.engAntiIce1)
+sysAice.engAntiIceGroup:addSwitch(sysAice.engAntiIce2)
+
+
 -- ===== Annunciators
 
 -- ANTI ICE annunciator

@@ -77,6 +77,18 @@ sysElectric.gpuSwitch = MultiStateCmdSwitch:new("","laminar/B738/electric/dc_gnd
 sysElectric.apuGenBus1 = MultiStateCmdSwitch:new("","laminar/B738/electrical/apu_power_bus1",0,"laminar/B738/toggle_switch/apu_gen1_dn","laminar/B738/toggle_switch/apu_gen1_up")
 sysElectric.apuGenBus2 = MultiStateCmdSwitch:new("","laminar/B738/electrical/apu_power_bus2",0,"laminar/B738/toggle_switch/apu_gen2_dn","laminar/B738/toggle_switch/apu_gen2_up")
 
+
+-- GEN drive shaft
+sysElectric.genDrive1Switch = TwoStateCmdSwitch:new("","laminar/B738/one_way_switch/drive_disconnect1_pos",0,"laminar/B738/one_way_switch/drive_disconnect1","laminar/B738/one_way_switch/drive_disconnect1_off")
+sysElectric.genDrive2Switch = TwoStateCmdSwitch:new("","laminar/B738/one_way_switch/drive_disconnect2_pos",0,"laminar/B738/one_way_switch/drive_disconnect2","laminar/B738/one_way_switch/drive_disconnect2_off")
+
+sysElectric.genDrive1Cover = TwoStateToggleSwitch:new("","laminar/B738/button_switch/cover_position",4,"laminar/B738/button_switch_cover04")
+sysElectric.genDrive2Cover = TwoStateToggleSwitch:new("","laminar/B738/button_switch/cover_position",5,"laminar/B738/button_switch_cover05")
+
+-- BUS TRANSFER
+sysElectric.busTransSwitch = TwoStateCmdSwitch:new("","sim/cockpit2/electrical/cross_tie",0,"sim/electrical/cross_tie_on","sim/electrical/cross_tie_off")
+sysElectric.busTransCover = TwoStateToggleSwitch:new("","laminar/B738/button_switch/cover_position",6,"laminar/B738/button_switch_cover06")
+
 -- ======== Annunciators
 
 -- LOW VOLTAGE annunciator
