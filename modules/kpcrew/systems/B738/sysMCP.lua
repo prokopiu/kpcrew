@@ -126,6 +126,12 @@ sysMCP.fmcNavSwitch = MultiStateCmdSwitch:new("fmcnav","laminar/B738/toggle_swit
 sysMCP.displaySourceSwitch = MultiStateCmdSwitch:new("dispsrc","laminar/B738/toggle_switch/dspl_source",0,"laminar/B738/toggle_switch/dspl_source_left","laminar/B738/toggle_switch/dspl_source_right")
 sysMCP.displayControlSwitch = MultiStateCmdSwitch:new("dispctrl","laminar/B738/toggle_switch/dspl_ctrl_pnl",0,"laminar/B738/toggle_switch/dspl_ctrl_pnl_left","laminar/B738/toggle_switch/dspl_ctrl_pnl_right")
 
+-- METERS
+sysMCP.mtrsSwitch = TwoStateToggleSwitch:new("","laminar/B738/PFD/capt/alt_mode_is_meters",0,"laminar/B738/EFIS_control/capt/push_button/mtrs_press")
+
+-- FPV
+sysMCP.fpvSwitch = TwoStateToggleSwitch:new("","laminar/B738/PFD/capt/fpv_on",0,"laminar/B738/EFIS_control/capt/push_button/fpv_press")
+
 ---------- Annunciators
 
 -- Flight Directors annunciator

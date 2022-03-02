@@ -466,6 +466,8 @@ KC_TURN_AROUND_STATE = { ["name"] = "SET TURN AROUND STATE", ["mode"]="s", ["wnd
 KC_ELEC_POWERUP_PROC = { ["name"] = "ELECTRICAL POWER UP (F/O)", ["mode"]="p", ["wnd_width"] = 350, ["wnd_height"] = 31*21,
 	[1] = {["activity"] = "POWERING UP THE AIRCRAFT", ["wait"] = 2, ["interactive"] = 0, ["actor"] = "SYS", ["validated"] = 0, ["chkl_color"] = color_white, ["end"] = 0,
 		["actions"] = function ()
+			getActiveSOP():setActiveFlowNumber(1)
+			wnd_flow_action = 1
 		end,
 		["speak"] = function () return "powering up the aircraft" end
 	},
@@ -505,12 +507,13 @@ KC_ELEC_POWERUP_PROC = { ["name"] = "ELECTRICAL POWER UP (F/O)", ["mode"]="p", [
 			kc_acf_firetests()
 		end
 	},
-	[9] = {["activity"] = "POWER -- ON", ["wait"] = 3, ["interactive"] = 0, ["actor"] = "F/O:", ["validated"] = 0, ["chkl_color"] = color_white, ["end"] = 0,
+	[9] = {["activity"] = "POWER -- ON", ["wait"] = 6, ["interactive"] = 0, ["actor"] = "F/O:", ["validated"] = 0, ["chkl_color"] = color_white, ["end"] = 0,
 		["actions"] = function ()
 			if get_kpcrew_config("config_apuinit") == false then
 				kc_acf_elec_gpu_start()
 			else
 				kc_acf_elec_apu_activate()
+				command_once("sim/annunciator/clear_master_warning")
 			end
 		end,
 		["display"] = function()
@@ -522,6 +525,9 @@ KC_ELEC_POWERUP_PROC = { ["name"] = "ELECTRICAL POWER UP (F/O)", ["mode"]="p", [
 		end
 	},
 	[10] = {["activity"] = "POWER UP FINISHED", ["wait"] = 1, ["interactive"] = 0, ["actor"] = "F/O:", ["validated"] = 0, ["chkl_color"] = color_white, ["end"] = 1,
+		["actions"] = function ()
+			getActiveSOP():getActiveFlow():setState(2)
+		end,
 		["answer"] = function() return "power up finished" end
 	}
 }
@@ -530,6 +536,8 @@ KC_ELEC_POWERUP_PROC = { ["name"] = "ELECTRICAL POWER UP (F/O)", ["mode"]="p", [
 KC_PREL_PREFLIGHT_PROC = { ["name"] = "PRELIMINARY PREFLIGHT PROCEDURE (F/O)", ["mode"]="p", ["wnd_width"] = 350, ["wnd_height"] = 31*21,
 	[1] = {["activity"] = "SETTING UP THE AIRCRAFT", ["wait"] = 2, ["interactive"] = 0, ["actor"] = "SYS", ["validated"] = 0, ["chkl_color"] = color_white, ["end"] = 0,
 		["actions"] = function ()
+			getActiveSOP():setActiveFlowNumber(2)
+			wnd_flow_action = 1
 		end,
 		["speak"] = function () return " " end
 	},
@@ -698,9 +706,14 @@ KC_PREL_PREFLIGHT_PROC = { ["name"] = "PRELIMINARY PREFLIGHT PROCEDURE (F/O)", [
 		["actions"] = function ()
 			kc_acf_elec_ife_power(1)
 			kc_acf_elec_cabin_power(1)
+			command_begin("laminar/B738/push_button/attend")
 		end
 	},
 	[19] = {["activity"] = "PRELIMINARY PREFLIGHT SETUP FINISHED", ["wait"] = 1, ["interactive"] = 0, ["actor"] = "F/O:", ["validated"] = 0, ["chkl_color"] = color_white, ["end"] = 1,
+		["actions"] = function ()
+			command_end("laminar/B738/push_button/attend")
+			getActiveSOP():getActiveFlow():setState(2)
+		end,
 		["answer"] = function() return "preliminary pre flight finished" end
 	}
 }
@@ -802,6 +815,8 @@ KC_PREFLIGHT_PROCEDURE = { ["name"] = "PREFLIGHT PROCEDURE", ["mode"]="p", ["wnd
 	-- },
 	[1] = {["activity"] = "PERFORMING PREFLIGHT ITEMS", ["wait"] = 2, ["interactive"] = 0, ["actor"] = "SYS:", ["validated"] = 0, ["chkl_color"] = color_white, ["end"] = 0,
 		["actions"] = function ()
+			getActiveSOP():setActiveFlowNumber(5)
+			wnd_flow_action = 1
 		end,
 		["speak"] = function () return "" end
 	},
@@ -1053,6 +1068,10 @@ KC_PREFLIGHT_PROCEDURE = { ["name"] = "PREFLIGHT PROCEDURE", ["mode"]="p", ["wnd
 -- function KC_PREFLIGHT_CHECKLIST() end
 KC_PREFLIGHT_CHECKLIST = { ["name"] = "PREFLIGHT CHECKLIST (PM)", ["mode"]="c", ["wnd_width1"] = 400,["wnd_width2"] = 300, ["wnd_height"] = 32*9, 
 	[1] = { ["actor"] = "", ["chkl_item"] = "PREFLIGHT CHECKLIST", ["chkl_response"] = "", ["chkl_state"] = false, ["chkl_color"] = color_white, ["validated"] = 0, ["wait"] = 2, ["interactive"] = 0, ["ask"] = 0, ["end"] = 0,
+		["actions"] = function ()
+			getActiveSOP():setActiveFlowNumber(9)
+			wnd_flow_action = 1
+		end,
 	},
 	[2] = { ["actor"] = "ALL:", ["chkl_item"] = "OXYGEN", ["chkl_response"] = "TESTED - 100%", ["chkl_state"] = false, ["chkl_color"] = color_white, ["validated"] = 0,  ["wait"] = 3, ["interactive"] = 0, ["ask"] = 0, ["end"] = 0
 	},

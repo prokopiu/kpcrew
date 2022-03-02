@@ -124,6 +124,28 @@ sysGeneral.equipCoolSupply = TwoStateToggleSwitch:new("","laminar/B738/toggle_sw
 sysGeneral.noSmokingSwitch = MultiStateCmdSwitch:new("","laminar/B738/toggle_switch/no_smoking_pos",0,"laminar/B738/toggle_switch/no_smoking_dn","laminar/B738/toggle_switch/no_smoking_up")
 sysGeneral.seatBeltSwitch = MultiStateCmdSwitch:new("","laminar/B738/toggle_switch/seatbelt_sign_pos",0,"laminar/B738/toggle_switch/seatbelt_sign_dn","laminar/B738/toggle_switch/seatbelt_sign_up")
 
+-- DISPLAY UNITS
+sysGeneral.displayUnitsFO = MultiStateCmdSwitch:new("","laminar/B738/toggle_switch/main_pnl_du_fo",0,"laminar/B738/toggle_switch/main_pnl_du_fo_right","laminar/B738/toggle_switch/main_pnl_du_fo_left")
+sysGeneral.displayUnitsCPT = MultiStateCmdSwitch:new("","laminar/B738/toggle_switch/main_pnl_du_capt",0,"laminar/B738/toggle_switch/main_pnl_du_capt_left","laminar/B738/toggle_switch/main_pnl_du_fo_left")
+
+-- LOWER DU
+sysGeneral.lowerDuFO = MultiStateCmdSwitch:new("","laminar/B738/toggle_switch/lower_du_fo",0,"laminar/B738/toggle_switch/lower_du_fo_right","laminar/B738/toggle_switch/lower_du_fo_left")
+sysGeneral.lowerDuCPT = MultiStateCmdSwitch:new("","laminar/B738/toggle_switch/lower_du_capt",0,"laminar/B738/toggle_switch/lower_du_capt_left","laminar/B738/toggle_switch/lower_du_capt_right")
+
+-- GPWS
+
+sysGeneral.flapInhibitSwitch 	= TwoStateToggleSwitch:new("","laminar/B738/toggle_switch/gpws_flap_pos",0,"laminar/B738/toggle_switch/gpws_flap")
+sysGeneral.gearInhibitSwitch 	= TwoStateToggleSwitch:new("","laminar/B738/toggle_switch/gpws_gear_pos",0,"laminar/B738/toggle_switch/gpws_gear")
+sysGeneral.terrainInhibitSwitch = TwoStateToggleSwitch:new("","laminar/B738/toggle_switch/gpws_terr_pos",0,"laminar/B738/toggle_switch/gpws_terr")
+
+sysGeneral.flapInhibitCover 	= TwoStateToggleSwitch:new("","laminar/B738/toggle_switch/gpws_flap_cover_pos",0,"laminar/B738/toggle_switch/gpws_flap_cover")
+sysGeneral.gearInhibitCover 	= TwoStateToggleSwitch:new("","laminar/B738/toggle_switch/gpws_gear_cover_pos",0,"laminar/B738/toggle_switch/gpws_gear_cover")
+sysGeneral.terrainInhibitCover 	= TwoStateToggleSwitch:new("","laminar/B738/toggle_switch/gpws_terr_cover_pos",0,"laminar/B738/toggle_switch/gpws_terr_cover")
+
+-- Autobrake
+sysGeneral.autobreak = MultiStateCmdSwitch:new("","laminar/B738/autobrake/autobrake_pos",0,"laminar/B738/knob/autobrake_dn","laminar/B738/knob/autobrake_up")
+
+
 ------------ Annunciators
 -- park brake
 sysGeneral.parkbrakeAnc = CustomAnnunciator:new("parkbrake",

@@ -37,6 +37,13 @@ sysEngines.startLeverGroup:addSwitch(sysEngines.startLever2)
 -- OVHT Test
 sysEngines.ovhtFireTestSwitch = TwoStateToggleSwitch:new("","laminar/B738/toggle_switch/fire_test",0,"laminar/B738/toggle_switch/fire_test_rgt")
 
+-- IGN select
+sysEngines.ignSelectSwitch = MultiStateCmdSwitch:new("","laminar/B738/toggle_switch/eng_start_source",0,"laminar/B738/toggle_switch/eng_start_source_left","laminar/B738/toggle_switch/eng_start_source_right")
+
+-- STARTER Switches
+sysEngines.engStart1Switch = MultiStateCmdSwitch:new("","laminar/B738/engine/starter1_pos","laminar/B738/knob/eng1_start_left","laminar/B738/knob/eng1_start_right")
+sysEngines.engStart2Switch = MultiStateCmdSwitch:new("","laminar/B738/engine/starter2_pos","laminar/B738/knob/eng2_start_left","laminar/B738/knob/eng2_start_right")
+
 ----------- Annunciators
 
 -- ENGINE FIRE annunciator

@@ -32,7 +32,7 @@ local ChecklistItem = {
 	colorSkipped	= color_dark_green
 }
 
-function ChecklistItem:new(challengeText,responseText,actor,waittime,validFunc,responseFunc)
+function ChecklistItem:new(challengeText,responseText,actor,waittime,validFunc,responseFunc,skipFunc)
     ChecklistItem.__index = ChecklistItem
 
     local obj = {}
@@ -51,6 +51,7 @@ function ChecklistItem:new(challengeText,responseText,actor,waittime,validFunc,r
 	obj.color = ChecklistItem.colorInitial
 	obj.validFunc = validFunc
 	obj.responseFunc = responseFunc
+	obj.skipFunc = skipFunc
 
     return obj
 end
@@ -118,6 +119,11 @@ end
 
 -- get the current state of this checklist item
 function ChecklistItem:getState()
+	if type(self.skipFunc) == 'function' then
+		if self.skipFunc() then
+			return self.stateSkipped
+		end
+	end
     return self.state
 end
 

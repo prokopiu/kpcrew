@@ -119,6 +119,9 @@ function SOP:render()
 		if flow:getType() == "Checklist" then	
 			color = color_checklist
 		end
+		if flow:getState() == 2 then
+			color = color_green
+		end
 		if indexOf(flows,flow) == self.activeFlowNumber then
 			color = color_red
 		end
@@ -158,7 +161,7 @@ function SOP:getWndXPos()
 end
 
 function SOP:getWndYPos()
-	return 50
+	return 70
 end
 
 return SOP

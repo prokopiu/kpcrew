@@ -171,10 +171,12 @@ function Checklist:render()
 			item:setState(item.stateSuccess)
 			item:setColor(item:getStateColor()) 
 		end
-		imgui.SetCursorPosY(imgui.GetCursorPosY() + 5)
-		imgui.PushStyleColor(imgui.constant.Col.Text,item:getColor()) 
+		if item:getState() ~= ChecklistItem.stateSkipped then
+			imgui.SetCursorPosY(imgui.GetCursorPosY() + 5)
+			imgui.PushStyleColor(imgui.constant.Col.Text,item:getColor()) 
 			imgui.TextUnformatted(item:getLine(self:getLineLength()))
-		imgui.PopStyleColor()		
+			imgui.PopStyleColor()		
+		end
 	end
 
 	imgui.SetCursorPosY(imgui.GetCursorPosY() + 5)

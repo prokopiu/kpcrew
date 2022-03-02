@@ -8,7 +8,7 @@ local ProcedureItem = require "kpcrew.procedures.ProcedureItem"
 local SimpleProcedureItem = {
 }
 
-function SimpleProcedureItem:new(challengeText)
+function SimpleProcedureItem:new(challengeText,skipFunc)
 
     SimpleProcedureItem.__index = SimpleProcedureItem
     setmetatable(SimpleProcedureItem, {
@@ -25,6 +25,7 @@ function SimpleProcedureItem:new(challengeText)
 	obj.color = color_grey
 	obj.valid = true
 	obj.state = ProcedureItem.stateInitial
+	obj.skipFunc = skipFunc
 	
     return obj
 end
@@ -54,7 +55,12 @@ function SimpleProcedureItem:getWaitTime()
 end
 
 function SimpleProcedureItem:getState()
-    return ProcedureItem.stateInitial
+ 	if type(self.skipFunc) == 'function' then
+		if self.skipFunc() == true then
+			return ProcedureItem.stateSkipped
+		end
+	end
+   return ProcedureItem.stateInitial
 end
 
 

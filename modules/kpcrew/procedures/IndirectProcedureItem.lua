@@ -9,7 +9,7 @@ local IndirectProcedureItem = {
 	colorFailed 		= color_orange
 }
 
-function IndirectProcedureItem:new(challengeText,responseText,actor,waittime,validFunc,actionFunc,responseFunc)
+function IndirectProcedureItem:new(challengeText,responseText,actor,waittime,validFunc,actionFunc,responseFunc,skipFunc)
 
     IndirectProcedureItem.__index = IndirectProcedureItem
     setmetatable(IndirectProcedureItem, {
@@ -31,7 +31,7 @@ function IndirectProcedureItem:new(challengeText,responseText,actor,waittime,val
 	obj.actionFunc = actionFunc
 	obj.responseFunc = responseFunc
 	obj.conditionMet = false
-	
+	obj.skipFunc = skipFunc
     return obj
 end
 

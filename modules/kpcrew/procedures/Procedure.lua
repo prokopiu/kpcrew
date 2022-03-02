@@ -56,7 +56,14 @@ end
 
 -- return number of procedure items
 function Procedure:getNumberOfItems()
-	return table.getn(self.items)
+	local cnt = 0
+	for _, item in ipairs(self.items) do
+		if item:getState() ~= ProcedureItem.stateSkipped then
+			cnt = cnt + 1
+		end
+	end
+	return cnt
+	-- return table.getn(self.items)
 end
 
 -- get the currently active item
@@ -171,10 +178,12 @@ function Procedure:render()
 		else
 			item:setColor(item:getStateColor())
 		end
-		imgui.SetCursorPosY(imgui.GetCursorPosY() + 5)
-		imgui.PushStyleColor(imgui.constant.Col.Text,item:getColor()) 
+		if item:getState() ~= ProcedureItem.stateSkipped then
+			imgui.SetCursorPosY(imgui.GetCursorPosY() + 5)
+			imgui.PushStyleColor(imgui.constant.Col.Text,item:getColor()) 
 			imgui.TextUnformatted(item:getLine(self:getLineLength()))
-		imgui.PopStyleColor()		
+			imgui.PopStyleColor()
+		end
 	end
 
 	imgui.SetCursorPosY(imgui.GetCursorPosY() + 5)

@@ -53,6 +53,15 @@ function TwoStateDrefSwitch:actuate(action)
 	end
 end
 
+-- set the value directly where possible (dref can be written)
+function TwoStateDrefSwitch:setValue(value)
+	if self.statusDrefIdx > 0 then
+		set_array(self.statusDref,self.statusDrefIdx,value)
+	else
+		set(self.statusDref,value)
+	end
+end
+
 return TwoStateDrefSwitch
 
 

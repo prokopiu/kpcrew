@@ -13,6 +13,7 @@ local ProcedureItem = {
     stateSuccess 		= 2,
     stateFailed 		= 3,
     stateDoneManually 	= 4,
+	stateSkipped		= 5,
 	actorPF 			= "PF",		-- pilot flying (you)
 	actorPNF 			= "PNF",	-- pilot not flying (virtual)
 	actorPM 			= "PM",		-- pilot monitoring (virtual)
@@ -31,7 +32,7 @@ local ProcedureItem = {
 }
 
 
-function ProcedureItem:new(challengeText,responseText,actor,waittime,validFunc,actionFunc,responseFunc)
+function ProcedureItem:new(challengeText,responseText,actor,waittime,validFunc,actionFunc,responseFunc,skipFunc)
     ProcedureItem.__index = ProcedureItem
 
     local obj = {}
@@ -48,6 +49,7 @@ function ProcedureItem:new(challengeText,responseText,actor,waittime,validFunc,a
 	obj.validFunc = validFunc
 	obj.actionFunc = actionFunc
 	obj.responseFunc = responseFunc
+	obj.skipFunc = skipFunc
 
     return obj
 end
@@ -94,6 +96,11 @@ end
 
 -- get the current state of this checklist item
 function ProcedureItem:getState()
+	if type(self.skipFunc) == 'function' then
+		if self.skipFunc() then
+			return ProcedureItem.stateSkipped
+		end
+	end
     return self.state
 end
 

@@ -7,14 +7,13 @@ ZC_VERSION = "2.3"
 
 require "kpcrew.genutils"
 
-
 -- stop if pre-reqs are not met
 if not SUPPORTS_FLOATING_WINDOWS then
 	logMsg("Upgrade your FlyWithLua! to NG 2.7.30+, need Floating Windows")
 	return
 end
 
-local acf_icao = "DFLT"
+acf_icao = "DFLT"
 
 -- Zibo B738 - use different module for default Laminar B738
 if PLANE_ICAO == "B738" then
@@ -27,16 +26,19 @@ end
 
 -- Aircraft Specific SOP/Checklist/Procedure Definitions
 loadedSOP = require("kpcrew.sops.SOP_" .. acf_icao)
+loadedPrefs = require("kpcrew.preferences.defaultPrefs")
 
 -- ============ UIs ==========
 
 sop_wnd = nil
 flow_wnd = nil
 ctrl_wnd = nil
+pref_wnd = nil
 
 scrnwidth = get("sim/graphics/view/window_width")
 scrnheight = get("sim/graphics/view/window_height")
 
+-- ===== Standard Operating Procedure window =====
 function init_sop_window(sop)
 	if sop_wnd == 0 or sop_wnd == nil then	
 		height = sop:getWndHeight()
@@ -61,9 +63,10 @@ function sop_builder(wnd)
 end
 
 function close_sop_window(wnd)
-	wnd = 0
+	sop_wnd = nil
 end
 
+-- ===== Flow Window =====
 function init_flow_window(flow)
 	if flow_wnd == 0 or flow_wnd == nil then	
 		height = flow:getWndHeight()
@@ -95,10 +98,11 @@ function close_flow_window()
 	flow_wnd = 0
 end
 
+-- ===== Small button bar to open windows (preliminary)
 function init_ctrl_window()
 	if ctrl_wnd == 0 or ctrl_wnd == nil then	
-		ctrl_wnd = float_wnd_create(100, 45, 2, true)
-		xpos = scrnwidth - 100
+		ctrl_wnd = float_wnd_create(140, 45, 2, true)
+		xpos = scrnwidth - 140
 		float_wnd_set_title(ctrl_wnd, "")
 		float_wnd_set_position(ctrl_wnd, xpos, scrnheight - 46)
 		float_wnd_set_imgui_builder(ctrl_wnd, "ctrl_builder")
@@ -110,12 +114,20 @@ function ctrl_builder(wnd)
 	if get("sim/graphics/view/window_width") ~= scrnwidth or get("sim/graphics/view/window_height") ~= scrnheight then
 		scrnwidth = get("sim/graphics/view/window_width")
 		scrnheight = get("sim/graphics/view/window_height")
-		xpos = scrnwidth - 100
+		xpos = scrnwidth - 150
 		float_wnd_set_geometry(ctrl_wnd, xpos, 46, scrnwidth, 1)
 	end
 	imgui.SetCursorPosY(10)
 	imgui.SetCursorPosX(10)
 	
+	if imgui.Button("PRF", 35, 25) then
+		if loadedPrefs ~= nil then
+			if pref_wnd == nil or pref_wnd == 0 then
+				wnd_pref_action = 1
+			end
+		end
+	end
+    imgui.SameLine()
 	if imgui.Button("SOP", 35, 25) then
 		if loadedSOP ~= nil then
 			if sop_wnd == nil or sop_wnd == 0 then
@@ -139,8 +151,32 @@ end
 
 init_ctrl_window()
 
+-- ===== Preferences window =====
+function init_pref_window(prefset)
+	if pref_wnd == 0 or pref_wnd == nil then	
+		height = prefset:getWndHeight()
+		width = prefset:getWndWidth()
+		pref_wnd = float_wnd_create(width, height, 1, true)
+		float_wnd_set_title(pref_wnd, prefset:getName())
+		float_wnd_set_position(pref_wnd, prefset:getWndXPos(), prefset:getWndYPos())
+		float_wnd_set_imgui_builder(pref_wnd, "pref_builder")
+		float_wnd_set_onclose(pref_wnd, "close_pref_window")
+	end
+end
+
+function pref_builder()
+	getActivePrefs():render()
+end
+
+function close_pref_window()
+	pref_wnd = nil
+end
+
+-- init_pref_window(getActivePrefs())
+
 wnd_sop_action = 0
 wnd_flow_action = 0
+wnd_pref_action = 0
 
 function bckWindowOpen()
 	if wnd_sop_action == 1 then
@@ -151,13 +187,19 @@ function bckWindowOpen()
 	end
 	if wnd_flow_action == 1 then
 		if loadedSOP ~= nil then
-			if flow_wnd then 
-				resize_flow_window(getActiveSOP():getActiveFlow())
-			else
+			if flow_wnd == nil or flow_wnd == 0 then 
 				init_flow_window(getActiveSOP():getActiveFlow())
+			else
+				resize_flow_window(getActiveSOP():getActiveFlow())
 			end
 		end
 		wnd_flow_action = 0
+	end
+	if wnd_pref_action == 1 then
+		wnd_pref_action = 0
+		if loadedPrefs ~= nil then
+			init_pref_window(getActivePrefs())
+		end
 	end
 end
 
