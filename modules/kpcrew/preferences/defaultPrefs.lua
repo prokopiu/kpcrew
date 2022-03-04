@@ -1,17 +1,17 @@
 require "kpcrew.genutils"
 
 local defaultPrefs = {
-	icao = "DFLT"
 }
 
-local PreferenceSet = require("kpcrew.preferences.PreferenceSet")
-local PreferenceGroup = require("kpcrew.preferences.PreferenceGroup")
-local Preference = require("kpcrew.preferences.Preference")
+PreferenceSet = require("kpcrew.preferences.PreferenceSet")
+PreferenceGroup = require("kpcrew.preferences.PreferenceGroup")
+Preference = require("kpcrew.preferences.Preference")
 
 activePrefSet = PreferenceSet:new("DEFAULT PREFERENCES")
 
 local generalGroup = PreferenceGroup:new("general","GENERAL PREFERENCES")
 generalGroup:add(Preference:new("weight_units",true,Preference.typeToggle,"Weight Units|KGS|LBS")) -- true=KGS
+generalGroup:add(Preference:new("baro_hpa",true,Preference.typeToggle,"EFIS Default Baro Mode (Both)|HPA|IN")) -- true = HPA (mb), false = inhg
 generalGroup:add(Preference:new("defTransAlt",5000,Preference.typeInt,"Default Transition Level (ft)|100"))
 generalGroup:add(Preference:new("defTransLvl",50,Preference.typeInt,"Default Transition Level (FL)|10"))
 

@@ -41,13 +41,22 @@ end
 function PreferenceGroup:render()
 	if self ~= nil then
 		imgui.Separator()
-		imgui.TextUnformatted(self:getHeadline())
+		imgui_center(self:getHeadline())
 		imgui.Separator()
 		for _, pref in ipairs(self.preferences) do
 			pref:render()
 		end
 		imgui.Separator()
 	end
+end
+
+function PreferenceGroup:findPreference(key)
+	for _, pref in ipairs(self.preferences) do
+		if pref:getKey() == key then
+			return pref
+		end
+	end
+	return nil
 end
 
 function PreferenceGroup:getWndHeight()
@@ -74,6 +83,40 @@ function PreferenceGroup:getHeadline()
 		line[#line + 1] = " "
 	end
 	return table.concat(line)
+end
+
+function PreferenceGroup:save(filePref)
+	for _, pref in ipairs(self.preferences) do
+		filePref:write(self.name .. ":" .. pref:getSaveLine())
+	end
+end	
+
+function PreferenceGroup:load(filePref)
+   for line in filePref:lines() do
+        local key = nil
+        local value = nil
+		local splits = split(line,":")
+		if splits[1] == self.name then
+			local delim = string.find(splits[2], "=")
+			if delim and delim > 1 and delim < string.len(line) then
+				local key = string.sub(splits[2], 1, delim - 1)
+				local value = string.sub(splits[2], delim + 1)
+				local pref = self:findPreference(key)
+				if pref ~= nil then
+					if pref:getType() == Preference.typeFlag or pref:getType() == Preference.typeToggle then
+						if value == "true" then 
+							pref:setValue(true)
+						else
+							pref:setValue(false)
+						end
+					else
+						pref:setValue(value)
+					end
+				end
+			end
+        end
+    end
+
 end
 
 return PreferenceGroup

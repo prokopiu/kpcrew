@@ -27,6 +27,12 @@ end
 -- Aircraft Specific SOP/Checklist/Procedure Definitions
 loadedSOP = require("kpcrew.sops.SOP_" .. acf_icao)
 loadedPrefs = require("kpcrew.preferences.defaultPrefs")
+loadedVars = require("kpcrew.preferences.backgroundVars")
+
+local svar = activeBckVars:findPreference("general:flight_state")
+local sstate = split(svar:getTitle(),"|")[svar:getValue()+1]
+logMsg("> " .. sstate)
+-- ,"|")[activeBckVars:getPreference("general.flight_state")+1])
 
 -- ============ UIs ==========
 
@@ -159,7 +165,11 @@ function init_pref_window(prefset)
 		pref_wnd = float_wnd_create(width, height, 1, true)
 		float_wnd_set_title(pref_wnd, prefset:getName())
 		float_wnd_set_position(pref_wnd, prefset:getWndXPos(), prefset:getWndYPos())
-		float_wnd_set_imgui_builder(pref_wnd, "pref_builder")
+		if prefset:getName() == "BackgroundVars" then
+			float_wnd_set_imgui_builder(pref_wnd, "vars_builder")
+		else
+			float_wnd_set_imgui_builder(pref_wnd, "pref_builder")
+		end
 		float_wnd_set_onclose(pref_wnd, "close_pref_window")
 	end
 end
@@ -168,11 +178,16 @@ function pref_builder()
 	getActivePrefs():render()
 end
 
+function vars_builder()
+	getBckVars():render()
+end
+
 function close_pref_window()
 	pref_wnd = nil
 end
 
 -- init_pref_window(getActivePrefs())
+init_pref_window(getBckVars())
 
 wnd_sop_action = 0
 wnd_flow_action = 0

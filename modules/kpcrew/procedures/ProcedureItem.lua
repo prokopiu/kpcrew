@@ -32,7 +32,7 @@ local ProcedureItem = {
 }
 
 
-function ProcedureItem:new(challengeText,responseText,actor,waittime,validFunc,actionFunc,responseFunc,skipFunc)
+function ProcedureItem:new(challengeText,responseText,actor,waittime,validFunc,responseFunc,actionFunc,skipFunc)
     ProcedureItem.__index = ProcedureItem
 
     local obj = {}
@@ -71,6 +71,9 @@ end
 
 -- get the right hand result text for the item
 function ProcedureItem:getResponseText()
+	if type(self.responseFunc) == 'function' then
+		return self.responseFunc()
+	end
 	return self.responseText
 end
 
@@ -138,7 +141,7 @@ end
 -- return the visual line to put in the checklist displays
 function ProcedureItem:getLine(lineLength)
 	local line = {}
-	local dots = lineLength - string.len(self.challengeText) - string.len(self.responseText) - 7
+	local dots = lineLength - string.len(self.challengeText) - string.len(self:getResponseText()) - 7
 	line[#line + 1] = self.challengeText
 	local dotchar = "."
 	if self.responseText == "" then

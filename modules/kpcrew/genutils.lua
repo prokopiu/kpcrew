@@ -235,10 +235,29 @@ function gui_in_dropdown(lable, srcval, list, width)
 	return srcval
 end
 
+-- get daylight 0=dark 1=bright
+function is_daylight()
+	if get("sim/private/stats/skyc/sun_amb_b") < 0.02 then
+		return false
+	else
+		return true
+	end
+end
+
+-- split string function
 function split(s, delimiter)
     result = {};
     for match in (s..delimiter):gmatch("(.-)"..delimiter) do
         table.insert(result, match);
     end
     return result;
+end
+
+
+-- imgui supplementary functions
+function imgui_center(text) 
+    local win_width = imgui.GetWindowWidth()
+	local text_width, text_height = imgui.CalcTextSize(text)
+	imgui.SetCursorPos(win_width / 2 - text_width / 2, imgui.GetCursorPosY())
+	imgui.TextUnformatted(text)
 end

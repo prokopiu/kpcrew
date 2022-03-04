@@ -116,7 +116,8 @@ end
 
 -- return the procedure headline with its name and "="
 function Procedure:getHeadline()
-	local eqsigns = self.lineLength - string.len(self.name) - 2
+	local svar = activeBckVars:findPreference("general:flight_state")
+	local eqsigns = self.lineLength - string.len(self.name .. " - " .. split(svar:getTitle(),"|")[svar:getValue()+1]) - 2
 	local line = {}
 	
 	for i=0,math.floor((eqsigns / 2) + 0.5) - 1,1 do
@@ -124,7 +125,7 @@ function Procedure:getHeadline()
 	end
 	
 	line[#line + 1] = " "
-	line[#line + 1] = self.name
+	line[#line + 1] = self.name .. " - " .. split(svar:getTitle(),"|")[svar:getValue()+1]
 	line[#line + 1] = " "
 	
 	for i=0,(eqsigns / 2) - 1,1 do
