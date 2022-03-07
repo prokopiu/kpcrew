@@ -20,66 +20,18 @@ color_ocean_blue 	= 0xFFEC652B
 color_checklist		= 0xFF2F4F4F
 color_procedure		= 0xFF808000
 
-------------- logging related functions ---------------
-
---- Writes a log message into the X-Plane log file. (patrickl92)
-local function logMessage(source, severity, message)
-    verifyType("source", source, "string")
-    verifyType("severity", severity, "string")
-    verifyType("message", message, "string")
-
-    logMsg(tostring(getPCTime()) .. " kpcrew." .. source .. " [" .. severity .. "]: " .. message)
-end
-
---- Verifies that a value is of the expected type. (patrickl92)
--- An error is thrown if the type of the value does not match the expected type.
-function verifyType(valueName, value, expectedType)
-    if type(valueName) ~= "string" then error("valueName must be a string") end
-    if type(expectedType) ~= "string" then error("expectedType must be a string") end
-
-    if type(value) ~= expectedType then
-        error(valueName .. " must be a " .. expectedType)
-    end
-end
-
---- Writes an information log message into the X-Plane log file. (patrickl92)
-function logInfo(source, message)
-    logMessage(source, "INFO", message)
-end
-
---- Enables the logging of debug messages. (patrickl92)
-function enableDebugLogging()
-    debugLoggingEnabled = true
-end
-
---- Disables the logging of debug messages. (patrickl92)
-function disableDebugLogging()
-    debugLoggingEnabled = false
-end
-
---- Writes a debug log message into the X-Plane log file. (patrickl92)
--- The message is only written if debug logging is enabled.
-function logDebug(source, message)
-    if debugLoggingEnabled then
-        logMessage(source, "DEBUG", message)
-    end
-end
-
---- Writes an error log message into the X-Plane log file. (patrickl92)
-function logError(source, message)
-    logMessage(source, "ERROR", message)
-end
-
 -- speak text but don't show in sim, speakMode is used to prevent repetitive playing
 -- speakmode 1 will talk and show, 0 will only speak
 function speakNoText(speakMode, sText)
-	if speakMode == 0 then
-		set(drefTextout,0)
-		XPLMSpeakString(sText)
-		set(drefTextout,1)
-	else	
-		set(drefTextout,1)
-		XPLMSpeakString(sText)
+	if sText ~= "" and sText ~= nil then
+		if speakMode == 0 then
+			set(drefTextout,0)
+			XPLMSpeakString(sText)
+			set(drefTextout,1)
+		else	
+			set(drefTextout,1)
+			XPLMSpeakString(sText)
+		end
 	end
 end
 

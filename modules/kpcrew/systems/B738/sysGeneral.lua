@@ -8,21 +8,12 @@ local sysGeneral = {
 	irsUnitALIGN = 1,
 	irsUnitNAV = 2,
 	irsUnitATT = 3;
+
 	wiperPark = 0,
 	wiperInt = 1,
 	wiperLow = 2,
 	wiperHigh = 3
 }
-
-TwoStateDrefSwitch = require "kpcrew.systems.TwoStateDrefSwitch"
-TwoStateCmdSwitch = require "kpcrew.systems.TwoStateCmdSwitch"
-TwoStateCustomSwitch = require "kpcrew.systems.TwoStateCustomSwitch"
-SwitchGroup  = require "kpcrew.systems.SwitchGroup"
-SimpleAnnunciator = require "kpcrew.systems.SimpleAnnunciator"
-CustomAnnunciator = require "kpcrew.systems.CustomAnnunciator"
-TwoStateToggleSwitch = require "kpcrew.systems.TwoStateToggleSwitch"
-MultiStateCmdSwitch = require "kpcrew.systems.MultiStateCmdSwitch"
-InopSwitch = require "kpcrew.systems.InopSwitch"
 
 -- Parking Brake
 sysGeneral.parkBrakeSwitch = TwoStateToggleSwitch:new("parkbrake","sim/cockpit2/controls/parking_brake_ratio",0,"laminar/B738/push_button/park_brake_on_off")
@@ -171,6 +162,18 @@ function ()
 	local sum = sysGeneral.gearLeftGreenAnc:getStatus() +
 				sysGeneral.gearRightGreenAnc:getStatus() +
 				sysGeneral.gearNodeGreenAnc:getStatus()
+	if sum > 0 then 
+		return 1
+	else
+		return 0
+	end
+end)
+
+sysGeneral.gearLightsRed = CustomAnnunciator:new("gearlightsred", 
+function () 
+	local sum = sysGeneral.gearLeftRedAnc:getStatus() +
+				sysGeneral.gearRightRedAnc:getStatus() +
+				sysGeneral.gearNodeRedAnc:getStatus()
 	if sum > 0 then 
 		return 1
 	else

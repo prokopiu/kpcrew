@@ -48,13 +48,15 @@ local dest_rwy_length = 0
 -- speakmode 1 will talk and show, 0 will only speak
 dataref("TEXTOUT", "sim/operation/prefs/text_out", "writeable")
 function speakNoText(speakMode, sText)
-	if speakMode == 0 then
-		TEXTOUT=false
-		XPLMSpeakString(sText)
-		TEXTOUT=true
-	else	
-		TEXTOUT=true
-		XPLMSpeakString(sText)
+	if sText ~= "" then
+		if speakMode == 0 then
+			TEXTOUT=false
+			XPLMSpeakString(sText)
+			TEXTOUT=true
+		else	
+			TEXTOUT=true
+			XPLMSpeakString(sText)
+		end
 	end
 end
 

@@ -1,40 +1,55 @@
-require "kpcrew.genutils"
+-- Set of preferences 
+-- The set combines one or more preference groups, each group containing one to many single preferences
+-- Preferences can also be used for background variables to persist kpcrew specific states and values
+--
+-- @classmod PreferenceSet
+-- @author Kosta Prokopiu
+-- @copyright 2022 Kosta Prokopiu
+local kcPreferenceSet = {
+}
 
-local PreferenceSet = {}
-
-function PreferenceSet:new(name)
-
-    PreferenceSet.__index = PreferenceSet
-
+-- Instantiate a new preference set
+-- @tparam string name Name of the set (also used as title)
+function kcPreferenceSet:new(name)
+    kcPreferenceSet.__index = kcPreferenceSet
     local obj = {}
-    setmetatable(obj, PreferenceSet)
+    setmetatable(obj, kcPreferenceSet)
 
     obj.name = name
 	obj.preferenceGroups = {}
-	obj.filename = acf_icao
+	obj.filename = kc_acf_icao
 	
     return obj
 end
 
-function PreferenceSet:getName()
+-- Get name/title of preference set
+-- @treturn string name of set
+function kcPreferenceSet:getName()
     return self.name
 end
 
-function PreferenceSet:addGroup(group)
-	-- self.preferenceGroups[group:getName()] = group
+-- Add a preference group to the set
+-- @tparam PreferenceGroup group to add
+function kcPreferenceSet:addGroup(group)
     table.insert(self.preferenceGroups, group)
 end
 
-function PreferenceSet:getAllGroups()
+-- Return all registered groups from set
+-- @treturn array PreferenceGroup
+function kcPreferenceSet:getAllGroups()
 	return self.preferenceGroups
 end
 
-function PreferenceSet:findPreference(inkey)
+-- Find a preference object in all groups
+-- key contains the group and the key such as general:flight_state
+-- @tparam string inkey Key of preference to find
+-- @treturn Preference found preference or nil
+function kcPreferenceSet:find(inkey)
 	for _, group in ipairs(self.preferenceGroups) do
 		if group ~= nil then
 			local splits = split(inkey,":")
 			if splits[1] == group:getName() then
-				local found = group:findPreference(splits[2])
+				local found = group:find(splits[2])
 				return found
 			end
 		end
@@ -42,14 +57,21 @@ function PreferenceSet:findPreference(inkey)
 	return nil
 end
 
-function PreferenceSet:getPreference(inkey)
-	local pref = self:findPreference(inkey)
+-- Get the value of a preference object
+-- key contains the group and the key such as general:flight_state
+-- @tparam string inkey Key of preference to find
+-- @treturn object value of preference 
+function kcPreferenceSet:get(inkey)
+	local pref = self:find(inkey)
 	if pref ~= nil then
 		return pref:getValue()
 	end
 end
 
-function PreferenceSet:getWndHeight()
+-- ===== UI related functionality =====
+-- Get the required window height calculated on all preferences and groups
+-- @treturn int height in pixel
+function kcPreferenceSet:getWndHeight()
 	local wndHeight = 0
 	for _, group in ipairs(self.preferenceGroups) do
 		wndHeight = wndHeight + group:getWndHeight()
@@ -57,24 +79,33 @@ function PreferenceSet:getWndHeight()
 	return wndHeight
 end
 
-function PreferenceSet:getWndWidth()
-	return 350 --435
+-- Get the required window width
+-- @treturn int width in pixel
+function kcPreferenceSet:getWndWidth()
+	return 350
 end
 
-function PreferenceSet:getWndXPos()
+-- Get the x-position for the window
+-- @treturn int position on left side of the screen
+function kcPreferenceSet:getWndXPos()
 	local win_width = get("sim/graphics/view/window_width")
 	return win_width - self:getWndWidth() - 330
 end
 
-function PreferenceSet:getWndYPos()
+-- Get the y-position for the window
+-- @treturn int position from top of screen
+function kcPreferenceSet:getWndYPos()
 	return 70
 end
 
-function PreferenceSet:render()
+-- Render all preferences and groups in imgui window
+function kcPreferenceSet:render()
 	if self ~= nil then
+		-- run through groups and preferences and 
 		for _, group in ipairs(self.preferenceGroups) do
 			group:render()
 		end
+		-- filename and load/save button
 		imgui.Separator()
 		local changed, textin = imgui.InputText("", self.filename, 20)
 		if changed then
@@ -91,7 +122,8 @@ function PreferenceSet:render()
 	end
 end
 
-function PreferenceSet:save()
+-- Save all preferences with group prefix to .preferences file
+function kcPreferenceSet:save()
 	filePrefs = io.open(SCRIPT_DIRECTORY .. "..\\Modules\\kpcrew\\preferences\\" .. self.filename .. ".preferences", "w+")
 	for _, group in ipairs(self.preferenceGroups) do
 		group:save(filePrefs)
@@ -99,7 +131,8 @@ function PreferenceSet:save()
 	filePrefs:close()
 end
 
-function PreferenceSet:load()
+-- Read all preferences from file
+function kcPreferenceSet:load()
 	for _, group in ipairs(self.preferenceGroups) do
 		filePrefs = io.open(SCRIPT_DIRECTORY .. "..\\Modules\\kpcrew\\preferences\\" .. self.filename .. ".preferences", "r")
 		if filePrefs then
@@ -109,4 +142,4 @@ function PreferenceSet:load()
 	end
 end	
 
-return PreferenceSet
+return kcPreferenceSet

@@ -3,6 +3,19 @@
 	Kosta Prokopiu, October 2021
 --]]
 
+-- classes for systems switches 
+TwoStateDrefSwitch 		= require "kpcrew.systems.TwoStateDrefSwitch"
+TwoStateCmdSwitch 		= require "kpcrew.systems.TwoStateCmdSwitch"
+TwoStateCustomSwitch 	= require "kpcrew.systems.TwoStateCustomSwitch"
+TwoStateToggleSwitch 	= require "kpcrew.systems.TwoStateToggleSwitch"
+MultiStateCmdSwitch 	= require "kpcrew.systems.MultiStateCmdSwitch"
+InopSwitch 				= require "kpcrew.systems.InopSwitch"
+
+SwitchGroup  			= require "kpcrew.systems.SwitchGroup"
+
+SimpleAnnunciator 		= require "kpcrew.systems.SimpleAnnunciator"
+CustomAnnunciator 		= require "kpcrew.systems.CustomAnnunciator"
+
 sysLights = require("kpcrew.systems.B738.sysLights")
 sysGeneral = require("kpcrew.systems.B738.sysGeneral")	
 sysControls = require("kpcrew.systems.B738.sysControls")	
@@ -466,7 +479,7 @@ KC_TURN_AROUND_STATE = { ["name"] = "SET TURN AROUND STATE", ["mode"]="s", ["wnd
 KC_ELEC_POWERUP_PROC = { ["name"] = "ELECTRICAL POWER UP (F/O)", ["mode"]="p", ["wnd_width"] = 350, ["wnd_height"] = 31*21,
 	[1] = {["activity"] = "POWERING UP THE AIRCRAFT", ["wait"] = 2, ["interactive"] = 0, ["actor"] = "SYS", ["validated"] = 0, ["chkl_color"] = color_white, ["end"] = 0,
 		["actions"] = function ()
-			getActiveSOP():setActiveFlowNumber(1)
+			getActiveSOP():setActiveFlowIndex(1)
 			wnd_flow_action = 1
 		end,
 		["speak"] = function () return "powering up the aircraft" end
@@ -474,6 +487,7 @@ KC_ELEC_POWERUP_PROC = { ["name"] = "ELECTRICAL POWER UP (F/O)", ["mode"]="p", [
 	[2] = {["activity"] = "BATTERY -- ON", ["wait"] = 1, ["interactive"] = 0, ["actor"] = "F/O:", ["validated"] = 0, ["chkl_color"] = color_white, ["end"] = 0,
 		["actions"] = function ()
 			sysElectric.batterySwitch:actuate(modeOn)
+			sysElectric.batteryCover:actuate(modeOff)
 		end,
 		["checks"] = function () return get("laminar/B738/electric/battery_pos") == 1 end
 	},
@@ -524,7 +538,58 @@ KC_ELEC_POWERUP_PROC = { ["name"] = "ELECTRICAL POWER UP (F/O)", ["mode"]="p", [
 			end
 		end
 	},
-	[10] = {["activity"] = "POWER UP FINISHED", ["wait"] = 1, ["interactive"] = 0, ["actor"] = "F/O:", ["validated"] = 0, ["chkl_color"] = color_white, ["end"] = 1,
+	[10] = {["activity"] = "COCKPIT LIGHTS --  AS REQUIRED", ["wait"] = 1, ["interactive"] = 0, ["actor"] = "SYS", ["validated"] = 0, ["chkl_color"] = color_white, ["end"] = 0,
+		["actions"] = function ()
+			if kc_get_daylight() == 0 then
+				set_array("sim/cockpit2/switches/generic_lights_switch",0,1)
+				set_array("sim/cockpit2/switches/generic_lights_switch",1,1)
+				set_array("sim/cockpit2/switches/generic_lights_switch",2,1)
+				set_array("sim/cockpit2/switches/generic_lights_switch",3,1)
+				set_array("sim/cockpit2/switches/generic_lights_switch",4,1)
+				set_array("sim/cockpit2/switches/generic_lights_switch",5,1)
+				set_array("sim/cockpit2/switches/generic_lights_switch",6,1)
+				set_array("sim/cockpit2/switches/generic_lights_switch",7,1)
+				set_array("sim/cockpit2/switches/generic_lights_switch",8,1)
+				set_array("sim/cockpit2/switches/generic_lights_switch",9,1)
+				set_array("sim/cockpit2/switches/generic_lights_switch",10,1)
+				set_array("sim/cockpit2/switches/generic_lights_switch",11,1)
+				set_array("sim/cockpit2/switches/generic_lights_switch",12,1)
+				set_array("sim/cockpit2/switches/generic_lights_switch",13,1)
+				kc_acf_light_panel(0,1)
+				kc_acf_light_panel(1,1)
+				kc_acf_light_panel(2,1)
+				kc_acf_light_panel(3,1)
+				kc_acf_light_logo_mode(1)
+			else
+				set_array("sim/cockpit2/switches/generic_lights_switch",0,0)
+				set_array("sim/cockpit2/switches/generic_lights_switch",1,0)
+				set_array("sim/cockpit2/switches/generic_lights_switch",2,0)
+				set_array("sim/cockpit2/switches/generic_lights_switch",3,0)
+				set_array("sim/cockpit2/switches/generic_lights_switch",4,0)
+				set_array("sim/cockpit2/switches/generic_lights_switch",5,0)
+				set_array("sim/cockpit2/switches/generic_lights_switch",6,0)
+				set_array("sim/cockpit2/switches/generic_lights_switch",7,0)
+				set_array("sim/cockpit2/switches/generic_lights_switch",8,0)
+				set_array("sim/cockpit2/switches/generic_lights_switch",9,0)
+				set_array("sim/cockpit2/switches/generic_lights_switch",10,0)
+				set_array("sim/cockpit2/switches/generic_lights_switch",11,0)
+				set_array("sim/cockpit2/switches/generic_lights_switch",12,0)
+				set_array("sim/cockpit2/switches/generic_lights_switch",13,1)
+				kc_acf_light_panel(0,0)
+				kc_acf_light_panel(1,0)
+				kc_acf_light_panel(2,0)
+				kc_acf_light_panel(3,0)
+				kc_acf_light_logo_mode(0)
+			end
+			kc_acf_light_taxi_mode(0)
+			kc_acf_light_landing_mode(0,0)
+			kc_acf_light_rwyto_mode(0)
+			kc_acf_light_nav_mode(1)
+			kc_acf_light_beacon_mode(0)
+			kc_acf_light_logo_mode(0)
+		end
+	},
+	[11] = {["activity"] = "POWER UP FINISHED", ["wait"] = 1, ["interactive"] = 0, ["actor"] = "F/O:", ["validated"] = 0, ["chkl_color"] = color_white, ["end"] = 1,
 		["actions"] = function ()
 			getActiveSOP():getActiveFlow():setState(2)
 		end,
@@ -536,7 +601,7 @@ KC_ELEC_POWERUP_PROC = { ["name"] = "ELECTRICAL POWER UP (F/O)", ["mode"]="p", [
 KC_PREL_PREFLIGHT_PROC = { ["name"] = "PRELIMINARY PREFLIGHT PROCEDURE (F/O)", ["mode"]="p", ["wnd_width"] = 350, ["wnd_height"] = 31*21,
 	[1] = {["activity"] = "SETTING UP THE AIRCRAFT", ["wait"] = 2, ["interactive"] = 0, ["actor"] = "SYS", ["validated"] = 0, ["chkl_color"] = color_white, ["end"] = 0,
 		["actions"] = function ()
-			getActiveSOP():setActiveFlowNumber(2)
+			getActiveSOP():setActiveFlowIndex(2)
 			wnd_flow_action = 1
 		end,
 		["speak"] = function () return " " end
@@ -815,7 +880,7 @@ KC_PREFLIGHT_PROCEDURE = { ["name"] = "PREFLIGHT PROCEDURE", ["mode"]="p", ["wnd
 	-- },
 	[1] = {["activity"] = "PERFORMING PREFLIGHT ITEMS", ["wait"] = 2, ["interactive"] = 0, ["actor"] = "SYS:", ["validated"] = 0, ["chkl_color"] = color_white, ["end"] = 0,
 		["actions"] = function ()
-			getActiveSOP():setActiveFlowNumber(5)
+			getActiveSOP():setActiveFlowIndex(5)
 			wnd_flow_action = 1
 		end,
 		["speak"] = function () return "" end
@@ -1069,7 +1134,7 @@ KC_PREFLIGHT_PROCEDURE = { ["name"] = "PREFLIGHT PROCEDURE", ["mode"]="p", ["wnd
 KC_PREFLIGHT_CHECKLIST = { ["name"] = "PREFLIGHT CHECKLIST (PM)", ["mode"]="c", ["wnd_width1"] = 400,["wnd_width2"] = 300, ["wnd_height"] = 32*9, 
 	[1] = { ["actor"] = "", ["chkl_item"] = "PREFLIGHT CHECKLIST", ["chkl_response"] = "", ["chkl_state"] = false, ["chkl_color"] = color_white, ["validated"] = 0, ["wait"] = 2, ["interactive"] = 0, ["ask"] = 0, ["end"] = 0,
 		["actions"] = function ()
-			getActiveSOP():setActiveFlowNumber(9)
+			getActiveSOP():setActiveFlowIndex(9)
 			wnd_flow_action = 1
 		end,
 	},

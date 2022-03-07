@@ -1,6 +1,11 @@
-require "kpcrew.genutils"
+-- A preferences 
+-- Preferences can also be used for background variables to persist kpcrew specific states and values
+--
+-- @classmod Preference
+-- @author Kosta Prokopiu
+-- @copyright 2022 Kosta Prokopiu
 
-local Preference = {
+local kcPreference = {
 	typeInt = 0,
 	typeFlag = 1,
 	typeFloat = 2,
@@ -9,12 +14,15 @@ local Preference = {
 	typeList = 5
 }
 
-function Preference:new(key, value, datatype, title)
-
-    Preference.__index = Preference
-
+-- Instantiate a new preference group
+-- @tparam string key Key of preference
+-- @tparam object value of preference
+-- @tparam int datatype 
+-- @tparam string title 
+function kcPreference:new(key, value, datatype, title)
+    kcPreference.__index = kcPreference
     local obj = {}
-    setmetatable(obj, Preference)
+    setmetatable(obj, kcPreference)
 
 	obj.key = key
 	obj.value = value
@@ -24,38 +32,55 @@ function Preference:new(key, value, datatype, title)
     return obj
 end
 
-function Preference:getKey()
+-- get key of preference
+-- @treturn string key
+function kcPreference:getKey()
     return self.key
 end
 
-function Preference:getValue()
+-- get value of preference
+-- @treturn object value
+function kcPreference:getValue()
     return self.value
 end
 
-function Preference:getType()
+-- get data type of preference
+-- @treturn int datatype
+function kcPreference:getType()
     return self.datatype
 end
 
-function Preference:getTitle()
+-- get title of preference
+-- @treturn string title
+function kcPreference:getTitle()
     return self.title
 end
 
-function Preference:setValue(value)
+-- set value of preference
+-- @tparam object 
+function kcPreference:setValue(value)
     self.value = value
 end
 
-function Preference:setType(datatype)
+-- set type of preference
+-- @tparam int datatype 
+function kcPreference:setType(datatype)
     self.datatype = datatype
 end
 
-function Preference:setTitle(title)
+-- set title of preference
+-- @tparam string title 
+function kcPreference:setTitle(title)
     self.title = title
 end
 
-function Preference:render()
+-- ===== UI related functionality =====
+
+-- Render preference in imgui window
+function kcPreference:render()
 	local splitTitle = split(self.title,"|")
 	imgui.TextUnformatted(splitTitle[1])
-	
+		
 	if self.datatype == self.typeInt then
 		imgui.PushID(splitTitle[1])
 			local changed, textin = imgui.InputInt("", self.value, tonumber(splitTitle[2]))
@@ -100,7 +125,8 @@ function Preference:render()
 	end
 end
 
-function Preference:getSaveLine()
+-- return the line to be written into the .preferences file
+function kcPreference:getSaveLine()
 	if self.datatype == self.typeInt or self.datatype == self.typeFloat then
 		return self.key .. "=" .. self.value .. "\n"
 	end
@@ -117,4 +143,4 @@ function Preference:getSaveLine()
 	return self.key .. "=\"\"\n"
 end
 
-return Preference
+return kcPreference

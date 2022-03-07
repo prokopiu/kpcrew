@@ -1,22 +1,23 @@
--- SimpleProcedureItem: a line in the procedurethat stays always white and has no activities, info text
--- SimpleProcedureItem:new(challengeText)
---   challengeText only text to display full length
-require "kpcrew.genutils"
+-- Simple Procedure Item to be added to procedures
+-- This item only displays text and does not execute or change
+--
+-- @classmod ProcedureItem
+-- @author Kosta Prokopiu
+-- @copyright 2022 Kosta Prokopiu
 
-local ProcedureItem = require "kpcrew.procedures.ProcedureItem"
-
-local SimpleProcedureItem = {
+local kcSimpleProcedureItem = {
 }
 
-function SimpleProcedureItem:new(challengeText,skipFunc)
-
-    SimpleProcedureItem.__index = SimpleProcedureItem
-    setmetatable(SimpleProcedureItem, {
-        __index = ProcedureItem
+-- Instantiate a new SimpleProcedureItem
+-- @tparam string challengeText is the left hand text 
+-- @tparam function reference  skipFunc if true will skip the item and not diaply in list
+function kcSimpleProcedureItem:new(challengeText, skipFunc)
+    kcSimpleProcedureItem.__index = kcSimpleProcedureItem
+    setmetatable(kcSimpleProcedureItem, {
+        __index = kcFlowItem
     })
-
-    local obj = ProcedureItem:new()
-    setmetatable(obj, SimpleProcedureItem)
+    local obj = kcFlowItem:new()
+    setmetatable(obj, kcSimpleProcedureItem)
 
     obj.challengeText = challengeText
     obj.responseText = ""
@@ -24,55 +25,41 @@ function SimpleProcedureItem:new(challengeText,skipFunc)
 	obj.waittime = 0
 	obj.color = color_grey
 	obj.valid = true
-	obj.state = ProcedureItem.stateInitial
 	obj.skipFunc = skipFunc
 	
     return obj
 end
 
--- nothing spoken with these entries
-function SimpleProcedureItem:speakChallenge()
-	-- do nothing
-end
-
--- nothing spoken with these items
-function SimpleProcedureItem:speakResponse()
-	-- do nothing
-end
-
 -- color is always white
-function SimpleProcedureItem:getColor()
+function kcFlowItem:getStateColor()
 	return self.color
 end
 
 -- item is always valid
-function SimpleProcedureItem:isValid()
+function kcSimpleProcedureItem:isValid()
 	return true
 end
 
-function SimpleProcedureItem:getWaitTime()
+-- rteurn 0 wait time
+function kcSimpleProcedureItem:getWaitTime()
 	return 0
 end
 
-function SimpleProcedureItem:getState()
+-- state always initial unless skipped
+function kcSimpleProcedureItem:getState()
  	if type(self.skipFunc) == 'function' then
 		if self.skipFunc() == true then
-			return ProcedureItem.stateSkipped
+			return kcFlowItem.stateSkipped
 		end
 	end
-   return ProcedureItem.stateInitial
+   return kcFlowItem.stateInitial
 end
 
-
-function SimpleProcedureItem:getStateColor()
-	return self.color
-end
-
-function SimpleProcedureItem:reset()
-    self:setState(ProcedureItem.stateInitial)
+-- reset the item by hardcoding the values
+function kcSimpleProcedureItem:reset()
+    self:setState(kcFlowItem.stateInitial)
 	self.valid = true
 	self.color = color_grey
 end
 
-
-return SimpleProcedureItem
+return kcSimpleProcedureItem

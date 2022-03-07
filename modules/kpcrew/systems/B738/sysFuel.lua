@@ -52,4 +52,19 @@ function ()
 	end
 end)
 
+sysFuel.allFuelPumpsOff = CustomAnnunciator:new("allfueloff",
+function ()
+	local leftAftpmp = (activePrefSet:get("aircraft:powerup_apu") == false and sysFuel.fuelPumpLeftAft:getStatus() == 0) or (activePrefSet:get("aircraft:powerup_apu") == true and sysFuel.fuelPumpLeftAft:getStatus() == 1)
+	if leftAftpmp == true
+	and sysFuel.fuelPumpLeftFwd:getStatus() == 0 
+	and sysFuel.fuelPumpRightAft:getStatus() == 0 
+	and sysFuel.fuelPumpRightFwd:getStatus() == 0 
+	and sysFuel.fuelPumpCtrLeft:getStatus() == 0 
+	and sysFuel.fuelPumpCtrRight:getStatus() == 0 then
+		return 1
+	else
+		return 0
+	end
+end)
+
 return sysFuel

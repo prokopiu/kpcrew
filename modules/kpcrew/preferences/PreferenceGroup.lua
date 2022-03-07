@@ -1,14 +1,21 @@
-require "kpcrew.genutils"
+-- Group of preferences 
+-- The group combines one or more preferences thematically 
+-- Preferences can also be used for background variables to persist kpcrew specific states and values
+--
+-- @classmod PreferenceGroup
+-- @author Kosta Prokopiu
+-- @copyright 2022 Kosta Prokopiu
 
+local kcPreferenceGroup = {
+}
 
-local PreferenceGroup = {}
-
-function PreferenceGroup:new(name,title)
-
-    PreferenceGroup.__index = PreferenceGroup
-
+-- Instantiate a new preference group
+-- @tparam string name Name of the set 
+-- @tparam string title Title string to display in window
+function kcPreferenceGroup:new(name,title)
+    kcPreferenceGroup.__index = kcPreferenceGroup
     local obj = {}
-    setmetatable(obj, PreferenceGroup)
+    setmetatable(obj, kcPreferenceGroup)
 
     obj.name = name
 	obj.title = title
@@ -18,48 +25,76 @@ function PreferenceGroup:new(name,title)
     return obj
 end
 
-function PreferenceGroup:getName()
+-- Get name of preference set
+-- @treturn string name of set
+function kcPreferenceGroup:getName()
     return self.name
 end
 
-function PreferenceGroup:getTitle()
+-- Get title of preference set
+-- @treturn string title for display
+function kcPreferenceGroup:getTitle()
     return self.title
 end
 
-function PreferenceGroup:add(preference)
+-- Add a preference to the group
+-- @tparam Preference preference to add
+function kcPreferenceGroup:add(preference)
 	table.insert(self.preferences,preference)
 end
 
-function PreferenceGroup:remove(key)
-    self.preferences[key] = nil
+-- remove preference from group
+-- @tparam string key of preference to remove
+function kcPreferenceGroup:remove(key)
+    table.remove(self.preferences,self:getIndex(key))
 end
 
-function PreferenceGroup:getAllPreferences()
+-- Return all registered preferences from group
+-- @treturn array Preference
+function kcPreferenceGroup:getAllPreferences()
 	return self.preferences
 end
 
-function PreferenceGroup:render()
-	if self ~= nil then
-		imgui.Separator()
-		imgui_center(self:getHeadline())
-		imgui.Separator()
-		for _, pref in ipairs(self.preferences) do
-			pref:render()
-		end
-		imgui.Separator()
-	end
-end
-
-function PreferenceGroup:findPreference(key)
+-- Find a preference object in group
+-- @tparam string inkey Key of preference to find
+-- @treturn Preference found preference or nil
+function kcPreferenceGroup:find(inkey)
 	for _, pref in ipairs(self.preferences) do
-		if pref:getKey() == key then
+		if pref:getKey() == inkey then
 			return pref
 		end
 	end
 	return nil
 end
 
-function PreferenceGroup:getWndHeight()
+-- Get a preference value
+-- @tparam string inkey Key of preference to find
+-- @treturn Preference found preference or nil
+function kcPreferenceGroup:get(inkey)
+	local pref = self:find(inkey)
+	if pref ~= nil then
+		return pref:getValue()
+	end
+	return nil
+end
+
+-- Get the index of a preferene in the group array
+-- @tparam string inkey Key of preference to find
+-- @treturn int index of pref or -1
+function kcPreferenceGroup:getIndex(key)
+	local cnt = 0
+	for _, pref in ipairs(self.preferences) do
+		if pref:getKey() == key then
+			return cnt
+		end
+	end
+	return -1
+end
+
+-- ===== UI related functionality =====
+-- Get the required window height calculated on all preferences
+-- @treturn int height in pixel
+function kcPreferenceGroup:getWndHeight()
 	local wndHeight = 50
 	for _, pref in ipairs(self.preferences) do
 		wndHeight = wndHeight + 40
@@ -67,7 +102,8 @@ function PreferenceGroup:getWndHeight()
 	return wndHeight
 end
 
-function PreferenceGroup:getHeadline()
+-- build the headline of the group
+function kcPreferenceGroup:getHeadline()
 	local eqsigns = self.lineLength - string.len(self.title) - 2
 	local line = {}
 	
@@ -85,13 +121,28 @@ function PreferenceGroup:getHeadline()
 	return table.concat(line)
 end
 
-function PreferenceGroup:save(filePref)
+-- Render all preferences in imgui window
+function kcPreferenceGroup:render()
+	if self ~= nil then
+		imgui.Separator()
+		imgui_center(self:getHeadline())
+		imgui.Separator()
+		for _, pref in ipairs(self.preferences) do
+			pref:render()
+		end
+		imgui.Separator()
+	end
+end
+
+-- Save all preferences of group prefix to .preferences file
+function kcPreferenceGroup:save(filePref)
 	for _, pref in ipairs(self.preferences) do
 		filePref:write(self.name .. ":" .. pref:getSaveLine())
 	end
 end	
 
-function PreferenceGroup:load(filePref)
+-- Read all preferences from file
+function kcPreferenceGroup:load(filePref)
    for line in filePref:lines() do
         local key = nil
         local value = nil
@@ -103,7 +154,7 @@ function PreferenceGroup:load(filePref)
 				local value = string.sub(splits[2], delim + 1)
 				local pref = self:findPreference(key)
 				if pref ~= nil then
-					if pref:getType() == Preference.typeFlag or pref:getType() == Preference.typeToggle then
+					if pref:getType() == kcPreference.typeFlag or pref:getType() == kcPreference.typeToggle then
 						if value == "true" then 
 							pref:setValue(true)
 						else
@@ -119,4 +170,4 @@ function PreferenceGroup:load(filePref)
 
 end
 
-return PreferenceGroup
+return kcPreferenceGroup

@@ -1,22 +1,23 @@
--- SimpleChecklistItem: a line in the checklist that stays always white and has no activities, info text
--- SimleChecklistItem:new(challengeText)
---   challengeText only text to display full length
-require "kpcrew.genutils"
+-- Simple Checklist Item to be added to checklist
+-- This item only displays text and does not execute or change
+--
+-- @classmod ProcedureItem
+-- @author Kosta Prokopiu
+-- @copyright 2022 Kosta Prokopiu
 
-local ChecklistItem = require "kpcrew.checklists.ChecklistItem"
-
-local SimpleChecklistItem = {
+local kcSimpleChecklistItem = {
 }
 
-function SimpleChecklistItem:new(challengeText)
-
-    SimpleChecklistItem.__index = SimpleChecklistItem
-    setmetatable(SimpleChecklistItem, {
-        __index = ChecklistItem
+-- Instantiate a new SimpleProcedureItem
+-- @tparam string challengeText is the left hand text 
+-- @tparam function reference  skipFunc if true will skip the item and not diaply in list
+function kcSimpleChecklistItem:new(challengeText, skipFunc)
+    kcSimpleChecklistItem.__index = kcSimpleChecklistItem
+    setmetatable(kcSimpleChecklistItem, {
+        __index = kcFlowItem
     })
-
-    local obj = ChecklistItem:new()
-    setmetatable(obj, SimpleChecklistItem)
+    local obj = kcFlowItem:new()
+    setmetatable(obj, kcSimpleChecklistItem)
 
     obj.challengeText = challengeText
     obj.responseText = ""
@@ -24,49 +25,37 @@ function SimpleChecklistItem:new(challengeText)
 	obj.waittime = 0
 	obj.color = color_white
 	obj.valid = true
-	obj.state = ChecklistItem.stateInitial
+	obj.skipFunc = skipFunc
 	
     return obj
 end
 
--- nothing spoken with these entries
-function SimpleChecklistItem:speakChallenge()
-	-- do nothing
-end
-
--- nothing spoken with these items
-function SimpleChecklistItem:speakResponse()
-	-- do nothing
-end
-
--- color is always white
-function SimpleChecklistItem:getColor()
-	return color_white
-end
-
 -- item is always valid
-function SimpleChecklistItem:isValid()
+function kcSimpleChecklistItem:isValid()
 	return true
 end
 
-function SimpleChecklistItem:getWaitTime()
+function kcSimpleChecklistItem:getWaitTime()
 	return 0
 end
 
-function SimpleChecklistItem:getState()
-    return ChecklistItem.stateInitials
+function kcSimpleChecklistItem:getState()
+ 	if type(self.skipFunc) == 'function' then
+		if self.skipFunc() == true then
+			return kcFlowItem.stateSkipped
+		end
+	end
+   return kcFlowItem.stateInitial
 end
 
-
-function SimpleChecklistItem:getStateColor()
+function kcSimpleChecklistItem:getStateColor()
 	return color_white
 end
 
-function SimpleChecklistItem:reset()
-    self:setState(ChecklistItem.stateInitial)
+function kcSimpleChecklistItem:reset()
+    self:setState(kcFlowItem.stateInitial)
 	self.valid = true
-	self.color = ChecklistItem.colorInitial
+	self.color = color_white
 end
 
-
-return SimpleChecklistItem
+return kcSimpleChecklistItem

@@ -3,11 +3,15 @@
 	Kosta Prokopiu, January 2022
 --]]
 
+require "kpcrew.genutils"
+require "kpcrew.systems.activities"
+
 local KPH_VERSION = "2.3"
 
 logMsg ( "FWL: ** Starting KPHARDWARE version " .. KPH_VERSION .." **" )
 
-local acf_icao = "DFLT"
+-- ====== Global variables =======
+kh_acf_icao = "DFLT" -- active addon aircraft ICAO code (DFLT when nothing found)
 
 -- Laminar MD82 -> MD82
 -- Laminar 747 -> B744, check Sparky 744
@@ -17,26 +21,24 @@ local acf_icao = "DFLT"
 -- Zibo B738 - use different module for default Laminar B738
 if PLANE_ICAO == "B738" then
 	if PLANE_TAILNUMBER ~= "ZB738" then
-		acf_icao = "DFLT" -- add L738 module later
+		kh_acf_icao = "DFLT" 
 	else
-		acf_icao = "B738" -- Zibo Mod
+		kh_acf_icao = "B738" -- Zibo Mod
 	end
 end
 
-require "kpcrew.genutils"
-require "kpcrew.systems.activities"
+sysLights = require("kpcrew.systems." .. kh_acf_icao .. ".sysLights")
+sysGeneral = require("kpcrew.systems." .. kh_acf_icao .. ".sysGeneral")	
+sysControls = require("kpcrew.systems." .. kh_acf_icao .. ".sysControls")	
+sysEngines = require("kpcrew.systems." .. kh_acf_icao .. ".sysEngines")	
+sysElectric = require("kpcrew.systems." .. kh_acf_icao .. ".sysElectric")	
+sysHydraulic = require("kpcrew.systems." .. kh_acf_icao .. ".sysHydraulic")	
+sysFuel = require("kpcrew.systems." .. kh_acf_icao .. ".sysFuel")	
+sysAir = require("kpcrew.systems." .. kh_acf_icao .. ".sysAir")	
+sysAice = require("kpcrew.systems." .. kh_acf_icao .. ".sysAice")	
+sysMCP = require("kpcrew.systems." .. kh_acf_icao .. ".sysMCP")	
+sysEFIS = require("kpcrew.systems." .. kh_acf_icao .. ".sysEFIS")	
 
-sysLights = require("kpcrew.systems." .. acf_icao .. ".sysLights")
-sysGeneral = require("kpcrew.systems." .. acf_icao .. ".sysGeneral")	
-sysControls = require("kpcrew.systems." .. acf_icao .. ".sysControls")	
-sysEngines = require("kpcrew.systems." .. acf_icao .. ".sysEngines")	
-sysElectric = require("kpcrew.systems." .. acf_icao .. ".sysElectric")	
-sysHydraulic = require("kpcrew.systems." .. acf_icao .. ".sysHydraulic")	
-sysFuel = require("kpcrew.systems." .. acf_icao .. ".sysFuel")	
-sysAir = require("kpcrew.systems." .. acf_icao .. ".sysAir")	
-sysAice = require("kpcrew.systems." .. acf_icao .. ".sysAice")	
-sysMCP = require("kpcrew.systems." .. acf_icao .. ".sysMCP")	
-sysEFIS = require("kpcrew.systems." .. acf_icao .. ".sysEFIS")	
 
 -- ============ aircraft generic joystick/key commands
 
