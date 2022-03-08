@@ -29,3 +29,6 @@ cmdDown = 0
 cmdUp = 1
 cmdLeft = 0
 cmdRight = 1
+
+slowDown = 10
+slowUp = 11

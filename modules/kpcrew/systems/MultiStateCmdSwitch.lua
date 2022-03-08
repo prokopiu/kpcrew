@@ -1,8 +1,10 @@
 -- switch with mode on/off and toggle function via command
-local MultiStateCmdSwitch = {}
 
-utils = require "kpcrew.genutils"
-Switch = require "kpcrew.systems.Switch"
+local MultiStateCmdSwitch = { 
+	defaultDelay = 3 
+}
+
+local Switch = require "kpcrew.systems.Switch"
 
 -- provide the dataref with switch state, commands for on, off and toggle. use "nocommand" if no tgl cmd
 function MultiStateCmdSwitch:new(name, statusDref, statusDrefIdx, decrcmd, incrcmd)
@@ -19,6 +21,7 @@ function MultiStateCmdSwitch:new(name, statusDref, statusDrefIdx, decrcmd, incrc
 	obj.statusDrefIdx = statusDrefIdx
 	obj.decrcmd = decrcmd
 	obj.incrcmd = incrcmd
+	obj.delay = self.defaultDelay
 	
     return obj
 end
@@ -30,11 +33,27 @@ end
 
 -- actuate the switch with given mode
 function MultiStateCmdSwitch:actuate(action)
-	if action == Switch.increase then
+	if action == cmdUp then
 		command_once(self.incrcmd)
 	end
-	if action == Switch.decrease then
+	if action == slowUp then
+		if self.delay > 0 then
+			self.delay = self.delay - 1
+		else
+			command_once(self.incrcmd)
+			self.delay = self.defaultDelay
+		end
+	end
+	if action == cmdDown then
 		command_once(self.decrcmd)
+	end
+	if action == slowDown then
+		if self.delay > 0 then
+			self.delay = self.delay - 1
+		else
+			command_once(self.decrcmd)
+			self.delay = self.defaultDelay
+		end
 	end
 end
 

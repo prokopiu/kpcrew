@@ -12,6 +12,11 @@ logMsg ( "FWL: ** Starting KPHARDWARE version " .. KPH_VERSION .." **" )
 
 -- ====== Global variables =======
 kh_acf_icao = "DFLT" -- active addon aircraft ICAO code (DFLT when nothing found)
+kh_mcp_wnd = nil
+kh_light_wnd = nil
+-- get screen width from X-Plane
+kh_scrn_width = get("sim/graphics/view/window_width")
+kh_scrn_height = get("sim/graphics/view/window_height")
 
 -- Laminar MD82 -> MD82
 -- Laminar 747 -> B744, check Sparky 744
@@ -305,6 +310,55 @@ function xsp_set_light_drefs()
 	xsp_lights_instrument[0] = sysLights.instrumentAnc:getStatus()
 
 end
+
+-- MCP UI
+
+-- ===== Aircraft specific MCP Window
+function kh_init_mcp_window()
+	if kh_mcp_wnd == 0 or kh_mcp_wnd == nil then	
+		kh_mcp_wnd = float_wnd_create(25, 45, 2, true)
+		float_wnd_set_title(kh_mcp_wnd, "")
+		float_wnd_set_position(kh_mcp_wnd, 0, kh_scrn_height - 46)
+		float_wnd_set_imgui_builder(kh_mcp_wnd, "kh_mcp_builder")
+		float_wnd_set_onclose(kh_mcp_wnd, "kh_close_mcp_window")
+	end
+end
+
+kh_mcp_wnd_state = 0
+
+function kh_mcp_builder()
+	sysMCP:render()
+end
+
+function kh_close_mcp_window()
+	kh_mcp_wnd = nil
+end
+
+kh_init_mcp_window() -- always show this window
+
+-- ===== Aircraft specific MCP Window
+function kh_init_light_window()
+	if kh_light_wnd == 0 or kh_light_wnd == nil then	
+		kh_light_wnd = float_wnd_create(25, 45, 2, true)
+		float_wnd_set_title(kh_light_wnd, "")
+		float_wnd_set_position(kh_light_wnd, 0, kh_scrn_height - 91)
+		float_wnd_set_imgui_builder(kh_light_wnd, "kh_light_builder")
+		float_wnd_set_onclose(kh_light_wnd, "kh_close_light_window")
+	end
+end
+
+kh_light_wnd_state = 0
+
+function kh_light_builder()
+	sysLights:render()
+end
+
+function kh_close_light_window()
+	kh_light_wnd = nil
+end
+
+kh_init_light_window() -- always show this window
+
 
 -- regularly update the drefs for annunciators and lights 
 do_often("xsp_set_light_drefs()")

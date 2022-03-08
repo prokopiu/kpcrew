@@ -125,7 +125,7 @@ end
 function kcPreferenceGroup:render()
 	if self ~= nil then
 		imgui.Separator()
-		imgui_center(self:getHeadline())
+		kc_imgui_center(self:getHeadline())
 		imgui.Separator()
 		for _, pref in ipairs(self.preferences) do
 			pref:render()
@@ -146,7 +146,7 @@ function kcPreferenceGroup:load(filePref)
    for line in filePref:lines() do
         local key = nil
         local value = nil
-		local splits = split(line,":")
+		local splits = kc_split(line,":")
 		if splits[1] == self.name then
 			local delim = string.find(splits[2], "=")
 			if delim and delim > 1 and delim < string.len(line) then

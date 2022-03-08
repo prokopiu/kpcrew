@@ -2,7 +2,7 @@
 local SwitchGroup = {
 }
 
-local utils = require "kpcrew.genutils"
+-- local utils = require "kpcrew.genutils"
 
 -- new switch object
 function SwitchGroup:new(name)
@@ -37,6 +37,14 @@ function SwitchGroup:setValue(value)
     for _, switch in ipairs(self.switches) do
         switch:setValue(value)
     end	
+end
+
+function SwitchGroup:getStatus()
+	local stat = 0
+    for _, switch in ipairs(self.switches) do
+        stat = stat + switch:getStatus()
+    end	
+	return stat
 end
 
 function SwitchGroup:adjustValue(value,min,max)

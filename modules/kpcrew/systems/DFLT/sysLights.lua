@@ -4,15 +4,20 @@
 local sysLights = {
 }
 
-TwoStateDrefSwitch = require "kpcrew.systems.TwoStateDrefSwitch"
-TwoStateCmdSwitch = require "kpcrew.systems.TwoStateCmdSwitch"
-TwoStateCustomSwitch = require "kpcrew.systems.TwoStateCustomSwitch"
-SwitchGroup  = require "kpcrew.systems.SwitchGroup"
-SimpleAnnunciator  = require "kpcrew.systems.SimpleAnnunciator"
-CustomAnnunciator  = require "kpcrew.systems.CustomAnnunciator"
+local TwoStateDrefSwitch = require "kpcrew.systems.TwoStateDrefSwitch"
+local TwoStateCmdSwitch = require "kpcrew.systems.TwoStateCmdSwitch"
+local TwoStateCustomSwitch = require "kpcrew.systems.TwoStateCustomSwitch"
+local SwitchGroup  = require "kpcrew.systems.SwitchGroup"
+local SimpleAnnunciator = require "kpcrew.systems.SimpleAnnunciator"
+local CustomAnnunciator = require "kpcrew.systems.CustomAnnunciator"
+local TwoStateToggleSwitch = require "kpcrew.systems.TwoStateToggleSwitch"
+local MultiStateCmdSwitch = require "kpcrew.systems.MultiStateCmdSwitch"
+local InopSwitch = require "kpcrew.systems.InopSwitch"
 
 local drefLandingLights = "sim/cockpit2/switches/landing_lights_switch"	
 local drefGenericLights = "sim/cockpit2/switches/generic_lights_switch"
+local drefInstrLights = "sim/cockpit2/switches/instrument_brightness_ratio"
+local drefPanelLights = "sim/cockpit2/switches/panel_brightness_ratio"
 
 ----------- Switches
 
@@ -61,10 +66,22 @@ sysLights.wheelSwitch = TwoStateDrefSwitch:new("wheel",drefGenericLights,5)
 sysLights.domeLightSwitch = TwoStateDrefSwitch:new("wheel","sim/cockpit/electrical/cockpit_lights",0)
 
 -- Instrument Lights
-sysLights.instr1Light = TwoStateDrefSwitch:new("instr1","sim/cockpit2/switches/instrument_brightness_ratio",0)
+sysLights.instr1Light = TwoStateDrefSwitch:new("",drefInstrLights,-1)
+sysLights.instr2Light = TwoStateDrefSwitch:new("",drefInstrLights,2)
+sysLights.instr3Light = TwoStateDrefSwitch:new("",drefPanelLights,1)
+sysLights.instr4Light = TwoStateDrefSwitch:new("",drefPanelLights,2)
+sysLights.instr5Light = TwoStateDrefSwitch:new("",drefPanelLights,3)
+sysLights.instr6Light = TwoStateDrefSwitch:new("",drefInstrLights,3)
+sysLights.instr7Light = TwoStateDrefSwitch:new("",drefInstrLights,4)
 
 sysLights.instrLightGroup = SwitchGroup:new("instrumentlights")
 sysLights.instrLightGroup:addSwitch(sysLights.instr1Light)
+sysLights.instrLightGroup:addSwitch(sysLights.instr2Light)
+sysLights.instrLightGroup:addSwitch(sysLights.instr3Light)
+sysLights.instrLightGroup:addSwitch(sysLights.instr4Light)
+sysLights.instrLightGroup:addSwitch(sysLights.instr5Light)
+sysLights.instrLightGroup:addSwitch(sysLights.instr6Light)
+sysLights.instrLightGroup:addSwitch(sysLights.instr7Light)
 
 --------- Annunciators
 -- annunciator to mark any landing lights on
@@ -120,5 +137,55 @@ end)
 
 -- Instrument Light(s) status
 sysLights.instrumentAnc = SimpleAnnunciator:new("instrumentlights", "sim/cockpit2/switches/instrument_brightness_ratio")
+
+-- ===== UI related functions =====
+
+-- render the MCP part
+function sysLights:render()
+
+	-- reposition when screen size changes
+	if get("sim/graphics/view/window_width") ~= kh_scrn_width or get("sim/graphics/view/window_height") ~= kh_scrn_height then
+		kh_scrn_height = get("sim/graphics/view/window_height")
+		float_wnd_set_geometry(kh_light_wnd, 0, 92, 930, 46)
+	end
+	
+	imgui.SetCursorPosY(10)
+	imgui.SetCursorPosX(2)
+	
+	if kh_light_wnd_state == 1 then
+		imgui.Button("<", 15, 25)
+		if imgui.IsItemActive() then
+			kh_light_wnd_state = 0
+			float_wnd_set_geometry(kh_light_wnd, 0, 92, 25, 46)
+		end
+	end
+
+	if kh_light_wnd_state == 0 then
+		imgui.Button(">", 15, 25)
+		if imgui.IsItemActive() then
+			kh_light_wnd_state = 1
+			float_wnd_set_geometry(kh_light_wnd, 0, 92, 930, 46)
+		end
+	end
+
+	imgui_label_mcp("LIGHTS:",10)
+	imgui_label_mcp("LAND:",10)
+	imgui_toggle_button_mcp("LEFT",sysLights.llLeftSwitch,10,42,25)
+	imgui_toggle_button_mcp("RIGHT",sysLights.llRightSwitch,10,42,25)
+	imgui_simple_button_mcp("ALL",sysLights.landLightGroup,10,42,25)
+	imgui_label_mcp("|",10)
+	imgui_toggle_button_mcp("RWYs",sysLights.rwyLightGroup,10,42,25)
+	imgui_toggle_button_mcp("TAXI",sysLights.taxiSwitch,10,42,25)
+	imgui_toggle_button_mcp("LOGO",sysLights.logoSwitch,10,42,25)
+	imgui_toggle_button_mcp("STRB",sysLights.strobesSwitch,10,42,25)
+	imgui_toggle_button_mcp("POS",sysLights.positionSwitch,10,42,25)
+	imgui_toggle_button_mcp("BEAC",sysLights.beaconSwitch,10,42,25)
+	imgui_toggle_button_mcp("WING",sysLights.wingSwitch,10,42,25)
+	imgui_toggle_button_mcp("WHL",sysLights.wheelSwitch,10,42,25)
+	imgui_label_mcp("|",10)
+	imgui_toggle_button_mcp("DOME",sysLights.domeLightSwitch,10,42,25)
+	imgui_toggle_button_mcp("INSTR",sysLights.instrLightGroup,10,45,25)
+
+end
 
 return sysLights

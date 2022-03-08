@@ -4,14 +4,15 @@
 local sysElectric = {
 }
 
-TwoStateDrefSwitch = require "kpcrew.systems.TwoStateDrefSwitch"
-TwoStateCmdSwitch = require "kpcrew.systems.TwoStateCmdSwitch"
-TwoStateCustomSwitch = require "kpcrew.systems.TwoStateCustomSwitch"
-SwitchGroup  = require "kpcrew.systems.SwitchGroup"
-SimpleAnnunciator = require "kpcrew.systems.SimpleAnnunciator"
-CustomAnnunciator = require "kpcrew.systems.CustomAnnunciator"
-TwoStateToggleSwitch = require "kpcrew.systems.TwoStateToggleSwitch"
-MultiStateCmdSwitch = require "kpcrew.systems.MultiStateCmdSwitch"
+local TwoStateDrefSwitch = require "kpcrew.systems.TwoStateDrefSwitch"
+local TwoStateCmdSwitch = require "kpcrew.systems.TwoStateCmdSwitch"
+local TwoStateCustomSwitch = require "kpcrew.systems.TwoStateCustomSwitch"
+local SwitchGroup  = require "kpcrew.systems.SwitchGroup"
+local SimpleAnnunciator = require "kpcrew.systems.SimpleAnnunciator"
+local CustomAnnunciator = require "kpcrew.systems.CustomAnnunciator"
+local TwoStateToggleSwitch = require "kpcrew.systems.TwoStateToggleSwitch"
+local MultiStateCmdSwitch = require "kpcrew.systems.MultiStateCmdSwitch"
+local InopSwitch = require "kpcrew.systems.InopSwitch"
 
 -- LOW VOLTAGE annunciator
 sysElectric.lowVoltageAnc = SimpleAnnunciator:new("lowvoltage","sim/cockpit2/annunciators/low_voltage",0)

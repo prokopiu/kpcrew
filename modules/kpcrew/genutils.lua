@@ -1,14 +1,14 @@
 -- General utilities used in kpcrew and kphardware
 -- some new features and ideas thanks to patrickl92
 
-local socket = require "socket"
+require "socket"
 
 local drefTextout = "sim/operation/prefs/text_out"
-local debugLoggingEnabled = false
 
 -- color definitions
 color_red 			= 0xFF0000FF
 color_green 		= 0xFF558817
+color_bright_green 	= 0xFF00FF00
 color_dark_green 	= 0xFF007f00
 color_white 		= 0xFFFFFFFF
 color_light_blue 	= 0xFFFFFF00
@@ -17,12 +17,20 @@ color_grey 			= 0xFFC0C0C0
 color_dark_grey 	= 0xFF606060
 color_left_display 	= 0xFFA0AFFF
 color_ocean_blue 	= 0xFFEC652B
+
 color_checklist		= 0xFF2F4F4F
 color_procedure		= 0xFF808000
 
+color_mcp_button	= 0xFF303030
+color_mcp_active	= 0xFF606060
+color_mcp_hover		= 0xFF606060
+color_mcp_text		= 0xFFC0C0C0
+color_mcp_on		= 0xFF00FF00
+color_mcp_off		= 0xFFC0C0C0
+
 -- speak text but don't show in sim, speakMode is used to prevent repetitive playing
 -- speakmode 1 will talk and show, 0 will only speak
-function speakNoText(speakMode, sText)
+function kc_speakNoText(speakMode, sText)
 	if sText ~= "" and sText ~= nil then
 		if speakMode == 0 then
 			set(drefTextout,0)
@@ -38,7 +46,7 @@ end
 ------------- text conversion related functions ---------------
 
 -- split up text in single characters and separate by space
-function singleLetters(intext)
+function kc_singleLetters(intext)
 	local outtext = ""
 	for i = 1, string.len(intext) do
 		local c = intext:sub(i,i)
@@ -48,7 +56,7 @@ function singleLetters(intext)
 end
 
 -- convert text into NATO alphabet words
-function convertNato(intext)
+function kc_convertNato(intext)
 
 	-- the NATO alphabet
 	local nato = {["a"] = "Alpha", ["b"] = "Bravo", ["c"] = "Charlie", ["d"] = "Delta", ["e"] = "Echo", ["f"] = "Foxtrot",
@@ -69,7 +77,7 @@ function convertNato(intext)
 end
 
 -- convert runway designators to spoken characters, translating L,C,R
-function convertRwy(intext)
+function kc_convertRwy(intext)
 
 	local nato = {["c"] = "Center", ["l"] = "Left", ["r"] = "Right", ["0"] = "Zero", ["1"] = "One", ["2"] = "Two", ["3"] = "Tree", ["4"] = "Four", 
 		["5"] = "Five", ["6"] = "Six", ["7"] = "Seven", ["8"] = "Eight", ["9"] = "Niner", ["-"] = "Dash", [" "] = " "
@@ -87,7 +95,7 @@ end
 ------------- file related functions ---------------
 
 -- check if external lua file exists
-function file_exists(name)
+function kc_file_exists(name)
 	local f=io.open(name,"r")
 	if f~=nil then 
 		io.close(f) 
@@ -100,7 +108,7 @@ end
 ------------- coordinates related functions ---------------
 
 -- convert a coordinate from x-plane to deg,min,sec format
-function toDegreesMinutesAndSeconds(coordinate) 
+function kc_toDegMinSec(coordinate) 
     local absolute = math.abs(coordinate);
     local degrees  = math.floor(absolute);
     local minutesNotTruncated = (absolute - degrees) * 60;
@@ -111,7 +119,7 @@ function toDegreesMinutesAndSeconds(coordinate)
 end
 
 -- convert position to full coordinate string with N/S and E/W
-function convert_DMS(lat, lng) 
+function kc_convertDMS(lat, lng) 
     local latitude = toDegreesMinutesAndSeconds(lat);
     local latitudeCardinal = (lat >= 0) and "N" or "S";
 
@@ -124,7 +132,7 @@ end
 ------------- time related functions ---------------
 
 -- return a full time string from given time in seconds of day
-function display_timefull(timeseconds)
+function kc_dispTimeFull(timeseconds)
 	local lhours = math.floor(timeseconds/3600)
 	local lminutes = math.floor((timeseconds - lhours * 3600)/60)
 	local lsec = math.floor(timeseconds - (lhours * 3600) - (lminutes * 60))
@@ -132,7 +140,7 @@ function display_timefull(timeseconds)
 end
 
 -- return a hh:mm string from given time in seconds of day
-function display_timehhmm(timeseconds)
+function kc_dispTimeHHMM(timeseconds)
 	local lhours = math.floor(timeseconds/3600)
 	local lminutes = math.floor((timeseconds - lhours * 3600)/60)
 	return string.format("%2.2i:%2.2i",lhours,lminutes)
@@ -141,23 +149,12 @@ end
 --- Gets the current time. (patrickl92)
 -- The function uses the <code>gettime()</code> function of LuaSocket, which provides the current time with milliseconds resolution.
 -- @treturn number The current time.
-function getPCTime()
+function kc_getPcTime()
 	return socket.gettime()
 end
 
-dataref("TEXTOUT", "sim/operation/prefs/text_out", "writeable")
-function speakNoText(speakMode, sText)
-	if speakMode == 0 then
-		TEXTOUT=false
-		XPLMSpeakString(sText)
-		TEXTOUT=true
-	else	
-		TEXTOUT=true
-		XPLMSpeakString(sText)
-	end
-end
-
-function indexOf(array, value)
+-- return index position of value in an array
+function kc_indexOf(array, value)
     for i, v in ipairs(array) do
         if v == value then
             return i
@@ -167,28 +164,28 @@ function indexOf(array, value)
 end
 
 -- input field dropdown
-function gui_in_dropdown(lable, srcval, list, width)
-	imgui.BeginChild(lable, width, 20)
-		imgui.Columns(2,lable,false)
-		imgui.SetColumnWidth(0, 1)
-		imgui.SetColumnWidth(1, width)
-		imgui.TextUnformatted(lable .. ":")
-		imgui.NextColumn()
-		if imgui.BeginCombo("                                    " .. lable, list[srcval]) then
-			for i = 1, #list do
-				if imgui.Selectable(list[i], srcval == i) then
-					srcval = i
-				end
-			end
-			imgui.EndCombo()
-		end
-		imgui.NextColumn()
-	imgui.EndChild()
-	return srcval
-end
+-- function gui_in_dropdown(lable, srcval, list, width)
+	-- imgui.BeginChild(lable, width, 20)
+		-- imgui.Columns(2,lable,false)
+		-- imgui.SetColumnWidth(0, 1)
+		-- imgui.SetColumnWidth(1, width)
+		-- imgui.TextUnformatted(lable .. ":")
+		-- imgui.NextColumn()
+		-- if imgui.BeginCombo("                                    " .. lable, list[srcval]) then
+			-- for i = 1, #list do
+				-- if imgui.Selectable(list[i], srcval == i) then
+					-- srcval = i
+				-- end
+			-- end
+			-- imgui.EndCombo()
+		-- end
+		-- imgui.NextColumn()
+	-- imgui.EndChild()
+	-- return srcval
+-- end
 
 -- get daylight 0=dark 1=bright
-function is_daylight()
+function kc_is_daylight()
 	if get("sim/private/stats/skyc/sun_amb_b") < 0.02 then
 		return false
 	else
@@ -197,7 +194,7 @@ function is_daylight()
 end
 
 -- split string function
-function split(s, delimiter)
+function kc_split(s, delimiter)
     result = {};
     for match in (s..delimiter):gmatch("(.-)"..delimiter) do
         table.insert(result, match);
@@ -205,11 +202,96 @@ function split(s, delimiter)
     return result;
 end
 
-
 -- imgui supplementary functions
-function imgui_center(text) 
+function kc_imgui_center(text) 
     local win_width = imgui.GetWindowWidth()
 	local text_width, text_height = imgui.CalcTextSize(text)
 	imgui.SetCursorPos(win_width / 2 - text_width / 2, imgui.GetCursorPosY())
 	imgui.TextUnformatted(text)
+end
+
+-- render a toggle button with green/grey status light for MCP
+function kc_imgui_toggle_button_mcp(label,system,ypos,width,height)
+    imgui.SameLine()
+	imgui.SetCursorPosY(ypos)
+	imgui.PushStyleColor(imgui.constant.Col.Button, color_mcp_button)
+	imgui.PushStyleColor(imgui.constant.Col.ButtonActive, color_mcp_active)
+	imgui.PushStyleColor(imgui.constant.Col.ButtonHovered, color_mcp_hover)
+	imgui.PushStyleColor(imgui.constant.Col.Text,color_mcp_text)
+	if system:getStatus() ~= 0 then 
+		imgui.PushStyleColor(imgui.constant.Col.Text,color_mcp_on)
+	else
+		imgui.PushStyleColor(imgui.constant.Col.Text,color_mcp_off)
+	end
+	if imgui.Button(label, width, height) then
+		system:actuate(modeToggle)
+	end
+	imgui.PopStyleColor()
+	imgui.PopStyleColor()
+	imgui.PopStyleColor()
+	imgui.PopStyleColor()
+	imgui.PopStyleColor()
+end
+
+-- render a rotary with + and - clickspots and value display
+function kc_imgui_rotary_mcp(label,system,ypos,id)
+    imgui.SameLine()
+	imgui.SetCursorPosY(ypos)
+	imgui.PushStyleColor(imgui.constant.Col.Button, color_mcp_button)
+	imgui.PushStyleColor(imgui.constant.Col.ButtonActive, color_mcp_active)
+	imgui.PushStyleColor(imgui.constant.Col.ButtonHovered, color_mcp_hover)
+	imgui.PushStyleColor(imgui.constant.Col.Text,color_mcp_text)
+
+    imgui.PushID(id)
+	imgui.Button("-", 15, 25)
+	if imgui.IsItemActive() then
+		system:actuate(slowDown)
+	end
+	imgui.PopID()
+	
+	imgui.SameLine()
+	imgui.SetCursorPosY(ypos + 2)
+	imgui.TextUnformatted(string.format(label,system:getStatus()))
+
+	imgui.SameLine()
+	imgui.SetCursorPosY(ypos)
+	
+    imgui.PushID(id)
+	imgui.Button("+", 15, 25)
+	if imgui.IsItemActive() then
+		system:actuate(slowUp)
+	end
+	imgui.PopID()
+
+	imgui.PopStyleColor()
+	imgui.PopStyleColor()
+	imgui.PopStyleColor()
+	imgui.PopStyleColor()
+end
+
+-- render a label
+function kc_imgui_label_mcp(label,ypos)
+    imgui.SameLine()
+	imgui.SetCursorPosY(ypos+2)
+	imgui.PushStyleColor(imgui.constant.Col.Text,color_mcp_text)
+	imgui.TextUnformatted(label)
+	imgui.PopStyleColor()
+	imgui.SetCursorPosY(ypos)
+end
+
+-- render a simple button without status light
+function kc_imgui_simple_button_mcp(label,system,ypos,width,height)
+    imgui.SameLine()
+	imgui.SetCursorPosY(ypos)
+	imgui.PushStyleColor(imgui.constant.Col.Button, color_mcp_button)
+	imgui.PushStyleColor(imgui.constant.Col.ButtonActive, color_mcp_active)
+	imgui.PushStyleColor(imgui.constant.Col.ButtonHovered, color_mcp_hover)
+	imgui.PushStyleColor(imgui.constant.Col.Text,color_mcp_text)
+	if imgui.Button(label, width, height) then
+		system:actuate(modeToggle)
+	end
+	imgui.PopStyleColor()
+	imgui.PopStyleColor()
+	imgui.PopStyleColor()
+	imgui.PopStyleColor()
 end

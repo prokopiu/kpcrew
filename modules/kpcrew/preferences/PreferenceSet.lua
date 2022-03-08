@@ -47,7 +47,7 @@ end
 function kcPreferenceSet:find(inkey)
 	for _, group in ipairs(self.preferenceGroups) do
 		if group ~= nil then
-			local splits = split(inkey,":")
+			local splits = kc_split(inkey,":")
 			if splits[1] == group:getName() then
 				local found = group:find(splits[2])
 				return found

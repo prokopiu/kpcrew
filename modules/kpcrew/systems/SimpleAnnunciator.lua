@@ -2,8 +2,7 @@
 local SimpleAnnunciator = {
 }
 
-local utils = require "kpcrew.genutils"
-Annunciator = require "kpcrew.systems.Annunciator"
+local Annunciator = require "kpcrew.systems.Annunciator"
 
 -- new switch object
 function SimpleAnnunciator:new(name, statusDref, statusDrefIdx)

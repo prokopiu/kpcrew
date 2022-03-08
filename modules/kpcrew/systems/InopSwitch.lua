@@ -1,7 +1,6 @@
 local InopSwitch = {}
 
-utils = require "kpcrew.genutils"
-Switch = require "kpcrew.systems.Switch"
+local Switch = require "kpcrew.systems.Switch"
 
 function InopSwitch:new(name)
 

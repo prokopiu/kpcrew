@@ -78,7 +78,7 @@ end
 
 -- Render preference in imgui window
 function kcPreference:render()
-	local splitTitle = split(self.title,"|")
+	local splitTitle = kc_split(self.title,"|")
 	imgui.TextUnformatted(splitTitle[1])
 		
 	if self.datatype == self.typeInt then

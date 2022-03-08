@@ -2,8 +2,6 @@
 local Annunciator = {
 }
 
-local utils = require "kpcrew.genutils"
-
 -- new switch object
 function Annunciator:new(name)
     Annunciator.__index = Annunciator

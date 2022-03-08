@@ -14,10 +14,9 @@ local kcProcedureItem = {
 -- @tparam string actor is the actor for the item; see list below
 -- @tparam int wait time in seconds during execution 
 -- @tparam function reference validFunc shall return true or false to verify if condition is met
--- @tparam function reference  responseFunc will overwrite the responseText with simulator values
 -- @tparam function reference  actionFunc will be executed and make changes to aircraft settings
 -- @tparam function reference  skipFunc if true will skip the item and not diaply in list
-function kcProcedureItem:new(challengeText,responseText,actor,waittime,validFunc,responseFunc,actionFunc,skipFunc)
+function kcProcedureItem:new(challengeText,responseText,actor,waittime,validFunc,actionFunc,skipFunc)
     kcProcedureItem.__index = kcProcedureItem
 	setmetatable(kcProcedureItem, {
         __index = kcFlowItem
@@ -30,7 +29,6 @@ function kcProcedureItem:new(challengeText,responseText,actor,waittime,validFunc
 	obj.actor = actor
 	obj.waittime = waittime
 	obj.validFunc = validFunc
-	obj.responseFunc = responseFunc
 	obj.actionFunc = actionFunc
 	obj.skipFunc = skipFunc
 	obj.state = kcFlowItem.stateInitial

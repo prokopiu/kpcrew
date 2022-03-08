@@ -13,10 +13,9 @@ local kcChecklistItem = {
 -- @tparam string actor is the actor for the item; see list below
 -- @tparam int wait time in seconds during execution 
 -- @tparam function reference validFunc shall return true or false to verify if condition is met
--- @tparam function reference  responseFunc will overwrite the responseText with simulator values
 -- @tparam function reference  actionFunc will be executed and make changes to aircraft settings
 -- @tparam function reference  skipFunc if true will skip the item and not diaply in list
-function kcChecklistItem:new(challengeText,responseText,actor,waittime,validFunc,responseFunc,actionFunc,skipFunc)
+function kcChecklistItem:new(challengeText,responseText,actor,waittime,validFunc,actionFunc,skipFunc)
     kcChecklistItem.__index = kcChecklistItem
 	setmetatable(kcChecklistItem, {
         __index = kcFlowItem

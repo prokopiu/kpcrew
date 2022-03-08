@@ -4,15 +4,15 @@
 local sysMCP = {
 }
 
-TwoStateDrefSwitch = require "kpcrew.systems.TwoStateDrefSwitch"
-TwoStateCmdSwitch = require "kpcrew.systems.TwoStateCmdSwitch"
-TwoStateCustomSwitch = require "kpcrew.systems.TwoStateCustomSwitch"
-SwitchGroup  = require "kpcrew.systems.SwitchGroup"
-SimpleAnnunciator = require "kpcrew.systems.SimpleAnnunciator"
-CustomAnnunciator = require "kpcrew.systems.CustomAnnunciator"
-TwoStateToggleSwitch = require "kpcrew.systems.TwoStateToggleSwitch"
-MultiStateCmdSwitch = require "kpcrew.systems.MultiStateCmdSwitch"
-InopSwitch = require "kpcrew.systems.InopSwitch"
+local TwoStateDrefSwitch = require "kpcrew.systems.TwoStateDrefSwitch"
+local TwoStateCmdSwitch = require "kpcrew.systems.TwoStateCmdSwitch"
+local TwoStateCustomSwitch = require "kpcrew.systems.TwoStateCustomSwitch"
+local SwitchGroup  = require "kpcrew.systems.SwitchGroup"
+local SimpleAnnunciator = require "kpcrew.systems.SimpleAnnunciator"
+local CustomAnnunciator = require "kpcrew.systems.CustomAnnunciator"
+local TwoStateToggleSwitch = require "kpcrew.systems.TwoStateToggleSwitch"
+local MultiStateCmdSwitch = require "kpcrew.systems.MultiStateCmdSwitch"
+local InopSwitch = require "kpcrew.systems.InopSwitch"
 
 local drefVORLocLight = "sim/cockpit2/autopilot/nav_status"
 local drefLNAVLight = "sim/cockpit2/radios/actuators/HSI_source_select_pilot"
@@ -23,13 +23,13 @@ local drefVNAVLight = "sim/cockpit2/autopilot/fms_vnav"
 --------- Switches
 
 -- Flight Directors
-sysMCP.fdirPilotSwitch = TwoStateToggleSwitch:new("fdir","sim/cockpit2/annunciators/flight_director",0,"sim/autopilot/fdir_toggle")
+sysMCP.fdirPilotSwitch = TwoStateDrefSwitch:new("","sim/cockpit2/autopilot/flight_director_mode",0)
 
 sysMCP.fdirGroup = SwitchGroup:new("fdirs")
 sysMCP.fdirGroup:addSwitch(sysMCP.fdirPilotSwitch)
 
 -- HDG SEL
-sysMCP.hdgselSwitch = TwoStateToggleSwitch:new("hdgsel","sim/cockpit/autopilot/heading_mode",0,"sim/autopilot/heading")
+sysMCP.hdgselSwitch = TwoStateToggleSwitch:new("hdgsel","sim/cockpit2/autopilot/heading_mode",-1,"sim/autopilot/heading")
 
 -- VORLOC
 sysMCP.vorlocSwitch = TwoStateToggleSwitch:new("vorloc",drefVORLocLight,0,"sim/autopilot/NAV")
@@ -122,7 +122,7 @@ sysMCP.displayControlSwitch = InopSwitch:new("dispctrl")
 ------- Annunciators
 
 -- Flight Directors annunciator
-sysMCP.fdirAnc = SimpleAnnunciator:new("fdiranc","sim/cockpit2/annunciators/flight_director",0)
+sysMCP.fdirAnc = SimpleAnnunciator:new("fdiranc","sim/cockpit2/autopilot/flight_director_mode",0)
 
 -- HDG Select/mode annunciator
 sysMCP.hdgAnc = SimpleAnnunciator:new("hdganc","sim/cockpit2/autopilot/heading_mode",0)
@@ -161,5 +161,71 @@ sysMCP.apAnc = SimpleAnnunciator:new("autopilotanc","sim/cockpit2/autopilot/auto
 
 -- BC mode annunciator
 sysMCP.bcAnc = InopSwitch:new("bc")
+
+-- ===== UI related functions =====
+
+-- render the MCP part
+function sysMCP:render()
+
+	-- reposition when screen size changes
+	if get("sim/graphics/view/window_width") ~= kh_scrn_width or get("sim/graphics/view/window_height") ~= kh_scrn_height then
+		kh_scrn_height = get("sim/graphics/view/window_height")
+		float_wnd_set_geometry(kh_mcp_wnd, 0, 46, 1000, 1)
+	end
+	
+	imgui.SetCursorPosY(10)
+	imgui.SetCursorPosX(2)
+	
+	if kh_mcp_wnd_state == 1 then
+		if imgui.Button("<", 15, 25) then
+			kh_mcp_wnd_state = 0
+			float_wnd_set_geometry(kh_mcp_wnd, 0, 46, 25, 1)
+		end
+	end
+
+	if kh_mcp_wnd_state == 0 then
+		if imgui.Button(">", 15, 25) then
+			kh_mcp_wnd_state = 1
+			float_wnd_set_geometry(kh_mcp_wnd, 0, 46, 1000, 1)
+		end
+	end
+
+	imgui_rotary_mcp("CRS:%03d",sysMCP.crs1Selector,10,11)
+
+	imgui_toggle_button_mcp("FD",sysMCP.fdirGroup,10,22,25)
+
+	imgui_toggle_button_mcp("AT",sysMCP.athrSwitch,10,22,25)
+
+	imgui_toggle_button_mcp("N1",sysMCP.n1Switch,10,22,25)
+
+	imgui_toggle_button_mcp("SP",sysMCP.speedSwitch,10,22,25)
+
+	imgui_rotary_mcp("SPD:%03d",sysMCP.iasSelector,10,12)
+
+	imgui_toggle_button_mcp("VN",sysMCP.vnavSwitch,10,22,25)
+
+	imgui_toggle_button_mcp("LC",sysMCP.lvlchgSwitch,10,22,25)
+
+	imgui_rotary_mcp("HDG:%03d",sysMCP.hdgSelector,10,13)
+
+	imgui_toggle_button_mcp("HD",sysMCP.hdgselSwitch,10,22,25)
+
+	imgui_toggle_button_mcp("LN",sysMCP.lnavSwitch,10,22,25)
+
+	imgui_toggle_button_mcp("LO",sysMCP.vorlocSwitch,10,22,25)
+
+	imgui_toggle_button_mcp("AP",sysMCP.approachSwitch,10,22,25)
+
+	imgui_rotary_mcp("ALT:%05d",sysMCP.altSelector,10,14)
+
+	imgui_toggle_button_mcp("AL",sysMCP.altholdSwitch,10,22,25)
+
+	imgui_rotary_mcp((sysMCP.vspSelector:getStatus() >= 0) and "VSP:+%04d" or "VSP:%05d",sysMCP.vspSelector,10,15)
+
+	imgui_toggle_button_mcp("VS",sysMCP.vsSwitch,10,22,25)
+
+	imgui_toggle_button_mcp("CMDA",sysMCP.ap1Switch,10,59,25)
+
+end
 
 return sysMCP

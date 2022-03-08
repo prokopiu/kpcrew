@@ -21,6 +21,7 @@ local kcFlowItem = {
 	actorLHS 			= "LHS",	-- left hand seat (you)
 	actorRHS 			= "RHS",	-- right hand seat (virtual)
 	actorFE				= "FE",		-- flight engineer on some aircraft (virtual)
+	actorALL 			= "ALL",
 	actorNONE 			= "",
 
 	colorInitial		= color_green,
@@ -37,10 +38,9 @@ local kcFlowItem = {
 -- @tparam string actor is the actor for the item; see list below
 -- @tparam int wait time in seconds during execution 
 -- @tparam function reference validFunc shall return true or false to verify if condition is met
--- @tparam function reference  responseFunc will overwrite the responseText with simulator values
 -- @tparam function reference  actionFunc will be executed and make changes to aircraft settings
 -- @tparam function reference  skipFunc if true will skip the item and not diaply in list
-function kcFlowItem:new(challengeText,responseText,actor,waittime,validFunc,responseFunc,actionFunc,skipFunc)
+function kcFlowItem:new(challengeText,responseText,actor,waittime,validFunc,actionFunc,skipFunc)
     kcFlowItem.__index = kcFlowItem
     local obj = {}
     setmetatable(obj, kcFlowItem)
@@ -55,7 +55,6 @@ function kcFlowItem:new(challengeText,responseText,actor,waittime,validFunc,resp
 	obj.color = kcFlowItem.colorInitial
 	obj.validFunc = validFunc
 	obj.actionFunc = actionFunc
-	obj.responseFunc = responseFunc
 	obj.skipFunc = skipFunc
 
     return obj
@@ -84,7 +83,7 @@ function kcFlowItem:getResponseText()
 		if string.find(self.responseText,"|") == nil then
 			return self.responseText
 		else
-			local resArr = split(self.responseText,"|")
+			local resArr = kc_split(self.responseText,"|")
 			kcLoadString = "return string.format(\"" .. resArr[1] .. "\""
 			if table.getn(resArr) > 1 then kcLoadString = kcLoadString .. "," .. resArr[2] end
 			if table.getn(resArr) > 2 then kcLoadString = kcLoadString .. "," .. resArr[3] end

@@ -173,12 +173,12 @@ function kcSOP:render()
 		if flow:getState() == 2 then
 			color = color_green
 		end
-		if indexOf(flows,flow) == self.activeFlowIndex then
+		if kc_indexOf(flows,flow) == self.activeFlowIndex then
 			color = color_red
 		end
         imgui.PushStyleColor(imgui.constant.Col.Button, color)
 		if imgui.Button(flow:getName(), self:getBtnWidth(), 18) then
-			self:setActiveFlowIndex(indexOf(flows,flow))
+			self:setActiveFlowIndex(kc_indexOf(flows,flow))
 			kc_wnd_flow_action = 1
 		end
         imgui.PopStyleColor()

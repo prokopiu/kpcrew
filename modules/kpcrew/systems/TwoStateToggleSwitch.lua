@@ -1,8 +1,7 @@
 -- switch with mode on/off and toggle function via command
 local TwoStateToggleSwitch = {}
 
-utils = require "kpcrew.genutils"
-Switch = require "kpcrew.systems.Switch"
+local Switch = require "kpcrew.systems.Switch"
 
 -- provide the dataref with switch state, commands for on, off and toggle. use "nocommand" if no tgl cmd
 function TwoStateToggleSwitch:new(name, statusDref, statusDrefIdx, tglcmd)
@@ -24,22 +23,32 @@ end
 
 -- return value of status dataref
 function TwoStateToggleSwitch:getStatus()
-	return get(self.statusDref,self.statusDrefIdx)
+	if self.statusDrefIdx == 0 then
+		get(self.statusDref)
+	end
+	if self.statusDrefIdx < 0 then
+		return get(self.statusDref,0)
+	else
+		return get(self.statusDref,self.statusDrefIdx)
+	end
 end
 
 -- actuate the switch with given mode
 function TwoStateToggleSwitch:actuate(action)
-	if action == Switch.modeOn then
+	if action == modeOn then
 		if self:getStatus() ~= modeOn then
+		logMsg("k")
 			command_once(self.tglcmd)
 		end
 	end
-	if action == Switch.modeOff then
+	if action == modeOff then
 		if self:getStatus() ~= modeOff then
+		logMsg("l")
 			command_once(self.tglcmd)
 		end
 	end
-	if action == Switch.modeToggle then
+	if action == modeToggle then
+			logMsg("m")
 		command_once(self.tglcmd)
 	end
 end

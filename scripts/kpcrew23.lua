@@ -5,10 +5,11 @@
 --]]
 
 require "kpcrew.genutils"
+require "kpcrew.systems.activities"
 
-local KC_VERSION = "2.3"
+kc_VERSION = "2.3"
 
-logMsg ( "FWL: ** Starting KPCrew version " .. KC_VERSION .." **" )
+logMsg ( "FWL: ** Starting KPCrew version " .. kc_VERSION .." **" )
 
 -- ====== Global variables =======
 kc_acf_icao = "DFLT" -- active addon aircraft ICAO code (DFLT when nothing found)
@@ -16,7 +17,7 @@ kc_acf_icao = "DFLT" -- active addon aircraft ICAO code (DFLT when nothing found
 -- ====== Select the addon modules based on ICAO code
 if PLANE_ICAO == "B738" then
 	if PLANE_TAILNUMBER ~= "ZB738" then
-		kc_acf_icao = "DFLT" -- add L738 module later
+		kc_acf_icao = "DFLT" 
 	else
 		kc_acf_icao = "B738" -- Zibo Mod
 	end
@@ -51,8 +52,8 @@ kc_pref_wnd = nil
 -- ===== Standard Operating Procedure window =====
 function kc_init_sop_window(sop)
 	if kc_sop_wnd == 0 or kc_sop_wnd == nil then	
-		height = sop:getWndHeight()
-		width = sop:getWndWidth()
+		local height = sop:getWndHeight()
+		local width = sop:getWndWidth()
 		kc_sop_wnd = float_wnd_create(width, height, 1, true)
 		float_wnd_set_title(kc_sop_wnd, sop:getName())
 		float_wnd_set_position(kc_sop_wnd, sop:getWndXPos(), sop:getWndYPos())
@@ -66,8 +67,8 @@ function kc_sop_builder(wnd)
 	if get("sim/graphics/view/window_width") ~= kc_scrn_width or get("sim/graphics/view/window_height") ~= kc_scrn_height then
 		kc_scrn_width = get("sim/graphics/view/window_width")
 		kc_scrn_height = get("sim/graphics/view/window_height")
-		xpos = getActiveSOP():getWndXPos()
-		ypos = kc_scrn_height - getActiveSOP():getWndYPos()
+		local xpos = getActiveSOP():getWndXPos()
+		local ypos = kc_scrn_height - getActiveSOP():getWndYPos()
 		float_wnd_set_geometry(kc_sop_wnd, xpos-100, ypos, xpos + getActiveSOP():getWndWidth(), ypos - getActiveSOP():getWndHeight())
 	end
 	-- render window with current SOP flows
@@ -81,8 +82,8 @@ end
 -- ===== Flow Window =====
 function kc_init_flow_window(flow)
 	if kc_flow_wnd == 0 or kc_flow_wnd == nil then	
-		height = flow:getWndHeight()
-		width = flow:getWndWidth()
+		local height = flow:getWndHeight()
+		local width = flow:getWndWidth()
 		kc_flow_wnd = float_wnd_create(width, height, 1, true)
 		float_wnd_set_title(kc_flow_wnd, flow:getName())
 		float_wnd_set_position(kc_flow_wnd, flow:getWndXPos(), flow:getWndYPos())
@@ -126,7 +127,7 @@ end
 function kc_init_ctrl_window()
 	if kc_ctrl_wnd == 0 or kc_ctrl_wnd == nil then	
 		kc_ctrl_wnd = float_wnd_create(680, 45, 2, true)
-		xpos = kc_scrn_width - 680
+		local xpos = kc_scrn_width - 680
 		float_wnd_set_title(kc_ctrl_wnd, "")
 		float_wnd_set_position(kc_ctrl_wnd, xpos, kc_scrn_height - 46)
 		float_wnd_set_imgui_builder(kc_ctrl_wnd, "kc_ctrl_builder")
@@ -141,16 +142,17 @@ function kc_ctrl_builder()
 	if get("sim/graphics/view/window_width") ~= kc_scrn_width or get("sim/graphics/view/window_height") ~= kc_scrn_height then
 		kc_scrn_width = get("sim/graphics/view/window_width")
 		kc_scrn_height = get("sim/graphics/view/window_height")
-		xpos = kc_scrn_width - 680
+		local xpos = kc_scrn_width - 680
 		float_wnd_set_geometry(kc_ctrl_wnd, xpos, 46, kc_scrn_width, 1)
 	end
 	imgui.SetCursorPosY(10)
 	imgui.SetCursorPosX(7)
+	imgui.PushStyleColor(imgui.constant.Col.Text,color_grey)
 	
 	if kc_ctrl_wnd_state == 0 then
 		if imgui.Button("<", 15, 25) then
 			kc_ctrl_wnd_state = 1
-			xpos = kc_scrn_width - 680
+			local xpos = kc_scrn_width - 680
 			float_wnd_set_geometry(kc_ctrl_wnd, xpos, 46, kc_scrn_width, 1)
 		end
 		imgui.SameLine()
@@ -203,11 +205,12 @@ function kc_ctrl_builder()
 	if kc_ctrl_wnd_state == 1 then
 		if imgui.Button(">", 15, 25) then
 			kc_ctrl_wnd_state = 0
-			xpos = kc_scrn_width - 25
+			local xpos = kc_scrn_width - 25
 			float_wnd_set_geometry(kc_ctrl_wnd, xpos, 46, kc_scrn_width, 1)
 		end
 	end
-	
+
+	imgui.PopStyleColor()
 end
 
 function kc_close_ctrl_window()
@@ -219,8 +222,8 @@ kc_init_ctrl_window()
 -- ===== Preferences window =====
 function kc_init_pref_window(prefset)
 	if kc_pref_wnd == 0 or kc_pref_wnd == nil then	
-		height = prefset:getWndHeight()
-		width = prefset:getWndWidth()
+		local height = prefset:getWndHeight()
+		local width = prefset:getWndWidth()
 		kc_pref_wnd = float_wnd_create(width, height, 1, true)
 		float_wnd_set_title(kc_pref_wnd, prefset:getName())
 		float_wnd_set_position(kc_pref_wnd, prefset:getWndXPos(), prefset:getWndYPos())
@@ -246,9 +249,11 @@ function kc_close_pref_window()
 	kc_pref_wnd = nil
 end
 
+
 -- kc_init_pref_window(getActivePrefs())
 -- kc_init_pref_window(getBckVars())
 
+-- ===== Background  Window control - direct window commands do not work as expected =====
 kc_wnd_sop_action = 0
 kc_wnd_flow_action = 0
 kc_wnd_pref_action = 0
