@@ -14,9 +14,7 @@ logMsg ( "FWL: ** Starting KPHARDWARE version " .. KPH_VERSION .." **" )
 kh_acf_icao = "DFLT" -- active addon aircraft ICAO code (DFLT when nothing found)
 kh_mcp_wnd = nil
 kh_light_wnd = nil
--- get screen width from X-Plane
-kh_scrn_width = get("sim/graphics/view/window_width")
-kh_scrn_height = get("sim/graphics/view/window_height")
+kh_radio_wnd = nil
 
 -- Laminar MD82 -> MD82
 -- Laminar 747 -> B744, check Sparky 744
@@ -43,6 +41,7 @@ sysAir = require("kpcrew.systems." .. kh_acf_icao .. ".sysAir")
 sysAice = require("kpcrew.systems." .. kh_acf_icao .. ".sysAice")	
 sysMCP = require("kpcrew.systems." .. kh_acf_icao .. ".sysMCP")	
 sysEFIS = require("kpcrew.systems." .. kh_acf_icao .. ".sysEFIS")	
+sysRadios = require("kpcrew.systems." .. kh_acf_icao .. ".sysRadios")	
 
 
 -- ============ aircraft generic joystick/key commands
@@ -312,11 +311,13 @@ function xsp_set_light_drefs()
 end
 
 -- MCP UI
+kh_scrn_width = get("sim/graphics/view/window_width")
+kh_scrn_height = get("sim/graphics/view/window_height")
 
 -- ===== Aircraft specific MCP Window
 function kh_init_mcp_window()
 	if kh_mcp_wnd == 0 or kh_mcp_wnd == nil then	
-		kh_mcp_wnd = float_wnd_create(25, 45, 2, true)
+		kh_mcp_wnd = float_wnd_create(25, 46, 2, true)
 		float_wnd_set_title(kh_mcp_wnd, "")
 		float_wnd_set_position(kh_mcp_wnd, 0, kh_scrn_height - 46)
 		float_wnd_set_imgui_builder(kh_mcp_wnd, "kh_mcp_builder")
@@ -327,7 +328,14 @@ end
 kh_mcp_wnd_state = 0
 
 function kh_mcp_builder()
-	sysMCP:render()
+	if get("sim/graphics/view/window_width") ~= kh_scrn_width or get("sim/graphics/view/window_height") ~= kh_scrn_height then
+		kh_light_wnd_state = -1
+		kh_mcp_wnd_state = -1
+		kh_radio_wnd_state = -1
+		kh_scrn_width = get("sim/graphics/view/window_width")
+		kh_scrn_height = get("sim/graphics/view/window_height")
+	end
+	sysMCP:render(46,46)
 end
 
 function kh_close_mcp_window()
@@ -339,9 +347,9 @@ kh_init_mcp_window() -- always show this window
 -- ===== Aircraft specific MCP Window
 function kh_init_light_window()
 	if kh_light_wnd == 0 or kh_light_wnd == nil then	
-		kh_light_wnd = float_wnd_create(25, 45, 2, true)
+		kh_light_wnd = float_wnd_create(25, 46, 2, true)
 		float_wnd_set_title(kh_light_wnd, "")
-		float_wnd_set_position(kh_light_wnd, 0, kh_scrn_height - 91)
+		float_wnd_set_position(kh_light_wnd, 0, kh_scrn_height - 92)
 		float_wnd_set_imgui_builder(kh_light_wnd, "kh_light_builder")
 		float_wnd_set_onclose(kh_light_wnd, "kh_close_light_window")
 	end
@@ -350,7 +358,14 @@ end
 kh_light_wnd_state = 0
 
 function kh_light_builder()
-	sysLights:render()
+	if get("sim/graphics/view/window_width") ~= kh_scrn_width or get("sim/graphics/view/window_height") ~= kh_scrn_height then
+		kh_light_wnd_state = -1
+		kh_mcp_wnd_state = -1
+		kh_radio_wnd_state = -1
+		kh_scrn_width = get("sim/graphics/view/window_width")
+		kh_scrn_height = get("sim/graphics/view/window_height")
+	end
+	sysLights:render(92,46)
 end
 
 function kh_close_light_window()
@@ -359,6 +374,35 @@ end
 
 kh_init_light_window() -- always show this window
 
+-- ===== Aircraft specific Radio Window
+function kh_init_radio_window()
+	if kh_radio_wnd == 0 or kh_radio_wnd == nil then	
+		kh_radio_wnd = float_wnd_create(25, 80, 2, true)
+		float_wnd_set_title(kh_radio_wnd, "")
+		float_wnd_set_position(kh_radio_wnd, 0, kh_scrn_height - 170)
+		float_wnd_set_imgui_builder(kh_radio_wnd, "kh_radio_builder")
+		float_wnd_set_onclose(kh_radio_wnd, "kh_close_radio_window")
+	end
+end
+
+kh_radio_wnd_state = 0
+
+function kh_radio_builder()
+	if get("sim/graphics/view/window_width") ~= kh_scrn_width or get("sim/graphics/view/window_height") ~= kh_scrn_height then
+		kh_light_wnd_state = -1
+		kh_mcp_wnd_state = -1
+		kh_radio_wnd_state = -1
+		kh_scrn_width = get("sim/graphics/view/window_width")
+		kh_scrn_height = get("sim/graphics/view/window_height")
+	end
+	sysRadios:render(170,80)
+end
+
+function kh_close_radio_window()
+	kh_light_wnd = nil
+end
+
+kh_init_radio_window() -- always show this window
 
 -- regularly update the drefs for annunciators and lights 
 do_often("xsp_set_light_drefs()")

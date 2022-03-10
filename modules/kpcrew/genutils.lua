@@ -202,15 +202,17 @@ function kc_split(s, delimiter)
     return result;
 end
 
--- imgui supplementary functions
-function kc_imgui_center(text) 
+-- ===== imgui supplementary functions =====
+
+-- center text based on imgui window size
+function kc_imgui_center(text)
     local win_width = imgui.GetWindowWidth()
 	local text_width, text_height = imgui.CalcTextSize(text)
 	imgui.SetCursorPos(win_width / 2 - text_width / 2, imgui.GetCursorPosY())
 	imgui.TextUnformatted(text)
 end
 
--- render a toggle button with green/grey status light for MCP
+-- render a toggle button with green/grey status (label) for MCP
 function kc_imgui_toggle_button_mcp(label,system,ypos,width,height)
     imgui.SameLine()
 	imgui.SetCursorPosY(ypos)
@@ -233,7 +235,7 @@ function kc_imgui_toggle_button_mcp(label,system,ypos,width,height)
 	imgui.PopStyleColor()
 end
 
--- render a rotary with + and - clickspots and value display
+-- render a rotary with + and - clickspots and value display for mcp
 function kc_imgui_rotary_mcp(label,system,ypos,id)
     imgui.SameLine()
 	imgui.SetCursorPosY(ypos)
@@ -269,7 +271,7 @@ function kc_imgui_rotary_mcp(label,system,ypos,id)
 	imgui.PopStyleColor()
 end
 
--- render a label
+-- render a label /also used as separator stroke)
 function kc_imgui_label_mcp(label,ypos)
     imgui.SameLine()
 	imgui.SetCursorPosY(ypos+2)
@@ -294,4 +296,106 @@ function kc_imgui_simple_button_mcp(label,system,ypos,width,height)
 	imgui.PopStyleColor()
 	imgui.PopStyleColor()
 	imgui.PopStyleColor()
+end
+
+-- render a radio 1=com, 2=nav, 3=adf
+function kc_imgui_radio(radio,label,course,fine,standby,active,flip,ypos,id)
+
+    -- imgui.SameLine()
+	imgui.SetCursorPosY(ypos)
+	imgui.PushStyleColor(imgui.constant.Col.Button, color_mcp_button)
+	imgui.PushStyleColor(imgui.constant.Col.ButtonActive, color_mcp_active)
+	imgui.PushStyleColor(imgui.constant.Col.ButtonHovered, color_mcp_hover)
+	imgui.PushStyleColor(imgui.constant.Col.Text,color_mcp_text)
+
+    imgui.PushID(id)
+	imgui.Button("--", 20, 25)
+	if imgui.IsItemActive() then
+		course:actuate(slowDown)
+	end
+	imgui.PopID()
+	
+	imgui.SameLine()
+    imgui.PushID(id)
+	imgui.Button("-", 20, 25)
+	if imgui.IsItemActive() then
+		fine:actuate(slowDown)
+	end
+	imgui.PopID()
+	
+	if radio == 1 then
+		imgui.SameLine()
+		imgui.SetCursorPosY(ypos + 2)
+		imgui.TextUnformatted(string.format(label .. "%06.3f",standby:getStatus()/1000))
+
+		imgui.SameLine()
+		imgui.SetCursorPosY(ypos)
+		imgui.PushStyleColor(imgui.constant.Col.Text,color_bright_green)
+		imgui.Button(string.format("%06.3f",active:getStatus()/1000), 55, 25)
+		if imgui.IsItemActive() then
+			flip:actuate(2)
+		end
+		imgui.PopStyleColor()
+	end
+	if radio == 2 then
+		imgui.SameLine()
+		imgui.SetCursorPosY(ypos + 2)
+		imgui.TextUnformatted(string.format(label .. "%05.2f",standby:getStatus()/100))
+
+		imgui.SameLine()
+		imgui.SetCursorPosY(ypos)
+		imgui.PushStyleColor(imgui.constant.Col.Text,color_bright_green)
+		imgui.Button(string.format("%05.2f",active:getStatus()/100), 55, 25)
+		if imgui.IsItemActive() then
+			flip:actuate(2)
+		end
+		imgui.PopStyleColor()
+	end
+	if radio == 3 then
+		imgui.SameLine()
+		imgui.SetCursorPosY(ypos + 2)
+		imgui.TextUnformatted(string.format(label .. "%03.0f",standby:getStatus()))
+
+		imgui.SameLine()
+		imgui.SetCursorPosY(ypos)
+		imgui.PushStyleColor(imgui.constant.Col.Text,color_bright_green)
+		imgui.Button(string.format("%03.0f",active:getStatus()), 55, 25)
+		if imgui.IsItemActive() then
+			flip:actuate(2)
+		end
+		imgui.PopStyleColor()
+	end
+	
+	imgui.SameLine()
+    imgui.PushID(id)
+	imgui.Button("+", 20, 25)
+	if imgui.IsItemActive() then
+		fine:actuate(slowUp)
+	end
+	imgui.PopID()
+
+	imgui.SameLine()
+    imgui.PushID(id)
+	imgui.Button("++", 20, 25)
+	if imgui.IsItemActive() then
+		course:actuate(slowUp)
+	end
+	imgui.PopID()
+
+	imgui.PopStyleColor()
+	imgui.PopStyleColor()
+	imgui.PopStyleColor()
+	imgui.PopStyleColor()
+end
+
+function kc_imgui_com_radio(label,course,fine,standby,active,flip,ypos,id)
+	kc_imgui_radio(1,label,course,fine,standby,active,flip,ypos,id)
+end
+
+function kc_imgui_nav_radio(label,course,fine,standby,active,flip,ypos,id)
+	kc_imgui_radio(2,label,course,fine,standby,active,flip,ypos,id)
+end
+
+function kc_imgui_adf_radio(label,course,fine,standby,active,flip,ypos,id)
+	kc_imgui_radio(3,label,course,fine,standby,active,flip,ypos,id)
 end

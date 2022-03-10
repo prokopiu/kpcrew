@@ -1,4 +1,4 @@
--- B738 airplane 
+-- DFLT airplane 
 -- Radio functionality
 
 local TwoStateDrefSwitch = require "kpcrew.systems.TwoStateDrefSwitch"
@@ -34,14 +34,14 @@ sysRadio.nav1StbyFine = MultiStateCmdSwitch:new("","sim/cockpit/radios/nav1_stdb
 sysRadio.nav1StbyCourse = MultiStateCmdSwitch:new("","sim/cockpit/radios/nav1_stdby_freq_hz",0,"sim/radios/stby_nav1_coarse_down","sim/radios/stby_nav1_coarse_up")
 sysRadio.nav1Flip = TwoStateToggleSwitch:new("","sim/cockpit2/radios/actuators/nav1_right_is_selected",0,"sim/radios/nav1_standy_flip")
 
-sysRadio.nav1ActiveFreq = SimpleAnnunciator:new("","laminar/radios/pilot/nav_freq",0)
+sysRadio.nav1ActiveFreq = SimpleAnnunciator:new("","sim/cockpit/radios/nav1_freq_hz",0)
 sysRadio.nav1StandbyFreq = SimpleAnnunciator:new("","sim/cockpit/radios/nav1_stdby_freq_hz",0)
 
 sysRadio.nav2StbyFine = MultiStateCmdSwitch:new("","sim/cockpit/radios/nav2_stdby_freq_hz",0,"sim/radios/stby_nav2_fine_down","sim/radios/stby_nav2_fine_up")
 sysRadio.nav2StbyCourse = MultiStateCmdSwitch:new("","sim/cockpit/radios/nav2_stdby_freq_hz",0,"sim/radios/stby_nav2_coarse_down","sim/radios/stby_nav2_coarse_up")
 sysRadio.nav2Flip = TwoStateToggleSwitch:new("","sim/cockpit2/radios/actuators/nav2_right_is_selected",0,"sim/radios/nav2_standy_flip")
 
-sysRadio.nav2ActiveFreq = SimpleAnnunciator:new("","laminar/radios/copilot/nav_freq_fo",0)
+sysRadio.nav2ActiveFreq = SimpleAnnunciator:new("","sim/cockpit/radios/nav2_freq_hz",0)
 sysRadio.nav2StandbyFreq = SimpleAnnunciator:new("","sim/cockpit/radios/nav2_stdby_freq_hz",0)
 
 -- ===== ADF =====

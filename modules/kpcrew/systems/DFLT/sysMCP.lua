@@ -165,66 +165,58 @@ sysMCP.bcAnc = InopSwitch:new("bc")
 -- ===== UI related functions =====
 
 -- render the MCP part
-function sysMCP:render()
+function sysMCP:render(ypos,height)
 
 	-- reposition when screen size changes
-	if get("sim/graphics/view/window_width") ~= kh_scrn_width or get("sim/graphics/view/window_height") ~= kh_scrn_height then
-		kh_scrn_height = get("sim/graphics/view/window_height")
-		float_wnd_set_geometry(kh_mcp_wnd, 0, 46, 1000, 1)
+	if kh_mcp_wnd_state < 0 then
+		float_wnd_set_position(kh_mcp_wnd, 0, kh_scrn_height - ypos)
+		float_wnd_set_geometry(kh_mcp_wnd, 0, ypos, 25, ypos-height)
+		kh_mcp_wnd_state = 0
 	end
 	
 	imgui.SetCursorPosY(10)
 	imgui.SetCursorPosX(2)
 	
 	if kh_mcp_wnd_state == 1 then
-		if imgui.Button("<", 15, 25) then
+		imgui.Button("<", 17, 25)
+		if imgui.IsItemActive() then 
 			kh_mcp_wnd_state = 0
-			float_wnd_set_geometry(kh_mcp_wnd, 0, 46, 25, 1)
+			float_wnd_set_geometry(kh_mcp_wnd, 0, ypos, 25, ypos-height)
 		end
 	end
 
 	if kh_mcp_wnd_state == 0 then
-		if imgui.Button(">", 15, 25) then
+		imgui.Button("M", 17, 25)
+		if imgui.IsItemActive() then 
 			kh_mcp_wnd_state = 1
-			float_wnd_set_geometry(kh_mcp_wnd, 0, 46, 1000, 1)
+			float_wnd_set_geometry(kh_mcp_wnd, 0, ypos, 1000, ypos-height)
 		end
 	end
 
-	imgui_rotary_mcp("CRS:%03d",sysMCP.crs1Selector,10,11)
+	sysMCP.crs1Selector:setDefaultDelay(4)
+	sysMCP.iasSelector:setDefaultDelay(4)
+	sysMCP.hdgSelector:setDefaultDelay(4)
+	sysMCP.altSelector:setDefaultDelay(4)
+	sysMCP.vspSelector:setDefaultDelay(8)
 
-	imgui_toggle_button_mcp("FD",sysMCP.fdirGroup,10,22,25)
-
-	imgui_toggle_button_mcp("AT",sysMCP.athrSwitch,10,22,25)
-
-	imgui_toggle_button_mcp("N1",sysMCP.n1Switch,10,22,25)
-
-	imgui_toggle_button_mcp("SP",sysMCP.speedSwitch,10,22,25)
-
-	imgui_rotary_mcp("SPD:%03d",sysMCP.iasSelector,10,12)
-
-	imgui_toggle_button_mcp("VN",sysMCP.vnavSwitch,10,22,25)
-
-	imgui_toggle_button_mcp("LC",sysMCP.lvlchgSwitch,10,22,25)
-
-	imgui_rotary_mcp("HDG:%03d",sysMCP.hdgSelector,10,13)
-
-	imgui_toggle_button_mcp("HD",sysMCP.hdgselSwitch,10,22,25)
-
-	imgui_toggle_button_mcp("LN",sysMCP.lnavSwitch,10,22,25)
-
-	imgui_toggle_button_mcp("LO",sysMCP.vorlocSwitch,10,22,25)
-
-	imgui_toggle_button_mcp("AP",sysMCP.approachSwitch,10,22,25)
-
-	imgui_rotary_mcp("ALT:%05d",sysMCP.altSelector,10,14)
-
-	imgui_toggle_button_mcp("AL",sysMCP.altholdSwitch,10,22,25)
-
-	imgui_rotary_mcp((sysMCP.vspSelector:getStatus() >= 0) and "VSP:+%04d" or "VSP:%05d",sysMCP.vspSelector,10,15)
-
-	imgui_toggle_button_mcp("VS",sysMCP.vsSwitch,10,22,25)
-
-	imgui_toggle_button_mcp("CMDA",sysMCP.ap1Switch,10,59,25)
+	kc_imgui_rotary_mcp("CRS:%03d",sysMCP.crs1Selector,10,11)
+	kc_imgui_toggle_button_mcp("FD",sysMCP.fdirGroup,10,22,25)
+	kc_imgui_toggle_button_mcp("AT",sysMCP.athrSwitch,10,22,25)
+	kc_imgui_toggle_button_mcp("N1",sysMCP.n1Switch,10,22,25)
+	kc_imgui_toggle_button_mcp("SP",sysMCP.speedSwitch,10,22,25)
+	kc_imgui_rotary_mcp("SPD:%03d",sysMCP.iasSelector,10,12)
+	kc_imgui_toggle_button_mcp("VN",sysMCP.vnavSwitch,10,22,25)
+	kc_imgui_toggle_button_mcp("LC",sysMCP.lvlchgSwitch,10,22,25)
+	kc_imgui_rotary_mcp("HDG:%03d",sysMCP.hdgSelector,10,13)
+	kc_imgui_toggle_button_mcp("HD",sysMCP.hdgselSwitch,10,22,25)
+	kc_imgui_toggle_button_mcp("LN",sysMCP.lnavSwitch,10,22,25)
+	kc_imgui_toggle_button_mcp("LO",sysMCP.vorlocSwitch,10,22,25)
+	kc_imgui_toggle_button_mcp("AP",sysMCP.approachSwitch,10,22,25)
+	kc_imgui_rotary_mcp("ALT:%05d",sysMCP.altSelector,10,14)
+	kc_imgui_toggle_button_mcp("AL",sysMCP.altholdSwitch,10,22,25)
+	kc_imgui_rotary_mcp((sysMCP.vspSelector:getStatus() >= 0) and "VSP:+%04d" or "VSP:%05d",sysMCP.vspSelector,10,15)
+	kc_imgui_toggle_button_mcp("VS",sysMCP.vsSwitch,10,22,25)
+	kc_imgui_toggle_button_mcp("A/P",sysMCP.ap1Switch,10,59,25)
 
 end
 

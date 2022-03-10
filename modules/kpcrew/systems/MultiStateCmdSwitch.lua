@@ -78,5 +78,10 @@ function MultiStateCmdSwitch:adjustValue(value,min,max)
 	end
 end
 
+-- adjust the delay for repeated calls
+function MultiStateCmdSwitch:setDefaultDelay(delay)
+	self.defaultDelay = delay
+end
+
 return MultiStateCmdSwitch
 

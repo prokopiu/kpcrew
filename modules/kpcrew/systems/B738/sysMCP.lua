@@ -199,33 +199,40 @@ sysMCP.bcAnc = InopSwitch:new("bc")
 -- ===== UI related functions =====
 
 -- render the MCP part
-function sysMCP:render()
+function sysMCP:render(ypos,height)
 
 	-- reposition when screen size changes
-	if get("sim/graphics/view/window_width") ~= kh_scrn_width or get("sim/graphics/view/window_height") ~= kh_scrn_height then
-		kh_scrn_height = get("sim/graphics/view/window_height")
-		float_wnd_set_geometry(kh_mcp_wnd, 0, 46, 1000, 1)
+	if kh_mcp_wnd_state < 0 then
+		float_wnd_set_position(kh_mcp_wnd, 0, kh_scrn_height - ypos)
+		float_wnd_set_geometry(kh_mcp_wnd, 0, ypos, 25, ypos-height)
+		kh_mcp_wnd_state = 0
 	end
 	
 	imgui.SetCursorPosY(10)
 	imgui.SetCursorPosX(2)
 	
 	if kh_mcp_wnd_state == 1 then
-		imgui.Button("<", 15, 25)
+		imgui.Button("<", 17, 25)
 		if imgui.IsItemActive() then 
 			kh_mcp_wnd_state = 0
-			float_wnd_set_geometry(kh_mcp_wnd, 0, 46, 25, 1)
+			float_wnd_set_geometry(kh_mcp_wnd, 0, ypos, 25, ypos-height)
 		end
 	end
 
 	if kh_mcp_wnd_state == 0 then
-		imgui.Button(">", 15, 25)
+		imgui.Button("M", 17, 25)
 		if imgui.IsItemActive() then 
 			kh_mcp_wnd_state = 1
-			float_wnd_set_geometry(kh_mcp_wnd, 0, 46, 1000, 1)
+			float_wnd_set_geometry(kh_mcp_wnd, 0, ypos, 1000, ypos-height)
 		end
 	end
 
+	sysMCP.crs1Selector:setDefaultDelay(1)
+	sysMCP.iasSelector:setDefaultDelay(1)
+	sysMCP.hdgSelector:setDefaultDelay(1)
+	sysMCP.altSelector:setDefaultDelay(2)
+	sysMCP.vspSelector:setDefaultDelay(4)
+	
 	kc_imgui_rotary_mcp("CRS:%03d",sysMCP.crs1Selector,10,11)
 	kc_imgui_toggle_button_mcp("FD",sysMCP.fdirPilotSwitch,10,22,25)
 	kc_imgui_toggle_button_mcp("AT",sysMCP.athrSwitch,10,22,25)

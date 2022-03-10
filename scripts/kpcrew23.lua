@@ -123,11 +123,17 @@ function kc_close_flow_window()
 	kc_flow_wnd = 0
 end
 
+
 -- ===== Control bar to open windows (preliminary)
+kc_ctrl_wnd_state = 0
+
 function kc_init_ctrl_window()
 	if kc_ctrl_wnd == 0 or kc_ctrl_wnd == nil then	
-		kc_ctrl_wnd = float_wnd_create(680, 45, 2, true)
+		kc_ctrl_wnd = float_wnd_create(25, 45, 2, true)
 		local xpos = kc_scrn_width - 680
+		if kc_ctrl_wnd_state == 0 then
+			xpos = kc_scrn_width - 25
+		end
 		float_wnd_set_title(kc_ctrl_wnd, "")
 		float_wnd_set_position(kc_ctrl_wnd, xpos, kc_scrn_height - 46)
 		float_wnd_set_imgui_builder(kc_ctrl_wnd, "kc_ctrl_builder")
@@ -135,22 +141,24 @@ function kc_init_ctrl_window()
 	end
 end
 
-kc_ctrl_wnd_state = 1
-
 function kc_ctrl_builder()
 	-- reposition when screen size changes
 	if get("sim/graphics/view/window_width") ~= kc_scrn_width or get("sim/graphics/view/window_height") ~= kc_scrn_height then
 		kc_scrn_width = get("sim/graphics/view/window_width")
 		kc_scrn_height = get("sim/graphics/view/window_height")
 		local xpos = kc_scrn_width - 680
+		if kc_ctrl_wnd_state == 0 then
+			xpos = kc_scrn_width - 25
+		end
 		float_wnd_set_geometry(kc_ctrl_wnd, xpos, 46, kc_scrn_width, 1)
 	end
 	imgui.SetCursorPosY(10)
 	imgui.SetCursorPosX(7)
 	imgui.PushStyleColor(imgui.constant.Col.Text,color_grey)
-	
+
 	if kc_ctrl_wnd_state == 0 then
-		if imgui.Button("<", 15, 25) then
+		imgui.Button("<", 15, 25)
+		if imgui.IsItemActive() then
 			kc_ctrl_wnd_state = 1
 			local xpos = kc_scrn_width - 680
 			float_wnd_set_geometry(kc_ctrl_wnd, xpos, 46, kc_scrn_width, 1)
