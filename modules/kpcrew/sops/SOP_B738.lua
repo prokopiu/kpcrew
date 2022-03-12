@@ -43,13 +43,14 @@ sysAir 					= require("kpcrew.systems." .. kc_acf_icao .. ".sysAir")
 sysAice 				= require("kpcrew.systems." .. kc_acf_icao .. ".sysAice")	
 sysMCP 					= require("kpcrew.systems." .. kc_acf_icao .. ".sysMCP")	
 sysEFIS 				= require("kpcrew.systems." .. kc_acf_icao .. ".sysEFIS")	
+sysFMC 					= require("kpcrew.systems." .. kc_acf_icao .. ".sysFMC")	
 
 
 -- Set up SOP =========================================================================
 
 activeSOP = kcSOP:new("Zibo Mod SOP")
 
--- ============ Electrical Power Up Procedures =============
+-- ============ Electrical Power Up Procedures ============= OK
 
 local electricalPowerUpProc = kcProcedure:new("ELECTRICAL POWER UP (F/O)")
 electricalPowerUpProc:addItem(kcProcedureItem:new("BATTERY SWITCH","GUARD CLOSED",kcFlowItem.actorFO,1,
@@ -120,7 +121,7 @@ electricalPowerUpProc:addItem(kcProcedureItem:new("   STANDBY PWR LIGHT","CHECK 
 -- electricalPowerUpProc:addItem(kcProcedureItem:new("WHEEL WELL FIRE WARNING SYSTEM","TEST",kcFlowItem.actorFO,1,nil,nil,nil))
 electricalPowerUpProc:addItem(kcSimpleProcedureItem:new("Next: Preliminary Preflight Procedure"))
 
--- ============ Preliminary Preflight Procedures =============
+-- ============ Preliminary Preflight Procedures ============= OK
 
 local prelPreflightProc = kcProcedure:new("PREL PREFLIGHT PROCEDURE (F/O)")
 -- not coded in Zibo
@@ -156,6 +157,68 @@ prelPreflightProc:addItem(kcProcedureItem:new("POSITION LIGHTS","ON",kcFlowItem.
 prelPreflightProc:addItem(kcProcedureItem:new("MCP","INITIALIZE",kcFlowItem.actorFO,1))
 prelPreflightProc:addItem(kcProcedureItem:new("PARKING BRAKE","SET",kcFlowItem.actorFO,1))
 prelPreflightProc:addItem(kcProcedureItem:new("IFE & GALLEY POWER","ON",kcFlowItem.actorFO,1))
+
+-- ============ CDU Preflight =============
+local cduPreflightProc = kcProcedure:new("CDU PREFLIGHT PROCEDURE (CPT)")
+cduPreflightProc:addItem(kcSimpleProcedureItem:new("INITIAL DATA (CPT)"))
+cduPreflightProc:addItem(kcIndirectProcedureItem:new("  IDENT page:","OPEN",kcFlowItem.actorCPT,1,
+	function () return string.find(sysFMC.fmcPageTitle:getStatus(),"IDENT") end))
+cduPreflightProc:addItem(kcSimpleProcedureItem:new("    Verify Model and ENG RATING"))
+cduPreflightProc:addItem(kcSimpleProcedureItem:new("    Verify navigation database ACTIVE date"))
+cduPreflightProc:addItem(kcIndirectProcedureItem:new("  POS INIT page:","OPEN",kcFlowItem.actorCPT,1,
+	function () return string.find(sysFMC.fmcPageTitle:getStatus(),"POS INIT") end))
+cduPreflightProc:addItem(kcSimpleProcedureItem:new("    Verify time"))
+cduPreflightProc:addItem(kcIndirectProcedureItem:new("    REF AIRPORT","SET",kcFlowItem.actorCPT,1,
+	function () return sysFMC.fmcRefAirportSet:getStatus() end))
+cduPreflightProc:addItem(kcSimpleProcedureItem:new("NAVIGATION DATA (CPT)"))
+cduPreflightProc:addItem(kcIndirectProcedureItem:new("  RTE page:","OPEN",kcFlowItem.actorCPT,1,
+	function () return string.find(sysFMC.fmcPageTitle:getStatus(),"RTE ") end))
+cduPreflightProc:addItem(kcIndirectProcedureItem:new("    ORIGIN","SET",kcFlowItem.actorCPT,1,
+	function () return sysFMC.fmcOrigin:getStatus() end))
+cduPreflightProc:addItem(kcIndirectProcedureItem:new("    DEST","SET",kcFlowItem.actorCPT,1,
+	function () return sysFMC.fmcDestination:getStatus() end))
+cduPreflightProc:addItem(kcIndirectProcedureItem:new("    FLT NO","SET",kcFlowItem.actorCPT,1,
+	function () return sysFMC.fmcFltNo:getStatus() end))
+cduPreflightProc:addItem(kcIndirectProcedureItem:new("    ROUTE","ENTER",kcFlowItem.actorCPT,1,
+	function () return sysFMC.fmcRouteEntered:getStatus() end))
+cduPreflightProc:addItem(kcIndirectProcedureItem:new("    ROUTE","ACTIVATE",kcFlowItem.actorCPT,1,
+	function () return sysFMC.fmcRouteActivated:getStatus() end))
+cduPreflightProc:addItem(kcProcedureItem:new("    ROUTE","EXECUTE",kcFlowItem.actorCPT,1,
+	function () return sysFMC.fmcRouteExecuted:getStatus() end))
+cduPreflightProc:addItem(kcIndirectProcedureItem:new("  DEPARTURES page:","OPEN",kcFlowItem.actorCPT,1,
+	function () return string.find(sysFMC.fmcPageTitle:getStatus(),"DEPARTURES") end))
+cduPreflightProc:addItem(kcSimpleProcedureItem:new("    Select runway and departure routing"))
+cduPreflightProc:addItem(kcProcedureItem:new("    ROUTE:","EXECUTE",kcFlowItem.actorCPT,1,
+	function () return sysFMC.fmcRouteExecuted:getStatus() end))
+cduPreflightProc:addItem(kcIndirectProcedureItem:new("  LEGS page:","OPEN",kcFlowItem.actorCPT,1,
+	function () return string.find(sysFMC.fmcPageTitle:getStatus(),"LEGS") end))
+cduPreflightProc:addItem(kcSimpleProcedureItem:new("    Verify or enter correct RNP for departure"))
+cduPreflightProc:addItem(kcSimpleProcedureItem:new("PERFORMANCE DATA (CPT)"))
+cduPreflightProc:addItem(kcIndirectProcedureItem:new("  PERF INIT page:","OPEN",kcFlowItem.actorCPT,1,
+	function () return string.find(sysFMC.fmcPageTitle:getStatus(),"PERF INIT") end))
+cduPreflightProc:addItem(kcIndirectProcedureItem:new("    ZFW","ENTER",kcFlowItem.actorCPT,1,
+	function () return sysFMC.fmcZFWEntered:getStatus() end))
+cduPreflightProc:addItem(kcIndirectProcedureItem:new("    GW","ENTER/VERIFY",kcFlowItem.actorCPT,1,
+	function () return sysFMC.fmcGWEntered:getStatus() end))
+cduPreflightProc:addItem(kcIndirectProcedureItem:new("    RESERVES","ENTER/VERIFY",kcFlowItem.actorCPT,1,
+	function () return sysFMC.fmcReservesEntered:getStatus() end))
+cduPreflightProc:addItem(kcIndirectProcedureItem:new("    COST INDEX","ENTER",kcFlowItem.actorCPT,1,
+	function () return sysFMC.fmcCIEntered:getStatus() end))
+cduPreflightProc:addItem(kcIndirectProcedureItem:new("    CRZ ALT","ENTER",kcFlowItem.actorCPT,1,
+	function () return sysFMC.fmcCrzAltEntered:getStatus() end))
+cduPreflightProc:addItem(kcIndirectProcedureItem:new("  N1 LIMIT page:","OPEN",kcFlowItem.actorCPT,1,
+	function () return string.find(sysFMC.fmcPageTitle:getStatus(),"N1 LIMIT") end))
+cduPreflightProc:addItem(kcSimpleProcedureItem:new("    Select assumed temp and/or fixed t/o rating"))
+cduPreflightProc:addItem(kcSimpleProcedureItem:new("    Select full or derated climb thrust"))
+cduPreflightProc:addItem(kcIndirectProcedureItem:new("  TAKEOFF REF page:","OPEN",kcFlowItem.actorCPT,1,
+	function () return string.find(sysFMC.fmcPageTitle:getStatus(),"TAKEOFF REF") end))
+cduPreflightProc:addItem(kcIndirectProcedureItem:new("    FLAPS","ENTER",kcFlowItem.actorCPT,1,
+	function () return sysFMC.fmcFlapsEntered:getStatus() end))
+cduPreflightProc:addItem(kcIndirectProcedureItem:new("    CG","ENTER",kcFlowItem.actorCPT,1,
+	function () return sysFMC.fmcCGEntered:getStatus() end))
+cduPreflightProc:addItem(kcIndirectProcedureItem:new("    V SPEEDS","ENTER",kcFlowItem.actorCPT,1,
+	function () return sysFMC.fmcVspeedsEntered:getStatus() end))
+cduPreflightProc:addItem(kcProcedureItem:new("PREFLIGHT COMPLETE?","VERIFY",kcFlowItem.actorCPT,1,nil,nil,nil))
 
 -- ============ Preflight Procedure =============
 local preflightFOProc = kcProcedure:new("PREFLIGHT PROCEDURE PART 1 (F/O)")
@@ -526,39 +589,6 @@ secureChkl:addItem(kcChecklistItem:new("  BAT SWITCH","OFF",kcChecklistItem.acto
 -- ============ Procedures =============
 
 
--- ============ CDU Preflight =============
-local cduPreflightProc = kcProcedure:new("CDU PREFLIGHT PROCEDURE (CPT)")
-cduPreflightProc:addItem(kcProcedureItem:new("INITIAL DATA","SET",kcFlowItem.actorCPT,1,nil,nil,nil))
-cduPreflightProc:addItem(kcSimpleProcedureItem:new("  IDENT page:"))
-cduPreflightProc:addItem(kcSimpleProcedureItem:new("    Verify Model"))
-cduPreflightProc:addItem(kcSimpleProcedureItem:new("    Verify ENG RATING"))
-cduPreflightProc:addItem(kcSimpleProcedureItem:new("    Verify navigation database ACTIVE date"))
-cduPreflightProc:addItem(kcSimpleProcedureItem:new("  POS INIT page:"))
-cduPreflightProc:addItem(kcSimpleProcedureItem:new("    Verify time"))
-cduPreflightProc:addItem(kcSimpleProcedureItem:new("    Set present position"))
-cduPreflightProc:addItem(kcProcedureItem:new("NAVIGATION DATA","SET",kcFlowItem.actorCPT,1,nil,nil,nil))
-cduPreflightProc:addItem(kcSimpleProcedureItem:new("  ROUTE page:"))
-cduPreflightProc:addItem(kcSimpleProcedureItem:new("    Enter ORIGIN, route, flight number, activate and execute"))
-cduPreflightProc:addItem(kcSimpleProcedureItem:new("  DEPARTURES page:"))
-cduPreflightProc:addItem(kcSimpleProcedureItem:new("    Select runway and departure routing"))
-cduPreflightProc:addItem(kcSimpleProcedureItem:new("    Execute"))
-cduPreflightProc:addItem(kcSimpleProcedureItem:new("  LEGS page:"))
-cduPreflightProc:addItem(kcSimpleProcedureItem:new("    Verify or enter correct RNP for departure"))
-cduPreflightProc:addItem(kcProcedureItem:new("PERFORMANCE DATA","SET",kcFlowItem.actorCPT,1,nil,nil,nil))
-cduPreflightProc:addItem(kcSimpleProcedureItem:new("  PERF INIT page:"))
-cduPreflightProc:addItem(kcSimpleProcedureItem:new("    Enter ZFW or let it be calculated"))
-cduPreflightProc:addItem(kcSimpleProcedureItem:new("    Verify fuel on CDU"))
-cduPreflightProc:addItem(kcSimpleProcedureItem:new("    Verify gross weight and cruise CG"))
-cduPreflightProc:addItem(kcSimpleProcedureItem:new("  Thrust mode display:"))
-cduPreflightProc:addItem(kcSimpleProcedureItem:new("    Verify that TO and dashes show"))
-cduPreflightProc:addItem(kcSimpleProcedureItem:new("  N1 LIMIT page:"))
-cduPreflightProc:addItem(kcSimpleProcedureItem:new("    Select assumed temp and/or fixed t/o rating"))
-cduPreflightProc:addItem(kcSimpleProcedureItem:new("    Select full or derated climb thrust"))
-cduPreflightProc:addItem(kcSimpleProcedureItem:new("  TAKEOFF REF page:"))
-cduPreflightProc:addItem(kcSimpleProcedureItem:new("    Enter CG"))
-cduPreflightProc:addItem(kcSimpleProcedureItem:new("    Verify trim value"))
-cduPreflightProc:addItem(kcSimpleProcedureItem:new("    Select or enter takeoff V speeds"))
-cduPreflightProc:addItem(kcProcedureItem:new("PREFLIGHT COMPLETE?","VERIFY",kcFlowItem.actorCPT,1,nil,nil,nil))
 
 -- ============ External Walkaround =============
 local exteriorInspectionProc = kcProcedure:new("EXTERIOR INSPECTION")
@@ -716,9 +746,9 @@ local coldAndDarkProc = kcProcedure:new("SET AIRCRAFT TO COLD & DARK")
 
 -- ============  =============
 -- add the checklists and procedures to the active sop
-activeSOP:addProcedure(electricalPowerUpProc)
-activeSOP:addProcedure(prelPreflightProc)
--- activeSOP:addProcedure(cduPreflightProc)
+-- activeSOP:addProcedure(electricalPowerUpProc)
+-- activeSOP:addProcedure(prelPreflightProc)
+activeSOP:addProcedure(cduPreflightProc)
 -- activeSOP:addProcedure(exteriorInspectionProc)
 activeSOP:addProcedure(preflightFOProc)
 activeSOP:addProcedure(preflightFO2Proc)

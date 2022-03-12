@@ -55,6 +55,10 @@ function kc_singleLetters(intext)
 	return outtext
 end
 
+function trim(s)
+  return (string.gsub(s, "^%s*(.-)%s*$", "%1"))
+end
+
 -- convert text into NATO alphabet words
 function kc_convertNato(intext)
 

@@ -44,22 +44,20 @@ kc_scrn_height = get("sim/graphics/view/window_height")
 
 -- ============ UIs ==========
 
-kc_sop_wnd = nil
-kc_flow_wnd = nil
 kc_ctrl_wnd = nil
-kc_pref_wnd = nil
 
 -- ===== Standard Operating Procedure window =====
+kc_sop_wnd = nil
+kc_show_sop_once = 0
+kc_hide_sop_once = 0
+
 function kc_init_sop_window(sop)
-	if kc_sop_wnd == 0 or kc_sop_wnd == nil then	
-		local height = sop:getWndHeight()
-		local width = sop:getWndWidth()
-		kc_sop_wnd = float_wnd_create(width, height, 1, true)
-		float_wnd_set_title(kc_sop_wnd, sop:getName())
-		float_wnd_set_position(kc_sop_wnd, sop:getWndXPos(), sop:getWndYPos())
-		float_wnd_set_imgui_builder(kc_sop_wnd, "kc_sop_builder")
-		float_wnd_set_onclose(kc_sop_wnd, "kc_close_sop_window")
-	end
+	local height = sop:getWndHeight()
+	local width = sop:getWndWidth()
+	kc_sop_wnd = float_wnd_create(width, height, 1, true)
+	float_wnd_set_title(kc_sop_wnd, sop:getName())
+	float_wnd_set_position(kc_sop_wnd, sop:getWndXPos(), sop:getWndYPos())
+	float_wnd_set_imgui_builder(kc_sop_wnd, "kc_sop_builder")
 end
 
 function kc_sop_builder(wnd)
@@ -75,21 +73,41 @@ function kc_sop_builder(wnd)
 	getActiveSOP():render()
 end
 
-function kc_close_sop_window()
-	kc_sop_wnd = nil
+function kc_hide_sop_wnd()
+	if kc_sop_wnd then 
+		float_wnd_destroy(kc_sop_wnd)
+	end
+end
+
+function kc_toggle_sop_window()
+	kc_show_sop = not kc_show_sop
+	if kc_show_sop then
+		if kc_show_sop_once == 0 then
+			kc_init_sop_window(getActiveSOP())
+			kc_show_sop_once = 1
+			kc_hide_sop_once = 0
+		end
+	else
+		if kc_hide_sop_once == 0 then
+			kc_hide_sop_wnd()
+			kc_show_sop_once = 0
+			kc_hide_sop_once = 1
+		end
+	end
 end
 
 -- ===== Flow Window =====
+kc_flow_wnd = nil
+kc_show_flow_once = 0
+kc_hide_flow_once = 0
+
 function kc_init_flow_window(flow)
-	if kc_flow_wnd == 0 or kc_flow_wnd == nil then	
-		local height = flow:getWndHeight()
-		local width = flow:getWndWidth()
-		kc_flow_wnd = float_wnd_create(width, height, 1, true)
-		float_wnd_set_title(kc_flow_wnd, flow:getName())
-		float_wnd_set_position(kc_flow_wnd, flow:getWndXPos(), flow:getWndYPos())
-		float_wnd_set_imgui_builder(kc_flow_wnd, "kc_flow_builder")
-		float_wnd_set_onclose(kc_flow_wnd, "kc_close_flow_window")
-	end
+	local height = flow:getWndHeight()
+	local width = flow:getWndWidth()
+	kc_flow_wnd = float_wnd_create(width, height, 1, true)
+	float_wnd_set_title(kc_flow_wnd, flow:getName())
+	float_wnd_set_position(kc_flow_wnd, flow:getWndXPos(), flow:getWndYPos())
+	float_wnd_set_imgui_builder(kc_flow_wnd, "kc_flow_builder")
 end
 
 -- resize the window when a new flow is shown
@@ -119,10 +137,28 @@ function kc_flow_builder()
 	getActiveSOP():getActiveFlow():render()
 end
 
-function kc_close_flow_window()
-	kc_flow_wnd = 0
+function kc_hide_flow_wnd()
+	if kc_flow_wnd then 
+		float_wnd_destroy(kc_flow_wnd)
+	end
 end
 
+function kc_toggle_flow_window()
+	kc_show_flow = not kc_show_flow
+	if kc_show_flow then
+		if kc_show_flow_once == 0 then
+			kc_init_flow_window(getActiveSOP():getActiveFlow())
+			kc_show_flow_once = 1
+			kc_hide_flow_once = 0
+		end
+	else
+		if kc_hide_flow_once == 0 then
+			kc_hide_flow_wnd()
+			kc_show_flow_once = 0
+			kc_hide_flow_once = 1
+		end
+	end
+end
 
 -- ===== Control bar to open windows (preliminary)
 kc_ctrl_wnd_state = 0
@@ -169,11 +205,7 @@ function kc_ctrl_builder()
 	end
     imgui.SameLine()
 	if imgui.Button("SOP", 35, 25) then
-		if kcLoadedSOP ~= nil then
-			if kc_sop_wnd == nil or kc_sop_wnd == 0 then
-				kc_wnd_sop_action = 1
-			end
-		end
+		kc_wnd_sop_action = 1
 	end
     imgui.SameLine()
 	if imgui.Button("PREV", 35, 25) then
@@ -195,19 +227,11 @@ function kc_ctrl_builder()
 	end
     imgui.SameLine()
 	if imgui.Button("FLOW", 35, 25) then
-		if kcLoadedSOP ~= nil then
-			if kc_flow_wnd == nil or kc_flow_wnd == 0 then
-				kc_wnd_flow_action = 1
-			end
-		end
+		kc_wnd_flow_action = 1
 	end
     imgui.SameLine()
 	if imgui.Button("PREF", 35, 25) then
-		if kcLoadedPrefs ~= nil then
-			if kc_pref_wnd == nil or kc_pref_wnd == 0 then
-				kc_wnd_pref_action = 1
-			end
-		end
+		kc_wnd_pref_action = 1
 	end
     imgui.SameLine()
 	if kc_ctrl_wnd_state == 1 then
@@ -228,38 +252,49 @@ end
 kc_init_ctrl_window()
 
 -- ===== Preferences window =====
+kc_show_pref_once = 0
+kc_hide_pref_once = 0
+kc_pref_wnd = nil
+
 function kc_init_pref_window(prefset)
-	if kc_pref_wnd == 0 or kc_pref_wnd == nil then	
-		local height = prefset:getWndHeight()
-		local width = prefset:getWndWidth()
-		kc_pref_wnd = float_wnd_create(width, height, 1, true)
-		float_wnd_set_title(kc_pref_wnd, prefset:getName())
-		float_wnd_set_position(kc_pref_wnd, prefset:getWndXPos(), prefset:getWndYPos())
-		-- debug option for background vars
-		if prefset:getName() == "BackgroundVars" then
-			float_wnd_set_imgui_builder(kc_pref_wnd, "kc_vars_builder")
-		else
-			float_wnd_set_imgui_builder(kc_pref_wnd, "kc_pref_builder")
-		end
-		float_wnd_set_onclose(kc_pref_wnd, "kc_close_pref_window")
-	end
+	local height = prefset:getWndHeight()
+	local width = prefset:getWndWidth()
+	kc_pref_wnd = float_wnd_create(width, height, 1, true)
+	float_wnd_set_title(kc_pref_wnd, prefset:getName())
+	float_wnd_set_position(kc_pref_wnd, prefset:getWndXPos(), prefset:getWndYPos())
+	-- debug option for background vars
+	float_wnd_set_imgui_builder(kc_pref_wnd, "kc_pref_builder")
+	-- float_wnd_set_onclose(kc_pref_wnd, "kc_close_pref_window")
 end
 
 function kc_pref_builder()
+				-- kc_resize_flow_window(getActiveSOP():getActiveFlow())
+
 	getActivePrefs():render()
 end
 
-function kc_vars_builder()
-	getBckVars():render()
+function kc_hide_pref_wnd()
+	if kc_pref_wnd then 
+		float_wnd_destroy(kc_pref_wnd)
+	end
 end
 
-function kc_close_pref_window()
-	kc_pref_wnd = nil
+function kc_toggle_pref_window()
+	kc_show_pref = not kc_show_pref
+	if kc_show_pref then
+		if kc_show_pref_once == 0 then
+			kc_init_pref_window(getActivePrefs())
+			kc_show_pref_once = 1
+			kc_hide_pref_once = 0
+		end
+	else
+		if kc_hide_pref_once == 0 then
+			kc_hide_pref_wnd()
+			kc_show_pref_once = 0
+			kc_hide_pref_once = 1
+		end
+	end
 end
-
-
--- kc_init_pref_window(getActivePrefs())
--- kc_init_pref_window(getBckVars())
 
 -- ===== Background  Window control - direct window commands do not work as expected =====
 kc_wnd_sop_action = 0
@@ -269,25 +304,15 @@ kc_wnd_pref_action = 0
 function bckWindowOpen()
 	if kc_wnd_sop_action == 1 then
 		kc_wnd_sop_action = 0
-		if kcLoadedSOP ~= nil then
-			kc_init_sop_window(getActiveSOP())
-		end
+		kc_toggle_sop_window()
 	end
 	if kc_wnd_flow_action == 1 then
-		if kcLoadedSOP ~= nil then
-			if kc_flow_wnd == nil or kc_flow_wnd == 0 then 
-				kc_init_flow_window(getActiveSOP():getActiveFlow())
-			else
-				kc_resize_flow_window(getActiveSOP():getActiveFlow())
-			end
-		end
 		kc_wnd_flow_action = 0
+		kc_toggle_flow_window()
 	end
 	if kc_wnd_pref_action == 1 then
 		kc_wnd_pref_action = 0
-		if kcLoadedPrefs ~= nil then
-			kc_init_pref_window(getActivePrefs())
-		end
+		kc_toggle_pref_window()
 	end
 end
 
