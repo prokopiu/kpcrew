@@ -105,7 +105,7 @@ function kc_init_flow_window(flow)
 	local height = flow:getWndHeight()
 	local width = flow:getWndWidth()
 	kc_flow_wnd = float_wnd_create(width, height, 1, true)
-	float_wnd_set_title(kc_flow_wnd, flow:getName())
+	float_wnd_set_title(kc_flow_wnd, "FLOW")
 	float_wnd_set_position(kc_flow_wnd, flow:getWndXPos(), flow:getWndYPos())
 	float_wnd_set_imgui_builder(kc_flow_wnd, "kc_flow_builder")
 end

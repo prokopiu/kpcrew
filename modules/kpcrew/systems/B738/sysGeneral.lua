@@ -146,6 +146,8 @@ sysGeneral.terrainInhibitCover 	= TwoStateToggleSwitch:new("","laminar/B738/togg
 -- Autobrake
 sysGeneral.autobreak = MultiStateCmdSwitch:new("","laminar/B738/autobrake/autobrake_pos",0,"laminar/B738/knob/autobrake_dn","laminar/B738/knob/autobrake_up")
 
+-- Lights Test
+sysGeneral.lightTest = TwoStateCmdSwitch:new("","laminar/B738/toggle_switch/bright_test",0,"laminar/B738/toggle_switch/bright_test_ip","laminar/B738/toggle_switch/bright_test_dn")
 
 ------------ Annunciators
 -- park brake
@@ -222,5 +224,11 @@ function ()
 		return 0
 	end
 end)
+
+sysGeneral.irs1Align = SimpleAnnunciator:new("","laminar/B738/annunciator/irs_align_left",0)
+sysGeneral.irs2Align = SimpleAnnunciator:new("","laminar/B738/annunciator/irs_align_right",0)
+sysGeneral.irs1OnDC = SimpleAnnunciator:new("","laminar/B738/annunciator/irs_on_dc_left",0)
+sysGeneral.irs2OnDC = SimpleAnnunciator:new("","laminar/B738/annunciator/irs_on_dc_right",0)
+
 
 return sysGeneral

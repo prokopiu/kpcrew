@@ -105,8 +105,8 @@ create_command("kp/xsp/systems/all_alt_std","ALTS STD/QNH toggle","sysGeneral.ba
 
 create_command("kp/xsp/systems/baro_mode_tgl","Baro inch/mb toggle","sysGeneral.baroModeGroup:actuate(modeToggle)","","")
 
-create_command("kp/xsp/systems/all_baro_down","All baro down","sysGeneral.baroGroup:actuate(Switch.decrease)","","")
-create_command("kp/xsp/systems/all_baro_up","All baro up","sysGeneral.baroGroup:actuate(Switch.increase)","","")
+create_command("kp/xsp/systems/all_baro_down","All baro down","sysGeneral.baroGroup:actuate(cmdDown)","","")
+create_command("kp/xsp/systems/all_baro_up","All baro up","sysGeneral.baroGroup:actuate(cmdUp)","","")
 
 ----------------- Flight Controls --------------------
 
@@ -154,30 +154,30 @@ create_command("kp/xsp/autopilot/lvlchg_tgl", "Toggle Level Change", "sysMCP.lvl
 create_command("kp/xsp/autopilot/vnav_tgl", "Toggle VNAV", "sysMCP.vnavSwitch:actuate(modeToggle)","","")
 create_command("kp/xsp/autopilot/lnav_tgl", "Toggle LNAV", "sysMCP.lnavSwitch:actuate(modeToggle)","","")
 
-create_command("kp/xsp/autopilot/crs1_dn", "CRS 1 decrease", "sysMCP.crs1Selector:actuate(Switch.decrease)","","")
-create_command("kp/xsp/autopilot/crs1_up", "CRS 1 increase", "sysMCP.crs1Selector:actuate(Switch.increase)","","")
-create_command("kp/xsp/autopilot/crs2_dn", "CRS 2 decrease", "sysMCP.crs2Selector:actuate(Switch.decrease)","","")
-create_command("kp/xsp/autopilot/crs2_up", "CRS 2 increase", "sysMCP.crs2Selector:actuate(Switch.increase)","","")
+create_command("kp/xsp/autopilot/crs1_dn", "CRS 1 decrease", "sysMCP.crs1Selector:actuate(cmdDown)","","")
+create_command("kp/xsp/autopilot/crs1_up", "CRS 1 increase", "sysMCP.crs1Selector:actuate(cmdUp)","","")
+create_command("kp/xsp/autopilot/crs2_dn", "CRS 2 decrease", "sysMCP.crs2Selector:actuate(cmdDown)","","")
+create_command("kp/xsp/autopilot/crs2_up", "CRS 2 increase", "sysMCP.crs2Selector:actuate(cmdUp)","","")
 
-create_command("kp/xsp/autopilot/spd_dn", "Speed decrease", "sysMCP.iasSelector:actuate(Switch.decrease)","","")
-create_command("kp/xsp/autopilot/spd_up", "Speed increase", "sysMCP.iasSelector:actuate(Switch.increase)","","")
+create_command("kp/xsp/autopilot/spd_dn", "Speed decrease", "sysMCP.iasSelector:actuate(cmdDown)","","")
+create_command("kp/xsp/autopilot/spd_up", "Speed increase", "sysMCP.iasSelector:actuate(cmdUp)","","")
 
-create_command("kp/xsp/autopilot/hdg_dn", "Heading decrease", "sysMCP.hdgSelector:actuate(Switch.decrease)","","")
-create_command("kp/xsp/autopilot/hdg_up", "Heading increase", "sysMCP.hdgSelector:actuate(Switch.increase)","","")
+create_command("kp/xsp/autopilot/hdg_dn", "Heading decrease", "sysMCP.hdgSelector:actuate(cmdDown)","","")
+create_command("kp/xsp/autopilot/hdg_up", "Heading increase", "sysMCP.hdgSelector:actuate(cmdUp)","","")
 
-create_command("kp/xsp/autopilot/alt_dn", "Altitude decrease", "sysMCP.altSelector:actuate(Switch.decrease)","","")
-create_command("kp/xsp/autopilot/alt_up", "Altitude increase", "sysMCP.altSelector:actuate(Switch.increase)","","")
+create_command("kp/xsp/autopilot/alt_dn", "Altitude decrease", "sysMCP.altSelector:actuate(cmdDown)","","")
+create_command("kp/xsp/autopilot/alt_up", "Altitude increase", "sysMCP.altSelector:actuate(cmdUp)","","")
 
-create_command("kp/xsp/autopilot/vsp_dn", "Vertical Speed decrease", "sysMCP.vspSelector:actuate(Switch.decrease)","","")
-create_command("kp/xsp/autopilot/vsp_up", "Vertical Speed increase", "sysMCP.vspSelector:actuate(Switch.increase)","","")
+create_command("kp/xsp/autopilot/vsp_dn", "Vertical Speed decrease", "sysMCP.vspSelector:actuate(cmdDown)","","")
+create_command("kp/xsp/autopilot/vsp_up", "Vertical Speed increase", "sysMCP.vspSelector:actuate(cmdUp)","","")
 
 -- --------------- EFIS all captain side
 
-create_command("kp/xsp/efis/map_zoom_dn", "EFIS Map Zoom In", "sysEFIS.mapZoomPilot:actuate(Switch.decrease)","","")
-create_command("kp/xsp/efis/map_zoom_up", "EFIS Map Zoom Out", "sysEFIS.mapZoomPilot:actuate(Switch.increase)","","")
+create_command("kp/xsp/efis/map_zoom_dn", "EFIS Map Zoom In", "sysEFIS.mapZoomPilot:actuate(cmdDown)","","")
+create_command("kp/xsp/efis/map_zoom_up", "EFIS Map Zoom Out", "sysEFIS.mapZoomPilot:actuate(cmdUp)","","")
 
-create_command("kp/xsp/efis/map_mode_dn", "EFIS Map Mode Left", "sysEFIS.mapModePilot:actuate(Switch.decrease)","","")
-create_command("kp/xsp/efis/map_mode_up", "EFIS Map Mode Right", "sysEFIS.mapModePilot:actuate(Switch.increase)","","")
+create_command("kp/xsp/efis/map_mode_dn", "EFIS Map Mode Left", "sysEFIS.mapModePilot:actuate(cmdDown)","","")
+create_command("kp/xsp/efis/map_mode_up", "EFIS Map Mode Right", "sysEFIS.mapModePilot:actuate(cmdUp)","","")
 
 -- CTR Boeing
 create_command("kp/xsp/efis/ctr_toggle", "EFIS CTR Toggle", "sysEFIS.ctrPilot:actuate(modeToggle)","","")
@@ -203,20 +203,20 @@ create_command("kp/xsp/efis/fpv_toggle", "EFIS FPV Toggle", "sysEFIS.fpvPilot:ac
 create_command("kp/xsp/efis/mtr_toggle", "EFIS FPV Toggle", "sysEFIS.mtrsPilot:actuate(modeToggle)","","")
 
 -- MINS type Boeing RADIO/BARO
-create_command("kp/xsp/efis/mins_type_dn", "EFIS Mins Type Knob Left", "sysEFIS.minsTypePilot:actuate(Switch.decrease)","","")
-create_command("kp/xsp/efis/mins_type_up", "EFIS Mins Type Knob Right", "sysEFIS.minsTypePilot:actuate(Switch.increase)","","")
+create_command("kp/xsp/efis/mins_type_dn", "EFIS Mins Type Knob Left", "sysEFIS.minsTypePilot:actuate(cmdDown)","","")
+create_command("kp/xsp/efis/mins_type_up", "EFIS Mins Type Knob Right", "sysEFIS.minsTypePilot:actuate(cmdUp)","","")
 -- MINS RESET/ON OFF Boeing
 create_command("kp/xsp/efis/mins_toggle", "EFIS Minimums Reset", "sysEFIS.minsResetPilot:actuate(modeToggle)","","")
 -- MINS SET or DH/DA
-create_command("kp/xsp/efis/mins_dn", "EFIS Minimums Down", "sysEFIS.minsPilot:actuate(Switch.decrease)","","")
-create_command("kp/xsp/efis/mins_up", "EFIS Minimums Up", "sysEFIS.minsPilot:actuate(Switch.increase)","","")
+create_command("kp/xsp/efis/mins_dn", "EFIS Minimums Down", "sysEFIS.minsPilot:actuate(cmdDown)","","")
+create_command("kp/xsp/efis/mins_up", "EFIS Minimums Up", "sysEFIS.minsPilot:actuate(cmdUp)","","")
 
 -- VOR/ADF 1
-create_command("kp/xsp/efis/voradf_1_dn", "EFIS VORADF1 Down/Left", "sysEFIS.voradf1Pilot:actuate(Switch.decrease)","","")
-create_command("kp/xsp/efis/voradf_1_up", "EFIS VORADF1 Up/Right", "sysEFIS.voradf1Pilot:actuate(Switch.increase)","","")
+create_command("kp/xsp/efis/voradf_1_dn", "EFIS VORADF1 Down/Left", "sysEFIS.voradf1Pilot:actuate(cmdDown)","","")
+create_command("kp/xsp/efis/voradf_1_up", "EFIS VORADF1 Up/Right", "sysEFIS.voradf1Pilot:actuate(cmdUp)","","")
 -- VOR/ADF 2
-create_command("kp/xsp/efis/voradf_2_dn", "EFIS VORADF2 Down/Left", "sysEFIS.voradf2Pilot:actuate(Switch.decrease)","","")
-create_command("kp/xsp/efis/voradf_2_up", "EFIS VORADF2 Up/Right", "sysEFIS.voradf2Pilot:actuate(Switch.increase)","","")
+create_command("kp/xsp/efis/voradf_2_dn", "EFIS VORADF2 Down/Left", "sysEFIS.voradf2Pilot:actuate(cmdDown)","","")
+create_command("kp/xsp/efis/voradf_2_up", "EFIS VORADF2 Up/Right", "sysEFIS.voradf2Pilot:actuate(cmdUp)","","")
 
 -- comment out if you do not need this
 require("kpcrew.hardware.honeycombBravo")

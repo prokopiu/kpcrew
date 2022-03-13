@@ -183,6 +183,7 @@ function kcFlow:render()
 			imgui.SetCursorPosY(imgui.GetCursorPosY() + 5)
 			imgui.PushStyleColor(imgui.constant.Col.Text,item:getColor()) 
 				imgui.TextUnformatted(item:getLine(self:getLineLength()))
+				-- logMsg(item:getLine(self:getLineLength()))
 			imgui.PopStyleColor()
 		end
 	end
