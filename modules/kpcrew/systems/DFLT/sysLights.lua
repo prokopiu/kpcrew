@@ -34,14 +34,10 @@ sysLights.strobesSwitch = TwoStateCmdSwitch:new("strobes","sim/cockpit2/switches
 sysLights.taxiSwitch = TwoStateCmdSwitch:new("taxi","sim/cockpit2/switches/taxi_light_on",0,"sim/lights/taxi_lights_on","sim/lights/taxi_lights_off","sim/lights/taxi_lights_toggle")
 
 -- Landing Lights, single onoff command driven
-sysLights.llRetLeftSwitch = TwoStateDrefSwitch:new("llretleft",drefLandingLights,0)
-sysLights.llRetRightSwitch = TwoStateDrefSwitch:new("llretright",drefLandingLights,1)
-sysLights.llLeftSwitch = TwoStateDrefSwitch:new("llleft",drefLandingLights,2)
-sysLights.llRightSwitch = TwoStateDrefSwitch:new("llright",drefLandingLights,3)
+sysLights.llLeftSwitch = TwoStateDrefSwitch:new("llleft",drefLandingLights,1)
+sysLights.llRightSwitch = TwoStateDrefSwitch:new("llright",drefLandingLights,2)
 
 sysLights.landLightGroup = SwitchGroup:new("landinglights")
-sysLights.landLightGroup:addSwitch(sysLights.llRetLeftSwitch)
-sysLights.landLightGroup:addSwitch(sysLights.llRetRightSwitch)
 sysLights.landLightGroup:addSwitch(sysLights.llLeftSwitch)
 sysLights.landLightGroup:addSwitch(sysLights.llRightSwitch)
 

@@ -12,9 +12,6 @@ logMsg ( "FWL: ** Starting KPHARDWARE version " .. KPH_VERSION .." **" )
 
 -- ====== Global variables =======
 kh_acf_icao = "DFLT" -- active addon aircraft ICAO code (DFLT when nothing found)
-kh_mcp_wnd = nil
-kh_light_wnd = nil
-kh_radio_wnd = nil
 
 -- Laminar MD82 -> MD82
 -- Laminar 747 -> B744, check Sparky 744
@@ -310,11 +307,11 @@ function xsp_set_light_drefs()
 
 end
 
--- MCP UI
 kh_scrn_width = get("sim/graphics/view/window_width")
 kh_scrn_height = get("sim/graphics/view/window_height")
 
 -- ===== Aircraft specific MCP Window
+kh_mcp_wnd = nil
 function kh_init_mcp_window()
 	if kh_mcp_wnd == 0 or kh_mcp_wnd == nil then	
 		kh_mcp_wnd = float_wnd_create(25, 46, 2, true)
@@ -329,9 +326,10 @@ kh_mcp_wnd_state = 0
 
 function kh_mcp_builder()
 	if get("sim/graphics/view/window_width") ~= kh_scrn_width or get("sim/graphics/view/window_height") ~= kh_scrn_height then
-		kh_light_wnd_state = -1
 		kh_mcp_wnd_state = -1
+		kh_light_wnd_state = -1
 		kh_radio_wnd_state = -1
+		kh_efis_wnd_state = -1
 		kh_scrn_width = get("sim/graphics/view/window_width")
 		kh_scrn_height = get("sim/graphics/view/window_height")
 	end
@@ -344,7 +342,8 @@ end
 
 kh_init_mcp_window() -- always show this window
 
--- ===== Aircraft specific MCP Window
+-- ===== Aircraft specific Light Window
+kh_light_wnd = nil
 function kh_init_light_window()
 	if kh_light_wnd == 0 or kh_light_wnd == nil then	
 		kh_light_wnd = float_wnd_create(25, 46, 2, true)
@@ -359,9 +358,10 @@ kh_light_wnd_state = 0
 
 function kh_light_builder()
 	if get("sim/graphics/view/window_width") ~= kh_scrn_width or get("sim/graphics/view/window_height") ~= kh_scrn_height then
-		kh_light_wnd_state = -1
 		kh_mcp_wnd_state = -1
+		kh_light_wnd_state = -1
 		kh_radio_wnd_state = -1
+		kh_efis_wnd_state = -1
 		kh_scrn_width = get("sim/graphics/view/window_width")
 		kh_scrn_height = get("sim/graphics/view/window_height")
 	end
@@ -375,6 +375,7 @@ end
 kh_init_light_window() -- always show this window
 
 -- ===== Aircraft specific Radio Window
+kh_radio_wnd = nil
 function kh_init_radio_window()
 	if kh_radio_wnd == 0 or kh_radio_wnd == nil then	
 		kh_radio_wnd = float_wnd_create(25, 80, 2, true)
@@ -389,9 +390,10 @@ kh_radio_wnd_state = 0
 
 function kh_radio_builder()
 	if get("sim/graphics/view/window_width") ~= kh_scrn_width or get("sim/graphics/view/window_height") ~= kh_scrn_height then
-		kh_light_wnd_state = -1
 		kh_mcp_wnd_state = -1
+		kh_light_wnd_state = -1
 		kh_radio_wnd_state = -1
+		kh_efis_wnd_state = -1
 		kh_scrn_width = get("sim/graphics/view/window_width")
 		kh_scrn_height = get("sim/graphics/view/window_height")
 	end
@@ -399,10 +401,42 @@ function kh_radio_builder()
 end
 
 function kh_close_radio_window()
-	kh_light_wnd = nil
+	kh_radio_wnd = nil
 end
 
 kh_init_radio_window() -- always show this window
+
+-- ===== Aircraft specific EFIS Window
+kh_efis_wnd = nil
+function kh_init_efis_window()
+	if kh_efis_wnd == 0 or kh_efis_wnd == nil then	
+		kh_efis_wnd = float_wnd_create(25, 46, 2, true)
+		float_wnd_set_title(kh_efis_wnd, "")
+		float_wnd_set_position(kh_efis_wnd, 0, kh_scrn_height - 212)
+		float_wnd_set_imgui_builder(kh_efis_wnd, "kh_efis_builder")
+		float_wnd_set_onclose(kh_efis_wnd, "kh_close_efis_window")
+	end
+end
+
+kh_efis_wnd_state = 0
+
+function kh_efis_builder()
+	if get("sim/graphics/view/window_width") ~= kh_scrn_width or get("sim/graphics/view/window_height") ~= kh_scrn_height then
+		kh_mcp_wnd_state = -1
+		kh_light_wnd_state = -1
+		kh_radio_wnd_state = -1
+		kh_efis_wnd_state = -1
+		kh_scrn_width = get("sim/graphics/view/window_width")
+		kh_scrn_height = get("sim/graphics/view/window_height")
+	end
+	sysEFIS:render(212,46)
+end
+
+function kh_close_efis_window()
+	kh_efis_wnd = nil
+end
+
+kh_init_efis_window() -- always show this window
 
 -- regularly update the drefs for annunciators and lights 
 do_often("xsp_set_light_drefs()")

@@ -97,8 +97,8 @@ sysEFIS.minsResetPilot = TwoStateToggleSwitch:new("minsresetpilot","laminar/B738
 sysEFIS.minsResetCopilot = TwoStateToggleSwitch:new("minsresetcopilot","laminar/B738/EFIS_control/fo/minimums_show",0,"laminar/B738/EFIS_control/fo/push_button/rst_press")
 
 -- MINS SET
-sysEFIS.minsPilot = MultiStateCmdSwitch:new("minspilot","laminar/B738/EFIS_control/pfd/baro_min_cpt",0,"laminar/B738/pfd/dh_pilot_dn","laminar/B738/pfd/dh_pilot_up")
-sysEFIS.minsCopilot = MultiStateCmdSwitch:new("minscopilot","laminar/B738/EFIS_control/pfd/baro_min_fo",0,"laminar/B738/pfd/dh_copilot_dn","laminar/B738/pfd/dh_copilot_up")
+sysEFIS.minsPilot = MultiStateCmdSwitch:new("minspilot","laminar/B738/pfd/dh_pilot",0,"laminar/B738/pfd/dh_pilot_dn","laminar/B738/pfd/dh_pilot_up")
+sysEFIS.minsCopilot = MultiStateCmdSwitch:new("minscopilot","laminar/B738/pfd/dh_copilot",0,"laminar/B738/pfd/dh_copilot_dn","laminar/B738/pfd/dh_copilot_up")
 
 -- VOR/ADF 1
 sysEFIS.voradf1Pilot = MultiStateCmdSwitch:new("voradf1pilot","laminar/B738/EFIS_control/capt/vor1_off_pfd",0,"laminar/B738/EFIS_control/capt/vor1_off_dn","laminar/B738/EFIS_control/capt/vor1_off_up")
@@ -110,5 +110,61 @@ sysEFIS.voradf2Copilot = MultiStateCmdSwitch:new("vorad2copilot","laminar/B738/E
 
 
 ------------- Annunciators
+
+sysEFIS.baroStandby = SimpleAnnunciator:new("","laminar/B738/knobs/standby_alt_baro",0)
+
+-- UI
+function sysEFIS:render(ypos,height)
+
+	-- reposition when screen size changes
+	if kh_efis_wnd_state < 0 then
+		float_wnd_set_position(kh_efis_wnd, 0, kh_scrn_height - ypos)
+		float_wnd_set_geometry(kh_efis_wnd, 0, ypos, 25, ypos-height)
+		kh_efis_wnd_state = 0
+	end
+	
+	imgui.SetCursorPosY(10)
+	imgui.SetCursorPosX(2)
+	
+	if kh_efis_wnd_state == 1 then
+		imgui.Button("<", 17, 25)
+		if imgui.IsItemActive() then 
+			kh_efis_wnd_state = 0
+			float_wnd_set_geometry(kh_efis_wnd, 0, ypos, 25, ypos-height)
+		end
+	end
+
+	if kh_efis_wnd_state == 0 then
+		imgui.Button("E", 17, 25)
+		if imgui.IsItemActive() then 
+			kh_efis_wnd_state = 1
+			float_wnd_set_geometry(kh_efis_wnd, 0, ypos, 1000, ypos-height)
+		end
+	end
+
+	kc_imgui_label_mcp("ND:",10)
+	kc_imgui_simple_actuator("MODE <",sysEFIS.mapModePilot,cmdDown,10,47,25)
+	kc_imgui_simple_actuator("MODE >",sysEFIS.mapModePilot,cmdUp,10,47,25)
+	kc_imgui_simple_actuator("ZOOM <",sysEFIS.mapZoomPilot,cmdDown,10,47,25)
+	kc_imgui_simple_actuator("ZOOM >",sysEFIS.mapZoomPilot,cmdUp,10,47,25)
+	kc_imgui_label_mcp("|",10)
+	kc_imgui_toggle_button_mcp("WXR",sysEFIS.wxrPilot,10,30,25)
+	kc_imgui_toggle_button_mcp("STA",sysEFIS.staPilot,10,30,25)
+	kc_imgui_toggle_button_mcp("WPT",sysEFIS.wptPilot,10,30,25)
+	kc_imgui_toggle_button_mcp("APT",sysEFIS.arptPilot,10,30,25)
+	kc_imgui_toggle_button_mcp("DAT",sysEFIS.dataPilot,10,30,25)
+	kc_imgui_toggle_button_mcp("POS",sysEFIS.posPilot,10,30,25)
+	kc_imgui_toggle_button_mcp("TERR",sysEFIS.terrPilot,10,35,25)
+	kc_imgui_label_mcp("| MINS",10)
+	kc_imgui_simple_actuator("RADIO",sysEFIS.minsTypePilot,cmdUp,10,40,25)
+	kc_imgui_simple_actuator("BARO",sysEFIS.minsTypePilot,cmdDown,10,40,25)
+	kc_imgui_rotary_mcp("%04d",sysEFIS.minsPilot,10,31)
+	kc_imgui_label_mcp("| BARO",10)
+	kc_imgui_simple_actuator("DN",sysGeneral.baroGroup,cmdDown,10,23,25)
+	kc_imgui_value((sysGeneral.baroModePilot:getStatus() == 0) and "%5.2f" or "%04d ",sysGeneral.baroStandby,10)
+	kc_imgui_simple_actuator("UP",sysGeneral.baroGroup,cmdUp,10,23,25)
+	kc_imgui_toggle_button_mcp("STD",sysGeneral.barostdGroup,10,35,25)
+
+end
 
 return sysEFIS

@@ -275,6 +275,19 @@ function kc_imgui_rotary_mcp(label,system,ypos,id)
 	imgui.PopStyleColor()
 end
 
+function kc_imgui_value(label,system,ypos)
+    imgui.SameLine()
+	imgui.SetCursorPosY(ypos)
+	imgui.PushStyleColor(imgui.constant.Col.Text,color_mcp_text)
+
+	imgui.SetCursorPosY(ypos + 2)
+	imgui.TextUnformatted(string.format(label,system:getStatus()))
+
+	imgui.SetCursorPosY(ypos)
+	
+	imgui.PopStyleColor()
+end
+
 -- render a label /also used as separator stroke)
 function kc_imgui_label_mcp(label,ypos)
     imgui.SameLine()
@@ -295,6 +308,22 @@ function kc_imgui_simple_button_mcp(label,system,ypos,width,height)
 	imgui.PushStyleColor(imgui.constant.Col.Text,color_mcp_text)
 	if imgui.Button(label, width, height) then
 		system:actuate(modeToggle)
+	end
+	imgui.PopStyleColor()
+	imgui.PopStyleColor()
+	imgui.PopStyleColor()
+	imgui.PopStyleColor()
+end
+
+function kc_imgui_simple_actuator(label,system,action,ypos,width,height)
+    imgui.SameLine()
+	imgui.SetCursorPosY(ypos)
+	imgui.PushStyleColor(imgui.constant.Col.Button, color_mcp_button)
+	imgui.PushStyleColor(imgui.constant.Col.ButtonActive, color_mcp_active)
+	imgui.PushStyleColor(imgui.constant.Col.ButtonHovered, color_mcp_hover)
+	imgui.PushStyleColor(imgui.constant.Col.Text,color_mcp_text)
+	if imgui.Button(label, width, height) then
+		system:actuate(action)
 	end
 	imgui.PopStyleColor()
 	imgui.PopStyleColor()
