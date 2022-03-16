@@ -60,5 +60,6 @@ sysControls.spoilerACover = TwoStateToggleSwitch:new("","laminar/B738/switches/s
 sysControls.spoilerBCover = TwoStateToggleSwitch:new("","laminar/B738/switches/spoiler_B_cover_pos",0,"laminar/B738/toggle_switch/spoiler_B_cover")
 
 --------- Annunciators
+sysControls.spoilerLever = SimpleAnnunciator:new("","laminar/B738/flt_ctrls/speedbrake_lever",0)
 
 return sysControls

@@ -199,12 +199,12 @@ sysMCP.bcAnc = InopSwitch:new("bc")
 -- ===== UI related functions =====
 
 -- render the MCP part
-function sysMCP:render(ypos,height)
+function sysMCP:render(ypos, height)
 
 	-- reposition when screen size changes
 	if kh_mcp_wnd_state < 0 then
 		float_wnd_set_position(kh_mcp_wnd, 0, kh_scrn_height - ypos)
-		float_wnd_set_geometry(kh_mcp_wnd, 0, ypos, 25, ypos-height)
+		float_wnd_set_geometry(kh_mcp_wnd, 0, ypos, 25, ypos - height)
 		kh_mcp_wnd_state = 0
 	end
 	
@@ -215,7 +215,7 @@ function sysMCP:render(ypos,height)
 		imgui.Button("<", 17, 25)
 		if imgui.IsItemActive() then 
 			kh_mcp_wnd_state = 0
-			float_wnd_set_geometry(kh_mcp_wnd, 0, ypos, 25, ypos-height)
+			float_wnd_set_geometry(kh_mcp_wnd, 0, ypos, 25, ypos - height)
 		end
 	end
 
@@ -223,7 +223,7 @@ function sysMCP:render(ypos,height)
 		imgui.Button("M", 17, 25)
 		if imgui.IsItemActive() then 
 			kh_mcp_wnd_state = 1
-			float_wnd_set_geometry(kh_mcp_wnd, 0, ypos, 1000, ypos-height)
+			float_wnd_set_geometry(kh_mcp_wnd, 0, ypos, 1000, ypos - height)
 		end
 	end
 

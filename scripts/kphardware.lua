@@ -1,20 +1,23 @@
 --[[
 	*** KPHARDWARE
-	Kosta Prokopiu, January 2022
+	Kosta Prokopiu, March 2022
 --]]
 
 require "kpcrew.genutils"
 require "kpcrew.systems.activities"
 
-local KPH_VERSION = "2.3"
+local KPH_VERSION = "2.3-alpha1"
 
-logMsg ( "FWL: ** Starting KPHARDWARE version " .. KPH_VERSION .." **" )
+-- disable windows by changing from true to false
+local show_mcp_panel = true
+local show_light_panel = true
+local show_radio_panel = true
+local show_efis_panel = true
+
+logMsg ("FWL: ** Starting KPHARDWARE version " .. KPH_VERSION .." **")
 
 -- ====== Global variables =======
 kh_acf_icao = "DFLT" -- active addon aircraft ICAO code (DFLT when nothing found)
-
--- Laminar MD82 -> MD82
--- Laminar 747 -> B744, check Sparky 744
 
 -- Load plane specific module from Modules folder
 
@@ -26,6 +29,8 @@ if PLANE_ICAO == "B738" then
 		kh_acf_icao = "B738" -- Zibo Mod
 	end
 end
+
+-- load aircraft specific systems
 
 sysLights = require("kpcrew.systems." .. kh_acf_icao .. ".sysLights")
 sysGeneral = require("kpcrew.systems." .. kh_acf_icao .. ".sysGeneral")	
@@ -39,7 +44,6 @@ sysAice = require("kpcrew.systems." .. kh_acf_icao .. ".sysAice")
 sysMCP = require("kpcrew.systems." .. kh_acf_icao .. ".sysMCP")	
 sysEFIS = require("kpcrew.systems." .. kh_acf_icao .. ".sysEFIS")	
 sysRadios = require("kpcrew.systems." .. kh_acf_icao .. ".sysRadios")	
-
 
 -- ============ aircraft generic joystick/key commands
 
@@ -170,40 +174,54 @@ create_command("kp/xsp/autopilot/vsp_up", "Vertical Speed increase", "sysMCP.vsp
 
 -- --------------- EFIS all captain side
 
+-- MAP zoom
 create_command("kp/xsp/efis/map_zoom_dn", "EFIS Map Zoom In", "sysEFIS.mapZoomPilot:actuate(cmdDown)","","")
 create_command("kp/xsp/efis/map_zoom_up", "EFIS Map Zoom Out", "sysEFIS.mapZoomPilot:actuate(cmdUp)","","")
 
+-- MAP mode
 create_command("kp/xsp/efis/map_mode_dn", "EFIS Map Mode Left", "sysEFIS.mapModePilot:actuate(cmdDown)","","")
 create_command("kp/xsp/efis/map_mode_up", "EFIS Map Mode Right", "sysEFIS.mapModePilot:actuate(cmdUp)","","")
 
 -- CTR Boeing
 create_command("kp/xsp/efis/ctr_toggle", "EFIS CTR Toggle", "sysEFIS.ctrPilot:actuate(modeToggle)","","")
 
+-- TFC Traffic 
 create_command("kp/xsp/efis/tfc_toggle", "EFIS TFC Toggle", "sysEFIS.tfcPilot:actuate(modeToggle)","","")
 
+-- WXR Weather
 create_command("kp/xsp/efis/wxr_toggle", "EFIS Weather Toggle", "sysEFIS.wxrPilot:actuate(modeToggle)","","")
+
 -- STA Boeing / VOR DFLT
 create_command("kp/xsp/efis/sta_toggle", "EFIS STA Toggle", "sysEFIS.staPilot:actuate(modeToggle)","","")
+
 -- WPT / FIX
 create_command("kp/xsp/efis/wpt_toggle", "EFIS WPT Toggle", "sysEFIS.wptPilot:actuate(modeToggle)","","")
 
+-- APT
 create_command("kp/xsp/efis/apt_toggle", "EFIS Airport Toggle", "sysEFIS.arptPilot:actuate(modeToggle)","","")
+
 -- DATA Boeing
 create_command("kp/xsp/efis/dat_toggle", "EFIS DATA Toggle", "sysEFIS.dataPilot:actuate(modeToggle)","","")
+
 -- POS Boeing / NAV DFLT
 create_command("kp/xsp/efis/pos_toggle", "EFIS POS Toggle", "sysEFIS.posPilot:actuate(modeToggle)","","")
 
+-- Terrain
 create_command("kp/xsp/efis/ter_toggle", "EFIS Terrain Toggle", "sysEFIS.terrPilot:actuate(modeToggle)","","")
+
 -- FPV Boeing
 create_command("kp/xsp/efis/fpv_toggle", "EFIS FPV Toggle", "sysEFIS.fpvPilot:actuate(modeToggle)","","")
+
 -- MTRS Boeing
 create_command("kp/xsp/efis/mtr_toggle", "EFIS FPV Toggle", "sysEFIS.mtrsPilot:actuate(modeToggle)","","")
 
 -- MINS type Boeing RADIO/BARO
 create_command("kp/xsp/efis/mins_type_dn", "EFIS Mins Type Knob Left", "sysEFIS.minsTypePilot:actuate(cmdDown)","","")
 create_command("kp/xsp/efis/mins_type_up", "EFIS Mins Type Knob Right", "sysEFIS.minsTypePilot:actuate(cmdUp)","","")
+
 -- MINS RESET/ON OFF Boeing
 create_command("kp/xsp/efis/mins_toggle", "EFIS Minimums Reset", "sysEFIS.minsResetPilot:actuate(modeToggle)","","")
+
 -- MINS SET or DH/DA
 create_command("kp/xsp/efis/mins_dn", "EFIS Minimums Down", "sysEFIS.minsPilot:actuate(cmdDown)","","")
 create_command("kp/xsp/efis/mins_up", "EFIS Minimums Up", "sysEFIS.minsPilot:actuate(cmdUp)","","")
@@ -211,6 +229,7 @@ create_command("kp/xsp/efis/mins_up", "EFIS Minimums Up", "sysEFIS.minsPilot:act
 -- VOR/ADF 1
 create_command("kp/xsp/efis/voradf_1_dn", "EFIS VORADF1 Down/Left", "sysEFIS.voradf1Pilot:actuate(cmdDown)","","")
 create_command("kp/xsp/efis/voradf_1_up", "EFIS VORADF1 Up/Right", "sysEFIS.voradf1Pilot:actuate(cmdUp)","","")
+
 -- VOR/ADF 2
 create_command("kp/xsp/efis/voradf_2_dn", "EFIS VORADF2 Down/Left", "sysEFIS.voradf2Pilot:actuate(cmdDown)","","")
 create_command("kp/xsp/efis/voradf_2_up", "EFIS VORADF2 Up/Right", "sysEFIS.voradf2Pilot:actuate(cmdUp)","","")
@@ -307,16 +326,27 @@ function xsp_set_light_drefs()
 
 end
 
+-- ===== UIs =====
+
 kh_scrn_width = get("sim/graphics/view/window_width")
 kh_scrn_height = get("sim/graphics/view/window_height")
 
+local start_y_pos = 0
+
 -- ===== Aircraft specific MCP Window
+
 kh_mcp_wnd = nil
+kh_mcp_start_pos = 0
+local mcp_window_height = 46 
+local mcp_window_width = 25
+
 function kh_init_mcp_window()
 	if kh_mcp_wnd == 0 or kh_mcp_wnd == nil then	
-		kh_mcp_wnd = float_wnd_create(25, 46, 2, true)
+		start_y_pos = start_y_pos + mcp_window_height
+		kh_mcp_start_pos = start_y_pos
+		kh_mcp_wnd = float_wnd_create(mcp_window_width, mcp_window_height, 2, true)
 		float_wnd_set_title(kh_mcp_wnd, "")
-		float_wnd_set_position(kh_mcp_wnd, 0, kh_scrn_height - 46)
+		float_wnd_set_position(kh_mcp_wnd, 0, kh_scrn_height - start_y_pos)
 		float_wnd_set_imgui_builder(kh_mcp_wnd, "kh_mcp_builder")
 		float_wnd_set_onclose(kh_mcp_wnd, "kh_close_mcp_window")
 	end
@@ -333,22 +363,31 @@ function kh_mcp_builder()
 		kh_scrn_width = get("sim/graphics/view/window_width")
 		kh_scrn_height = get("sim/graphics/view/window_height")
 	end
-	sysMCP:render(46,46)
+	sysMCP:render(kh_mcp_start_pos,mcp_window_height)
 end
 
 function kh_close_mcp_window()
 	kh_mcp_wnd = nil
 end
 
-kh_init_mcp_window() -- always show this window
+if show_mcp_panel then 
+	kh_init_mcp_window() 
+end
 
 -- ===== Aircraft specific Light Window
+
 kh_light_wnd = nil
+kh_light_start_pos = 0
+local light_window_height = 46 
+local light_window_width = 25
+
 function kh_init_light_window()
 	if kh_light_wnd == 0 or kh_light_wnd == nil then	
-		kh_light_wnd = float_wnd_create(25, 46, 2, true)
+		start_y_pos = start_y_pos + light_window_height
+		kh_light_start_pos = start_y_pos
+		kh_light_wnd = float_wnd_create(light_window_width, light_window_height, 2, true)
 		float_wnd_set_title(kh_light_wnd, "")
-		float_wnd_set_position(kh_light_wnd, 0, kh_scrn_height - 92)
+		float_wnd_set_position(kh_light_wnd, 0, kh_scrn_height - start_y_pos)
 		float_wnd_set_imgui_builder(kh_light_wnd, "kh_light_builder")
 		float_wnd_set_onclose(kh_light_wnd, "kh_close_light_window")
 	end
@@ -365,22 +404,31 @@ function kh_light_builder()
 		kh_scrn_width = get("sim/graphics/view/window_width")
 		kh_scrn_height = get("sim/graphics/view/window_height")
 	end
-	sysLights:render(92,46)
+	sysLights:render(kh_light_start_pos,light_window_height)
 end
 
 function kh_close_light_window()
 	kh_light_wnd = nil
 end
 
-kh_init_light_window() -- always show this window
+if show_light_panel then
+	kh_init_light_window() 
+end	
 
 -- ===== Aircraft specific Radio Window
+
 kh_radio_wnd = nil
+kh_radio_start_pos = 0
+local radio_window_height = 80 
+local radio_window_width = 25
+
 function kh_init_radio_window()
 	if kh_radio_wnd == 0 or kh_radio_wnd == nil then	
-		kh_radio_wnd = float_wnd_create(25, 80, 2, true)
+		start_y_pos = start_y_pos + radio_window_height
+		kh_radio_start_pos = start_y_pos
+		kh_radio_wnd = float_wnd_create(radio_window_width, radio_window_height, 2, true)
 		float_wnd_set_title(kh_radio_wnd, "")
-		float_wnd_set_position(kh_radio_wnd, 0, kh_scrn_height - 170)
+		float_wnd_set_position(kh_radio_wnd, 0, kh_scrn_height - start_y_pos)
 		float_wnd_set_imgui_builder(kh_radio_wnd, "kh_radio_builder")
 		float_wnd_set_onclose(kh_radio_wnd, "kh_close_radio_window")
 	end
@@ -397,22 +445,31 @@ function kh_radio_builder()
 		kh_scrn_width = get("sim/graphics/view/window_width")
 		kh_scrn_height = get("sim/graphics/view/window_height")
 	end
-	sysRadios:render(170,80)
+	sysRadios:render(kh_radio_start_pos,radio_window_height)
 end
 
 function kh_close_radio_window()
 	kh_radio_wnd = nil
 end
 
-kh_init_radio_window() -- always show this window
+if show_radio_panel then
+	kh_init_radio_window() 
+end
 
 -- ===== Aircraft specific EFIS Window
+
 kh_efis_wnd = nil
+kh_efis_start_pos = 0
+local efis_window_height = 46 
+local efis_window_width = 25
+
 function kh_init_efis_window()
 	if kh_efis_wnd == 0 or kh_efis_wnd == nil then	
-		kh_efis_wnd = float_wnd_create(25, 46, 2, true)
+		start_y_pos = start_y_pos + efis_window_height
+		kh_efis_start_pos = start_y_pos
+		kh_efis_wnd = float_wnd_create(efis_window_width, efis_window_height, 2, true)
 		float_wnd_set_title(kh_efis_wnd, "")
-		float_wnd_set_position(kh_efis_wnd, 0, kh_scrn_height - 212)
+		float_wnd_set_position(kh_efis_wnd, 0, kh_scrn_height - start_y_pos)
 		float_wnd_set_imgui_builder(kh_efis_wnd, "kh_efis_builder")
 		float_wnd_set_onclose(kh_efis_wnd, "kh_close_efis_window")
 	end
@@ -429,14 +486,16 @@ function kh_efis_builder()
 		kh_scrn_width = get("sim/graphics/view/window_width")
 		kh_scrn_height = get("sim/graphics/view/window_height")
 	end
-	sysEFIS:render(212,46)
+	sysEFIS:render(kh_efis_start_pos,efis_window_height)
 end
 
 function kh_close_efis_window()
 	kh_efis_wnd = nil
 end
 
-kh_init_efis_window() -- always show this window
+if show_efis_panel then 
+	kh_init_efis_window() 
+end
 
--- regularly update the drefs for annunciators and lights 
+-- regularly update the drefs for annunciators and lights (every 1 second)
 do_often("xsp_set_light_drefs()")

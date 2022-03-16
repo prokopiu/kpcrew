@@ -167,12 +167,12 @@ end)
 -- ===== UI related functions =====
 
 -- render the MCP part
-function sysLights:render(ypos,height)
+function sysLights:render(ypos, height)
 
 	-- reposition when screen size changes
 	if kh_light_wnd_state < 0 then
 		float_wnd_set_position(kh_light_wnd, 0, kh_scrn_height - ypos)
-		float_wnd_set_geometry(kh_light_wnd, 0, ypos, 25, ypos-height)
+		float_wnd_set_geometry(kh_light_wnd, 0, ypos, 25, ypos - height)
 		kh_light_wnd_state = 0
 	end
 	
@@ -183,7 +183,7 @@ function sysLights:render(ypos,height)
 		imgui.Button("<", 17, 25)
 		if imgui.IsItemActive() then 
 			kh_light_wnd_state = 0
-			float_wnd_set_geometry(kh_light_wnd, 0, ypos, 25, ypos-height)
+			float_wnd_set_geometry(kh_light_wnd, 0, ypos, 25, ypos - height)
 		end
 	end
 
@@ -191,7 +191,7 @@ function sysLights:render(ypos,height)
 		imgui.Button("L", 17, 25)
 		if imgui.IsItemActive() then 
 			kh_light_wnd_state = 1
-			float_wnd_set_geometry(kh_light_wnd, 0, ypos, 930, ypos-height)
+			float_wnd_set_geometry(kh_light_wnd, 0, ypos, 930, ypos - height)
 		end
 	end
 

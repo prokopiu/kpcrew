@@ -7,7 +7,7 @@
 require "kpcrew.genutils"
 require "kpcrew.systems.activities"
 
-kc_VERSION = "2.3"
+kc_VERSION = "2.3-alpha1"
 
 logMsg ( "FWL: ** Starting KPCrew version " .. kc_VERSION .." **" )
 
