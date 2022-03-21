@@ -1,4 +1,5 @@
 local B738Group = kcPreferenceGroup:new("aircraft","B738 PREFERENCES")
+B738Group:setInitialOpen(true)
 B738Group:add(kcPreference:new("efis_mins_dh",true,kcPreference.typeToggle,"EFIS MINS Mode|RADIO (DH)|BARO (DA)")) 
 B738Group:add(kcPreference:new("mcp_def_spd",100,kcPreference.typeInt,"MCP Initial Speed|5")) 
 B738Group:add(kcPreference:new("mcp_def_hdg",001,kcPreference.typeInt,"MCP Initial Heading|1")) 

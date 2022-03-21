@@ -21,6 +21,7 @@ function kcPreferenceGroup:new(name,title)
 	obj.title = title
 	obj.preferences = {}
 	obj.lineLength = 60
+	obj.initialOpen = false
 
     return obj
 end
@@ -35,6 +36,15 @@ end
 -- @treturn string title for display
 function kcPreferenceGroup:getTitle()
     return self.title
+end
+
+-- set the flag to have that tree item open
+function kcPreferenceGroup:setInitialOpen(flag)
+	self.initialOpen = flag
+end
+
+function kcPreferenceGroup:getInitialOpen()
+	return self.initialOpen
 end
 
 -- Add a preference to the group
@@ -108,15 +118,15 @@ function kcPreferenceGroup:getHeadline()
 	local line = {}
 	
 	for i=0,math.floor((eqsigns / 2) + 0.5) - 1,1 do
-		line[#line + 1] = " "
+		-- line[#line + 1] = " "
 	end
 	
-	line[#line + 1] = " "
+	-- line[#line + 1] = " "
 	line[#line + 1] = self.title
-	line[#line + 1] = " "
+	-- line[#line + 1] = " "
 	
 	for i=0,(eqsigns / 2) - 1,1 do
-		line[#line + 1] = " "
+		-- line[#line + 1] = " "
 	end
 	return table.concat(line)
 end
@@ -124,13 +134,16 @@ end
 -- Render all preferences in imgui window
 function kcPreferenceGroup:render()
 	if self ~= nil then
-		imgui.Separator()
-		kc_imgui_center(self:getHeadline())
-		imgui.Separator()
-		for _, pref in ipairs(self.preferences) do
-			pref:render()
+		if self.initialOpen then 
+			imgui.SetNextItemOpen(true)
+			self.initialOpen = false
 		end
-		imgui.Separator()
+		if imgui.TreeNode(self:getHeadline()) then
+			for _, pref in ipairs(self.preferences) do
+				pref:render()
+			end
+			imgui.TreePop()
+		end
 	end
 end
 
@@ -152,7 +165,7 @@ function kcPreferenceGroup:load(filePref)
 			if delim and delim > 1 and delim < string.len(line) then
 				local key = string.sub(splits[2], 1, delim - 1)
 				local value = string.sub(splits[2], delim + 1)
-				local pref = self:findPreference(key)
+				local pref = self:find(key)
 				if pref ~= nil then
 					if pref:getType() == kcPreference.typeFlag or pref:getType() == kcPreference.typeToggle then
 						if value == "true" then 

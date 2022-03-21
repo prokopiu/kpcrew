@@ -179,7 +179,7 @@ function kcSOP:render()
         imgui.PushStyleColor(imgui.constant.Col.Button, color)
 		if imgui.Button(flow:getName(), self:getBtnWidth(), 18) then
 			self:setActiveFlowIndex(kc_indexOf(flows,flow))
-			kc_wnd_flow_action = 1
+			-- kc_wnd_flow_action = 1
 		end
         imgui.PopStyleColor()
 	end

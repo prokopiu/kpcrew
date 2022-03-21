@@ -24,7 +24,7 @@ local kcFlowItem = {
 	actorALL 			= "ALL",
 	actorNONE 			= "",
 
-	colorInitial		= color_green,
+	colorInitial		= color_grey,
 	colorActive 		= color_white,
 	colorSuccess		= color_green,
 	colorFailed 		= color_red,

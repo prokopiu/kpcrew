@@ -28,6 +28,9 @@ color_mcp_text		= 0xFFC0C0C0
 color_mcp_on		= 0xFF00FF00
 color_mcp_off		= 0xFFC0C0C0
 
+color_ctrl_bckgr	= 0xFF101010
+color_ctrl_selected = 0xFF303030
+
 -- speak text but don't show in sim, speakMode is used to prevent repetitive playing
 -- speakmode 1 will talk and show, 0 will only speak
 function kc_speakNoText(speakMode, sText)

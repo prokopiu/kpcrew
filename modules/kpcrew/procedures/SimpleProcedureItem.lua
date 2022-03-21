@@ -23,7 +23,7 @@ function kcSimpleProcedureItem:new(challengeText, skipFunc)
     obj.responseText = ""
 	obj.actor = ""
 	obj.waittime = 0
-	obj.color = color_grey
+	obj.color = color_white
 	obj.valid = true
 	obj.skipFunc = skipFunc
 	

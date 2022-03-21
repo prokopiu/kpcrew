@@ -5,7 +5,7 @@
 -- @copyright 2022 Kosta Prokopiu
 
 local kcProcedureItem = {
-	colorInitial = color_green
+	-- colorInitial = color_green
 }
 
 -- Instantiate a new ProcedureItem

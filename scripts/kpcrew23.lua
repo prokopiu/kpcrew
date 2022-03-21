@@ -108,7 +108,11 @@ function kc_init_flow_window(flow)
 	float_wnd_set_title(kc_flow_wnd, "FLOW")
 	float_wnd_set_position(kc_flow_wnd, flow:getWndXPos(), flow:getWndYPos())
 	float_wnd_set_imgui_builder(kc_flow_wnd, "kc_flow_builder")
+	float_wnd_set_onclose(kc_flow_wnd, "kc_close_flow_window")
 end
+
+function kc_close_flow_window()
+end 
 
 -- resize the window when a new flow is shown
 function kc_resize_flow_window(flow)
@@ -163,6 +167,11 @@ end
 -- ===== Control bar to open windows (preliminary)
 kc_ctrl_wnd_state = 0
 
+function kc_master_button()
+	-- toggle active flow window
+	kc_wnd_flow_action = 1
+end
+
 function kc_init_ctrl_window()
 	if kc_ctrl_wnd == 0 or kc_ctrl_wnd == nil then	
 		kc_ctrl_wnd = float_wnd_create(25, 45, 2, true)
@@ -182,7 +191,7 @@ function kc_ctrl_builder()
 	if get("sim/graphics/view/window_width") ~= kc_scrn_width or get("sim/graphics/view/window_height") ~= kc_scrn_height then
 		kc_scrn_width = get("sim/graphics/view/window_width")
 		kc_scrn_height = get("sim/graphics/view/window_height")
-		local xpos = kc_scrn_width - 680
+		local xpos = kc_scrn_width - 600
 		if kc_ctrl_wnd_state == 0 then
 			xpos = kc_scrn_width - 25
 		end
@@ -196,38 +205,45 @@ function kc_ctrl_builder()
 		imgui.Button("<", 15, 25)
 		if imgui.IsItemActive() then
 			kc_ctrl_wnd_state = 1
-			local xpos = kc_scrn_width - 680
+			local xpos = kc_scrn_width - 590
 			float_wnd_set_geometry(kc_ctrl_wnd, xpos, 46, kc_scrn_width, 1)
 		end
 		imgui.SameLine()
 	end
-	if imgui.Button("MSTR", 35, 25) then
-	end
-    imgui.SameLine()
-	if imgui.Button("SOP", 35, 25) then
+	if imgui.Button("SOP", 30, 25) then
 		kc_wnd_sop_action = 1
 	end
     imgui.SameLine()
-	if imgui.Button("PREV", 35, 25) then
+	if imgui.Button("<-", 25, 25) then
 		if getActiveSOP():getActiveFlowIndex() > 1 then
 			getActiveSOP():setActiveFlowIndex(getActiveSOP():getActiveFlowIndex() -1)
 		end
 	end
-	-- MODE/AUXILIARY display
+	-- ACTION/DISPLAY BUTTON
 	imgui.SameLine()
-	imgui.SetCursorPosY(12)
-	imgui.PushStyleColor(imgui.constant.Col.Text, color_left_display)
-		imgui.TextUnformatted(getActiveSOP():getActiveFlow():getHeadline())
+	imgui.PushStyleColor(imgui.constant.Col.Button, color_ctrl_bckgr)
+	imgui.PushStyleColor(imgui.constant.Col.ButtonActive, color_ctrl_selected)
+	imgui.PushStyleColor(imgui.constant.Col.ButtonHovered, color_ctrl_selected)
+	imgui.PushStyleColor(imgui.constant.Col.Text, getActiveSOP():getActiveFlow():getStateColor())
+		if imgui.Button(getActiveSOP():getActiveFlow():getHeadline(), 400, 25) then
+			kc_master_button()
+		end
 	imgui.PopStyleColor()
+	imgui.PopStyleColor()
+	imgui.PopStyleColor()
+	imgui.PopStyleColor()
+
+	-- MODE/AUXILIARY display
+	-- imgui.SameLine()
+	-- imgui.SetCursorPosY(12)
+	-- imgui.PushStyleColor(imgui.constant.Col.Text, color_left_display)
+		-- imgui.TextUnformatted(getActiveSOP():getActiveFlow():getHeadline())
+	-- imgui.PopStyleColor()
 
     imgui.SameLine()
 	imgui.SetCursorPosY(10)
-	if imgui.Button("NEXT", 35, 25) then
+	if imgui.Button("->", 25, 25) then
 		getActiveSOP():setNextFlowActive()
-	end
-    imgui.SameLine()
-	if imgui.Button("FLOW", 35, 25) then
-		kc_wnd_flow_action = 1
 	end
     imgui.SameLine()
 	if imgui.Button("PREF", 35, 25) then
@@ -255,22 +271,30 @@ kc_init_ctrl_window()
 kc_show_pref_once = 0
 kc_hide_pref_once = 0
 kc_pref_wnd = nil
+kc_bck_wnd = nil
 
 function kc_init_pref_window(prefset)
 	local height = prefset:getWndHeight()
 	local width = prefset:getWndWidth()
-	kc_pref_wnd = float_wnd_create(width, height, 1, true)
-	float_wnd_set_title(kc_pref_wnd, prefset:getName())
-	float_wnd_set_position(kc_pref_wnd, prefset:getWndXPos(), prefset:getWndYPos())
-	-- debug option for background vars
-	float_wnd_set_imgui_builder(kc_pref_wnd, "kc_pref_builder")
-	-- float_wnd_set_onclose(kc_pref_wnd, "kc_close_pref_window")
+	if prefset:getName() == "BackgroundVars" then
+		kc_bck_wnd = float_wnd_create(width, height, 1, true)
+		float_wnd_set_title(kc_bck_wnd, prefset:getName())
+		float_wnd_set_imgui_builder(kc_bck_wnd, "kc_bck_builder")
+		float_wnd_set_position(kc_bck_wnd, prefset:getWndXPos(), prefset:getWndYPos())
+	else
+		kc_pref_wnd = float_wnd_create(width, height, 1, true)
+		float_wnd_set_title(kc_pref_wnd, prefset:getName())
+		float_wnd_set_imgui_builder(kc_pref_wnd, "kc_pref_builder")
+		float_wnd_set_position(kc_pref_wnd, prefset:getWndXPos(), prefset:getWndYPos())
+	end
 end
 
 function kc_pref_builder()
-				-- kc_resize_flow_window(getActiveSOP():getActiveFlow())
-
 	getActivePrefs():render()
+end
+
+function kc_bck_builder()
+	getBckVars():render()
 end
 
 function kc_hide_pref_wnd()
@@ -296,6 +320,10 @@ function kc_toggle_pref_window()
 	end
 end
 
+if kc_file_exists(SCRIPT_DIRECTORY .. "..\\Modules\\kpcrew\\preferences\\" .. kc_acf_icao .. ".preferences") then
+	getActivePrefs():load()
+end
+
 -- ===== Background  Window control - direct window commands do not work as expected =====
 kc_wnd_sop_action = 0
 kc_wnd_flow_action = 0
@@ -318,3 +346,5 @@ end
 
 -- needed for window control
 do_every_frame("bckWindowOpen()")
+
+add_macro("KPCrew Debug Procvars", "kc_init_pref_window(getBckVars())")

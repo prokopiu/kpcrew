@@ -8,7 +8,10 @@
 local kcFlow = {
     stateNotStarted = 0,
     stateInProgress = 1,
-    stateCompleted = 2
+    stateCompleted = 2,
+	colorNotStarted = color_white,
+	colorInProgress = color_left_display,
+	colorCompleted = color_dark_green
 }
 
 -- Instantiate a new Procedure
@@ -19,7 +22,7 @@ function kcFlow:new(name)
     setmetatable(obj, kcFlow)
 
     obj.name = name
-    obj.state = kcFlow.stateNotStarted
+    obj.state = self.stateNotStarted
     obj.items = {}
     obj.activeItemIndex = 1
 	obj.wnd = nil
@@ -48,6 +51,12 @@ end
 -- get state of procedure
 function kcFlow:getState()
     return self.state
+end
+
+-- return the color code linked to the state
+function kcFlow:getStateColor()
+	local statecolors = { self.colorNotStarted, self.colorInProgress, self.colorCompleted }
+	return statecolors[self.state + 1]
 end
 
 -- add a new procedure item at the end

@@ -28,6 +28,10 @@ function kcPreferenceSet:getName()
     return self.name
 end
 
+function kcPreferenceSet:setName(name)
+    self.name = name
+end
+
 -- Add a preference group to the set
 -- @tparam PreferenceGroup group to add
 function kcPreferenceSet:addGroup(group)
@@ -72,10 +76,10 @@ end
 -- Get the required window height calculated on all preferences and groups
 -- @treturn int height in pixel
 function kcPreferenceSet:getWndHeight()
-	local wndHeight = 0
-	for _, group in ipairs(self.preferenceGroups) do
-		wndHeight = wndHeight + group:getWndHeight()
-	end
+	local wndHeight = 600
+	-- for _, group in ipairs(self.preferenceGroups) do
+		-- wndHeight = wndHeight + group:getWndHeight()
+	-- end
 	return wndHeight
 end
 
@@ -119,6 +123,7 @@ function kcPreferenceSet:render()
 		if imgui.Button("SAVE") then
 			self:save()
 		end		
+		imgui.Separator()
 	end
 end
 

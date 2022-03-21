@@ -253,7 +253,7 @@ function()
 	local cnt = 0
 	local title = get("laminar/B738/fmc1/Line01_X")
 	local origin = get("laminar/B738/fmc1/Line01_L")
-	if string.find(title," V1") then
+	if string.find(title," V1") then               
 		if string.sub(origin,22,24) ~= "---" then
 			cnt = cnt + 1
 		end
@@ -278,5 +278,9 @@ function()
 		return false
 	end
 end)
+
+sysFMC.V2 = SimpleAnnunciator:new("","laminar/B738/FMS/v2",0)
+sysFMC.V1 = SimpleAnnunciator:new("","laminar/B738/FMS/v1",0)
+sysFMC.Vr = SimpleAnnunciator:new("","laminar/B738/FMS/vr",0)
 
 return sysFMC
