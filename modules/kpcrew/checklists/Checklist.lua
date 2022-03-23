@@ -22,7 +22,7 @@ function kcChecklist:new(name)
     -- obj.state = kcChecklist.stateNotStarted
     -- obj.items = {}
     -- obj.activeiItemIndex = 1
-	obj.flowType = "Checklist"
+	obj.className = "Checklist"
 
     return obj
 end

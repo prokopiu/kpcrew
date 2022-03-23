@@ -31,8 +31,13 @@ function kcChecklistItem:new(challengeText,responseText,actor,waittime,validFunc
 	obj.responseFunc = responseFunc
 	obj.actionFunc = actionFunc
 	obj.skipFunc = skipFunc
+	obj.className = "ChecklistItem"
 
     return obj
+end
+
+function kcChecklistItem:getClassName()
+	return self.className
 end
 
 function kcChecklistItem:getStateColor()

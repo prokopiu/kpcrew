@@ -39,8 +39,13 @@ function kcIndirectProcedureItem:new(challengeText,responseText,actor,waittime,p
 	obj.procvar = procvar
 
 	obj.conditionMet = false  -- if condition was met set to true
+	obj.className = "IndirectProcedureItem"
 
     return obj
+end
+
+function kcIndirectProcedureItem:getClassName()
+	return self.className
 end
 
 -- return the color code linked to the state (varied from standard)

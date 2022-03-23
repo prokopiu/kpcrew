@@ -19,7 +19,7 @@ function kcProcedure:new(name)
     setmetatable(obj, kcProcedure)
 
     obj.name = name
-	obj.flowType = "Procedure"
+	obj.className = "Procedure"
 
     return obj
 end

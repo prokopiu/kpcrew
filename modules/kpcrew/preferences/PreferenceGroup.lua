@@ -174,7 +174,7 @@ function kcPreferenceGroup:load(filePref)
 							pref:setValue(false)
 						end
 					else
-						pref:setValue(value)
+						pref:setValue(tonumber(value))
 					end
 				end
 			end

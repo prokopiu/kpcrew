@@ -69,5 +69,7 @@ end)
 
 sysFuel.centerTankLbs = SimpleAnnunciator:new("","laminar/B738/fuel/center_tank_lbs",0)
 sysFuel.centerTankKgs = SimpleAnnunciator:new("","laminar/B738/fuel/center_tank_kgs",0)
+sysFuel.allTanksLbs = SimpleAnnunciator:new("","laminar/B738/fuel/total_tank_lbs",0)
+sysFuel.allTanksKgs = SimpleAnnunciator:new("","laminar/B738/fuel/total_tank_kgs",0)
 
 return sysFuel

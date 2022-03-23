@@ -127,7 +127,7 @@ end
 
 -- return the line to be written into the .preferences file
 function kcPreference:getSaveLine()
-	if self.datatype == self.typeInt or self.datatype == self.typeFloat then
+	if self.datatype == self.typeInt or self.datatype == self.typeFloat or self.datatype == self.typeList then
 		return self.key .. "=" .. self.value .. "\n"
 	end
 	if self.datatype == self.typeFlag or self.datatype == self.typeToggle then

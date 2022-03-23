@@ -26,8 +26,13 @@ function kcSimpleProcedureItem:new(challengeText, skipFunc)
 	obj.color = color_white
 	obj.valid = true
 	obj.skipFunc = skipFunc
+	obj.className = "SimpleProcedureItem"
 	
     return obj
+end
+
+function kcSimpleProcedureItem:getClassName()
+	return self.className
 end
 
 -- color is always white

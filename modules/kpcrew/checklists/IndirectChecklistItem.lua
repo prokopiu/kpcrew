@@ -10,7 +10,7 @@ local kcIndirectChecklistItem = {
 	colorFailed 		= color_orange
 }
 
--- Instantiate a new IndirectProcedureItem
+-- Instantiate a new IndirectChecklistItem
 -- @tparam string challengeText is the left hand text 
 -- @tparam string responseText is specific state of the item
 -- @tparam string actor is the actor for the item; see list below
@@ -36,10 +36,15 @@ function kcIndirectChecklistItem:new(challengeText,responseText,actor,waittime,v
 	obj.actionFunc = actionFunc
 	obj.responseFunc = responseFunc
 	obj.skipFunc = skipFunc
+	obj.className = "IndirectChecklistItem"
 
 	obj.conditionMet = false  -- if condition was met set to true
 
     return obj
+end
+
+function kcIndirectChecklistItem:getClassName()
+	return self.className
 end
 
 function kcIndirectChecklistItem:getStateColor()

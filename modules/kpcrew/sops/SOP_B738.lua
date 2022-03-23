@@ -84,17 +84,23 @@ activeSOP = kcSOP:new("Zibo Mod SOP")
 
 local electricalPowerUpProc = kcProcedure:new("ELECTRICAL POWER UP (F/O)")
 electricalPowerUpProc:addItem(kcProcedureItem:new("BATTERY SWITCH","GUARD CLOSED",kcFlowItem.actorFO,1,
-	function () return sysElectric.batteryCover:getStatus() == 0 end))
+	function () return sysElectric.batteryCover:getStatus() == 0 end,
+	function () sysElectric.batteryCover:actuate(modeOff) end))
 electricalPowerUpProc:addItem(kcProcedureItem:new("STANDBY POWER SWITCH","GUARD CLOSED",kcFlowItem.actorFO,1,
-	function () return sysElectric.stbyPowerCover:getStatus() == 0 end))
+	function () return sysElectric.stbyPowerCover:getStatus() == 0 end,
+	function () sysElectric.stbyPowerCover:actuate(modeOff) end))
 electricalPowerUpProc:addItem(kcProcedureItem:new("ALTERNATE FLAPS MASTER SWITCH","GUARD CLOSED",kcFlowItem.actorFO,1,
-	function () return sysControls.altFlapsCover:getStatus() == 0 end))
+	function () return sysControls.altFlapsCover:getStatus() == 0 end,
+	function () sysControls.altFlapsCover:actuate(modeOff) end))
 electricalPowerUpProc:addItem(kcProcedureItem:new("WINDSHIELD WIPER SELECTORS","PARK",kcFlowItem.actorFO,1,
-	function () return sysGeneral.wiperLeftSwitch:getStatus() == 0 and sysGeneral.wiperRightSwitch:getStatus() == 0 end))
+	function () return sysGeneral.wiperLeftSwitch:getStatus() == 0 and sysGeneral.wiperRightSwitch:getStatus() == 0 end,
+	function () sysGeneral.wiperLeftSwitch:actuate(modeOff) sysGeneral.wiperRightSwitch:actuate(modeOff) end))
 electricalPowerUpProc:addItem(kcProcedureItem:new("ELECTRIC HYDRAULIC PUMPS SWITCHES","OFF",kcFlowItem.actorFO,1,
-	function () return sysHydraulic.elecHydPump1:getStatus() == 0 and sysHydraulic.elecHydPump2:getStatus() == 0 end))
+	function () return sysHydraulic.elecHydPump1:getStatus() == 0 and sysHydraulic.elecHydPump2:getStatus() == 0 end,
+	function () sysHydraulic.elecHydPump1:actuate(modeOff) sysHydraulic.elecHydPump2:actuate(modeOff) end))
 electricalPowerUpProc:addItem(kcProcedureItem:new("LANDING GEAR LEVER","DOWN",kcFlowItem.actorFO,1,
-	function () return sysGeneral.GearSwitch:getStatus() == 1 end))
+	function () return sysGeneral.GearSwitch:getStatus() == 1 end,
+	function () sysGeneral.GearSwitch:actuate(modeOn) end))
 electricalPowerUpProc:addItem(kcProcedureItem:new("  GREEN LANDING GEAR LIGHT","CHECK ILLUMINATED",kcFlowItem.actorFO,1,
 	function () return sysGeneral.gearLightsAnc:getStatus() == 1 end))
 electricalPowerUpProc:addItem(kcProcedureItem:new("  RED LANDING GEAR LIGHT","CHECK EXTINGUISHED",kcFlowItem.actorFO,1,
@@ -110,7 +116,8 @@ electricalPowerUpProc:addItem(kcProcedureItem:new("  GRD POWER AVAILABLE LIGHT",
 	function () return sysElectric.gpuAvailAnc:getStatus() == 1 end,nil,
 	function () return activePrefSet:get("aircraft:powerup_apu") == true end))
 electricalPowerUpProc:addItem(kcProcedureItem:new("  GROUND POWER SWITCH","ON",kcFlowItem.actorFO,1,
-	function () return sysElectric.gpuSwitch:getStatus() == 1 end,nil,
+	function () return sysElectric.gpuSwitch:getStatus() == 1 end,
+	function () sysElectric.gpuSwitch:actuate(cmdDown) end,
 	function () return activePrefSet:get("aircraft:powerup_apu") == true end))
 electricalPowerUpProc:addItem(kcSimpleProcedureItem:new("If APU power is needed:",
 	function () return activePrefSet:get("aircraft:powerup_apu") == false end))
@@ -144,7 +151,7 @@ electricalPowerUpProc:addItem(kcProcedureItem:new("    TRANSFER BUS LIGHTS","CHE
 electricalPowerUpProc:addItem(kcProcedureItem:new("    SOURCE OFF LIGHTS","CHECK EXTINGUISHED",kcFlowItem.actorFO,1,
 	function () return sysElectric.sourceOff1:getStatus() == 0 and sysElectric.sourceOff2:getStatus() == 0 end))
 electricalPowerUpProc:addItem(kcProcedureItem:new("STANDBY POWER","ON",kcFlowItem.actorFO,1,
-	function (state) return get("laminar/B738/electric/standby_bat_pos") > 0 end))
+	function () return get("laminar/B738/electric/standby_bat_pos") > 0 end))
 electricalPowerUpProc:addItem(kcProcedureItem:new("   STANDBY PWR LIGHT","CHECK EXTINGUISHED",kcFlowItem.actorFO,1,
 	function () return sysElectric.stbyPwrOff:getStatus() == 0 end))
 -- does not exist in Zibo
@@ -375,7 +382,7 @@ preflightFOProc:addItem(kcProcedureItem:new("FMC TRANSFER SWITCH","NORMAL",kcFlo
 preflightFOProc:addItem(kcProcedureItem:new("SOURCE SELECTOR","AUTO",kcFlowItem.actorFO,1,
 	function() return sysMCP.displaySourceSwitch:getStatus() == 0 end))
 preflightFOProc:addItem(kcProcedureItem:new("CONTROL PANEL SELECT SWITCH","NORMAL",kcFlowItem.actorFO,1,
-	function(self) return sysMCP.displayControlSwitch:getStatus() == 0 end))
+	function() return sysMCP.displayControlSwitch:getStatus() == 0 end))
 
 preflightFOProc:addItem(kcSimpleProcedureItem:new("Fuel panel"))
 preflightFOProc:addItem(kcProcedureItem:new("CROSSFEED SELECTOR","CLOSED",kcFlowItem.actorFO,1,
@@ -602,7 +609,7 @@ preflightFO3Proc:addItem(kcProcedureItem:new("TRANSPONDER PANEL","SET",kcFlowIte
 
 local preflightCPTProc = kcProcedure:new("PREFLIGHT PROCEDURE (CAPT)")
 preflightCPTProc:addItem(kcIndirectProcedureItem:new("LIGHTS","TEST",kcFlowItem.actorCPT,1,"internal_lights_test",
-function () return sysGeneral.lightTest:getStatus() == 1 end))
+	function () return sysGeneral.lightTest:getStatus() == 1 end))
 
 preflightCPTProc:addItem(kcSimpleProcedureItem:new("EFIS control panel"))
 preflightCPTProc:addItem(kcProcedureItem:new("MINIMUMS REFERENCE SELECTOR","%s|(activePrefSet:get(\"aircraft:efis_mins_dh\")) and \"RADIO\" or \"BARO\"",kcFlowItem.actorCPT,1,
@@ -727,10 +734,10 @@ beforeStartProc:addItem(kcSimpleProcedureItem:new("Call for Before Start Checkli
 local beforeStartChkl = kcChecklist:new("BEFORE START CHECKLIST (F/O)")
 beforeStartChkl:addItem(kcChecklistItem:new("FLIGHT DECK DOOR","CLOSED AND LOCKED",kcFlowItem.actorCPT,1,
 	function () return sysGeneral.cockpitDoor:getStatus() == 0 end ))
-beforeStartChkl:addItem(kcChecklistItem:new("FUEL","___ LBS/KGS, PUMPS ON",kcFlowItem.actorCPT,1,
+beforeStartChkl:addItem(kcChecklistItem:new("FUEL","%i %s, PUMPS ON|activePrefSet:get(\"general:weight_kgs\") and sysFuel.allTanksKgs:getStatus() or sysFuel.allTanksLbs:getStatus()|activePrefSet:get(\"general:weight_kgs\") and \"KGS\" or \"LBS\"",kcFlowItem.actorCPT,1,
 	function () return sysFuel.fuelPumpGroup:getStatus() == 4 end,nil,
 	function () return sysFuel.centerTankLbs:getStatus() > 999 end))
-beforeStartChkl:addItem(kcChecklistItem:new("FUEL","___ LBS/KGS, PUMPS ON",kcFlowItem.actorCPT,1,
+beforeStartChkl:addItem(kcChecklistItem:new("FUEL","%i %s, PUMPS ON|activePrefSet:get(\"general:weight_kgs\") and sysFuel.allTanksKgs:getStatus() or sysFuel.allTanksLbs:getStatus()|activePrefSet:get(\"general:weight_kgs\") and \"KGS\" or \"LBS\"",kcFlowItem.actorCPT,1,
 	function () return sysFuel.fuelPumpGroup:getStatus() == 6 end,nil,
 	function () return sysFuel.centerTankLbs:getStatus() < 1000 end))
 beforeStartChkl:addItem(kcChecklistItem:new("PASSENGER SIGNS","SET",kcFlowItem.actorCPT,1,

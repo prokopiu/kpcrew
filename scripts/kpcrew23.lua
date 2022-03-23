@@ -32,6 +32,8 @@ kcLoadedPrefs 			= require("kpcrew.preferences.defaultPrefs")
 kcLoadedVars 			= require("kpcrew.preferences.backgroundVars")
 kcLoadedSOP 			= require("kpcrew.sops.SOP_" .. kc_acf_icao)
 
+kcFlowExecutor			= require("kpcrew.FlowExecutor")
+
 -- stop if pre-reqs are not met
 if not SUPPORTS_FLOATING_WINDOWS then
 	logMsg("Upgrade your FlyWithLua! to NG 2.7.30+, need Floating Windows")
@@ -112,6 +114,7 @@ function kc_init_flow_window(flow)
 end
 
 function kc_close_flow_window()
+	kc_mstr_button_state = kc_mstr_state_new_flow
 end 
 
 -- resize the window when a new flow is shown
@@ -124,6 +127,7 @@ function kc_resize_flow_window(flow)
 	local width = flow:getWndWidth()
 	local screenheight = get("sim/graphics/view/window_height")
 	float_wnd_set_geometry(kc_flow_wnd, flow.getWndXPos(), screenheight - flow.getWndYPos(), flow.getWndXPos() + width, screenheight - (flow.getWndYPos() + height))
+	kc_mstr_button_state = kc_mstr_state_flow_open
 end
 
 function kc_flow_builder()
@@ -144,6 +148,7 @@ end
 function kc_hide_flow_wnd()
 	if kc_flow_wnd then 
 		float_wnd_destroy(kc_flow_wnd)
+		kc_mstr_button_state = kc_mstr_state_new_flow
 	end
 end
 
@@ -164,12 +169,47 @@ function kc_toggle_flow_window()
 	end
 end
 
+-- master button state
+kc_mstr_state_new_flow = 0
+kc_mstr_state_flow_open = 1
+kc_mstr_state_active = 2
+kc_mstr_state_finished = 3
+kc_mstr_state_waiting = 4
+kc_mstr_state_stop = 5
+kc_mstr_button_state_cols = { color_ctrl_bckgr, color_mstr_flow_open, color_green, color_dark_green, color_orange, color_red }
+kc_mstr_button_state = kc_mstr_state_new_flow
+kc_mstr_button_text = "== FLOW =="
+
 -- ===== Control bar to open windows (preliminary)
 kc_ctrl_wnd_state = 0
 
 function kc_master_button()
-	-- toggle active flow window
-	kc_wnd_flow_action = 1
+	if kc_mstr_button_state == kc_mstr_state_new_flow then
+		-- kc_wnd_flow_action = 1
+		-- kc_mstr_button_state = kc_mstr_state_flow_open
+	-- elseif kc_mstr_button_state == kc_mstr_state_flow_open then
+		if getActivePrefs():get("general:assistance") > 1 then
+			kc_mstr_button_state = kc_mstr_state_active
+			kc_flow_executor:setState(kcFlowExecutor.state_running)
+		end
+	elseif kc_mstr_button_state == kc_mstr_state_active  then
+		kc_mstr_button_state = kc_mstr_state_waiting
+		if kc_flow_executor:getState() == kcFlowExecutor.state_running then
+			kc_flow_executor:setState(kcFlowExecutor.state_paused)
+		end
+	elseif kc_mstr_button_state == kc_mstr_state_waiting then
+		if getActiveSOP():getActiveFlow():getActiveItem():isValid() then
+			kc_mstr_button_state = kc_mstr_state_active
+			kc_flow_executor:setState(kcFlowExecutor.state_running)
+		end
+	elseif kc_mstr_button_state == kc_mstr_state_waiting then
+		if getActivePrefs():get("general:assistance") > 1 then
+			kc_mstr_button_state = kc_mstr_state_active
+			kc_flow_executor:setState(kcFlowExecutor.state_running)
+		end
+	elseif kc_mstr_button_state == kc_mstr_state_finished then
+		kc_mstr_button_state = kc_mstr_state_new_flow
+	end
 end
 
 function kc_init_ctrl_window()
@@ -217,17 +257,40 @@ function kc_ctrl_builder()
 	if imgui.Button("<-", 25, 25) then
 		if getActiveSOP():getActiveFlowIndex() > 1 then
 			getActiveSOP():setActiveFlowIndex(getActiveSOP():getActiveFlowIndex() -1)
+			kc_flow_executor = kcFlowExecutor:new(getActiveSOP():getActiveFlow())
 		end
 	end
 	-- ACTION/DISPLAY BUTTON
 	imgui.SameLine()
-	imgui.PushStyleColor(imgui.constant.Col.Button, color_ctrl_bckgr)
-	imgui.PushStyleColor(imgui.constant.Col.ButtonActive, color_ctrl_selected)
-	imgui.PushStyleColor(imgui.constant.Col.ButtonHovered, color_ctrl_selected)
-	imgui.PushStyleColor(imgui.constant.Col.Text, getActiveSOP():getActiveFlow():getStateColor())
-		if imgui.Button(getActiveSOP():getActiveFlow():getHeadline(), 400, 25) then
+	-- if getActiveSOP():getActiveFlow():getState() == kcFlow.stateCompleted then
+		-- kc_mstr_button_state = kc_mstr_state_finished
+	-- end
+	if kc_mstr_button_state == kc_mstr_state_waiting and getActiveSOP():getActiveFlow():getState() == kcFlow.stateInProgress then
+		kc_mstr_button_state = kc_mstr_state_active
+	end
+	if getActiveSOP():getActiveFlow():getState() == kcFlow.statePaused then
+		kc_mstr_button_state = kc_mstr_state_waiting
+	end
+	-- if getActiveSOP():getActiveFlow():getState() == kcFlow.stateNotStarted then
+		-- kc_mstr_button_state = kc_mstr_state_new_flow
+	-- end
+
+	imgui.PushStyleColor(imgui.constant.Col.Button, kc_mstr_button_state_cols[kc_mstr_button_state+1] )
+	-- imgui.PushStyleColor(imgui.constant.Col.Button, color_ctrl_bckgr)
+	imgui.PushStyleColor(imgui.constant.Col.ButtonActive, kc_mstr_button_state_cols[kc_mstr_button_state+1])
+	imgui.PushStyleColor(imgui.constant.Col.ButtonHovered, kc_mstr_button_state_cols[kc_mstr_button_state+1])
+	imgui.PushStyleColor(imgui.constant.Col.Text, color_white)
+
+		if getActiveSOP():getActiveFlow():getState() ~= kcFlow.stateInProgress and 
+		   getActiveSOP():getActiveFlow():getState() ~= kcFlow.statePaused then
+			kc_mstr_button_text = getActiveSOP():getActiveFlow():getHeadline()
+		else
+			kc_mstr_button_text = getActiveSOP():getActiveFlow():getActiveItem():getLine(getActiveSOP():getActiveFlow():getLineLength())
+		end
+		if imgui.Button(kc_mstr_button_text, 400, 25) then
 			kc_master_button()
 		end
+
 	imgui.PopStyleColor()
 	imgui.PopStyleColor()
 	imgui.PopStyleColor()
@@ -244,6 +307,7 @@ function kc_ctrl_builder()
 	imgui.SetCursorPosY(10)
 	if imgui.Button("->", 25, 25) then
 		getActiveSOP():setNextFlowActive()
+		kc_flow_executor = kcFlowExecutor:new(getActiveSOP():getActiveFlow())
 	end
     imgui.SameLine()
 	if imgui.Button("PREF", 35, 25) then
@@ -254,7 +318,6 @@ function kc_ctrl_builder()
 		if imgui.Button(">", 15, 25) then
 			kc_ctrl_wnd_state = 0
 			local xpos = kc_scrn_width - 25
-			float_wnd_set_geometry(kc_ctrl_wnd, xpos, 46, kc_scrn_width, 1)
 		end
 	end
 
@@ -336,7 +399,8 @@ function bckWindowOpen()
 	end
 	if kc_wnd_flow_action == 1 then
 		kc_wnd_flow_action = 0
-		kc_toggle_flow_window()
+		kc_init_flow_window(getActiveSOP():getActiveFlow())
+		-- kc_toggle_flow_window()
 	end
 	if kc_wnd_pref_action == 1 then
 		kc_wnd_pref_action = 0
@@ -346,5 +410,9 @@ end
 
 -- needed for window control
 do_every_frame("bckWindowOpen()")
+
+kc_flow_executor = kcFlowExecutor:new(getActiveSOP():getActiveFlow())
+
+do_often("kc_flow_executor:execute()")
 
 add_macro("KPCrew Debug Procvars", "kc_init_pref_window(getBckVars())")
