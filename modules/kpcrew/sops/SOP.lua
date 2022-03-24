@@ -167,7 +167,7 @@ function kcSOP:render()
 	for _, flow in ipairs(flows) do
 		imgui.SetCursorPosY(imgui.GetCursorPosY() + 1)
 		local color = color_procedure
-		if flow:getType() == "Checklist" then	
+		if flow:getClassName() == "Checklist" then	
 			color = color_checklist
 		end
 		if flow:getState() == 2 then

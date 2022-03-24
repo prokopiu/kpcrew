@@ -114,7 +114,10 @@ function kc_init_flow_window(flow)
 end
 
 function kc_close_flow_window()
-	kc_mstr_button_state = kc_mstr_state_new_flow
+	if kc_mstr_button_state == kc_mstr_state_flow_open then
+		kc_mstr_button_state = kc_mstr_state_new_flow
+	end
+	kc_show_flow_once = 0
 end 
 
 -- resize the window when a new flow is shown
@@ -185,9 +188,15 @@ kc_ctrl_wnd_state = 0
 
 function kc_master_button()
 	if kc_mstr_button_state == kc_mstr_state_new_flow then
-		-- kc_wnd_flow_action = 1
-		-- kc_mstr_button_state = kc_mstr_state_flow_open
-	-- elseif kc_mstr_button_state == kc_mstr_state_flow_open then
+		if getActivePrefs():get("general:assistance") == 1 then
+			kc_wnd_flow_action = 1
+			kc_mstr_button_state = kc_mstr_state_flow_open
+		end
+		if getActivePrefs():get("general:assistance") > 1 then
+			kc_mstr_button_state = kc_mstr_state_active
+			kc_flow_executor:setState(kcFlowExecutor.state_running)
+		end
+	elseif kc_mstr_button_state == kc_mstr_state_flow_open then
 		if getActivePrefs():get("general:assistance") > 1 then
 			kc_mstr_button_state = kc_mstr_state_active
 			kc_flow_executor:setState(kcFlowExecutor.state_running)
@@ -209,13 +218,15 @@ function kc_master_button()
 		end
 	elseif kc_mstr_button_state == kc_mstr_state_finished then
 		kc_mstr_button_state = kc_mstr_state_new_flow
+	else
+		-- do nothing
 	end
 end
 
 function kc_init_ctrl_window()
 	if kc_ctrl_wnd == 0 or kc_ctrl_wnd == nil then	
 		kc_ctrl_wnd = float_wnd_create(25, 45, 2, true)
-		local xpos = kc_scrn_width - 680
+		local xpos = kc_scrn_width - 625
 		if kc_ctrl_wnd_state == 0 then
 			xpos = kc_scrn_width - 25
 		end
@@ -226,12 +237,42 @@ function kc_init_ctrl_window()
 	end
 end
 
+function kc_prev_button()
+	-- unassisted always navigate flows
+	if getActivePrefs():get("general:assistance") == 1 then
+		if getActiveSOP():getActiveFlowIndex() > 1 then
+			getActiveSOP():setActiveFlowIndex(getActiveSOP():getActiveFlowIndex() -1)
+			kc_flow_executor = kcFlowExecutor:new(getActiveSOP():getActiveFlow())
+		end
+	else
+		if kc_mstr_button_state <= kc_mstr_state_flow_open then
+			if getActiveSOP():getActiveFlowIndex() > 1 then
+				getActiveSOP():setActiveFlowIndex(getActiveSOP():getActiveFlowIndex() -1)
+				kc_flow_executor = kcFlowExecutor:new(getActiveSOP():getActiveFlow())
+			end
+		end
+	end
+end
+
+function kc_next_button()
+	-- unassisted always navigate flows
+	if getActivePrefs():get("general:assistance") == 1 then
+		getActiveSOP():setNextFlowActive()
+		kc_flow_executor = kcFlowExecutor:new(getActiveSOP():getActiveFlow())
+	else
+		if kc_mstr_button_state <= kc_mstr_state_flow_open then
+			getActiveSOP():setNextFlowActive()
+			kc_flow_executor = kcFlowExecutor:new(getActiveSOP():getActiveFlow())
+		end
+	end
+end
+
 function kc_ctrl_builder()
 	-- reposition when screen size changes
 	if get("sim/graphics/view/window_width") ~= kc_scrn_width or get("sim/graphics/view/window_height") ~= kc_scrn_height then
 		kc_scrn_width = get("sim/graphics/view/window_width")
 		kc_scrn_height = get("sim/graphics/view/window_height")
-		local xpos = kc_scrn_width - 600
+		local xpos = kc_scrn_width - 625
 		if kc_ctrl_wnd_state == 0 then
 			xpos = kc_scrn_width - 25
 		end
@@ -245,7 +286,7 @@ function kc_ctrl_builder()
 		imgui.Button("<", 15, 25)
 		if imgui.IsItemActive() then
 			kc_ctrl_wnd_state = 1
-			local xpos = kc_scrn_width - 590
+			local xpos = kc_scrn_width - 625
 			float_wnd_set_geometry(kc_ctrl_wnd, xpos, 46, kc_scrn_width, 1)
 		end
 		imgui.SameLine()
@@ -254,11 +295,15 @@ function kc_ctrl_builder()
 		kc_wnd_sop_action = 1
 	end
     imgui.SameLine()
-	if imgui.Button("<-", 25, 25) then
-		if getActiveSOP():getActiveFlowIndex() > 1 then
-			getActiveSOP():setActiveFlowIndex(getActiveSOP():getActiveFlowIndex() -1)
-			kc_flow_executor = kcFlowExecutor:new(getActiveSOP():getActiveFlow())
+	if imgui.Button("FLOW", 35, 25) then
+		kc_wnd_flow_action = 1
+		if kc_mstr_button_state == kc_mstr_state_new_flow then
+			kc_mstr_button_state = kc_mstr_state_flow_open
 		end
+	end
+    imgui.SameLine()
+	if imgui.Button("<-", 25, 25) then
+		kc_prev_button()
 	end
 	-- ACTION/DISPLAY BUTTON
 	imgui.SameLine()
@@ -306,8 +351,7 @@ function kc_ctrl_builder()
     imgui.SameLine()
 	imgui.SetCursorPosY(10)
 	if imgui.Button("->", 25, 25) then
-		getActiveSOP():setNextFlowActive()
-		kc_flow_executor = kcFlowExecutor:new(getActiveSOP():getActiveFlow())
+		kc_next_button()
 	end
     imgui.SameLine()
 	if imgui.Button("PREF", 35, 25) then
@@ -318,6 +362,7 @@ function kc_ctrl_builder()
 		if imgui.Button(">", 15, 25) then
 			kc_ctrl_wnd_state = 0
 			local xpos = kc_scrn_width - 25
+			float_wnd_set_geometry(kc_ctrl_wnd, xpos, 46, kc_scrn_width, 1)
 		end
 	end
 
@@ -399,7 +444,10 @@ function bckWindowOpen()
 	end
 	if kc_wnd_flow_action == 1 then
 		kc_wnd_flow_action = 0
-		kc_init_flow_window(getActiveSOP():getActiveFlow())
+		if kc_show_flow_once == 0 then 
+			kc_init_flow_window(getActiveSOP():getActiveFlow())
+			kc_show_flow_once = 1
+		end
 		-- kc_toggle_flow_window()
 	end
 	if kc_wnd_pref_action == 1 then
