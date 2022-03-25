@@ -17,19 +17,19 @@ function xsp_bravo_knob_up()
 	-- normal A/P mode
 	if xsp_bravo_layer == 0 then
 		if xsp_bravo_mode == 1 then
-			sysMCP.altSelector:actuate(Switch.increase)
+			sysMCP.altSelector:actuate(cmdUp)
 		end
 		if xsp_bravo_mode == 2 then
-			sysMCP.vspSelector:actuate(Switch.increase)
+			sysMCP.vspSelector:actuate(cmdUp)
 		end
 		if xsp_bravo_mode == 3 then
-			sysMCP.hdgSelector:actuate(Switch.increase)
+			sysMCP.hdgSelector:actuate(cmdUp)
 		end
 		if xsp_bravo_mode == 4 then
-			sysMCP.crs1Selector:actuate(Switch.increase)
+			sysMCP.crs1Selector:actuate(cmdUp)
 		end
 		if xsp_bravo_mode == 5 then
-			sysMCP.iasSelector:actuate(Switch.increase)
+			sysMCP.iasSelector:actuate(cmdUp)
 		end
 	end
 	
@@ -41,19 +41,19 @@ function xsp_bravo_knob_dn()
 	-- normal A/P mode
 	if xsp_bravo_layer == 0 then
 		if xsp_bravo_mode == 1 then
-			sysMCP.altSelector:actuate(Switch.decrease)
+			sysMCP.altSelector:actuate(cmdDown)
 		end
 		if xsp_bravo_mode == 2 then
-			sysMCP.vspSelector:actuate(Switch.decrease)
+			sysMCP.vspSelector:actuate(cmdDown)
 		end
 		if xsp_bravo_mode == 3 then
-			sysMCP.hdgSelector:actuate(Switch.decrease)
+			sysMCP.hdgSelector:actuate(cmdDown)
 		end
 		if xsp_bravo_mode == 4 then
-			sysMCP.crs1Selector:actuate(Switch.decrease)
+			sysMCP.crs1Selector:actuate(cmdDown)
 		end
 		if xsp_bravo_mode == 5 then
-			sysMCP.iasSelector:actuate(Switch.decrease)
+			sysMCP.iasSelector:actuate(cmdDown)
 		end
 	end
 
