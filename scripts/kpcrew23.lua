@@ -202,19 +202,18 @@ function kc_master_button()
 			kc_flow_executor:setState(kcFlowExecutor.state_running)
 		end
 	elseif kc_mstr_button_state == kc_mstr_state_active  then
-		kc_mstr_button_state = kc_mstr_state_waiting
-		if kc_flow_executor:getState() == kcFlowExecutor.state_running then
-			kc_flow_executor:setState(kcFlowExecutor.state_paused)
-		end
-	elseif kc_mstr_button_state == kc_mstr_state_waiting then
-		if getActiveSOP():getActiveFlow():getActiveItem():isValid() then
-			kc_mstr_button_state = kc_mstr_state_active
-			kc_flow_executor:setState(kcFlowExecutor.state_running)
+		if getActivePrefs():get("general:assistance") > 1 then
+			if kc_flow_executor:getState() == kcFlowExecutor.state_running then
+				kc_flow_executor:setState(kcFlowExecutor.state_paused)
+				getActiveSOP():getActiveFlow():setState(kcFlow.statePaused)
+			end
+			kc_mstr_button_state = kc_mstr_state_waiting
 		end
 	elseif kc_mstr_button_state == kc_mstr_state_waiting then
 		if getActivePrefs():get("general:assistance") > 1 then
 			kc_mstr_button_state = kc_mstr_state_active
 			kc_flow_executor:setState(kcFlowExecutor.state_running)
+			getActiveSOP():getActiveFlow():setState(kcFlow.stateInProgress)
 		end
 	elseif kc_mstr_button_state == kc_mstr_state_finished then
 		kc_mstr_button_state = kc_mstr_state_new_flow
@@ -263,6 +262,15 @@ function kc_next_button()
 		if kc_mstr_button_state <= kc_mstr_state_flow_open then
 			getActiveSOP():setNextFlowActive()
 			kc_flow_executor = kcFlowExecutor:new(getActiveSOP():getActiveFlow())
+		end
+		if kc_mstr_button_state == kc_mstr_state_waiting then
+			local flow = getActiveSOP():getActiveFlow()
+			if flow:hasNextItem() then
+				flow:setNextItemActive()
+				flow:setState(kcFlow.stateInProgress)
+				kc_flow_executor:setState(kcFlow.stateInProgress)
+				kc_mstr_button_state = kc_mstr_state_active
+			end
 		end
 	end
 end

@@ -9,10 +9,10 @@ require "kpcrew.systems.activities"
 local KPH_VERSION = "2.3-alpha1"
 
 -- disable windows by changing from true to false
-local show_mcp_panel = true
-local show_light_panel = true
-local show_radio_panel = true
-local show_efis_panel = true
+local show_mcp_panel = false
+local show_light_panel = false
+local show_radio_panel = false
+local show_efis_panel = false
 
 logMsg ("FWL: ** Starting KPHARDWARE version " .. KPH_VERSION .." **")
 
@@ -374,6 +374,13 @@ if show_mcp_panel then
 	kh_init_mcp_window() 
 end
 
+function kh_hide_mcp_wnd()
+	if kh_mcp_wnd then 
+		float_wnd_destroy(kh_mcp_wnd)
+		start_y_pos = start_y_pos - mcp_window_height
+	end
+end
+
 -- ===== Aircraft specific Light Window
 
 kh_light_wnd = nil
@@ -415,6 +422,13 @@ if show_light_panel then
 	kh_init_light_window() 
 end	
 
+function kh_hide_light_wnd()
+	if kh_light_wnd then 
+		float_wnd_destroy(kh_light_wnd)
+		start_y_pos = start_y_pos - light_window_height
+	end
+end
+
 -- ===== Aircraft specific Radio Window
 
 kh_radio_wnd = nil
@@ -454,6 +468,13 @@ end
 
 if show_radio_panel then
 	kh_init_radio_window() 
+end
+
+function kh_hide_radio_wnd()
+	if kh_radio_wnd then 
+		float_wnd_destroy(kh_radio_wnd)
+		start_y_pos = start_y_pos - radio_window_height
+	end
 end
 
 -- ===== Aircraft specific EFIS Window
@@ -497,5 +518,17 @@ if show_efis_panel then
 	kh_init_efis_window() 
 end
 
+function kh_hide_efis_wnd()
+	if kh_efis_wnd then 
+		float_wnd_destroy(kh_efis_wnd)
+		start_y_pos = start_y_pos - efis_window_height
+	end
+end
+
 -- regularly update the drefs for annunciators and lights (every 1 second)
 do_often("xsp_set_light_drefs()")
+add_macro("KPHardware Toggle MCP Bar", "show_mcp_panel = not show_mcp_panel\nif show_mcp_panel then kh_init_mcp_window() else kh_hide_mcp_wnd() end")
+add_macro("KPHardware Toggle Light Bar", "show_light_panel = not show_light_panel\nif show_light_panel then kh_init_light_window() else kh_hide_light_wnd() end")
+add_macro("KPHardware Toggle Radio Bar", "show_radio_panel = not show_radio_panel\nif show_radio_panel then kh_init_radio_window() else kh_hide_radio_wnd() end")
+add_macro("KPHardware Toggle EFIS Bar", "show_efis_panel = not show_efis_panel\nif show_efis_panel then kh_init_efis_window() else kh_hide_efis_wnd() end")
+
