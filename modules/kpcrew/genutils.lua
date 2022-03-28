@@ -9,7 +9,7 @@ local drefTextout = "sim/operation/prefs/text_out"
 color_red 			= 0xFF0000FF
 color_green 		= 0xFF558817
 color_bright_green 	= 0xFF00FF00
-color_dark_green 	= 0xFF007f00
+color_dark_green 	= 0xFF002f00
 color_white 		= 0xFFFFFFFF
 color_light_blue 	= 0xFFFFFF00
 color_orange 		= 0xFF003FBF
@@ -27,6 +27,10 @@ color_mcp_hover		= 0xFF606060
 color_mcp_text		= 0xFFC0C0C0
 color_mcp_on		= 0xFF00FF00
 color_mcp_off		= 0xFFC0C0C0
+
+color_ctrl_bckgr	= 0xFF101010
+color_ctrl_selected = 0xFF303030
+color_mstr_flow_open = 0xFF404040
 
 -- speak text but don't show in sim, speakMode is used to prevent repetitive playing
 -- speakmode 1 will talk and show, 0 will only speak
@@ -275,6 +279,19 @@ function kc_imgui_rotary_mcp(label,system,ypos,id)
 	imgui.PopStyleColor()
 end
 
+function kc_imgui_value(label,system,ypos)
+    imgui.SameLine()
+	imgui.SetCursorPosY(ypos)
+	imgui.PushStyleColor(imgui.constant.Col.Text,color_mcp_text)
+
+	imgui.SetCursorPosY(ypos + 2)
+	imgui.TextUnformatted(string.format(label,system:getStatus()))
+
+	imgui.SetCursorPosY(ypos)
+	
+	imgui.PopStyleColor()
+end
+
 -- render a label /also used as separator stroke)
 function kc_imgui_label_mcp(label,ypos)
     imgui.SameLine()
@@ -295,6 +312,22 @@ function kc_imgui_simple_button_mcp(label,system,ypos,width,height)
 	imgui.PushStyleColor(imgui.constant.Col.Text,color_mcp_text)
 	if imgui.Button(label, width, height) then
 		system:actuate(modeToggle)
+	end
+	imgui.PopStyleColor()
+	imgui.PopStyleColor()
+	imgui.PopStyleColor()
+	imgui.PopStyleColor()
+end
+
+function kc_imgui_simple_actuator(label,system,action,ypos,width,height)
+    imgui.SameLine()
+	imgui.SetCursorPosY(ypos)
+	imgui.PushStyleColor(imgui.constant.Col.Button, color_mcp_button)
+	imgui.PushStyleColor(imgui.constant.Col.ButtonActive, color_mcp_active)
+	imgui.PushStyleColor(imgui.constant.Col.ButtonHovered, color_mcp_hover)
+	imgui.PushStyleColor(imgui.constant.Col.Text,color_mcp_text)
+	if imgui.Button(label, width, height) then
+		system:actuate(action)
 	end
 	imgui.PopStyleColor()
 	imgui.PopStyleColor()

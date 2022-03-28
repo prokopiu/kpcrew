@@ -37,18 +37,15 @@ end
 function TwoStateToggleSwitch:actuate(action)
 	if action == modeOn then
 		if self:getStatus() ~= modeOn then
-		logMsg("k")
 			command_once(self.tglcmd)
 		end
 	end
 	if action == modeOff then
 		if self:getStatus() ~= modeOff then
-		logMsg("l")
 			command_once(self.tglcmd)
 		end
 	end
 	if action == modeToggle then
-			logMsg("m")
 		command_once(self.tglcmd)
 	end
 end

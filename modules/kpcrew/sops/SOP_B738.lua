@@ -50,7 +50,7 @@ sysFMC 					= require("kpcrew.systems." .. kc_acf_icao .. ".sysFMC")
 
 activeSOP = kcSOP:new("Zibo Mod SOP")
 
--- ============ Electrical Power Up Procedures ============= OK
+-- ============ Electrical Power Up Procedures ========== OK
 -- BATTERY SWITCH......................GUARD CLOSED (F/O)
 -- STANDBY POWER SWITCH................GUARD CLOSED (F/O)
 -- ALTERNATE FLAPS MASTER SWITCH.......GUARD CLOSED (F/O)
@@ -84,22 +84,28 @@ activeSOP = kcSOP:new("Zibo Mod SOP")
 
 local electricalPowerUpProc = kcProcedure:new("ELECTRICAL POWER UP (F/O)")
 electricalPowerUpProc:addItem(kcProcedureItem:new("BATTERY SWITCH","GUARD CLOSED",kcFlowItem.actorFO,1,
-	function () return sysElectric.batteryCover:getStatus() == 0 end))
+	function () return sysElectric.batteryCover:getStatus() == 0 end,
+	function () sysElectric.batteryCover:actuate(modeOff) end))
 electricalPowerUpProc:addItem(kcProcedureItem:new("STANDBY POWER SWITCH","GUARD CLOSED",kcFlowItem.actorFO,1,
-	function () return sysElectric.stbyPowerCover:getStatus() == 0 end))
+	function () return sysElectric.stbyPowerCover:getStatus() == 0 end,
+	function () sysElectric.stbyPowerCover:actuate(modeOff) end))
 electricalPowerUpProc:addItem(kcProcedureItem:new("ALTERNATE FLAPS MASTER SWITCH","GUARD CLOSED",kcFlowItem.actorFO,1,
-	function () return sysControls.altFlapsCover:getStatus() == 0 end))
+	function () return sysControls.altFlapsCover:getStatus() == 0 end,
+	function () sysControls.altFlapsCover:actuate(modeOff) end))
 electricalPowerUpProc:addItem(kcProcedureItem:new("WINDSHIELD WIPER SELECTORS","PARK",kcFlowItem.actorFO,1,
-	function () return sysGeneral.wiperLeftSwitch:getStatus() == 0 and sysGeneral.wiperRightSwitch:getStatus() == 0 end))
+	function () return sysGeneral.wiperLeftSwitch:getStatus() == 0 and sysGeneral.wiperRightSwitch:getStatus() == 0 end,
+	function () sysGeneral.wiperLeftSwitch:actuate(modeOff) sysGeneral.wiperRightSwitch:actuate(modeOff) end))
 electricalPowerUpProc:addItem(kcProcedureItem:new("ELECTRIC HYDRAULIC PUMPS SWITCHES","OFF",kcFlowItem.actorFO,1,
-	function () return sysHydraulic.elecHydPump1:getStatus() == 0 and sysHydraulic.elecHydPump2:getStatus() == 0 end))
+	function () return sysHydraulic.elecHydPump1:getStatus() == 0 and sysHydraulic.elecHydPump2:getStatus() == 0 end,
+	function () sysHydraulic.elecHydPump1:actuate(modeOff) sysHydraulic.elecHydPump2:actuate(modeOff) end))
 electricalPowerUpProc:addItem(kcProcedureItem:new("LANDING GEAR LEVER","DOWN",kcFlowItem.actorFO,1,
-	function () return sysGeneral.GearSwitch:getStatus() == 1 end))
+	function () return sysGeneral.GearSwitch:getStatus() == 1 end,
+	function () sysGeneral.GearSwitch:actuate(modeOn) end))
 electricalPowerUpProc:addItem(kcProcedureItem:new("  GREEN LANDING GEAR LIGHT","CHECK ILLUMINATED",kcFlowItem.actorFO,1,
 	function () return sysGeneral.gearLightsAnc:getStatus() == 1 end))
 electricalPowerUpProc:addItem(kcProcedureItem:new("  RED LANDING GEAR LIGHT","CHECK EXTINGUISHED",kcFlowItem.actorFO,1,
 	function () return sysGeneral.gearLightsRed:getStatus() == 0 end))
-electricalPowerUpProc:addItem(kcIndirectProcedureItem:new("TAKEOFF CONFIG WARNING","TEST",kcFlowItem.actorFO,1,
+electricalPowerUpProc:addItem(kcIndirectProcedureItem:new("TAKEOFF CONFIG WARNING","TEST",kcFlowItem.actorFO,1,"takeoff_config_warn",
 	function () return get("laminar/B738/system/takeoff_config_warn") > 0 end))
 electricalPowerUpProc:addItem(kcSimpleProcedureItem:new("  Move thrust levers full forward and back to idle."))
 electricalPowerUpProc:addItem(kcSimpleProcedureItem:new("If external power is needed:",
@@ -110,22 +116,23 @@ electricalPowerUpProc:addItem(kcProcedureItem:new("  GRD POWER AVAILABLE LIGHT",
 	function () return sysElectric.gpuAvailAnc:getStatus() == 1 end,nil,
 	function () return activePrefSet:get("aircraft:powerup_apu") == true end))
 electricalPowerUpProc:addItem(kcProcedureItem:new("  GROUND POWER SWITCH","ON",kcFlowItem.actorFO,1,
-	function () return sysElectric.gpuSwitch:getStatus() == 1 end,nil,
+	function () return sysElectric.gpuSwitch:getStatus() == 1 end,
+	function () sysElectric.gpuSwitch:actuate(cmdDown) end,
 	function () return activePrefSet:get("aircraft:powerup_apu") == true end))
 electricalPowerUpProc:addItem(kcSimpleProcedureItem:new("If APU power is needed:",
 	function () return activePrefSet:get("aircraft:powerup_apu") == false end))
 -- OVHT Switch not coded
 -- electricalPowerUpProc:addItem(kcProcedureItem:new("  OVHT DET SWITCHES","NORMAL",kcFlowItem.actorFO,1,function (self) return true end,nil,nil))
-electricalPowerUpProc:addItem(kcIndirectProcedureItem:new("  OVHT FIRE TEST SWITCH","HOLD RIGHT",kcFlowItem.actorFO,1,
+electricalPowerUpProc:addItem(kcIndirectProcedureItem:new("  OVHT FIRE TEST SWITCH","HOLD RIGHT",kcFlowItem.actorFO,1,"ovht_fire_test",
 	function () return  sysEngines.ovhtFireTestSwitch:getStatus() > 0 end,nil,
 	function () return activePrefSet:get("aircraft:powerup_apu") == false end))
-electricalPowerUpProc:addItem(kcIndirectProcedureItem:new("  MASTER FIRE WARN LIGHT","PUSH",kcFlowItem.actorFO,1,
+electricalPowerUpProc:addItem(kcIndirectProcedureItem:new("  MASTER FIRE WARN LIGHT","PUSH",kcFlowItem.actorFO,1,"master_fire_warn",
 	function () return sysGeneral.fireWarningAnc:getStatus() > 0 end,nil,
 	function () return activePrefSet:get("aircraft:powerup_apu") == false end))
-electricalPowerUpProc:addItem(kcIndirectProcedureItem:new("  ENGINES EXT TEST SWITCH","TEST 1 TO LEFT",kcFlowItem.actorFO,1,
+electricalPowerUpProc:addItem(kcIndirectProcedureItem:new("  ENGINES EXT TEST SWITCH","TEST 1 TO LEFT",kcFlowItem.actorFO,1,"eng_ext_test_1",
 	function () return get("laminar/B738/toggle_switch/extinguisher_circuit_test") < 0 end,nil,
 	function () return activePrefSet:get("aircraft:powerup_apu") == false end))
-electricalPowerUpProc:addItem(kcIndirectProcedureItem:new("  ENGINES EXT TEST SWITCH","TEST 2 TO RIGHT",kcFlowItem.actorFO,1,
+electricalPowerUpProc:addItem(kcIndirectProcedureItem:new("  ENGINES EXT TEST SWITCH","TEST 2 TO RIGHT",kcFlowItem.actorFO,1,"eng_ext_test_2",
 	function () return get("laminar/B738/toggle_switch/extinguisher_circuit_test") > 0 end,nil,
 	function () return activePrefSet:get("aircraft:powerup_apu") == false end))
 electricalPowerUpProc:addItem(kcProcedureItem:new("  APU","START",kcFlowItem.actorFO,1,
@@ -144,17 +151,17 @@ electricalPowerUpProc:addItem(kcProcedureItem:new("    TRANSFER BUS LIGHTS","CHE
 electricalPowerUpProc:addItem(kcProcedureItem:new("    SOURCE OFF LIGHTS","CHECK EXTINGUISHED",kcFlowItem.actorFO,1,
 	function () return sysElectric.sourceOff1:getStatus() == 0 and sysElectric.sourceOff2:getStatus() == 0 end))
 electricalPowerUpProc:addItem(kcProcedureItem:new("STANDBY POWER","ON",kcFlowItem.actorFO,1,
-	function (state) return get("laminar/B738/electric/standby_bat_pos") > 0 end))
+	function () return get("laminar/B738/electric/standby_bat_pos") > 0 end))
 electricalPowerUpProc:addItem(kcProcedureItem:new("   STANDBY PWR LIGHT","CHECK EXTINGUISHED",kcFlowItem.actorFO,1,
 	function () return sysElectric.stbyPwrOff:getStatus() == 0 end))
 -- does not exist in Zibo
 -- electricalPowerUpProc:addItem(kcProcedureItem:new("WHEEL WELL FIRE WARNING SYSTEM","TEST",kcFlowItem.actorFO,1,nil,nil,nil))
 electricalPowerUpProc:addItem(kcSimpleProcedureItem:new("Next: Preliminary Preflight Procedure"))
 
--- ============ Preliminary Preflight Procedures ============= OK
+-- ============ Preliminary Preflight Procedures ========OK
 -- EMERGENCY EXIT LIGHT.........ARM/ON GUARD CLOSED (F/O)
 -- ATTENDENCE BUTTON..........................PRESS (F/O)
---   Electrical Power Up supplementary procedure is complete.
+--   Electrical Power Up supplementary procedure complete
 -- IRS MODE SELECTORS...........................OFF (F/O)
 -- IRS MODE SELECTORS......................THEN NAV (F/O)
 --   Verify ON DC lights illuminate then extinguish
@@ -179,26 +186,26 @@ local prelPreflightProc = kcProcedure:new("PREL PREFLIGHT PROCEDURE (F/O)")
 -- prelPreflightProc:addItem(kcProcedureItem:new("CIRCUIT BREAKERS (CONTROL STAND,P18 PANEL)","CHECK",kcFlowItem.actorFO,1,nil,nil,nil))
 prelPreflightProc:addItem(kcProcedureItem:new("EMERGENCY EXIT LIGHT","ARM/ON GUARD CLOSED",kcFlowItem.actorFO,1,
 	function () return sysGeneral.emerExitLightsCover:getStatus() == 0  end))
-prelPreflightProc:addItem(kcIndirectProcedureItem:new("ATTENDENCE BUTTON","PRESS",kcFlowItem.actorFO,1,
+prelPreflightProc:addItem(kcIndirectProcedureItem:new("ATTENDENCE BUTTON","PRESS",kcFlowItem.actorFO,1,"attendence_button",
 	function () return sysGeneral.attendanceButton:getStatus() > 0 end))
 prelPreflightProc:addItem(kcSimpleProcedureItem:new("  Electrical Power Up supplementary procedure completed."))
-prelPreflightProc:addItem(kcIndirectProcedureItem:new("IRS MODE SELECTORS","OFF",kcFlowItem.actorFO,1,
+prelPreflightProc:addItem(kcIndirectProcedureItem:new("IRS MODE SELECTORS","OFF",kcFlowItem.actorFO,1,"irs_mode_initial_off",
 	function () return sysGeneral.irsUnit1Switch:getStatus() == 0 and sysGeneral.irsUnit2Switch:getStatus() == 0 end))
-prelPreflightProc:addItem(kcIndirectProcedureItem:new("IRS MODE SELECTORS","THEN NAV",kcFlowItem.actorFO,1,
+prelPreflightProc:addItem(kcIndirectProcedureItem:new("IRS MODE SELECTORS","THEN NAV",kcFlowItem.actorFO,1,"irs_mode_nav_again",
 	function () return sysGeneral.irsUnit1Switch:getStatus() == 2 and sysGeneral.irsUnit2Switch:getStatus() == 2 end))
-prelPreflightProc:addItem(kcIndirectProcedureItem:new("  IRS LEFT ON DC","ILLUMINATES & EXTINGUISHES",kcFlowItem.actorFO,1,
+prelPreflightProc:addItem(kcIndirectProcedureItem:new("  IRS LEFT ON DC","ILLUMINATES & EXTINGUISHES",kcFlowItem.actorFO,1,"irs_left_dc",
 	function () return sysGeneral.irs1OnDC:getStatus() == 1 end))
-prelPreflightProc:addItem(kcIndirectProcedureItem:new("  IRS RIGHT ON DC","ILLUMINATES & EXTINGUISHES",kcFlowItem.actorFO,1,
+prelPreflightProc:addItem(kcIndirectProcedureItem:new("  IRS RIGHT ON DC","ILLUMINATES & EXTINGUISHES",kcFlowItem.actorFO,1,"irs_right_dc",
 	function () return sysGeneral.irs2OnDC:getStatus() == 1 end))
-prelPreflightProc:addItem(kcIndirectProcedureItem:new("  IRS LEFT ALIGN LIGHT","ILLUMINATES",kcFlowItem.actorFO,1,
+prelPreflightProc:addItem(kcIndirectProcedureItem:new("  IRS LEFT ALIGN LIGHT","ILLUMINATES",kcFlowItem.actorFO,1,"irs_left_align",
 	function () return sysGeneral.irs1Align:getStatus() == 1 end))
-prelPreflightProc:addItem(kcIndirectProcedureItem:new("  IRS RIGHT ALIGN LIGHT","ILLUMINATES",kcFlowItem.actorFO,1,
+prelPreflightProc:addItem(kcIndirectProcedureItem:new("  IRS RIGHT ALIGN LIGHT","ILLUMINATES",kcFlowItem.actorFO,1,"irs_right_align",
 	function () return sysGeneral.irs2Align:getStatus() == 1 end))
 prelPreflightProc:addItem(kcProcedureItem:new("VOICE RECORDER SWITCH","AUTO",kcFlowItem.actorFO,1,
 	function () return  sysGeneral.voiceRecSwitch:getStatus() == 0 end))
-prelPreflightProc:addItem(kcIndirectProcedureItem:new("MACH OVERSPEED TEST","PERFORM",kcFlowItem.actorFO,1,
+prelPreflightProc:addItem(kcIndirectProcedureItem:new("MACH OVERSPEED TEST","PERFORM",kcFlowItem.actorFO,1,"mach_ovspd_test",
 	function () return get("laminar/B738/push_button/mach_warn1_pos") == 1 or get("laminar/B738/push_button/mach_warn2_pos") == 1 end))
-prelPreflightProc:addItem(kcIndirectProcedureItem:new("STALL WARNING TEST","PERFORM",kcFlowItem.actorFO,1,
+prelPreflightProc:addItem(kcIndirectProcedureItem:new("STALL WARNING TEST","PERFORM",kcFlowItem.actorFO,1,"stall_warning_test",
 	function () return get("laminar/B738/push_button/stall_test1") == 1 or get("laminar/B738/push_button/stall_test2") == 1 end))
 prelPreflightProc:addItem(kcProcedureItem:new("XPDR","SET 2000",kcFlowItem.actorFO,1,
 	function () return get("sim/cockpit/radios/transponder_code") == 2000 end))
@@ -211,11 +218,12 @@ prelPreflightProc:addItem(kcProcedureItem:new("FUEL CROSS FEED","OFF",kcFlowItem
 prelPreflightProc:addItem(kcProcedureItem:new("POSITION LIGHTS","ON",kcFlowItem.actorFO,1,
 	function () return get("laminar/B738/toggle_switch/position_light_pos") ~= 0 end))
 prelPreflightProc:addItem(kcProcedureItem:new("MCP","INITIALIZE",kcFlowItem.actorFO,1))
-prelPreflightProc:addItem(kcProcedureItem:new("PARKING BRAKE","SET",kcFlowItem.actorFO,1))
+prelPreflightProc:addItem(kcProcedureItem:new("PARKING BRAKE","SET",kcFlowItem.actorFO,1,
+	function () return sysGeneral.parkBrakeSwitch:getStatus() == 1 end))
 prelPreflightProc:addItem(kcProcedureItem:new("IFE & GALLEY POWER","ON",kcFlowItem.actorFO,1))
 prelPreflightProc:addItem(kcSimpleProcedureItem:new("Next: CDU Preflight"))
 
--- ============ CDU Preflight ============= OK
+-- ================== CDU Preflight ================== OK
 -- INITIAL DATA (CPT)                              
 --   IDENT page:...............................OPEN (CPT)
 --     Verify Model and ENG RATING                 
@@ -255,66 +263,66 @@ prelPreflightProc:addItem(kcSimpleProcedureItem:new("Next: CDU Preflight"))
 
 local cduPreflightProc = kcProcedure:new("CDU PREFLIGHT PROCEDURE (CPT)")
 cduPreflightProc:addItem(kcSimpleProcedureItem:new("INITIAL DATA (CPT)"))
-cduPreflightProc:addItem(kcIndirectProcedureItem:new("  IDENT page:","OPEN",kcFlowItem.actorCPT,1,
+cduPreflightProc:addItem(kcIndirectProcedureItem:new("  IDENT page:","OPEN",kcFlowItem.actorCPT,1,"ident_page",
 	function () return string.find(sysFMC.fmcPageTitle:getStatus(),"IDENT") end))
 cduPreflightProc:addItem(kcSimpleProcedureItem:new("    Verify Model and ENG RATING"))
 cduPreflightProc:addItem(kcSimpleProcedureItem:new("    Verify navigation database ACTIVE date"))
-cduPreflightProc:addItem(kcIndirectProcedureItem:new("  POS INIT page:","OPEN",kcFlowItem.actorCPT,1,
+cduPreflightProc:addItem(kcIndirectProcedureItem:new("  POS INIT page:","OPEN",kcFlowItem.actorCPT,1,"pos_init_page",
 	function () return string.find(sysFMC.fmcPageTitle:getStatus(),"POS INIT") end))
 cduPreflightProc:addItem(kcSimpleProcedureItem:new("    Verify time"))
-cduPreflightProc:addItem(kcIndirectProcedureItem:new("    REF AIRPORT","SET",kcFlowItem.actorCPT,1,
+cduPreflightProc:addItem(kcIndirectProcedureItem:new("    REF AIRPORT","SET",kcFlowItem.actorCPT,1,"ref_airport_set",
 	function () return sysFMC.fmcRefAirportSet:getStatus() end))
 cduPreflightProc:addItem(kcSimpleProcedureItem:new("NAVIGATION DATA (CPT)"))
-cduPreflightProc:addItem(kcIndirectProcedureItem:new("  RTE page:","OPEN",kcFlowItem.actorCPT,1,
+cduPreflightProc:addItem(kcIndirectProcedureItem:new("  RTE page:","OPEN",kcFlowItem.actorCPT,1,"rte_page",
 	function () return string.find(sysFMC.fmcPageTitle:getStatus(),"RTE ") end))
-cduPreflightProc:addItem(kcIndirectProcedureItem:new("    ORIGIN","SET",kcFlowItem.actorCPT,1,
+cduPreflightProc:addItem(kcIndirectProcedureItem:new("    ORIGIN","SET",kcFlowItem.actorCPT,1,"origin_set",
 	function () return sysFMC.fmcOrigin:getStatus() end))
-cduPreflightProc:addItem(kcIndirectProcedureItem:new("    DEST","SET",kcFlowItem.actorCPT,1,
+cduPreflightProc:addItem(kcIndirectProcedureItem:new("    DEST","SET",kcFlowItem.actorCPT,1,"dest_set",
 	function () return sysFMC.fmcDestination:getStatus() end))
-cduPreflightProc:addItem(kcIndirectProcedureItem:new("    FLT NO","SET",kcFlowItem.actorCPT,1,
+cduPreflightProc:addItem(kcIndirectProcedureItem:new("    FLT NO","SET",kcFlowItem.actorCPT,1,"flt_no_entered",
 	function () return sysFMC.fmcFltNo:getStatus() end))
-cduPreflightProc:addItem(kcIndirectProcedureItem:new("    ROUTE","ENTER",kcFlowItem.actorCPT,1,
+cduPreflightProc:addItem(kcIndirectProcedureItem:new("    ROUTE","ENTER",kcFlowItem.actorCPT,1,"route_entered",
 	function () return sysFMC.fmcRouteEntered:getStatus() end))
-cduPreflightProc:addItem(kcIndirectProcedureItem:new("    ROUTE","ACTIVATE",kcFlowItem.actorCPT,1,
+cduPreflightProc:addItem(kcIndirectProcedureItem:new("    ROUTE","ACTIVATE",kcFlowItem.actorCPT,1,"route_activated",
 	function () return sysFMC.fmcRouteActivated:getStatus() end))
 cduPreflightProc:addItem(kcProcedureItem:new("    ROUTE","EXECUTE",kcFlowItem.actorCPT,1,
 	function () return sysFMC.fmcRouteExecuted:getStatus() end))
-cduPreflightProc:addItem(kcIndirectProcedureItem:new("  DEPARTURES page:","OPEN",kcFlowItem.actorCPT,1,
+cduPreflightProc:addItem(kcIndirectProcedureItem:new("  DEPARTURES page:","OPEN",kcFlowItem.actorCPT,1,"departures_open",
 	function () return string.find(sysFMC.fmcPageTitle:getStatus(),"DEPARTURES") end))
 cduPreflightProc:addItem(kcSimpleProcedureItem:new("    Select runway and departure routing"))
 cduPreflightProc:addItem(kcProcedureItem:new("    ROUTE:","EXECUTE",kcFlowItem.actorCPT,1,
 	function () return sysFMC.fmcRouteExecuted:getStatus() end))
-cduPreflightProc:addItem(kcIndirectProcedureItem:new("  LEGS page:","OPEN",kcFlowItem.actorCPT,1,
+cduPreflightProc:addItem(kcIndirectProcedureItem:new("  LEGS page:","OPEN",kcFlowItem.actorCPT,1,"legs_page_open",
 	function () return string.find(sysFMC.fmcPageTitle:getStatus(),"LEGS") end))
 cduPreflightProc:addItem(kcSimpleProcedureItem:new("    Verify or enter correct RNP for departure"))
 cduPreflightProc:addItem(kcSimpleProcedureItem:new("PERFORMANCE DATA (CPT)"))
-cduPreflightProc:addItem(kcIndirectProcedureItem:new("  PERF INIT page:","OPEN",kcFlowItem.actorCPT,1,
+cduPreflightProc:addItem(kcIndirectProcedureItem:new("  PERF INIT page:","OPEN",kcFlowItem.actorCPT,1,"perf_init_page",
 	function () return string.find(sysFMC.fmcPageTitle:getStatus(),"PERF INIT") end))
-cduPreflightProc:addItem(kcIndirectProcedureItem:new("    ZFW","ENTER",kcFlowItem.actorCPT,1,
+cduPreflightProc:addItem(kcIndirectProcedureItem:new("    ZFW","ENTER",kcFlowItem.actorCPT,1,"zfw_entered",
 	function () return sysFMC.fmcZFWEntered:getStatus() end))
-cduPreflightProc:addItem(kcIndirectProcedureItem:new("    GW","ENTER/VERIFY",kcFlowItem.actorCPT,1,
+cduPreflightProc:addItem(kcIndirectProcedureItem:new("    GW","ENTER/VERIFY",kcFlowItem.actorCPT,1,"gw_entered",
 	function () return sysFMC.fmcGWEntered:getStatus() end))
-cduPreflightProc:addItem(kcIndirectProcedureItem:new("    RESERVES","ENTER/VERIFY",kcFlowItem.actorCPT,1,
+cduPreflightProc:addItem(kcIndirectProcedureItem:new("    RESERVES","ENTER/VERIFY",kcFlowItem.actorCPT,1,"reserves_entered",
 	function () return sysFMC.fmcReservesEntered:getStatus() end))
-cduPreflightProc:addItem(kcIndirectProcedureItem:new("    COST INDEX","ENTER",kcFlowItem.actorCPT,1,
+cduPreflightProc:addItem(kcIndirectProcedureItem:new("    COST INDEX","ENTER",kcFlowItem.actorCPT,1,"cost_index_entered",
 	function () return sysFMC.fmcCIEntered:getStatus() end))
-cduPreflightProc:addItem(kcIndirectProcedureItem:new("    CRZ ALT","ENTER",kcFlowItem.actorCPT,1,
+cduPreflightProc:addItem(kcIndirectProcedureItem:new("    CRZ ALT","ENTER",kcFlowItem.actorCPT,1,"crz_alt_entered",
 	function () return sysFMC.fmcCrzAltEntered:getStatus() end))
-cduPreflightProc:addItem(kcIndirectProcedureItem:new("  N1 LIMIT page:","OPEN",kcFlowItem.actorCPT,1,
+cduPreflightProc:addItem(kcIndirectProcedureItem:new("  N1 LIMIT page:","OPEN",kcFlowItem.actorCPT,1,"n1_limit_page",
 	function () return string.find(sysFMC.fmcPageTitle:getStatus(),"N1 LIMIT") end))
 cduPreflightProc:addItem(kcSimpleProcedureItem:new("    Select assumed temp and/or fixed t/o rating"))
 cduPreflightProc:addItem(kcSimpleProcedureItem:new("    Select full or derated climb thrust"))
-cduPreflightProc:addItem(kcIndirectProcedureItem:new("  TAKEOFF REF page:","OPEN",kcFlowItem.actorCPT,1,
+cduPreflightProc:addItem(kcIndirectProcedureItem:new("  TAKEOFF REF page:","OPEN",kcFlowItem.actorCPT,1,"takeoff_ref_page",
 	function () return string.find(sysFMC.fmcPageTitle:getStatus(),"TAKEOFF REF") end))
-cduPreflightProc:addItem(kcIndirectProcedureItem:new("    FLAPS","ENTER",kcFlowItem.actorCPT,1,
+cduPreflightProc:addItem(kcIndirectProcedureItem:new("    FLAPS","ENTER",kcFlowItem.actorCPT,1,"flaps_entered",
 	function () return sysFMC.fmcFlapsEntered:getStatus() end))
-cduPreflightProc:addItem(kcIndirectProcedureItem:new("    CG","ENTER",kcFlowItem.actorCPT,1,
+cduPreflightProc:addItem(kcIndirectProcedureItem:new("    CG","ENTER",kcFlowItem.actorCPT,1,"cg_entered",
 	function () return sysFMC.fmcCGEntered:getStatus() end))
-cduPreflightProc:addItem(kcIndirectProcedureItem:new("    V SPEEDS","ENTER",kcFlowItem.actorCPT,1,
-	function () return sysFMC.fmcVspeedsEntered:getStatus() end))
+cduPreflightProc:addItem(kcIndirectProcedureItem:new("    V SPEEDS","ENTER",kcFlowItem.actorCPT,1,"vspeeds_entered",
+	function () return sysFMC.fmcVspeedsEntered:getStatus() == true end))
 cduPreflightProc:addItem(kcSimpleProcedureItem:new("CDU PREFLIGHT COMPLETE"))
 
--- ============ Preflight Procedure =============
+-- ================ Preflight Procedure =================OK
 -- Flight control panel                            
 -- FLIGHT CONTROL SWITCHES............GUARDS CLOSED (F/O)
 -- FLIGHT SPOILER SWITCHES............GUARDS CLOSED (F/O)
@@ -356,7 +364,6 @@ cduPreflightProc:addItem(kcSimpleProcedureItem:new("CDU PREFLIGHT COMPLETE"))
 -- ENGINE HYDRAULIC PUMPS SWITCHES...............ON (F/O)
 -- ELECTRIC HYDRAULIC PUMPS SWITCHES............OFF (F/O)
 
-
 local preflightFOProc = kcProcedure:new("PREFLIGHT PROCEDURE PART 1 (F/O)")
 preflightFOProc:addItem(kcSimpleProcedureItem:new("Flight control panel"))
 preflightFOProc:addItem(kcProcedureItem:new("FLIGHT CONTROL SWITCHES","GUARDS CLOSED",kcFlowItem.actorFO,1,
@@ -375,7 +382,7 @@ preflightFOProc:addItem(kcProcedureItem:new("FMC TRANSFER SWITCH","NORMAL",kcFlo
 preflightFOProc:addItem(kcProcedureItem:new("SOURCE SELECTOR","AUTO",kcFlowItem.actorFO,1,
 	function() return sysMCP.displaySourceSwitch:getStatus() == 0 end))
 preflightFOProc:addItem(kcProcedureItem:new("CONTROL PANEL SELECT SWITCH","NORMAL",kcFlowItem.actorFO,1,
-	function(self) return sysMCP.displayControlSwitch:getStatus() == 0 end))
+	function() return sysMCP.displayControlSwitch:getStatus() == 0 end))
 
 preflightFOProc:addItem(kcSimpleProcedureItem:new("Fuel panel"))
 preflightFOProc:addItem(kcProcedureItem:new("CROSSFEED SELECTOR","CLOSED",kcFlowItem.actorFO,1,
@@ -399,13 +406,13 @@ preflightFOProc:addItem(kcProcedureItem:new("BUS TRANSFER SWITCH","GUARD CLOSED"
 
 preflightFOProc:addItem(kcSimpleProcedureItem:new("Overheat and fire protection panel"))
 -- preflightFOProc:addItem(kcProcedureItem:new("OVHT DET SWITCHES","NORMAL",kcFlowItem.actorFO,1,function (self) return true end,nil,nil))
-preflightFOProc:addItem(kcIndirectProcedureItem:new("OVHT FIRE TEST SWITCH","HOLD RIGHT",kcFlowItem.actorFO,1,
+preflightFOProc:addItem(kcIndirectProcedureItem:new("OVHT FIRE TEST SWITCH","HOLD RIGHT",kcFlowItem.actorFO,1,"ovht_fire_test",
 	function () return  sysEngines.ovhtFireTestSwitch:getStatus() > 0 end))
-preflightFOProc:addItem(kcIndirectProcedureItem:new("MASTER FIRE WARN LIGHT","PUSH",kcFlowItem.actorFO,1,
+preflightFOProc:addItem(kcIndirectProcedureItem:new("MASTER FIRE WARN LIGHT","PUSH",kcFlowItem.actorFO,1,"master_fire_warn",
 	function () return sysGeneral.fireWarningAnc:getStatus() > 0 end))
-preflightFOProc:addItem(kcIndirectProcedureItem:new("ENGINES EXT TEST SWITCH","TEST 1 TO LEFT",kcFlowItem.actorFO,1,
+preflightFOProc:addItem(kcIndirectProcedureItem:new("ENGINES EXT TEST SWITCH","TEST 1 TO LEFT",kcFlowItem.actorFO,1,"eng_ext_test_1",
 	function () return get("laminar/B738/toggle_switch/extinguisher_circuit_test") < 0 end))
-preflightFOProc:addItem(kcIndirectProcedureItem:new("ENGINES EXT TEST SWITCH","TEST 2 TO RIGHT",kcFlowItem.actorFO,1,
+preflightFOProc:addItem(kcIndirectProcedureItem:new("ENGINES EXT TEST SWITCH","TEST 2 TO RIGHT",kcFlowItem.actorFO,1,"eng_ext_test_2",
 	function () return get("laminar/B738/toggle_switch/extinguisher_circuit_test") > 0 end))
 preflightFOProc:addItem(kcProcedureItem:new("APU SWITCH","START",kcFlowItem.actorFO,1,
 	function () return sysElectric.apuRunningAnc:getStatus() == 1 end))
@@ -440,10 +447,7 @@ preflightFOProc:addItem(kcProcedureItem:new("ELECTRIC HYDRAULIC PUMPS SWITCHES",
 	function () return sysHydraulic.elecHydPump1:getStatus() == 0 and sysHydraulic.elecHydPump2:getStatus() == 0 end))
 preflightFOProc:addItem(kcSimpleProcedureItem:new("NEXT Prelimibary Preflight Part 2"))
 
--- PREFLIGHT PROCEDURE PART 2 (F/O)
--- Hydraulic panel                                 
--- ENGINE HYDRAULIC PUMPS SWITCHES...............ON (F/O)
--- ELECTRIC HYDRAULIC PUMPS SWITCHES............OFF (F/O)
+-- ========== PREFLIGHT PROCEDURE PART 2 (F/O) ==========
 -- Air conditioning panel                          
 -- AIR TEMPERATURE SOURCE SELECTOR........AS NEEDED (F/O)
 -- TRIM AIR SWITCH...............................ON (F/O)
@@ -469,12 +473,6 @@ preflightFOProc:addItem(kcSimpleProcedureItem:new("NEXT Prelimibary Preflight Pa
 -- ENGINE START SWITCHES........................OFF (F/O)
 
 local preflightFO2Proc = kcProcedure:new("PREFLIGHT PROCEDURE PART 2 (F/O)")
-preflightFO2Proc:addItem(kcSimpleProcedureItem:new("Hydraulic panel"))
-preflightFO2Proc:addItem(kcProcedureItem:new("ENGINE HYDRAULIC PUMPS SWITCHES","ON",kcFlowItem.actorFO,1,
-	function () return sysHydraulic.engHydPump1:getStatus() == 1 and sysHydraulic.engHydPump2:getStatus() == 1 end))
-preflightFO2Proc:addItem(kcProcedureItem:new("ELECTRIC HYDRAULIC PUMPS SWITCHES","OFF",kcFlowItem.actorFO,1,
-	function () return sysHydraulic.elecHydPump1:getStatus() == 0 and sysHydraulic.elecHydPump2:getStatus() == 0 end))
-
 preflightFO2Proc:addItem(kcSimpleProcedureItem:new("Air conditioning panel"))
 preflightFO2Proc:addItem(kcProcedureItem:new("AIR TEMPERATURE SOURCE SELECTOR","AS NEEDED",kcFlowItem.actorFO,1,
 	function () return sysAir.contCabTemp:getStatus() > 0 and sysAir.fwdCabTemp:getStatus() > 0 and sysAir.aftCabTemp:getStatus() > 0 end))
@@ -515,7 +513,7 @@ preflightFO2Proc:addItem(kcProcedureItem:new("IGNITION SELECT SWITCH","IGN L OR 
 preflightFO2Proc:addItem(kcProcedureItem:new("ENGINE START SWITCHES","OFF",kcFlowItem.actorFO,1,
 	function () return sysEngines.engStart1Switch:getStatus() == 1 and sysEngines.engStart2Switch:getStatus() == 1 end))
 
--- PREFLIGHT PROCEDURE PART 3 (F/O)
+-- ========== PREFLIGHT PROCEDURE PART 3 (F/O) ==========
 -- Mode control panel                              
 -- COURSE(S)....................................SET (F/O)
 -- FLIGHT DIRECTOR SWITCHES......................ON (F/O)
@@ -552,7 +550,6 @@ preflightFO2Proc:addItem(kcProcedureItem:new("ENGINE START SWITCHES","OFF",kcFlo
 -- ADF RADIOS...................................SET (F/O)
 -- WEATHER RADAR PANEL..........................SET (F/O)
 -- TRANSPONDER PANEL............................SET (F/O)
-
 
 local preflightFO3Proc = kcProcedure:new("PREFLIGHT PROCEDURE PART 3 (F/O)")
 preflightFO3Proc:addItem(kcSimpleProcedureItem:new("Mode control panel"))
@@ -611,27 +608,24 @@ preflightFO3Proc:addItem(kcProcedureItem:new("TRANSPONDER PANEL","SET",kcFlowIte
 -- ===== PREFLIGHT PROCEDURE CAPT =====
 
 local preflightCPTProc = kcProcedure:new("PREFLIGHT PROCEDURE (CAPT)")
-preflightCPTProc:addItem(kcIndirectProcedureItem:new("LIGHTS","TEST",kcFlowItem.actorCPT,1,
-function () return sysGeneral.lightTest:getStatus() == 1 end))
+preflightCPTProc:addItem(kcIndirectProcedureItem:new("LIGHTS","TEST",kcFlowItem.actorCPT,1,"internal_lights_test",
+	function () return sysGeneral.lightTest:getStatus() == 1 end))
 
 preflightCPTProc:addItem(kcSimpleProcedureItem:new("EFIS control panel"))
 preflightCPTProc:addItem(kcProcedureItem:new("MINIMUMS REFERENCE SELECTOR","%s|(activePrefSet:get(\"aircraft:efis_mins_dh\")) and \"RADIO\" or \"BARO\"",kcFlowItem.actorCPT,1,
-function () return (sysEFIS.minsTypePilot:getStatus() == 0 and activePrefSet:get("aircraft:efis_mins_dh") == true)
-or (sysEFIS.minsTypePilot:getStatus() == 1 and activePrefSet:get("aircraft:efis_mins_dh") == false) end ))
+	function () return (sysEFIS.minsTypePilot:getStatus() == 0 and activePrefSet:get("aircraft:efis_mins_dh") == true) or (sysEFIS.minsTypePilot:getStatus() == 1 and activePrefSet:get("aircraft:efis_mins_dh") == false) end )) 
 preflightCPTProc:addItem(kcProcedureItem:new("DECISION HEIGHT OR ALTITUDE REFERENCE","SET",kcFlowItem.actorCPT,1,
-function () return sysEFIS.minsResetPilot:getStatus() == 1 end))
+	function () return sysEFIS.minsResetPilot:getStatus() == 1 end))
 preflightCPTProc:addItem(kcProcedureItem:new("METERS SWITCH","%s|(activePrefSet:get(\"aircraft:efis_mtr\")) and \"MTRS\" or \"FEET\"",kcFlowItem.actorCPT,1,
-function () return (sysEFIS.mtrsPilot:getStatus() == 0 and activePrefSet:get("aircraft:efis_mtr") == false)
-or (sysEFIS.mtrsPilot:getStatus() == 1 and activePrefSet:get("aircraft:efis_mtr") == true) end ))
+	function () return (sysEFIS.mtrsPilot:getStatus() == 0 and activePrefSet:get("aircraft:efis_mtr") == false) or (sysEFIS.mtrsPilot:getStatus() == 1 and activePrefSet:get("aircraft:efis_mtr") == true) end ))
 preflightCPTProc:addItem(kcProcedureItem:new("FLIGHT PATH VECTOR","%s|(activePrefSet:get(\"aircraft:efis_fpv\")) and \"ON\" or \"OFF\"",kcFlowItem.actorCPT,1,
-function () return (sysEFIS.fpvPilot:getStatus() == 0 and activePrefSet:get("aircraft:efis_fpv") == false)
-or (sysEFIS.fpvPilot:getStatus() == 1 and activePrefSet:get("aircraft:efis_fpv") == true) end ))
+	function () return (sysEFIS.fpvPilot:getStatus() == 0 and activePrefSet:get("aircraft:efis_fpv") == false) or (sysEFIS.fpvPilot:getStatus() == 1 and activePrefSet:get("aircraft:efis_fpv") == true) end ))
 preflightCPTProc:addItem(kcProcedureItem:new("BAROMETRIC REFERENCE SELECTOR","%s|(activePrefSet:get(\"general:baro_mode_hpa\")) and \"HPA\" or \"IN\"",kcFlowItem.actorCPT,1,
-function () return (sysGeneral.baroModePilot:getStatus() == 1 and activePrefSet:get("general:baro_mode_hpa") == true)
-or (sysGeneral.baroModePilot:getStatus() == 0 and activePrefSet:get("general:baro_mode_hpa") == false) end ))
+	function () return (sysGeneral.baroModePilot:getStatus() == 1 and activePrefSet:get("general:baro_mode_hpa") == true) or (sysGeneral.baroModePilot:getStatus() == 0 and activePrefSet:get("general:baro_mode_hpa") == false) end ))
 preflightCPTProc:addItem(kcProcedureItem:new("BAROMETRIC SELECTOR","SET LOCAL ALTIMETER SETTING",kcFlowItem.actorCPT,1))
 preflightCPTProc:addItem(kcProcedureItem:new("VOR/ADF SWITCHES","AS NEEDED",kcFlowItem.actorCPT,1))
-preflightCPTProc:addItem(kcProcedureItem:new("MODE SELECTOR","MAP",kcFlowItem.actorCPT,1))
+preflightCPTProc:addItem(kcProcedureItem:new("MODE SELECTOR","MAP",kcFlowItem.actorCPT,1,
+	function () return sysEFIS.mapModePilot:getStatus() == sysEFIS.mapModeMAP end))
 preflightCPTProc:addItem(kcProcedureItem:new("CENTER SWITCH","AS NEEDED",kcFlowItem.actorCPT,1))
 preflightCPTProc:addItem(kcProcedureItem:new("RANGE SELECTOR","AS NEEDED",kcFlowItem.actorCPT,1))
 preflightCPTProc:addItem(kcProcedureItem:new("TRAFFIC SWITCH","AS NEEDED",kcFlowItem.actorCPT,1))
@@ -640,9 +634,11 @@ preflightCPTProc:addItem(kcProcedureItem:new("MAP SWITCHES","AS NEEDED",kcFlowIt
 
 preflightCPTProc:addItem(kcSimpleProcedureItem:new("Mode control panel"))
 preflightCPTProc:addItem(kcProcedureItem:new("COURSE(S)","SET",kcFlowItem.actorCPT,1))
-preflightCPTProc:addItem(kcProcedureItem:new("FLIGHT DIRECTOR SWITCH","ON",kcFlowItem.actorCPT,1))
+preflightCPTProc:addItem(kcProcedureItem:new("FLIGHT DIRECTOR SWITCH","ON",kcFlowItem.actorCPT,1,
+	function () return sysMCP.fdirPilotSwitch:getStatus() == 1 end))
 preflightCPTProc:addItem(kcProcedureItem:new("BANK ANGLE SELECTOR","AS NEEDED",kcFlowItem.actorCPT,1))
-preflightCPTProc:addItem(kcProcedureItem:new("AUTOPILOT DISENGAGE BAR","UP",kcFlowItem.actorCPT,1))
+preflightCPTProc:addItem(kcProcedureItem:new("AUTOPILOT DISENGAGE BAR","UP",kcFlowItem.actorCPT,1,
+	function () return sysMCP.discAPSwitch:getStatus() == 0 end))
 preflightCPTProc:addItem(kcProcedureItem:new("OXYGEN RESET/TEST SWITCH","PUSH AND HOLD",kcFlowItem.actorCPT,1))
 preflightCPTProc:addItem(kcProcedureItem:new("CLOCK","SET",kcFlowItem.actorCPT,1))
 preflightCPTProc:addItem(kcProcedureItem:new("NOSE WHEEL STEERING SWITCH","GUARD CLOSED",kcFlowItem.actorCPT,1))
@@ -651,13 +647,18 @@ preflightCPTProc:addItem(kcSimpleProcedureItem:new("Display select panel"))
 preflightCPTProc:addItem(kcProcedureItem:new("MAIN PANEL DISPLAY UNITS SELECTOR","NORM",kcFlowItem.actorCPT,1))
 preflightCPTProc:addItem(kcProcedureItem:new("LOWER DISPLAY UNIT SELECTOR","NORM",kcFlowItem.actorCPT,1))
 preflightCPTProc:addItem(kcProcedureItem:new("INTEGRATED STANDBY FLIGHT DISPLAY","SET",kcFlowItem.actorCPT,1))
-preflightCPTProc:addItem(kcProcedureItem:new("SPEED BRAKE LEVER","DOWN DETENT",kcFlowItem.actorCPT,1))
-preflightCPTProc:addItem(kcProcedureItem:new("REVERSE THRUST LEVERS","DOWN",kcFlowItem.actorCPT,1))
-preflightCPTProc:addItem(kcProcedureItem:new("FORWARD THRUST LEVERS","CLOSED",kcFlowItem.actorCPT,1))
+preflightCPTProc:addItem(kcProcedureItem:new("SPEED BRAKE LEVER","DOWN DETENT",kcFlowItem.actorCPT,1,
+	function () return sysControls.spoilerLever:getStatus() == 0 end))
+preflightCPTProc:addItem(kcProcedureItem:new("REVERSE THRUST LEVERS","DOWN",kcFlowItem.actorCPT,1,
+	function () return sysEngines.reverseLever1:getStatus() == 0 and sysEngines.reverseLever2:getStatus() == 0 end))
+preflightCPTProc:addItem(kcProcedureItem:new("FORWARD THRUST LEVERS","CLOSED",kcFlowItem.actorCPT,1,
+	function () return sysEngines.thrustLever1:getStatus() == 0 and sysEngines.thrustLever2:getStatus() == 0 end))
 preflightCPTProc:addItem(kcProcedureItem:new("FLAP LEVER","SET",kcFlowItem.actorCPT,1))
 preflightCPTProc:addItem(kcSimpleProcedureItem:new("  Set the flap lever to agree with the flap position."))
-preflightCPTProc:addItem(kcProcedureItem:new("PARKING BRAKE","SET",kcFlowItem.actorCPT,1))
-preflightCPTProc:addItem(kcProcedureItem:new("ENGINE START LEVERS","CUTOFF",kcFlowItem.actorCPT,1))
+prelPreflightProc:addItem(kcProcedureItem:new("PARKING BRAKE","SET",kcFlowItem.actorFO,1,
+	function () return sysGeneral.parkBrakeSwitch:getStatus() == 1 end))
+preflightCPTProc:addItem(kcProcedureItem:new("ENGINE START LEVERS","CUTOFF",kcFlowItem.actorCPT,1,
+	function () return sysEngines.startLever1:getStatus() == 0 and sysEngines.startLever2:getStatus() == 0 end))
 preflightCPTProc:addItem(kcProcedureItem:new("STABILIZER TRIM CUTOUT SWITCHES","NORMAL",kcFlowItem.actorCPT,1))
 preflightCPTProc:addItem(kcProcedureItem:new("RADIO TUNING PANEL","SET",kcFlowItem.actorCPT,1))
 preflightCPTProc:addItem(kcSimpleProcedureItem:new("CALL PREFLIGHT CHECKLIST"))
@@ -682,23 +683,86 @@ preflightChkl:addItem(kcFlowItem:new("ENGINE START LEVERS","CUTOFF",kcFlowItem.a
 	function () return sysEngines.startLever1:getStatus() == 0 and sysEngines.startLever2:getStatus() == 0 end))
 preflightChkl:addItem(kcFlowItem:new("GEAR PINS","REMOVED",kcFlowItem.actorPF,1))
 
+-- ============ before start Procedure =============
+local beforeStartProc = kcProcedure:new("BEFORE START PROCEDURE (BOTH)")
+beforeStartProc:addItem(kcProcedureItem:new("FLIGHT DECK DOOR","CLOSED AND LOCKED",kcFlowItem.actorFO,1,
+	function () return sysGeneral.cockpitDoor:getStatus() == 0 end))
+beforeStartProc:addItem(kcProcedureItem:new("CDU DISPLAY","SET",kcFlowItem.actorBOTH,1))
+beforeStartProc:addItem(kcProcedureItem:new("N1 BUGS","CHECK",kcFlowItem.actorBOTH,1))
+beforeStartProc:addItem(kcProcedureItem:new("IAS BUGS","SET",kcFlowItem.actorBOTH,1))
+beforeStartProc:addItem(kcSimpleProcedureItem:new("Set MCP"))
+beforeStartProc:addItem(kcProcedureItem:new("  AUTOTHROTTLE ARM SWITCH","ARM",kcFlowItem.actorCPT,1,
+	function () return sysMCP.athrSwitch:getStatus() == 1 end))
+beforeStartProc:addItem(kcProcedureItem:new("  IAS/MACH SELECTOR","SET V2",kcFlowItem.actorCPT,1))
+beforeStartProc:addItem(kcProcedureItem:new("  LNAV","ARM AS NEEDED",kcFlowItem.actorCPT,1))
+beforeStartProc:addItem(kcProcedureItem:new("  VNAV","ARM AS NEEDED",kcFlowItem.actorCPT,1))
+beforeStartProc:addItem(kcProcedureItem:new("  INITIAL HEADING","SET",kcFlowItem.actorCPT,1))
+beforeStartProc:addItem(kcProcedureItem:new("  INITIAL ALTITUDE","SET",kcFlowItem.actorCPT,1))
+beforeStartProc:addItem(kcProcedureItem:new("TAXI AND TAKEOFF BRIEFINGS","COMPLETE",kcFlowItem.actorBOTH,1))
+beforeStartProc:addItem(kcProcedureItem:new("EXTERIOR DOORS","VERIFY CLOSED",kcFlowItem.actorFO,1,
+	function () return sysGeneral.doorGroup:getStatus() == 0 end))
+beforeStartProc:addItem(kcProcedureItem:new("START CLEARANCE","OBTAIN",kcFlowItem.actorBOTH,1))
+beforeStartProc:addItem(kcSimpleProcedureItem:new("  Obtain a clearance to pressurize the hydraulic systems."))
+beforeStartProc:addItem(kcSimpleProcedureItem:new("  Obtain a clearance to start the engines."))
+beforeStartProc:addItem(kcSimpleProcedureItem:new("Set Fuel panel"))
+beforeStartProc:addItem(kcProcedureItem:new("  LEFT AND RIGHT CENTER FUEL PUMPS SWITCHES","ON",kcFlowItem.actorFO,1,
+	function () return sysFuel.ctrFuelPumpGroup:getStatus() == 2 end,nil,
+	function () return sysFuel.centerTankLbs:getStatus() < 1000 end))
+beforeStartProc:addItem(kcSimpleProcedureItem:new("    If center tank quantity exceeds 1,000 lbs/460 kgs",
+	function () return sysFuel.centerTankLbs:getStatus() < 1000 end))
+beforeStartProc:addItem(kcProcedureItem:new("  AFT AND FORWARD FUEL PUMPS SWITCHES","ON",kcFlowItem.actorFO,1,
+	function () return sysFuel.fuelPumpGroup:getStatus() == 4 end,nil,
+	function () return sysFuel.centerTankLbs:getStatus() > 999 end))
+beforeStartProc:addItem(kcProcedureItem:new("  AFT AND FORWARD FUEL PUMPS SWITCHES","ON",kcFlowItem.actorFO,1,
+	function () return sysFuel.fuelPumpGroup:getStatus() == 6 end,nil,
+	function () return sysFuel.centerTankLbs:getStatus() < 1000 end))
+beforeStartProc:addItem(kcSimpleProcedureItem:new("Set Hydraulic panel"))
+beforeStartProc:addItem(kcProcedureItem:new("  ENGINE HYDRAULIC PUMP SWITCHES","OFF",kcFlowItem.actorFO,1,
+	function () return sysHydraulic.engHydPumpGroup:getStatus() == 0 end))
+beforeStartProc:addItem(kcProcedureItem:new("  ELECTRIC HYDRAULIC PUMP SWITCHES","ON",kcFlowItem.actorFO,1,
+	function () return sysHydraulic.elecHydPumpGroup:getStatus() == 2 end))
+beforeStartProc:addItem(kcProcedureItem:new("ANTI COLLISION LIGHT SWITCH","ON",kcFlowItem.actorFO,1,
+	function () return sysLights.beaconSwitch:getStatus() == 1 end))
+beforeStartProc:addItem(kcSimpleProcedureItem:new("Set Trim"))
+beforeStartProc:addItem(kcProcedureItem:new("  STABILIZER TRIM","___ UNITS",kcFlowItem.actorCPT,1))
+beforeStartProc:addItem(kcProcedureItem:new("  AILERON TRIM","0 UNITS",kcFlowItem.actorCPT,1))
+beforeStartProc:addItem(kcProcedureItem:new("  RUDDER TRIM","0 UNITS",kcFlowItem.actorCPT,1))
+beforeStartProc:addItem(kcSimpleProcedureItem:new("Call for Before Start Checklist"))
+
 -- ======= Before Start Checklist
 
 local beforeStartChkl = kcChecklist:new("BEFORE START CHECKLIST (F/O)")
-beforeStartChkl:addItem(kcFlowItem:new("FLIGHT DECK DOOR","CLOSED AND LOCKED",kcFlowItem.actorCPT,1,
+beforeStartChkl:addItem(kcChecklistItem:new("FLIGHT DECK DOOR","CLOSED AND LOCKED",kcFlowItem.actorCPT,1,
 	function () return sysGeneral.cockpitDoor:getStatus() == 0 end ))
-beforeStartChkl:addItem(kcFlowItem:new("FUEL","___ LBS/KGS, PUMPS ON",kcFlowItem.actorCPT,1))
-beforeStartChkl:addItem(kcFlowItem:new("PASSENGER SIGNS","SET",kcFlowItem.actorCPT,1,
+beforeStartChkl:addItem(kcChecklistItem:new("FUEL","%i %s, PUMPS ON|activePrefSet:get(\"general:weight_kgs\") and sysFuel.allTanksKgs:getStatus() or sysFuel.allTanksLbs:getStatus()|activePrefSet:get(\"general:weight_kgs\") and \"KGS\" or \"LBS\"",kcFlowItem.actorCPT,1,
+	function () return sysFuel.fuelPumpGroup:getStatus() == 4 end,nil,
+	function () return sysFuel.centerTankLbs:getStatus() > 999 end))
+beforeStartChkl:addItem(kcChecklistItem:new("FUEL","%i %s, PUMPS ON|activePrefSet:get(\"general:weight_kgs\") and sysFuel.allTanksKgs:getStatus() or sysFuel.allTanksLbs:getStatus()|activePrefSet:get(\"general:weight_kgs\") and \"KGS\" or \"LBS\"",kcFlowItem.actorCPT,1,
+	function () return sysFuel.fuelPumpGroup:getStatus() == 6 end,nil,
+	function () return sysFuel.centerTankLbs:getStatus() < 1000 end))
+beforeStartChkl:addItem(kcChecklistItem:new("PASSENGER SIGNS","SET",kcFlowItem.actorCPT,1,
 	function () return sysGeneral.seatBeltSwitch:getStatus() > 0 and sysGeneral.noSmokingSwitch:getStatus() > 0 end ))
 beforeStartChkl:addItem(kcFlowItem:new("WINDOWS","LOCKED",kcFlowItem.actorBOTH,1))
-beforeStartChkl:addItem(kcFlowItem:new("MCP","V2___, HDG___, ALT___",kcFlowItem.actorCPT,1))
-beforeStartChkl:addItem(kcFlowItem:new("TAKEOFF SPEEDS","V1___, VR___, V2___",kcFlowItem.actorBOTH,1))
-beforeStartChkl:addItem(kcFlowItem:new("CDU PREFLIGHT","COMPLETED",kcFlowItem.actorCPT,1))
-beforeStartChkl:addItem(kcFlowItem:new("RUDDER & AILERON TRIM","FREE AND 0",kcFlowItem.actorCPT,1,
+beforeStartChkl:addItem(kcChecklistItem:new("MCP","V2 %i, HDG %i, ALT %i|sysFMC.V2:getStatus()|sysMCP.hdgSelector:getStatus()|sysMCP.altSelector:getStatus()",kcFlowItem.actorCPT,1))
+beforeStartChkl:addItem(kcChecklistItem:new("TAKEOFF SPEEDS","V1 %i, VR %i, V2 %i|sysFMC.V1:getStatus()|sysFMC.Vr:getStatus()|sysFMC.V2:getStatus()",kcFlowItem.actorBOTH,1))
+beforeStartChkl:addItem(kcChecklistItem:new("CDU PREFLIGHT","COMPLETED",kcFlowItem.actorCPT,1))
+beforeStartChkl:addItem(kcChecklistItem:new("RUDDER & AILERON TRIM","FREE AND 0",kcFlowItem.actorCPT,1,
 	function () return sysControls.rudderTrimSwitch:getStatus() == 0 and sysControls.aileronTrimSwitch:getStatus() == 0 end ))
-beforeStartChkl:addItem(kcFlowItem:new("TAXI AND TAKEOFF BRIEFING","Completed",kcFlowItem.actorCPT,1))
-beforeStartChkl:addItem(kcFlowItem:new("ANTI COLLISION LIGHT","ON",kcFlowItem.actorCPT,
-	function () return sysLights.beaconSwitch:getStatus() == 1 end ))
+beforeStartChkl:addItem(kcChecklistItem:new("TAXI AND TAKEOFF BRIEFING","Completed",kcFlowItem.actorCPT,1))
+
+-- ============ Pushback Towing Procedure =============
+local pushstartProc = kcProcedure:new("PUSHBACK & ENGINE START (BOTH)")
+pushstartProc:addItem(kcIndirectProcedureItem:new("PARKING BRAKE","SET",kcFlowItem.actorFO,1,"pb_parkbrk_initial_set",
+	function () return sysGeneral.parkBrakeSwitch:getStatus() == 1 end))
+pushstartProc:addItem(kcSimpleProcedureItem:new("Engine Start may be done during pushback or towing"))
+pushstartProc:addItem(kcProcedureItem:new("COMMUNICATION WITH GROUND","ESTABLISH",kcFlowItem.actorCPT,1))
+pushstartProc:addItem(kcIndirectProcedureItem:new("PARKING BRAKE","RELEASED",kcFlowItem.actorFO,1,"pb_parkbrk_release",
+	function () return sysGeneral.parkBrakeSwitch:getStatus() == 0 end))
+pushstartProc:addItem(kcSimpleProcedureItem:new("When pushback/towing complete"))
+pushstartProc:addItem(kcProcedureItem:new("  TOW BAR DISCONNECTED","VERIFY",kcFlowItem.actorCPT,1))
+pushstartProc:addItem(kcProcedureItem:new("  LOCKOUT PIN REMOVED","VERIFY",kcFlowItem.actorCPT,1))
+pushstartProc:addItem(kcProcedureItem:new("  SYSTEM A HYDRAULIC PUMPS","ON",kcFlowItem.actorFO,1,
+	function () return sysHydraulic.engHydPump1:getStatus() == 1 and sysHydraulic.elecHydPump1:getStatus() == 1 end ))
 
 -- ======= Before Taxi checklist =======
 
@@ -850,40 +914,7 @@ exteriorInspectionProc:addItem(kcProcedureItem:new("  Probes, sensors, ports, ve
 exteriorInspectionProc:addItem(kcProcedureItem:new("  Exterior lights","Check"))
 
 
--- ============ before start Procedure =============
-local beforeStartProc = kcProcedure:new("BEFORE START PROCEDURE (BOTH)")
-beforeStartProc:addItem(kcProcedureItem:new("FLIGHT DECK DOOR","CLOSED AND LOCKED",kcFlowItem.actorFO,1))
-beforeStartProc:addItem(kcProcedureItem:new("CDU DISPLAY","SET",kcFlowItem.actorBOTH,1))
-beforeStartProc:addItem(kcProcedureItem:new("N1 BUGS","CHECK",kcFlowItem.actorBOTH,1))
-beforeStartProc:addItem(kcProcedureItem:new("IAS BUGS","SET",kcFlowItem.actorBOTH,1))
-beforeStartProc:addItem(kcSimpleProcedureItem:new("Set MCP"))
-beforeStartProc:addItem(kcProcedureItem:new("  AUTOTHROTTLE ARM SWITCH","ARM",kcFlowItem.actorCPT,1))
-beforeStartProc:addItem(kcProcedureItem:new("  IAS/MACH SELECTOR","SET V2",kcFlowItem.actorCPT,1))
-beforeStartProc:addItem(kcProcedureItem:new("  LNAV","ARM AS NEEDED",kcFlowItem.actorCPT,1))
-beforeStartProc:addItem(kcProcedureItem:new("  VNAV","ARM AS NEEDED",kcFlowItem.actorCPT,1))
-beforeStartProc:addItem(kcProcedureItem:new("  INITIAL HEADING","SET",kcFlowItem.actorCPT,1))
-beforeStartProc:addItem(kcProcedureItem:new("  INITIAL ALTITUDE","SET",kcFlowItem.actorCPT,1))
-beforeStartProc:addItem(kcProcedureItem:new("TAXI AND TAKEOFF BRIEFINGS","COMPLETE",kcFlowItem.actorBOTH,1))
-beforeStartProc:addItem(kcProcedureItem:new("EXTERIOR DOORS","VERIFY CLOSED",kcFlowItem.actorFO,1))
-beforeStartProc:addItem(kcProcedureItem:new("START CLEARANCE","OBTAIN",kcFlowItem.actorBOTH,1))
-beforeStartProc:addItem(kcSimpleProcedureItem:new("  Obtain a clearance to pressurize the hydraulic systems."))
-beforeStartProc:addItem(kcSimpleProcedureItem:new("  Obtain a clearance to start the engines."))
-beforeStartProc:addItem(kcSimpleProcedureItem:new("Set Fuel panel"))
-beforeStartProc:addItem(kcProcedureItem:new("  LEFT AND RIGHT CENTER FUEL PUMPS SWITCHES","ON",kcFlowItem.actorFO,1))
-beforeStartProc:addItem(kcSimpleProcedureItem:new("    If the center tank fuel quantity exceeds 1,000 pounds/460 kilograms"))
-beforeStartProc:addItem(kcProcedureItem:new("  AFT AND FORWARD FUEL PUMPS SWITCHES","ON",kcFlowItem.actorFO,1))
-beforeStartProc:addItem(kcSimpleProcedureItem:new("Set Hydraulic panel"))
-beforeStartProc:addItem(kcProcedureItem:new("  ENGINE HYDRAULIC PUMP SWITCHES","OFF",kcFlowItem.actorFO,1))
-beforeStartProc:addItem(kcProcedureItem:new("  ELECTRIC HYDRAULIC PUMP SWITCHES","ON",kcFlowItem.actorFO,1))
-beforeStartProc:addItem(kcProcedureItem:new("ANTI COLLISION LIGHT SWITCH","ON",kcFlowItem.actorFO,1))
-beforeStartProc:addItem(kcSimpleProcedureItem:new("Set Trim"))
-beforeStartProc:addItem(kcProcedureItem:new("  STABILIZER TRIM","___ UNITS",kcFlowItem.actorCPT,1))
-beforeStartProc:addItem(kcProcedureItem:new("  AILERON TRIM","0 UNITS",kcFlowItem.actorCPT,1))
-beforeStartProc:addItem(kcProcedureItem:new("  RUDDER TRIM","0 UNITS",kcFlowItem.actorCPT,1))
-beforeStartProc:addItem(kcSimpleProcedureItem:new("Call for Before Start Checklist"))
 
--- ============ Pushback Towing Procedure =============
-local pushstartProc = kcProcedure:new("PUSHBACK & ENGINE START (BOTH)")
 
 -- ============ Before Taxi =============
 local beforeTaxiProc = kcProcedure:new("BEFORE TAXI PROCEDURE (F/O)")
@@ -944,12 +975,12 @@ local coldAndDarkProc = kcProcedure:new("SET AIRCRAFT TO COLD & DARK")
 
 -- ============  =============
 -- add the checklists and procedures to the active sop
--- activeSOP:addProcedure(electricalPowerUpProc)
--- activeSOP:addProcedure(prelPreflightProc)
--- activeSOP:addProcedure(cduPreflightProc)
--- activeSOP:addProcedure(preflightFOProc)
--- activeSOP:addProcedure(preflightFO2Proc)
--- activeSOP:addProcedure(preflightFO3Proc)
+activeSOP:addProcedure(electricalPowerUpProc)
+activeSOP:addProcedure(prelPreflightProc)
+activeSOP:addProcedure(cduPreflightProc)
+activeSOP:addProcedure(preflightFOProc)
+activeSOP:addProcedure(preflightFO2Proc)
+activeSOP:addProcedure(preflightFO3Proc)
 activeSOP:addProcedure(preflightCPTProc)
 activeSOP:addChecklist(preflightChkl)
 activeSOP:addProcedure(beforeStartProc)

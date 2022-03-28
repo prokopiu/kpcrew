@@ -26,8 +26,13 @@ function kcSimpleChecklistItem:new(challengeText, skipFunc)
 	obj.color = color_white
 	obj.valid = true
 	obj.skipFunc = skipFunc
+	obj.className = "SimpleProcedureItem"
 	
     return obj
+end
+
+function kcSimpleChecklistItem:getClassName()
+	return self.className
 end
 
 -- item is always valid

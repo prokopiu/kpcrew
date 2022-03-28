@@ -111,4 +111,52 @@ sysEFIS.voradf2Copilot = InopSwitch:new("vorad2copilot")
 
 ------------- Annunciators
 
+-- UI
+function sysEFIS:render(ypos,height)
+
+	-- reposition when screen size changes
+	if kh_efis_wnd_state < 0 then
+		float_wnd_set_position(kh_efis_wnd, 0, kh_scrn_height - ypos)
+		float_wnd_set_geometry(kh_efis_wnd, 0, ypos, 25, ypos-height)
+		kh_efis_wnd_state = 0
+	end
+	
+	imgui.SetCursorPosY(10)
+	imgui.SetCursorPosX(2)
+	
+	if kh_efis_wnd_state == 1 then
+		imgui.Button("<", 17, 25)
+		if imgui.IsItemActive() then 
+			kh_efis_wnd_state = 0
+			float_wnd_set_geometry(kh_efis_wnd, 0, ypos, 25, ypos-height)
+		end
+	end
+
+	if kh_efis_wnd_state == 0 then
+		imgui.Button("E", 17, 25)
+		if imgui.IsItemActive() then 
+			kh_efis_wnd_state = 1
+			float_wnd_set_geometry(kh_efis_wnd, 0, ypos, 770, ypos-height)
+		end
+	end
+
+	kc_imgui_label_mcp("ND:",10)
+	kc_imgui_simple_actuator("MODE <",sysEFIS.mapModePilot,cmdDown,10,47,25)
+	kc_imgui_simple_actuator("MODE >",sysEFIS.mapModePilot,cmdUp,10,47,25)
+	kc_imgui_simple_actuator("ZOOM <",sysEFIS.mapZoomPilot,cmdDown,10,47,25)
+	kc_imgui_simple_actuator("ZOOM >",sysEFIS.mapZoomPilot,cmdUp,10,47,25)
+	kc_imgui_label_mcp("|",10)
+	kc_imgui_toggle_button_mcp("WXR",sysEFIS.wxrPilot,10,30,25)
+	kc_imgui_toggle_button_mcp("APT",sysEFIS.arptPilot,10,30,25)
+	kc_imgui_toggle_button_mcp("NAV",sysEFIS.staPilot,10,30,25)
+	kc_imgui_toggle_button_mcp("WPT",sysEFIS.wptPilot,10,30,25)
+	kc_imgui_label_mcp("| MINS",10)
+	kc_imgui_rotary_mcp("%04d",sysEFIS.minsPilot,10,31)
+	kc_imgui_label_mcp("| BARO",10)
+	kc_imgui_simple_actuator("DN",sysGeneral.baroGroup,cmdDown,10,23,25)
+	kc_imgui_value("%04d ",sysGeneral.baroMbar,10)
+	kc_imgui_value("%5.2f",sysGeneral.baroInhg,10)
+	kc_imgui_simple_actuator("UP",sysGeneral.baroGroup,cmdUp,10,23,25)
+end
+
 return sysEFIS

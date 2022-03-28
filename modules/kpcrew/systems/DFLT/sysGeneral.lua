@@ -141,5 +141,15 @@ function ()
 	end
 end)
 
+-- baro mbar/inhg
+sysGeneral.baroMbar = CustomAnnunciator:new("mbar",
+function () 
+	return get("sim/cockpit2/gauges/actuators/barometer_setting_in_hg_pilot") * 33.8639 
+end)
+sysGeneral.baroInhg = CustomAnnunciator:new("inhg",
+function () 
+	return get("sim/cockpit2/gauges/actuators/barometer_setting_in_hg_pilot") 
+end)
+
 
 return sysGeneral

@@ -5,7 +5,7 @@
 -- @copyright 2022 Kosta Prokopiu
 
 local kcProcedureItem = {
-	colorInitial = color_green
+	-- colorInitial = color_green
 }
 
 -- Instantiate a new ProcedureItem
@@ -32,8 +32,13 @@ function kcProcedureItem:new(challengeText,responseText,actor,waittime,validFunc
 	obj.actionFunc = actionFunc
 	obj.skipFunc = skipFunc
 	obj.state = kcFlowItem.stateInitial
+	obj.className = "ProcedureItem"
 
     return obj
+end
+
+function kcProcedureItem:getClassName()
+	return self.className
 end
 
 function kcProcedureItem:getStateColor()

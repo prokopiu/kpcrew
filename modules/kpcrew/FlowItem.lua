@@ -24,7 +24,7 @@ local kcFlowItem = {
 	actorALL 			= "ALL",
 	actorNONE 			= "",
 
-	colorInitial		= color_green,
+	colorInitial		= color_grey,
 	colorActive 		= color_white,
 	colorSuccess		= color_green,
 	colorFailed 		= color_red,
@@ -56,8 +56,13 @@ function kcFlowItem:new(challengeText,responseText,actor,waittime,validFunc,acti
 	obj.validFunc = validFunc
 	obj.actionFunc = actionFunc
 	obj.skipFunc = skipFunc
+	obj.className = "FlowItem"
 
     return obj
+end
+
+function kcFlowItem:getClassName()
+	return self.className
 end
 
 -- get the actor string for this checklist item
@@ -158,6 +163,12 @@ function kcFlowItem:isValid()
     return self.valid
 end
 
+function kcFlowItem:execute()
+	if type(self.actionFunc) == 'function' then
+		self.actionFunc()
+	end
+end
+	
 -- return the visual line to put in the checklist displays
 function kcFlowItem:getLine(lineLength)
 	local line = {}

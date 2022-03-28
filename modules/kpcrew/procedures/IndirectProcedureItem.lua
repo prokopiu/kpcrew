@@ -18,7 +18,7 @@ local kcIndirectProcedureItem = {
 -- @tparam function reference validFunc shall return true or false to verify if condition is met
 -- @tparam function reference  actionFunc will be executed and make changes to aircraft settings
 -- @tparam function reference  skipFunc if true will skip the item and not diaply in list
-function kcIndirectProcedureItem:new(challengeText,responseText,actor,waittime,validFunc,actionFunc,skipFunc)
+function kcIndirectProcedureItem:new(challengeText,responseText,actor,waittime,procvar,validFunc,actionFunc,skipFunc)
     kcIndirectProcedureItem.__index = kcIndirectProcedureItem
     setmetatable(kcIndirectProcedureItem, {
         __index = kcFlowItem
@@ -36,10 +36,16 @@ function kcIndirectProcedureItem:new(challengeText,responseText,actor,waittime,v
 	obj.actionFunc = actionFunc
 	obj.responseFunc = responseFunc
 	obj.skipFunc = skipFunc
+	obj.procvar = procvar
 
 	obj.conditionMet = false  -- if condition was met set to true
+	obj.className = "IndirectProcedureItem"
 
     return obj
+end
+
+function kcIndirectProcedureItem:getClassName()
+	return self.className
 end
 
 -- return the color code linked to the state (varied from standard)
@@ -59,18 +65,19 @@ end
 
 -- are the conditions for this item met?
 function kcIndirectProcedureItem:isValid()
-	if type(self.validFunc) == 'function' then
-
-		if self.conditionMet == false then
-
-			if self.validFunc(self) then
-				self.conditionMet = true
+	local procvar = getBckVars():find("procvars:" .. self.procvar)
+	if procvar ~= nil then
+		if type(self.validFunc) == 'function' then
+			if procvar:getValue() == false then
+				if self.validFunc(self) then
+					procvar:setValue(true)
+				end
 			end
-
 		end
-
+	else
+		return false
 	end
-    return self.conditionMet
+	return procvar:getValue()
 end
 
 return kcIndirectProcedureItem

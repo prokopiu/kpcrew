@@ -167,7 +167,7 @@ function kcSOP:render()
 	for _, flow in ipairs(flows) do
 		imgui.SetCursorPosY(imgui.GetCursorPosY() + 1)
 		local color = color_procedure
-		if flow:getType() == "Checklist" then	
+		if flow:getClassName() == "Checklist" then	
 			color = color_checklist
 		end
 		if flow:getState() == 2 then
@@ -179,7 +179,7 @@ function kcSOP:render()
         imgui.PushStyleColor(imgui.constant.Col.Button, color)
 		if imgui.Button(flow:getName(), self:getBtnWidth(), 18) then
 			self:setActiveFlowIndex(kc_indexOf(flows,flow))
-			kc_wnd_flow_action = 1
+			-- kc_wnd_flow_action = 1
 		end
         imgui.PopStyleColor()
 	end

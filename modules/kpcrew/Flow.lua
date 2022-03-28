@@ -8,7 +8,11 @@
 local kcFlow = {
     stateNotStarted = 0,
     stateInProgress = 1,
-    stateCompleted = 2
+    stateCompleted = 2,
+	statePaused = 3,
+	colorNotStarted = color_white,
+	colorInProgress = color_left_display,
+	colorCompleted = color_dark_green
 }
 
 -- Instantiate a new Procedure
@@ -19,11 +23,11 @@ function kcFlow:new(name)
     setmetatable(obj, kcFlow)
 
     obj.name = name
-    obj.state = kcFlow.stateNotStarted
+    obj.state = self.stateNotStarted
     obj.items = {}
     obj.activeItemIndex = 1
 	obj.wnd = nil
-	obj.flowType = "Flow"
+	obj.className = "Flow"
 
     return obj
 end
@@ -36,8 +40,8 @@ end
 
 -- return the type of flow for distinction later
 -- @treturn string "Procedure"
-function kcFlow:getType()
-	return self.flowType
+function kcFlow:getClassName()
+	return self.className
 end
 
 -- set state of procedure
@@ -48,6 +52,12 @@ end
 -- get state of procedure
 function kcFlow:getState()
     return self.state
+end
+
+-- return the color code linked to the state
+function kcFlow:getStateColor()
+	local statecolors = { self.colorNotStarted, self.colorInProgress, self.colorCompleted }
+	return statecolors[self.state + 1]
 end
 
 -- add a new procedure item at the end
@@ -92,8 +102,17 @@ end
 
 -- Take the next procedure item as active item
 function kcFlow:setNextItemActive()
-    if self:hasNextItem() then
+	if self:hasNextItem() then
 		self.activeItemIndex = self.activeItemIndex + 1
+	end
+    while self:hasNextItem() 
+	and (self.items[self.activeItemIndex]:getClassName() == "SimpleProcedureItem"
+			or self.items[self.activeItemIndex]:getClassName() == "SimpleChecklistItem"
+			or self.items[self.activeItemIndex]:getState() == kcFlowItem.stateSkipped) do
+		self.activeItemIndex = self.activeItemIndex + 1
+	end
+	if self.activeItemIndex <= #self.items then
+		return self.activeItemIndex
 	else
 		return -1
     end
