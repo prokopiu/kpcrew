@@ -9,10 +9,10 @@ require "kpcrew.systems.activities"
 local KPH_VERSION = "2.3-alpha1"
 
 -- disable windows by changing from true to false
-local show_mcp_panel = false
-local show_light_panel = false
-local show_radio_panel = false
-local show_efis_panel = false
+local show_mcp_panel = true
+local show_light_panel = true
+local show_radio_panel = true
+local show_efis_panel = true
 
 logMsg ("FWL: ** Starting KPHARDWARE version " .. KPH_VERSION .." **")
 
@@ -29,6 +29,10 @@ if PLANE_ICAO == "B738" then
 		kh_acf_icao = "B738" -- Zibo Mod
 	end
 end
+if PLANE_ICAO == "MD11" then
+	kh_acf_icao = "MD11"
+end
+set("sim/private/controls/shadow/cockpit_near_adjust",0.09)
 
 -- load aircraft specific systems
 
