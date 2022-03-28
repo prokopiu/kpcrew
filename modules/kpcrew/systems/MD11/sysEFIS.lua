@@ -2,19 +2,21 @@
 -- EFIS functionality
 
 local sysEFIS = {
-	mapRange_5 = 0,
-	mapRange10 = 1,
-	mapRange20 = 2,
-	mapRange40 = 3,
-	mapRange80 = 4,
-	mapRange160 = 5,
-	mapRange320 = 6,
+	mapRange10 = 0,
+	mapRange20 = 1,
+	mapRange40 = 2,
+	mapRange80 = 3,
+	mapRange160 = 4,
+	mapRange320 = 5,
 	mapRange640 = 6,
+	cnvRange = {10, 20, 40, 80, 160, 320, 640 },
 	
 	mapModeAPP = 0,
 	mapModeVOR = 1,
 	mapModeMAP = 2,
 	mapModePLAN = 4,
+	mapModeTCAS = 5,
+	cnvModes = {0, 1, 5, 2, 4},
 	
 	voradfVOR = 1,
 	voradfOFF = 0,
@@ -40,7 +42,83 @@ local InopSwitch = require "kpcrew.systems.InopSwitch"
 sysEFIS.mapZoomPilot = MultiStateCmdSwitch:new("mapzoompilot","sim/cockpit/switches/EFIS_map_range_selector",0,"Rotate/aircraft/controls_c/eis_range_decr_l","Rotate/aircraft/controls_c/eis_range_incr_l")
 sysEFIS.mapZoomCopilot = InopSwitch:new("mapzoomcopilot")
 
--- MAP MODE
+-- MAP MODEs MAP VOR TCAS PLAN APPR
+sysEFIS.mapPLAN = TwoStateCustomSwitch:new("PLAN","Rotate/aircraft/systems/gcp_rqst_plan_mode",0,
+	function () 
+	end,
+	function () 
+	end,	
+	function () 
+		if get("Rotate/aircraft/systems/gcp_rqst_plan_mode",0) == 0 then
+			set_array("Rotate/aircraft/systems/gcp_rqst_plan_mode",0,1)
+			set_array("Rotate/aircraft/systems/gcp_rqst_appr_mode",0,0)
+			set_array("Rotate/aircraft/systems/gcp_rqst_map_mode",0,0)
+			set_array("Rotate/aircraft/systems/gcp_rqst_tcas_mode",0,0)
+			set_array("Rotate/aircraft/systems/gcp_rqst_vor_mode",0,0)
+		end
+	end
+)
+sysEFIS.mapMAP = TwoStateCustomSwitch:new("MAP","Rotate/aircraft/systems/gcp_rqst_map_mode",0,
+	function () 
+	end,
+	function () 
+	end,	
+	function () 
+		if get("Rotate/aircraft/systems/gcp_rqst_map_mode",0) == 0 then
+			set_array("Rotate/aircraft/systems/gcp_rqst_plan_mode",0,0)
+			set_array("Rotate/aircraft/systems/gcp_rqst_appr_mode",0,0)
+			set_array("Rotate/aircraft/systems/gcp_rqst_map_mode",0,1)
+			set_array("Rotate/aircraft/systems/gcp_rqst_tcas_mode",0,0)
+			set_array("Rotate/aircraft/systems/gcp_rqst_vor_mode",0,0)
+		end
+	end
+)
+sysEFIS.mapVOR = TwoStateCustomSwitch:new("VOR","Rotate/aircraft/systems/gcp_rqst_vor_mode",0,
+	function () 
+	end,
+	function () 
+	end,	
+	function () 
+		if get("Rotate/aircraft/systems/gcp_rqst_vor_mode",0) == 0 then
+			set_array("Rotate/aircraft/systems/gcp_rqst_plan_mode",0,0)
+			set_array("Rotate/aircraft/systems/gcp_rqst_appr_mode",0,0)
+			set_array("Rotate/aircraft/systems/gcp_rqst_map_mode",0,0)
+			set_array("Rotate/aircraft/systems/gcp_rqst_tcas_mode",0,0)
+			set_array("Rotate/aircraft/systems/gcp_rqst_vor_mode",0,1)
+		end
+	end
+)
+sysEFIS.mapAPPR = TwoStateCustomSwitch:new("PLAN","Rotate/aircraft/systems/gcp_rqst_appr_mode",0,
+	function () 
+	end,
+	function () 
+	end,	
+	function () 
+		if get("Rotate/aircraft/systems/gcp_rqst_appr_mode",0) == 0 then
+			set_array("Rotate/aircraft/systems/gcp_rqst_plan_mode",0,0)
+			set_array("Rotate/aircraft/systems/gcp_rqst_appr_mode",0,1)
+			set_array("Rotate/aircraft/systems/gcp_rqst_map_mode",0,0)
+			set_array("Rotate/aircraft/systems/gcp_rqst_tcas_mode",0,0)
+			set_array("Rotate/aircraft/systems/gcp_rqst_vor_mode",0,0)
+		end
+	end
+)
+sysEFIS.mapTCAS = TwoStateCustomSwitch:new("TCAS","Rotate/aircraft/systems/gcp_rqst_tcas_mode",0,
+	function () 
+	end,
+	function () 
+	end,	
+	function () 
+		if get("Rotate/aircraft/systems/gcp_rqst_tcas_mode",0) == 0 then
+			set_array("Rotate/aircraft/systems/gcp_rqst_plan_mode",0,0)
+			set_array("Rotate/aircraft/systems/gcp_rqst_appr_mode",0,0)
+			set_array("Rotate/aircraft/systems/gcp_rqst_map_mode",0,0)
+			set_array("Rotate/aircraft/systems/gcp_rqst_tcas_mode",0,1)
+			set_array("Rotate/aircraft/systems/gcp_rqst_vor_mode",0,0)
+		end
+	end
+)
+
 sysEFIS.mapModePilot = MultiStateCmdSwitch:new("mapmodepilot","sim/cockpit/switches/EFIS_map_submode",0,"sim/instruments/EFIS_mode_dn","sim/instruments/EFIS_mode_up")
 sysEFIS.mapModeCopilot = InopSwitch:new("mapmodecopilot")
 
@@ -49,27 +127,27 @@ sysEFIS.ctrPilot = InopSwitch:new("ctrpilot")
 sysEFIS.ctrCopilot = InopSwitch:new("ctrcopilot")
 
 -- TFC
-sysEFIS.tfcPilot = TwoStateToggleSwitch:new("tfcpilot","Rotate/aircraft/systems/gcp_rqst_traffic_info",0,"Rotate/aircraft/controls_c/eis_show_traffic_l")
+sysEFIS.tfcPilot = TwoStateToggleSwitch:new("tfcpilot","Rotate/aircraft/systems/instr_nd_trfc_ann",0,"Rotate/aircraft/controls_c/eis_show_traffic_l")
 sysEFIS.tfcCopilot = InopSwitch:new("tfccopilot")
 
 -- WX 
-sysEFIS.wxrPilot = TwoStateToggleSwitch:new("wxrpilot","sim/cockpit2/EFIS/EFIS_weather_on",0,"sim/instruments/EFIS_wxr")
+sysEFIS.wxrPilot = TwoStateToggleSwitch:new("wxrpilot","Rotate/aircraft/systems/gcp_wx_show",0,"Rotate/aircraft/controls_c/eis_wx_on_l")
 sysEFIS.wxrCopilot = InopSwitch:new("wxrcopilot")
 
 -- STA / VOR
-sysEFIS.staPilot = TwoStateToggleSwitch:new("stapilot","sim/cockpit2/EFIS/EFIS_vor_on",0,"sim/instruments/EFIS_vor")
+sysEFIS.staPilot = TwoStateToggleSwitch:new("stapilot","Rotate/aircraft/systems/instr_nd_vor_ann",0,"Rotate/aircraft/controls_c/eis_show_vor_l")
 sysEFIS.staCopilot = InopSwitch:new("stacopilot")
 
 -- WPT
-sysEFIS.wptPilot = TwoStateToggleSwitch:new("wptpilot","sim/cockpit2/EFIS/EFIS_fix_on",0,"sim/instruments/EFIS_fix")
+sysEFIS.wptPilot = TwoStateToggleSwitch:new("wptpilot","Rotate/aircraft/systems/instr_nd_wpt_ann",0,"Rotate/aircraft/controls_c/eis_show_wpt_l")
 sysEFIS.wptCopilot = InopSwitch:new("wptcopilot")
 
 -- ARPT
-sysEFIS.arptPilot = TwoStateToggleSwitch:new("arptpilot","sim/cockpit/switches/EFIS_shows_airports",0,"sim/instruments/EFIS_apt")
+sysEFIS.arptPilot = TwoStateToggleSwitch:new("arptpilot","Rotate/aircraft/systems/gcp_rqst_apt_info",0,"Rotate/aircraft/controls_c/eis_show_apt_l")
 sysEFIS.arptCopilot = InopSwitch:new("arptcopilot")
 
 -- DATA
-sysEFIS.dataPilot = InopSwitch:new("datapilot")
+sysEFIS.dataPilot = TwoStateToggleSwitch:new("datapilot","Rotate/aircraft/systems/instr_nd_data_ann",0,"Rotate/aircraft/controls_c/eis_show_data_l")
 sysEFIS.dataCopilot = InopSwitch:new("datacopilot")
 
 -- NAV/POS
@@ -136,20 +214,25 @@ function sysEFIS:render(ypos,height)
 		imgui.Button("E", 17, 25)
 		if imgui.IsItemActive() then 
 			kh_efis_wnd_state = 1
-			float_wnd_set_geometry(kh_efis_wnd, 0, ypos, 820, ypos-height)
+			float_wnd_set_geometry(kh_efis_wnd, 0, ypos, 1000, ypos-height)
 		end
 	end
 
 	kc_imgui_label_mcp("ND:",10)
-	kc_imgui_simple_actuator("MODE <",sysEFIS.mapModePilot,cmdDown,10,47,25)
-	kc_imgui_simple_actuator("MODE >",sysEFIS.mapModePilot,cmdUp,10,47,25)
+	kc_imgui_toggle_button_mcp("MAP",sysEFIS.mapMAP,10,30,25)
+	kc_imgui_toggle_button_mcp("VOR",sysEFIS.mapVOR,10,30,25)
+	kc_imgui_toggle_button_mcp("TCAS",sysEFIS.mapTCAS,10,35,25)
+	kc_imgui_toggle_button_mcp("PLAN",sysEFIS.mapPLAN,10,35,25)
+	kc_imgui_toggle_button_mcp("APPR",sysEFIS.mapAPPR,10,35,25)
 	kc_imgui_simple_actuator("ZOOM <",sysEFIS.mapZoomPilot,cmdDown,10,47,25)
 	kc_imgui_simple_actuator("ZOOM >",sysEFIS.mapZoomPilot,cmdUp,10,47,25)
 	kc_imgui_label_mcp("|",10)
-	kc_imgui_toggle_button_mcp("WXR",sysEFIS.wxrPilot,10,30,25)
-	kc_imgui_toggle_button_mcp("APT",sysEFIS.arptPilot,10,30,25)
-	kc_imgui_toggle_button_mcp("NAV",sysEFIS.staPilot,10,30,25)
+	kc_imgui_toggle_button_mcp("TRFC",sysEFIS.tfcPilot,10,35,25)
+	kc_imgui_toggle_button_mcp("DATA",sysEFIS.dataPilot,10,35,25)
 	kc_imgui_toggle_button_mcp("WPT",sysEFIS.wptPilot,10,30,25)
+	kc_imgui_toggle_button_mcp("VOR",sysEFIS.staPilot,10,30,25)
+	kc_imgui_toggle_button_mcp("ARPT",sysEFIS.arptPilot,10,35,25)
+	kc_imgui_toggle_button_mcp("WXR",sysEFIS.wxrPilot,10,30,25)
 	kc_imgui_label_mcp("| MINS",10)
 	kc_imgui_rotary_mcp("%04d",sysEFIS.minsPilot,10,31)
 	kc_imgui_label_mcp("| BARO",10)
