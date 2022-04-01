@@ -1,6 +1,6 @@
 activePrefSet = kcPreferenceSet:new("PREFERENCES")
 
-kc_assistance_levels = "No assistance|Guide|Some automation|Fully automatic"
+kc_assistance_levels = "No assistance" --|Guide|Some automation|Fully automatic"
 
 local generalGroup = kcPreferenceGroup:new("general","GENERAL PREFERENCES")
 generalGroup:setInitialOpen(true)

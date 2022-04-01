@@ -1,4 +1,4 @@
--- DFLT airplane 
+-- MD11 airplane 
 -- Air and Pneumatics functionality
 
 local sysAir = {
@@ -14,6 +14,17 @@ local TwoStateToggleSwitch = require "kpcrew.systems.TwoStateToggleSwitch"
 local MultiStateCmdSwitch = require "kpcrew.systems.MultiStateCmdSwitch"
 local InopSwitch = require "kpcrew.systems.InopSwitch"
 local drefAirANC = "sim/cockpit/warnings/annunciators/bleed_air_off"
+
+-- APU AIR
+sysAir.apuAir = TwoStateToggleSwitch:new("","Rotate/aircraft/systems/air_apu_on_lt",0,"Rotate/aircraft/controls_c/apu_air")
+
+-- MASK
+sysAir.maskGuard = TwoStateToggleSwitch:new("","Rotate/aircraft/controls/mask_deploy_grd",0,"Rotate/aircraft/controls_c/mask_deploy_grd")
+
+----------------------
+-- Trim air anc
+sysAir.trimAirAnc = SimpleAnnunciator:new("trimAir","Rotate/aircraft/systems/air_trim_air_off_lt",0)
+
 
 -- VACUUM annunciator
 sysAir.vacuumAnc = CustomAnnunciator:new("vacuum",

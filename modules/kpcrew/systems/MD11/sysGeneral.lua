@@ -1,4 +1,4 @@
--- DFLT airplane 
+-- MD11 airplane 
 -- aircraft general systems
 
 local sysGeneral = {
@@ -22,7 +22,7 @@ local drefSlider = "sim/cockpit2/switches/custom_slider_on"
 sysGeneral.parkBrakeSwitch = TwoStateCmdSwitch:new("parkbrake","Rotate/aircraft/controls/park_brake",0,"Rotate/aircraft/controls_c/park_brake_up","Rotate/aircraft/controls_c/park_brake_dn","nocommand")
 
 -- Landing Gear
-sysGeneral.GearSwitch = TwoStateCmdSwitch:new("gear","sim/cockpit2/controls/gear_handle_down",0,"sim/flight_controls/landing_gear_down","sim/flight_controls/landing_gear_up","nocommand")
+sysGeneral.GearSwitch = TwoStateCmdSwitch:new("gear","Rotate/aircraft/controls/gear_handle",0,"Rotate/aircraft/controls_c/gear_handle_dn","Rotate/aircraft/controls_c/gear_handle_up","nocommand")
 
 -- Doors
 sysGeneral.doorL1 = TwoStateToggleSwitch:new("doorl1",drefSlider,0,"sim/operation/slider_01")
@@ -109,16 +109,30 @@ sysGeneral.baroGroup:addSwitch(sysGeneral.baroPilot)
 sysGeneral.baroGroup:addSwitch(sysGeneral.baroCoPilot)
 sysGeneral.baroGroup:addSwitch(sysGeneral.baroStandby)
 
-sysGeneral.irsUnit1Switch = InopSwitch:new("irsunit1")
-sysGeneral.irsUnit2Switch = InopSwitch:new("irsunit2")
-sysGeneral.irsUnit3Switch = InopSwitch:new("irsunit3")
+sysGeneral.irsUnit1Switch = TwoStateCmdSwitch:new("irsunit1","Rotate/aircraft/controls/irs_switch_1",0,"Rotate/aircraft/controls_c/irs_switch_1_up","Rotate/aircraft/controls_c/irs_switch_1_dn","nocommand")
+sysGeneral.irsUnit2Switch = TwoStateCmdSwitch:new("irsunit2","Rotate/aircraft/controls/irs_switch_2",0,"Rotate/aircraft/controls_c/irs_switch_2_up","Rotate/aircraft/controls_c/irs_switch_2_dn","nocommand")
+sysGeneral.irsUnit3Switch = TwoStateCmdSwitch:new("irsunit3","Rotate/aircraft/controls/irs_switch_3",0,"Rotate/aircraft/controls_c/irs_switch_3_up","Rotate/aircraft/controls_c/irs_switch_3_dn","nocommand")
 
 sysGeneral.irsUnitGroup = SwitchGroup:new("irsunits")
 sysGeneral.irsUnitGroup:addSwitch(sysGeneral.irsUnit1Switch)
 sysGeneral.irsUnitGroup:addSwitch(sysGeneral.irsUnit2Switch)
 sysGeneral.irsUnitGroup:addSwitch(sysGeneral.irsUnit3Switch)
 
+-- Weather Radar
+sysGeneral.wxSystemSwitch = MultiStateCmdSwitch:new("","Rotate/aircraft/controls/wx_sys",0,"Rotate/aircraft/controls_c/wx_sys_dn","Rotate/aircraft/controls_c/wx_sys_up")
+
+sysGeneral.ancLightTest = TwoStateDrefSwitch:new("","Rotate/aircraft/controls/annun_test",0)
+-- Rotate/aircraft/controls_c/annun_test
+
+sysGeneral.emerExitSwitch = MultiStateCmdSwitch:new("","Rotate/aircraft/controls/emer_lts",0,"Rotate/aircraft/controls_c/emer_lts_dn","Rotate/aircraft/controls_c/emer_lts_up")
+
+sysGeneral.noSmokeSigns = MultiStateCmdSwitch:new("","Rotate/aircraft/controls/nosmoke_lts",0,"Rotate/aircraft/controls_c/nosmoke_lts_dn","Rotate/aircraft/controls_c/nosmoke_lts_up")
+
+sysGeneral.seatBeltSigns = MultiStateCmdSwitch:new("","Rotate/aircraft/controls/seatbelts_lts",0,"Rotate/aircraft/controls_c/seatbelts_lts_dn","Rotate/aircraft/controls_c/seatbelts_lts_up")
+
 ------------ Annunciators
+
+
 -- park brake
 sysGeneral.parkbrakeAnc = CustomAnnunciator:new("parkbrake",
 function ()
@@ -189,5 +203,11 @@ function ()
 	return get("Rotate/aircraft/systems/gcp_baroset_qnh_inhg") 
 end)
 
+-- cargo fire test
+sysGeneral.cargoFireTestAnc = SimpleAnnunciator:new("cargofire","Rotate/aircraft/systems/fire_cargo_fwd_flow_disag_lt",0)
+
+-- VCR Test
+sysGeneral.vrcTest = SimpleAnnunciator:new("vcrtest","Rotate/aircraft/controls/voice_rcdr_test",0)
+-- Rotate/aircraft/controls_c/voice_rcdr_test
 
 return sysGeneral

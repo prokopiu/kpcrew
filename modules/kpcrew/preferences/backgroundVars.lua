@@ -15,10 +15,11 @@ group2:add(kcPreference:new("flow_line_length",55,kcPreference.typeInt,"Flow tex
 
 local group3 = kcPreferenceGroup:new("procvars","Procedure Variables")
 group3:add(kcPreference:new("takeoff_config_warn",false,kcPreference.typeToggle,"takeoff_config_warn|TRUE|FALSE"))
-group3:add(kcPreference:new("ovht_fire_test",false,kcPreference.typeToggle,"ovht_fire_test|TRUE|FALSE"))
+group3:add(kcPreference:new("cargo_fire_test",false,kcPreference.typeToggle,"cargo_fire_test|TRUE|FALSE"))
 group3:add(kcPreference:new("master_fire_warn",false,kcPreference.typeToggle,"master_fire_warn|TRUE|FALSE"))
 group3:add(kcPreference:new("eng_ext_test_1",false,kcPreference.typeToggle,"eng_ext_test_1|TRUE|FALSE"))
 group3:add(kcPreference:new("eng_ext_test_2",false,kcPreference.typeToggle,"eng_ext_test_2|TRUE|FALSE"))
+group3:add(kcPreference:new("apu_fire_test",false,kcPreference.typeToggle,"apu_fire_test|TRUE|FALSE"))
 group3:add(kcPreference:new("attendence_button",false,kcPreference.typeToggle,"attendence_button|TRUE|FALSE"))
 group3:add(kcPreference:new("irs_mode_initial_off",false,kcPreference.typeToggle,"irs_mode_initial_off|TRUE|FALSE"))
 group3:add(kcPreference:new("irs_mode_nav_again",false,kcPreference.typeToggle,"irs_mode_nav_again|TRUE|FALSE"))
@@ -51,6 +52,8 @@ group3:add(kcPreference:new("flaps_entered",false,kcPreference.typeToggle,"flaps
 group3:add(kcPreference:new("cg_entered",false,kcPreference.typeToggle,"cg_entered|TRUE|FALSE"))
 group3:add(kcPreference:new("vspeeds_entered",false,kcPreference.typeToggle,"vspeeds_entered|TRUE|FALSE"))
 group3:add(kcPreference:new("internal_lights_test",false,kcPreference.typeToggle,"internal_lights_test|TRUE|FALSE"))
+group3:add(kcPreference:new("voice_recorder_test",false,kcPreference.typeToggle,"voice_recorder_test|TRUE|FALSE"))
+group3:add(kcPreference:new("hyd_press_test",false,kcPreference.typeToggle,"hyd_press_test|TRUE|FALSE"))
 group3:add(kcPreference:new("pb_parkbrk_initial_set",false,kcPreference.typeToggle,"pb_parkbrk_initial_set|TRUE|FALSE"))
 group3:add(kcPreference:new("pb_parkbrk_release",false,kcPreference.typeToggle,"pb_parkbrk_release|TRUE|FALSE"))
 

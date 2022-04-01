@@ -17,14 +17,9 @@ local InopSwitch = require "kpcrew.systems.InopSwitch"
 local drefHydPressure1 = "sim/cockpit2/hydraulics/indicators/hydraulic_pressure_1"
 local drefHydPressure2 = "sim/cockpit2/hydraulics/indicators/hydraulic_pressure_2"
 
+sysHydraulic.hydTestSwitch = TwoStateToggleSwitch:new("","Rotate/aircraft/controls/hyd_pres_test",0,"Rotate/aircraft/controls_c/hyd_pres_test_grd")
+
 -- LOW HYDRAULIC annunciator
-sysHydraulic.hydraulicLowAnc = CustomAnnunciator:new("hydrauliclow",
-function ()
-	if get(drefHydPressure1,0) == 1 or get(drefHydPressure2,0) == 1 then
-		return 1
-	else
-		return 0
-	end
-end)
+sysHydraulic.hydraulicLowAnc = InopSwitch:new("hydrauliclow")
 
 return sysHydraulic

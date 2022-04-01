@@ -1,4 +1,4 @@
--- DFLT airplane 
+-- MD11 airplane 
 -- Flight Controls functionality
 
 local sysControls = {
@@ -24,7 +24,7 @@ local InopSwitch = require "kpcrew.systems.InopSwitch"
 --------- Switches
 
 -- Flaps 
-sysControls.flapsSwitch = MultiStateCmdSwitch:new("flaps","sim/flightmodel2/controls/flap_ratio",0,"sim/flight_controls/flaps_up","sim/flight_controls/flaps_down")
+sysControls.flapsSwitch = MultiStateCmdSwitch:new("flaps","Rotate/aircraft/controls/flap_handle",0,"Rotate/aircraft/controls_c/flap_handle_dn","Rotate/aircraft/controls_c/flap_handle_up")
 
 -- Pitch Trim
 sysControls.pitchTrimSwitch = MultiStateCmdSwitch:new("pitchtrim","sim/cockpit2/controls/elevator_trim",0,"sim/flight_controls/pitch_trim_up","sim/flight_controls/pitch_trim_down")
@@ -42,6 +42,8 @@ sysControls.rudderReset = TwoStateToggleSwitch:new("rudderreset","sim/cockpit2/c
 sysControls.yawDamper = TwoStateToggleSwitch:new("yawdamper","sim/cockpit2/switches/yaw_damper_on",0,"sim/systems/yaw_damper_toggle")
 
 sysControls.altFlapsCtrl = InopSwitch:new("altflapsctrl")
+
+sysControls.speedBrake = TwoStateDrefSwitch:new("","Rotate/aircraft/controls/speed_brake",0)
 
 --------- Annunciators
 

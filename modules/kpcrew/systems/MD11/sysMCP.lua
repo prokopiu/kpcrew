@@ -379,42 +379,4 @@ function sysMCP:render(ypos,height)
 
 end
 
-function reset_actuators()
-	if get("Rotate/aircraft/controls/fgs_hdg_mode_sel") == -1 then
-		set("Rotate/aircraft/controls/fgs_hdg_mode_sel",0)
-	end
-	if get("Rotate/aircraft/controls/fgs_nav") == 1 then
-		set("Rotate/aircraft/controls/fgs_nav",0)
-	end
-	if get("Rotate/aircraft/controls/fgs_appr_land") == 1 then
-		set("Rotate/aircraft/controls/fgs_appr_land",0)
-	end
-	if get("Rotate/aircraft/controls/fgs_alt_mode_sel") == -1 then
-		set("Rotate/aircraft/controls/fgs_alt_mode_sel",0)
-	end
-	if get("Rotate/aircraft/controls/fgs_spd_sel_mode") == -1 then
-		set("Rotate/aircraft/controls/fgs_spd_sel_mode",0)
-	end
-	if get("Rotate/aircraft/controls/fgs_fms_spd") == 1 then
-		set("Rotate/aircraft/controls/fgs_fms_spd",0)
-	end
-	if get("Rotate/aircraft/controls/fgs_autoflight") == 1 then
-		set("Rotate/aircraft/controls/fgs_autoflight",0)
-	end
-	if get("Rotate/aircraft/controls/fgs_prof") == 1 then
-		set("Rotate/aircraft/controls/fgs_prof",0)
-	end
-	if get("Rotate/aircraft/controls/ap_disc_l") == 1 then
-		set("Rotate/aircraft/controls/ap_disc_l",0)
-	end
-	if get("Rotate/aircraft/controls/baro_std_set_l") == -1 then
-		set("Rotate/aircraft/controls/baro_std_set_l",0)
-	end
-	if get("Rotate/aircraft/controls/baro_std_set_r") == -1 then
-		set("Rotate/aircraft/controls/baro_std_set_r",0)
-	end
-end
-
-do_often("reset_actuators()")
-
 return sysMCP

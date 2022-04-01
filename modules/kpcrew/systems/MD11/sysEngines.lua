@@ -68,4 +68,22 @@ function ()
 	end
 end)
 
+sysEngines.eng1FireLight = SimpleAnnunciator:new("eng1fire","Rotate/aircraft/systems/fire_eng_1_alert_lt",0)
+sysEngines.eng2FireLight = SimpleAnnunciator:new("eng2fire","Rotate/aircraft/systems/fire_eng_2_alert_lt",0)
+sysEngines.eng3FireLight = SimpleAnnunciator:new("eng3fire","Rotate/aircraft/systems/fire_eng_3_alert_lt",0)
+
+sysEngines.engFireLights = CustomAnnunciator:new("firelights",
+function () 
+	if sysEngines.eng1FireLight:getStatus() == 1 or sysEngines.eng2FireLight:getStatus() == 1 or sysEngines.eng3FireLight:getStatus() == 1  then
+		return 1
+	else
+		return 0
+	end
+end)
+
+sysEngines.apuFireLight = SimpleAnnunciator:new("apufire","Rotate/aircraft/systems/fire_apu_alert_lt",0)
+
+-- eng ign off light
+sysEngines.engIgnOffLight = SimpleAnnunciator:new("engignlight","Rotate/aircraft/systems/eng_ign_off_lt",0)
+
 return sysEngines

@@ -93,5 +93,4 @@ sysEngines.reverseLever2 = SimpleAnnunciator:new("","laminar/B738/flt_ctrls/reve
 sysEngines.thrustLever1 = SimpleAnnunciator:new ("","laminar/B738/engine/thrust1_leveler",0)
 sysEngines.thrustLever2 = SimpleAnnunciator:new ("","laminar/B738/engine/thrust2_leveler",0)
 
-
 return sysEngines
