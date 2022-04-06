@@ -173,6 +173,8 @@ function kcPreferenceGroup:load(filePref)
 						else
 							pref:setValue(false)
 						end
+					elseif pref:getType() == kcPreference.typeText or pref:getType() == kcPreference.typeInfo then
+						pref:setValue(string.gsub(value,"\"",""))
 					else
 						pref:setValue(tonumber(value))
 					end

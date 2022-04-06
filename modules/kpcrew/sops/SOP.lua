@@ -163,6 +163,13 @@ end
 
 -- render the SOP button list
 function kcSOP:render()
+	imgui.PushStyleColor(imgui.constant.Col.Text, color_white)
+	imgui.SetWindowFontScale(1.05)
+	imgui.PushStyleColor(imgui.constant.Col.Button, 0xFF00007F)
+	if imgui.Button("RESET", 50, 18) then
+		self:reset()
+	end
+	imgui.PopStyleColor()
 	local flows = self:getAllFlows()
 	for _, flow in ipairs(flows) do
 		imgui.SetCursorPosY(imgui.GetCursorPosY() + 1)
@@ -174,20 +181,25 @@ function kcSOP:render()
 			color = color_green
 		end
 		if kc_indexOf(flows,flow) == self.activeFlowIndex then
-			color = color_red
+			color = 0xFF001F9F
 		end
         imgui.PushStyleColor(imgui.constant.Col.Button, color)
+		imgui.PushStyleColor(imgui.constant.Col.ButtonActive, 0xFF001F9F)
+		imgui.PushStyleColor(imgui.constant.Col.ButtonHovered, 0xFF001F9F)
 		if imgui.Button(flow:getName(), self:getBtnWidth(), 18) then
 			self:setActiveFlowIndex(kc_indexOf(flows,flow))
 			-- kc_wnd_flow_action = 1
 		end
         imgui.PopStyleColor()
+        imgui.PopStyleColor()
+        imgui.PopStyleColor()
 	end
+    imgui.PopStyleColor()
 end
 
 -- get the calculated height for the window
 function kcSOP:getWndHeight()
-	return self:getNumberOfFlows() * 23 + 12
+	return self:getNumberOfFlows() * 23 + 12 + 25
 end
 
 -- get the max width of buttons in the list based on labels

@@ -18,8 +18,10 @@ color_dark_grey 	= 0xFF606060
 color_left_display 	= 0xFFA0AFFF
 color_ocean_blue 	= 0xFFEC652B
 
-color_checklist		= 0xFF2F4F4F
-color_procedure		= 0xFF808000
+-- color_checklist		= 0xFF2F4F4F
+-- color_procedure		= 0xFF808000
+color_checklist		= 0xFF0F0F0F
+color_procedure		= 0xFF202000
 
 color_mcp_button	= 0xFF303030
 color_mcp_active	= 0xFF606060
@@ -31,6 +33,10 @@ color_mcp_off		= 0xFFC0C0C0
 color_ctrl_bckgr	= 0xFF101010
 color_ctrl_selected = 0xFF303030
 color_mstr_flow_open = 0xFF404040
+
+WX_Cloudcover_list = {"","FEW","SCT","BKN","OVC",""}
+WX_Precipitation_list = {"NONE","DRIZZLE","LIGHT RAIN","RAIN","HEAVY RAIN","SNOW"}
+WX_Cloud_list = {"NO","FEW","SCATTERED","BROKEN","OVERCAST"}
 
 -- speak text but don't show in sim, speakMode is used to prevent repetitive playing
 -- speakmode 1 will talk and show, 0 will only speak
@@ -100,6 +106,128 @@ function kc_convertRwy(intext)
 	return outtext	
 end
 
+-- return QNH string
+function kc_getQNHString()
+	local QNHstring = ""
+	if activePrefSet:get("general:baro_mode_hpa") then
+		QNHstring = string.format("Q%4.4i",get("sim/weather/barometer_sealevel_inhg") / 0.02952999)
+	else
+		QNHstring = string.format("A%4.4i",((get("sim/weather/barometer_sealevel_inhg") * 10^2)*10^-2)*100)
+	end
+	return QNHstring
+end
+
+-- build a makeshift ATIS string from XP11 weather - very simplistic
+function kc_buildAtisString()
+	
+	local ATISstring = string.format("%2.2i%2.2i%2.2iZ ", get("sim/cockpit2/clock_timer/current_day"),get("sim/cockpit2/clock_timer/zulu_time_hours"),get("sim/cockpit2/clock_timer/zulu_time_minutes"))
+	
+	local windstring = string.format("%3.3i%2.2i", get("sim/weather/wind_direction_degt[0]"),get("sim/weather/wind_speed_kt[0]"))
+	if get("sim/weather/shear_speed_kt[0]") > 0 then
+		windstring = windstring .. "G" .. string.format("%2.2i", get("sim/weather/shear_speed_kt[0]")) .. "KT"
+	else
+		windstring = windstring .. "KT"
+	end
+	
+	if get("sim/weather/shear_direction_degt[0]") > 30 and get("sim/weather/wind_speed_kt[0]") > 6 then
+		windstring = windstring .. " " .. string.format("%2.2iV%2.2i", (get("sim/weather/wind_direction_degt[0]")-get("sim/weather/shear_direction_degt[0]")),(get("sim/weather/wind_direction_degt[0]")+get("sim/weather/shear_direction_degt[0]"))) 
+	end
+
+	if get("sim/weather/shear_direction_degt[0]") > 90 and get("sim/weather/wind_speed_kt[0]") < 6 then
+		windstring = string.format("VRB%2.2iKT", get("sim/weather/wind_speed_kt[0]")) 
+	end
+
+	ATISstring = ATISstring .. windstring
+	
+	local APTAltitude = get("sim/cockpit2/autopilot/altitude_readout_preselector")
+	local CLDcoverage = get("sim/weather/cloud_coverage[0]")
+	local CLDstring = ""
+	if (CLDcoverage > 1 and CLDcoverage < 6) then
+		CLDstring = CLDstring .. string.format("%s%3.3i ",WX_Cloudcover_list[CLDcoverage],(get("sim/weather/cloud_base_msl_m[0]")*3.28-APTAltitude)/100)
+	end
+	local CLDcoverage = get("sim/weather/cloud_coverage[1]")
+	if (CLDcoverage > 1 and CLDcoverage < 6) then
+		CLDstring = CLDstring .. string.format("%s%3.3i ",WX_Cloudcover_list[CLDcoverage],(get("sim/weather/cloud_base_msl_m[1]")*3.28-APTAltitude)/100)
+	end
+	local CLDcoverage = get("sim/weather/cloud_coverage[2]")
+	if (CLDcoverage > 1 and CLDcoverage < 6) then
+		CLDstring = CLDstring .. string.format("%s%3.3i ",WX_Cloudcover_list[CLDcoverage],(get("sim/weather/cloud_base_msl_m[2]")*3.28-APTAltitude)/100)
+	end
+	
+	local visiblestring = ""
+	local visibility = get("sim/weather/visibility_reported_m")
+	if (visibility >= 10000) then
+		visiblestring = "9999 "
+	end
+	if (visibility < 9000) then
+		visiblestring = string.format("%4.4i",visibility) .. " "
+	end
+	if (visibility < 4500) then
+		visiblestring = "HZ "
+	end
+	if (visibility < 1500) then
+		visiblestring = "BR "
+	end
+	if (visibility < 800) then
+		visiblestring = "FG "
+	end
+
+-- sim/weather/thunderstorm_percent
+	
+	local precipitation = ""
+	if get("sim/weather/precipitation_on_aircraft_ratio") > 0 then
+		if get("sim/weather/precipitation_on_aircraft_ratio") < 0.01 then
+			precipitation = "DZ "
+		end
+		if get("sim/weather/precipitation_on_aircraft_ratio") > 0.01 then
+			precipitation = "-RN "
+		end
+		if get("sim/weather/precipitation_on_aircraft_ratio") > 0.05 then
+			precipitation = "RN "
+		end
+		if get("sim/weather/precipitation_on_aircraft_ratio") > 0.1 then
+			precipitation = "+RN "
+		end
+		if get("sim/weather/temperature_ambient_c") < 0 then
+			if get("sim/weather/precipitation_on_aircraft_ratio") > 0.01 then
+				precipitation = "-SN "
+			end
+			if get("sim/weather/precipitation_on_aircraft_ratio") > 0.05 then
+				precipitation = "SN "
+			end
+			if get("sim/weather/precipitation_on_aircraft_ratio") > 0.1 then
+				precipitation = "+SN "
+			end
+		end
+	end
+	
+	local ambtemp = get("sim/weather/temperature_ambient_c")
+	local duepoint = get("sim/weather/dewpoi_sealevel_c")
+	local tempstring = ""
+	if (ambtemp<0) then
+		tempstring=string.format("M%2.2i/", ambtemp*-1)
+	else
+		tempstring=string.format("%2.2i/", ambtemp)
+	end
+	if (duepoint<0) then
+		tempstring=tempstring .. string.format("M%2.2i", duepoint*-1)
+	else
+		tempstring=tempstring .. string.format("%2.2i", duepoint)
+	end
+	ATISstring = ATISstring .. " " .. visiblestring .. precipitation .. "" .. CLDstring .. tempstring
+	
+	local cavokcld1 = get("sim/weather/cloud_base_msl_m[0]") > 5000 or get("sim/weather/cloud_coverage[0]") == 0
+	local cavokcld2 = get("sim/weather/cloud_base_msl_m[1]") > 5000 or get("sim/weather/cloud_coverage[1]") == 0
+	local cavokcld3 = get("sim/weather/cloud_base_msl_m[2]") > 5000 or get("sim/weather/cloud_coverage[2]") == 0
+	local vcond = ""
+	if visibility > 10000 and cavokcld1 and cavokcld2 and cavokcld3 then
+		vcond = "CAVOK"
+	end
+
+	ATISstring = ATISstring .. " " .. kc_getQNHString() .. " " .. vcond
+	return ATISstring
+end
+
 ------------- file related functions ---------------
 
 -- check if external lua file exists
@@ -128,10 +256,10 @@ end
 
 -- convert position to full coordinate string with N/S and E/W
 function kc_convertDMS(lat, lng) 
-    local latitude = toDegreesMinutesAndSeconds(lat);
+    local latitude = kc_toDegMinSec(lat);
     local latitudeCardinal = (lat >= 0) and "N" or "S";
 
-    local longitude = toDegreesMinutesAndSeconds(lng);
+    local longitude = kc_toDegMinSec(lng);
     local longitudeCardinal = (lng >= 0) and "E" or "W";
 
     return latitude .. " " .. latitudeCardinal .. " - " .. longitude .. " " .. longitudeCardinal;

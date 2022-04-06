@@ -95,6 +95,8 @@ sysLights.instrLightGroup:addSwitch(sysLights.instr5Light)
 sysLights.instrLightGroup:addSwitch(sysLights.instr6Light)
 sysLights.instrLightGroup:addSwitch(sysLights.instr7Light)
 
+sysLights.instrLightGroup:actuate(modeOff)
+
 --------- Annunciators
 -- annunciator to mark any landing lights on
 sysLights.landingAnc = CustomAnnunciator:new("landinglights",
@@ -187,18 +189,27 @@ function sysLights:render(ypos, height)
 		end
 	end
 
+	local xsize = 935
+	if get("laminar/B738/kill_led_lights") ~= 1 then
+		xsize = 815
+	else
+		xsize = 935
+	end
+
 	if kh_light_wnd_state == 0 then
 		imgui.Button("L", 17, 25)
 		if imgui.IsItemActive() then 
 			kh_light_wnd_state = 1
-			float_wnd_set_geometry(kh_light_wnd, 0, ypos, 930, ypos - height)
+			float_wnd_set_geometry(kh_light_wnd, 0, ypos, xsize, ypos - height)
 		end
 	end
 
 	kc_imgui_label_mcp("LIGHTS:",10)
 	kc_imgui_label_mcp("LAND:",10)
-	kc_imgui_toggle_button_mcp("LEFT R",sysLights.llRetLeftSwitch,10,53,25)
-	kc_imgui_toggle_button_mcp("RIGHT R",sysLights.llRetRightSwitch,10,53,25)
+	if get("laminar/B738/kill_led_lights") == 1 then
+		kc_imgui_toggle_button_mcp("LEFT R",sysLights.llRetLeftSwitch,10,53,25)
+		kc_imgui_toggle_button_mcp("RIGHT R",sysLights.llRetRightSwitch,10,53,25)
+	end
 	kc_imgui_toggle_button_mcp("LEFT",sysLights.llLeftSwitch,10,42,25)
 	kc_imgui_toggle_button_mcp("RIGHT",sysLights.llRightSwitch,10,42,25)
 	kc_imgui_simple_button_mcp("ALL",sysLights.landLightGroup,10,42,25)

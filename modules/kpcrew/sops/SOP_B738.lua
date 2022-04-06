@@ -440,11 +440,7 @@ preflightFOProc:addItem(kcProcedureItem:new("WING ANTI-ICE SWITCH","OFF",kcFlowI
 preflightFOProc:addItem(kcProcedureItem:new("ENGINE ANTI-ICE SWITCHES","OFF",kcFlowItem.actorFO,1,
 	function () return sysAice.engAntiIce1:getStatus() == 0 and sysAice.engAntiIce2:getStatus() == 0 end))
 	
-preflightFOProc:addItem(kcSimpleProcedureItem:new("Hydraulic panel"))
-preflightFOProc:addItem(kcProcedureItem:new("ENGINE HYDRAULIC PUMPS SWITCHES","ON",kcFlowItem.actorFO,1,
-	function () return sysHydraulic.engHydPump1:getStatus() == 1 and sysHydraulic.engHydPump2:getStatus() == 1 end))
-preflightFOProc:addItem(kcProcedureItem:new("ELECTRIC HYDRAULIC PUMPS SWITCHES","OFF",kcFlowItem.actorFO,1,
-	function () return sysHydraulic.elecHydPump1:getStatus() == 0 and sysHydraulic.elecHydPump2:getStatus() == 0 end))
+
 preflightFOProc:addItem(kcSimpleProcedureItem:new("NEXT Prelimibary Preflight Part 2"))
 
 -- ========== PREFLIGHT PROCEDURE PART 2 (F/O) ==========
@@ -473,6 +469,13 @@ preflightFOProc:addItem(kcSimpleProcedureItem:new("NEXT Prelimibary Preflight Pa
 -- ENGINE START SWITCHES........................OFF (F/O)
 
 local preflightFO2Proc = kcProcedure:new("PREFLIGHT PROCEDURE PART 2 (F/O)")
+
+preflightFO2Proc:addItem(kcSimpleProcedureItem:new("Hydraulic panel"))
+preflightFO2Proc:addItem(kcProcedureItem:new("ENGINE HYDRAULIC PUMPS SWITCHES","ON",kcFlowItem.actorFO,1,
+	function () return sysHydraulic.engHydPump1:getStatus() == 1 and sysHydraulic.engHydPump2:getStatus() == 1 end))
+preflightFO2Proc:addItem(kcProcedureItem:new("ELECTRIC HYDRAULIC PUMPS SWITCHES","OFF",kcFlowItem.actorFO,1,
+	function () return sysHydraulic.elecHydPump1:getStatus() == 0 and sysHydraulic.elecHydPump2:getStatus() == 0 end))
+	
 preflightFO2Proc:addItem(kcSimpleProcedureItem:new("Air conditioning panel"))
 preflightFO2Proc:addItem(kcProcedureItem:new("AIR TEMPERATURE SOURCE SELECTOR","AS NEEDED",kcFlowItem.actorFO,1,
 	function () return sysAir.contCabTemp:getStatus() > 0 and sysAir.fwdCabTemp:getStatus() > 0 and sysAir.aftCabTemp:getStatus() > 0 end))
@@ -604,7 +607,6 @@ preflightFO3Proc:addItem(kcProcedureItem:new("ADF RADIOS","SET",kcFlowItem.actor
 preflightFO3Proc:addItem(kcProcedureItem:new("WEATHER RADAR PANEL","SET",kcFlowItem.actorFO,1))
 preflightFO3Proc:addItem(kcProcedureItem:new("TRANSPONDER PANEL","SET",kcFlowItem.actorFO,1))
 
-
 -- ===== PREFLIGHT PROCEDURE CAPT =====
 
 local preflightCPTProc = kcProcedure:new("PREFLIGHT PROCEDURE (CAPT)")
@@ -663,12 +665,17 @@ preflightCPTProc:addItem(kcProcedureItem:new("STABILIZER TRIM CUTOUT SWITCHES","
 preflightCPTProc:addItem(kcProcedureItem:new("RADIO TUNING PANEL","SET",kcFlowItem.actorCPT,1))
 preflightCPTProc:addItem(kcSimpleProcedureItem:new("CALL PREFLIGHT CHECKLIST"))
 
-
--- ======= Preflight checklist =======
+-- ============== PREFLIGHT CHECKLIST (PM) ============= OK
+-- OXYGEN..............................TESTED, 100% (PF)
+-- NAVIGATION & DISPLAY SWITCHES........NORMAL,AUTO (PF)
+-- WINDOW HEAT...................................ON (PF)
+-- PRESSURIZATION MODE SELECTOR................AUTO (PF)
+-- PARKING BRAKE................................SET (PF)
+-- ENGINE START LEVERS.......................CUTOFF (PF)
+-- GEAR PINS................................REMOVED (PF)
 
 local preflightChkl = kcChecklist:new("PREFLIGHT CHECKLIST (PM)")
-
-preflightChkl:addItem(kcIndirectChecklistItem:new("OXYGEN","Tested, 100%",kcFlowItem.actorALL,1,
+preflightChkl:addItem(kcIndirectChecklistItem:new("OXYGEN","TESTED, 100%",kcFlowItem.actorALL,1,
 	function () return get("laminar/B738/push_button/oxy_test_cpt_pos") == 1 end))
 preflightChkl:addItem(kcFlowItem:new("NAVIGATION & DISPLAY SWITCHES","NORMAL,AUTO",kcFlowItem.actorPF,1,
 	function () return sysMCP.vhfNavSwitch:getStatus() == 0 and sysMCP.irsNavSwitch:getStatus() == 0 and sysMCP.fmcNavSwitch:getStatus() == 0 and sysMCP.displaySourceSwitch:getStatus() == 0 and sysMCP.displayControlSwitch:getStatus() == 0 end))
@@ -729,7 +736,17 @@ beforeStartProc:addItem(kcProcedureItem:new("  AILERON TRIM","0 UNITS",kcFlowIte
 beforeStartProc:addItem(kcProcedureItem:new("  RUDDER TRIM","0 UNITS",kcFlowItem.actorCPT,1))
 beforeStartProc:addItem(kcSimpleProcedureItem:new("Call for Before Start Checklist"))
 
--- ======= Before Start Checklist
+
+-- ============ BEFORE START CHECKLIST (F/O) ============OK
+-- FLIGHT DECK DOOR...............CLOSED AND LOCKED (CPT)
+-- FUEL..........................9999 KGS, PUMPS ON (CPT)
+-- PASSENGER SIGNS..............................SET (CPT)
+-- WINDOWS...................................LOCKED (CPT)
+-- MCP...................V2 999, HDG 999, ALT 99999 (CPT)
+-- TAKEOFF SPEEDS............V1 999, VR 999, V2 999 (CPT)
+-- CDU PREFLIGHT..........................COMPLETED (CPT)
+-- RUDDER & AILERON TRIM.................FREE AND 0 (CPT)
+-- TAXI AND TAKEOFF BRIEFING..            COMPLETED (CPT)
 
 local beforeStartChkl = kcChecklist:new("BEFORE START CHECKLIST (F/O)")
 beforeStartChkl:addItem(kcChecklistItem:new("FLIGHT DECK DOOR","CLOSED AND LOCKED",kcFlowItem.actorCPT,1,
@@ -748,7 +765,7 @@ beforeStartChkl:addItem(kcChecklistItem:new("TAKEOFF SPEEDS","V1 %i, VR %i, V2 %
 beforeStartChkl:addItem(kcChecklistItem:new("CDU PREFLIGHT","COMPLETED",kcFlowItem.actorCPT,1))
 beforeStartChkl:addItem(kcChecklistItem:new("RUDDER & AILERON TRIM","FREE AND 0",kcFlowItem.actorCPT,1,
 	function () return sysControls.rudderTrimSwitch:getStatus() == 0 and sysControls.aileronTrimSwitch:getStatus() == 0 end ))
-beforeStartChkl:addItem(kcChecklistItem:new("TAXI AND TAKEOFF BRIEFING","Completed",kcFlowItem.actorCPT,1))
+beforeStartChkl:addItem(kcChecklistItem:new("TAXI AND TAKEOFF BRIEFING","COMPLETED",kcFlowItem.actorCPT,1))
 
 -- ============ Pushback Towing Procedure =============
 local pushstartProc = kcProcedure:new("PUSHBACK & ENGINE START (BOTH)")
@@ -763,9 +780,43 @@ pushstartProc:addItem(kcProcedureItem:new("  TOW BAR DISCONNECTED","VERIFY",kcFl
 pushstartProc:addItem(kcProcedureItem:new("  LOCKOUT PIN REMOVED","VERIFY",kcFlowItem.actorCPT,1))
 pushstartProc:addItem(kcProcedureItem:new("  SYSTEM A HYDRAULIC PUMPS","ON",kcFlowItem.actorFO,1,
 	function () return sysHydraulic.engHydPump1:getStatus() == 1 and sysHydraulic.elecHydPump1:getStatus() == 1 end ))
+-- Call “START ___ ENGINE 1”
+-- ENGINE START switch GRD
+-- Verify that the N2 RPM increases.
+-- When N1 rotation is seen and N2 is at 25%,
+-- Engine start lever .....................................................IDLE
+-- Call “STARTER CUTOUT.” F/O
+-- Call “START ___ ENGINE 1”
+-- ENGINE START switch GRD
+-- Verify that the N2 RPM increases.
+-- When N1 rotation is seen and N2 is at 25%,
+-- Engine start lever .....................................................IDLE
+-- Call “STARTER CUTOUT.” F/O
+
+
+-- ============ Before Taxi =============
+local beforeTaxiProc = kcProcedure:new("BEFORE TAXI PROCEDURE (F/O)")
+beforeTaxiProc:addItem(kcProcedureItem:new("GENERATOR 1 AND 2 SWITCHES","ON",kcFlowItem.actorFO,1))
+beforeTaxiProc:addItem(kcProcedureItem:new("PROBE HEAT SWITCHES","ON",kcFlowItem.actorFO,1))
+beforeTaxiProc:addItem(kcProcedureItem:new("WING ANTI–ICE SWITCH","AS NEEDED",kcFlowItem.actorFO,1))
+beforeTaxiProc:addItem(kcProcedureItem:new("ENGINE ANTI–ICE SWITCHES","AS NEEDED",kcFlowItem.actorFO,1))
+beforeTaxiProc:addItem(kcProcedureItem:new("PACK SWITCHES","AUTO",kcFlowItem.actorFO,1))
+beforeTaxiProc:addItem(kcProcedureItem:new("ISOLATION VALVE SWITCH","AUTO",kcFlowItem.actorFO,1))
+beforeTaxiProc:addItem(kcProcedureItem:new("APU BLEED AIR SWITCH","OFF",kcFlowItem.actorFO,1))
+beforeTaxiProc:addItem(kcProcedureItem:new("APU SWITCH","OFF",kcFlowItem.actorFO,1))
+beforeTaxiProc:addItem(kcProcedureItem:new("ENGINE START SWITCHES","CONT",kcFlowItem.actorFO,1))
+beforeTaxiProc:addItem(kcProcedureItem:new("ENGINE START LEVERS","IDLE DETENT",kcFlowItem.actorCPT,1))
+beforeTaxiProc:addItem(kcSimpleProcedureItem:new("Verify that the ground equipment is clear."))
+beforeTaxiProc:addItem(kcSimpleProcedureItem:new("Call 'FLAPS ___' as needed for takeoff."))
+beforeTaxiProc:addItem(kcProcedureItem:new("FLAP LEVER","SET TAKEOFF FLAPS",kcFlowItem.actorFO,1))
+beforeTaxiProc:addItem(kcProcedureItem:new("LE FLAPS EXT GREEN LIGHT","ILLUMINATED",kcFlowItem.actorBOTH,1))
+beforeTaxiProc:addItem(kcProcedureItem:new("FLIGHT CONTROLS","CHECK",kcFlowItem.actorCPT,1))
+beforeTaxiProc:addItem(kcProcedureItem:new("TRANSPONDER","AS NEEDED",kcFlowItem.actorFO,1))
+beforeTaxiProc:addItem(kcProcedureItem:new("Recall","CHECK",kcFlowItem.actorBOTH,1))
+beforeTaxiProc:addItem(kcSimpleProcedureItem:new("  Verify all annunciators illuminate and then extinguish."))
+beforeTaxiProc:addItem(kcSimpleProcedureItem:new("Call BEFORE TAXI CHECKLIST"))
 
 -- ======= Before Taxi checklist =======
-
 local beforeTaxiChkl = kcChecklist:new("BEFORE TAXI CHECKLIST (F/O)")
 beforeTaxiChkl:addItem(kcChecklistItem:new("GENERATORS","ON",kcChecklistItem.actorCPT,1))
 beforeTaxiChkl:addItem(kcChecklistItem:new("PROBE HEAT","ON",kcChecklistItem.actorCPT,1))
@@ -778,13 +829,32 @@ beforeTaxiChkl:addItem(kcChecklistItem:new("ENGINE START LEVERS","IDLE DETENT",k
 beforeTaxiChkl:addItem(kcChecklistItem:new("FLIGHT CONTROLS","CHECKED",kcChecklistItem.actorCPT,1))
 beforeTaxiChkl:addItem(kcChecklistItem:new("GROUND EQUIPMENT","CLEAR",kcChecklistItem.actorBOTH,1))
 
--- ======= Before Takeoff checklist =======
+-- ============ Before Takeoff =============
+local beforeTakeoffProc = kcProcedure:new("BEFORE TAKEOFF PROCEDURE (F/O)")
+-- verify an increase in engine oil temperature before takeoff
+-- Engine warm up recommendations:
+-- • run the engines for at least 2 minutes
+-- • use a thrust setting normally used for taxi operations
+-- takeoff briefing
+-- notify cabin
+-- wx as needed
+-- terr as needed
 
+-- ======= Before Takeoff checklist =======
 local beforeTakeoffChkl = kcChecklist:new("BEFORE TAKEOFF CHECKLIST (F/O)")
 beforeTakeoffChkl:addItem(kcChecklistItem:new("TAKEOFF BRIEFING","REVIEWED",kcChecklistItem.actorCPT,nil))
 beforeTakeoffChkl:addItem(kcChecklistItem:new("FLAPS","Green light",kcChecklistItem.actorCPT,nil))
 beforeTakeoffChkl:addItem(kcChecklistItem:new("STABILIZER TRIM","___ Units",kcChecklistItem.actorCPT,nil))
 beforeTakeoffChkl:addItem(kcChecklistItem:new("CABIN","Secure",kcChecklistItem.actorCPT,nil))
+
+-- ============ RUNWAY ENTRY PROCEDURE (F/O) ============
+-- STROBES.......................................ON (F/O)
+-- TRANSPONDER...................................ON (F/O)
+-- FIXED LANDING LIGHTS..........................ON (CPT)
+-- RWY TURNOFF LIGHTS............................ON (CPT)
+-- TAXI LIGHTS..................................OFF (CPT)
+
+local runwayEntryProc = kcProcedure:new("RUNWAY ENTRY PROCEDURE (F/O)")
 
 -- ======= After Takeoff checklist =======
 
@@ -916,33 +986,7 @@ exteriorInspectionProc:addItem(kcProcedureItem:new("  Exterior lights","Check"))
 
 
 
--- ============ Before Taxi =============
-local beforeTaxiProc = kcProcedure:new("BEFORE TAXI PROCEDURE (F/O)")
-beforeTaxiProc:addItem(kcProcedureItem:new("GENERATOR 1 AND 2 SWITCHES","ON",kcFlowItem.actorFO,1))
-beforeTaxiProc:addItem(kcProcedureItem:new("PROBE HEAT SWITCHES","ON",kcFlowItem.actorFO,1))
-beforeTaxiProc:addItem(kcProcedureItem:new("WING ANTI–ICE SWITCH","AS NEEDED",kcFlowItem.actorFO,1))
-beforeTaxiProc:addItem(kcProcedureItem:new("ENGINE ANTI–ICE SWITCHES","AS NEEDED",kcFlowItem.actorFO,1))
-beforeTaxiProc:addItem(kcProcedureItem:new("PACK SWITCHES","AUTO",kcFlowItem.actorFO,1))
-beforeTaxiProc:addItem(kcProcedureItem:new("ISOLATION VALVE SWITCH","AUTO",kcFlowItem.actorFO,1))
-beforeTaxiProc:addItem(kcProcedureItem:new("APU BLEED AIR SWITCH","OFF",kcFlowItem.actorFO,1))
-beforeTaxiProc:addItem(kcProcedureItem:new("APU SWITCH","OFF",kcFlowItem.actorFO,1))
-beforeTaxiProc:addItem(kcProcedureItem:new("ENGINE START SWITCHES","CONT",kcFlowItem.actorFO,1))
-beforeTaxiProc:addItem(kcProcedureItem:new("ENGINE START LEVERS","IDLE DETENT",kcFlowItem.actorCPT,1))
-beforeTaxiProc:addItem(kcSimpleProcedureItem:new("Verify that the ground equipment is clear."))
-beforeTaxiProc:addItem(kcSimpleProcedureItem:new("Call 'FLAPS ___' as needed for takeoff."))
-beforeTaxiProc:addItem(kcProcedureItem:new("FLAP LEVER","SET TAKEOFF FLAPS",kcFlowItem.actorFO,1))
-beforeTaxiProc:addItem(kcProcedureItem:new("LE FLAPS EXT GREEN LIGHT","ILLUMINATED",kcFlowItem.actorBOTH,1))
-beforeTaxiProc:addItem(kcProcedureItem:new("FLIGHT CONTROLS","CHECK",kcFlowItem.actorCPT,1))
-beforeTaxiProc:addItem(kcProcedureItem:new("TRANSPONDER","AS NEEDED",kcFlowItem.actorFO,1))
-beforeTaxiProc:addItem(kcProcedureItem:new("Recall","CHECK",kcFlowItem.actorBOTH,1))
-beforeTaxiProc:addItem(kcSimpleProcedureItem:new("  Verify all annunciators illuminate and then extinguish."))
-beforeTaxiProc:addItem(kcSimpleProcedureItem:new("Call BEFORE TAXI CHECKLIST"))
 
--- ============ Before Takeoff =============
-local beforeTakeoffProc = kcProcedure:new("BEFORE TAKEOFF PROCEDURE (F/O)")
-
--- ============ Runway entry =============
-local runwayEntryProc = kcProcedure:new("RUNWAY ENTRY PROCEDURE (F/O)")
 
 -- ============ start and initial climb =============
 local takeoffClimbProc = kcProcedure:new("TAKEOFF & INITIAL CLIMB")

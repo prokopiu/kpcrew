@@ -367,7 +367,10 @@ function kh_mcp_builder()
 		kh_scrn_width = get("sim/graphics/view/window_width")
 		kh_scrn_height = get("sim/graphics/view/window_height")
 	end
-	sysMCP:render(kh_mcp_start_pos,mcp_window_height)
+	imgui.SetWindowFontScale(1.05)
+	imgui.PushStyleColor(imgui.constant.Col.Text, color_white)
+		sysMCP:render(kh_mcp_start_pos,mcp_window_height)
+	imgui.PopStyleColor()
 end
 
 function kh_close_mcp_window()
@@ -415,7 +418,10 @@ function kh_light_builder()
 		kh_scrn_width = get("sim/graphics/view/window_width")
 		kh_scrn_height = get("sim/graphics/view/window_height")
 	end
-	sysLights:render(kh_light_start_pos,light_window_height)
+	imgui.SetWindowFontScale(1.05)
+	imgui.PushStyleColor(imgui.constant.Col.Text, color_white)
+		sysLights:render(kh_light_start_pos,light_window_height)
+	imgui.PopStyleColor()
 end
 
 function kh_close_light_window()
@@ -463,7 +469,10 @@ function kh_radio_builder()
 		kh_scrn_width = get("sim/graphics/view/window_width")
 		kh_scrn_height = get("sim/graphics/view/window_height")
 	end
-	sysRadios:render(kh_radio_start_pos,radio_window_height)
+	imgui.SetWindowFontScale(1.05)
+	imgui.PushStyleColor(imgui.constant.Col.Text, color_white)
+		sysRadios:render(kh_radio_start_pos,radio_window_height)
+	imgui.PopStyleColor()
 end
 
 function kh_close_radio_window()
@@ -511,7 +520,10 @@ function kh_efis_builder()
 		kh_scrn_width = get("sim/graphics/view/window_width")
 		kh_scrn_height = get("sim/graphics/view/window_height")
 	end
-	sysEFIS:render(kh_efis_start_pos,efis_window_height)
+	imgui.SetWindowFontScale(1.05)
+	imgui.PushStyleColor(imgui.constant.Col.Text, color_white)
+		sysEFIS:render(kh_efis_start_pos,efis_window_height)
+	imgui.PopStyleColor()
 end
 
 function kh_close_efis_window()

@@ -56,6 +56,7 @@ group3:add(kcPreference:new("voice_recorder_test",false,kcPreference.typeToggle,
 group3:add(kcPreference:new("hyd_press_test",false,kcPreference.typeToggle,"hyd_press_test|TRUE|FALSE"))
 group3:add(kcPreference:new("pb_parkbrk_initial_set",false,kcPreference.typeToggle,"pb_parkbrk_initial_set|TRUE|FALSE"))
 group3:add(kcPreference:new("pb_parkbrk_release",false,kcPreference.typeToggle,"pb_parkbrk_release|TRUE|FALSE"))
+group3:add(kcPreference:new("ovht_fire_test",false,kcPreference.typeToggle,"ovht_fire_test|TRUE|FALSE"))
 
 activeBckVars:addGroup(group1)
 activeBckVars:addGroup(group2)

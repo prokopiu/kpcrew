@@ -1,0 +1,13 @@
+information:aircraftType=""
+information:totalFuel=""
+information:grosszfw=""
+information:currPosition=""
+information:currElevation=""
+information:currElevation=""
+information:localMetar=""
+flight:callsign="D-ATUI"
+flight:originIcao="EDDS"
+flight:destinationIcao="EDDM"
+flight:cruiseLevel=140
+flight:takeoffFuel=4000
+departure:atisFrequency="112.300"

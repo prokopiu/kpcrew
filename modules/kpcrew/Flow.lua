@@ -122,6 +122,7 @@ end
 function kcFlow:reset()
     self:setState(kcFlow.stateNotStarted)
     self:setActiveItemIndex(1)
+	kc_flow_executor:setState(kcFlowExecutor.state_stopped)
 	-- reset all items in procedure
     for _, item in ipairs(self.items) do
         item:reset()
@@ -179,6 +180,13 @@ function kcFlow:render()
 	-- start position in window
 	imgui.SetCursorPosX(10)
 	imgui.SetCursorPosY(10)
+	imgui.SetWindowFontScale(1.05)
+	
+	imgui.PushStyleColor(imgui.constant.Col.Button, 0xFF00007F)
+	if imgui.Button("RESET", 50, 18) then
+		self:reset()
+	end
+	imgui.PopStyleColor()
 
 	-- Flow output area with 
 	-- ==== headline ====
@@ -215,12 +223,12 @@ end
 
 -- get calculated window height
 function kcFlow:getWndHeight()
-	return (self:getNumberOfItems() + 2) * 22 + 15
+	return (self:getNumberOfItems() + 2) * 22 + 40
 end
 
 -- get calculated winow width
 function kcFlow:getWndWidth()
-	return self:getLineLength() * 7 + 20
+	return self:getLineLength() * 7 + 30
 end
 
 -- get calculated window x position

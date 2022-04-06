@@ -61,6 +61,10 @@ function kcIndirectProcedureItem:reset()
 	self.color = color_orange
 
 	self.conditionMet = false
+	local procvar = getBckVars():find("procvars:" .. self.procvar)
+	if procvar ~= nil then
+		procvar:setValue(false)
+	end
 end
 
 -- are the conditions for this item met?

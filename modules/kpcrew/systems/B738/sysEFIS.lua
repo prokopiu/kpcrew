@@ -138,7 +138,7 @@ function sysEFIS:render(ypos,height)
 		imgui.Button("E", 17, 25)
 		if imgui.IsItemActive() then 
 			kh_efis_wnd_state = 1
-			float_wnd_set_geometry(kh_efis_wnd, 0, ypos, 1000, ypos-height)
+			float_wnd_set_geometry(kh_efis_wnd, 0, ypos, 1005, ypos-height)
 		end
 	end
 

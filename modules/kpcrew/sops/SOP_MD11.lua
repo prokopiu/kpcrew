@@ -186,8 +186,13 @@ cockpitPrepProcFO:addItem(kcIndirectProcedureItem:new("CARGO FIRE TEST","STARTED
 -- NO SMOKE SIGNS.................................ON (F/O)
 -- SEAT BELTS SIGNS...............................ON (F/O)
 -- Exterior Lights
-
--- LL RET, NOSE OFF, RWY LIGHTS OFF, NAV OFF, LOGO as needed, BCN, H-INT OFF
+-- LANDING LIGHTS..........................RETRACTED (F/O)
+-- NOSE LIGHTS...................................OFF (F/O)
+-- RWY LIGHTS....................................OFF (F/O)
+-- NAV LIGHTS....................................OFF (F/O)
+-- LOGO LIGHTS...........................AS REQUIRED (F/O)
+-- BEACON LIGHTS.................................OFF (F/O)
+-- H-INT LIGHTS..................................OFF (F/O)
 
 -- GPWS TEST - PUSH
 
@@ -260,6 +265,34 @@ cockpitPrepProcFO2:addItem(kcProcedureItem:new("NO SMOKE SIGNS","ON",kcFlowItem.
 cockpitPrepProcFO2:addItem(kcProcedureItem:new("SEAT BELTS SIGNS","AUTO",kcFlowItem.actorFO,1,
 	function () return sysGeneral.seatBeltSigns:getStatus() == 1 end,
 	function () sysGeneral.seatBeltSigns:setValue(1) end))
+cockpitPrepProcFO2:addItem(kcSimpleProcedureItem:new("Exterior Lights"))
+cockpitPrepProcFO2:addItem(kcProcedureItem:new("LANDING LIGHTS","RETRACTED",kcFlowItem.actorFO,1,
+	function () return sysLights.landLightGroup:getStatus() == 0 end,
+	function () sysLights.landLightGroup:actuate(modeOff) end))
+cockpitPrepProcFO2:addItem(kcProcedureItem:new("NOSE LIGHTS","OFF",kcFlowItem.actorFO,1,
+	function () return sysLights.taxiSwitch:getStatus() == 0 end,
+	function () sysLights.taxiSwitch:actuate(modeOff) end))
+cockpitPrepProcFO2:addItem(kcProcedureItem:new("RWY LIGHTS","OFF",kcFlowItem.actorFO,1,
+	function () return sysLights.rwyLightGroup:getStatus() == 0 end,
+	function () sysLights.rwyLightGroup:actuate(modeOff) end))
+cockpitPrepProcFO2:addItem(kcProcedureItem:new("NAV LIGHTS","OFF",kcFlowItem.actorFO,1,
+	function () return sysLights.positionSwitch:getStatus() == 0 end,
+	function () sysLights.positionSwitch:actuate(modeOff) end))
+cockpitPrepProcFO2:addItem(kcProcedureItem:new("LOGO LIGHTS","OFF",kcFlowItem.actorFO,1,
+	function () return sysLights.logoSwitch:getStatus() == 0 end,
+	function () sysLights.logoSwitch:actuate(modeOff) end,
+	function () return kc_is_daylight() == false end))
+cockpitPrepProcFO2:addItem(kcProcedureItem:new("LOGO LIGHTS","ON",kcFlowItem.actorFO,1,
+	function () return sysLights.logoSwitch:getStatus() == 1 end,
+	function () sysLights.logoSwitch:actuate(modeOn) end,
+	function () return kc_is_daylight() == true end))
+cockpitPrepProcFO2:addItem(kcProcedureItem:new("BEACON LIGHTS","OFF",kcFlowItem.actorFO,1,
+	function () return sysLights.beaconSwitch:getStatus() == 0 end,
+	function () sysLights.beaconSwitch:actuate(modeOff) end))
+cockpitPrepProcFO2:addItem(kcProcedureItem:new("H-INT LIGHTS","OFF",kcFlowItem.actorFO,1,
+	function () return sysLights.strobesSwitch:getStatus() == 0 end,
+	function () sysLights.strobesSwitch:actuate(modeOff) end))
+	
 
 -- ============  =============
 -- add the checklists and procedures to the active sop

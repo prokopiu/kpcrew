@@ -223,7 +223,7 @@ function sysMCP:render(ypos, height)
 		imgui.Button("M", 17, 25)
 		if imgui.IsItemActive() then 
 			kh_mcp_wnd_state = 1
-			float_wnd_set_geometry(kh_mcp_wnd, 0, ypos, 1000, ypos - height)
+			float_wnd_set_geometry(kh_mcp_wnd, 0, ypos, 1005, ypos - height)
 		end
 	end
 

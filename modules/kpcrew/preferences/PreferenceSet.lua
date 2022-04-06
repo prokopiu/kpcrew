@@ -32,6 +32,14 @@ function kcPreferenceSet:setName(name)
     self.name = name
 end
 
+function kcPreferenceSet:getFilename()
+    return self.filename
+end
+
+function kcPreferenceSet:setFilename(name)
+    self.filename = name
+end
+
 -- Add a preference group to the set
 -- @tparam PreferenceGroup group to add
 function kcPreferenceSet:addGroup(group)
@@ -104,6 +112,7 @@ end
 
 -- Render all preferences and groups in imgui window
 function kcPreferenceSet:render()
+	imgui.SetWindowFontScale(1.05)
 	if self ~= nil then
 		-- run through groups and preferences and 
 		for _, group in ipairs(self.preferenceGroups) do

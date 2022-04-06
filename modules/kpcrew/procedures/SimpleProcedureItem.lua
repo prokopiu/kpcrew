@@ -36,8 +36,12 @@ function kcSimpleProcedureItem:getClassName()
 end
 
 -- color is always white
-function kcFlowItem:getStateColor()
+function kcSimpleProcedureItem:getStateColor()
 	return self.color
+end
+
+function kcSimpleProcedureItem:setColor(color)
+	self.color = color_white
 end
 
 -- item is always valid

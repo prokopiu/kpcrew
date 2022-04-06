@@ -33,6 +33,7 @@ kcPreference 			= require("kpcrew.preferences.Preference")
 kcLoadedPrefs 			= require("kpcrew.preferences.defaultPrefs")
 kcLoadedVars 			= require("kpcrew.preferences.backgroundVars")
 kcLoadedSOP 			= require("kpcrew.sops.SOP_" .. kc_acf_icao)
+kcLoadedBrief			= require("kpcrew.briefings.defaultBriefings")
 
 kcFlowExecutor			= require("kpcrew.FlowExecutor")
 
@@ -189,6 +190,11 @@ kc_mstr_button_text = "== FLOW =="
 kc_ctrl_wnd_state = 0
 
 function kc_master_button()
+	if getActivePrefs():get("general:assistance") == 1 and kc_ctrl_wnd_state == 0 then
+		kc_ctrl_wnd_state = 1
+		local xpos = kc_scrn_width - 750
+		float_wnd_set_geometry(kc_ctrl_wnd, xpos, 46, kc_scrn_width, 1)
+	end
 	if kc_mstr_button_state == kc_mstr_state_new_flow then
 		if getActivePrefs():get("general:assistance") == 1 then
 			kc_wnd_flow_action = 1
@@ -227,7 +233,7 @@ end
 function kc_init_ctrl_window()
 	if kc_ctrl_wnd == 0 or kc_ctrl_wnd == nil then	
 		kc_ctrl_wnd = float_wnd_create(25, 45, 2, true)
-		local xpos = kc_scrn_width - 625
+		local xpos = kc_scrn_width - 750
 		if kc_ctrl_wnd_state == 0 then
 			xpos = kc_scrn_width - 25
 		end
@@ -245,13 +251,14 @@ function kc_prev_button()
 			getActiveSOP():setActiveFlowIndex(getActiveSOP():getActiveFlowIndex() -1)
 			kc_flow_executor = kcFlowExecutor:new(getActiveSOP():getActiveFlow())
 		end
-	else
-		if kc_mstr_button_state <= kc_mstr_state_flow_open then
+	elseif getActivePrefs():get("general:assistance") > 1 then
+		if kc_mstr_button_state <= kc_mstr_state_flow_open or kc_mstr_button_state == kc_mstr_state_finished then
 			if getActiveSOP():getActiveFlowIndex() > 1 then
 				getActiveSOP():setActiveFlowIndex(getActiveSOP():getActiveFlowIndex() -1)
 				kc_flow_executor = kcFlowExecutor:new(getActiveSOP():getActiveFlow())
 			end
 		end
+	else
 	end
 end
 
@@ -260,8 +267,8 @@ function kc_next_button()
 	if getActivePrefs():get("general:assistance") == 1 then
 		getActiveSOP():setNextFlowActive()
 		kc_flow_executor = kcFlowExecutor:new(getActiveSOP():getActiveFlow())
-	else
-		if kc_mstr_button_state <= kc_mstr_state_flow_open then
+	elseif getActivePrefs():get("general:assistance") > 1 then
+		if kc_mstr_button_state <= kc_mstr_state_flow_open or kc_mstr_button_state == kc_mstr_state_finished then
 			getActiveSOP():setNextFlowActive()
 			kc_flow_executor = kcFlowExecutor:new(getActiveSOP():getActiveFlow())
 		end
@@ -274,6 +281,7 @@ function kc_next_button()
 				kc_mstr_button_state = kc_mstr_state_active
 			end
 		end
+	else
 	end
 end
 
@@ -282,7 +290,7 @@ function kc_ctrl_builder()
 	if get("sim/graphics/view/window_width") ~= kc_scrn_width or get("sim/graphics/view/window_height") ~= kc_scrn_height then
 		kc_scrn_width = get("sim/graphics/view/window_width")
 		kc_scrn_height = get("sim/graphics/view/window_height")
-		local xpos = kc_scrn_width - 625
+		local xpos = kc_scrn_width - 750
 		if kc_ctrl_wnd_state == 0 then
 			xpos = kc_scrn_width - 25
 		end
@@ -290,13 +298,14 @@ function kc_ctrl_builder()
 	end
 	imgui.SetCursorPosY(10)
 	imgui.SetCursorPosX(7)
-	imgui.PushStyleColor(imgui.constant.Col.Text,color_grey)
+	imgui.PushStyleColor(imgui.constant.Col.Text,color_white)
+	imgui.SetWindowFontScale(1.05)
 
 	if kc_ctrl_wnd_state == 0 then
 		imgui.Button("<", 15, 25)
 		if imgui.IsItemActive() then
 			kc_ctrl_wnd_state = 1
-			local xpos = kc_scrn_width - 625
+			local xpos = kc_scrn_width - 750
 			float_wnd_set_geometry(kc_ctrl_wnd, xpos, 46, kc_scrn_width, 1)
 		end
 		imgui.SameLine()
@@ -317,21 +326,20 @@ function kc_ctrl_builder()
 	end
 	-- ACTION/DISPLAY BUTTON
 	imgui.SameLine()
-	-- if getActiveSOP():getActiveFlow():getState() == kcFlow.stateCompleted then
-		-- kc_mstr_button_state = kc_mstr_state_finished
-	-- end
-	if kc_mstr_button_state == kc_mstr_state_waiting and getActiveSOP():getActiveFlow():getState() == kcFlow.stateInProgress then
+	if getActiveSOP():getActiveFlow():getState() == kcFlow.stateCompleted then
+		kc_mstr_button_state = kc_mstr_state_finished
+	end
+	if getActiveSOP():getActiveFlow():getState() == kcFlow.stateInProgress then
 		kc_mstr_button_state = kc_mstr_state_active
 	end
 	if getActiveSOP():getActiveFlow():getState() == kcFlow.statePaused then
 		kc_mstr_button_state = kc_mstr_state_waiting
 	end
-	-- if getActiveSOP():getActiveFlow():getState() == kcFlow.stateNotStarted then
-		-- kc_mstr_button_state = kc_mstr_state_new_flow
-	-- end
+	if getActiveSOP():getActiveFlow():getState() == kcFlow.stateNotStarted then
+		kc_mstr_button_state = kc_mstr_state_new_flow
+	end
 
 	imgui.PushStyleColor(imgui.constant.Col.Button, kc_mstr_button_state_cols[kc_mstr_button_state+1] )
-	-- imgui.PushStyleColor(imgui.constant.Col.Button, color_ctrl_bckgr)
 	imgui.PushStyleColor(imgui.constant.Col.ButtonActive, kc_mstr_button_state_cols[kc_mstr_button_state+1])
 	imgui.PushStyleColor(imgui.constant.Col.ButtonHovered, kc_mstr_button_state_cols[kc_mstr_button_state+1])
 	imgui.PushStyleColor(imgui.constant.Col.Text, color_white)
@@ -342,7 +350,7 @@ function kc_ctrl_builder()
 		else
 			kc_mstr_button_text = getActiveSOP():getActiveFlow():getActiveItem():getLine(getActiveSOP():getActiveFlow():getLineLength())
 		end
-		if imgui.Button(kc_mstr_button_text, 400, 25) then
+		if imgui.Button(kc_mstr_button_text, 415, 25) then
 			kc_master_button()
 		end
 
@@ -351,17 +359,20 @@ function kc_ctrl_builder()
 	imgui.PopStyleColor()
 	imgui.PopStyleColor()
 
-	-- MODE/AUXILIARY display
-	-- imgui.SameLine()
-	-- imgui.SetCursorPosY(12)
-	-- imgui.PushStyleColor(imgui.constant.Col.Text, color_left_display)
-		-- imgui.TextUnformatted(getActiveSOP():getActiveFlow():getHeadline())
-	-- imgui.PopStyleColor()
-
     imgui.SameLine()
 	imgui.SetCursorPosY(10)
 	if imgui.Button("->", 25, 25) then
 		kc_next_button()
+	end
+    imgui.SameLine()
+	imgui.PushStyleColor(imgui.constant.Col.Button, 0xFF00007F)
+	if imgui.Button("RESET", 47, 25) then
+		getActiveSOP():getActiveFlow():reset()
+	end
+	imgui.PopStyleColor()
+    imgui.SameLine()
+	if imgui.Button("BRIEF", 45, 25) then
+		kc_wnd_brief_action = 1
 	end
     imgui.SameLine()
 	if imgui.Button("PREF", 35, 25) then
@@ -442,10 +453,52 @@ if kc_file_exists(SCRIPT_DIRECTORY .. "..\\Modules\\kpcrew\\preferences\\" .. kc
 	getActivePrefs():load()
 end
 
+-- ===== Briefings window =====
+kc_show_brief_once = 0
+kc_hide_brief_once = 0
+kc_brief_wnd = nil
+
+function kc_init_brief_window(briefing)
+	local height = briefing:getWndHeight()
+	local width = briefing:getWndWidth()
+	kc_brief_wnd = float_wnd_create(width, height, 1, true)
+	float_wnd_set_title(kc_brief_wnd, briefing:getName())
+	float_wnd_set_imgui_builder(kc_brief_wnd, "kc_brief_builder")
+	float_wnd_set_position(kc_brief_wnd, briefing:getWndXPos(), briefing:getWndYPos())
+end
+
+function kc_brief_builder()
+	getActiveBriefings():render()
+end
+
+function kc_hide_brief_wnd()
+	if kc_brief_wnd then 
+		float_wnd_destroy(kc_brief_wnd)
+	end
+end
+
+function kc_toggle_brief_window()
+	kc_show_brief = not kc_show_brief
+	if kc_show_brief then
+		if kc_show_brief_once == 0 then
+			kc_init_brief_window(getActiveBriefings())
+			kc_show_brief_once = 1
+			kc_hide_brief_once = 0
+		end
+	else
+		if kc_hide_brief_once == 0 then
+			kc_hide_brief_wnd()
+			kc_show_brief_once = 0
+			kc_hide_brief_once = 1
+		end
+	end
+end
+
 -- ===== Background  Window control - direct window commands do not work as expected =====
 kc_wnd_sop_action = 0
 kc_wnd_flow_action = 0
 kc_wnd_pref_action = 0
+kc_wnd_brief_action = 0
 
 function bckWindowOpen()
 	if kc_wnd_sop_action == 1 then
@@ -464,6 +517,14 @@ function bckWindowOpen()
 		kc_wnd_pref_action = 0
 		kc_toggle_pref_window()
 	end
+	if kc_wnd_brief_action == 1 then
+		kc_wnd_brief_action = 0
+		kc_toggle_brief_window()
+	end
+end
+
+if kc_file_exists(SCRIPT_DIRECTORY .. "..\\Modules\\kpcrew\\preferences\\briefings.preferences") then
+	getActiveBriefings():load()
 end
 
 -- needed for window control
@@ -474,3 +535,6 @@ kc_flow_executor = kcFlowExecutor:new(getActiveSOP():getActiveFlow())
 do_often("kc_flow_executor:execute()")
 
 add_macro("KPCrew Debug Procvars", "kc_init_pref_window(getBckVars())")
+create_command("kp/crew/master", "KPCrew Masterbutton","kc_master_button()","","")
+create_command("kp/crew/next", "KPCrew Nextbutton","kc_next_button()","","")
+create_command("kp/crew/prev", "KPCrew Prevbutton","kc_prev_button()","","")

@@ -41,7 +41,11 @@ end
 -- get value of preference
 -- @treturn object value
 function kcPreference:getValue()
-    return self.value
+	if type(self.value) == 'function' then
+		return self.value()
+	else
+		return self.value
+	end
 end
 
 -- get data type of preference
@@ -53,13 +57,19 @@ end
 -- get title of preference
 -- @treturn string title
 function kcPreference:getTitle()
-    return self.title
+	if type(self.title) == 'function' then
+		return self.title()
+	else
+		return self.title
+	end
 end
 
 -- set value of preference
 -- @tparam object 
 function kcPreference:setValue(value)
-    self.value = value
+	if type(self.value) ~= 'function' then
+		self.value = value
+	end
 end
 
 -- set type of preference
@@ -71,52 +81,62 @@ end
 -- set title of preference
 -- @tparam string title 
 function kcPreference:setTitle(title)
-    self.title = title
+	if type(self.title) ~= 'function' then
+		self.title = title
+	end
 end
 
 -- ===== UI related functionality =====
 
 -- Render preference in imgui window
 function kcPreference:render()
-	local splitTitle = kc_split(self.title,"|")
+	local splitTitle = kc_split(self:getTitle(),"|")
 	imgui.TextUnformatted(splitTitle[1])
 		
 	if self.datatype == self.typeInt then
 		imgui.PushID(splitTitle[1])
-			local changed, textin = imgui.InputInt("", self.value, tonumber(splitTitle[2]))
+			local changed, textin = imgui.InputInt("", self:getValue(), tonumber(splitTitle[2]))
 			if changed then
-				self.value = textin
+				self:setValue(textin)
 			end
 		imgui.PopID()
 	end
 	
 	if self.datatype == self.typeText then
 		imgui.PushID(splitTitle[1])
-			local changed, textin = imgui.InputText("", self.value, 255)
+			local changed, textin = imgui.InputText("", self:getValue(), 255)
 			if changed then
-				self.value = textin
+				self:setValue(textin)
 			end
 		imgui.PopID()
 	end
 	
+	if self.datatype == self.typeInfo then
+		imgui.PushStyleColor(imgui.constant.Col.Text, 0xFF95C857)
+		imgui.PushTextWrapPos(345)
+		imgui.TextUnformatted(self:getValue())
+		imgui.PopTextWrapPos()
+		imgui.PopStyleColor()
+	end
+	
 	if self.datatype == self.typeToggle then
-		local retval = self.value
-		if imgui.RadioButton(splitTitle[2], self.value == true) then
+		local retval = self:getValue()
+		if imgui.RadioButton(splitTitle[2], self:getValue() == true) then
 			retval = true
 		end
 		imgui.SameLine()
-		if imgui.RadioButton(splitTitle[3], self.value ~= true) then
+		if imgui.RadioButton(splitTitle[3], self:getValue() ~= true) then
 			retval = false
 		end
-		self.value = retval
+		self:setValue(retval)
 	end
 
 	if self.datatype == self.typeList then
 		imgui.PushID(splitTitle[1])
-			if imgui.BeginCombo("", splitTitle[self.value + 1]) then
+			if imgui.BeginCombo("", splitTitle[self:getValue() + 1]) then
 				for i = 2, #splitTitle do
-					if imgui.Selectable(splitTitle[i], self.value + 1 == i) then
-						self.value = i - 1
+					if imgui.Selectable(splitTitle[i], self:getValue() + 1 == i) then
+						self:setValue(i - 1)
 					end
 				end
 			imgui.EndCombo()

@@ -149,10 +149,8 @@ end
 -- reset the item to its initial state
 function kcFlowItem:reset()
     self:setState(kcFlowItem.stateInitial)
-	self.challengeText = self.origChallengeText
-	self.responseText = self.origResponseText
 	self.valid = true
-	self.color = kcFlowItem.colorInitial
+	self:setColor(kcFlowItem.colorInitial)
 end
 
 -- are the conditions for this item met?
