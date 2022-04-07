@@ -136,7 +136,7 @@ function kcPreferenceGroup:render()
 	if self ~= nil then
 		if self.initialOpen then 
 			imgui.SetNextItemOpen(true)
-			self.initialOpen = false
+			-- self.initialOpen = false
 		end
 		if imgui.TreeNode(self:getHeadline()) then
 			for _, pref in ipairs(self.preferences) do
