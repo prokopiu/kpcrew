@@ -84,7 +84,7 @@ end
 -- Get the required window height calculated on all preferences and groups
 -- @treturn int height in pixel
 function kcPreferenceSet:getWndHeight()
-	local wndHeight = 600
+	local wndHeight = 700
 	-- for _, group in ipairs(self.preferenceGroups) do
 		-- wndHeight = wndHeight + group:getWndHeight()
 	-- end

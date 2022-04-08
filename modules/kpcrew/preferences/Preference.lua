@@ -102,6 +102,15 @@ function kcPreference:render()
 		imgui.PopID()
 	end
 	
+	if self.datatype == self.typeFloat then
+		imgui.PushID(splitTitle[1])
+			local changed, textin = imgui.InputFloat("", self:getValue(), tonumber(splitTitle[2]), 1.0,splitTitle[3])
+			if changed then
+				self:setValue(textin)
+			end
+		imgui.PopID()
+	end
+	
 	if self.datatype == self.typeText then
 		imgui.PushID(splitTitle[1])
 			local changed, textin = imgui.InputText("", self:getValue(), 255)
@@ -113,7 +122,7 @@ function kcPreference:render()
 	
 	if self.datatype == self.typeInfo then
 		imgui.PushStyleColor(imgui.constant.Col.Text, 0xFF95C857)
-		imgui.PushTextWrapPos(345)
+		imgui.PushTextWrapPos(330)
 		imgui.TextUnformatted(self:getValue())
 		imgui.PopTextWrapPos()
 		imgui.PopStyleColor()
