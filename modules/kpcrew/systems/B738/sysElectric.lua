@@ -60,7 +60,6 @@ sysElectric.gpuSwitch = MultiStateCmdSwitch:new("","laminar/B738/electric/dc_gnd
 sysElectric.apuGenBus1 = MultiStateCmdSwitch:new("","laminar/B738/electrical/apu_power_bus1",0,"laminar/B738/toggle_switch/apu_gen1_dn","laminar/B738/toggle_switch/apu_gen1_up")
 sysElectric.apuGenBus2 = MultiStateCmdSwitch:new("","laminar/B738/electrical/apu_power_bus2",0,"laminar/B738/toggle_switch/apu_gen2_dn","laminar/B738/toggle_switch/apu_gen2_up")
 
-
 -- GEN drive shaft
 sysElectric.genDrive1Switch = TwoStateCmdSwitch:new("","laminar/B738/one_way_switch/drive_disconnect1_pos",0,"laminar/B738/one_way_switch/drive_disconnect1","laminar/B738/one_way_switch/drive_disconnect1_off")
 sysElectric.genDrive2Switch = TwoStateCmdSwitch:new("","laminar/B738/one_way_switch/drive_disconnect2_pos",0,"laminar/B738/one_way_switch/drive_disconnect2","laminar/B738/one_way_switch/drive_disconnect2_off")
@@ -71,6 +70,16 @@ sysElectric.genDrive2Cover = TwoStateToggleSwitch:new("","laminar/B738/button_sw
 -- BUS TRANSFER
 sysElectric.busTransSwitch = TwoStateCmdSwitch:new("","sim/cockpit2/electrical/cross_tie",0,"sim/electrical/cross_tie_on","sim/electrical/cross_tie_off")
 sysElectric.busTransCover = TwoStateToggleSwitch:new("","laminar/B738/button_switch/cover_position",6,"laminar/B738/button_switch_cover06")
+
+-- GEN Switches
+sysElectric.gen1Switch = MultiStateCmdSwitch:new("","laminar/B738/electrical/gen1_pos",0,"laminar/B738/toggle_switch/gen1_dn","laminar/B738/toggle_switch/gen1_up")
+sysElectric.gen2Switch = MultiStateCmdSwitch:new("","laminar/B738/electrical/gen2_pos",0,"laminar/B738/toggle_switch/gen2_dn","laminar/B738/toggle_switch/gen2_up")
+
+sysElectric.genSwitchGroup = SwitchGroup:new("genswitches")
+sysElectric.genSwitchGroup:addSwitch(sysElectric.gen1Switch)
+sysElectric.genSwitchGroup:addSwitch(sysElectric.gen2Switch)
+
+sysElectric.apuStartSwitch = MultiStateCmdSwitch:new("","laminar/B738/spring_toggle_switch/APU_start_pos",0,"laminar/B738/spring_toggle_switch/APU_start_pos_dn","laminar/B738/spring_toggle_switch/APU_start_pos_up")
 
 -- ======== Annunciators
 
@@ -97,5 +106,8 @@ sysElectric.sourceOff1 = SimpleAnnunciator:new("srcoff1","laminar/B738/annunciat
 sysElectric.sourceOff2 = SimpleAnnunciator:new("srcoff2","laminar/B738/annunciator/source_off2",0)
 
 sysElectric.stbyPwrOff = SimpleAnnunciator:new("","laminar/B738/annunciator/standby_pwr_off",0)
+
+sysElectric.gen1off = SimpleAnnunciator:new("","sim/cockpit2/annunciators/generator_off",0)
+sysElectric.gen2off = SimpleAnnunciator:new("","sim/cockpit2/annunciators/generator_off",1)
 
 return sysElectric

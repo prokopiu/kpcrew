@@ -81,7 +81,7 @@ function kc_convertNato(intext)
 		["5"] = "Five", ["6"] = "Six", ["7"] = "Seven", ["8"] = "Eight", ["9"] = "Niner", ["-"] = "Dash", [" "] = " ", ["."] = "Point", [","] = "Comma"
 	}
 	intext = string.lower(intext)
-	intext = singleLetters(intext)
+	intext = kc_singleLetters(intext)
 	local outtext = ""
 	for i = 1, string.len(intext) do
 		local natoword = nato[intext:sub(i,i)]
@@ -97,7 +97,7 @@ function kc_convertRwy(intext)
 		["5"] = "Five", ["6"] = "Six", ["7"] = "Seven", ["8"] = "Eight", ["9"] = "Niner", ["-"] = "Dash", [" "] = " "
 	}
 	intext = string.lower(intext)
-	intext = singleLetters(intext)
+	intext = kc_singleLetters(intext)
 	local outtext = ""
 	for i = 1, string.len(intext) do
 		local natoword = nato[intext:sub(i,i)]
@@ -105,6 +105,70 @@ function kc_convertRwy(intext)
 	end
 	return outtext	
 end
+
+-- parse string for function macros and replace for spoken text
+function kc_parse_string(instring)
+	local outstring = ""
+	local elements = kc_split(instring,"#")
+	for _, item in ipairs(elements) do
+		local pitem = ""
+		if string.sub(item,1,6) == "spell|" then
+			pitem = kc_singleLetters(kc_split(item,"|")[2])
+		else
+			pitem = item
+		end
+		if string.sub(item,1,5) == "nato|" then
+			pitem = kc_convertNato(kc_split(item,"|")[2])
+		else
+			pitem = item
+		end
+		if string.sub(item,1,4) == "rwy|" then
+			pitem = kc_convertRwy(kc_split(item,"|")[2])
+		else
+			pitem = item
+		end
+		if string.sub(item,1,9) == "exchange|" then
+			pitem = kc_split(item,"|")[3]
+		else
+			pitem = item
+		end
+		outstring = outstring .. pitem
+	end
+	return outstring
+end
+
+-- parse string for function macros and replace for spoken text
+function kc_unparse_string(instring)
+	local outstring = ""
+	local elements = kc_split(instring,"#")
+	for _, item in ipairs(elements) do
+		local pitem = ""
+		if string.sub(item,1,6) == "spell|" then
+			pitem = kc_split(item,"|")[2]
+		else
+			pitem = item
+		end
+		if string.sub(item,1,5) == "nato|" then
+			pitem = kc_split(item,"|")[2]
+		else
+			pitem = item
+		end
+		if string.sub(item,1,4) == "rwy|" then
+			pitem = kc_split(item,"|")[2]
+		else
+			pitem = item
+		end
+		if string.sub(item,1,9) == "exchange|" then
+			pitem = kc_split(item,"|")[2]
+		else
+			pitem = item
+		end
+		outstring = outstring .. pitem
+	end
+	return outstring
+end
+
+
 
 -- return QNH string
 function kc_getQNHString()

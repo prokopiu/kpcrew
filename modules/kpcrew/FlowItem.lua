@@ -179,7 +179,7 @@ function kcFlowItem:getLine(lineLength)
 	for i=0,dots-1,1 do
 		line[#line + 1] = dotchar
 	end
-	line[#line + 1] = self:getResponseText()
+	line[#line + 1] = kc_unparse_string(self:getResponseText())
 	if self.actor ~= "" then
 		line[#line + 1] = " ("
 		line[#line + 1] = self.actor

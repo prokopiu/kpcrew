@@ -66,7 +66,7 @@ function MultiStateCmdSwitch:setValue(value)
 	end
 end
 
--- set the value directly where possible (dref can be written)
+-- set the value directly where possible 
 function MultiStateCmdSwitch:adjustValue(value,min,max)
 	if value <= max and value >= min then
 		while value < math.floor(get(self.statusDref,self.statusDrefIdx)) and math.floor(get(self.statusDref,self.statusDrefIdx)) > min do
