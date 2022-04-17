@@ -177,7 +177,7 @@ function kcSOP:render()
 		if flow:getClassName() == "Checklist" then	
 			color = color_checklist
 		end
-		if flow:getState() == 2 then
+		if flow:getState() == kcFlow.FINISH then
 			color = color_green
 		end
 		if kc_indexOf(flows,flow) == self.activeFlowIndex then
@@ -188,7 +188,6 @@ function kcSOP:render()
 		imgui.PushStyleColor(imgui.constant.Col.ButtonHovered, 0xFF001F9F)
 		if imgui.Button(flow:getName(), self:getBtnWidth(), 18) then
 			self:setActiveFlowIndex(kc_indexOf(flows,flow))
-			-- kc_wnd_flow_action = 1
 		end
         imgui.PopStyleColor()
         imgui.PopStyleColor()

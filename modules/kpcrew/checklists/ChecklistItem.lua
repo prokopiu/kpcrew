@@ -41,7 +41,16 @@ function kcChecklistItem:getClassName()
 end
 
 function kcChecklistItem:getStateColor()
-	local statecolors = { color_grey, kcFlowItem.colorActive, kcFlowItem.colorSuccess, kcFlowItem.colorFailed, kcFlowItem.colorManual }
+	local statecolors = { 
+		color_grey, 				-- INIT
+		kcFlowItem.colorActive, 	-- RUN
+		kcFlowItem.colorPause, 		-- PAUSE
+		kcFlowItem.colorFailed,  	-- FAIL
+		kcFlowItem.colorSuccess,	-- DONE
+		kcFlowItem.colorManual, 	-- SKIP
+		kcFlowItem.colorActive 		-- RESUME
+	}
+
 	return statecolors[self.state + 1]
 end
 

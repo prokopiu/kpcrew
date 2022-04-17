@@ -40,23 +40,15 @@ function kcIndirectProcedureItem:new(challengeText,responseText,actor,waittime,p
 
 	obj.conditionMet = false  -- if condition was met set to true
 	obj.className = "IndirectProcedureItem"
+	
+	kc_global_procvars:add(kcPreference:new(procvar,false,kcPreference.typeToggle,procvar .. "|TRUE|FALSE"))
 
     return obj
 end
 
-function kcIndirectProcedureItem:getClassName()
-	return self.className
-end
-
--- return the color code linked to the state (varied from standard)
-function kcIndirectProcedureItem:getStateColor()
-	local statecolors = { kcFlowItem.colorInitial, kcFlowItem.colorActive, kcFlowItem.colorSuccess, color_orange, kcFlowItem.colorManual }
-	return statecolors[self.state + 1]
-end
-
 -- reset the item to its initial state
 function kcIndirectProcedureItem:reset()
-    self:setState(kcFlowItem.stateInitial)
+    self:setState(kcFlowItem.INIT)
 	self.valid = true
 	self.color = color_orange
 

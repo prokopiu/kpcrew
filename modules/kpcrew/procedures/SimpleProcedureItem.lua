@@ -58,15 +58,15 @@ end
 function kcSimpleProcedureItem:getState()
  	if type(self.skipFunc) == 'function' then
 		if self.skipFunc() == true then
-			return kcFlowItem.stateSkipped
+			return kcFlowItem.SKIP
 		end
 	end
-   return kcFlowItem.stateInitial
+   return kcFlowItem.INIT
 end
 
 -- reset the item by hardcoding the values
 function kcSimpleProcedureItem:reset()
-    self:setState(kcFlowItem.stateInitial)
+    self:setState(kcFlowItem.INIT)
 	self.valid = true
 	self.color = color_grey
 end

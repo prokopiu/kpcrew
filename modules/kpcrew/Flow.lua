@@ -6,13 +6,17 @@
 -- @copyright 2022 Kosta Prokopiu
 
 local kcFlow = {
-    stateNotStarted = 0,
-    stateInProgress = 1,
-    stateCompleted = 2,
-	statePaused = 3,
-	colorNotStarted = color_white,
+    START 			= 0,
+    RUN 			= 1,
+    PAUSE  			= 2,
+	WAIT			= 3,
+	FINISH			= 4,
+	HALT			= 5,
+	
+	colorNotStarted	= color_white,
 	colorInProgress = color_left_display,
-	colorCompleted = color_dark_green
+	colorPaused		= color_orange,
+	colorCompleted 	= color_dark_green
 }
 
 -- Instantiate a new Procedure
@@ -23,7 +27,7 @@ function kcFlow:new(name)
     setmetatable(obj, kcFlow)
 
     obj.name = name
-    obj.state = self.stateNotStarted
+    obj.state = self.START
     obj.items = {}
     obj.activeItemIndex = 1
 	obj.wnd = nil
@@ -56,7 +60,7 @@ end
 
 -- return the color code linked to the state
 function kcFlow:getStateColor()
-	local statecolors = { self.colorNotStarted, self.colorInProgress, self.colorCompleted }
+	local statecolors = { self.colorNotStarted, self.colorInProgress, self.colorPaused, self.colorPaused, self.colorCompleted, self.colorPaused }
 	return statecolors[self.state + 1]
 end
 
@@ -74,7 +78,7 @@ end
 function kcFlow:getNumberOfItems()
 	local cnt = 0
 	for _, item in ipairs(self.items) do
-		if item:getState() ~= kcFlowItem.stateSkipped then
+		if item:getState() ~= kcFlowItem.SKIP then
 			cnt = cnt + 1
 		end
 	end
@@ -108,7 +112,7 @@ function kcFlow:setNextItemActive()
     while self:hasNextItem() 
 	and (self.items[self.activeItemIndex]:getClassName() == "SimpleProcedureItem"
 			or self.items[self.activeItemIndex]:getClassName() == "SimpleChecklistItem"
-			or self.items[self.activeItemIndex]:getState() == kcFlowItem.stateSkipped) do
+			or self.items[self.activeItemIndex]:getState() == kcFlowItem.SKIP) do
 		self.activeItemIndex = self.activeItemIndex + 1
 	end
 	if self.activeItemIndex <= #self.items then
@@ -120,9 +124,8 @@ end
 
 -- reset procedure and all below items
 function kcFlow:reset()
-    self:setState(kcFlow.stateNotStarted)
+    self:setState(kcFlow.START)
     self:setActiveItemIndex(1)
-	kc_flow_executor:setState(kcFlowExecutor.state_stopped)
 	-- reset all items in procedure
     for _, item in ipairs(self.items) do
         item:reset()
@@ -206,7 +209,7 @@ function kcFlow:render()
 			item:setColor(item:getStateColor())
 		end
 		-- remove skipped items
-		if item:getState() ~= kcFlowItem.stateSkipped then
+		if item:getState() ~= kcFlowItem.SKIP then
 			imgui.SetCursorPosY(imgui.GetCursorPosY() + 5)
 			imgui.PushStyleColor(imgui.constant.Col.Text,item:getColor()) 
 				imgui.TextUnformatted(item:getLine(self:getLineLength()))

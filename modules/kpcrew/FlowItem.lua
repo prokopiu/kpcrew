@@ -5,12 +5,13 @@
 -- @copyright 2022 Kosta Prokopiu
 
 local kcFlowItem = {
-    stateInitial 		= 0,
-    stateInProgress 	= 1,
-    stateSuccess 		= 2,
-    stateFailed 		= 3,
-    stateDoneManually 	= 4,
-	stateSkipped		= 5,
+    INIT		 		= 0,
+	RUN					= 1,
+    PAUSE			 	= 2,
+    FAIL		 		= 3,
+    DONE		 		= 4,
+	SKIP				= 5,
+	RESUME				= 6,
 
 	actorPF 			= "PF",		-- pilot flying (you)
 	actorPNF 			= "PNF",	-- pilot not flying (virtual)
@@ -26,10 +27,11 @@ local kcFlowItem = {
 
 	colorInitial		= color_grey,
 	colorActive 		= color_white,
-	colorSuccess		= color_green,
+	colorPause			= color_orange,
 	colorFailed 		= color_red,
-	colorManual			= color_dark_green,
-	colorSkipped		= color_white
+	colorSuccess		= color_green,
+	colorSkipped		= color_white,
+	colorManual			= color_dark_green
 }
 
 -- Instantiate a new FlowItem
@@ -45,7 +47,7 @@ function kcFlowItem:new(challengeText,responseText,actor,waittime,validFunc,acti
     local obj = {}
     setmetatable(obj, kcFlowItem)
 
-	obj.state = kcFlowItem.stateInitial
+	obj.state = kcFlowItem.INIT
 	obj.challengeText = challengeText
 	obj.responseText = responseText	
 	obj.origResponseText = responseText
@@ -78,6 +80,16 @@ end
 -- set left hand action text
 function kcFlowItem:setChallengeText(text)
 	self.challengeText = text
+end
+
+-- speak the challenge text
+function kcFlowItem:speakChallengeText()
+    kc_speakNoText(1,kc_parse_string(self.challengeText))
+end
+
+-- speak the challenge text
+function kcFlowItem:speakResponseText()
+    kc_speakNoText(1,kc_parse_string(self.responseText))
 end
 
 -- get the right hand result text for the item
@@ -124,7 +136,7 @@ end
 function kcFlowItem:getState()
 	if type(self.skipFunc) == 'function' then
 		if self.skipFunc() then
-			return kcFlowItem.stateSkipped
+			return kcFlowItem.SKIP
 		end
 	end
     return self.state
@@ -142,15 +154,23 @@ end
 
 -- return the color code linked to the state
 function kcFlowItem:getStateColor()
-	local statecolors = { self.colorInitial, self.colorActive, self.colorSuccess, self.colorFailed, self.colorManual, self.colorWhite }
+	local statecolors = { 
+		kcFlowItem.colorInitial,	-- INIT 
+		kcFlowItem.colorActive,     -- RUN
+		kcFlowItem.colorPause,      -- PAUSE
+		kcFlowItem.colorFailed,    	-- FAIL
+		kcFlowItem.colorSuccess,    -- DONE
+		kcFlowItem.colorManual,     -- SKIP
+		kcFlowItem.colorActive	    -- RESUME 
+	}
 	return statecolors[self.state + 1]
 end
 
 -- reset the item to its initial state
 function kcFlowItem:reset()
-    self:setState(kcFlowItem.stateInitial)
+    self:setState(kcFlowItem.INIT)
 	self.valid = true
-	self:setColor(kcFlowItem.colorInitial)
+	self:setColor(self.colorInitial)
 end
 
 -- are the conditions for this item met?
@@ -170,16 +190,18 @@ end
 -- return the visual line to put in the checklist displays
 function kcFlowItem:getLine(lineLength)
 	local line = {}
-	local dots = lineLength - string.len(self.challengeText) - string.len(self:getResponseText()) - 7
-	line[#line + 1] = self.challengeText
+	local unparsedChallengeText = kc_unparse_string(self.challengeText)
+	local unparsedResponseText = kc_unparse_string(self:getResponseText())
+	local dots = lineLength - string.len(unparsedChallengeText) - string.len(unparsedResponseText) - 7
+	line[#line + 1] = unparsedChallengeText
 	local dotchar = "."
-	if self:getResponseText() == "" then
+	if unparsedResponseText == "" then
 		dotchar = " "
 	end
 	for i=0,dots-1,1 do
 		line[#line + 1] = dotchar
 	end
-	line[#line + 1] = kc_unparse_string(self:getResponseText())
+	line[#line + 1] = unparsedResponseText
 	if self.actor ~= "" then
 		line[#line + 1] = " ("
 		line[#line + 1] = self.actor

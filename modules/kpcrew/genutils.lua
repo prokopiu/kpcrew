@@ -1,7 +1,7 @@
 -- General utilities used in kpcrew and kphardware
 -- some new features and ideas thanks to patrickl92
 
-require "socket"
+local socket = require "socket"
 
 local drefTextout = "sim/operation/prefs/text_out"
 
@@ -42,10 +42,11 @@ WX_Cloud_list = {"NO","FEW","SCATTERED","BROKEN","OVERCAST"}
 -- speakmode 1 will talk and show, 0 will only speak
 function kc_speakNoText(speakMode, sText)
 	if sText ~= "" and sText ~= nil then
+	
 		if speakMode == 0 then
 			set(drefTextout,0)
 			XPLMSpeakString(sText)
-			set(drefTextout,1)
+			-- set(drefTextout,1)
 		else	
 			set(drefTextout,1)
 			XPLMSpeakString(sText)
@@ -114,20 +115,11 @@ function kc_parse_string(instring)
 		local pitem = ""
 		if string.sub(item,1,6) == "spell|" then
 			pitem = kc_singleLetters(kc_split(item,"|")[2])
-		else
-			pitem = item
-		end
-		if string.sub(item,1,5) == "nato|" then
+		elseif string.sub(item,1,5) == "nato|" then
 			pitem = kc_convertNato(kc_split(item,"|")[2])
-		else
-			pitem = item
-		end
-		if string.sub(item,1,4) == "rwy|" then
+		elseif string.sub(item,1,4) == "rwy|" then
 			pitem = kc_convertRwy(kc_split(item,"|")[2])
-		else
-			pitem = item
-		end
-		if string.sub(item,1,9) == "exchange|" then
+		elseif string.sub(item,1,9) == "exchange|" then
 			pitem = kc_split(item,"|")[3]
 		else
 			pitem = item
@@ -145,20 +137,11 @@ function kc_unparse_string(instring)
 		local pitem = ""
 		if string.sub(item,1,6) == "spell|" then
 			pitem = kc_split(item,"|")[2]
-		else
-			pitem = item
-		end
-		if string.sub(item,1,5) == "nato|" then
+		elseif string.sub(item,1,5) == "nato|" then
 			pitem = kc_split(item,"|")[2]
-		else
-			pitem = item
-		end
-		if string.sub(item,1,4) == "rwy|" then
+		elseif string.sub(item,1,4) == "rwy|" then
 			pitem = kc_split(item,"|")[2]
-		else
-			pitem = item
-		end
-		if string.sub(item,1,9) == "exchange|" then
+		elseif string.sub(item,1,9) == "exchange|" then
 			pitem = kc_split(item,"|")[2]
 		else
 			pitem = item
@@ -167,8 +150,6 @@ function kc_unparse_string(instring)
 	end
 	return outstring
 end
-
-
 
 -- return QNH string
 function kc_getQNHString()
@@ -347,7 +328,7 @@ function kc_dispTimeHHMM(timeseconds)
 end
 
 --- Gets the current time. (patrickl92)
--- The function uses the <code>gettime()</code> function of LuaSocket, which provides the current time with milliseconds resolution.
+-- The function uses the <code>gettime()</code> function of LuaSocket, which provides the current time with seconds resolution.
 -- @treturn number The current time.
 function kc_getPcTime()
 	return socket.gettime()
@@ -362,27 +343,6 @@ function kc_indexOf(array, value)
     end
     return nil
 end
-
--- input field dropdown
--- function gui_in_dropdown(lable, srcval, list, width)
-	-- imgui.BeginChild(lable, width, 20)
-		-- imgui.Columns(2,lable,false)
-		-- imgui.SetColumnWidth(0, 1)
-		-- imgui.SetColumnWidth(1, width)
-		-- imgui.TextUnformatted(lable .. ":")
-		-- imgui.NextColumn()
-		-- if imgui.BeginCombo("                                    " .. lable, list[srcval]) then
-			-- for i = 1, #list do
-				-- if imgui.Selectable(list[i], srcval == i) then
-					-- srcval = i
-				-- end
-			-- end
-			-- imgui.EndCombo()
-		-- end
-		-- imgui.NextColumn()
-	-- imgui.EndChild()
-	-- return srcval
--- end
 
 -- get daylight 0=dark 1=bright
 function kc_is_daylight()
@@ -471,6 +431,7 @@ function kc_imgui_rotary_mcp(label,system,ypos,id)
 	imgui.PopStyleColor()
 end
 
+-- enter any value
 function kc_imgui_value(label,system,ypos)
     imgui.SameLine()
 	imgui.SetCursorPosY(ypos)

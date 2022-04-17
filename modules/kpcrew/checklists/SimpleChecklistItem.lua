@@ -26,7 +26,7 @@ function kcSimpleChecklistItem:new(challengeText, skipFunc)
 	obj.color = color_white
 	obj.valid = true
 	obj.skipFunc = skipFunc
-	obj.className = "SimpleProcedureItem"
+	obj.className = "SimpleChecklistItem"
 	
     return obj
 end
@@ -47,10 +47,10 @@ end
 function kcSimpleChecklistItem:getState()
  	if type(self.skipFunc) == 'function' then
 		if self.skipFunc() == true then
-			return kcFlowItem.stateSkipped
+			return kcFlowItem.SKIP
 		end
 	end
-   return kcFlowItem.stateInitial
+   return kcFlowItem.INIT
 end
 
 function kcSimpleChecklistItem:getStateColor()
@@ -58,7 +58,7 @@ function kcSimpleChecklistItem:getStateColor()
 end
 
 function kcSimpleChecklistItem:reset()
-    self:setState(kcFlowItem.stateInitial)
+    self:setState(kcFlowItem.INIT)
 	self.valid = true
 	self.color = color_white
 end

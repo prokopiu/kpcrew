@@ -29,6 +29,7 @@ end
 kcPreferenceSet 		= require("kpcrew.preferences.PreferenceSet")
 kcPreferenceGroup 		= require("kpcrew.preferences.PreferenceGroup")
 kcPreference 			= require("kpcrew.preferences.Preference")
+kc_global_procvars 		= kcPreferenceGroup:new("procvars","Procedure Variables")
 
 kcLoadedPrefs 			= require("kpcrew.preferences.defaultPrefs")
 kcLoadedVars 			= require("kpcrew.preferences.backgroundVars")
@@ -202,26 +203,25 @@ function kc_master_button()
 		end
 		if getActivePrefs():get("general:assistance") > 1 then
 			kc_mstr_button_state = kc_mstr_state_active
-			kc_flow_executor:setState(kcFlowExecutor.state_running)
+			getActiveSOP():getActiveFlow():setState(kcFlow.RUN)
 		end
 	elseif kc_mstr_button_state == kc_mstr_state_flow_open then
 		if getActivePrefs():get("general:assistance") > 1 then
 			kc_mstr_button_state = kc_mstr_state_active
-			kc_flow_executor:setState(kcFlowExecutor.state_running)
+			getActiveSOP():getActiveFlow():setState(kcFlow.RUN)
 		end
 	elseif kc_mstr_button_state == kc_mstr_state_active  then
 		if getActivePrefs():get("general:assistance") > 1 then
-			if kc_flow_executor:getState() == kcFlowExecutor.state_running then
-				kc_flow_executor:setState(kcFlowExecutor.state_paused)
-				getActiveSOP():getActiveFlow():setState(kcFlow.statePaused)
+			if getActiveSOP():getActiveFlow():getState() == kcFlow.RUN then
+				getActiveSOP():getActiveFlow():setState(kcFlow.PAUSE)
 			end
 			kc_mstr_button_state = kc_mstr_state_waiting
 		end
 	elseif kc_mstr_button_state == kc_mstr_state_waiting then
 		if getActivePrefs():get("general:assistance") > 1 then
 			kc_mstr_button_state = kc_mstr_state_active
-			kc_flow_executor:setState(kcFlowExecutor.state_running)
-			getActiveSOP():getActiveFlow():setState(kcFlow.stateInProgress)
+			getActiveSOP():getActiveFlow():setState(kcFlow.RUN)
+			getActiveSOP():getActiveFlow():getActiveItem():setState(kcFlowItem.RUN)
 		end
 	elseif kc_mstr_button_state == kc_mstr_state_finished then
 		kc_mstr_button_state = kc_mstr_state_new_flow
@@ -272,12 +272,12 @@ function kc_next_button()
 			getActiveSOP():setNextFlowActive()
 			kc_flow_executor = kcFlowExecutor:new(getActiveSOP():getActiveFlow())
 		end
-		if kc_mstr_button_state == kc_mstr_state_waiting then
+		if kc_mstr_button_state == kc_mstr_state_waiting or kc_mstr_button_state == kc_mstr_state_stop then
 			local flow = getActiveSOP():getActiveFlow()
+			getActiveSOP():getActiveFlow():getActiveItem():setState(kcFlowItem.RESUME)
 			if flow:hasNextItem() then
 				flow:setNextItemActive()
-				flow:setState(kcFlow.stateInProgress)
-				kc_flow_executor:setState(kcFlow.stateInProgress)
+				flow:setState(kcFlow.RUN)
 				kc_mstr_button_state = kc_mstr_state_active
 			end
 		end
@@ -326,16 +326,15 @@ function kc_ctrl_builder()
 	end
 	-- ACTION/DISPLAY BUTTON
 	imgui.SameLine()
-	if getActiveSOP():getActiveFlow():getState() == kcFlow.stateCompleted then
+	if getActiveSOP():getActiveFlow():getState() == kcFlow.FINISH then
 		kc_mstr_button_state = kc_mstr_state_finished
-	end
-	if getActiveSOP():getActiveFlow():getState() == kcFlow.stateInProgress then
+	elseif getActiveSOP():getActiveFlow():getState() == kcFlow.RUN then
 		kc_mstr_button_state = kc_mstr_state_active
-	end
-	if getActiveSOP():getActiveFlow():getState() == kcFlow.statePaused then
+	elseif getActiveSOP():getActiveFlow():getState() == kcFlow.PAUSE then
 		kc_mstr_button_state = kc_mstr_state_waiting
-	end
-	if getActiveSOP():getActiveFlow():getState() == kcFlow.stateNotStarted then
+	elseif getActiveSOP():getActiveFlow():getState() == kcFlow.HALT then
+		kc_mstr_button_state = kc_mstr_state_stop
+	elseif getActiveSOP():getActiveFlow():getState() == kcFlow.START then
 		kc_mstr_button_state = kc_mstr_state_new_flow
 	end
 
@@ -344,8 +343,10 @@ function kc_ctrl_builder()
 	imgui.PushStyleColor(imgui.constant.Col.ButtonHovered, kc_mstr_button_state_cols[kc_mstr_button_state+1])
 	imgui.PushStyleColor(imgui.constant.Col.Text, color_white)
 
-		if getActiveSOP():getActiveFlow():getState() ~= kcFlow.stateInProgress and 
-		   getActiveSOP():getActiveFlow():getState() ~= kcFlow.statePaused then
+		if getActiveSOP():getActiveFlow():getState() ~= kcFlow.RUN and 
+		   getActiveSOP():getActiveFlow():getState() ~= kcFlow.PAUSE and 
+		   getActiveSOP():getActiveFlow():getState() ~= kcFlow.HALT and 
+		   getActiveSOP():getActiveFlow():getState() ~= kcFlow.WAIT then
 			kc_mstr_button_text = getActiveSOP():getActiveFlow():getHeadline()
 		else
 			kc_mstr_button_text = getActiveSOP():getActiveFlow():getActiveItem():getLine(getActiveSOP():getActiveFlow():getLineLength())

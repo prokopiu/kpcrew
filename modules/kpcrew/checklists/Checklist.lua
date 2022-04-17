@@ -19,9 +19,6 @@ function kcChecklist:new(name)
     setmetatable(obj, kcChecklist)
 
     obj.name = name
-    -- obj.state = kcChecklist.stateNotStarted
-    -- obj.items = {}
-    -- obj.activeiItemIndex = 1
 	obj.className = "Checklist"
 
     return obj

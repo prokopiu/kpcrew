@@ -18,7 +18,7 @@ local kcIndirectChecklistItem = {
 -- @tparam function reference validFunc shall return true or false to verify if condition is met
 -- @tparam function reference  actionFunc will be executed and make changes to aircraft settings
 -- @tparam function reference  skipFunc if true will skip the item and not diaply in list
-function kcIndirectChecklistItem:new(challengeText,responseText,actor,waittime,validFunc,actionFunc,skipFunc)
+function kcIndirectChecklistItem:new(challengeText,responseText,actor,waittime,procvar,validFunc,actionFunc,skipFunc)
     kcIndirectChecklistItem.__index = kcIndirectChecklistItem
     setmetatable(kcIndirectChecklistItem, {
         __index = kcFlowItem
@@ -36,37 +36,54 @@ function kcIndirectChecklistItem:new(challengeText,responseText,actor,waittime,v
 	obj.actionFunc = actionFunc
 	obj.responseFunc = responseFunc
 	obj.skipFunc = skipFunc
+	obj.procvar = procvar
 	obj.className = "IndirectChecklistItem"
 
 	obj.conditionMet = false  -- if condition was met set to true
 
+	kc_global_procvars:add(kcPreference:new(procvar,false,kcPreference.typeToggle,procvar .. "|TRUE|FALSE"))
+
     return obj
 end
 
-function kcIndirectChecklistItem:getClassName()
-	return self.className
-end
-
 function kcIndirectChecklistItem:getStateColor()
-	local statecolors = { kcFlowItem.colorInitial, kcFlowItem.colorActive, kcFlowItem.colorSuccess, color_orange, kcFlowItem.colorSkipped }
+	local statecolors = { 
+		kcFlowItem.colorInitial,	-- INIT 
+		kcFlowItem.colorActive,     -- RUN
+		kcFlowItem.colorPause,      -- PAUSE
+		kcFlowItem.colorFailed,    	-- FAIL
+		kcFlowItem.colorSuccess,    -- DONE
+		kcFlowItem.colorManual,     -- SKIP
+		kcFlowItem.colorActive	    -- RESUME 
+	}
+
 	return statecolors[self.state + 1]
 end
 
 function kcIndirectChecklistItem:reset()
-    self:setState(kcFlowItem.stateInitial)
+    self:setState(kcFlowItem.INIT)
 	self.valid = true
 	self.color = color_orange
+
+	self.conditionMet = false
+	local procvar = getBckVars():find("procvars:" .. self.procvar)
+	if procvar ~= nil then
+		procvar:setValue(false)
+	end
 end
 
 function kcIndirectChecklistItem:isValid()
-	if type(self.validFunc) == 'function' then
-		if self.conditionMet == false then
-			if self.validFunc(self) then
-				self.conditionMet = true
+	local procvar = getBckVars():find("procvars:" .. self.procvar)
+	if procvar ~= nil then
+		if type(self.validFunc) == 'function' then
+			if procvar:getValue() == false then
+				procvar:setValue(self.validFunc(self))
 			end
 		end
+	else
+		return false
 	end
-    return self.conditionMet
+	return procvar:getValue()	
 end
 
 return kcIndirectChecklistItem

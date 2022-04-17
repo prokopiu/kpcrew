@@ -11,7 +11,9 @@ local kcPreference = {
 	typeFloat = 2,
 	typeToggle = 3,
 	typeText = 4,
-	typeList = 5
+	typeList = 5,
+	typeCOMFreq = 6,
+	typeNAVFreq = 7
 }
 
 -- Instantiate a new preference group
@@ -152,11 +154,41 @@ function kcPreference:render()
 			end
 		imgui.PopID()
 	end
+
+	if self.datatype == self.typeCOMFreq then
+		imgui.PushID(splitTitle[1])
+			local changed, textin = imgui.InputFloat("", self:getValue(), 0.005, 1.00, "%4.3f")
+			imgui.SameLine()
+			if imgui.Button("<->") then
+				set("sim/cockpit2/radios/actuators/com1_frequency_hz_833",(self:getValue()*1000)) 
+			end
+			if changed then
+				self:setValue(textin)
+			end
+		imgui.PopID()
+	end
+
+	if self.datatype == self.typeNAVFreq then
+		imgui.PushID(splitTitle[1])
+			local changed, textin = imgui.InputFloat("", self:getValue(), 0.005, 1.00, "%4.3f")
+			imgui.SameLine()
+			if imgui.Button("<->") then
+				if splitTitle[2] ~= "2" then 
+					set("sim/cockpit2/radios/actuators/nav1_frequency_hz",(self:getValue()*100)) 
+				else
+					set("sim/cockpit2/radios/actuators/nav2_frequency_hz",(self:getValue()*100)) 
+				end
+			end
+			if changed then
+				self:setValue(textin)
+			end
+		imgui.PopID()
+	end
 end
 
 -- return the line to be written into the .preferences file
 function kcPreference:getSaveLine()
-	if self.datatype == self.typeInt or self.datatype == self.typeFloat or self.datatype == self.typeList then
+	if self.datatype == self.typeInt or self.datatype == self.typeFloat or self.datatype == self.typeList or self.datatype == self.typeCOMFreq then
 		return self.key .. "=" .. self.value .. "\n"
 	end
 	if self.datatype == self.typeFlag or self.datatype == self.typeToggle then
