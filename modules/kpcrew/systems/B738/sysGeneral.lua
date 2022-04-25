@@ -113,6 +113,7 @@ sysGeneral.emerExitLightsCover = TwoStateToggleSwitch:new("","laminar/B738/butto
 -- Voice recorder
 
 sysGeneral.voiceRecSwitch = TwoStateCmdSwitch:new("","laminar/B738/toggle_switch/vcr",0,"laminar/B738/toggle_switch/vcr_auto","laminar/B738/toggle_switch/vcr_on")
+sysGeneral.vcrCover = TwoStateToggleSwitch:new("","laminar/B738/switches/fdr_cover_pos",0,"laminar/B738/toggle_switch/fdr_cover")
 
 -- Attendence button 
 sysGeneral.attendanceButton = TwoStateToggleSwitch:new("","laminar/B738/push_button/attend_pos",0,"laminar/B738/push_button/attend")
