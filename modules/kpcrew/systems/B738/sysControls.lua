@@ -50,14 +50,28 @@ sysControls.altFlapsCover = TwoStateToggleSwitch:new("altflapscover","laminar/B7
 -- flight controls
 sysControls.fltCtrlASwitch = MultiStateCmdSwitch:new("","laminar/B738/switches/flt_ctr_A_pos",0,"laminar/B738/toggle_switch/flt_ctr_A_dn","laminar/B738/toggle_switch/flt_ctr_A_up")
 sysControls.fltCtrlBSwitch = MultiStateCmdSwitch:new("","laminar/B738/switches/flt_ctr_B_pos",0,"laminar/B738/toggle_switch/flt_ctr_B_dn","laminar/B738/toggle_switch/flt_ctr_B_up")
+sysControls.fltCtrlSwitches = SwitchGroup:new("fltCtrlSwitches")
+sysControls.fltCtrlSwitches:addSwitch(sysControls.fltCtrlASwitch) 
+sysControls.fltCtrlSwitches:addSwitch(sysControls.fltCtrlBSwitch) 
+
 sysControls.fltCtrlACover = TwoStateToggleSwitch:new("","laminar/B738/switches/flt_ctr_A_cover_pos",0,"laminar/B738/toggle_switch/flt_ctr_A_cover")
 sysControls.fltCtrlBCover = TwoStateToggleSwitch:new("","laminar/B738/switches/flt_ctr_B_cover_pos",0,"laminar/B738/toggle_switch/flt_ctr_B_cover")
+sysControls.fltCtrlCovers = SwitchGroup:new("fltCtrlCovers")
+sysControls.fltCtrlCovers:addSwitch(sysControls.fltCtrlACover) 
+sysControls.fltCtrlCovers:addSwitch(sysControls.fltCtrlBCover) 
 
 -- Spoilers
 sysControls.spoilerASwitch = TwoStateToggleSwitch:new("","laminar/B738/switches/spoiler_A_pos",0,"laminar/B738/toggle_switch/spoiler_A")
 sysControls.spoilerBSwitch = TwoStateToggleSwitch:new("","laminar/B738/switches/spoiler_B_pos",0,"laminar/B738/toggle_switch/spoiler_B")
+sysControls.spoilerSwitches = SwitchGroup:new("spoilerSwitches")
+sysControls.spoilerSwitches:addSwitch(sysControls.spoilerASwitch) 
+sysControls.spoilerSwitches:addSwitch(sysControls.spoilerBSwitch) 
+
 sysControls.spoilerACover = TwoStateToggleSwitch:new("","laminar/B738/switches/spoiler_A_cover_pos",0,"laminar/B738/toggle_switch/spoiler_A_cover")
 sysControls.spoilerBCover = TwoStateToggleSwitch:new("","laminar/B738/switches/spoiler_B_cover_pos",0,"laminar/B738/toggle_switch/spoiler_B_cover")
+sysControls.spoilerCovers = SwitchGroup:new("spoilerCovers")
+sysControls.spoilerCovers:addSwitch(sysControls.spoilerACover) 
+sysControls.spoilerCovers:addSwitch(sysControls.spoilerBCover) 
 
 --------- Annunciators
 sysControls.spoilerLever = SimpleAnnunciator:new("","laminar/B738/flt_ctrls/speedbrake_lever",0)

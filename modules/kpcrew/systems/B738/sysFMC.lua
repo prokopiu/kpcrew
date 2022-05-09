@@ -113,8 +113,8 @@ sysFMC.fmcRouteEntered = CustomAnnunciator:new("",
 function() 
 	local title = get("laminar/B738/fmc1/Line01_X")
 	local origin = get("laminar/B738/fmc1/Line01_L")
-	if title == " VIA                 TO " then
-		if origin == "--------           -----" then
+	if string.sub(title,2,4) == "VIA" then
+		if string.sub(origin,1,8) == "--------" then
 			return false
 		else
 			return true

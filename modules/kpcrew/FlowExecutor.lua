@@ -71,7 +71,7 @@ function kcFlowExecutor:execute()
 		if stepState == kcFlowItem.INIT then
 			if getActivePrefs():get("general:speakProcedure") == true then
 				if self.flow:getClassName() == "Procedure" then
-					kc_speakNoText(0,kc_parse_string(step.challengeText .. ": " .. step.responseText))
+					kc_speakNoText(0,kc_parse_string(step:getChallengeText() .. ": " .. step:getResponseText()))
 				end
 			end
 			if getActivePrefs():get("general:assistance") > 2 then
@@ -94,9 +94,7 @@ function kcFlowExecutor:execute()
 					self.nextStepTime = kc_getPcTime() + step:getWaitTime()
 					self.flow:setState(kcFlow.WAIT)
 				else
-					-- speakChklResponse(self.flow,step)
 					step:setState(kcFlowItem.DONE)
-					-- jump2NextStep(self.flow)
 				end
 			end
 		elseif stepState == kcFlowItem.RUN then
@@ -108,7 +106,6 @@ function kcFlowExecutor:execute()
 					self.flow:setState(kcFlow.WAIT)
 				else
 					step:setState(kcFlowItem.DONE)
-					-- jump2NextStep(self.flow)
 				end
 			end
 
@@ -132,7 +129,6 @@ function kcFlowExecutor:execute()
 				else
 					speakChklResponse(self.flow,step)
 					step:setState(kcFlowItem.DONE)
-					-- jump2NextStep(self.flow)
 				end
 			end
 		elseif stepState == kcFlowItem.DONE then
@@ -144,7 +140,6 @@ function kcFlowExecutor:execute()
 	-- waiting on delay
 	elseif flowState == kcFlow.WAIT then
 		if kc_getPcTime() >= self.nextStepTime then 
-			-- speakChklResponse(self.flow,step)
 			step:setState(kcFlowItem.DONE)
 			jump2NextStep(self.flow)
 			self.flow:setState(kcFlow.RUN)
@@ -162,6 +157,8 @@ function kcFlowExecutor:execute()
 	else
 		-- whatever needed when states do not match
 	end
+
+	-- logMsg("Flow End: [" .. self.flow:getClassName() .. "] " .. flowState .. " - Step: " .. step:getState())
 	
 end
 

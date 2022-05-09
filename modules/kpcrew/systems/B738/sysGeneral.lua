@@ -127,11 +127,11 @@ sysGeneral.noSmokingSwitch = MultiStateCmdSwitch:new("","laminar/B738/toggle_swi
 sysGeneral.seatBeltSwitch = MultiStateCmdSwitch:new("","laminar/B738/toggle_switch/seatbelt_sign_pos",0,"laminar/B738/toggle_switch/seatbelt_sign_dn","laminar/B738/toggle_switch/seatbelt_sign_up")
 
 -- DISPLAY UNITS
-sysGeneral.displayUnitsFO = MultiStateCmdSwitch:new("","laminar/B738/toggle_switch/main_pnl_du_fo",0,"laminar/B738/toggle_switch/main_pnl_du_fo_right","laminar/B738/toggle_switch/main_pnl_du_fo_left")
-sysGeneral.displayUnitsCPT = MultiStateCmdSwitch:new("","laminar/B738/toggle_switch/main_pnl_du_capt",0,"laminar/B738/toggle_switch/main_pnl_du_capt_left","laminar/B738/toggle_switch/main_pnl_du_fo_left")
+sysGeneral.displayUnitsFO = MultiStateCmdSwitch:new("","laminar/B738/toggle_switch/main_pnl_du_fo",0,"laminar/B738/toggle_switch/main_pnl_du_fo_left","laminar/B738/toggle_switch/main_pnl_du_fo_right")
+sysGeneral.displayUnitsCPT = MultiStateCmdSwitch:new("","laminar/B738/toggle_switch/main_pnl_du_capt",0,"laminar/B738/toggle_switch/main_pnl_du_capt_left","laminar/B738/toggle_switch/main_pnl_du_capt_right")
 
 -- LOWER DU
-sysGeneral.lowerDuFO = MultiStateCmdSwitch:new("","laminar/B738/toggle_switch/lower_du_fo",0,"laminar/B738/toggle_switch/lower_du_fo_right","laminar/B738/toggle_switch/lower_du_fo_left")
+sysGeneral.lowerDuFO = MultiStateCmdSwitch:new("","laminar/B738/toggle_switch/lower_du_fo",0,"laminar/B738/toggle_switch/lower_du_fo_left","laminar/B738/toggle_switch/lower_du_fo_right")
 sysGeneral.lowerDuCPT = MultiStateCmdSwitch:new("","laminar/B738/toggle_switch/lower_du_capt",0,"laminar/B738/toggle_switch/lower_du_capt_left","laminar/B738/toggle_switch/lower_du_capt_right")
 
 -- GPWS

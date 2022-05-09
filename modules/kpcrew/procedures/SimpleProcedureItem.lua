@@ -61,7 +61,7 @@ function kcSimpleProcedureItem:getState()
 			return kcFlowItem.SKIP
 		end
 	end
-   return kcFlowItem.INIT
+   return kcFlowItem.DONE
 end
 
 -- reset the item by hardcoding the values
