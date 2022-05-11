@@ -28,17 +28,23 @@ sysFuel.fuelPumpRightFwd = TwoStateDrefSwitch:new("fuelpumprightfwd","laminar/B7
 sysFuel.fuelPumpCtrLeft = TwoStateDrefSwitch:new ("fuelpumpctrleft","laminar/B738/fuel/fuel_tank_pos_ctr1",0)
 sysFuel.fuelPumpCtrRight = TwoStateDrefSwitch:new("fuelpumpctrright","laminar/B738/fuel/fuel_tank_pos_ctr2",0)
 
-sysFuel.fuelPumpGroup = SwitchGroup:new("fuelpumpgroup")
-sysFuel.fuelPumpGroup:addSwitch(sysFuel.fuelPumpLeftAft)
-sysFuel.fuelPumpGroup:addSwitch(sysFuel.fuelPumpLeftFwd)
-sysFuel.fuelPumpGroup:addSwitch(sysFuel.fuelPumpRightAft)
-sysFuel.fuelPumpGroup:addSwitch(sysFuel.fuelPumpRightFwd)
-sysFuel.fuelPumpGroup:addSwitch(sysFuel.fuelPumpCtrLeft)
-sysFuel.fuelPumpGroup:addSwitch(sysFuel.fuelPumpCtrRight)
+sysFuel.allFuelPumpGroup = SwitchGroup:new("fuelpumpgroup")
+sysFuel.allFuelPumpGroup:addSwitch(sysFuel.fuelPumpLeftAft)
+sysFuel.allFuelPumpGroup:addSwitch(sysFuel.fuelPumpLeftFwd)
+sysFuel.allFuelPumpGroup:addSwitch(sysFuel.fuelPumpRightAft)
+sysFuel.allFuelPumpGroup:addSwitch(sysFuel.fuelPumpRightFwd)
+sysFuel.allFuelPumpGroup:addSwitch(sysFuel.fuelPumpCtrLeft)
+sysFuel.allFuelPumpGroup:addSwitch(sysFuel.fuelPumpCtrRight)
 
 sysFuel.ctrFuelPumpGroup = SwitchGroup:new("ctrfuelpumpgroup")
 sysFuel.ctrFuelPumpGroup:addSwitch(sysFuel.fuelPumpCtrLeft)
 sysFuel.ctrFuelPumpGroup:addSwitch(sysFuel.fuelPumpCtrRight)
+
+sysFuel.wingFuelPumpGroup = SwitchGroup:new("fuelpumpgroup")
+sysFuel.wingFuelPumpGroup:addSwitch(sysFuel.fuelPumpLeftAft)
+sysFuel.wingFuelPumpGroup:addSwitch(sysFuel.fuelPumpLeftFwd)
+sysFuel.wingFuelPumpGroup:addSwitch(sysFuel.fuelPumpRightAft)
+sysFuel.wingFuelPumpGroup:addSwitch(sysFuel.fuelPumpRightFwd)
 
 sysFuel.crossFeed = TwoStateCmdSwitch:new("crossfeed","laminar/B738/knobs/cross_feed_pos",0,"laminar/B738/toggle_switch/crossfeed_valve_on","laminar/B738/toggle_switch/crossfeed_valve_off")
 

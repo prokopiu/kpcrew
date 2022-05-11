@@ -829,8 +829,8 @@ preflightChkl:addItem(kcSimpleChecklistItem:new("Preflight Checklist Completed")
 -- TAXI AND TAKEOFF BRIEFINGS.............COMPLETE (BOTH)
 -- EXTERIOR DOORS....................VERIFY CLOSED (F/O)
 -- START CLEARANCE..........................OBTAIN (BOTH)
---   Obtain a clearance to pressurize the hydraulic systems.
---   Obtain a clearance to start the engines.
+--   Obtain a clearance to pressurize hydraulic systems.
+--   Obtain a clearance to start engines.
 -- Set Fuel panel
 --   CENTER FUEL PUMPS SWITCHES.................ON (F/O)
 --     If center tank quantity exceeds 1,000 lbs/460 kgs
@@ -846,52 +846,76 @@ preflightChkl:addItem(kcSimpleChecklistItem:new("Preflight Checklist Completed")
 -- Call for Before Start Checklist
 
 local beforeStartProc = kcProcedure:new("BEFORE START PROCEDURE (BOTH)")
-beforeStartProc:addItem(kcProcedureItem:new("FLIGHT DECK DOOR","CLOSED AND LOCKED",kcFlowItem.actorFO,1,
-	function () return sysGeneral.cockpitDoor:getStatus() == 0 end))
+beforeStartProc:addItem(kcProcedureItem:new("FLIGHT DECK DOOR","CLOSED AND LOCKED",kcFlowItem.actorFO,2,
+	function () return sysGeneral.cockpitDoor:getStatus() == 0 end,
+	function () sysGeneral.cockpitDoor:actuate(0) end))
 beforeStartProc:addItem(kcProcedureItem:new("CDU DISPLAY","SET",kcFlowItem.actorBOTH,1))
 beforeStartProc:addItem(kcProcedureItem:new("N1 BUGS","CHECK",kcFlowItem.actorBOTH,1))
-beforeStartProc:addItem(kcProcedureItem:new("IAS BUGS","SET",kcFlowItem.actorBOTH,1))
+beforeStartProc:addItem(kcProcedureItem:new("IAS BUGS","SET",kcFlowItem.actorBOTH,2,
+	function () return sysFMC.noVSpeeds:getStatus() == 0 end))
 beforeStartProc:addItem(kcSimpleProcedureItem:new("Set MCP"))
-beforeStartProc:addItem(kcProcedureItem:new("  AUTOTHROTTLE ARM SWITCH","ARM",kcFlowItem.actorCPT,1,
-	function () return sysMCP.athrSwitch:getStatus() == 1 end))
-beforeStartProc:addItem(kcProcedureItem:new("  IAS/MACH SELECTOR","SET V2",kcFlowItem.actorCPT,1))
-beforeStartProc:addItem(kcProcedureItem:new("  LNAV","ARM AS NEEDED",kcFlowItem.actorCPT,1))
-beforeStartProc:addItem(kcProcedureItem:new("  VNAV","ARM AS NEEDED",kcFlowItem.actorCPT,1))
-beforeStartProc:addItem(kcProcedureItem:new("  INITIAL HEADING","SET",kcFlowItem.actorCPT,1))
-beforeStartProc:addItem(kcProcedureItem:new("  INITIAL ALTITUDE","SET",kcFlowItem.actorCPT,1))
+beforeStartProc:addItem(kcProcedureItem:new("  AUTOTHROTTLE ARM SWITCH","ARM",kcFlowItem.actorCPT,2,
+	function () return sysMCP.athrSwitch:getStatus() == 1 end,
+	function () sysMCP.athrSwitch:actuate(modeOn) end))
+beforeStartProc:addItem(kcProcedureItem:new("  IAS/MACH SELECTOR","SET V2 %03d|activeBriefings:get(\"takeoff:v2\")",kcFlowItem.actorCPT,2,
+	function () return sysMCP.iasSelector:getStatus() == activeBriefings:get("takeoff:v2") end))
+beforeStartProc:addItem(kcProcedureItem:new("  LNAV","ARM",kcFlowItem.actorCPT,2,
+	function () return sysMCP.lnavSwitch:getStatus() == 1 end, 
+	function () sysMCP.lnavSwitch:actuate(modeOn) end,
+	function () return activeBriefings:get("takeoff:apMode") ~= 1 end))
+beforeStartProc:addItem(kcProcedureItem:new("  VNAV","ARM",kcFlowItem.actorCPT,2,
+	function () return sysMCP.vnavSwitch:getStatus() == 1 end, 
+	function () sysMCP.vnavSwitch:actuate(modeOn) end,
+	function () return activeBriefings:get("takeoff:apMode") ~= 1 end))
+beforeStartProc:addItem(kcProcedureItem:new("  INITIAL HEADING","SET %03d|activeBriefings:get(\"departure:initHeading\")",kcFlowItem.actorCPT,2,
+	function () return sysMCP.hdgSelector:getStatus() == activeBriefings:get("departure:initHeading") end,
+	function () sysMCP.hdgSelector:setValue(activeBriefings:get("departure:initHeading")) end ))
+beforeStartProc:addItem(kcProcedureItem:new("  INITIAL ALTITUDE","SET %05d|activeBriefings:get(\"departure:initAlt\")",kcFlowItem.actorCPT,2,
+	function () return sysMCP.altSelector:getStatus() == activeBriefings:get("departure:initAlt") end,
+	function () sysMCP.altSelector:setValue(activeBriefings:get("departure:initAlt")) end ))
 beforeStartProc:addItem(kcProcedureItem:new("TAXI AND TAKEOFF BRIEFINGS","COMPLETE",kcFlowItem.actorBOTH,1))
 beforeStartProc:addItem(kcProcedureItem:new("EXTERIOR DOORS","VERIFY CLOSED",kcFlowItem.actorFO,1,
-	function () return sysGeneral.doorGroup:getStatus() == 0 end))
+	function () return sysGeneral.doorGroup:getStatus() == 0 end,
+	function () sysGeneral.doorGroup:actuate(0) end))
 beforeStartProc:addItem(kcProcedureItem:new("START CLEARANCE","OBTAIN",kcFlowItem.actorBOTH,1))
-beforeStartProc:addItem(kcSimpleProcedureItem:new("  Obtain a clearance to pressurize the hydraulic systems."))
-beforeStartProc:addItem(kcSimpleProcedureItem:new("  Obtain a clearance to start the engines."))
+beforeStartProc:addItem(kcSimpleProcedureItem:new("  Obtain a clearance to pressurize hydraulic systems."))
+beforeStartProc:addItem(kcSimpleProcedureItem:new("  Obtain a clearance to start engines."))
 beforeStartProc:addItem(kcSimpleProcedureItem:new("Set Fuel panel"))
-beforeStartProc:addItem(kcProcedureItem:new("  LEFT AND RIGHT CENTER FUEL PUMPS SWITCHES","ON",kcFlowItem.actorFO,1,
-	function () return sysFuel.ctrFuelPumpGroup:getStatus() == 2 end,nil,
+beforeStartProc:addItem(kcProcedureItem:new("  LEFT AND RIGHT CENTER FUEL PUMPS SWITCHES","ON",kcFlowItem.actorFO,2,
+	function () return sysFuel.ctrFuelPumpGroup:getStatus() == 2 end,
+	function () sysFuel.ctrFuelPumpGroup:actuate(1) end,
 	function () return sysFuel.centerTankLbs:getStatus() < 1000 end))
 beforeStartProc:addItem(kcSimpleProcedureItem:new("    If center tank quantity exceeds 1,000 lbs/460 kgs",
 	function () return sysFuel.centerTankLbs:getStatus() < 1000 end))
-beforeStartProc:addItem(kcProcedureItem:new("  AFT AND FORWARD FUEL PUMPS SWITCHES","ON",kcFlowItem.actorFO,1,
-	function () return sysFuel.fuelPumpGroup:getStatus() == 4 end,nil,
+beforeStartProc:addItem(kcProcedureItem:new("  AFT AND FORWARD FUEL PUMPS SWITCHES","ON",kcFlowItem.actorFO,2,
+	function () return sysFuel.wingFuelPumpGroup:getStatus() == 4 end,
+	function () sysFuel.wingFuelPumpGroup:actuate(1) end,
 	function () return sysFuel.centerTankLbs:getStatus() > 999 end))
-beforeStartProc:addItem(kcProcedureItem:new("  AFT AND FORWARD FUEL PUMPS SWITCHES","ON",kcFlowItem.actorFO,1,
-	function () return sysFuel.fuelPumpGroup:getStatus() == 6 end,nil,
+beforeStartProc:addItem(kcProcedureItem:new("  AFT AND FORWARD FUEL PUMPS SWITCHES","ON",kcFlowItem.actorFO,2,
+	function () return sysFuel.allFuelPumpGroup:getStatus() == 6 end,
+	function () sysFuel.allFuelPumpGroup:actuate(1) end,
 	function () return sysFuel.centerTankLbs:getStatus() < 1000 end))
 beforeStartProc:addItem(kcSimpleProcedureItem:new("Set Hydraulic panel"))
-beforeStartProc:addItem(kcProcedureItem:new("  ENGINE HYDRAULIC PUMP SWITCHES","OFF",kcFlowItem.actorFO,1,
-	function () return sysHydraulic.engHydPumpGroup:getStatus() == 0 end))
-beforeStartProc:addItem(kcProcedureItem:new("  ELECTRIC HYDRAULIC PUMP SWITCHES","ON",kcFlowItem.actorFO,1,
-	function () return sysHydraulic.elecHydPumpGroup:getStatus() == 2 end))
-beforeStartProc:addItem(kcProcedureItem:new("ANTI COLLISION LIGHT SWITCH","ON",kcFlowItem.actorFO,1,
-	function () return sysLights.beaconSwitch:getStatus() == 1 end))
+beforeStartProc:addItem(kcProcedureItem:new("  ENGINE HYDRAULIC PUMP SWITCHES","OFF",kcFlowItem.actorFO,2,
+	function () return sysHydraulic.engHydPumpGroup:getStatus() == 0 end,
+	function () sysHydraulic.engHydPumpGroup:actuate(0) end))
+beforeStartProc:addItem(kcProcedureItem:new("  ELECTRIC HYDRAULIC PUMP SWITCHES","ON",kcFlowItem.actorFO,2,
+	function () return sysHydraulic.elecHydPumpGroup:getStatus() == 2 end,
+	function () sysHydraulic.elecHydPumpGroup:actuate(1) end))
+beforeStartProc:addItem(kcProcedureItem:new("ANTI COLLISION LIGHT SWITCH","ON",kcFlowItem.actorFO,2,
+	function () return sysLights.beaconSwitch:getStatus() == 1 end,
+	function () sysLights.beaconSwitch:actuate(1) end))
 beforeStartProc:addItem(kcSimpleProcedureItem:new("Set Trim"))
-beforeStartProc:addItem(kcProcedureItem:new("  STABILIZER TRIM","___ UNITS",kcFlowItem.actorCPT,1))
-beforeStartProc:addItem(kcProcedureItem:new("  AILERON TRIM","0 UNITS",kcFlowItem.actorCPT,1))
-beforeStartProc:addItem(kcProcedureItem:new("  RUDDER TRIM","0 UNITS",kcFlowItem.actorCPT,1))
+beforeStartProc:addItem(kcProcedureItem:new("  STABILIZER TRIM","___ UNITS",kcFlowItem.actorCPT,1)) --******
+beforeStartProc:addItem(kcProcedureItem:new("  AILERON TRIM","0 UNITS (%3.2f)|sysControls.aileronTrimSwitch:getStatus()",kcFlowItem.actorCPT,2,
+	function () return sysControls.aileronTrimSwitch:getStatus() == 0 end,
+	function () sysControls.aileronTrimSwitch:setValue(0) end))
+beforeStartProc:addItem(kcProcedureItem:new("  RUDDER TRIM","0 UNITS (%3.2f)|sysControls.rudderTrimSwitch:getStatus()",kcFlowItem.actorCPT,2,
+	function () return sysControls.rudderTrimSwitch:getStatus() == 0 end,
+	function () sysControls.rudderTrimSwitch:setValue(0) end))
 beforeStartProc:addItem(kcSimpleProcedureItem:new("Call for Before Start Checklist"))
 
-
--- ============ BEFORE START CHECKLIST (F/O) ============OK
+-- ============ BEFORE START CHECKLIST (F/O) ============
 -- FLIGHT DECK DOOR...............CLOSED AND LOCKED (CPT)
 -- FUEL..........................9999 KGS, PUMPS ON (CPT)
 -- PASSENGER SIGNS..............................SET (CPT)
@@ -904,48 +928,83 @@ beforeStartProc:addItem(kcSimpleProcedureItem:new("Call for Before Start Checkli
 
 local beforeStartChkl = kcChecklist:new("BEFORE START CHECKLIST (F/O)")
 beforeStartChkl:addItem(kcChecklistItem:new("FLIGHT DECK DOOR","CLOSED AND LOCKED",kcFlowItem.actorCPT,2,
-	function () return sysGeneral.cockpitDoor:getStatus() == 0 end ))
+	function () return sysGeneral.cockpitDoor:getStatus() == 0 end,
+	function () sysGeneral.cockpitDoor:actuate(0) end))
 beforeStartChkl:addItem(kcChecklistItem:new("FUEL","%i %s, PUMPS ON|activePrefSet:get(\"general:weight_kgs\") and sysFuel.allTanksKgs:getStatus() or sysFuel.allTanksLbs:getStatus()|activePrefSet:get(\"general:weight_kgs\") and \"KGS\" or \"LBS\"",kcFlowItem.actorCPT,1,
-	function () return sysFuel.fuelPumpGroup:getStatus() == 4 end,nil,
+	function () return sysFuel.wingFuelPumpGroup:getStatus() == 4 end,
+	function () sysFuel.wingFuelPumpGroup:actuate(1) end,
 	function () return sysFuel.centerTankLbs:getStatus() > 999 end))
 beforeStartChkl:addItem(kcChecklistItem:new("FUEL","%i %s, PUMPS ON|activePrefSet:get(\"general:weight_kgs\") and sysFuel.allTanksKgs:getStatus() or sysFuel.allTanksLbs:getStatus()|activePrefSet:get(\"general:weight_kgs\") and \"KGS\" or \"LBS\"",kcFlowItem.actorCPT,1,
-	function () return sysFuel.fuelPumpGroup:getStatus() == 6 end,nil,
+	function () return sysFuel.allFuelPumpGroup:getStatus() == 6 end,
+	function () sysFuel.allFuelPumpGroup:actuate(1) end,
 	function () return sysFuel.centerTankLbs:getStatus() < 1000 end))
-beforeStartChkl:addItem(kcChecklistItem:new("PASSENGER SIGNS","SET",kcFlowItem.actorCPT,1,
-	function () return sysGeneral.seatBeltSwitch:getStatus() > 0 and sysGeneral.noSmokingSwitch:getStatus() > 0 end ))
-beforeStartChkl:addItem(kcFlowItem:new("WINDOWS","LOCKED",kcFlowItem.actorBOTH,1))
-beforeStartChkl:addItem(kcChecklistItem:new("MCP","V2 %i, HDG %i, ALT %i|sysFMC.V2:getStatus()|sysMCP.hdgSelector:getStatus()|sysMCP.altSelector:getStatus()",kcFlowItem.actorCPT,1))
-beforeStartChkl:addItem(kcChecklistItem:new("TAKEOFF SPEEDS","V1 %i, VR %i, V2 %i|sysFMC.V1:getStatus()|sysFMC.Vr:getStatus()|sysFMC.V2:getStatus()",kcFlowItem.actorBOTH,1))
+beforeStartChkl:addItem(kcChecklistItem:new("PASSENGER SIGNS","SET",kcFlowItem.actorCPT,2,
+	function () return sysGeneral.seatBeltSwitch:getStatus() > 0 and sysGeneral.noSmokingSwitch:getStatus() > 0 end,
+	function () sysGeneral.seatBeltSwitch:adjustValue(1,0,2)  sysGeneral.noSmokingSwitch:adjustValue(1,0,2) end))
+beforeStartChkl:addItem(kcFlowItem:new("WINDOWS","LOCKED",kcFlowItem.actorBOTH,2))
+beforeStartChkl:addItem(kcChecklistItem:new("MCP","V2 %i, HDG %i, ALT %i|sysFMC.V2:getStatus()|sysMCP.hdgSelector:getStatus()|sysMCP.altSelector:getStatus()",kcFlowItem.actorCPT,2,
+	function () return sysMCP.iasSelector:getStatus() == sysFMC.V2:getStatus() and sysMCP.hdgSelector:getStatus() == activeBriefings:get("departure:initHeading") and sysMCP.altSelector:getStatus() == activeBriefings:get("departure:initAlt") end))
+beforeStartChkl:addItem(kcChecklistItem:new("TAKEOFF SPEEDS","V1 %i, VR %i, V2 %i|sysFMC.V1:getStatus()|sysFMC.Vr:getStatus()|sysFMC.V2:getStatus()",kcFlowItem.actorBOTH,2))
 beforeStartChkl:addItem(kcChecklistItem:new("CDU PREFLIGHT","COMPLETED",kcFlowItem.actorCPT,1))
 beforeStartChkl:addItem(kcChecklistItem:new("RUDDER & AILERON TRIM","FREE AND 0",kcFlowItem.actorCPT,1,
 	function () return sysControls.rudderTrimSwitch:getStatus() == 0 and sysControls.aileronTrimSwitch:getStatus() == 0 end ))
 beforeStartChkl:addItem(kcChecklistItem:new("TAXI AND TAKEOFF BRIEFING","COMPLETED",kcFlowItem.actorCPT,1))
 
--- ============ Pushback Towing Procedure =============
+-- =========== PUSHBACK & ENGINE START (BOTH) ==========
+-- PARKING BRAKE...............................SET (F/O)
+-- Engine Start may be done during pushback or towing
+-- COMMUNICATION WITH GROUND.............ESTABLISH (CPT)
+-- PARKING BRAKE..........................RELEASED (F/O)
+-- When pushback/towing complete
+--   TOW BAR DISCONNECTED...................VERIFY (CPT)
+--   LOCKOUT PIN REMOVED....................VERIFY (CPT)
+--   SYSTEM A HYDRAULIC PUMPS...................ON (F/O)
+-- Call START ENGINE 2
+-- ENGINE START SWITCH 2.......................GRD (F/O)
+--   Verify that the N2 RPM increases.
+-- When N1 rotation is seen and N2 is at 25%,
+-- ENGINE START LEVER 2.......................IDLE (F/O)
+--   When starter switch jumps back call STARTER CUTOUT
+-- Call START ENGINE 1
+-- ENGINE START SWITCH 1.......................GRD (F/O)
+--   Verify that the N2 RPM increases.
+-- When N1 rotation is seen and N2 is at 25%,
+-- ENGINE START LEVER 1.......................IDLE (F/O)
+--   When starter switch jumps back call STARTER CUTOUT
+-- Next BEFORE TAXI PROCEDURE
+
 local pushstartProc = kcProcedure:new("PUSHBACK & ENGINE START (BOTH)")
-pushstartProc:addItem(kcIndirectProcedureItem:new("PARKING BRAKE","SET",kcFlowItem.actorFO,1,"pb_parkbrk_initial_set",
-	function () return sysGeneral.parkBrakeSwitch:getStatus() == 1 end))
+pushstartProc:addItem(kcIndirectProcedureItem:new("PARKING BRAKE","SET",kcFlowItem.actorFO,2,"pb_parkbrk_initial_set",
+	function () return sysGeneral.parkBrakeSwitch:getStatus() == 1 end,
+	function () sysGeneral.parkBrakeSwitch:actuate(1) end ))
 pushstartProc:addItem(kcSimpleProcedureItem:new("Engine Start may be done during pushback or towing"))
-pushstartProc:addItem(kcProcedureItem:new("COMMUNICATION WITH GROUND","ESTABLISH",kcFlowItem.actorCPT,1))
-pushstartProc:addItem(kcIndirectProcedureItem:new("PARKING BRAKE","RELEASED",kcFlowItem.actorFO,1,"pb_parkbrk_release",
-	function () return sysGeneral.parkBrakeSwitch:getStatus() == 0 end))
+pushstartProc:addItem(kcProcedureItem:new("COMMUNICATION WITH GROUND","ESTABLISH",kcFlowItem.actorCPT,2))
+pushstartProc:addItem(kcIndirectProcedureItem:new("PARKING BRAKE","RELEASED",kcFlowItem.actorFO,2,"pb_parkbrk_release",
+	function () return sysGeneral.parkBrakeSwitch:getStatus() == 0 end,
+	function () sysGeneral.parkBrakeSwitch:actuate(0) end))
 pushstartProc:addItem(kcSimpleProcedureItem:new("When pushback/towing complete"))
 pushstartProc:addItem(kcProcedureItem:new("  TOW BAR DISCONNECTED","VERIFY",kcFlowItem.actorCPT,1))
 pushstartProc:addItem(kcProcedureItem:new("  LOCKOUT PIN REMOVED","VERIFY",kcFlowItem.actorCPT,1))
 pushstartProc:addItem(kcProcedureItem:new("  SYSTEM A HYDRAULIC PUMPS","ON",kcFlowItem.actorFO,1,
-	function () return sysHydraulic.engHydPump1:getStatus() == 1 and sysHydraulic.elecHydPump1:getStatus() == 1 end ))
--- Call “START ___ ENGINE 1”
--- ENGINE START switch GRD
--- Verify that the N2 RPM increases.
--- When N1 rotation is seen and N2 is at 25%,
--- Engine start lever .....................................................IDLE
--- Call “STARTER CUTOUT.” F/O
--- Call “START ___ ENGINE 1”
--- ENGINE START switch GRD
--- Verify that the N2 RPM increases.
--- When N1 rotation is seen and N2 is at 25%,
--- Engine start lever .....................................................IDLE
--- Call “STARTER CUTOUT.” F/O
+	function () return sysHydraulic.engHydPump1:getStatus() == 1 and sysHydraulic.elecHydPump1:getStatus() == 1 end,
+	function () sysHydraulic.engHydPump1:actuate(1) sysHydraulic.elecHydPump1:actuate(1) end))
+pushstartProc:addItem(kcSimpleProcedureItem:new("Call START ENGINE 2"))
+pushstartProc:addItem(kcIndirectProcedureItem:new("ENGINE START SWITCH 2","GRD",kcFlowItem.actorFO,2,"eng_start_2_grd",
+	function () return sysEngines.engStart2Switch:getStatus() == 0 end ))
+pushstartProc:addItem(kcSimpleProcedureItem:new("  Verify that the N2 RPM increases."))
+pushstartProc:addItem(kcSimpleProcedureItem:new("When N1 rotation is seen and N2 is at 25%,"))
+pushstartProc:addItem(kcIndirectProcedureItem:new("ENGINE START LEVER 2","IDLE",kcFlowItem.actorFO,2,"eng_start_2_lever",
+	function () return sysEngines.startLever2:getStatus() == 1 end ))
+pushstartProc:addItem(kcSimpleProcedureItem:new("  When starter switch jumps back call STARTER CUTOUT"))
+pushstartProc:addItem(kcSimpleProcedureItem:new("Call START ENGINE 1"))
+pushstartProc:addItem(kcIndirectProcedureItem:new("ENGINE START SWITCH 1","GRD",kcFlowItem.actorFO,2,"eng_start_1_grd",
+	function () return sysEngines.engStart1Switch:getStatus() == 0 end ))
+pushstartProc:addItem(kcSimpleProcedureItem:new("  Verify that the N2 RPM increases."))
+pushstartProc:addItem(kcSimpleProcedureItem:new("When N1 rotation is seen and N2 is at 25%,"))
+pushstartProc:addItem(kcIndirectProcedureItem:new("ENGINE START LEVER 1","IDLE",kcFlowItem.actorFO,2,"eng_start_1_lever",
+	function () return sysEngines.startLever1:getStatus() == 1 end ))
+pushstartProc:addItem(kcSimpleProcedureItem:new("  When starter switch jumps back call STARTER CUTOUT"))
+pushstartProc:addItem(kcSimpleProcedureItem:new("Next BEFORE TAXI PROCEDURE"))
 
 
 -- ============ Before Taxi =============

@@ -283,4 +283,6 @@ sysFMC.V2 = SimpleAnnunciator:new("","laminar/B738/FMS/v2",0)
 sysFMC.V1 = SimpleAnnunciator:new("","laminar/B738/FMS/v1",0)
 sysFMC.Vr = SimpleAnnunciator:new("","laminar/B738/FMS/vr",0)
 
+sysFMC.noVSpeeds = SimpleAnnunciator:new("","laminar/B738/pfd/no_vspd",0)
+
 return sysFMC
