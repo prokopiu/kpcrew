@@ -1007,7 +1007,27 @@ pushstartProc:addItem(kcSimpleProcedureItem:new("  When starter switch jumps bac
 pushstartProc:addItem(kcSimpleProcedureItem:new("Next BEFORE TAXI PROCEDURE"))
 
 
--- ============ Before Taxi =============
+-- ============ BEFORE TAXI PROCEDURE (F/O) ============
+-- GENERATOR 1 AND 2 SWITCHES...................ON (F/O)
+-- PROBE HEAT SWITCHES..........................ON (F/O)
+-- WING ANTI-ICE SWITCH..................AS NEEDED (F/O)
+-- ENGINE ANTI-ICE SWITCHES..............AS NEEDED (F/O)
+-- PACK SWITCHES..............................AUTO (F/O)
+-- ISOLATION VALVE SWITCH.....................AUTO (F/O)
+-- APU BLEED AIR SWITCH........................OFF (F/O)
+-- APU SWITCH..................................OFF (F/O)
+-- ENGINE START SWITCHES......................CONT (F/O)
+-- ENGINE START LEVERS.................IDLE DETENT (CPT)
+-- Verify that the ground equipment is clear.
+-- Call 'FLAPS ___' as needed for takeoff.         (CPT)
+-- FLAP LEVER....................SET TAKEOFF FLAPS (F/O)
+-- LE FLAPS EXT GREEN LIGHT............ILLUMINATED (BOTH)
+-- FLIGHT CONTROLS...........................CHECK (CPT)
+-- TRANSPONDER...........................AS NEEDED (F/O)
+-- RECALL....................................CHECK (BOTH)
+--   Verify annunciators illuminate and then extinguish.
+-- Call BEFORE TAXI CHECKLIST
+
 local beforeTaxiProc = kcProcedure:new("BEFORE TAXI PROCEDURE (F/O)")
 beforeTaxiProc:addItem(kcProcedureItem:new("GENERATOR 1 AND 2 SWITCHES","ON",kcFlowItem.actorFO,1,
 	function () return sysElectric.gen1off:getStatus() == 0 and sysElectric.gen2off:getStatus() == 0 end,
@@ -1032,7 +1052,7 @@ beforeTaxiProc:addItem(kcProcedureItem:new("APU SWITCH","OFF",kcFlowItem.actorFO
 beforeTaxiProc:addItem(kcProcedureItem:new("ENGINE START SWITCHES","CONT",kcFlowItem.actorFO,1,
 	function () return sysEngines.engStarterGroup:getStatus() == 4 end,
 	function () sysEngines.engStarterGroup:actuate(cmdUp) end))
-beforeTaxiProc:addItem(kcProcedureItem:new("ENGINE START LEVERS","IDLE DETENT",kcFlowItem.actorCPT,1,
+beforeTaxiProc:addItem(kcProcedureItem:new("ENGINE START LEVERS","IDLE DETENT",kcFlowItem.actorCPT,2,
 	function () return sysEngines.startLeverGroup:getStatus() == 2 end,
 	function () sysEngines.startLeverGroup:actuate(cmdUp) end))
 beforeTaxiProc:addItem(kcSimpleProcedureItem:new("Verify that the ground equipment is clear."))
@@ -1042,22 +1062,45 @@ beforeTaxiProc:addItem(kcProcedureItem:new("LE FLAPS EXT GREEN LIGHT","ILLUMINAT
 beforeTaxiProc:addItem(kcProcedureItem:new("FLIGHT CONTROLS","CHECK",kcFlowItem.actorCPT,1))
 beforeTaxiProc:addItem(kcProcedureItem:new("TRANSPONDER","AS NEEDED",kcFlowItem.actorFO,1))
 beforeTaxiProc:addItem(kcProcedureItem:new("Recall","CHECK",kcFlowItem.actorBOTH,1))
-beforeTaxiProc:addItem(kcSimpleProcedureItem:new("  Verify all annunciators illuminate and then extinguish."))
+beforeTaxiProc:addItem(kcSimpleProcedureItem:new("  Verify annunciators illuminate and then extinguish."))
 beforeTaxiProc:addItem(kcSimpleProcedureItem:new("Call BEFORE TAXI CHECKLIST"))
 
--- ======= Before Taxi checklist =======
+-- ============ BEFORE TAXI CHECKLIST (F/O) ============
+-- GENERATORS...................................ON (CPT)
+-- PROBE HEAT...................................ON (CPT)
+-- ANTI-ICE............................AS REQUIRED (CPT)
+-- ISOLATION VALVE............................AUTO (CPT)
+-- ENGINE START SWITCHES......................CONT (CPT)
+-- RECALL..................................CHECKED (CPT)
+-- AUTOBRAKE...................................RTO (CPT)
+-- ENGINE START LEVERS.................IDLE DETENT (CPT)
+-- FLIGHT CONTROLS.........................CHECKED (CPT)
+-- GROUND EQUIPMENT..........................CLEAR (BOTH)
+-- Next BEFORE TAKEOFF CHECKLIST
+
 local beforeTaxiChkl = kcChecklist:new("BEFORE TAXI CHECKLIST (F/O)")
 beforeTaxiChkl:addItem(kcChecklistItem:new("GENERATORS","ON",kcChecklistItem.actorCPT,1,
-	function () return sysElectric.gen1off:getStatus() == 0 and sysElectric.gen2off:getStatus() == 0 end ))
-beforeTaxiChkl:addItem(kcChecklistItem:new("PROBE HEAT","ON",kcChecklistItem.actorCPT,1))
+	function () return sysElectric.gen1off:getStatus() == 0 and sysElectric.gen2off:getStatus() == 0 end,
+	function () sysElectric.gen1Switch:actuate(1) sysElectric.gen2Switch:actuate(1)	end ))
+beforeTaxiChkl:addItem(kcChecklistItem:new("PROBE HEAT","ON",kcChecklistItem.actorCPT,2,
+	function () return sysAice.probeHeatGroup:getStatus() == 2 end,
+	function () sysAice.probeHeatGroup:actuate(1) end))
 beforeTaxiChkl:addItem(kcChecklistItem:new("ANTI-ICE","AS REQUIRED",kcChecklistItem.actorCPT,1))
-beforeTaxiChkl:addItem(kcChecklistItem:new("ISOLATION VALVE","AUTO",kcChecklistItem.actorCPT,1))
-beforeTaxiChkl:addItem(kcChecklistItem:new("ENGINE START SWITCHES","CONT",kcChecklistItem.actorCPT,1))
+beforeTaxiChkl:addItem(kcChecklistItem:new("ISOLATION VALVE","AUTO",kcChecklistItem.actorCPT,2,
+	function () return sysAir.isoValveSwitch:getStatus() > 0 end,
+	function () sysAir.trimAirSwitch:actuate(modeOn) end))
+beforeTaxiChkl:addItem(kcChecklistItem:new("ENGINE START SWITCHES","CONT",kcChecklistItem.actorCPT,2,
+	function () return sysEngines.engStarterGroup:getStatus() == 4 end,
+	function () sysEngines.engStarterGroup:adjustValue(2,0,3) end)) 
 beforeTaxiChkl:addItem(kcChecklistItem:new("RECALL","CHECKED",kcChecklistItem.actorCPT,1))
-beforeTaxiChkl:addItem(kcChecklistItem:new("AUTOBRAKE","RTO",kcChecklistItem.actorCPT,1))
-beforeTaxiChkl:addItem(kcChecklistItem:new("ENGINE START LEVERS","IDLE DETENT",kcChecklistItem.actorCPT,1))
+beforeTaxiChkl:addItem(kcChecklistItem:new("AUTOBRAKE","RTO",kcChecklistItem.actorCPT,2,
+	function () return sysGeneral.autobreak:getStatus() == 0 end,
+	function () sysGeneral.autobreak:actuate(0) end))
+beforeTaxiChkl:addItem(kcChecklistItem:new("ENGINE START LEVERS","IDLE DETENT",kcChecklistItem.actorCPT,2,
+	function () return sysEngines.startLeverGroup:getStatus() == 2 end))
 beforeTaxiChkl:addItem(kcChecklistItem:new("FLIGHT CONTROLS","CHECKED",kcChecklistItem.actorCPT,1))
 beforeTaxiChkl:addItem(kcChecklistItem:new("GROUND EQUIPMENT","CLEAR",kcChecklistItem.actorBOTH,1))
+beforeTaxiChkl:addItem(kcSimpleChecklistItem:new("Next BEFORE TAKEOFF CHECKLIST"))
 
 -- ======= Before Takeoff checklist =======
 local beforeTakeoffChkl = kcChecklist:new("BEFORE TAKEOFF CHECKLIST (F/O)")
