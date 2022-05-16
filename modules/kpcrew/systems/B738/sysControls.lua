@@ -24,7 +24,7 @@ local InopSwitch = require "kpcrew.systems.InopSwitch"
 --------- Switches
 
 -- Flaps 
-sysControls.flapsSwitch = MultiStateCmdSwitch:new("flaps","sim/flightmodel2/controls/flap_ratio",0,"sim/flight_controls/flaps_down","sim/flight_controls/flaps_up")
+sysControls.flapsSwitch = MultiStateCmdSwitch:new("flaps","sim/cockpit2/controls/flap_ratio",0,"sim/flight_controls/flaps_down","sim/flight_controls/flaps_up")
 
 -- Pitch Trim
 sysControls.pitchTrimSwitch = MultiStateCmdSwitch:new("pitchtrim","sim/cockpit2/controls/elevator_trim",0,"laminar/B738/flight_controls/pitch_trim_up","laminar/B738/flight_controls/pitch_trim_down")
@@ -75,5 +75,8 @@ sysControls.spoilerCovers:addSwitch(sysControls.spoilerBCover)
 
 --------- Annunciators
 sysControls.spoilerLever = SimpleAnnunciator:new("","laminar/B738/flt_ctrls/speedbrake_lever",0)
+
+-- Flaps extend
+sysControls.slatsExtended = SimpleAnnunciator:new("","laminar/B738/annunciator/slats_extend",0)
 
 return sysControls

@@ -1102,12 +1102,20 @@ beforeTaxiChkl:addItem(kcChecklistItem:new("FLIGHT CONTROLS","CHECKED",kcCheckli
 beforeTaxiChkl:addItem(kcChecklistItem:new("GROUND EQUIPMENT","CLEAR",kcChecklistItem.actorBOTH,1))
 beforeTaxiChkl:addItem(kcSimpleChecklistItem:new("Next BEFORE TAKEOFF CHECKLIST"))
 
--- ======= Before Takeoff checklist =======
+-- ============ BEFORE TAKEOFF CHECKLIST (F/O) ============
+-- GENERATORS...................................ON (CPT)
+-- TAKEOFF BRIEFING.......................REVIEWED (CPT)
+-- FLAPS...........................__, GREEN LIGHT (CPT)
+-- STABILIZER TRIM...................... ___ UNITS (CPT)
+-- CABIN....................................SECURE (CPT)
+-- Next RUNWAY ENTRY PROCEDURE
+
 local beforeTakeoffChkl = kcChecklist:new("BEFORE TAKEOFF CHECKLIST (F/O)")
-beforeTakeoffChkl:addItem(kcChecklistItem:new("TAKEOFF BRIEFING","REVIEWED",kcChecklistItem.actorCPT,nil))
-beforeTakeoffChkl:addItem(kcChecklistItem:new("FLAPS","Green light",kcChecklistItem.actorCPT,nil))
-beforeTakeoffChkl:addItem(kcChecklistItem:new("STABILIZER TRIM","___ Units",kcChecklistItem.actorCPT,nil))
-beforeTakeoffChkl:addItem(kcChecklistItem:new("CABIN","Secure",kcChecklistItem.actorCPT,nil))
+beforeTakeoffChkl:addItem(kcChecklistItem:new("TAKEOFF BRIEFING","REVIEWED",kcChecklistItem.actorCPT,1))
+beforeTakeoffChkl:addItem(kcChecklistItem:new("FLAPS","GREEN LIGHT",kcChecklistItem.actorCPT,1))
+beforeTakeoffChkl:addItem(kcChecklistItem:new("STABILIZER TRIM","___ UNITS",kcChecklistItem.actorCPT,1))
+beforeTakeoffChkl:addItem(kcChecklistItem:new("CABIN","SECURE",kcChecklistItem.actorCPT,1))
+beforeTakeoffChkl:addItem(kcSimpleChecklistItem:new("Next RUNWAY ENTRY PROCEDURE"))
 
 -- ============ RUNWAY ENTRY PROCEDURE (F/O) ============
 -- STROBES.......................................ON (F/O)
@@ -1115,30 +1123,71 @@ beforeTakeoffChkl:addItem(kcChecklistItem:new("CABIN","Secure",kcChecklistItem.a
 -- FIXED LANDING LIGHTS..........................ON (CPT)
 -- RWY TURNOFF LIGHTS............................ON (CPT)
 -- TAXI LIGHTS..................................OFF (CPT)
+-- Next TAKEOFF AND INITIAL CLIMB 
 
 local runwayEntryProc = kcProcedure:new("RUNWAY ENTRY PROCEDURE (F/O)")
-
-	-- [2] = {["activity"] = "STROBES -- ON", ["wait"] = 1, ["interactive"] = 0, ["actor"] = "F/O:", ["validated"] = 0, ["chkl_color"] = color_white, ["end"] = 0,
-	-- [3] = {["activity"] = "TRANSPONDER -- ON", ["wait"] = 1, ["interactive"] = 0, ["actor"] = "F/O:", ["validated"] = 0, ["chkl_color"] = color_white, ["end"] = 0,
-	-- [4] = {["activity"] = "FIXED LANDING LIGHTS -- ON", ["wait"] = 1, ["interactive"] = 0, ["actor"] = "CPT:", ["validated"] = 0, ["chkl_color"] = color_white, ["end"] = 0,
-	-- [5] = {["activity"] = "RWY TURNOFF LIGHTS -- ON", ["wait"] = 1, ["interactive"] = 0, ["actor"] = "CPT:", ["validated"] = 0, ["chkl_color"] = color_white, ["end"] = 0,
-	-- [6] = {["activity"] = "TAXI LIGHTS -- OFF", ["wait"] = 1, ["interactive"] = 0, ["actor"] = "CPT:", ["validated"] = 0, ["chkl_color"] = color_white, ["end"] = 0,
-	-- [7] = {["activity"] = "ENTER RUNWAY PROCEDURE FINISHED | TAKEOFF AND CLIMB POCEDURE", ["wait"] = 1, ["interactive"] = 0, ["actor"] = "CPT:", ["validated"] = 0, ["chkl_color"] = color_white, ["end"] = 1
-
+runwayEntryProc:addItem(kcChecklistItem:new("STROBES","ON",kcChecklistItem.actorFO,2,
+	function () return sysLights.strobesSwitch:getStatus() == 1 end,
+	function () sysLights.strobesSwitch:actuate(1) end))
+runwayEntryProc:addItem(kcChecklistItem:new("TRANSPONDER","ON",kcChecklistItem.actorFO,2,
+	function () return sysRadios.xpdrSwitch:getStatus() == 5 end,
+	function () sysRadios.xpdrSwitch:adjustValue(sysRadios.xpdrTARA,0,5) end))
+runwayEntryProc:addItem(kcChecklistItem:new("LANDING LIGHTS","ON",kcChecklistItem.actorCPT,2,
+	function () return sysLights.landLightGroup:getStatus() > 1 end,
+	function () sysLights.landLightGroup:actuate(1) end))
+runwayEntryProc:addItem(kcChecklistItem:new("RWY TURNOFF LIGHTS","ON",kcChecklistItem.actorCPT,2,
+	function () return sysLights.rwyLightGroup:getStatus() > 0 end,
+	function () sysLights.rwyLightGroup:actuate(1) end))
+runwayEntryProc:addItem(kcChecklistItem:new("TAXI LIGHTS","OFF",kcChecklistItem.actorCPT,2,
+	function () return sysLights.taxiSwitch:getStatus() == 0 end,
+	function () sysLights.taxiSwitch:actuate(0) end))
+runwayEntryProc:addItem(kcSimpleChecklistItem:new("Next TAKEOFF AND INITIAL CLIMB"))
 
 -- ============ start and initial climb =============
 local takeoffClimbProc = kcProcedure:new("TAKEOFF & INITIAL CLIMB")
+	-- [2] = {["activity"] = "A/T -- ON", ["wait"] = 1, ["interactive"] = 0, ["actor"] = "CPT:", ["validated"] = 0, ["chkl_color"] = color_white, ["end"] = 0,
+	-- [3] = {["activity"] = "SET A/P MODES", ["wait"] = 1, ["interactive"] = 0, ["actor"] = "CPT:", ["validated"] = 0, ["chkl_color"] = color_white, ["end"] = 0,
+	-- [4] = {["activity"] = "SET TAKEOFF THRUST", ["wait"] = 1, ["interactive"] = 1, ["actor"] = "CPT:", ["validated"] = 0, ["chkl_color"] = color_white, ["end"] = 0,
+	-- [5] = {["activity"] = "SETTING TAKEOFF THRUST", ["wait"] = 1, ["interactive"] = 0, ["actor"] = "CPT:", ["validated"] = 0, ["chkl_color"] = color_white, ["end"] = 0,
+	-- [6] = {["activity"] = "FLAPS 10", ["wait"] = 1, ["interactive"] = 1, ["actor"] = "CPT:", ["validated"] = 0, ["chkl_color"] = color_white, ["end"] = 0,
+	-- [7] = {["activity"] = "SPEED CHECK FLAPS 10", ["wait"] = 1, ["interactive"] = 0, ["actor"] = "F/O:", ["validated"] = 0, ["chkl_color"] = color_white, ["end"] = 0,
+	-- [8] = {["activity"] = "FLAPS 5", ["wait"] = 1, ["interactive"] = 1, ["actor"] = "CPT:", ["validated"] = 0, ["chkl_color"] = color_white, ["end"] = 0,
+	-- [9] = {["activity"] = "SPEED CHECK FLAPS 5", ["wait"] = 1, ["interactive"] = 0, ["actor"] = "F/O:", ["validated"] = 0, ["chkl_color"] = color_white, ["end"] = 0,
+	-- [10] = {["activity"] = "FLAPS 1", ["wait"] = 1, ["interactive"] = 1, ["actor"] = "CPT:", ["validated"] = 0, ["chkl_color"] = color_white, ["end"] = 0,
+	-- [11] = {["activity"] = "SPEED CHECK FLAPS 1", ["wait"] = 1, ["interactive"] = 0, ["actor"] = "F/O:", ["validated"] = 0, ["chkl_color"] = color_white, ["end"] = 0,
+	-- [12] = {["activity"] = "FLAPS UP", ["wait"] = 1, ["interactive"] = 1, ["actor"] = "CPT:", ["validated"] = 0, ["chkl_color"] = color_white, ["end"] = 0,
+	-- [13] = {["activity"] = "FLAPS UP", ["wait"] = 1, ["interactive"] = 0, ["actor"] = "F/O:", ["validated"] = 0, ["chkl_color"] = color_white, ["end"] = 0,
+	-- [14] = {["activity"] = "CMD A", ["wait"] = 1, ["interactive"] = 1, ["actor"] = "CPT:", ["validated"] = 0, ["chkl_color"] = color_white, ["end"] = 0,
+	-- [15] = {["activity"] = "SETTING CMD A", ["wait"] = 1, ["interactive"] = 0, ["actor"] = "CPT:", ["validated"] = 0, ["chkl_color"] = color_white, ["end"] = 0,
 
+
+-- ============ AFTER TAKEOFF CHECKLIST (PM) ============
+-- TAKEOFF BRIEFING.......................REVIEWED (PM)
+-- ENGINE BLEEDS................................ON (PM)
+-- PACKS......................................AUTO (PM)
+-- LANDING GEAR.........................UP AND OFF (PM)
+-- FLAPS.............................UP, NO LIGHTS (PM)
+-- ALTIMETERS..................................SET (BOTH)
+-- Next CLIMB & CRUISE
 
 -- ======= After Takeoff checklist =======
 
 local afterTakeoffChkl = kcChecklist:new("AFTER TAKEOFF CHECKLIST (PM)")
-afterTakeoffChkl:addItem(kcChecklistItem:new("TAKEOFF BRIEFING","REVIEWED",kcChecklistItem.actorPM,nil))
-afterTakeoffChkl:addItem(kcChecklistItem:new("ENGINE BLEEDS","ON",kcChecklistItem.actorPM,nil))
-afterTakeoffChkl:addItem(kcChecklistItem:new("PACKS","AUTO",kcChecklistItem.actorPM,nil))
-afterTakeoffChkl:addItem(kcChecklistItem:new("LANDING GEAR","UP AND OFF",kcChecklistItem.actorPM,nil))
-afterTakeoffChkl:addItem(kcChecklistItem:new("FLAPS","UP, NO LIGHTS",kcChecklistItem.actorPM,nil))
-afterTakeoffChkl:addItem(kcChecklistItem:new("ALTIMETERS","SET",kcChecklistItem.actorBOTH,nil))
+afterTakeoffChkl:addItem(kcChecklistItem:new("TAKEOFF BRIEFING","REVIEWED",kcChecklistItem.actorPM,1))
+afterTakeoffChkl:addItem(kcChecklistItem:new("ENGINE BLEEDS","ON",kcChecklistItem.actorPM,2,
+	function () return sysAir.engBleedGroup:getStatus() == 2 end,
+	function () sysAir.engBleedGroup:actuate(1) end))
+afterTakeoffChkl:addItem(kcChecklistItem:new("PACKS","AUTO",kcChecklistItem.actorPM,2,
+	function () return sysAir.packSwitchGroup:getStatus() == 2 end,
+	function () sysAir.packSwitchGroup:setValue(1) end))
+afterTakeoffChkl:addItem(kcChecklistItem:new("LANDING GEAR","UP AND OFF",kcChecklistItem.actorPM,2,
+	function () return sysGeneral.GearSwitch:getStatus() == 0.5 end,
+	function () sysGeneral.GearSwitch:setValue(0.5) end))
+afterTakeoffChkl:addItem(kcChecklistItem:new("FLAPS","UP, NO LIGHTS",kcChecklistItem.actorPM,2,
+	function () return sysControls.flapsSwitch:getStatus() == 0 and sysControls.slatsExtended:getStatus() == 0 end,
+	function () sysControls.flapsSwitch:adjustValue(0) end))
+afterTakeoffChkl:addItem(kcChecklistItem:new("ALTIMETERS","SET",kcChecklistItem.actorBOTH,1))
+afterTakeoffChkl:addItem(kcSimpleChecklistItem:new("Next CLIMB & CRUISE"))
 
 -- ============ climb & cuise =============
 local climbCruiseProc = kcProcedure:new("CLIMB & CRUISE")

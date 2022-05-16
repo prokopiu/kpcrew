@@ -12,6 +12,12 @@ local MultiStateCmdSwitch = require "kpcrew.systems.MultiStateCmdSwitch"
 local InopSwitch = require "kpcrew.systems.InopSwitch"
 
 local sysRadio = {
+	xpdrTest = 0,
+	xpdrStby = 1,
+	xpdrAltOff = 2,
+	xpdrAltOn = 3,
+	xpdrTA = 4,
+	xpdrTARA = 5
 }
 
 -- ===== COM Radios =====
@@ -55,6 +61,8 @@ sysRadio.adf1StandbyFreq = SimpleAnnunciator:new("","sim/cockpit/radios/adf1_std
 sysRadio.adf2StbyFine = MultiStateCmdSwitch:new("","sim/cockpit/radios/adf2_stdby_freq_hz",0,"sim/radios/stby_adf2_ones_tens_down","sim/radios/stby_adf2_ones_tens_up")
 sysRadio.adf2StbyCourse = MultiStateCmdSwitch:new("","sim/cockpit/radios/adf2_stdby_freq_hz",0,"sim/radios/stby_adf2_hundreds_thous_down","sim/radios/stby_adf2_hundreds_thous_up")
 sysRadio.adf2Flip = TwoStateToggleSwitch:new("","sim/cockpit2/radios/actuators/adf2_right_is_selected",0,"sim/radios/adf2_standy_flip")
+
+sysRadio.xpdrSwitch = MultiStateCmdSwitch:new ("","laminar/B738/knob/transponder_pos",0,"laminar/B738/knob/transponder_mode_dn","laminar/B738/knob/transponder_mode_up")
 
 sysRadio.adf2ActiveFreq = SimpleAnnunciator:new("","sim/cockpit/radios/adf2_freq_hz",0)
 sysRadio.adf2StandbyFreq = SimpleAnnunciator:new("","sim/cockpit/radios/adf2_stdby_freq_hz",0)

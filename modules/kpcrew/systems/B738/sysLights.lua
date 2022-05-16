@@ -30,7 +30,7 @@ sysLights.beaconSwitch = TwoStateCmdSwitch:new("beacon","sim/cockpit/electrical/
 sysLights.positionSwitch = TwoStateCmdSwitch:new("position","sim/cockpit2/switches/navigation_lights_on",0,"laminar/B738/toggle_switch/position_light_steady","laminar/B738/toggle_switch/position_light_off","nocommand")
 
 -- Strobe Lights, single onoff command driven
-sysLights.strobesSwitch = TwoStateCmdSwitch:new("strobes","sim/cockpit2/switches/navigation_lights_on",0,"laminar/B738/toggle_switch/position_light_strobe","laminar/B738/toggle_switch/position_light_off","nocommand")
+sysLights.strobesSwitch = TwoStateCmdSwitch:new("strobes","sim/cockpit/electrical/strobe_lights_on",0,"laminar/B738/toggle_switch/position_light_strobe","laminar/B738/toggle_switch/position_light_off","nocommand")
 
 -- Taxi/Nose Lights, single onoff command driven
 sysLights.taxiSwitch = TwoStateCmdSwitch:new("taxi","laminar/B738/toggle_switch/taxi_light_brightness_pos",0,"laminar/B738/toggle_switch/taxi_light_brightness_on","laminar/B738/toggle_switch/taxi_light_brightness_off","laminar/B738/toggle_switch/taxi_light_brigh_toggle")

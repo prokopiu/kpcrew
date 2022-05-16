@@ -37,6 +37,9 @@ sysAir.recircFanRight = TwoStateToggleSwitch:new("","laminar/B738/air/r_recirc_f
 -- PACK switches
 sysAir.packLeftSwitch = MultiStateCmdSwitch:new("","laminar/B738/air/l_pack_pos",0,"laminar/B738/toggle_switch/l_pack_dn","laminar/B738/toggle_switch/l_pack_up")
 sysAir.packRightSwitch = MultiStateCmdSwitch:new("","laminar/B738/air/r_pack_pos",0,"laminar/B738/toggle_switch/r_pack_dn","laminar/B738/toggle_switch/r_pack_up")
+sysAir.packSwitchGroup = SwitchGroup:new("PackBleeds")
+sysAir.packSwitchGroup:addSwitch(sysAir.packLeftSwitch)
+sysAir.packSwitchGroup:addSwitch(sysAir.packRightSwitch)
 
 -- ISOLATION VLV
 sysAir.isoValveSwitch = TwoStateCmdSwitch:new("","laminar/B738/air/isolation_valve_pos",0,"laminar/B738/toggle_switch/iso_valve_dn","laminar/B738/toggle_switch/iso_valve_up")
@@ -44,6 +47,9 @@ sysAir.isoValveSwitch = TwoStateCmdSwitch:new("","laminar/B738/air/isolation_val
 -- BLEED AIR
 sysAir.bleedEng1Switch = TwoStateToggleSwitch:new("","laminar/B738/toggle_switch/bleed_air_1_pos",0,"laminar/B738/toggle_switch/bleed_air_1")
 sysAir.bleedEng2Switch = TwoStateToggleSwitch:new("","laminar/B738/toggle_switch/bleed_air_2_pos",0,"laminar/B738/toggle_switch/bleed_air_2")
+sysAir.engBleedGroup = SwitchGroup:new("EngBleeds")
+sysAir.engBleedGroup:addSwitch(sysAir.bleedEng1Switch)
+sysAir.engBleedGroup:addSwitch(sysAir.bleedEng2Switch)
 
 -- APU Bleed
 sysAir.apuBleedSwitch = TwoStateToggleSwitch:new("","laminar/B738/toggle_switch/bleed_air_apu_pos",0,"laminar/B738/toggle_switch/bleed_air_apu")
