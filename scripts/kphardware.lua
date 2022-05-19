@@ -11,8 +11,8 @@ local KPH_VERSION = "2.3-alpha1"
 -- disable windows by changing from true to false
 local show_mcp_panel = true
 local show_light_panel = true
-local show_radio_panel = true
-local show_efis_panel = true
+local show_radio_panel = false
+local show_efis_panel = false
 
 logMsg ("FWL: ** Starting KPHARDWARE version " .. KPH_VERSION .." **")
 
@@ -32,6 +32,10 @@ end
 if PLANE_ICAO == "MD11" then
 	kh_acf_icao = "MD11"
 end
+if PLANE_ICAO == "E135" or PLANE_ICAO == "E140" or PLANE_ICAO == "E145" or PLANE_ICAO == "E45X" then
+	kh_acf_icao = "ERJF"
+end
+
 set("sim/private/controls/shadow/cockpit_near_adjust",0.09)
 
 -- load aircraft specific systems
