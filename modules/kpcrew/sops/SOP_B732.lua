@@ -1,4 +1,4 @@
-local SOP_B738 = {
+local SOP_B732 = {
 }
 
 -- SOP related imports
@@ -159,7 +159,7 @@ electricalPowerUpProc:addItem(kcSimpleProcedureItem:new("Next: Preliminary Prefl
 -- electricalPowerUpProc:addItem(kcProcedureItem:new("WHEEL WELL FIRE WARNING SYSTEM","TEST",kcFlowItem.actorFO,1,nil,nil,nil))
 -- electricalPowerUpProc:addItem(kcSimpleProcedureItem:new("Next: Preliminary Preflight Procedure"))
 
--- ============ PRELIMINARY PREFLIGHT PROCEDURES ========
+-- ============ Preliminary Preflight Procedures ========
 -- EMERGENCY EXIT LIGHT.........ARM/ON GUARD CLOSED (F/O)
 -- ATTENDENCE BUTTON..........................PRESS (F/O)
 --   Electrical Power Up supplementary procedure complete
@@ -722,27 +722,7 @@ preflightFO3Proc:addItem(kcProcedureItem:new("TRANSPONDER PANEL","SET",kcFlowIte
 -- WEATHER RADAR...............................OFF (CPT)
 -- MAP SWITCHES..........................AS NEEDED (CPT)
 -- Mode control panel
--- COURSE(S)...................................SET (CPT)
--- FLIGHT DIRECTOR SWITCH.......................ON (CPT)
--- BANK ANGLE SELECTOR...................AS NEEDED (CPT)
--- AUTOPILOT DISENGAGE BAR......................UP (CPT)
--- Main panel
--- OXYGEN RESET/TEST SWITCH..........PUSH AND HOLD (CPT)
--- CLOCK.......................................SET (CPT)
--- NOSE WHEEL STEERING SWITCH.........GUARD CLOSED (CPT)
--- Display select panel
--- MAIN PANEL DISPLAY UNITS SELECTOR..........NORM (F/O)
--- LOWER DISPLAY UNIT SELECTOR................NORM (F/O)
--- INTEGRATED STANDBY FLIGHT DISPLAY...........SET (CPT)
--- SPEED BRAKE LEVER...................DOWN DETENT (CPT)
--- REVERSE THRUST LEVERS......................DOWN (CPT)
--- FORWARD THRUST LEVERS....................CLOSED (CPT)
--- FLAP LEVER..................................SET (CPT)
---   Set the flap lever to agree with the flap position.
--- PARKING BRAKE...............................SET (F/O)
--- ENGINE START LEVERS......................CUTOFF (CPT)
--- STABILIZER TRIM CUTOUT SWITCHES..........NORMAL (CPT)
--- RADIO TUNING PANEL..........................SET (CPT)
+
 
 local preflightCPTProc = kcProcedure:new("PREFLIGHT PROCEDURE (CAPT)")
 preflightCPTProc:addItem(kcIndirectProcedureItem:new("LIGHTS","TEST",kcFlowItem.actorCPT,1,"internal_lights_test",
@@ -808,19 +788,19 @@ preflightCPTProc:addItem(kcProcedureItem:new("STABILIZER TRIM CUTOUT SWITCHES","
 preflightCPTProc:addItem(kcProcedureItem:new("RADIO TUNING PANEL","SET",kcFlowItem.actorCPT,1))
 preflightCPTProc:addItem(kcSimpleProcedureItem:new("CALL PREFLIGHT CHECKLIST"))
 
--- =============== PREFLIGHT CHECKLIST (PM) ============== 
--- OXYGEN..............................TESTED, 100% (BOTH)
--- NAVIGATION & DISPLAY SWITCHES........NORMAL,AUTO   (PF)
--- WINDOW HEAT...................................ON   (PF)
--- PRESSURIZATION MODE SELECTOR................AUTO   (PF)
--- PARKING BRAKE................................SET   (PF)
--- ENGINE START LEVERS.......................CUTOFF   (PF)
--- GEAR PINS................................REMOVED   (PF)
+-- ============== PREFLIGHT CHECKLIST (PM) ============= OK
+-- OXYGEN..............................TESTED, 100% (PF)
+-- NAVIGATION & DISPLAY SWITCHES........NORMAL,AUTO (PF)
+-- WINDOW HEAT...................................ON (PF)
+-- PRESSURIZATION MODE SELECTOR................AUTO (PF)
+-- PARKING BRAKE................................SET (PF)
+-- ENGINE START LEVERS.......................CUTOFF (PF)
+-- GEAR PINS................................REMOVED (PF)
 
 local preflightChkl = kcChecklist:new("PREFLIGHT CHECKLIST (PM)")
 preflightChkl:addItem(kcIndirectChecklistItem:new("OXYGEN","TESTED #exchange|100 PERC|one hundred percent#",kcFlowItem.actorALL,2,"oxygentested",
 	function () return get("laminar/B738/push_button/oxy_test_cpt_pos") == 1 end))
-preflightChkl:addItem(kcChecklistItem:new("NAVIGATION & DISPLAY SWITCHES","NORMAL,AUTO",kcFlowItem.actorALL,1,
+preflightChkl:addItem(kcChecklistItem:new("NAVIGATION & DISPLAY SWITCHES","NORMAL,AUTO",kcFlowItem.actorPF,1,
 	function () return sysMCP.vhfNavSwitch:getStatus() == 0 and sysMCP.irsNavSwitch:getStatus() == 0 and sysMCP.fmcNavSwitch:getStatus() == 0 and sysMCP.displaySourceSwitch:getStatus() == 0 and sysMCP.displayControlSwitch:getStatus() == 0 end))
 preflightChkl:addItem(kcChecklistItem:new("WINDOW HEAT","ON",kcFlowItem.actorPF,1,
 	function () return sysAice.windowHeatGroup:getStatus() == 4 end))
@@ -935,17 +915,16 @@ beforeStartProc:addItem(kcProcedureItem:new("  RUDDER TRIM","0 UNITS (%3.2f)|sys
 	function () sysControls.rudderTrimSwitch:setValue(0) end))
 beforeStartProc:addItem(kcSimpleProcedureItem:new("Call for Before Start Checklist"))
 
--- ============= BEFORE START CHECKLIST (F/O) ============
--- FLIGHT DECK DOOR...............CLOSED AND LOCKED  (CPT)
--- FUEL..........................9999 KGS, PUMPS ON  (CPT)
--- PASSENGER SIGNS..............................SET  (CPT)
--- WINDOWS...................................LOCKED (BOTH)
--- MCP...................V2 999, HDG 999, ALT 99999  (CPT)
--- TAKEOFF SPEEDS............V1 999, VR 999, V2 999 (BOTH)
--- CDU PREFLIGHT..........................COMPLETED  (CPT)
--- RUDDER & AILERON TRIM.................FREE AND 0  (CPT)
--- TAXI AND TAKEOFF BRIEFING..            COMPLETED  (CPT)
--- ANTI COLLISION LIGHT..........................ON  (CPT)
+-- ============ BEFORE START CHECKLIST (F/O) ============
+-- FLIGHT DECK DOOR...............CLOSED AND LOCKED (CPT)
+-- FUEL..........................9999 KGS, PUMPS ON (CPT)
+-- PASSENGER SIGNS..............................SET (CPT)
+-- WINDOWS...................................LOCKED (CPT)
+-- MCP...................V2 999, HDG 999, ALT 99999 (CPT)
+-- TAKEOFF SPEEDS............V1 999, VR 999, V2 999 (CPT)
+-- CDU PREFLIGHT..........................COMPLETED (CPT)
+-- RUDDER & AILERON TRIM.................FREE AND 0 (CPT)
+-- TAXI AND TAKEOFF BRIEFING..            COMPLETED (CPT)
 
 local beforeStartChkl = kcChecklist:new("BEFORE START CHECKLIST (F/O)")
 beforeStartChkl:addItem(kcChecklistItem:new("FLIGHT DECK DOOR","CLOSED AND LOCKED",kcFlowItem.actorCPT,2,
@@ -970,9 +949,6 @@ beforeStartChkl:addItem(kcChecklistItem:new("CDU PREFLIGHT","COMPLETED",kcFlowIt
 beforeStartChkl:addItem(kcChecklistItem:new("RUDDER & AILERON TRIM","FREE AND 0",kcFlowItem.actorCPT,1,
 	function () return sysControls.rudderTrimSwitch:getStatus() == 0 and sysControls.aileronTrimSwitch:getStatus() == 0 end ))
 beforeStartChkl:addItem(kcChecklistItem:new("TAXI AND TAKEOFF BRIEFING","COMPLETED",kcFlowItem.actorCPT,1))
-beforeStartChkl:addItem(kcProcedureItem:new("ANTI-COLLISION LIGHT SWITCH","ON",kcFlowItem.actorCPT,2,
-	function () return sysLights.beaconSwitch:getStatus() == 1 end,
-	function () sysLights.beaconSwitch:actuate(1) end))
 
 -- =========== PUSHBACK & ENGINE START (BOTH) ==========
 -- PARKING BRAKE...............................SET (F/O)
@@ -1135,7 +1111,6 @@ beforeTaxiChkl:addItem(kcSimpleChecklistItem:new("Next BEFORE TAKEOFF CHECKLIST"
 -- Next RUNWAY ENTRY PROCEDURE
 
 local beforeTakeoffChkl = kcChecklist:new("BEFORE TAKEOFF CHECKLIST (F/O)")
-beforeTakeoffChkl:addItem(kcChecklistItem:new("GENERATORS","ON",kcChecklistItem.actorCPT,1))
 beforeTakeoffChkl:addItem(kcChecklistItem:new("TAKEOFF BRIEFING","REVIEWED",kcChecklistItem.actorCPT,1))
 beforeTakeoffChkl:addItem(kcChecklistItem:new("FLAPS","GREEN LIGHT",kcChecklistItem.actorCPT,1))
 beforeTakeoffChkl:addItem(kcChecklistItem:new("STABILIZER TRIM","___ UNITS",kcChecklistItem.actorCPT,1))
@@ -1245,38 +1220,21 @@ local descentProc = kcProcedure:new("DESCENT PROCEDURE")
 -- Call “DESCENT CHECKLIST.”Do the DESCENT checklist.
 -- ======= Descent checklist =======
 
- -- =============== DESCENT CHECKLIST (PM) ===============
- -- PRESSURISATION...................LAND ALT _____   (PM)
- -- RECALL..................................CHECKED   (PM)
- -- AUTOBRAKE...................................___   (PM)
- -- LANDING DATA...............VREF___, MINIMUMS___ (BOTH)
- -- APPROACH BRIEFING.....................COMPLETED   (PM)
- -- ======================================================
-
 local descentChkl = kcChecklist:new("DESCENT CHECKLIST (PM)")
+descentChkl:addItem(kcChecklistItem:new("TAKEOFF BRIEFING","REVIEWED",kcChecklistItem.actorPM,nil))
 descentChkl:addItem(kcChecklistItem:new("PRESSURISATION","LAND ALT___",kcChecklistItem.actorPM,nil))
 descentChkl:addItem(kcChecklistItem:new("RECALL","CHECKED",kcChecklistItem.actorPM,nil))
 descentChkl:addItem(kcChecklistItem:new("AUTOBRAKE","___",kcChecklistItem.actorPM,nil))
 descentChkl:addItem(kcChecklistItem:new("LANDING DATA","VREF___, MINIMUMS___",kcChecklistItem.actorBOTH,nil))
 descentChkl:addItem(kcChecklistItem:new("APPROACH BRIEFING","COMPLETED",kcChecklistItem.actorPM,nil))
 
- -- =============== APPROACH CHECKLIST (PM) ==============
- -- ALTIMETERS............................QNH _____ (BOTH)
- -- NAV AIDS....................................SET   (PM)
- -- ======================================================
+-- ======= Approach checklist =======
 
 local approachChkl = kcChecklist:new("APPROACH CHECKLIST (PM)")
 approachChkl:addItem(kcChecklistItem:new("ALTIMETERS","QNH ___",kcChecklistItem.actorBOTH,nil))
 approachChkl:addItem(kcChecklistItem:new("NAV AIDS","SET",kcChecklistItem.actorPM,nil))
 
- -- =============== LANDING CHECKLIST (PM) ===============
- -- ALTIMETERS............................QNH _____ (BOTH)
- -- CABIN....................................SECURE   (PF)
- -- ENGINE START SWITCHES......................CONT   (PF)
- -- SPEEDBRAKE................................ARMED   (PF)
- -- LANDING GEAR...............................DOWN   (PF)
- -- FLAPS..........................___, GREEN LIGHT   (PF)
- -- ======================================================
+-- ======= Landing checklist =======
 
 local landingChkl = kcChecklist:new("LANDING CHECKLIST (PM)")
 landingChkl:addItem(kcChecklistItem:new("CABIN","SECURE",kcChecklistItem.actorPF,nil))
@@ -1357,15 +1315,7 @@ local shutdownProc = kcProcedure:new("SHUTDOWN PROCEDURE")
 
 
 
- -- ============== SHUTDOWN CHECKLIST (F/O) ==============
- -- HYDRAULIC PANEL.............................SET  (CPT)
- -- PROBE HEAT.............................AUTO/OFF  (CPT)
- -- FUEL PUMPS..................................OFF  (CPT)
- -- FLAPS........................................UP  (CPT)
- -- ENGINE START LEVERS......................CUTOFF  (CPT)
- -- WEATHER RADAR...............................OFF (BOTH)
- -- PARKING BRAKE...............................___  (CPT)
- -- ======================================================
+-- ======= Shutdown checklist =======
 
 local shutdownChkl = kcChecklist:new("SHUTDOWN CHECKLIST (F/O)")
 shutdownChkl:addItem(kcChecklistItem:new("HYDRAULIC PANEL","SET",kcChecklistItem.actorCPT,nil))
@@ -1385,20 +1335,7 @@ local secureProc = kcProcedure:new("SECURE PROCEDURE")
 -- WINDOW HEAT switches....OFF F/O
 -- Air conditioning PACK switches....OFF F/O
 
- -- =============== SECURE CHECKLIST (F/O) ===============
- -- EFBs (if installed)...................SHUT DOWN  (CPT)
- -- IRSs........................................OFF  (CPT)
- -- EMERGENCY EXIT LIGHTS.......................OFF  (CPT)
- -- WINDOW HEAT.................................OFF  (CPT)
- -- PACKS.......................................OFF  (CPT)
-   -- If the aircraft is not handed over to succeeding 
-   -- flight crew or maintenance personnel:
-     -- EFB switches (if installed).............OFF  (CPT)
-     -- APU/GRD PWR.............................OFF  (CPT)
-     -- GROUND SERVICE SWITCH....................ON  (CPT)
-     -- BAT SWITCH..............................OFF  (CPT)
- -- ======================================================
-
+-- ======= Secure checklist =======
 
 local secureChkl = kcChecklist:new("SECURE CHECKLIST (F/O)")
 secureChkl:addItem(kcChecklistItem:new("EFBs (if installed)","SHUT DOWN",kcChecklistItem.actorCPT))
@@ -1406,8 +1343,8 @@ secureChkl:addItem(kcChecklistItem:new("IRSs","OFF",kcChecklistItem.actorCPT))
 secureChkl:addItem(kcChecklistItem:new("EMERGENCY EXIT LIGHTS","OFF",kcChecklistItem.actorCPT))
 secureChkl:addItem(kcChecklistItem:new("WINDOW HEAT","OFF",kcChecklistItem.actorCPT))
 secureChkl:addItem(kcChecklistItem:new("PACKS","OFF",kcChecklistItem.actorCPT))
-secureChkl:addItem(kcSimpleChecklistItem:new("  If the aircraft is not handed over to succeeding flight"))
-secureChkl:addItem(kcSimpleChecklistItem:new("  crew or maintenance personnel:"))
+secureChkl:addItem(kcSimpleChecklistItem:new(	"If the aircraft is not handed over to succeeding flight"))
+secureChkl:addItem(kcSimpleChecklistItem:new(	"crew or maintenance personnel:"))
 secureChkl:addItem(kcChecklistItem:new("  EFB switches (if installed)","OFF",kcChecklistItem.actorCPT))
 secureChkl:addItem(kcChecklistItem:new("  APU/GRD PWR","OFF",kcChecklistItem.actorCPT))
 secureChkl:addItem(kcChecklistItem:new("  GROUND SERVICE SWITCH","ON",kcChecklistItem.actorCPT))

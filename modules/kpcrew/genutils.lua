@@ -431,6 +431,42 @@ function kc_imgui_rotary_mcp(label,system,ypos,id)
 	imgui.PopStyleColor()
 end
 
+function kc_imgui_selector_mcp(label,system,ypos,sarray,id)
+    imgui.SameLine()
+	imgui.SetCursorPosY(ypos)
+	imgui.PushStyleColor(imgui.constant.Col.Button, color_mcp_button)
+	imgui.PushStyleColor(imgui.constant.Col.ButtonActive, color_mcp_active)
+	imgui.PushStyleColor(imgui.constant.Col.ButtonHovered, color_mcp_hover)
+	imgui.PushStyleColor(imgui.constant.Col.Text,color_mcp_text)
+
+    imgui.PushID(id)
+	imgui.Button("-", 15, 25)
+	if imgui.IsItemActive() then
+		system:actuate(slowDown)
+	end
+	imgui.PopID()
+	
+	imgui.SameLine()
+	imgui.SetCursorPosY(ypos + 2)
+	imgui.TextUnformatted(string.format(label,sarray[system:getStatus()]))
+
+	imgui.SameLine()
+	imgui.SetCursorPosY(ypos)
+	
+    imgui.PushID(id)
+	imgui.Button("+", 15, 25)
+	if imgui.IsItemActive() then
+		system:actuate(slowUp)
+	end
+	imgui.PopID()
+
+	imgui.PopStyleColor()
+	imgui.PopStyleColor()
+	imgui.PopStyleColor()
+	imgui.PopStyleColor()
+end
+
+
 -- enter any value
 function kc_imgui_value(label,system,ypos)
     imgui.SameLine()

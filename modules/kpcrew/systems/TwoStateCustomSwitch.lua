@@ -1,5 +1,7 @@
 -- switch with mode on/off and toggle function via command
-local TwoStateCustomSwitch = {}
+local TwoStateCustomSwitch = {
+	defaultDelay = 3 
+}
 
 local Switch = require "kpcrew.systems.Switch"
 
@@ -19,6 +21,7 @@ function TwoStateCustomSwitch:new(name, statusDref, statusDrefIdx, funcOn, funcO
 	obj.funcOn = funcOn
 	obj.funcOff = funcOff
 	obj.funcToggle = funcToggle
+	obj.delay = self.defaultDelay
 	
     return obj
 end
@@ -35,10 +38,30 @@ function TwoStateCustomSwitch:actuate(action)
 			self.funcOn()
 		end
 	end
+	if action == slowUp then
+		if self.delay > 0 then
+			self.delay = self.delay - 1
+		else
+			if type(self.funcOn) == 'function' then
+				self.funcOn()
+			end
+			self.delay = self.defaultDelay
+		end
+	end
 	
 	if action == modeOff then
 		if type(self.funcOff) == 'function' then
 			self.funcOff()
+		end
+	end
+	if action == slowDown then
+		if self.delay > 0 then
+			self.delay = self.delay - 1
+		else
+			if type(self.funcOff) == 'function' then
+				self.funcOff()
+			end
+			self.delay = self.defaultDelay
 		end
 	end
 	
@@ -54,6 +77,10 @@ function TwoStateCustomSwitch:actuate(action)
 		end
 	end
 	
+end
+
+function TwoStateCustomSwitch:setDefaultDelay(delay)
+	self.defaultDelay = delay
 end
 
 return TwoStateCustomSwitch
