@@ -29,6 +29,7 @@ taxi:towerFrequency1=122.8
 taxi:parkingStand=""
 taxi:gateStand=1
 taxi:pushDirection=1
+taxi:startSequence=2
 taxi:taxiRoute=""
 taxi:taxibriefing=""
 depBriefing:taxibriefing=""

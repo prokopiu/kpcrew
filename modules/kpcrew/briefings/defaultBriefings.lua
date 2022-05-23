@@ -111,6 +111,7 @@ taxi:add(kcPreference:new("towerFrequency1",122.800,kcPreference.typeCOMFreq,"To
 taxi:add(kcPreference:new("parkingStand","",kcPreference.typeText,"Parking Stand|"))
 taxi:add(kcPreference:new("gateStand",1,kcPreference.typeList,"Gate/Stand|" .. DEP_gatestand_list))
 taxi:add(kcPreference:new("pushDirection",1,kcPreference.typeList,"Push Direction|" .. DEP_push_direction))
+taxi:add(kcPreference:new("startSequence",1,kcPreference.typeList,"Start Sequence|" .. kc_StartSequence))
 taxi:add(kcPreference:new("taxiRoute","",kcPreference.typeText,"Taxi Route|"))
 taxi:add(kcPreference:new("taxibriefing",
 function () 

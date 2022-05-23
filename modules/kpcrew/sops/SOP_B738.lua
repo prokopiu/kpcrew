@@ -974,60 +974,90 @@ beforeStartChkl:addItem(kcProcedureItem:new("ANTI-COLLISION LIGHT SWITCH","ON",k
 	function () return sysLights.beaconSwitch:getStatus() == 1 end,
 	function () sysLights.beaconSwitch:actuate(1) end))
 
--- =========== PUSHBACK & ENGINE START (BOTH) ==========
--- PARKING BRAKE...............................SET (F/O)
+-- =========== PUSHBACK & ENGINE START (BOTH) ===========
+-- PARKING BRAKE...............................SET  (F/O)
+-- PUSHBACK SERVICE.........................ENGAGE  (CPT)
 -- Engine Start may be done during pushback or towing
--- COMMUNICATION WITH GROUND.............ESTABLISH (CPT)
--- PARKING BRAKE..........................RELEASED (F/O)
+-- COMMUNICATION WITH GROUND.............ESTABLISH  (CPT)
+-- PARKING BRAKE..........................RELEASED  (F/O)
+-- PACKS...............................AUTO OR OFF  (F/O)
 -- When pushback/towing complete
---   TOW BAR DISCONNECTED...................VERIFY (CPT)
---   LOCKOUT PIN REMOVED....................VERIFY (CPT)
---   SYSTEM A HYDRAULIC PUMPS...................ON (F/O)
--- Call START ENGINE 2
--- ENGINE START SWITCH 2.......................GRD (F/O)
+--   TOW BAR DISCONNECTED...................VERIFY  (CPT)
+--   LOCKOUT PIN REMOVED....................VERIFY  (CPT)
+--   SYSTEM A HYDRAULIC PUMPS...................ON  (F/O)
+-- START FIRST ENGINE............STARTING ENGINE _  (CPT)
+-- ENGINE START SWITCH.......START SWITCH _ TO GRD  (F/O)
 --   Verify that the N2 RPM increases.
--- When N1 rotation is seen and N2 is at 25%,
--- ENGINE START LEVER 2.......................IDLE (F/O)
+--   When N1 rotation is seen and N2 is at 25%,
+--   ENGINE START LEVER...............LEVER _ IDLE  (F/O)
 --   When starter switch jumps back call STARTER CUTOUT
--- Call START ENGINE 1
--- ENGINE START SWITCH 1.......................GRD (F/O)
+-- START SECOND ENGINE...........STARTING ENGINE _  (CPT)
+-- ENGINE START SWITCH.......START SWITCH _ TO GRD  (F/O)
 --   Verify that the N2 RPM increases.
--- When N1 rotation is seen and N2 is at 25%,
--- ENGINE START LEVER 1.......................IDLE (F/O)
+--   When N1 rotation is seen and N2 is at 25%,
+--   ENGINE START LEVER...............LEVER _ IDLE  (F/O)
 --   When starter switch jumps back call STARTER CUTOUT
+-- PARKING BRAKE...............................SET  (F/O)
+--   When instructed by ground crew after pushback/towing
 -- Next BEFORE TAXI PROCEDURE
 
 local pushstartProc = kcProcedure:new("PUSHBACK & ENGINE START (BOTH)")
 pushstartProc:addItem(kcIndirectProcedureItem:new("PARKING BRAKE","SET",kcFlowItem.actorFO,2,"pb_parkbrk_initial_set",
 	function () return sysGeneral.parkBrakeSwitch:getStatus() == 1 end,
 	function () sysGeneral.parkBrakeSwitch:actuate(1) end ))
+pushstartProc:addItem(kcProcedureItem:new("PUSHBACK SERVICE","ENGAGE",kcFlowItem.actorCPT,2))
 pushstartProc:addItem(kcSimpleProcedureItem:new("Engine Start may be done during pushback or towing"))
 pushstartProc:addItem(kcProcedureItem:new("COMMUNICATION WITH GROUND","ESTABLISH",kcFlowItem.actorCPT,2))
 pushstartProc:addItem(kcIndirectProcedureItem:new("PARKING BRAKE","RELEASED",kcFlowItem.actorFO,2,"pb_parkbrk_release",
-	function () return sysGeneral.parkBrakeSwitch:getStatus() == 0 end,
-	function () sysGeneral.parkBrakeSwitch:actuate(0) end))
+	function () return sysGeneral.parkBrakeSwitch:getStatus() == 0 end))
+pushstartProc:addItem(kcChecklistItem:new("PACKS","AUTO or OFF",kcChecklistItem.actorPM,2,
+	function () return sysAir.packSwitchGroup:getStatus() == 2 end,
+	function () sysAir.packSwitchGroup:setValue(1) end))
 pushstartProc:addItem(kcSimpleProcedureItem:new("When pushback/towing complete"))
 pushstartProc:addItem(kcProcedureItem:new("  TOW BAR DISCONNECTED","VERIFY",kcFlowItem.actorCPT,1))
 pushstartProc:addItem(kcProcedureItem:new("  LOCKOUT PIN REMOVED","VERIFY",kcFlowItem.actorCPT,1))
 pushstartProc:addItem(kcProcedureItem:new("  SYSTEM A HYDRAULIC PUMPS","ON",kcFlowItem.actorFO,1,
 	function () return sysHydraulic.engHydPump1:getStatus() == 1 and sysHydraulic.elecHydPump1:getStatus() == 1 end,
 	function () sysHydraulic.engHydPump1:actuate(1) sysHydraulic.elecHydPump1:actuate(1) end))
-pushstartProc:addItem(kcSimpleProcedureItem:new("Call START ENGINE 2"))
-pushstartProc:addItem(kcIndirectProcedureItem:new("ENGINE START SWITCH 2","GRD",kcFlowItem.actorFO,2,"eng_start_2_grd",
-	function () return sysEngines.engStart2Switch:getStatus() == 0 end ))
+pushstartProc:addItem(kcProcedureItem:new("START FIRST ENGINE","START ENGINE %s|activeBriefings:get(\"taxi:startSequence\") == 1 and \"2\" or \"1\"",kcFlowItem.actorCPT,1))
+pushstartProc:addItem(kcIndirectProcedureItem:new("  ENGINE START SWITCH","START SWITCH %s TO GRD|activeBriefings:get(\"taxi:startSequence\") == 1 and \"2\" or \"1\"",kcFlowItem.actorFO,2,"eng_start_1_grd",
+	function () if activeBriefings:get("taxi:startSequence") == 1 then
+		return sysEngines.engStart2Switch:getStatus() == 0 else 
+		return sysEngines.engStart1Switch:getStatus() == 0 end end,
+	function () if activeBriefings:get("taxi:startSequence") == 1 then
+		sysEngines.engStart2Switch:setValue(0) else
+		sysEngines.engStart1Switch:setValue(0) end end))
 pushstartProc:addItem(kcSimpleProcedureItem:new("  Verify that the N2 RPM increases."))
-pushstartProc:addItem(kcSimpleProcedureItem:new("When N1 rotation is seen and N2 is at 25%,"))
-pushstartProc:addItem(kcIndirectProcedureItem:new("ENGINE START LEVER 2","IDLE",kcFlowItem.actorFO,2,"eng_start_2_lever",
-	function () return sysEngines.startLever2:getStatus() == 1 end ))
+pushstartProc:addItem(kcSimpleProcedureItem:new("  When N1 rotation is seen and N2 is at 25%,"))
+pushstartProc:addItem(kcIndirectProcedureItem:new("  ENGINE START LEVER","LEVER %s IDLE|activeBriefings:get(\"taxi:startSequence\") == 1 and \"2\" or \"1\"",kcFlowItem.actorFO,2,"eng_start_1_lever",
+	function () if activeBriefings:get("taxi:startSequence") == 1 then
+		return sysEngines.startLever2:getStatus() == 1 else 
+		return sysEngines.startLever1:getStatus() == 1 end end,
+	function () if activeBriefings:get("taxi:startSequence") == 1 then
+		sysEngines.startLever2:setValue(1) else
+		sysEngines.startLever1:setValue(1) end end))
 pushstartProc:addItem(kcSimpleProcedureItem:new("  When starter switch jumps back call STARTER CUTOUT"))
-pushstartProc:addItem(kcSimpleProcedureItem:new("Call START ENGINE 1"))
-pushstartProc:addItem(kcIndirectProcedureItem:new("ENGINE START SWITCH 1","GRD",kcFlowItem.actorFO,2,"eng_start_1_grd",
-	function () return sysEngines.engStart1Switch:getStatus() == 0 end ))
+pushstartProc:addItem(kcProcedureItem:new("START SECOND ENGINE","START ENGINE %s|activeBriefings:get(\"taxi:startSequence\") == 1 and \"1\" or \"2\"",kcFlowItem.actorCPT,1))
+pushstartProc:addItem(kcIndirectProcedureItem:new("  ENGINE START SWITCH","START SWITCH %s TO GRD|activeBriefings:get(\"taxi:startSequence\") == 1 and \"1\" or \"2\"",kcFlowItem.actorFO,2,"eng_start_2_grd",
+	function () if activeBriefings:get("taxi:startSequence") == 1 then
+		return sysEngines.engStart1Switch:getStatus() == 0 else 
+		return sysEngines.engStart2Switch:getStatus() == 0 end end,
+	function () if activeBriefings:get("taxi:startSequence") == 1 then
+		sysEngines.engStart1Switch:setValue(0) else
+		sysEngines.engStart2Switch:setValue(0) end end))
 pushstartProc:addItem(kcSimpleProcedureItem:new("  Verify that the N2 RPM increases."))
-pushstartProc:addItem(kcSimpleProcedureItem:new("When N1 rotation is seen and N2 is at 25%,"))
-pushstartProc:addItem(kcIndirectProcedureItem:new("ENGINE START LEVER 1","IDLE",kcFlowItem.actorFO,2,"eng_start_1_lever",
-	function () return sysEngines.startLever1:getStatus() == 1 end ))
+pushstartProc:addItem(kcSimpleProcedureItem:new("  When N1 rotation is seen and N2 is at 25%,"))
+pushstartProc:addItem(kcIndirectProcedureItem:new("  ENGINE START LEVER","LEVER %s IDLE|activeBriefings:get(\"taxi:startSequence\") == 1 and \"1\" or \"2\"",kcFlowItem.actorFO,2,"eng_start_2_lever",
+	function () if activeBriefings:get("taxi:startSequence") == 1 then
+		return sysEngines.startLever1:getStatus() == 1 else 
+		return sysEngines.startLever2:getStatus() == 1 end end,
+	function () if activeBriefings:get("taxi:startSequence") == 1 then
+		sysEngines.startLever1:setValue(1) else
+		sysEngines.startLever2:setValue(1) end end))
 pushstartProc:addItem(kcSimpleProcedureItem:new("  When starter switch jumps back call STARTER CUTOUT"))
+pushstartProc:addItem(kcIndirectProcedureItem:new("PARKING BRAKE","SET",kcFlowItem.actorFO,2,"pb_parkbrk_after_set",
+	function () return sysGeneral.parkBrakeSwitch:getStatus() == 1 end))
+pushstartProc:addItem(kcSimpleProcedureItem:new("  When instructed by ground crew after pushback/towing"))
 pushstartProc:addItem(kcSimpleProcedureItem:new("Next BEFORE TAXI PROCEDURE"))
 
 
