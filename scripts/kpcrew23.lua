@@ -38,6 +38,8 @@ kcLoadedBrief			= require("kpcrew.briefings.defaultBriefings")
 
 kcFlowExecutor			= require("kpcrew.FlowExecutor")
 
+kc_ctrl_wnd_off = true
+
 -- stop if pre-reqs are not met
 if not SUPPORTS_FLOATING_WINDOWS then
 	logMsg("Upgrade your FlyWithLua! to NG 2.7.30+, need Floating Windows")
@@ -384,8 +386,16 @@ function kc_ctrl_builder()
 		if imgui.Button(">", 15, 25) then
 			kc_ctrl_wnd_state = 0
 			local xpos = kc_scrn_width - 25
+			if kc_ctrl_wnd_off == true then
+				xpos = kc_scrn_width
+			end
 			float_wnd_set_geometry(kc_ctrl_wnd, xpos, 46, kc_scrn_width, 1)
 		end
+	end
+
+	if kc_ctrl_wnd_off == true then
+		xpos = kc_scrn_width
+		float_wnd_set_geometry(kc_ctrl_wnd, xpos, 46, kc_scrn_width, 1)
 	end
 
 	imgui.PopStyleColor()
@@ -541,4 +551,6 @@ create_command("kp/crew/next", "KPCrew Nextbutton","kc_next_button()","","")
 create_command("kp/crew/prev", "KPCrew Prevbutton","kc_prev_button()","","")
 create_command("kp/crew/flowwindow", "KPCrew Toggle Flow Window","kc_wnd_flow_action=1","","")
 create_command("kp/crew/sopwindow", "KPCrew Toggle SOP Window","kc_wnd_sop_action=1","","")
-create_command("kp/crew/openmaster", "KPCrew Open Master Window","kc_ctrl_wnd_state = 1 local xpos = kc_scrn_width - 750 float_wnd_set_geometry(kc_ctrl_wnd, xpos, 46, kc_scrn_width, 1)","","")
+create_command("kp/crew/openmaster", "KPCrew Open Master Window","kc_ctrl_wnd_state = 1 kc_ctrl_wnd_off=false local xpos = kc_scrn_width - 750 float_wnd_set_geometry(kc_ctrl_wnd, xpos, 46, kc_scrn_width, 1)","","")
+
+add_macro("KPCrew Toggle Control Window", "kc_ctrl_wnd_off = not kc_ctrl_wnd_off")
