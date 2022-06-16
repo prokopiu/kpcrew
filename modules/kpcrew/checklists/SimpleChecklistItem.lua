@@ -31,9 +31,9 @@ function kcSimpleChecklistItem:new(challengeText, skipFunc)
     return obj
 end
 
-function kcSimpleChecklistItem:getClassName()
-	return self.className
-end
+-- function kcSimpleChecklistItem:getClassName()
+	-- return self.className
+-- end
 
 -- item is always valid
 function kcSimpleChecklistItem:isValid()

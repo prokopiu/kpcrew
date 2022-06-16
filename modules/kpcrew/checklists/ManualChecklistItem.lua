@@ -1,41 +1,84 @@
-local ManualChecklistItem = {
+-- "Manual" Checklist Item to be added to procedures
+-- This covers anything which can not be checked / set by the sim but requires master button action
+--
+-- @classmod ManualChecklistItem
+-- @author Kosta Prokopiu
+-- @copyright 2022 Kosta Prokopiu
+
+local kcManualChecklistItem = {
 }
 
-require "kpcrew.genutils"
-local ChecklistItem = require "kpcrew.checklists.ChecklistItem"
+function kcManualChecklistItem:new(challengeText,responseText,actor,waittime,procvar,validFunc,actionFunc,skipFunc)
 
-function ManualChecklistItem:new(challengeText, responseText, actor, waittime)
-
-    ManualChecklistItem.__index = ManualChecklistItem
-    setmetatable(ManualChecklistItem, {
-        __index = ChecklistItem
+    kcManualChecklistItem.__index = kcManualChecklistItem
+    setmetatable(kcManualChecklistItem, {
+        __index = kcFlowItem
     })
 
-    local obj = ChecklistItem:new()
-    setmetatable(obj, ManualChecklistItem)
+    local obj = kcFlowItem:new()
+    setmetatable(obj, kcManualChecklistItem)
 
-    obj.challengeText = challengeText
-    obj.responseText = responseText
+	obj.challengeText = challengeText
+	obj.responseText = responseText
 	obj.actor = actor
-	obj.waittime = waittime
+	obj.waittime = waittime -- second
+	obj.valid = true
+	obj.validFunc = validFunc
+	obj.actionFunc = actionFunc
+	obj.responseFunc = responseFunc
+	obj.skipFunc = skipFunc
+	obj.procvar = procvar
+
+	obj.className = "ManualChecklistItem"
+
+	obj.conditionMet = false  -- if condition was met set to true
+
+	kc_global_procvars:add(kcPreference:new(procvar,false,kcPreference.typeToggle,procvar .. "|TRUE|FALSE"))
 
     return obj
 end
 
-function ManualChecklistItem:validate()
-    return true
+function kcManualChecklistItem:getStateColor()
+	local statecolors = { 
+		kcFlowItem.colorInitial,	-- INIT 
+		kcFlowItem.colorActive,     -- RUN
+		kcFlowItem.colorPause,      -- PAUSE
+		color_orange,		    	-- FAIL
+		kcFlowItem.colorSuccess,    -- DONE
+		kcFlowItem.colorManual,     -- SKIP
+		kcFlowItem.colorActive	    -- RESUME 
+	}
+
+	return statecolors[self.state + 1]
 end
 
-function ManualChecklistItem:isManualItem()
-    return true
+function kcManualChecklistItem:isValid()
+	if activePrefSet:get("general:assistance") < 2 then 
+		return true
+	else
+		local proc_var = getBckVars():find("procvars:" .. self.procvar)
+		if proc_var ~= nil then
+			return proc_var:getValue()
+		else
+			return true
+		end
+	end
 end
 
-function ManualChecklistItem:isAutomaticItem()
-    return false
+function kcManualChecklistItem:execute()
+	local proc_var = getBckVars():find("procvars:" .. self.procvar)
+	proc_var:setValue(true)
 end
 
-function ManualChecklistItem:hasResponse()
-    return false
-end
+function kcManualChecklistItem:reset()
+    self:setState(kcFlowItem.INIT)
+	self.valid = true
 
-return ManualChecklistItem
+	self.conditionMet = false
+	local procvar = getBckVars():find("procvars:" .. self.procvar)
+	if procvar ~= nil then
+		procvar:setValue(false)
+	end
+end	
+
+return kcManualChecklistItem

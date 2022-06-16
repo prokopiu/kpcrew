@@ -11,6 +11,7 @@ kc_LandingFlaps = "3|4|5"
 kc_LandingAutoBrake = "OFF|1|2|3|MAX"
 kc_LandingPacks = "OFF|ON|UNDER PRESSURIZED"
 kc_LandingAntiice = "NOT REQUIRED|ENGINE ONLY|ENGINE AND WING"
+kc_StartSequence = "2 THEN 1|1 THEN 2"
 
 function kc_get_total_fuel()
 	if activePrefSet:get("general:weight_kgs") then

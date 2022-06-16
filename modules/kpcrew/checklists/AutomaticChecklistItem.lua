@@ -1,3 +1,4 @@
+-- Obsolete
 local AutomaticChecklistItem = {}
 
 require "kpcrew.genutils"

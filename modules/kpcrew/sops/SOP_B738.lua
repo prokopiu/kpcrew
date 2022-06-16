@@ -11,6 +11,7 @@ kcChecklist = require "kpcrew.checklists.Checklist"
 kcChecklistItem = require "kpcrew.checklists.ChecklistItem"
 kcSimpleChecklistItem = require "kpcrew.checklists.SimpleChecklistItem"
 kcIndirectChecklistItem = require "kpcrew.checklists.IndirectChecklistItem"
+kcManualChecklistItem = require "kpcrew.checklists.ManualChecklistItem"
 
 kcProcedure = require "kpcrew.procedures.Procedure"
 kcProcedureItem = require "kpcrew.procedures.ProcedureItem"
@@ -154,7 +155,7 @@ electricalPowerUpProc:addItem(kcProcedureItem:new("STANDBY POWER","ON",kcFlowIte
 	function () return get("laminar/B738/electric/standby_bat_pos") > 0 end))
 electricalPowerUpProc:addItem(kcProcedureItem:new("   STANDBY #exchange|PWR|POWER# LIGHT","CHECK EXTINGUISHED",kcFlowItem.actorFO,2,
 	function () return sysElectric.stbyPwrOff:getStatus() == modeOff end))
-electricalPowerUpProc:addItem(kcSimpleProcedureItem:new("Next: Preliminary Preflight Procedure"))
+-- electricalPowerUpProc:addItem(kcSimpleProcedureItem:new("Next: Preliminary Preflight Procedure"))
 -- does not exist in Zibo
 -- electricalPowerUpProc:addItem(kcProcedureItem:new("WHEEL WELL FIRE WARNING SYSTEM","TEST",kcFlowItem.actorFO,1,nil,nil,nil))
 -- electricalPowerUpProc:addItem(kcSimpleProcedureItem:new("Next: Preliminary Preflight Procedure"))
@@ -258,7 +259,7 @@ prelPreflightProc:addItem(kcProcedureItem:new("PARKING BRAKE","SET",kcFlowItem.a
 prelPreflightProc:addItem(kcProcedureItem:new("#spell|IFE# & GALLEY POWER","ON",kcFlowItem.actorFO,3,
 	function () return sysElectric.ifePwr:getStatus() == modeOn and sysElectric.cabUtilPwr:getStatus() == modeOn end,
 	function () sysElectric.ifePwr:actuate(modeOn) sysElectric.cabUtilPwr:actuate(modeOn) end))
-prelPreflightProc:addItem(kcSimpleProcedureItem:new("Next CDU Preflight by Captain."))
+-- prelPreflightProc:addItem(kcSimpleProcedureItem:new("Next CDU Preflight by Captain."))
 
 -- ================== CDU Preflight ==================
 -- INITIAL DATA (CPT)                              
@@ -357,7 +358,7 @@ cduPreflightProc:addItem(kcIndirectProcedureItem:new("    CG","ENTER",kcFlowItem
 	function () return sysFMC.fmcCGEntered:getStatus() end))
 cduPreflightProc:addItem(kcIndirectProcedureItem:new("    V SPEEDS","ENTER",kcFlowItem.actorCPT,1,"vspeeds_entered",
 	function () return sysFMC.fmcVspeedsEntered:getStatus() == true end))
-cduPreflightProc:addItem(kcSimpleProcedureItem:new("CDU PREFLIGHT COMPLETE"))
+-- cduPreflightProc:addItem(kcSimpleProcedureItem:new("CDU PREFLIGHT COMPLETE"))
 
 -- ================ Preflight Procedure =================
 -- Flight control panel                            
@@ -503,7 +504,7 @@ preflightFOProc:addItem(kcProcedureItem:new("WING ANTI-ICE SWITCH","OFF",kcFlowI
 preflightFOProc:addItem(kcProcedureItem:new("ENGINE ANTI-ICE SWITCHES","OFF",kcFlowItem.actorFO,2,
 	function () return sysAice.engAntiIceGroup:getStatus() == 0 end,
 	function () sysAice.engAntiIceGroup:actuate(0) end))
-preflightFOProc:addItem(kcSimpleProcedureItem:new("Continue with part 2"))
+-- preflightFOProc:addItem(kcSimpleProcedureItem:new("Continue with part 2"))
 
 -- ========== PREFLIGHT PROCEDURE PART 2 (F/O) ==========
 -- Air conditioning panel                          
@@ -597,7 +598,7 @@ preflightFO2Proc:addItem(kcProcedureItem:new("IGNITION SELECT SWITCH","IGN L OR 
 preflightFO2Proc:addItem(kcProcedureItem:new("ENGINE START SWITCHES","OFF",kcFlowItem.actorFO,2,
 	function () return sysEngines.engStarterGroup:getStatus() == 2 end,
 	function () sysEngines.engStarterGroup:adjustValue(1,0,3) end)) 
-preflightFO2Proc:addItem(kcSimpleProcedureItem:new("Continue with part 3"))
+-- preflightFO2Proc:addItem(kcSimpleProcedureItem:new("Continue with part 3"))
 
 -- ========== PREFLIGHT PROCEDURE PART 3 (F/O) ==========
 -- Mode control panel                              
@@ -806,7 +807,7 @@ preflightCPTProc:addItem(kcProcedureItem:new("ENGINE START LEVERS","CUTOFF",kcFl
 	function () return sysEngines.startLever1:getStatus() == 0 and sysEngines.startLever2:getStatus() == 0 end))
 preflightCPTProc:addItem(kcProcedureItem:new("STABILIZER TRIM CUTOUT SWITCHES","NORMAL",kcFlowItem.actorCPT,1))
 preflightCPTProc:addItem(kcProcedureItem:new("RADIO TUNING PANEL","SET",kcFlowItem.actorCPT,1))
-preflightCPTProc:addItem(kcSimpleProcedureItem:new("CALL PREFLIGHT CHECKLIST"))
+-- preflightCPTProc:addItem(kcSimpleProcedureItem:new("CALL PREFLIGHT CHECKLIST"))
 
 -- =============== PREFLIGHT CHECKLIST (PM) ============== 
 -- OXYGEN..............................TESTED, 100% (BOTH)
@@ -826,13 +827,13 @@ preflightChkl:addItem(kcChecklistItem:new("WINDOW HEAT","ON",kcFlowItem.actorPF,
 	function () return sysAice.windowHeatGroup:getStatus() == 4 end))
 preflightChkl:addItem(kcChecklistItem:new("PRESSURIZATION MODE SELECTOR","AUTO",kcFlowItem.actorPF,1,
 	function () return sysAir.pressModeSelector:getStatus() == 0 end))
-preflightChkl:addItem(kcChecklistItem:new("FLIGHT INSTRUMENTS","HEADING %i, ALTIMETER %i|math.floor(get(\"sim/cockpit2/gauges/indicators/heading_electric_deg_mag_pilot\"))|math.floor(get(\"laminar/B738/autopilot/altitude\"))",kcFlowItem.actorBOTH,3))
+preflightChkl:addItem(kcManualChecklistItem:new("FLIGHT INSTRUMENTS","HEADING %i, ALTIMETER %i|math.floor(get(\"sim/cockpit2/gauges/indicators/heading_electric_deg_mag_pilot\"))|math.floor(get(\"laminar/B738/autopilot/altitude\"))",kcFlowItem.actorBOTH,6,"mc_flight_instruments",nil,nil,nil))
 preflightChkl:addItem(kcChecklistItem:new("PARKING BRAKE","SET",kcFlowItem.actorPF,1,
 	function () return sysGeneral.parkBrakeSwitch:getStatus() == 1 end))
 preflightChkl:addItem(kcChecklistItem:new("ENGINE START LEVERS","CUTOFF",kcFlowItem.actorPF,1,
 	function () return sysEngines.startLever1:getStatus() == 0 and sysEngines.startLever2:getStatus() == 0 end))
-preflightChkl:addItem(kcChecklistItem:new("GEAR PINS","REMOVED",kcFlowItem.actorPF,1))
-preflightChkl:addItem(kcSimpleChecklistItem:new("Preflight Checklist Completed"))
+preflightChkl:addItem(kcManualChecklistItem:new("GEAR PINS","REMOVED",kcFlowItem.actorPF,1,"mc_gearpins_removed",nil,nil,nil))
+-- preflightChkl:addItem(kcSimpleChecklistItem:new("Preflight Checklist Completed"))
 
 -- ============= BEFORE START PROCEDURE (BOTH) ============
 -- FLIGHT DECK DOOR..............CLOSED AND LOCKED (F/O)
@@ -933,7 +934,7 @@ beforeStartProc:addItem(kcProcedureItem:new("  AILERON TRIM","0 UNITS (%3.2f)|sy
 beforeStartProc:addItem(kcProcedureItem:new("  RUDDER TRIM","0 UNITS (%3.2f)|sysControls.rudderTrimSwitch:getStatus()",kcFlowItem.actorCPT,2,
 	function () return sysControls.rudderTrimSwitch:getStatus() == 0 end,
 	function () sysControls.rudderTrimSwitch:setValue(0) end))
-beforeStartProc:addItem(kcSimpleProcedureItem:new("Call for Before Start Checklist"))
+-- beforeStartProc:addItem(kcSimpleProcedureItem:new("Call for Before Start Checklist"))
 
 -- ============= BEFORE START CHECKLIST (F/O) ============
 -- FLIGHT DECK DOOR...............CLOSED AND LOCKED  (CPT)
@@ -1057,8 +1058,8 @@ pushstartProc:addItem(kcIndirectProcedureItem:new("  ENGINE START LEVER","LEVER 
 pushstartProc:addItem(kcSimpleProcedureItem:new("  When starter switch jumps back call STARTER CUTOUT"))
 pushstartProc:addItem(kcIndirectProcedureItem:new("PARKING BRAKE","SET",kcFlowItem.actorFO,2,"pb_parkbrk_after_set",
 	function () return sysGeneral.parkBrakeSwitch:getStatus() == 1 end))
-pushstartProc:addItem(kcSimpleProcedureItem:new("  When instructed by ground crew after pushback/towing"))
-pushstartProc:addItem(kcSimpleProcedureItem:new("Next BEFORE TAXI PROCEDURE"))
+-- pushstartProc:addItem(kcSimpleProcedureItem:new("  When instructed by ground crew after pushback/towing"))
+-- pushstartProc:addItem(kcSimpleProcedureItem:new("Next BEFORE TAXI PROCEDURE"))
 
 
 -- ============ BEFORE TAXI PROCEDURE (F/O) ============
@@ -1116,8 +1117,8 @@ beforeTaxiProc:addItem(kcProcedureItem:new("LE FLAPS EXT GREEN LIGHT","ILLUMINAT
 beforeTaxiProc:addItem(kcProcedureItem:new("FLIGHT CONTROLS","CHECK",kcFlowItem.actorCPT,1))
 beforeTaxiProc:addItem(kcProcedureItem:new("TRANSPONDER","AS NEEDED",kcFlowItem.actorFO,1))
 beforeTaxiProc:addItem(kcProcedureItem:new("Recall","CHECK",kcFlowItem.actorBOTH,1))
-beforeTaxiProc:addItem(kcSimpleProcedureItem:new("  Verify annunciators illuminate and then extinguish."))
-beforeTaxiProc:addItem(kcSimpleProcedureItem:new("Call BEFORE TAXI CHECKLIST"))
+-- beforeTaxiProc:addItem(kcSimpleProcedureItem:new("  Verify annunciators illuminate and then extinguish."))
+-- beforeTaxiProc:addItem(kcSimpleProcedureItem:new("Call BEFORE TAXI CHECKLIST"))
 
 -- ============ BEFORE TAXI CHECKLIST (F/O) ============
 -- GENERATORS...................................ON (CPT)
@@ -1154,7 +1155,7 @@ beforeTaxiChkl:addItem(kcChecklistItem:new("ENGINE START LEVERS","IDLE DETENT",k
 	function () return sysEngines.startLeverGroup:getStatus() == 2 end))
 beforeTaxiChkl:addItem(kcChecklistItem:new("FLIGHT CONTROLS","CHECKED",kcChecklistItem.actorCPT,1))
 beforeTaxiChkl:addItem(kcChecklistItem:new("GROUND EQUIPMENT","CLEAR",kcChecklistItem.actorBOTH,1))
-beforeTaxiChkl:addItem(kcSimpleChecklistItem:new("Next BEFORE TAKEOFF CHECKLIST"))
+-- beforeTaxiChkl:addItem(kcSimpleChecklistItem:new("Next BEFORE TAKEOFF CHECKLIST"))
 
 -- ============ BEFORE TAKEOFF CHECKLIST (F/O) ============
 -- TAKEOFF BRIEFING.......................REVIEWED (CPT)
@@ -1168,7 +1169,7 @@ beforeTakeoffChkl:addItem(kcChecklistItem:new("TAKEOFF BRIEFING","REVIEWED",kcCh
 beforeTakeoffChkl:addItem(kcChecklistItem:new("FLAPS","___ GREEN LIGHT",kcChecklistItem.actorCPT,1))
 beforeTakeoffChkl:addItem(kcChecklistItem:new("STABILIZER TRIM","___ UNITS",kcChecklistItem.actorCPT,1))
 beforeTakeoffChkl:addItem(kcChecklistItem:new("CABIN","SECURE",kcChecklistItem.actorCPT,1))
-beforeTakeoffChkl:addItem(kcSimpleChecklistItem:new("Next RUNWAY ENTRY PROCEDURE"))
+-- beforeTakeoffChkl:addItem(kcSimpleChecklistItem:new("Next RUNWAY ENTRY PROCEDURE"))
 
 -- ============ RUNWAY ENTRY PROCEDURE (F/O) ============
 -- STROBES.......................................ON (F/O)
@@ -1194,7 +1195,7 @@ runwayEntryProc:addItem(kcChecklistItem:new("RWY TURNOFF LIGHTS","ON",kcChecklis
 runwayEntryProc:addItem(kcChecklistItem:new("TAXI LIGHTS","OFF",kcChecklistItem.actorCPT,2,
 	function () return sysLights.taxiSwitch:getStatus() == 0 end,
 	function () sysLights.taxiSwitch:actuate(0) end))
-runwayEntryProc:addItem(kcSimpleChecklistItem:new("Next TAKEOFF AND INITIAL CLIMB"))
+-- runwayEntryProc:addItem(kcSimpleChecklistItem:new("Next TAKEOFF AND INITIAL CLIMB"))
 
 -- =========== TAKEOFF & INITIAL CLIMB (BOTH) ===========
 -- AUTOTHROTTLE................................ARM   (PF)
@@ -1220,7 +1221,7 @@ takeoffClimbProc:addItem(kcProcedureItem:new("FLAPS 10","MAX xxx KTS",kcFlowItem
 takeoffClimbProc:addItem(kcProcedureItem:new("FLAPS 5","MAX xxx KTS",kcFlowItem.actorPNF,2))
 takeoffClimbProc:addItem(kcProcedureItem:new("FLAPS 1","MAX xxx KTS",kcFlowItem.actorPNF,2))
 takeoffClimbProc:addItem(kcProcedureItem:new("FLAPS UP","MAX xxx KTS",kcFlowItem.actorPNF,2))
-takeoffClimbProc:addItem(kcSimpleChecklistItem:new("Next AFTER TAKEOFF CHECKLIST"))
+-- takeoffClimbProc:addItem(kcSimpleChecklistItem:new("Next AFTER TAKEOFF CHECKLIST"))
 
 -- ============ AFTER TAKEOFF CHECKLIST (PM) ============
 -- ENGINE BLEEDS................................ON   (PM)
@@ -1244,7 +1245,7 @@ afterTakeoffChkl:addItem(kcChecklistItem:new("FLAPS","UP, NO LIGHTS",kcChecklist
 	function () return sysControls.flapsSwitch:getStatus() == 0 and sysControls.slatsExtended:getStatus() == 0 end,
 	function () sysControls.flapsSwitch:adjustValue(0) end))
 afterTakeoffChkl:addItem(kcChecklistItem:new("ALTIMETERS","SET",kcChecklistItem.actorBOTH,1))
-afterTakeoffChkl:addItem(kcSimpleChecklistItem:new("Next CLIMB & CRUISE"))
+-- afterTakeoffChkl:addItem(kcSimpleChecklistItem:new("Next CLIMB & CRUISE"))
 
 
 -- =============== CLIMB & CRUISE (BOTH) ================
@@ -1286,7 +1287,7 @@ descentProc:addItem(kcSimpleChecklistItem:new("Set the RADIO/BARO minimums as ne
 descentProc:addItem(kcSimpleChecklistItem:new("Set or verify the navigation radios and course for the approach."))
 descentProc:addItem(kcSimpleChecklistItem:new("Set the AUTO BRAKE select switch to the needed brake setting."))
 descentProc:addItem(kcSimpleChecklistItem:new("Do the approach briefing."))
-descentProc:addItem(kcSimpleChecklistItem:new("Call DESCENT CHECKLIST"))
+-- descentProc:addItem(kcSimpleChecklistItem:new("Call DESCENT CHECKLIST"))
 
 -- =============== DESCENT CHECKLIST (PM) ===============
 -- PRESSURISATION...................LAND ALT _____   (PM)
@@ -1302,7 +1303,7 @@ descentChkl:addItem(kcChecklistItem:new("RECALL","CHECKED",kcChecklistItem.actor
 descentChkl:addItem(kcChecklistItem:new("AUTOBRAKE","___",kcChecklistItem.actorPM,1))
 descentChkl:addItem(kcChecklistItem:new("LANDING DATA","VREF___, MINIMUMS___",kcChecklistItem.actorBOTH,1))
 descentChkl:addItem(kcChecklistItem:new("APPROACH BRIEFING","COMPLETED",kcChecklistItem.actorPM,1))
-descentChkl:addItem(kcSimpleChecklistItem:new("Next APPROACH CHECKLIST"))
+-- descentChkl:addItem(kcSimpleChecklistItem:new("Next APPROACH CHECKLIST"))
 
 -- ============ approach =============
 local approachProc = kcProcedure:new("APPROACH PROCEDURE")
@@ -1315,7 +1316,7 @@ local approachProc = kcProcedure:new("APPROACH PROCEDURE")
 local approachChkl = kcChecklist:new("APPROACH CHECKLIST (PM)")
 approachChkl:addItem(kcChecklistItem:new("ALTIMETERS","QNH ___",kcChecklistItem.actorBOTH,1))
 approachChkl:addItem(kcChecklistItem:new("NAV AIDS","SET",kcChecklistItem.actorPM,1))
-approachChkl:addItem(kcSimpleChecklistItem:new("Next LANDING CHECKLIST"))
+-- approachChkl:addItem(kcSimpleChecklistItem:new("Next LANDING CHECKLIST"))
 
 local landingProc = kcProcedure:new("LANDING PROCEDURE (BOTH)")
 
@@ -1340,7 +1341,7 @@ landingChkl:addItem(kcChecklistItem:new("LANDING GEAR","DOWN",kcChecklistItem.ac
 	function () return sysGeneral.GearSwitch:getStatus() == modeOn end,
 	function () sysGeneral.GearSwitch:actuate(modeOn) end))
 landingChkl:addItem(kcChecklistItem:new("FLAPS","___, GREEN LIGHT",kcChecklistItem.actorPF,2))
-landingChkl:addItem(kcSimpleChecklistItem:new("Next AFTER LANDING PROCEDURE"))
+-- landingChkl:addItem(kcSimpleChecklistItem:new("Next AFTER LANDING PROCEDURE"))
 
 -- ============ after landing =============
 local afterLandingProc = kcProcedure:new("AFTER LANDING PROCEDURE (F/O)")
@@ -1379,7 +1380,7 @@ afterLandingProc:addItem(kcProcedureItem:new("AUTOBRAKE","OFF",kcFlowItem.actorF
 afterLandingProc:addItem(kcProcedureItem:new("TRANSPONDER","STBY",kcFlowItem.actorFO,2,
 	function () return sysRadios.xpdrSwitch:getStatus() == sysRadios.xpdrSTBY end,
 	function () sysRadios.xpdrSwitch:adjustValue(sysRadios.xpdrSTBY,0,5) end))
-afterLandingProc:addItem(kcSimpleChecklistItem:new("Next SHUTDOWN PROCEDURE"))
+-- afterLandingProc:addItem(kcSimpleChecklistItem:new("Next SHUTDOWN PROCEDURE"))
 
 -- ============ shutdown =============
 local shutdownProc = kcProcedure:new("SHUTDOWN PROCEDURE")
@@ -1449,7 +1450,7 @@ shutdownProc:addItem(kcProcedureItem:new("FLIGHT DIRECTOR SWITCHES","OFF",kcFlow
 shutdownProc:addItem(kcChecklistItem:new("TRANSPONDER","STBY",kcChecklistItem.actorFO,2,
 	function () return sysRadios.xpdrSwitch:getStatus() == sysRadios.xpdrSTBY end,
 	function () sysRadios.xpdrSwitch:adjustValue(sysRadios.xpdrSTBY,0,5) end))
-shutdownProc:addItem(kcSimpleChecklistItem:new("Next SHUTDOWN CHECKLIST"))
+-- shutdownProc:addItem(kcSimpleChecklistItem:new("Next SHUTDOWN CHECKLIST"))
 -- Reset MCP
 -- [15] = {["activity"] = "DOORS", ["wait"] = 1, ["interactive"] = 0, ["actor"] = "SYS:", ["validated"] = 0, ["chkl_color"] = color_white, ["end"] = 0,
 -- [16] = {["activity"] = "RESET ELAPSED TIME", ["wait"] = 1, ["interactive"] = 0, ["actor"] = "F/O:", ["validated"] = 0, ["chkl_color"] = color_white, ["end"] = 0,

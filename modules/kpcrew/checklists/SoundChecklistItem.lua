@@ -1,3 +1,4 @@
+-- Obsolete
 local SoundChecklistItem = {
 }
 

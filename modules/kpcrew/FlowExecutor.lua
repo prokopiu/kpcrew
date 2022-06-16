@@ -83,6 +83,11 @@ function kcFlowExecutor:execute()
 			if not step:isValid() then
 				step:setState(kcFlowItem.FAIL)
 				self.flow:setState(kcFlow.HALT)
+				if self.flow:getClassName() == "Checklist" then
+					if step:getClassName() == "ManualChecklistItem" then
+						step:execute()
+					end
+				end
 			end
 			if self.flow:getClassName() == "Checklist" and step:getState() ~= kcFlowItem.RUN and step:getClassName() ~= "SimpleChecklistItem" then
 				step:setState(kcFlowItem.PAUSE)
