@@ -41,6 +41,9 @@ end
 if PLANE_ICAO == "MD82" then
 	kh_acf_icao = "MD82"
 end
+if PLANE_ICAO == "B744" then
+	kh_acf_icao = "B744"
+end
 
 set("sim/private/controls/shadow/cockpit_near_adjust",0.09)
 
