@@ -85,6 +85,7 @@ sysMCP.vnavSwitch = TwoStateToggleSwitch:new("vnav","laminar/B747/autopilot/vnav
 
 -- LVL CHG
 sysMCP.lvlchgSwitch = InopSwitch:new("lvlchg")
+--,"",0,"laminar/B747/autopilot/button_switch/flch_mode")
 
 -- HDG
 sysMCP.hdgSelector = MultiStateCmdSwitch:new("hdg","sim/cockpit2/autopilot/heading_dial_deg_mag_pilot",0,"sim/autopilot/heading_down","sim/autopilot/heading_up")

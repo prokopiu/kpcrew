@@ -19,7 +19,7 @@ local drefCurrentBaro = "sim/weather/barometer_sealevel_inhg"
 local drefSlider = "sim/cockpit2/switches/custom_slider_on"
 
 -- Parking Brake
-sysGeneral.parkBrakeSwitch = TwoStateToggleSwitch:new("parkbrake","sim/cockpit2/controls/parking_brake_ratio",0,"sim/flight_controls/brakes_toggle_max")
+sysGeneral.parkBrakeSwitch = TwoStateToggleSwitch:new("parkbrake","laminar/B747/flt_ctrls/parking_brake_ratio",0,"laminar/B747/flt_ctrls/parking_brake_toggle")
 
 -- Landing Gear
 sysGeneral.GearSwitch = TwoStateCmdSwitch:new("gear","sim/cockpit2/controls/gear_handle_down",0,"sim/flight_controls/landing_gear_down","sim/flight_controls/landing_gear_up","nocommand")
