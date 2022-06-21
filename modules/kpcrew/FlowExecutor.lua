@@ -44,12 +44,6 @@ local function jump2NextStep(flow)
 	end
 end
 
-local function speakChklResponse(flow,step)
-	if flow:getClassName() == "Checklist" and getActivePrefs():get("general:speakChecklist") == true then
-		kc_speakNoText(1,":" .. kc_parse_string(step:getResponseText()))
-	end
-end
-
 function kcFlowExecutor:execute()
 	self.flow = getActiveSOP():getActiveFlow()
 	local flowState = self.flow:getState()
@@ -64,22 +58,20 @@ function kcFlowExecutor:execute()
 		-- execute the flow step by step
 		local stepState = step:getState()
 		if self.flow:getClassName() == "Checklist" then
-			kc_wnd_flow_action = 1
+			kc_wnd_flow_action = 1 -- open flow window for checklist
 		end
+
+		self.nextStepTime = kc_getPcTime() + step:getWaitTime()
 
 		-- initial state
 		if stepState == kcFlowItem.INIT then
-			if getActivePrefs():get("general:speakProcedure") == true then
-				if self.flow:getClassName() == "Procedure" then
-					kc_speakNoText(0,kc_parse_string(step:getChallengeText() .. ": " .. step:getResponseText()))
-				end
-			end
+			-- speak challenge text, for procedures this is the whole line
+			step:speakChallengeText()
+			-- execute automatic steps if available
 			if getActivePrefs():get("general:assistance") > 2 then
 				step:execute()
 			end
-			if self.flow:getClassName() == "Checklist" then
-				kc_speakNoText(0,kc_parse_string(step.challengeText))
-			end
+
 			if not step:isValid() then
 				step:setState(kcFlowItem.FAIL)
 				self.flow:setState(kcFlow.HALT)
@@ -94,9 +86,7 @@ function kcFlowExecutor:execute()
 				self.flow:setState(kcFlow.PAUSE)
 			end
 			if step:isValid() then
-				if (getActivePrefs():get("general:speakProcedure") == true or self.flow:getClassName() == "Checklist") 
-				  and step:getWaitTime() > 1 then
-					self.nextStepTime = kc_getPcTime() + step:getWaitTime()
+				if step:getWaitTime() > 0 then
 					self.flow:setState(kcFlow.WAIT)
 				else
 					step:setState(kcFlowItem.DONE)
@@ -104,10 +94,8 @@ function kcFlowExecutor:execute()
 			end
 		elseif stepState == kcFlowItem.RUN then
 			if step:isValid() then
-				speakChklResponse(self.flow,step)
-				if (getActivePrefs():get("general:speakProcedure") == true or self.flow:getClassName() == "Checklist") 
-				  and step:getWaitTime() > 1 then
-					self.nextStepTime = kc_getPcTime() + step:getWaitTime()
+				step:speakResponseText()
+				if step:getWaitTime() > 0 then
 					self.flow:setState(kcFlow.WAIT)
 				else
 					step:setState(kcFlowItem.DONE)
@@ -127,12 +115,10 @@ function kcFlowExecutor:execute()
 				step:setState(kcFlowItem.FAIL)
 			end
 			if step:isValid() then
-				if (getActivePrefs():get("general:speakProcedure") == true or self.flow:getClassName() == "Checklist") 
-				  and step:getWaitTime() > 1 then
-					self.nextStepTime = kc_getPcTime() + step:getWaitTime()
+				if step:getWaitTime() > 0 then
 					self.flow:setState(kcFlow.WAIT)
 				else
-					speakChklResponse(self.flow,step)
+					step:speakResponseText()
 					step:setState(kcFlowItem.DONE)
 				end
 			end
@@ -140,6 +126,7 @@ function kcFlowExecutor:execute()
 			jump2NextStep(self.flow)
 
 		else
+			-- do nothing
 		end
 		
 	-- waiting on delay
@@ -163,8 +150,6 @@ function kcFlowExecutor:execute()
 		-- whatever needed when states do not match
 	end
 
-	-- logMsg("Flow End: [" .. self.flow:getClassName() .. "] " .. flowState .. " - Step: " .. step:getState())
-	
 end
 
 return kcFlowExecutor

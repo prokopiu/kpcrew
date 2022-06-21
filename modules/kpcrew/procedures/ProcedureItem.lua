@@ -36,8 +36,44 @@ function kcProcedureItem:new(challengeText,responseText,actor,waittime,validFunc
     return obj
 end
 
-function kcProcedureItem:getClassName()
-	return self.className
+-- more refined wait time only when assistance mode and voice output is needed
+function kcProcedureItem:getWaitTime()
+	if getActivePrefs():get("general:assistance") < 2 then
+		return 0
+	else
+		if getActivePrefs():get("general:speakProcedure") == true then
+			return self.waittime
+		else
+			return 0
+		end
+	end
+	return 0
+end
+
+-- speak the challenge text which is a combination of both
+function kcProcedureItem:speakChallengeText()
+	if getActivePrefs():get("general:assistance") > 1 then
+		if getActivePrefs():get("general:speakProcedure") == true then
+			kc_speakNoText(0,kc_parse_string(self:getChallengeText() .. ": " .. self:getResponseText()))
+		end
+	end
+end
+
+-- no challenge response
+function kcProcedureItem:speakResponseText()
+	-- do nothing
+end
+
+-- execute the automation function if available
+function kcProcedureItem:execute()
+	if getActivePrefs():get("general:assistance") > 2 then
+		if (getActivePrefs():get("general:assistance") == 3 and self:isUserRole() == false) 
+			or getActivePrefs():get("general:assistance") > 3 then
+			if type(self.actionFunc) == 'function' then
+				self.actionFunc()
+			end
+		end
+	end
 end
 
 return kcProcedureItem

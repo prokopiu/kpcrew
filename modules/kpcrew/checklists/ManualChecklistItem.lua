@@ -81,4 +81,26 @@ function kcManualChecklistItem:reset()
 	end
 end	
 
+-- set wait time depending on sound output
+function kcManualChecklistItem:getWaitTime()
+	if getActivePrefs():get("general:assistance") < 2 then
+		return 0
+	else
+		if getActivePrefs():get("general:speakChecklist") == true then
+			return self.waittime
+		else
+			return 0
+		end
+	end
+end
+
+-- speak the challenge text
+function kcManualChecklistItem:speakResponseText()
+	if getActivePrefs():get("general:assistance") > 1 then
+		if getActivePrefs():get("general:speakChecklist") == true then
+			kc_speakNoText(0,kc_parse_string(self:getResponseText()))
+		end
+	end	
+end
+
 return kcManualChecklistItem

@@ -31,10 +31,6 @@ function kcSimpleChecklistItem:new(challengeText, skipFunc)
     return obj
 end
 
--- function kcSimpleChecklistItem:getClassName()
-	-- return self.className
--- end
-
 -- item is always valid
 function kcSimpleChecklistItem:isValid()
 	return true
@@ -61,6 +57,16 @@ function kcSimpleChecklistItem:reset()
     self:setState(kcFlowItem.INIT)
 	self.valid = true
 	self.color = color_white
+end
+
+-- speak the challenge text
+function kcSimpleChecklistItem:speakChallengeText()
+	-- do nothing
+end
+
+-- no challenge response
+function kcSimpleChecklistItem:speakResponseText()
+	-- do nothing
 end
 
 return kcSimpleChecklistItem

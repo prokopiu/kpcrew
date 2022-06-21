@@ -71,4 +71,14 @@ function kcSimpleProcedureItem:reset()
 	self.color = color_grey
 end
 
+-- speak the challenge text
+function kcSimpleProcedureItem:speakChallengeText()
+	-- do nothing
+end
+
+-- no challenge response
+function kcSimpleProcedureItem:speakResponseText()
+	-- do nothing
+end
+
 return kcSimpleProcedureItem

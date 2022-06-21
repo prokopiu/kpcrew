@@ -344,6 +344,16 @@ function kc_indexOf(array, value)
     return nil
 end
 
+-- see if a value is found in given array
+function kc_hasValue (array, value)
+    for i, v in ipairs(array) do
+        if v == value then
+            return true
+        end
+    end
+    return false
+end
+
 -- get daylight 0=dark 1=bright
 function kc_is_daylight()
 	if get("sim/private/stats/skyc/sun_amb_b") < 0.02 then

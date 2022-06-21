@@ -86,4 +86,26 @@ function kcIndirectChecklistItem:isValid()
 	return procvar:getValue()	
 end
 
+-- set wait time depending on sound output
+function kcIndirectChecklistItem:getWaitTime()
+	if getActivePrefs():get("general:assistance") < 2 then
+		return 0
+	else
+		if getActivePrefs():get("general:speakChecklist") == true then
+			return self.waittime
+		else
+			return 0
+		end
+	end
+end
+
+-- speak the challenge text
+function kcIndirectChecklistItem:speakResponseText()
+	if getActivePrefs():get("general:assistance") > 1 then
+		if getActivePrefs():get("general:speakChecklist") == true then
+			kc_speakNoText(0,kc_parse_string(self:getResponseText()))
+		end
+	end	
+end
+
 return kcIndirectChecklistItem

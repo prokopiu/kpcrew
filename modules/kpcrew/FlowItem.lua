@@ -67,6 +67,12 @@ function kcFlowItem:getClassName()
 	return self.className
 end
 
+-- return true if the actor for the item is the sim pilot
+function kcFlowItem:isUserRole()
+	local userroles = {	self.actorPF, self.actorCPT, self.actorLHS }
+	return kc_hasValue(userroles, self.actor)
+end	
+	
 -- get the actor string for this checklist item
 function kcFlowItem:getActor()
 	return self.actor
@@ -84,12 +90,7 @@ end
 
 -- speak the challenge text
 function kcFlowItem:speakChallengeText()
-    kc_speakNoText(1,kc_parse_string(self.challengeText))
-end
-
--- speak the challenge text
-function kcFlowItem:speakResponseText()
-    kc_speakNoText(1,kc_parse_string(self.responseText))
+    kc_speakNoText(0,kc_parse_string(self.challengeText))
 end
 
 -- get the right hand result text for the item
@@ -110,6 +111,11 @@ function kcFlowItem:getResponseText()
 			return resStr()
 		end
 	end
+end
+
+-- speak the challenge text
+function kcFlowItem:speakResponseText()
+	kc_speakNoText(0,kc_parse_string(self:getResponseText()))
 end
 
 -- set the right hand result text for the item
@@ -181,6 +187,7 @@ function kcFlowItem:isValid()
     return self.valid
 end
 
+-- execute the automation function if available
 function kcFlowItem:execute()
 	if type(self.actionFunc) == 'function' then
 		self.actionFunc()

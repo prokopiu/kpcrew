@@ -751,25 +751,61 @@ preflightCPTProc:addItem(kcIndirectProcedureItem:new("LIGHTS","TEST",kcFlowItem.
 
 preflightCPTProc:addItem(kcSimpleProcedureItem:new("EFIS control panel"))
 preflightCPTProc:addItem(kcProcedureItem:new("MINIMUMS REFERENCE SELECTOR","%s|(activePrefSet:get(\"aircraft:efis_mins_dh\")) and \"RADIO\" or \"BARO\"",kcFlowItem.actorCPT,1,
-	function () return ((sysEFIS.minsTypePilot:getStatus() == 0) == activePrefSet:get("aircraft:efis_mins_dh")) end )) 
+	function () return ((sysEFIS.minsTypePilot:getStatus() == 0) == activePrefSet:get("aircraft:efis_mins_dh")) end,
+	function () 
+		local flag = 0 
+		if activePrefSet:get("aircraft:efis_mins_dh") then flag=1 else flag=0 end
+		sysEFIS.minsTypePilot:actuate(flag) 
+	end))
 preflightCPTProc:addItem(kcProcedureItem:new("DECISION HEIGHT OR ALTITUDE REFERENCE","SET",kcFlowItem.actorCPT,1,
-	function () return sysEFIS.minsResetPilot:getStatus() == 1 and math.ceil(sysEFIS.minsPilot:getStatus()) == activeBriefings:get("arrival:decision") end))
+	function () return sysEFIS.minsResetPilot:getStatus() == 1 and math.ceil(sysEFIS.minsPilot:getStatus()) == activeBriefings:get("arrival:decision") end,
+	function () sysEFIS.minsPilot:adjustValue(activeBriefings:get("arrival:decision"),0,9000) end))
 preflightCPTProc:addItem(kcProcedureItem:new("METERS SWITCH","%s|(activePrefSet:get(\"aircraft:efis_mtr\")) and \"MTRS\" or \"FEET\"",kcFlowItem.actorCPT,1,
-	function () return (sysEFIS.mtrsPilot:getStatus() == 0 and activePrefSet:get("aircraft:efis_mtr") == false) or (sysEFIS.mtrsPilot:getStatus() == 1 and activePrefSet:get("aircraft:efis_mtr") == true) end ))
+	function () 
+		return (sysEFIS.mtrsPilot:getStatus() == 0 and activePrefSet:get("aircraft:efis_mtr") == false) 
+		or (sysEFIS.mtrsPilot:getStatus() == 1 and activePrefSet:get("aircraft:efis_mtr") == true) 
+	end,
+	function () 
+		local flag = 0 
+		if activePrefSet:get("aircraft:efis_mtr") then flag=1 else flag=0 end
+		sysEFIS.mtrsPilot:actuate(flag) 
+	end))
 preflightCPTProc:addItem(kcProcedureItem:new("FLIGHT PATH VECTOR","%s|(activePrefSet:get(\"aircraft:efis_fpv\")) and \"ON\" or \"OFF\"",kcFlowItem.actorCPT,1,
-	function () return (sysEFIS.fpvPilot:getStatus() == 0 and activePrefSet:get("aircraft:efis_fpv") == false) or (sysEFIS.fpvPilot:getStatus() == 1 and activePrefSet:get("aircraft:efis_fpv") == true) end ))
+	function () 
+		return (sysEFIS.fpvPilot:getStatus() == 0 and activePrefSet:get("aircraft:efis_fpv") == false) 
+		or (sysEFIS.fpvPilot:getStatus() == 1 and activePrefSet:get("aircraft:efis_fpv") == true) end,
+	function () 
+		local flag = 0 
+		if activePrefSet:get("aircraft:efis_fpv") then flag=1 else flag=0 end
+		sysEFIS.fpvPilot:actuate(flag) 
+	end))
 preflightCPTProc:addItem(kcProcedureItem:new("BAROMETRIC REFERENCE SELECTOR","%s|(activePrefSet:get(\"general:baro_mode_hpa\")) and \"HPA\" or \"IN\"",kcFlowItem.actorCPT,1,
-	function () return (sysGeneral.baroModePilot:getStatus() == 1 and activePrefSet:get("general:baro_mode_hpa") == true) or (sysGeneral.baroModePilot:getStatus() == 0 and activePrefSet:get("general:baro_mode_hpa") == false) end ))
-preflightCPTProc:addItem(kcProcedureItem:new("BAROMETRIC SELECTOR","SET LOCAL ALTIMETER SETTING",kcFlowItem.actorCPT,1))
-preflightCPTProc:addItem(kcProcedureItem:new("VOR/ADF SWITCHES","AS NEEDED",kcFlowItem.actorCPT,1))
+	function () 
+		return (sysGeneral.baroModePilot:getStatus() == 1 and activePrefSet:get("general:baro_mode_hpa") == true) 
+		or (sysGeneral.baroModePilot:getStatus() == 0 and activePrefSet:get("general:baro_mode_hpa") == false) end,
+	function () 
+		local flag = 0 
+		if activePrefSet:get("general:baro_mode_hpa") then flag=1 else flag=0 end
+		sysGeneral.baroModePilot:actuate(flag) 
+	end))
+preflightCPTProc:addItem(kcProcedureItem:new("BAROMETRIC SELECTOR","SET LOCAL ALTIMETER SETTING",kcFlowItem.actorCPT,3,
+	function () return sysGeneral.baroPilot:getStatus() == get("sim/weather/barometer_sealevel_inhg") end,
+	function () sysGeneral.baroGroup:setValue(get("sim/weather/barometer_sealevel_inhg")) end))
+preflightCPTProc:addItem(kcProcedureItem:new("VOR/ADF SWITCHES","VOR",kcFlowItem.actorCPT,1,
+	function () return sysEFIS.voradf1Pilot:getStatus() == 1 and sysEFIS.voradf2Pilot:getStatus() == 1 end,
+	function () sysEFIS.voradf1Pilot:actuate(1) sysEFIS.voradf2Pilot:actuate(1) end))
 preflightCPTProc:addItem(kcProcedureItem:new("MODE SELECTOR","MAP",kcFlowItem.actorCPT,1,
-	function () return sysEFIS.mapModePilot:getStatus() == sysEFIS.mapModeMAP end))
-preflightCPTProc:addItem(kcProcedureItem:new("CENTER SWITCH","AS NEEDED",kcFlowItem.actorCPT,1))
-preflightCPTProc:addItem(kcProcedureItem:new("RANGE SELECTOR","AS NEEDED",kcFlowItem.actorCPT,1))
-preflightCPTProc:addItem(kcProcedureItem:new("TRAFFIC SWITCH","AS NEEDED",kcFlowItem.actorCPT,1))
+	function () return sysEFIS.mapModePilot:getStatus() == sysEFIS.mapModeMAP end,
+	function () sysEFIS.mapModePilot:setValue(sysEFIS.mapModeMAP) end))
+preflightCPTProc:addItem(kcSimpleProcedureItem:new("Set CENTER SWITCH as needed"))
+preflightCPTProc:addItem(kcSimpleProcedureItem:new("Set RANGE SELECTOR as needed"))
+preflightCPTProc:addItem(kcProcedureItem:new("TRAFFIC SWITCH","ON",kcFlowItem.actorCPT,1,
+	function () return sysEFIS.tfcPilot:getStatus() == 1 end,
+	function () sysEFIS.tfcPilot:actuate(1) end))
 preflightCPTProc:addItem(kcProcedureItem:new("WEATHER RADAR","OFF",kcFlowItem.actorCPT,1,
-	function () return sysEFIS.wxrPilot:getStatus() == 0 end))
-preflightCPTProc:addItem(kcProcedureItem:new("MAP SWITCHES","AS NEEDED",kcFlowItem.actorCPT,1))
+	function () return sysEFIS.wxrPilot:getStatus() == 0 end,
+	function () sysEFIS.wxrPilot:actuate(0) end))
+preflightCPTProc:addItem(kcSimpleProcedureItem:new("Set MAP SWITCHES as needed"))
 
 preflightCPTProc:addItem(kcSimpleProcedureItem:new("Mode control panel"))
 preflightCPTProc:addItem(kcProcedureItem:new("COURSE(S)","SET",kcFlowItem.actorCPT,1,

@@ -46,6 +46,21 @@ function kcIndirectProcedureItem:new(challengeText,responseText,actor,waittime,p
     return obj
 end
 
+-- specific wait time
+function kcIndirectProcedureItem:getWaitTime()
+	if getActivePrefs():get("general:assistance") < 2 then
+		return 0
+	end
+	if getActivePrefs():get("general:assistance") > 1 then
+		if getActivePrefs():get("general:speakProcedure") == true then
+			return self.waittime
+		else
+			return 0
+		end
+	end
+	return 0
+end
+
 -- reset the item to its initial state
 function kcIndirectProcedureItem:reset()
     self:setState(kcFlowItem.INIT)
@@ -74,6 +89,20 @@ function kcIndirectProcedureItem:isValid()
 		return false
 	end
 	return procvar:getValue()
+end
+
+-- speak the challenge text
+function kcIndirectProcedureItem:speakChallengeText()
+	if getActivePrefs():get("general:assistance") > 1 then
+		if getActivePrefs():get("general:speakProcedure") == true then
+			kc_speakNoText(0,kc_parse_string(self:getChallengeText() .. ": " .. self:getResponseText()))
+		end
+	end
+end
+
+-- no challenge response
+function kcIndirectProcedureItem:speakResponseText()
+	-- do nothing
 end
 
 return kcIndirectProcedureItem
