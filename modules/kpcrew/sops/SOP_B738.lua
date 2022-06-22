@@ -809,17 +809,26 @@ preflightCPTProc:addItem(kcSimpleProcedureItem:new("Set MAP SWITCHES as needed")
 
 preflightCPTProc:addItem(kcSimpleProcedureItem:new("Mode control panel"))
 preflightCPTProc:addItem(kcProcedureItem:new("COURSE(S)","SET",kcFlowItem.actorCPT,1,
-	function () return math.floor(sysMCP.crs1Selector:getStatus()) == activeBriefings:get("approach:nav1Course") and math.floor(sysMCP.crs2Selector:getStatus()) == activeBriefings:get("approach:nav2Course") end))
+	function () return math.floor(sysMCP.crs1Selector:getStatus()) == activeBriefings:get("approach:nav1Course") 
+		and math.floor(sysMCP.crs2Selector:getStatus()) == activeBriefings:get("approach:nav2Course") end,
+	function () 
+		sysMCP.crs1Selector:setValue(activeBriefings:get("approach:nav1Course"))
+		sysMCP.crs2Selector:setValue(activeBriefings:get("approach:nav2Course"))
+	end))
 preflightCPTProc:addItem(kcProcedureItem:new("FLIGHT DIRECTOR SWITCH","ON",kcFlowItem.actorCPT,1,
-	function () return sysMCP.fdirPilotSwitch:getStatus() == 1 end))
-preflightCPTProc:addItem(kcProcedureItem:new("BANK ANGLE SELECTOR","AS NEEDED",kcFlowItem.actorCPT,1))
+	function () return sysMCP.fdirPilotSwitch:getStatus() == 1 end,
+	function () sysMCP.fdirPilotSwitch:actuate(1) end))
+preflightCPTProc:addItem(kcSimpleProcedureItem:new("Set BANK ANGLE SELECTOR as needed"))
 preflightCPTProc:addItem(kcProcedureItem:new("AUTOPILOT DISENGAGE BAR","UP",kcFlowItem.actorCPT,1,
-	function () return sysMCP.discAPSwitch:getStatus() == 0 end))
+	function () return sysMCP.discAPSwitch:getStatus() == 0 end,
+	function () sysMCP.discAPSwitch:actuate(0) end))
 
 preflightCPTProc:addItem(kcSimpleProcedureItem:new("Main panel"))
 preflightCPTProc:addItem(kcProcedureItem:new("OXYGEN RESET/TEST SWITCH","PUSH AND HOLD",kcFlowItem.actorCPT,1))
-preflightCPTProc:addItem(kcProcedureItem:new("CLOCK","SET",kcFlowItem.actorCPT,1))
-preflightCPTProc:addItem(kcProcedureItem:new("NOSE WHEEL STEERING SWITCH","GUARD CLOSED",kcFlowItem.actorCPT,1))
+preflightCPTProc:addItem(kcSimpleProcedureItem:new("Set the CLOCK"))
+preflightCPTProc:addItem(kcProcedureItem:new("NOSE WHEEL STEERING SWITCH","GUARD CLOSED",kcFlowItem.actorCPT,1,
+	function () return get("laminar/B738/switches/nose_steer_pos") == 1 end,
+	function () set("laminar/B738/switches/nose_steer_pos",1) end))
 
 preflightCPTProc:addItem(kcSimpleProcedureItem:new("Display select panel"))
 preflightCPTProc:addItem(kcProcedureItem:new("MAIN PANEL DISPLAY UNITS SELECTOR","NORM",kcFlowItem.actorFO,2,
@@ -828,21 +837,34 @@ preflightCPTProc:addItem(kcProcedureItem:new("MAIN PANEL DISPLAY UNITS SELECTOR"
 preflightCPTProc:addItem(kcProcedureItem:new("LOWER DISPLAY UNIT SELECTOR","NORM",kcFlowItem.actorFO,2,
 	function () return sysGeneral.lowerDuFO:getStatus() == 0 and sysGeneral.lowerDuCPT:getStatus() == 0 end,
 	function () sysGeneral.lowerDuFO:adjustValue(0,-1,1) sysGeneral.lowerDuCPT:adjustValue(0,-1,1) end))
-preflightCPTProc:addItem(kcProcedureItem:new("INTEGRATED STANDBY FLIGHT DISPLAY","SET",kcFlowItem.actorCPT,1))
+preflightCPTProc:addItem(kcSimpleProcedureItem:new("Set INTEGRATED STANDBY FLIGHT DISPLAY"))
 preflightCPTProc:addItem(kcProcedureItem:new("SPEED BRAKE LEVER","DOWN DETENT",kcFlowItem.actorCPT,1,
-	function () return sysControls.spoilerLever:getStatus() == 0 end))
+	function () return sysControls.spoilerLever:getStatus() == 0 end,
+	function () set("laminar/B738/flt_ctrls/speedbrake_lever",0) end))
 preflightCPTProc:addItem(kcProcedureItem:new("REVERSE THRUST LEVERS","DOWN",kcFlowItem.actorCPT,1,
-	function () return sysEngines.reverseLever1:getStatus() == 0 and sysEngines.reverseLever2:getStatus() == 0 end))
+	function () return sysEngines.reverseLever1:getStatus() == 0 and sysEngines.reverseLever2:getStatus() == 0 end,
+	function () set("laminar/B738/flt_ctrls/reverse_lever1",0) set("laminar/B738/flt_ctrls/reverse_lever2",0) end))
 preflightCPTProc:addItem(kcProcedureItem:new("FORWARD THRUST LEVERS","CLOSED",kcFlowItem.actorCPT,1,
-	function () return sysEngines.thrustLever1:getStatus() == 0 and sysEngines.thrustLever2:getStatus() == 0 end))
+	function () return sysEngines.thrustLever1:getStatus() == 0 and sysEngines.thrustLever2:getStatus() == 0 end,
+	function () set("laminar/B738/engine/thrust1_leveler",0) set("laminar/B738/engine/thrust2_leveler",0) end))
 preflightCPTProc:addItem(kcProcedureItem:new("FLAP LEVER","SET",kcFlowItem.actorCPT,1))
 preflightCPTProc:addItem(kcSimpleProcedureItem:new("  Set the flap lever to agree with the flap position."))
 preflightCPTProc:addItem(kcProcedureItem:new("PARKING BRAKE","SET",kcFlowItem.actorFO,1,
-	function () return sysGeneral.parkBrakeSwitch:getStatus() == 1 end))
+	function () return sysGeneral.parkBrakeSwitch:getStatus() == 1 end,
+	function () sysGeneral.parkBrakeSwitch:actuate(1) end))
 preflightCPTProc:addItem(kcProcedureItem:new("ENGINE START LEVERS","CUTOFF",kcFlowItem.actorCPT,1,
-	function () return sysEngines.startLever1:getStatus() == 0 and sysEngines.startLever2:getStatus() == 0 end))
-preflightCPTProc:addItem(kcProcedureItem:new("STABILIZER TRIM CUTOUT SWITCHES","NORMAL",kcFlowItem.actorCPT,1))
-preflightCPTProc:addItem(kcProcedureItem:new("RADIO TUNING PANEL","SET",kcFlowItem.actorCPT,1))
+	function () return sysEngines.startLever1:getStatus() == 0 and sysEngines.startLever2:getStatus() == 0 end,
+	function () sysEngines.startLever1:actuate(0) sysEngines.startLever2:actuate(0) end))
+preflightCPTProc:addItem(kcProcedureItem:new("STABILIZER TRIM CUTOUT SWITCHES","NORMAL",kcFlowItem.actorCPT,1,
+	function () return get("laminar/B738/toggle_switch/ap_trim_lock_pos") == 0 and
+		get("laminar/B738/toggle_switch/el_trim_lock_pos") == 0 and
+		get("laminar/B738/toggle_switch/ap_trim_pos") == 0 and
+		get("laminar/B738/toggle_switch/el_trim_pos") == 0 end,
+	function () set("laminar/B738/toggle_switch/ap_trim_lock_pos",0)
+		set("laminar/B738/toggle_switch/el_trim_lock_pos",0)
+		set("laminar/B738/toggle_switch/ap_trim_pos",0)
+		set("laminar/B738/toggle_switch/el_trim_pos",0) end))
+preflightCPTProc:addItem(kcSimpleProcedureItem:new("Set RADIO TUNING PANEL"))
 -- preflightCPTProc:addItem(kcSimpleProcedureItem:new("CALL PREFLIGHT CHECKLIST"))
 
 -- =============== PREFLIGHT CHECKLIST (PM) ============== 
@@ -906,8 +928,8 @@ local beforeStartProc = kcProcedure:new("BEFORE START PROCEDURE (BOTH)")
 beforeStartProc:addItem(kcProcedureItem:new("FLIGHT DECK DOOR","CLOSED AND LOCKED",kcFlowItem.actorFO,2,
 	function () return sysGeneral.cockpitDoor:getStatus() == 0 end,
 	function () sysGeneral.cockpitDoor:actuate(0) end))
-beforeStartProc:addItem(kcProcedureItem:new("CDU DISPLAY","SET",kcFlowItem.actorBOTH,1))
-beforeStartProc:addItem(kcProcedureItem:new("N1 BUGS","CHECK",kcFlowItem.actorBOTH,1))
+beforeStartProc:addItem(kcSimpleProcedureItem:new("Set required CDU DISPLAY"))
+beforeStartProc:addItem(kcSimpleProcedureItem:new("Check N1 BUGS"))
 beforeStartProc:addItem(kcProcedureItem:new("IAS BUGS","SET",kcFlowItem.actorBOTH,2,
 	function () return sysFMC.noVSpeeds:getStatus() == 0 end))
 beforeStartProc:addItem(kcSimpleProcedureItem:new("Set MCP"))
@@ -915,7 +937,8 @@ beforeStartProc:addItem(kcProcedureItem:new("  AUTOTHROTTLE ARM SWITCH","ARM",kc
 	function () return sysMCP.athrSwitch:getStatus() == 1 end,
 	function () sysMCP.athrSwitch:actuate(modeOn) end))
 beforeStartProc:addItem(kcProcedureItem:new("  IAS/MACH SELECTOR","SET V2 %03d|activeBriefings:get(\"takeoff:v2\")",kcFlowItem.actorCPT,2,
-	function () return sysMCP.iasSelector:getStatus() == activeBriefings:get("takeoff:v2") end))
+	function () return sysMCP.iasSelector:getStatus() == activeBriefings:get("takeoff:v2") end,
+	function () sysMCP.iasSelector:setValue(activeBriefings:get("takeoff:v2")) end))
 beforeStartProc:addItem(kcProcedureItem:new("  LNAV","ARM",kcFlowItem.actorCPT,2,
 	function () return sysMCP.lnavSwitch:getStatus() == 1 end, 
 	function () sysMCP.lnavSwitch:actuate(modeOn) end,
@@ -930,28 +953,27 @@ beforeStartProc:addItem(kcProcedureItem:new("  INITIAL HEADING","SET %03d|active
 beforeStartProc:addItem(kcProcedureItem:new("  INITIAL ALTITUDE","SET %05d|activeBriefings:get(\"departure:initAlt\")",kcFlowItem.actorCPT,2,
 	function () return sysMCP.altSelector:getStatus() == activeBriefings:get("departure:initAlt") end,
 	function () sysMCP.altSelector:setValue(activeBriefings:get("departure:initAlt")) end ))
-beforeStartProc:addItem(kcProcedureItem:new("TAXI AND TAKEOFF BRIEFINGS","COMPLETE",kcFlowItem.actorBOTH,1))
+beforeStartProc:addItem(kcSimpleProcedureItem:new("TAXI AND TAKEOFF BRIEFINGS - COMPLETE?"))
 beforeStartProc:addItem(kcProcedureItem:new("EXTERIOR DOORS","VERIFY CLOSED",kcFlowItem.actorFO,1,
 	function () return sysGeneral.doorGroup:getStatus() == 0 end,
 	function () sysGeneral.doorGroup:actuate(0) end))
-beforeStartProc:addItem(kcProcedureItem:new("START CLEARANCE","OBTAIN",kcFlowItem.actorBOTH,1))
+beforeStartProc:addItem(kcSimpleProcedureItem:new("Obtain START CLEARANCE"))
 beforeStartProc:addItem(kcSimpleProcedureItem:new("  Obtain a clearance to pressurize hydraulic systems."))
 beforeStartProc:addItem(kcSimpleProcedureItem:new("  Obtain a clearance to start engines."))
 beforeStartProc:addItem(kcSimpleProcedureItem:new("Set Fuel panel"))
 beforeStartProc:addItem(kcProcedureItem:new("  LEFT AND RIGHT CENTER FUEL PUMPS SWITCHES","ON",kcFlowItem.actorFO,2,
 	function () return sysFuel.ctrFuelPumpGroup:getStatus() == 2 end,
 	function () sysFuel.ctrFuelPumpGroup:actuate(1) end,
-	function () return sysFuel.centerTankLbs:getStatus() < 1000 end))
+	function () return sysFuel.centerTankLbs:getStatus() <= 1000 end))
+beforeStartProc:addItem(kcProcedureItem:new("  LEFT AND RIGHT CENTER FUEL PUMPS SWITCHES","OFF",kcFlowItem.actorFO,2,
+	function () return sysFuel.ctrFuelPumpGroup:getStatus() == 0 end,
+	function () sysFuel.ctrFuelPumpGroup:actuate(0) end,
+	function () return sysFuel.centerTankLbs:getStatus() > 1000 end))
 beforeStartProc:addItem(kcSimpleProcedureItem:new("    If center tank quantity exceeds 1,000 lbs/460 kgs",
-	function () return sysFuel.centerTankLbs:getStatus() < 1000 end))
+	function () return sysFuel.centerTankLbs:getStatus() <= 1000 end))
 beforeStartProc:addItem(kcProcedureItem:new("  AFT AND FORWARD FUEL PUMPS SWITCHES","ON",kcFlowItem.actorFO,2,
 	function () return sysFuel.wingFuelPumpGroup:getStatus() == 4 end,
-	function () sysFuel.wingFuelPumpGroup:actuate(1) end,
-	function () return sysFuel.centerTankLbs:getStatus() > 999 end))
-beforeStartProc:addItem(kcProcedureItem:new("  AFT AND FORWARD FUEL PUMPS SWITCHES","ON",kcFlowItem.actorFO,2,
-	function () return sysFuel.allFuelPumpGroup:getStatus() == 6 end,
-	function () sysFuel.allFuelPumpGroup:actuate(1) end,
-	function () return sysFuel.centerTankLbs:getStatus() < 1000 end))
+	function () sysFuel.wingFuelPumpGroup:actuate(1) end))
 beforeStartProc:addItem(kcSimpleProcedureItem:new("Set Hydraulic panel"))
 beforeStartProc:addItem(kcProcedureItem:new("  ENGINE HYDRAULIC PUMP SWITCHES","OFF",kcFlowItem.actorFO,2,
 	function () return sysHydraulic.engHydPumpGroup:getStatus() == 0 end,
@@ -963,7 +985,7 @@ beforeStartProc:addItem(kcProcedureItem:new("ANTI COLLISION LIGHT SWITCH","ON",k
 	function () return sysLights.beaconSwitch:getStatus() == 1 end,
 	function () sysLights.beaconSwitch:actuate(1) end))
 beforeStartProc:addItem(kcSimpleProcedureItem:new("Set Trim"))
-beforeStartProc:addItem(kcProcedureItem:new("  STABILIZER TRIM","___ UNITS",kcFlowItem.actorCPT,1)) --******
+beforeStartProc:addItem(kcProcedureItem:new("  STABILIZER TRIM","%3.2f UNITS (%3.2f)|sysControls.pitchTrimSwitch:getStatus()|activeBriefings:get(\"takeoff:elevatorTrim\")",kcFlowItem.actorCPT,1))
 beforeStartProc:addItem(kcProcedureItem:new("  AILERON TRIM","0 UNITS (%3.2f)|sysControls.aileronTrimSwitch:getStatus()",kcFlowItem.actorCPT,2,
 	function () return sysControls.aileronTrimSwitch:getStatus() == 0 end,
 	function () sysControls.aileronTrimSwitch:setValue(0) end))
