@@ -46,6 +46,7 @@ sysMCP 					= require("kpcrew.systems." .. kc_acf_icao .. ".sysMCP")
 sysEFIS 				= require("kpcrew.systems." .. kc_acf_icao .. ".sysEFIS")	
 sysFMC 					= require("kpcrew.systems." .. kc_acf_icao .. ".sysFMC")	
 
+require("kpcrew.briefings.briefings_" .. kc_acf_icao)
 
 -- Set up SOP =========================================================================
 
@@ -1084,8 +1085,8 @@ pushstartProc:addItem(kcIndirectProcedureItem:new("  ENGINE START SWITCH","START
 		return sysEngines.engStart2Switch:getStatus() == 0 else 
 		return sysEngines.engStart1Switch:getStatus() == 0 end end,
 	function () if activeBriefings:get("taxi:startSequence") == 1 then
-		sysEngines.engStart2Switch:setValue(0) else
-		sysEngines.engStart1Switch:setValue(0) end end))
+		sysEngines.engStart2Switch:actuate(0) else
+		sysEngines.engStart1Switch:actuate(0) end end))
 pushstartProc:addItem(kcSimpleProcedureItem:new("  Verify that the N2 RPM increases."))
 pushstartProc:addItem(kcSimpleProcedureItem:new("  When N1 rotation is seen and N2 is at 25%,"))
 pushstartProc:addItem(kcIndirectProcedureItem:new("  ENGINE START LEVER","LEVER %s IDLE|activeBriefings:get(\"taxi:startSequence\") == 1 and \"2\" or \"1\"",kcFlowItem.actorFO,2,"eng_start_1_lever",
@@ -1093,8 +1094,9 @@ pushstartProc:addItem(kcIndirectProcedureItem:new("  ENGINE START LEVER","LEVER 
 		return sysEngines.startLever2:getStatus() == 1 else 
 		return sysEngines.startLever1:getStatus() == 1 end end,
 	function () if activeBriefings:get("taxi:startSequence") == 1 then
-		sysEngines.startLever2:setValue(1) else
-		sysEngines.startLever1:setValue(1) end end))
+		sysEngines.startLever2:actuate(1) else
+		sysEngines.startLever1:actuate(1) end
+	end))
 pushstartProc:addItem(kcSimpleProcedureItem:new("  When starter switch jumps back call STARTER CUTOUT"))
 pushstartProc:addItem(kcProcedureItem:new("START SECOND ENGINE","START ENGINE %s|activeBriefings:get(\"taxi:startSequence\") == 1 and \"1\" or \"2\"",kcFlowItem.actorCPT,1))
 pushstartProc:addItem(kcIndirectProcedureItem:new("  ENGINE START SWITCH","START SWITCH %s TO GRD|activeBriefings:get(\"taxi:startSequence\") == 1 and \"1\" or \"2\"",kcFlowItem.actorFO,2,"eng_start_2_grd",
@@ -1102,8 +1104,8 @@ pushstartProc:addItem(kcIndirectProcedureItem:new("  ENGINE START SWITCH","START
 		return sysEngines.engStart1Switch:getStatus() == 0 else 
 		return sysEngines.engStart2Switch:getStatus() == 0 end end,
 	function () if activeBriefings:get("taxi:startSequence") == 1 then
-		sysEngines.engStart1Switch:setValue(0) else
-		sysEngines.engStart2Switch:setValue(0) end end))
+		sysEngines.engStart1Switch:actuate(0) else
+		sysEngines.engStart2Switch:actuate(0) end end))
 pushstartProc:addItem(kcSimpleProcedureItem:new("  Verify that the N2 RPM increases."))
 pushstartProc:addItem(kcSimpleProcedureItem:new("  When N1 rotation is seen and N2 is at 25%,"))
 pushstartProc:addItem(kcIndirectProcedureItem:new("  ENGINE START LEVER","LEVER %s IDLE|activeBriefings:get(\"taxi:startSequence\") == 1 and \"1\" or \"2\"",kcFlowItem.actorFO,2,"eng_start_2_lever",
@@ -1111,8 +1113,8 @@ pushstartProc:addItem(kcIndirectProcedureItem:new("  ENGINE START LEVER","LEVER 
 		return sysEngines.startLever1:getStatus() == 1 else 
 		return sysEngines.startLever2:getStatus() == 1 end end,
 	function () if activeBriefings:get("taxi:startSequence") == 1 then
-		sysEngines.startLever1:setValue(1) else
-		sysEngines.startLever2:setValue(1) end end))
+		sysEngines.startLever1:actuate(1) else
+		sysEngines.startLever2:actuate(1) end end))
 pushstartProc:addItem(kcSimpleProcedureItem:new("  When starter switch jumps back call STARTER CUTOUT"))
 pushstartProc:addItem(kcIndirectProcedureItem:new("PARKING BRAKE","SET",kcFlowItem.actorFO,2,"pb_parkbrk_after_set",
 	function () return sysGeneral.parkBrakeSwitch:getStatus() == 1 end))
@@ -1225,7 +1227,7 @@ beforeTaxiChkl:addItem(kcChecklistItem:new("GROUND EQUIPMENT","CLEAR",kcChecklis
 local beforeTakeoffChkl = kcChecklist:new("BEFORE TAKEOFF CHECKLIST (F/O)")
 beforeTakeoffChkl:addItem(kcChecklistItem:new("TAKEOFF BRIEFING","REVIEWED",kcChecklistItem.actorCPT,1))
 beforeTakeoffChkl:addItem(kcChecklistItem:new("FLAPS","___ GREEN LIGHT",kcChecklistItem.actorCPT,1))
-beforeTakeoffChkl:addItem(kcChecklistItem:new("STABILIZER TRIM","___ UNITS",kcChecklistItem.actorCPT,1))
+beforeTakeoffChkl:addItem(kcChecklistItem:new("STABILIZER TRIM","%3.2f UNITS (%3.2f)|sysControls.pitchTrimSwitch:getStatus()|activeBriefings:get(\"takeoff:elevatorTrim\")",kcChecklistItem.actorCPT,1))
 beforeTakeoffChkl:addItem(kcChecklistItem:new("CABIN","SECURE",kcChecklistItem.actorCPT,1))
 -- beforeTakeoffChkl:addItem(kcSimpleChecklistItem:new("Next RUNWAY ENTRY PROCEDURE"))
 
@@ -1271,14 +1273,74 @@ local takeoffClimbProc = kcProcedure:new("TAKEOFF & INITIAL CLIMB")
 takeoffClimbProc:addItem(kcProcedureItem:new("AUTOTHROTTLE","ARM",kcFlowItem.actorPF,2,
 	function () return sysMCP.athrSwitch:getStatus() == 1 end,
 	function () sysMCP.athrSwitch:actuate(modeOn) end))
-takeoffClimbProc:addItem(kcProcedureItem:new("A/P MODES","%s|kc_TakeoffApModes[activeBriefings:get(\"takeoff:apMode\")]",kcFlowItem.actorPF,2))
-takeoffClimbProc:addItem(kcProcedureItem:new("SET TAKEOFF THRUST","%s|kc_TakeoffThrust[activeBriefings:get(\"takeoff:thrust\")]",kcFlowItem.actorPF,2))
-takeoffClimbProc:addItem(kcProcedureItem:new("POSITIVE RATE","GEAR UP",kcFlowItem.actorPNF,2))
-takeoffClimbProc:addItem(kcProcedureItem:new("AT XXX ALTITUDE","REQUEST CMD-A",kcFlowItem.actorPF,2))
-takeoffClimbProc:addItem(kcProcedureItem:new("FLAPS 10","MAX xxx KTS",kcFlowItem.actorPNF,2))
-takeoffClimbProc:addItem(kcProcedureItem:new("FLAPS 5","MAX xxx KTS",kcFlowItem.actorPNF,2))
-takeoffClimbProc:addItem(kcProcedureItem:new("FLAPS 1","MAX xxx KTS",kcFlowItem.actorPNF,2))
-takeoffClimbProc:addItem(kcProcedureItem:new("FLAPS UP","MAX xxx KTS",kcFlowItem.actorPNF,2))
+takeoffClimbProc:addItem(kcProcedureItem:new("A/P MODES","%s|kc_pref_split(kc_TakeoffApModes)[activeBriefings:get(\"takeoff:apMode\")]",kcFlowItem.actorPF,2,
+	function () 
+		if activeBriefings:get("takeoff:apMode") == 1 then
+			return sysMCP.lnavSwitch:getStatus() == 1 and sysMCP.vnavSwitch:getStatus() == 1 
+		elseif activeBriefings:get("takeoff:apMode") == 2 then
+			return sysMCP.hdgselSwitch:getStatus() == 1 and sysMCP.lvlchgSwitch:getStatus() == 1 
+		else
+			return true
+		end
+	end, 
+	function () 
+		if activeBriefings:get("takeoff:apMode") == 1 then
+			sysMCP.lnavSwitch:actuate(1) 
+			sysMCP.vnavSwitch:actuate(1) 
+		elseif activeBriefings:get("takeoff:apMode") == 2 then
+			sysMCP.hdgselSwitch:actuate(1)
+			sysMCP.lvlchgSwitch:actuate(1)
+		else
+		end
+	end))
+takeoffClimbProc:addItem(kcIndirectProcedureItem:new("THRUST SETTING","40% N1",kcFlowItem.actorPNF,1,"to40percent",
+	function () return get("laminar/B738/engine/indicators/N1_percent_1") > 40 end))
+takeoffClimbProc:addItem(kcProcedureItem:new("SET TAKEOFF THRUST","T/O MODE",kcFlowItem.actorPF,2,
+	function () return get("laminar/B738/engine/indicators/N1_percent_1") > 70 end,
+	function () command_once("laminar/B738/autopilot/left_toga_press") end))
+takeoffClimbProc:addItem(kcIndirectProcedureItem:new("POSITIVE RATE","GT 40 FT AGL",kcFlowItem.actorPNF,2,"toposrate",
+	function () return get("sim/cockpit2/tcas/targets/position/vertical_speed",0) > 150 and get("sim/flightmodel/position/y_agl") > 40 end))
+takeoffClimbProc:addItem(kcProcedureItem:new("GEAR","UP",kcFlowItem.actorPF,2,
+	function () return sysGeneral.GearSwitch:getStatus() == 0 end,
+	function () sysGeneral.GearSwitch:actuate(0) kc_speakNoText(0,"gear up") end))
+takeoffClimbProc:addItem(kcIndirectProcedureItem:new("FLAPS 15 SPEED","REACHED",kcFlowItem.actorPNF,2,"toflap15spd",
+	function () return get("sim/cockpit2/gauges/indicators/airspeed_kts_pilot") > get("laminar/B738/pfd/flaps_15") end,nil,
+	function () return sysControls.flapsSwitch:getStatus() < 0.625 end))
+takeoffClimbProc:addItem(kcProcedureItem:new("FLAPS 10","SET",kcFlowItem.actorPNF,2,
+	function () return sysControls.flapsSwitch:getStatus() == 0.5 end,
+	function () command_once("laminar/B738/push_button/flaps_10") kc_speakNoText(0,"speed check flaps 10") end,
+	function () return sysControls.flapsSwitch:getStatus() < 0.5 end))
+takeoffClimbProc:addItem(kcIndirectProcedureItem:new("FLAPS 10 SPEED","REACHED",kcFlowItem.actorPNF,2,"toflap10spd",
+	function () return get("sim/cockpit2/gauges/indicators/airspeed_kts_pilot") > get("laminar/B738/pfd/flaps_10") end,nil,
+	function () return sysControls.flapsSwitch:getStatus() < 0.5 end))
+takeoffClimbProc:addItem(kcProcedureItem:new("FLAPS 5","SET",kcFlowItem.actorPNF,2,
+	function () return sysControls.flapsSwitch:getStatus() == 0.375 end,
+	function () command_once("laminar/B738/push_button/flaps_5") kc_speakNoText(0,"speed check flaps 5") end,
+	function () return sysControls.flapsSwitch:getStatus() < 0.375 end))
+takeoffClimbProc:addItem(kcIndirectProcedureItem:new("FLAPS 5 SPEED","REACHED",kcFlowItem.actorPNF,2,"toflap5spd",
+	function () return get("sim/cockpit2/gauges/indicators/airspeed_kts_pilot") > get("laminar/B738/pfd/flaps_5") end,nil,
+	function () return sysControls.flapsSwitch:getStatus() < 0.375 end))
+takeoffClimbProc:addItem(kcProcedureItem:new("FLAPS 1","SET",kcFlowItem.actorPNF,2,
+	function () return sysControls.flapsSwitch:getStatus() == 0.125 end,
+	function () command_once("laminar/B738/push_button/flaps_1") kc_speakNoText(0,"speed check flaps 1") end,
+	function () return sysControls.flapsSwitch:getStatus() < 0.125 end))
+takeoffClimbProc:addItem(kcIndirectProcedureItem:new("FLAPS 1 SPEED","REACHED",kcFlowItem.actorPNF,2,"toflap1spd",
+	function () return get("sim/cockpit2/gauges/indicators/airspeed_kts_pilot") > get("laminar/B738/pfd/flaps_1") end))
+takeoffClimbProc:addItem(kcProcedureItem:new("FLAPS UP","SET",kcFlowItem.actorPNF,2,
+	function () return sysControls.flapsSwitch:getStatus() == 0 end,
+	function () command_once("laminar/B738/push_button/flaps_0") kc_speakNoText(0,"speed check flaps up") end))
+takeoffClimbProc:addItem(kcIndirectProcedureItem:new("ACCELERATION ALTITUDE","GT 300 FT AGL",kcFlowItem.actorPNF,2,"toaccalt",
+	function () return get("sim/flightmodel/position/y_agl") > 300 end))
+takeoffClimbProc:addItem(kcProcedureItem:new("CMD-A","ON",kcFlowItem.actorPF,2,
+	function () return sysMCP.ap1Switch:getStatus() == 1 end,
+	function () if activePrefSet:get("takeoff_cmda") == true then sysMCP.ap1Switch:actuate(1) end kc_speakNoText(0,"command a") end))
+takeoffClimbProc:addItem(kcProcedureItem:new("AUTO BRAKE SELECT SWITCH","OFF",kcFlowItem.actorFO,2,
+	function () return sysGeneral.autobreak:getStatus() == 1 end,
+	function () sysGeneral.autobreak:actuate(1) end))
+takeoffClimbProc:addItem(kcProcedureItem:new("GEAR","OFF",kcFlowItem.actorPF,2,
+	function () return sysGeneral.GearSwitch:getStatus() == 0.5 end,
+	function () command_once("laminar/B738/push_button/gear_off") end))
+	
 -- takeoffClimbProc:addItem(kcSimpleChecklistItem:new("Next AFTER TAKEOFF CHECKLIST"))
 
 -- ============ AFTER TAKEOFF CHECKLIST (PM) ============

@@ -372,6 +372,10 @@ function kc_split(s, delimiter)
     return result;
 end
 
+function kc_pref_split(s)
+	return kc_split(s,"|")
+end
+
 -- ===== imgui supplementary functions =====
 
 -- center text based on imgui window size

@@ -7,5 +7,6 @@ B738Group:add(kcPreference:new("mcp_def_alt",4900,kcPreference.typeInt,"MCP Init
 B738Group:add(kcPreference:new("powerup_apu",false,kcPreference.typeToggle,"Initial Power-Up|APU|GPU")) 
 B738Group:add(kcPreference:new("efis_mtr",false,kcPreference.typeToggle,"EFIS Meters|MTRS|FEET")) 
 B738Group:add(kcPreference:new("efis_fpv",false,kcPreference.typeToggle,"EFIS Flight Path Vector|ON|OFF")) 
+B738Group:add(kcPreference:new("takeoff_cmda",true,kcPreference.typeToggle,"On TO turn on CMDA|ON|OFF")) 
 
 activePrefSet:addGroup(B738Group)
