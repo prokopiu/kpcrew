@@ -21,7 +21,7 @@ local kcFlow = {
 
 -- Instantiate a new Procedure
 -- @tparam string name Name of the set (also used as title)
-function kcFlow:new(name)
+function kcFlow:new(name, speakname)
     kcFlow.__index = kcFlow
     local obj = {}
     setmetatable(obj, kcFlow)
@@ -29,11 +29,33 @@ function kcFlow:new(name)
     obj.name = name
     obj.state = self.START
     obj.items = {}
-    obj.activeItemIndex = 1
+    obj.activeItemIndex = 0
 	obj.wnd = nil
 	obj.className = "Flow"
-
+	obj.resize = true
+	-- if speakname == nil then
+		-- obj.speakName = ""
+	-- else
+		obj.speakName = speakname
+	-- end 
+	
     return obj
+end
+
+function kcFlow:setSpeakName(name)
+	self.speakName = name
+end
+
+function kcFlow:getSpeakName()
+	return self.speakName
+end
+
+function kcFlow:setResize(flag)
+	self.resize = flag
+end
+
+function kcFlow:getResize()
+	return self.resize
 end
 
 -- Get name/title of procedure
@@ -87,7 +109,11 @@ end
 
 -- get the currently active item
 function kcFlow:getActiveItem()
-    return self.items[self.activeItemIndex]
+	if self.activeItemIndex == 0 then 
+		return self.items[1]
+	else
+		return self.items[self.activeItemIndex]
+	end
 end
 
 -- set the active procedure item
@@ -98,6 +124,10 @@ function kcFlow:setActiveItemIndex(itemIndex)
 		return -1
     end
 end
+
+function kcFlow:getActiveItemIndex()
+	return self.activeItemIndex
+end 
 
 -- is there another item left or at end?
 function kcFlow:hasNextItem()

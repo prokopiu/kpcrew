@@ -10,7 +10,7 @@ local kcProcedure = {
 
 -- Instantiate a new Procedure
 -- @tparam string name Name of the set (also used as title)
-function kcProcedure:new(name)
+function kcProcedure:new(name, speakname)
     kcProcedure.__index = kcProcedure
    setmetatable(kcProcedure, {
         __index = kcFlow
@@ -19,6 +19,7 @@ function kcProcedure:new(name)
     setmetatable(obj, kcProcedure)
 
     obj.name = name
+	obj.speakName = speakname
 	obj.className = "Procedure"
 
     return obj

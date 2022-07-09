@@ -55,10 +55,17 @@ function kcFlowExecutor:execute()
 
 	-- running flow
 	if flowState == kcFlow.RUN then
+	
 		-- execute the flow step by step
 		local stepState = step:getState()
 		if self.flow:getClassName() == "Checklist" then
 			kc_wnd_flow_action = 1 -- open flow window for checklist
+		end
+
+		if self.flow:getActiveItemIndex() == 0 then
+			kc_speakNoText(0,self.flow:getSpeakName())
+			self.flow:setActiveItemIndex(1)
+			return
 		end
 
 		self.nextStepTime = kc_getPcTime() + step:getWaitTime()

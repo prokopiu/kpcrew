@@ -141,14 +141,16 @@ end
 
 function kc_flow_builder()
 	-- resize when needed
-	local fheight = getActiveSOP():getActiveFlow():getWndHeight()
-	local fwidth = getActiveSOP():getActiveFlow():getWndWidth()
-	local fxpos = getActiveSOP():getActiveFlow().getWndXPos()
-	local fypos = getActiveSOP():getActiveFlow().getWndYPos()
+	local flow = getActiveSOP():getActiveFlow()
+	local fheight = flow:getWndHeight()
+	local fwidth = flow:getWndWidth()
+	local fxpos = flow.getWndXPos()
+	local fypos = flow.getWndYPos()
 	local wwidth = imgui.GetWindowWidth()
     local wheight = imgui.GetWindowHeight()
+	float_wnd_set_title(kc_flow_wnd, flow:getName())
 	local screenheight = get("sim/graphics/view/window_height")
-	if fwidth ~= wwidth or fheight ~= wheight then
+	if (fwidth ~= wwidth or fheight ~= wheight) and flow:getResize() == true then
 		float_wnd_set_geometry(kc_flow_wnd, fxpos, screenheight - fypos, fxpos + fwidth, screenheight - (fypos + fheight))
 	end
 	getActiveSOP():getActiveFlow():render()
