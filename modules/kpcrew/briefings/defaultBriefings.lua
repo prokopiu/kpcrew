@@ -113,9 +113,38 @@ taxi:add(kcPreference:new("gateStand",1,kcPreference.typeList,"Gate/Stand|" .. D
 taxi:add(kcPreference:new("pushDirection",1,kcPreference.typeList,"Push Direction|" .. DEP_push_direction))
 taxi:add(kcPreference:new("startSequence",1,kcPreference.typeList,"Start Sequence|" .. kc_StartSequence))
 taxi:add(kcPreference:new("taxiRoute","",kcPreference.typeText,"Taxi Route|"))
-taxi:add(kcPreference:new("taxibriefing",
+
+
+-- =================== DEPARTURE BRIEFING ==================
+-- W eather highlites
+-- A ircraft - Type of aircraft and engines
+-- N otams - highlite 
+-- N oise abatement proc
+-- T axi Taxiroute
+-- R outing  SID brief alt constraints, speeds, msa ... frequencies
+-- A utomation AFDS LNAV/VNAV or other
+-- M iscellaneous - any specialities and other non mentioned items of intereset	
+
+local depBriefing = kcPreferenceGroup:new("depBriefing","DEPARTURE BRIEFING")
+-- depBriefing:setInitialOpen(true)
+depBriefing:add(kcPreference:new("taxibriefing",
 function () 
-	local taxiroute = "We are located at "..activeBriefings:get("flight:originIcao") .. " parking stand " .. activeBriefings:get("taxi:parkingStand") .. "\n"
+	local briefing = "OK, I will be the pilot flying\n"
+-- [W] eather highlites
+	briefing = briefing .. "We are located at " .. activeBriefings:get("flight:originIcao") .. " parking stand " .. activeBriefings:get("taxi:parkingStand") .. "\n"
+    briefing = briefing .. "We have ATIS information " .. activeBriefings:get("departure:atisInfo") .. " The weather is " .. kc_buildAtisString() .. "\n\n"
+
+-- [A] ircraft
+    briefing = briefing .. "Today we are flying in a " .. kc_acf_name .. " with <engine and aircraft details from CDU>, we have no M E L issues today" .. "\n\n"
+
+-- [N] otams - highlite 
+    briefing = briefing .. "NOTAMs highlites if there are any <may also include VATSIM/IVAO details etc" .. "\n\n"
+
+-- [N] oise abatement proc
+	briefing = briefing .. "This will be a standard takeoff, noise abatement departure procedure " .. kc_split(DEP_nadp_list,"|")[activeBriefings:get("departure:NADP")] .. "\n\n"
+
+-- [T] axi Taxiroute
+    briefing = briefing .. "As to our taxi route: \n" 	
 	local xtaxiroute = ""
 	if activeBriefings:get("taxi:gateStand") == 1 then
 		xtaxiroute = "This is a gate position, pushback required " .. kc_split(DEP_push_direction,"|")[activeBriefings:get("taxi:pushDirection")] .. "\n"
@@ -126,21 +155,11 @@ function ()
 	if activeBriefings:get("taxi:gateStand") == 3 or activeBriefings:get("taxi:pushDirection") == 1 then
 		xtaxiroute = "We require no pushback at this position, start clearance only\n"
 	end
-	taxiroute = taxiroute .. xtaxiroute
-	taxiroute = taxiroute .. "We will be taxiing to holding point runway " .. activeBriefings:get("departure:rwy") .. " via "
-	taxiroute = taxiroute .. activeBriefings:get("taxi:taxiRoute")
-	return taxiroute
-end,
-kcPreference.typeInfo,"Taxi Briefing|"))
+	briefing = briefing .. xtaxiroute
+	briefing = briefing .. "We will be taxiing to holding point runway " .. activeBriefings:get("departure:rwy") .. " via "
+	briefing = briefing .. activeBriefings:get("taxi:taxiRoute") .. "\n"
 
--- =================== DEPARTURE BRIEFING ==================
-local depBriefing = kcPreferenceGroup:new("depBriefing","DEPARTURE BRIEFING")
--- depBriefing:setInitialOpen(true)
-depBriefing:add(kcPreference:new("taxibriefing",
-function () 
-	local briefing = "OK, I will be the pilot flying\n"
-	briefing = briefing .. "We have no M E L issues today" .. "\n"
-	briefing = briefing .. "This will be a standard takeoff, noise abatement departure procedure " .. kc_split(DEP_nadp_list,"|")[activeBriefings:get("departure:NADP")] .. "\n"
+-- [R] outing 
 	local xdep = ""
 	if activeBriefings:get("departure:type") == 1 then
 		xdep = "This will be a standard instrument departure via " .. activeBriefings:get("departure:route") .. " transition " .. activeBriefings:get("departure:transition") .. "\n"
@@ -154,8 +173,30 @@ function ()
 	briefing = briefing .. xdep 
 	briefing = briefing .. "We will take off from runway " .. activeBriefings:get("departure:rwy")  .. ". Runway conditions are " .. kc_split(DEP_rwystate_list,"|")[activeBriefings:get("departure:rwyCond")] .. "\n"
 	briefing = briefing .. "Initial altitude will be " .. activeBriefings:get("departure:initAlt") .. " ft. Today's cruise altitude will be FL " .. activeBriefings:get("flight:cruiseLevel") .. "\n" 
-	briefing = briefing .. "Transition altitude is " .. activeBriefings:get("departure:transalt") .. "\n" 
-	briefing = briefing .. "Initial heading is " .. activeBriefings:get("departure:initHeading") .. "\n"
+	briefing = briefing .. "Transition altitude is " .. activeBriefings:get("departure:transalt") .. " the initial heading is " .. activeBriefings:get("departure:initHeading") .. "\n"
+	briefing = briefing .. "We will use Flaps " .. kc_split(kc_TakeoffFlaps,"|")[activeBriefings:get("takeoff:flaps")] .. " for takeoff\n"
+	briefing = briefing .. "Our take off thrust is " .. kc_split(kc_TakeoffThrust,"|")[activeBriefings:get("takeoff:thrust")] .. " Anti Ice is " .. kc_split(kc_TakeoffAntiice,"|")[activeBriefings:get("takeoff:antiice")] .. ",bleeds will be " .. kc_split(kc_TakeoffBleeds,"|")[activeBriefings:get("takeoff:bleeds")] .. "\n"
+	briefing = briefing .. "Minimum Safe Altitude along our initial route is ".. activeBriefings:get("takeoff:msa") .. "ft\n"
+	briefing = briefing .. "In case of forced return we are ".. kc_split(DEP_forced_return,"|")[activeBriefings:get("takeoff:forcedReturn")] .. "\n"
+	briefing = briefing .. "The takeoff speeds are set. V1 is ".. activeBriefings:get("takeoff:v1") .. ", Vr is " .. activeBriefings:get("takeoff:vr") .. " and V2 today " .. activeBriefings:get("takeoff:v2") .. "\n"
+	briefing = briefing .. "<Brief the departure procedure from CDU and charts" .. "\n"
+
+-- [A] utomation AFDS LNAV/VNAV or other
+	
+-- [M] iscellaneous
+	briefing = briefing .. "For the security brief:\n"
+	briefing = briefing .. "From 0 to 100 knots for any malfunction I will call reject and we will confirm the autobrakes are operating\n\n"
+	briefing = briefing .. "If not operating I will apply maximum manual breaking and maximum symmetric reverse thrust and come to a full stop on the runway\n\n"
+	briefing = briefing .. "After full stop on the runway we decide on course of further actions\n\n"
+	briefing = briefing .. "From 100 knots to V1 I will reject only for one of the following reasons, engine fire, engine failure or takeoff configuration warning horn\n\n"
+	briefing = briefing .. "At and above V1 we will continue into the air and the only actions for you below 400 feet are to silence any alarm bells and confirm any failures\n\n"
+	briefing = briefing .. "Above 400 feet I will call for failure action drills as required and you'll perform memory items\n\n"
+	briefing = briefing .. "At 800 feet above field elevation I will call for altitude hold and we will retract the flaps on schedule\n\n"
+	briefing = briefing .. "At 1500 feet I will call for the checklist\n\n"
+	briefing = briefing .. "If we are above maximum landing weight we will make decision on whether to perform an overweight landing if the situation requires\n\n"
+	briefing = briefing .. "If we have a wheel well, engine or wing fire, I will turn the aircraft in such a way the flames will be downwind and we will evacuate through the upwind side\n\n"
+	briefing = briefing .. "If we have a cargo fire you need to ensure emergency services do not open the cargo doors until evac is completed\n\n"
+	briefing = briefing .. "Any questions or concerns?\n\n"
 	
 	return briefing
 end,
@@ -180,42 +221,6 @@ takeoff:add(kcPreference:new("v2",0,kcPreference.typeInt,"V2|1"))
 takeoff:add(kcPreference:new("crs1",0,kcPreference.typeInt,"CRS 1|1"))
 takeoff:add(kcPreference:new("crs2",0,kcPreference.typeInt,"CRS 2|1"))
 takeoff:add(kcPreference:new("apMode",1,kcPreference.typeList,"Autopilot Modes|" .. kc_TakeoffApModes))
-
--- =================== TAKEOFF BRIEFING ==================
-local tobrief = kcPreferenceGroup:new("tobrief","TAKEOFF BRIEFING")
--- tobrief:setInitialOpen(true)
-tobrief:add(kcPreference:new("tobrief",
-function () 
-	local briefing = "OK, I will be the pilot flying\n"
-	briefing = briefing .. "We will take off from runway ".. activeBriefings:get("departure:rwy") .. ",runway condition is " .. kc_split(DEP_rwystate_list,"|")[activeBriefings:get("departure:rwyCond")] .. "\n"
-	briefing = briefing .. "Our take off thrust is " .. kc_split(kc_TakeoffThrust,"|")[activeBriefings:get("takeoff:thrust")] .. "\n"
-	briefing = briefing .. "We will use Flaps " .. kc_split(kc_TakeoffFlaps,"|")[activeBriefings:get("takeoff:flaps")] .. " for takeoff\n"
-	briefing = briefing .. "Anti Ice is " .. kc_split(kc_TakeoffAntiice,"|")[activeBriefings:get("takeoff:antiice")] .. ",bleeds will be " .. kc_split(kc_TakeoffBleeds,"|")[activeBriefings:get("takeoff:bleeds")] .. "\n"
-	briefing = briefing .. "Minimum Safe Altitude along our initial route is ".. activeBriefings:get("takeoff:msa") .. "ft\n"
-	briefing = briefing .. "In case of forced return we are ".. kc_split(DEP_forced_return,"|")[activeBriefings:get("takeoff:forcedReturn")] .. "\n"
-	briefing = briefing .. "The takeoff speeds are set. V1 is ".. activeBriefings:get("takeoff:v1") .. ", Vr is " .. activeBriefings:get("takeoff:vr") .. " and V2 today " .. activeBriefings:get("takeoff:v2") .. "\n"
-	
-	return briefing
-end,
-kcPreference.typeInfo,"Let's talk about the takeoff|"))
-tobrief:add(kcPreference:new("securitybrief",
-function () 
-	local sbriefing = "From 0 to 100 knots for any malfunction I will call reject and we will confirm the autobrakes are operating\n\n"
-	sbriefing = sbriefing .. "If not operating I will apply maximum manual breaking and maximum symmetric reverse thrust and come to a full stop on the runway\n\n"
-	sbriefing = sbriefing .. "After full stop on the runway we decide on course of further actions\n\n"
-	sbriefing = sbriefing .. "From 100 knots to V1 I will reject only for one of the following reasons, engine fire, engine failure or takeoff configuration warning horn\n\n"
-	sbriefing = sbriefing .. "At and above V1 we will continue into the air and the only actions for you below 400 feet are to silence any alarm bells and confirm any failures\n\n"
-	sbriefing = sbriefing .. "Above 400 feet I will call for failure action drills as required and you'll perform memory items\n\n"
-	sbriefing = sbriefing .. "At 800 feet above field elevation I will call for altitude hold and we will retract the flaps on schedule\n\n"
-	sbriefing = sbriefing .. "At 1500 feet I will call for the checklist\n\n"
-	sbriefing = sbriefing .. "If we are above maximum landing weight we will make decision on whether to perform an overweight landing if the situation requires\n\n"
-	sbriefing = sbriefing .. "If we have a wheel well, engine or wing fire, I will turn the aircraft in such a way the flames will be downwind and we will evacuate through the upwind side\n\n"
-	sbriefing = sbriefing .. "If we have a cargo fire you need to ensure emergency services do not open the cargo doors until evac is completed\n\n"
-	sbriefing = sbriefing .. "Any questions or concerns?\n\n"
-
-	return sbriefing
-end,
-kcPreference.typeInfo,"For the takeoff safety brief|"))
 
 -- =================== ARRIVAL ==================
 local arrival = kcPreferenceGroup:new("arrival","ARRIVAL")
@@ -264,10 +269,33 @@ approach:add(kcPreference:new("gateStand",1,kcPreference.typeList,"Gate/Stand|" 
 approach:add(kcPreference:new("parkingPosition","",kcPreference.typeText,"Parking Position|"))
 
 -- =================== APPROACH BRIEFING ==================
+-- W eather highlites
+-- A ircraft - Type of aircraft and engines
+-- N otams - highlite 
+-- N oise abatement proc
+-- R outing  STAR brief alt constraints, speeds, msa ... frequencies
+-- T axi Taxiroute
+-- A utomation AFDS LNAV/VNAV or other
+-- M iscellaneous - any specialities and other non mentioned items of intereset	
+
 local appbrief = kcPreferenceGroup:new("appbrief","APPROACH BRIEFING")
 -- appbrief:setInitialOpen(true)
 appbrief:add(kcPreference:new("appbrief",
 function () 
+
+	local briefing = "OK, for the approach brief: \n"
+-- [W] eather highlites
+	briefing = briefing .. "Our destination today is " .. activeBriefings:get("flight:destinationIcao") .. "\n"
+	briefing = briefing .. "The weather report is winds " .. activeBriefings:get("arrival:atisWind") .. "; visibility " .. activeBriefings:get("arrival:atisVisibility") .. 
+		" km; precipitation " .. kc_split(WX_Precipitation_list,"|")[activeBriefings:get("arrival:atisPrecipit")] .. 
+		"; clouds " .. kc_split(WX_Cloud_list,"|")[activeBriefings:get("arrival:atisClouds")] .. 
+		"; the temperatures are " .. activeBriefings:get("arrival:atisTemps") .. "; QNH " .. activeBriefings:get("arrival:atisQNH").."\n\n" 
+
+-- [A] ircraft
+-- Aircraft weight, fuel remaining, Vref
+    briefing = briefing .. "Today we are flying in a " .. kc_acf_name .. " with <engine and aircraft details from CDU>, we have no M E L issues today" .. "\n\n"
+
+
 	local briefing = "Our destination today is " .. activeBriefings:get("flight:destinationIcao") .. "\n"
 	briefing = briefing .. "we will arrive at " .. activeBriefings:get("flight:destinationIcao") .. " via "
 		if activeBriefings:get("arrival:arrType") == 1 then
@@ -275,10 +303,6 @@ function ()
 		else
 			briefing = briefing .. "ATC vectors".."\n"
 		end
-	briefing = briefing .. "The weather report is winds " .. activeBriefings:get("arrival:atisWind") .. "; visibility " .. activeBriefings:get("arrival:atisVisibility") .. 
-		" km; precipitation " .. kc_split(WX_Precipitation_list,"|")[activeBriefings:get("arrival:atisPrecipit")] .. 
-		"; clouds " .. kc_split(WX_Cloud_list,"|")[activeBriefings:get("arrival:atisClouds")] .. 
-		"; the temperatures are " .. activeBriefings:get("arrival:atisTemps") .. "; QNH " .. activeBriefings:get("arrival:atisQNH").."\n" 
 	briefing = briefing .. "The MSA in our arrival sector is " .. activeBriefings:get("arrival:msa") .. " and the transition level today FL " .. activeBriefings:get("arrival:translvl").."\n"
 	briefing = briefing .. "After the arrival we can expect an " .. kc_split(APP_apptype_list,"|")[activeBriefings:get("arrival:appType")] .. " approach".."\n"
 	briefing = briefing .. "Runway assigned is " .. activeBriefings:get("arrival:rwy") .. " and the condition is " .. kc_split(APP_rwystate_list,"|")[activeBriefings:get("arrival:rwyCond")].."\n"
@@ -296,9 +320,9 @@ activeBriefings:addGroup(information)
 activeBriefings:addGroup(flight)
 activeBriefings:addGroup(departure)
 activeBriefings:addGroup(taxi)
-activeBriefings:addGroup(depBriefing)
 activeBriefings:addGroup(takeoff)
-activeBriefings:addGroup(tobrief)
+activeBriefings:addGroup(depBriefing)
+-- activeBriefings:addGroup(tobrief)
 activeBriefings:addGroup(arrival)
 activeBriefings:addGroup(approach)
 activeBriefings:addGroup(appbrief)
