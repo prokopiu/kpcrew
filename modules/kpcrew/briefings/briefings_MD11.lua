@@ -12,6 +12,15 @@ kc_LandingAutoBrake = "OFF|1|2|3|MAX"
 kc_LandingPacks = "OFF|ON|UNDER PRESSURIZED"
 kc_LandingAntiice = "NOT REQUIRED|ENGINE ONLY|ENGINE AND WING"
 
+-- full list of approach types can be overwritten by aircraft
+APP_apptype_list = "ILS CAT 1|ILS CAT 2 OR 3|VOR|NDB|RNAV|VISUAL|TOUCH AND GO|CIRCLING"
+
+-- APU/GPU startup after landing
+APP_apu_list = "APU delayed start|APU|GPU"
+
+-- Reverse Thrust
+APP_rev_thrust_list = "NONE|MINIMUM|FULL"
+
 function kc_get_total_fuel()
 	if activePrefSet:get("general:weight_kgs") then
 		return get("sim/flightmodel/weight/m_fuel_total")

@@ -17,17 +17,16 @@ local DEP_push_direction = "NO PUSH|NOSE LEFT|NOSE RIGHT|NOSE STRAIGHT|FACING NO
 -- forced return overweight or underweight
 local DEP_forced_return = "UNDERWEIGHT|OVERWEIGHT"
 
--- full list of approach types can be overwritten by aircraft
-local APP_apptype_list = "ILS CAT 1|ILS CAT 2 OR 3|VOR|NDB|RNAV|VISUAL|TOUCH AND GO|CIRCLING"
 -- runway state arrival
 local APP_rwystate_list = "DRY|WET|CONTAMINATED"
 -- arrival procedure type list 
 local APP_proctype_list = "STAR|VECTORS"
--- Reverse Thrust
-local APP_rev_thrust_list = "NONE|MINIMUM|FULL"
--- APU/GPU startup after landing
-local APP_apu_list = "APU delayed start|APU|GPU"
-
+-- Noise Abatement on arrival
+local APP_na_list = "NOT REQUIRED|SEE STAR"
+-- parking positin options
+local APP_gatestand_list = "GATE|STAND|STAND PUSH-IN REQUIRED"
+-- power at gate
+local APP_power_at_stand = "EXTERNAL POWER|NO POWER"
 
 local WX_Precipitation_list = "NONE|DRIZZLE|LIGHT RAIN|RAIN|HEAVY RAIN|SNOW"
 local WX_Cloud_list = "NO|FEW|SCATTERED|BROKEN|OVERCAST"
@@ -94,7 +93,7 @@ departure:add(kcPreference:new("clrFrequency",122.800,kcPreference.typeCOMFreq,"
 departure:add(kcPreference:new("type",1,kcPreference.typeList,"Departure Type|" .. DEP_proctype_list))
 departure:add(kcPreference:new("route","",kcPreference.typeText,"Departure Route|"))
 departure:add(kcPreference:new("transition","",kcPreference.typeText,"Departure Transition|"))
-departure:add(kcPreference:new("NADP",1,kcPreference.typeList,"NADP|" .. DEP_nadp_list))
+departure:add(kcPreference:new("depNADP",1,kcPreference.typeList,"NADP|" .. DEP_nadp_list))
 departure:add(kcPreference:new("initAlt",4900,kcPreference.typeInt,"Initial Altitude (ft)|100"))
 departure:add(kcPreference:new("transalt",activePrefSet:get("general:def_trans_alt"),kcPreference.typeInt,"Transition Altitude (ft)|100"))
 departure:add(kcPreference:new("rwy","",kcPreference.typeText,"Departure Runway|"))
@@ -141,7 +140,7 @@ function ()
     briefing = briefing .. "NOTAMs highlites if there are any <may also include VATSIM/IVAO details etc" .. "\n\n"
 
 -- [N] oise abatement proc
-	briefing = briefing .. "This will be a standard takeoff, noise abatement departure procedure " .. kc_split(DEP_nadp_list,"|")[activeBriefings:get("departure:NADP")] .. "\n\n"
+	briefing = briefing .. "This will be a standard takeoff, noise abatement procedure " .. kc_split(DEP_nadp_list,"|")[activeBriefings:get("departure:depNADP")] .. "\n\n"
 
 -- [T] axi Taxiroute
     briefing = briefing .. "As to our taxi route: \n" 	
@@ -241,6 +240,7 @@ arrival:add(kcPreference:new("arrType",1,kcPreference.typeList,"Arrival Type|" .
 arrival:add(kcPreference:new("appFrequency",122.800,kcPreference.typeCOMFreq,"Approach Frequency|"))
 arrival:add(kcPreference:new("route","",kcPreference.typeText,"Arrival Route|"))
 arrival:add(kcPreference:new("transition","",kcPreference.typeText,"Arrival Transition|"))
+arrival:add(kcPreference:new("arrNADP",1,kcPreference.typeList,"NADP|" .. APP_na_list))
 arrival:add(kcPreference:new("msa",0,kcPreference.typeInt,"Arrival MSA (ft)|100"))
 arrival:add(kcPreference:new("fafAltitude",0,kcPreference.typeInt,"FAF Altitude (ft)|100"))
 arrival:add(kcPreference:new("decision",0,kcPreference.typeInt,"Decision Height/Altitude|10"))
@@ -264,10 +264,10 @@ approach:add(kcPreference:new("autobrake",1,kcPreference.typeList,"Autobrake|" .
 approach:add(kcPreference:new("packs",1,kcPreference.typeList,"Packs|" .. kc_LandingPacks))
 approach:add(kcPreference:new("antiice",1,kcPreference.typeList,"Anti Ice|" .. kc_LandingAntiice))
 approach:add(kcPreference:new("reversethrust",1,kcPreference.typeList,"Reverse Thrust|" .. APP_rev_thrust_list))
-approach:add(kcPreference:new("powerAtGate",1,kcPreference.typeList,"Power at Gate|" .. APP_apu_list))
-approach:add(kcPreference:new("gateStand",1,kcPreference.typeList,"Gate/Stand|" .. DEP_gatestand_list))
+approach:add(kcPreference:new("gateStand",1,kcPreference.typeList,"Gate/Stand|" .. APP_gatestand_list))
 approach:add(kcPreference:new("parkingPosition","",kcPreference.typeText,"Parking Position|"))
-
+approach:add(kcPreference:new("powerAtGate",1,kcPreference.typeList,"Power at Stand|" .. APP_power_at_stand))
+approach:add(kcPreference:new("taxiIn","",kcPreference.typeText,"Taxi to Position via|"))
 -- =================== APPROACH BRIEFING ==================
 -- W eather highlites
 -- A ircraft - Type of aircraft and engines
@@ -282,7 +282,7 @@ local appbrief = kcPreferenceGroup:new("appbrief","APPROACH BRIEFING")
 -- appbrief:setInitialOpen(true)
 appbrief:add(kcPreference:new("appbrief",
 function () 
-
+	local wunit = activePrefSet:get("general:weight_kgs") == true and "KGS" or "LBS"
 	local briefing = "OK, for the approach brief: \n"
 -- [W] eather highlites
 	briefing = briefing .. "Our destination today is " .. activeBriefings:get("flight:destinationIcao") .. "\n"
@@ -292,11 +292,19 @@ function ()
 		"; the temperatures are " .. activeBriefings:get("arrival:atisTemps") .. "; QNH " .. activeBriefings:get("arrival:atisQNH").."\n\n" 
 
 -- [A] ircraft
--- Aircraft weight, fuel remaining, Vref
-    briefing = briefing .. "Today we are flying in a " .. kc_acf_name .. " with <engine and aircraft details from CDU>, we have no M E L issues today" .. "\n\n"
+    briefing = briefing .. "Our current weight is " .. string.format("%6.6i %s",kc_get_gross_weight(),wunit) .. 
+		" and fuel remaining " .. string.format("%6.6i %s",kc_get_total_fuel(),wunit) .. "\n"
+    briefing = briefing .. "Vref for our approach is " .. activeBriefings:get("approach:vref") .. " kts and Vapp " .. activeBriefings:get("approach:vapp") ..  " kts\n\n"
 
+-- [N] otams - highlite 
+    briefing = briefing .. "NOTAMs highlites if there are any <may also include VATSIM/IVAO details etc" .. "\n\n"
 
-	local briefing = "Our destination today is " .. activeBriefings:get("flight:destinationIcao") .. "\n"
+-- [N] oise abatement proc
+	briefing = briefing .. "Special noise abatement considerations: " .. kc_split(APP_na_list,"|")[activeBriefings:get("arrival:arrNADP")] .. "\n\n"
+
+-- [A] utomation AFDS LNAV/VNAV or other
+	
+-- [R] outing 
 	briefing = briefing .. "we will arrive at " .. activeBriefings:get("flight:destinationIcao") .. " via "
 		if activeBriefings:get("arrival:arrType") == 1 then
 			briefing = briefing .. "STAR " .. activeBriefings:get("arrival:route") .. " with transition " .. activeBriefings:get("arrival:transition") .."\n"
@@ -310,6 +318,29 @@ function ()
 	briefing = briefing .. "Airport elevation is " .. activeBriefings:get("arrival:aptElevation").."ft \n"
 	briefing = briefing .. "We are going to use landing flaps " .. kc_split(kc_LandingFlaps,"|")[activeBriefings:get("approach:flaps")] .. " and Autobrake " .. kc_split(kc_LandingAutoBrake,"|")[activeBriefings:get("approach:autobrake")].."\n"
 	briefing = briefing .. "Packs are set " .. kc_split(kc_LandingPacks,"|")[activeBriefings:get("approach:packs")] .. " and Anti Ice " .. kc_split(kc_LandingAntiice,"|")[activeBriefings:get("approach:antiice")].."\n"
+	briefing = briefing .. kc_split(APP_rev_thrust_list,"|")[activeBriefings:get("approach:reversethrust")] .. " reverse thrust applied" .. "\n"
+	briefing = briefing .. "<Brief the arrival procedure from CDU and charts" .. "\n\n"
+
+-- [T] axi Taxiroute
+    briefing = briefing .. "As to our taxi route after arrival: \n" 	
+	briefing = briefing .. "We will be taxiing to our position " .. activeBriefings:get("approach:parkingPosition") .. " via "
+	briefing = briefing .. activeBriefings:get("approach:taxiIn") .. "\n"
+	local xtaxiroute = ""
+	if activeBriefings:get("approach:gateStand") == 1 then
+		xtaxiroute = "This is a gate position " .. "\n"
+	end
+	if activeBriefings:get("approach:gateStand") == 2 then
+		xtaxiroute = "This is an outer position" .. "\n"
+	end
+	if activeBriefings:get("approach:gateStand") == 3 then
+		xtaxiroute = "The position requires a push-in\n"
+	end
+	briefing = briefing .. xtaxiroute
+	briefing = briefing .. "At the stand " .. kc_split(APP_power_at_stand,"|")[activeBriefings:get("approach:powerAtGate")] .. " available.\n"
+	briefing = briefing .. "Any questions or concerns?"
+	
+-- [M] iscellaneous
+	
 	return briefing
 end,
 kcPreference.typeInfo,"For the approach brief...|"))
