@@ -29,54 +29,73 @@ sw_itemvoid:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 sw_checklist:ELECTRICAL POWER UP GPU (F/O):ELECTRICAL POWER UP GPU
 #########
 sw_itemvoid_c:\grey\For power up with APU switch to ELECTRICAL POWER UP APU checklist
+sw_itemvoid:::::::::::::::: Initial Checks ::
+sw_itemvoid_c:\grey\DC Electric Power
+sw_item_c:\white\DC POWER SWITCH\grey\, BAT|SET:laminar/B738/knob/dc_power:2
+sw_item_c:\white\BATTERY VOLTAGE\grey\, MIN 24V|CHECKED:sim/cockpit2/electrical/battery_voltage_actual_volts:[0]>23
 sw_item_c:\white\BATTERY\grey\, GUARD CLOSED|SET:(sim/cockpit2/electrical/battery_on[0]:1)&&(laminar/B738/button_switch/cover_position[2]:0)&&(sim/operation/failures/rel_batter0:0)
 sw_item_c:\white\STANDBY POWER\grey\, GUARD CLOSED|CHECKED:(sim/cockpit2/electrical/battery_on[0]:1)&&(laminar/B738/button_switch/cover_position[3]:0)&&(sim/operation/failures/rel_batter1:0)sw_item_c:\white\DOME WHITE\grey\, BRIGHT, DIM OR OFF|AS NEEDED:(laminar/B738/toggle_switch/cockpit_dome_pos:1)||(laminar/B738/toggle_switch/cockpit_dome_pos:-1)
-sw_item_c:\white\ALTERNATE FLAPS POSITION\grey\, GUARD CLOSED|CHECKED:laminar/B738/toggle_switch/alt_flaps_ctrl:0sw_item_c:\white\ELECTRIC HYDRAULIC PUMPS A & B\grey\, OFF|CHECKED:(laminar/B738/toggle_switch/electric_hydro_pumps1_pos:0)&&(laminar/B738/toggle_switch/electric_hydro_pumps2_pos:0)
-sw_item_c:\white\WINDSHIELD WIPER SELECTORS\grey\, PARK POSITION (MAX 200KTS)|SET:(laminar/B738/switches/left_wiper_pos:0)&&(laminar/B738/switches/right_wiper_pos:0)
+sw_item_c:\white\CIRCUIT BREAKERS\grey\, ALL IN|CHECKED:1:1
+sw_itemvoid_c:\grey\Hydraulic System
 sw_item_c:\white\ELECTRIC HYDRAULIC PUMPS A & B\grey\, OFF|SET:(laminar/B738/toggle_switch/electric_hydro_pumps1_pos:0)&&(laminar/B738/toggle_switch/electric_hydro_pumps2_pos:0)
+sw_item_c:\white\ALTERNATE FLAPS POSITION\grey\, GUARD CLOSED|CHECKED:laminar/B738/toggle_switch/alt_flaps_ctrl:0sw_item_c:\white\ELECTRIC HYDRAULIC PUMPS A & B\grey\, OFF|CHECKED:(laminar/B738/toggle_switch/electric_hydro_pumps1_pos:0)&&(laminar/B738/toggle_switch/electric_hydro_pumps2_pos:0)
+sw_itemvoid_c:\grey\Other
+sw_item_c:\white\WINDSHIELD WIPER SELECTORS\grey\, PARK (MAX 200KTS)|SET:(laminar/B738/switches/left_wiper_pos:0)&&(laminar/B738/switches/right_wiper_pos:0)
 sw_item_c:\white\LANDING GEAR LEVER\grey\, DOWN|CHECKED:laminar/B738/controls/gear_handle_down:1
-sw_item_c:\white\  GREEN LANDING GEAR LIGHT|CHECK ILLUMINATED:(laminar/B738/annunciator/left_gear_safe:>0)&&(laminar/B738/annunciator/right_gear_safe:>0)&&(laminar/B738/annunciator/nose_gear_safe:>0)
-sw_item_c:\white\  RED LANDING GEAR LIGHT|CHECK EXTINGUISHED:(laminar/B738/annunciator/left_gear_transit:0)&&(laminar/B738/annunciator/right_gear_transit:0)&&(laminar/B738/annunciator/nose_gear_transit:0)
+sw_item_c:\white\  GREEN LANDING GEAR LIGHT\grey\, ILLUMINATED|CHECKED:(laminar/B738/annunciator/left_gear_safe:>0)&&(laminar/B738/annunciator/right_gear_safe:>0)&&(laminar/B738/annunciator/nose_gear_safe:>0)
+sw_item_c:\white\  RED LANDING GEAR LIGHT\grey\, EXTINGUISHED|CHECKED:(laminar/B738/annunciator/left_gear_transit:0)&&(laminar/B738/annunciator/right_gear_transit:0)&&(laminar/B738/annunciator/nose_gear_transit:0)
 sw_item_c:\white\TAKEOFF CONFIG WARNING|TESTED:laminar/B738/system/takeoff_config_warn:>0
 sw_itemvoid_c:\grey\  Move thrust levers full forward and back to idle.
-sw_itemvoid_c:\grey\  Use Zibo EFB to turn Ground Power on.
-sw_item_c:\white\  GRD POWER AVAILABLE LIGHT|CHECK ILLUMINATED:laminar/B738/annunciator/ground_power_avail:1
-sw_item_c:\white\  GROUND POWER SWITCH|ON:laminar/B738/electric/dc_gnd_service:1
+sw_itemvoid:::::::::::::::: Activate External Power ::
+sw_itemvoid_c:\grey\Use Zibo EFB to turn Ground Power on.
+sw_item_c:\white\GRD POWER AVAILABLE LIGHT\grey\, ILLUMINATED|CHECKED:laminar/B738/annunciator/ground_power_avail:1
+sw_item_c:\white\GROUND POWER SWITCH|ON:laminar/B738/electric/dc_gnd_service:1
+sw_item_c:\white\TRANSFER BUS LIGHTS\grey\, EXTINGUISHED|CHECKED:(laminar/B738/annunciator/trans_bus_off1:0)&&(laminar/B738/annunciator/trans_bus_off2:0)
+sw_item_c:\white\SOURCE OFF LIGHTS\grey\, EXTINGUISHED|CHECKED:(laminar/B738/annunciator/source_off1:0)&&(laminar/B738/annunciator/source_off2:0)
 sw_item_c:\white\STANDBY POWER|ON:laminar/B738/electric/standby_bat_pos:>0
-sw_item_c:\white\  STANDBY PWR LIGHT|CHECK EXTINGUISHED:laminar/B738/annunciator/standby_pwr_off:0
+sw_item_c:\white\  STANDBY PWR LIGHT\grey\, EXTINGUISHED|CHECKED:laminar/B738/annunciator/standby_pwr_off:0
 sw_continue:PREL PREFLIGHT PROCEDURE (F/O)
 
 #########
 sw_checklist:ELECTRICAL POWER UP APU (F/O):ELECTRICAL POWER UP APU
 #########
+sw_itemvoid:::::::::::::::: Initial Checks ::
+sw_itemvoid_c:\grey\DC Electric Power
+sw_item_c:\white\DC POWER SWITCH\grey\, BAT|SET:laminar/B738/knob/dc_power:2
+sw_item_c:\white\BATTERY VOLTAGE\grey\, MIN 24V|CHECKED:sim/cockpit2/electrical/battery_voltage_actual_volts:[0]>23
 sw_item_c:\white\BATTERY\grey\, GUARD CLOSED|SET:(sim/cockpit2/electrical/battery_on[0]:1)&&(laminar/B738/button_switch/cover_position[2]:0)&&(sim/operation/failures/rel_batter0:0)
 sw_item_c:\white\STANDBY POWER\grey\, GUARD CLOSED|CHECKED:(sim/cockpit2/electrical/battery_on[0]:1)&&(laminar/B738/button_switch/cover_position[3]:0)&&(sim/operation/failures/rel_batter1:0)sw_item_c:\white\DOME WHITE\grey\, BRIGHT, DIM OR OFF|AS NEEDED:(laminar/B738/toggle_switch/cockpit_dome_pos:1)||(laminar/B738/toggle_switch/cockpit_dome_pos:-1)
-sw_item_c:\white\ALTERNATE FLAPS POSITION\grey\, GUARD CLOSED|CHECKED:laminar/B738/toggle_switch/alt_flaps_ctrl:0sw_item_c:\white\ELECTRIC HYDRAULIC PUMPS A & B\grey\, OFF|CHECKED:(laminar/B738/toggle_switch/electric_hydro_pumps1_pos:0)&&(laminar/B738/toggle_switch/electric_hydro_pumps2_pos:0)
-sw_item_c:\white\WINDSHIELD WIPER SELECTORS\grey\, PARK POSITION (MAX 200KTS)|SET:(laminar/B738/switches/left_wiper_pos:0)&&(laminar/B738/switches/right_wiper_pos:0)
+sw_item_c:\white\CIRCUIT BREAKERS\grey\, ALL IN|CHECKED:1:1
+sw_itemvoid_c:\grey\Hydraulic System
 sw_item_c:\white\ELECTRIC HYDRAULIC PUMPS A & B\grey\, OFF|SET:(laminar/B738/toggle_switch/electric_hydro_pumps1_pos:0)&&(laminar/B738/toggle_switch/electric_hydro_pumps2_pos:0)
+sw_item_c:\white\ALTERNATE FLAPS POSITION\grey\, GUARD CLOSED|CHECKED:laminar/B738/toggle_switch/alt_flaps_ctrl:0sw_item_c:\white\ELECTRIC HYDRAULIC PUMPS A & B\grey\, OFF|CHECKED:(laminar/B738/toggle_switch/electric_hydro_pumps1_pos:0)&&(laminar/B738/toggle_switch/electric_hydro_pumps2_pos:0)
+sw_itemvoid_c:\grey\Other
+sw_item_c:\white\WINDSHIELD WIPER SELECTORS\grey\, PARK (MAX 200KTS)|SET:(laminar/B738/switches/left_wiper_pos:0)&&(laminar/B738/switches/right_wiper_pos:0)
 sw_item_c:\white\LANDING GEAR LEVER\grey\, DOWN|CHECKED:laminar/B738/controls/gear_handle_down:1
-sw_item_c:\white\  GREEN LANDING GEAR LIGHT|CHECK ILLUMINATED:(laminar/B738/annunciator/left_gear_safe:>0)&&(laminar/B738/annunciator/right_gear_safe:>0)&&(laminar/B738/annunciator/nose_gear_safe:>0)
-sw_item_c:\white\  RED LANDING GEAR LIGHT|CHECK EXTINGUISHED:(laminar/B738/annunciator/left_gear_transit:0)&&(laminar/B738/annunciator/right_gear_transit:0)&&(laminar/B738/annunciator/nose_gear_transit:0)
+sw_item_c:\white\  GREEN LANDING GEAR LIGHT\grey\, ILLUMINATED|CHECKED:(laminar/B738/annunciator/left_gear_safe:>0)&&(laminar/B738/annunciator/right_gear_safe:>0)&&(laminar/B738/annunciator/nose_gear_safe:>0)
+sw_item_c:\white\  RED LANDING GEAR LIGHT\grey\, EXTINGUISHED|CHECKED:(laminar/B738/annunciator/left_gear_transit:0)&&(laminar/B738/annunciator/right_gear_transit:0)&&(laminar/B738/annunciator/nose_gear_transit:0)
 sw_item_c:\white\TAKEOFF CONFIG WARNING|TESTED:laminar/B738/system/takeoff_config_warn:>0
 sw_itemvoid_c:\grey\  Move thrust levers full forward and back to idle.
+sw_itemvoid:::::::::::::::: Activate APU ::
+sw_item_c:\white\OVHT DET SWITCH|NORMAL:1:1
 sw_item_c:\white\OVHT FIRE TEST SWITCH|HOLD RIGHT:laminar/B738/toggle_switch/fire_test:1
 sw_item_c:\white\ENGINES EXT TEST SWITCH|BUTTON TO LEFT:laminar/B738/toggle_switch/extinguisher_circuit_test:<0
 sw_item_c:\white\ENGINES EXT TEST SWITCH|BUTTON TO RIGHT:laminar/B738/toggle_switch/extinguisher_circuit_test:>0
 sw_item_c:\white\APU|HOLD AT START:laminar/B738/spring_toggle_switch/APU_start_pos:>1
 sw_itemvoid_c:\grey\  Hold APU switch in START position for 3-4 seconds.
-sw_item_c:\white\  APU GEN OFF BUS LIGHT|ILLUMINATED:(laminar/B738/annunciator/apu_gen_off_bus:>0)||((laminar/B738/annunciator/apu_gen_off_bus:0)&&(laminar/B738/electrical/apu_power_bus1:1))&&(laminar/B738/electrical/apu_power_bus2:1)
+sw_item_c:\white\  APU GEN OFF BUS LIGHT\grey\, ILLUMINATED|CHECKED:(laminar/B738/annunciator/apu_gen_off_bus:>0)||((laminar/B738/annunciator/apu_gen_off_bus:0)&&(laminar/B738/electrical/apu_power_bus1:1))&&(laminar/B738/electrical/apu_power_bus2:1)
 sw_item_c:\white\  APU GENERATOR BUS SWITCHES|ON:(laminar/B738/electrical/apu_power_bus1:1)&&(laminar/B738/electrical/apu_power_bus2:1)
-sw_item_c:\white\  TRANSFER BUS LIGHTS|CHECK EXTINGUISHED:(laminar/B738/annunciator/trans_bus_off1:0)&&(laminar/B738/annunciator/trans_bus_off2:0)
-sw_item_c:\white\  SOURCE OFF LIGHTS|CHECK EXTINGUISHED:(laminar/B738/annunciator/source_off1:0)&&(laminar/B738/annunciator/source_off2:0)
+sw_item_c:\white\TRANSFER BUS LIGHTS\grey\, EXTINGUISHED|CHECKED:(laminar/B738/annunciator/trans_bus_off1:0)&&(laminar/B738/annunciator/trans_bus_off2:0)
+sw_item_c:\white\SOURCE OFF LIGHTS\grey\, EXTINGUISHED|CHECKED:(laminar/B738/annunciator/source_off1:0)&&(laminar/B738/annunciator/source_off2:0)
 sw_item_c:\white\STANDBY POWER|ON:laminar/B738/electric/standby_bat_pos:>0
-sw_item_c:\white\  STANDBY PWR LIGHT|CHECK EXTINGUISHED:laminar/B738/annunciator/standby_pwr_off:0
+sw_item_c:\white\  STANDBY PWR LIGHT\grey\, EXTINGUISHED|CHECKED:laminar/B738/annunciator/standby_pwr_off:0
 sw_continue:PREL PREFLIGHT PROCEDURE (F/O)
 
 
 #########
 sw_checklist:PREL PREFLIGHT PROCEDURE (F/O):PREL PREFLIGHT PROCEDURE
 #########
-sw_item_c:\white\Electrical Power Up supplementary procedure|Complete
+sw_item_c:\white\Electrical Power Up supplementary procedure|Complete:1:1
 sw_item_c:\white\EMERGENCY EXIT LIGHTS\grey\, AREMD & GUARDED|SET:(laminar/B738/toggle_switch/emer_exit_lights:1.0)&&(laminar/B738/button_switch/cover_position[9]:0)
 sw_item_c:\white\ATTENDENCE BUTTON|PRESS:laminar/B738/push_button/attend_pos:>0
 sw_item_c:\white\LEFT & RIGHT IRS MODE SELECTOR\grey\, OFF|SET:(laminar/B738/toggle_switch/irs_left:0)&&(laminar/B738/toggle_switch/irs_right:0)

@@ -53,53 +53,71 @@ require("kpcrew.briefings.briefings_" .. kc_acf_icao)
 activeSOP = kcSOP:new("Zibo Mod SOP")
 
 -- ============ Electrical Power Up Procedures ========== OK
+-- ===== Initial checks
+-- DC Electric Power
+-- DC POWER SWITCH..............................BAT (F/O)
+-- BATTERY VOLTAGE..........................MIN 24V (F/O)
 -- BATTERY SWITCH......................GUARD CLOSED (F/O)
 -- STANDBY POWER SWITCH................GUARD CLOSED (F/O)
+-- CIRCUIT BREAKERS..........................ALL IN (F/O)
+-- Hydraulic System
 -- ALTERNATE FLAPS MASTER SWITCH.......GUARD CLOSED (F/O)
--- WINDSHIELD WIPER SELECTORS..................PARK (F/O)
 -- ELECTRIC HYDRAULIC PUMPS SWITCHES............OFF (F/O)
+-- Other
+-- WINDSHIELD WIPER SELECTORS..................PARK (F/O)
 -- LANDING GEAR LEVER..........................DOWN (F/O)
 --   GREEN LANDING GEAR LIGHT.....CHECK ILLUMINATED (F/O)
 --   RED LANDING GEAR LIGHT......CHECK EXTINGUISHED (F/O)
 -- TAKEOFF CONFIG WARNING......................TEST (F/O)
 --   Move thrust levers full forward and back to idle.
 
--- If external power is needed:                    
+-- ==== Activate External Power
 --   Use Zibo EFB to turn Ground Power on.         
 --   GRD POWER AVAILABLE LIGHT..........ILLUMINATED (F/O)
 --   GROUND POWER SWITCH.........................ON (F/O)
 
--- If APU power is needed:                         
---  OVHT FIRE TEST SWITCH...............HOLD RIGHT (F/O)
---  MASTER FIRE WARN LIGHT....................PUSH (F/O)
---  ENGINES EXT TEST SWITCH.........TEST 1 TO LEFT (F/O)
---  ENGINES EXT TEST SWITCH........TEST 2 TO RIGHT (F/O)
---  APU......................................START (F/O)
---    Hold APU switch in START position for 3-4 seconds.
---  APU GEN OFF BUS LIGHT..............ILLUMINATED (F/O)
---  APU GENERATOR BUS SWITCHES..................ON (F/O)
---     TRANSFER BUS LIGHTS.......CHECK EXTINGUISHED (F/O)
---     SOURCE OFF LIGHTS.........CHECK EXTINGUISHED (F/O)
+-- ==== Activate APU 
+--   OVHT FIRE TEST SWITCH...............HOLD RIGHT (F/O)
+--   MASTER FIRE WARN LIGHT....................PUSH (F/O)
+--   ENGINES EXT TEST SWITCH.........TEST 1 TO LEFT (F/O)
+--   ENGINES EXT TEST SWITCH........TEST 2 TO RIGHT (F/O)
+--   APU......................................START (F/O)
+--     Hold APU switch in START position for 3-4 seconds.
+--     APU GEN OFF BUS LIGHT............ILLUMINATED (F/O)
+--     APU GENERATOR BUS SWITCHES................ON (F/O)
+
+-- TRANSFER BUS LIGHTS...........CHECK EXTINGUISHED (F/O)
+-- SOURCE OFF LIGHTS.............CHECK EXTINGUISHED (F/O)
 -- STANDBY POWER.................................ON (F/O)
---   STANDBY PWR LIGHT..........CHECK EXTINGUISHED (F/O)
+--   STANDBY PWR LIGHT...........CHECK EXTINGUISHED (F/O)
 -- Next: Preliminary Preflight Procedure           
 
 local electricalPowerUpProc = kcProcedure:new("ELECTRICAL POWER UP (F/O)","performing ELECTRICAL POWER UP")
+electricalPowerUpProc:addItem(kcSimpleProcedureItem:new("==== Initial Checks"))
+electricalPowerUpProc:addItem(kcSimpleProcedureItem:new("DC Electric Power"))
+electricalPowerUpProc:addItem(kcProcedureItem:new("DC POWER SWITCH","BAT",kcFlowItem.actorFO,2,
+	function () return sysElectric.dcPowerSwitch:getStatus() == sysElectric.dcPwrBAT end,
+	function () sysElectric.dcPowerSwitch:setValue(sysElectric.dcPwrBAT) end))
+electricalPowerUpProc:addItem(kcIndirectProcedureItem:new("BATTERY VOLTAGE","MIN 24V",kcFlowItem.actorFO,2,"bat24v",
+	function () return sysElectric.batt1Volt:getStatus() > 23 end))
 electricalPowerUpProc:addItem(kcProcedureItem:new("BATTERY SWITCH","GUARD CLOSED",kcFlowItem.actorFO,2,
 	function () return sysElectric.batteryCover:getStatus() == modeOff end,
 	function () sysElectric.batteryCover:actuate(modeOff) end))
 electricalPowerUpProc:addItem(kcProcedureItem:new("STANDBY POWER SWITCH","GUARD CLOSED",kcFlowItem.actorFO,2,
 	function () return sysElectric.stbyPowerCover:getStatus() == modeOff end,
 	function () sysElectric.stbyPowerCover:actuate(modeOff) end))
-electricalPowerUpProc:addItem(kcProcedureItem:new("ALTERNATE FLAPS MASTER SWITCH","GUARD CLOSED",kcFlowItem.actorFO,3,
-	function () return sysControls.altFlapsCover:getStatus() == modeOff end,
-	function () sysControls.altFlapsCover:actuate(modeOff) end))
-electricalPowerUpProc:addItem(kcProcedureItem:new("WINDSHIELD WIPER SELECTORS","PARK",kcFlowItem.actorFO,2,
-	function () return sysGeneral.wiperGroup:getStatus() == 0 end,
-	function () sysGeneral.wiperGroup:actuate(modeOff) end))
+electricalPowerUpProc:addItem(kcProcedureItem:new("CIRCUIT BREAKERS","ALL IN",kcFlowItem.actorFO,2,true))
+electricalPowerUpProc:addItem(kcSimpleProcedureItem:new("Hydraulic System"))
 electricalPowerUpProc:addItem(kcProcedureItem:new("ELECTRIC HYDRAULIC PUMPS SWITCHES","OFF",kcFlowItem.actorFO,3,
 	function () return sysHydraulic.elecHydPumpGroup:getStatus() == 0 end,
 	function () sysHydraulic.elecHydPumpGroup:actuate(modeOff) end))
+electricalPowerUpProc:addItem(kcProcedureItem:new("ALTERNATE FLAPS MASTER SWITCH","GUARD CLOSED",kcFlowItem.actorFO,3,
+	function () return sysControls.altFlapsCover:getStatus() == modeOff end,
+	function () sysControls.altFlapsCover:actuate(modeOff) end))
+electricalPowerUpProc:addItem(kcSimpleProcedureItem:new("Other"))
+electricalPowerUpProc:addItem(kcProcedureItem:new("WINDSHIELD WIPER SELECTORS","PARK",kcFlowItem.actorFO,2,
+	function () return sysGeneral.wiperGroup:getStatus() == 0 end,
+	function () sysGeneral.wiperGroup:actuate(modeOff) end))
 electricalPowerUpProc:addItem(kcProcedureItem:new("LANDING GEAR LEVER","DOWN",kcFlowItem.actorFO,2,
 	function () return sysGeneral.GearSwitch:getStatus() == modeOn end,
 	function () sysGeneral.GearSwitch:actuate(modeOn) end))
@@ -110,7 +128,7 @@ electricalPowerUpProc:addItem(kcProcedureItem:new("  RED LANDING GEAR LIGHT","CH
 electricalPowerUpProc:addItem(kcIndirectProcedureItem:new("TAKEOFF CONFIG WARNING","TEST",kcFlowItem.actorFO,2,"takeoff_config_warn",
 	function () return get("laminar/B738/system/takeoff_config_warn") > 0 end))
 electricalPowerUpProc:addItem(kcSimpleProcedureItem:new("  Move thrust levers full forward and back to idle."))
-electricalPowerUpProc:addItem(kcSimpleProcedureItem:new("If external power is needed:",
+electricalPowerUpProc:addItem(kcSimpleProcedureItem:new("==== Activate External Power",
 	function () return activePrefSet:get("aircraft:powerup_apu") == true end))
 electricalPowerUpProc:addItem(kcSimpleProcedureItem:new("  Use Zibo EFB to turn Ground Power on.",
 	function () return activePrefSet:get("aircraft:powerup_apu") == true end))
@@ -121,15 +139,14 @@ electricalPowerUpProc:addItem(kcProcedureItem:new("  GROUND POWER SWITCH","ON",k
 	function () return sysElectric.gpuSwitch:getStatus() == modeOn end,
 	function () sysElectric.gpuSwitch:actuate(cmdDown) end,
 	function () return activePrefSet:get("aircraft:powerup_apu") == true end))
-electricalPowerUpProc:addItem(kcSimpleProcedureItem:new("If APU power is needed:",
+electricalPowerUpProc:addItem(kcSimpleProcedureItem:new("==== Activate APU",
 	function () return activePrefSet:get("aircraft:powerup_apu") == false end))
--- OVHT Switch not coded in Zibo
--- electricalPowerUpProc:addItem(kcProcedureItem:new("  OVHT DET SWITCHES","NORMAL",kcFlowItem.actorFO,1,function (self) return true end,nil,nil))
+electricalPowerUpProc:addItem(kcProcedureItem:new("  OVHT DET SWITCHES","NORMAL",kcFlowItem.actorFO,1,true,nil,
+	function () return activePrefSet:get("aircraft:powerup_apu") == false end))
 electricalPowerUpProc:addItem(kcIndirectProcedureItem:new("  #exchange|OVHT|Overheat# FIRE TEST SWITCH","HOLD RIGHT",kcFlowItem.actorFO,2,"ovht_fire_test",
 	function () return  sysEngines.ovhtFireTestSwitch:getStatus() > modeOff end,nil,
 	function () return activePrefSet:get("aircraft:powerup_apu") == false end))
-electricalPowerUpProc:addItem(kcIndirectProcedureItem:new("  MASTER FIRE WARN LIGHT","PUSH",kcFlowItem.actorFO,2,"master_fire_warn",
-	function () return sysGeneral.fireWarningAnc:getStatus() > modeOff end,nil,
+electricalPowerUpProc:addItem(kcProcedureItem:new("  MASTER FIRE WARN LIGHT","PUSH",kcFlowItem.actorFO,1,true,nil,
 	function () return activePrefSet:get("aircraft:powerup_apu") == false end))
 electricalPowerUpProc:addItem(kcIndirectProcedureItem:new("  ENGINES #exchange|EXT|Extinguischer# TEST SWITCH","TEST 1 TO LEFT",kcFlowItem.actorFO,2,"eng_ext_test_1",
 	function () return get("laminar/B738/toggle_switch/extinguisher_circuit_test") < 0 end,nil,
@@ -148,15 +165,14 @@ electricalPowerUpProc:addItem(kcProcedureItem:new("  #spell|APU# GEN OFF BUS LIG
 electricalPowerUpProc:addItem(kcProcedureItem:new("  #spell|APU# GENERATOR BUS SWITCHES","ON",kcFlowItem.actorFO,2,
 	function () return sysElectric.apuGenBus1:getStatus() == modeOn and sysElectric.apuGenBus2:getStatus() == 1 end,nil,
 	function () return activePrefSet:get("aircraft:powerup_apu") == false end))
-electricalPowerUpProc:addItem(kcProcedureItem:new("    TRANSFER BUS LIGHTS","CHECK EXTINGUISHED",kcFlowItem.actorFO,2,
+electricalPowerUpProc:addItem(kcProcedureItem:new("TRANSFER BUS LIGHTS","CHECK EXTINGUISHED",kcFlowItem.actorFO,2,
 	function () return sysElectric.transferBus1:getStatus() == modeOff and sysElectric.transferBus2:getStatus() == modeOff end))
-electricalPowerUpProc:addItem(kcProcedureItem:new("    SOURCE OFF LIGHTS","CHECK EXTINGUISHED",kcFlowItem.actorFO,2,
+electricalPowerUpProc:addItem(kcProcedureItem:new("SOURCE OFF LIGHTS","CHECK EXTINGUISHED",kcFlowItem.actorFO,2,
 	function () return sysElectric.sourceOff1:getStatus() == modeOff and sysElectric.sourceOff2:getStatus() == modeOff end))
 electricalPowerUpProc:addItem(kcProcedureItem:new("STANDBY POWER","ON",kcFlowItem.actorFO,2,
 	function () return get("laminar/B738/electric/standby_bat_pos") > 0 end))
 electricalPowerUpProc:addItem(kcProcedureItem:new("   STANDBY #exchange|PWR|POWER# LIGHT","CHECK EXTINGUISHED",kcFlowItem.actorFO,2,
 	function () return sysElectric.stbyPwrOff:getStatus() == modeOff end))
--- electricalPowerUpProc:addItem(kcSimpleProcedureItem:new("Next: Preliminary Preflight Procedure"))
 -- does not exist in Zibo
 -- electricalPowerUpProc:addItem(kcProcedureItem:new("WHEEL WELL FIRE WARNING SYSTEM","TEST",kcFlowItem.actorFO,1,nil,nil,nil))
 -- electricalPowerUpProc:addItem(kcSimpleProcedureItem:new("Next: Preliminary Preflight Procedure"))

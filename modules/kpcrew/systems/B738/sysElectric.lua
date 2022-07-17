@@ -116,4 +116,7 @@ sysElectric.stbyPwrOff = SimpleAnnunciator:new("","laminar/B738/annunciator/stan
 sysElectric.gen1off = SimpleAnnunciator:new("","sim/cockpit2/annunciators/generator_off",0)
 sysElectric.gen2off = SimpleAnnunciator:new("","sim/cockpit2/annunciators/generator_off",1)
 
+sysElectric.batt1Volt = SimpleAnnunciator:new("bat1volt","sim/cockpit2/electrical/battery_voltage_actual_volts",0)
+sysElectric.batt2Volt = SimpleAnnunciator:new("bat2volt","sim/cockpit2/electrical/battery_voltage_actual_volts",1)
+
 return sysElectric
