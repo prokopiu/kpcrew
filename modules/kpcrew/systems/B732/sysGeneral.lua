@@ -29,7 +29,7 @@ local sysGeneral = {
 sysGeneral.parkBrakeSwitch = TwoStateToggleSwitch:new("parkbrake","sim/cockpit2/controls/parking_brake_ratio",0,"sim/flight_controls/brakes_toggle_max")
 
 -- Landing Gear
-sysGeneral.GearSwitch = TwoStateCmdSwitch:new("gear","kp/xsp/systems/gear_status",0,"sim/flight_controls/landing_gear_down","sim/flight_controls/landing_gear_up","nocommand")
+sysGeneral.GearSwitch = TwoStateCmdSwitch:new("gear","FJS/732/FltControls/GearHandlePosition",0,"sim/flight_controls/landing_gear_down","sim/flight_controls/landing_gear_up","nocommand")
 
 -- Doors
 sysGeneral.doorL1 = TwoStateToggleSwitch:new("doorl1","FJS/732/DoorSta/Door1",0,"FJS/732/Doors/Door1")

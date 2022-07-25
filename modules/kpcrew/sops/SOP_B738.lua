@@ -52,7 +52,7 @@ require("kpcrew.briefings.briefings_" .. kc_acf_icao)
 
 activeSOP = kcSOP:new("Zibo Mod SOP")
 
--- ============ Electrical Power Up Procedures ========== OK
+-- ============ Electrical Power Up Procedure ===========
 -- ===== Initial checks
 -- DC Electric Power
 -- DC POWER SWITCH..............................BAT (F/O)

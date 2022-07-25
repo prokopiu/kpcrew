@@ -1,13 +1,13 @@
 --[[
 	*** KPCREW 2.3
 	Virtual copilot for X-PLane 11
-	Kosta Prokopiu, October 2021
+	Kosta Prokopiu, August 2022
 --]]
 
 require "kpcrew.genutils"
 require "kpcrew.systems.activities"
 
-kc_VERSION = "2.3-alpha1"
+kc_VERSION = "2.3-alpha6"
 
 logMsg ( "FWL: ** Starting KPCrew version " .. kc_VERSION .." **" )
 
@@ -23,6 +23,8 @@ if PLANE_ICAO == "B738" then
 	end
 elseif PLANE_ICAO == "MD11" then
 	kc_acf_icao = "MD11"
+elseif PLANE_ICAO == "B732" then
+	kc_acf_icao = "B732"
 end
 
 -- Aircraft Specific SOP/Checklist/Procedure Definitions

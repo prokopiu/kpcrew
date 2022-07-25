@@ -1,4 +1,4 @@
--- B738 airplane 
+-- B732 airplane 
 -- Electric system functionality
 
 local TwoStateDrefSwitch = require "kpcrew.systems.TwoStateDrefSwitch"
@@ -134,5 +134,8 @@ sysElectric.stbyPwrOff = SimpleAnnunciator:new("","FJS/732/Annun/SysAnnunLIT_3",
 
 sysElectric.gen1off = SimpleAnnunciator:new("","FJS/732/Annun/SysAnnunLIT_9",0)
 sysElectric.gen2off = SimpleAnnunciator:new("","FJS/732/Annun/SysAnnunLIT_12",0)
+
+sysElectric.batt1Volt = SimpleAnnunciator:new("bat1volt","sim/cockpit2/electrical/battery_voltage_actual_volts",0)
+sysElectric.batt2Volt = SimpleAnnunciator:new("bat2volt","sim/cockpit2/electrical/battery_voltage_actual_volts",1)
 
 return sysElectric
