@@ -60,6 +60,9 @@ sysElectric.gpuSwitch = TwoStateDrefSwitch:new("","FJS/732/Elec/GndPwrSwitch",0)
 -- APU Bus Switches
 sysElectric.apuGenBus1 = TwoStateDrefSwitch:new("","FJS/732/Elec/APUgen1Switch",0)
 sysElectric.apuGenBus2 = TwoStateDrefSwitch:new("","FJS/732/Elec/APUgen2Switch",0)
+sysElectric.apuGenSwitches = SwitchGroup:new("apuGenSwitches")
+sysElectric.apuGenSwitches:addSwitch(sysElectric.apuGenBus1)
+sysElectric.apuGenSwitches:addSwitch(sysElectric.apuGenBus2)
 
 -- GEN drive shaft
 sysElectric.genDrive1Switch = TwoStateCmdSwitch:new("","FJS/732/Fail/GenDrive1Disconed",0)
@@ -137,5 +140,8 @@ sysElectric.gen2off = SimpleAnnunciator:new("","FJS/732/Annun/SysAnnunLIT_12",0)
 
 sysElectric.batt1Volt = SimpleAnnunciator:new("bat1volt","sim/cockpit2/electrical/battery_voltage_actual_volts",0)
 sysElectric.batt2Volt = SimpleAnnunciator:new("bat2volt","sim/cockpit2/electrical/battery_voltage_actual_volts",1)
+
+-- APU RUNNING annunciator
+sysElectric.apuRunningAnc = SimpleAnnunciator:new("apurunning","FJS/732/Elec/APUExhTempNeedle",0)
 
 return sysElectric

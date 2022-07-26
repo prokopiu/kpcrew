@@ -55,6 +55,8 @@ activeSOP = kcSOP:new("Zibo Mod SOP")
 -- ============ Electrical Power Up Procedure ===========
 -- ===== Initial checks
 -- DC Electric Power
+-- CIRCUIT BREAKERS (P6 PANEL)................CHECK (F/O)
+-- CIRCUIT BREAKERS (CONTROL STAND,P18 PANEL).CHECK (F/O)
 -- DC POWER SWITCH..............................BAT (F/O)
 -- BATTERY VOLTAGE..........................MIN 24V (F/O)
 -- BATTERY SWITCH......................GUARD CLOSED (F/O)
@@ -95,6 +97,8 @@ activeSOP = kcSOP:new("Zibo Mod SOP")
 local electricalPowerUpProc = kcProcedure:new("ELECTRICAL POWER UP (F/O)","performing ELECTRICAL POWER UP")
 electricalPowerUpProc:addItem(kcSimpleProcedureItem:new("==== Initial Checks"))
 electricalPowerUpProc:addItem(kcSimpleProcedureItem:new("DC Electric Power"))
+electricalPowerUpProc:addItem(kcProcedureItem:new("CIRCUIT BREAKERS (P6 PANEL)","CHECK",kcFlowItem.actorFO,1,true))
+electricalPowerUpProc:addItem(kcProcedureItem:new("CIRCUIT BREAKERS (CONTROL STAND,P18 PANEL)","CHECK",kcFlowItem.actorFO,1,true))
 electricalPowerUpProc:addItem(kcProcedureItem:new("DC POWER SWITCH","BAT",kcFlowItem.actorFO,2,
 	function () return sysElectric.dcPowerSwitch:getStatus() == sysElectric.dcPwrBAT end,
 	function () sysElectric.dcPowerSwitch:setValue(sysElectric.dcPwrBAT) end))
@@ -173,21 +177,19 @@ electricalPowerUpProc:addItem(kcProcedureItem:new("STANDBY POWER","ON",kcFlowIte
 	function () return get("laminar/B738/electric/standby_bat_pos") > 0 end))
 electricalPowerUpProc:addItem(kcProcedureItem:new("   STANDBY #exchange|PWR|POWER# LIGHT","CHECK EXTINGUISHED",kcFlowItem.actorFO,2,
 	function () return sysElectric.stbyPwrOff:getStatus() == modeOff end))
--- does not exist in Zibo
--- electricalPowerUpProc:addItem(kcProcedureItem:new("WHEEL WELL FIRE WARNING SYSTEM","TEST",kcFlowItem.actorFO,1,nil,nil,nil))
 -- electricalPowerUpProc:addItem(kcSimpleProcedureItem:new("Next: Preliminary Preflight Procedure"))
 
 -- ============ PRELIMINARY PREFLIGHT PROCEDURES ========
 -- EMERGENCY EXIT LIGHT.........ARM/ON GUARD CLOSED (F/O)
 -- ATTENDENCE BUTTON..........................PRESS (F/O)
---   Electrical Power Up supplementary procedure complete
+-- ELECTRICAL POWER UP.....................COMPLETE (F/O)
+-- VOICE RECORDER SWITCH.......................AUTO (F/O)
+-- MACH OVERSPEED TEST......................PERFORM (F/O)
+-- STALL WARNING TEST.......................PERFORM (F/O)
 -- IRS MODE SELECTORS...........................OFF (F/O)
 -- IRS MODE SELECTORS......................THEN NAV (F/O)
 --   Verify ON DC lights illuminate then extinguish
 --   Verify ALIGN lights are illuminated           
--- VOICE RECORDER SWITCH.......................AUTO (F/O)
--- MACH OVERSPEED TEST......................PERFORM (F/O)
--- STALL WARNING TEST.......................PERFORM (F/O)
 -- XPDR....................................SET 2000 (F/O)
 -- COCKPIT LIGHTS.....................SET AS NEEDED (F/O)
 -- WING & WHEEL WELL LIGHTS.........SET AS REQUIRED (F/O)
@@ -200,16 +202,24 @@ electricalPowerUpProc:addItem(kcProcedureItem:new("   STANDBY #exchange|PWR|POWE
 -- Next: CDU Preflight                             
 
 local prelPreflightProc = kcProcedure:new("PREL PREFLIGHT PROCEDURE (F/O)")
--- not coded in Zibo
--- prelPreflightProc:addItem(kcProcedureItem:new("CIRCUIT BREAKERS (P6 PANEL)","CHECK",kcFlowItem.actorFO,1,nil,nil,nil))
--- prelPreflightProc:addItem(kcProcedureItem:new("CIRCUIT BREAKERS (CONTROL STAND,P18 PANEL)","CHECK",kcFlowItem.actorFO,1,nil,nil,nil))
 prelPreflightProc:addItem(kcProcedureItem:new("EMERGENCY EXIT LIGHT","ARM #exchange|/ON GUARD CLOSED| #",kcFlowItem.actorFO,2,
 	function () return sysGeneral.emerExitLightsCover:getStatus() == modeOff  end,
 	function () sysGeneral.emerExitLightsCover:actuate(modeOff) end))
 prelPreflightProc:addItem(kcIndirectProcedureItem:new("ATTENDENCE BUTTON","PRESS",kcFlowItem.actorFO,2,"attendence_button",
 	function () return sysGeneral.attendanceButton:getStatus() > modeOff end))
 	-- ,function () sysGeneral.attendanceButton:actuate(modeOn)))
-prelPreflightProc:addItem(kcSimpleProcedureItem:new("Electrical Power Up supplementary procedure complete."))
+prelPreflightProc:addItem(kcProcedureItem:new("ELECTRICAL POWER UP","COMPLETE",kcFlowItem.actorFO,1,
+	function () return 
+		(sysElectric.apuGenBus1:getStatus() == 1 && sysElectric.apuGenBus2:getStatus() == 1) ||
+		sysElectric.gpuAvailAnc:getStatus() == 1
+	end))
+prelPreflightProc:addItem(kcProcedureItem:new("VOICE RECORDER SWITCH","AUTO",kcFlowItem.actorFO,2,
+	function () return  sysGeneral.voiceRecSwitch:getStatus() == modeOff and sysGeneral.vcrCover:getStatus() == modeOff end,
+	function () sysGeneral.voiceRecSwitch:actuate(modeOn) sysGeneral.vcrCover:actuate(modeOff) end))
+prelPreflightProc:addItem(kcIndirectProcedureItem:new("MACH OVERSPEED TEST","PERFORM",kcFlowItem.actorFO,2,"mach_ovspd_test",
+	function () return get("laminar/B738/push_button/mach_warn1_pos") == 1 or get("laminar/B738/push_button/mach_warn2_pos") == 1 end))
+prelPreflightProc:addItem(kcIndirectProcedureItem:new("STALL WARNING TEST","PERFORM",kcFlowItem.actorFO,2,"stall_warning_test",
+	function () return get("laminar/B738/push_button/stall_test1") == 1 or get("laminar/B738/push_button/stall_test2") == 1 end))
 prelPreflightProc:addItem(kcIndirectProcedureItem:new("IRS MODE SELECTORS","OFF",kcFlowItem.actorFO,2,"irs_mode_initial_off",
 	function () return sysGeneral.irsUnitGroup:getStatus() == modeOff end,
 	function () sysGeneral.irsUnitGroup:setValue(sysGeneral.irsUnitOFF) end))
@@ -227,13 +237,7 @@ prelPreflightProc:addItem(kcIndirectProcedureItem:new("IRS MODE SELECTORS","THEN
 	-- function () return sysGeneral.irs1OnDC:getStatus() == modeOn end))
 -- prelPreflightProc:addItem(kcIndirectProcedureItem:new("  IRS RIGHT ON DC","ILLUMINATES & EXTINGUISHES",kcFlowItem.actorFO,1,"irs_right_dc",
 	-- function () return sysGeneral.irs2OnDC:getStatus() == modeOn end))
-prelPreflightProc:addItem(kcProcedureItem:new("VOICE RECORDER SWITCH","AUTO",kcFlowItem.actorFO,2,
-	function () return  sysGeneral.voiceRecSwitch:getStatus() == modeOff and sysGeneral.vcrCover:getStatus() == modeOff end,
-	function () sysGeneral.voiceRecSwitch:actuate(modeOn) sysGeneral.vcrCover:actuate(modeOff) end))
-prelPreflightProc:addItem(kcIndirectProcedureItem:new("MACH OVERSPEED TEST","PERFORM",kcFlowItem.actorFO,2,"mach_ovspd_test",
-	function () return get("laminar/B738/push_button/mach_warn1_pos") == 1 or get("laminar/B738/push_button/mach_warn2_pos") == 1 end))
-prelPreflightProc:addItem(kcIndirectProcedureItem:new("STALL WARNING TEST","PERFORM",kcFlowItem.actorFO,2,"stall_warning_test",
-	function () return get("laminar/B738/push_button/stall_test1") == 1 or get("laminar/B738/push_button/stall_test2") == 1 end))
+
 prelPreflightProc:addItem(kcProcedureItem:new("#exchange|XPDR|transponder#","SET 2000",kcFlowItem.actorFO,2,
 	function () return get("sim/cockpit/radios/transponder_code") == 2000 end))
 prelPreflightProc:addItem(kcProcedureItem:new("COCKPIT LIGHTS","%s|(kc_is_daylight()) and \"OFF\" or \"ON\"",kcFlowItem.actorFO,2,

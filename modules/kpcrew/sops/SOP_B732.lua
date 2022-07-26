@@ -55,6 +55,8 @@ activeSOP = kcSOP:new("FJS B732 SOP")
 -- ============ Electrical Power Up Procedure ===========
 -- ===== Initial checks
 -- DC Electric Power
+-- CIRCUIT BREAKERS (P6 PANEL)................CHECK (F/O)
+-- CIRCUIT BREAKERS (CONTROL STAND,P18 PANEL).CHECK (F/O)
 -- DC METER SWITCH..............................BAT (F/O)
 -- BATTERY VOLTAGE..........................MIN 24V (F/O)
 -- BATTERY SWITCH......................GUARD CLOSED (F/O)
@@ -77,8 +79,7 @@ activeSOP = kcSOP:new("FJS B732 SOP")
 -- ==== Activate APU 
 --   OVHT FIRE TEST SWITCH...............HOLD RIGHT (F/O)
 --   MASTER FIRE WARN LIGHT....................PUSH (F/O)
---   ENGINES EXT TEST SWITCH.........TEST 1 TO LEFT (F/O)
---   ENGINES EXT TEST SWITCH........TEST 2 TO RIGHT (F/O)
+--   ENGINES EXT TEST SWITCH...........TEST TO LEFT (F/O)
 --   APU......................................START (F/O)
 --     Hold APU switch in START position for 3-4 seconds.
 --     APU GEN OFF BUS LIGHT............ILLUMINATED (F/O)
@@ -93,6 +94,8 @@ activeSOP = kcSOP:new("FJS B732 SOP")
 local electricalPowerUpProc = kcProcedure:new("ELECTRICAL POWER UP (F/O)","performing ELECTRICAL POWER UP")
 electricalPowerUpProc:addItem(kcSimpleProcedureItem:new("==== Initial Checks"))
 electricalPowerUpProc:addItem(kcSimpleProcedureItem:new("DC Electric Power"))
+electricalPowerUpProc:addItem(kcProcedureItem:new("CIRCUIT BREAKERS (P6 PANEL)","CHECK",kcFlowItem.actorFO,1,true))
+electricalPowerUpProc:addItem(kcProcedureItem:new("CIRCUIT BREAKERS (CONTROL STAND,P18 PANEL)","CHECK",kcFlowItem.actorFO,1,true))
 electricalPowerUpProc:addItem(kcProcedureItem:new("DC POWER SWITCH","BAT",kcFlowItem.actorFO,2,
 	function () return sysElectric.dcPowerSwitch:getStatus() == sysElectric.dcPwrBAT end,
 	function () sysElectric.dcPowerSwitch:setValue(sysElectric.dcPwrBAT) end))
@@ -132,7 +135,7 @@ electricalPowerUpProc:addItem(kcProcedureItem:new("  #exchange|GRD|GROUND# POWER
 	function () return activePrefSet:get("aircraft:powerup_apu") == true end))
 electricalPowerUpProc:addItem(kcProcedureItem:new("  GROUND POWER SWITCH","ON",kcFlowItem.actorFO,2,
 	function () return get("FJS/732/Elec/P_GPUPwr1On") == 1 end,
-	function () sysElectric.gpuSwitch:actuate(cmdDown) end,
+	function () sysElectric.gpuSwitch:actuate(1) end,
 	function () return activePrefSet:get("aircraft:powerup_apu") == true end))
 electricalPowerUpProc:addItem(kcSimpleProcedureItem:new("==== Activate APU",
 	function () return activePrefSet:get("aircraft:powerup_apu") == false end))
@@ -141,24 +144,23 @@ electricalPowerUpProc:addItem(kcProcedureItem:new("  OVHT DET SWITCHES","NORMAL"
 electricalPowerUpProc:addItem(kcIndirectProcedureItem:new("  #exchange|OVHT|Overheat# FIRE TEST SWITCH","HOLD RIGHT",kcFlowItem.actorFO,2,"ovht_fire_test",
 	function () return  sysEngines.ovhtFireTestSwitch:getStatus() > modeOff end,nil,
 	function () return activePrefSet:get("aircraft:powerup_apu") == false end))
-electricalPowerUpProc:addItem(kcProcedureItem:new("  MASTER FIRE WARN LIGHT","PUSH",kcFlowItem.actorFO,1,true,nil,
+electricalPowerUpProc:addItem(kcIndirectProcedureItem:new("  MASTER FIRE WARN LIGHT","PUSH",kcFlowItem.actorFO,1,"masterfire",
+	function () return get("FJS/732/FireProtect/FireWarnBellCutoutButtonL") > 0 end,nil,
 	function () return activePrefSet:get("aircraft:powerup_apu") == false end))
-electricalPowerUpProc:addItem(kcIndirectProcedureItem:new("  ENGINES #exchange|EXT|Extinguischer# TEST SWITCH","TEST 1 TO LEFT",kcFlowItem.actorFO,2,"eng_ext_test_1",
-	function () return get("FJS/732/FireProtect/ExtinguisherTestSwitch") < 0 end,nil,
-	function () return activePrefSet:get("aircraft:powerup_apu") == false end))
-electricalPowerUpProc:addItem(kcIndirectProcedureItem:new("  ENGINES #exchange|EXT|Extinguischer# TEST SWITCH","TEST 2 TO RIGHT",kcFlowItem.actorFO,2,"eng_ext_test_2",
+electricalPowerUpProc:addItem(kcIndirectProcedureItem:new("  ENGINES #exchange|EXT|Extinguischer# TEST SWITCH","TEST TO LEFT",kcFlowItem.actorFO,2,"eng_ext_test_2",
 	function () return get("FJS/732/FireProtect/ExtinguisherTestSwitch") > 0 end,nil,
 	function () return activePrefSet:get("aircraft:powerup_apu") == false end))
 electricalPowerUpProc:addItem(kcProcedureItem:new("  #spell|APU#","START",kcFlowItem.actorFO,2,
-	function () return sysElectric.apuRunningAnc:getStatus() == modeOn end,nil,
+	function () return sysElectric.apuRunningAnc:getStatus() > 0 end,nil,
 	function () return activePrefSet:get("aircraft:powerup_apu") == false end))
 electricalPowerUpProc:addItem(kcSimpleProcedureItem:new("    Hold APU switch in START position for 3-4 seconds.",
 	function () return activePrefSet:get("aircraft:powerup_apu") == false end))
 electricalPowerUpProc:addItem(kcProcedureItem:new("  #spell|APU# GEN OFF BUS LIGHT","ILLUMINATED",kcFlowItem.actorFO,1,
-	function () return sysElectric.apuGenBusOff:getStatus() == modeOn end,nil,
+	function () return sysElectric.apuGenBusOff:getStatus() == 0 end,
+	function () sysElectric.apuStartSwitch:actuate(1) end,
 	function () return activePrefSet:get("aircraft:powerup_apu") == false end))
-electricalPowerUpProc:addItem(kcProcedureItem:new("  #spell|APU# GENERATOR BUS SWITCHES","ON",kcFlowItem.actorFO,2,
-	function () return sysElectric.apuGenBus1:getStatus() == modeOn and sysElectric.apuGenBus2:getStatus() == 1 end,nil,
+electricalPowerUpProc:addItem(kcIndirectProcedureItem:new("  #spell|APU# GENERATOR BUS SWITCHES","ON",kcFlowItem.actorFO,2,"apugenson",
+	function () return sysElectric.apuGenSwitches:getStatus() > 0 end,nil,
 	function () return activePrefSet:get("aircraft:powerup_apu") == false end))
 electricalPowerUpProc:addItem(kcProcedureItem:new("TRANSFER BUS LIGHTS","CHECK EXTINGUISHED",kcFlowItem.actorFO,2,
 	function () return sysElectric.transferBus1:getStatus() == modeOff and sysElectric.transferBus2:getStatus() == modeOff end))
@@ -193,9 +195,6 @@ electricalPowerUpProc:addItem(kcProcedureItem:new("   STANDBY #exchange|PWR|POWE
 -- Next: CDU Preflight                             
 
 local prelPreflightProc = kcProcedure:new("PREL PREFLIGHT PROCEDURE (F/O)")
--- not coded in Zibo
--- prelPreflightProc:addItem(kcProcedureItem:new("CIRCUIT BREAKERS (P6 PANEL)","CHECK",kcFlowItem.actorFO,1,nil,nil,nil))
--- prelPreflightProc:addItem(kcProcedureItem:new("CIRCUIT BREAKERS (CONTROL STAND,P18 PANEL)","CHECK",kcFlowItem.actorFO,1,nil,nil,nil))
 prelPreflightProc:addItem(kcProcedureItem:new("EMERGENCY EXIT LIGHT","ARM #exchange|/ON GUARD CLOSED| #",kcFlowItem.actorFO,2,
 	function () return sysGeneral.emerExitLightsCover:getStatus() == modeOff  end,
 	function () sysGeneral.emerExitLightsCover:actuate(modeOff) end))
@@ -269,7 +268,6 @@ prelPreflightProc:addItem(kcProcedureItem:new("PARKING BRAKE","SET",kcFlowItem.a
 prelPreflightProc:addItem(kcProcedureItem:new("#spell|IFE# & GALLEY POWER","ON",kcFlowItem.actorFO,3,
 	function () return sysElectric.ifePwr:getStatus() == modeOn and sysElectric.cabUtilPwr:getStatus() == modeOn end,
 	function () sysElectric.ifePwr:actuate(modeOn) sysElectric.cabUtilPwr:actuate(modeOn) end))
-prelPreflightProc:addItem(kcSimpleProcedureItem:new("Next CDU Preflight by Captain."))
 
 -- ================== CDU Preflight ==================
 -- INITIAL DATA (CPT)                              
