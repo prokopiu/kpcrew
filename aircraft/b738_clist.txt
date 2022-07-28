@@ -96,16 +96,16 @@ sw_continue:PREL PREFLIGHT PROCEDURE (F/O)
 #########
 sw_checklist:PREL PREFLIGHT PROCEDURE (F/O):PREL PREFLIGHT PROCEDURE
 #########
-sw_item_c:\white\Electrical Power Up supplementary procedure|Complete:1:1
 sw_item_c:\white\EMERGENCY EXIT LIGHTS\grey\, AREMD & GUARDED|SET:(laminar/B738/toggle_switch/emer_exit_lights:1.0)&&(laminar/B738/button_switch/cover_position[9]:0)
 sw_item_c:\white\ATTENDENCE BUTTON|PRESS:laminar/B738/push_button/attend_pos:>0
+sw_item_c:\white\ELECTRICAL POWER UP|COMPLETE:(laminar/B738/electric/dc_gnd_service:>0)||((laminar/B738/electric/dc_gnd_service:0)&&((laminar/B738/electrical/apu_power_bus1:1)||(laminar/B738/electrical/apu_power_bus2:1)))
+sw_item_c:\white\VOICE RECORDER SWITCH\grey\, AUTO|SET:(laminar/B738/toggle_switch/vcr:0)&&(laminar/B738/switches/fdr_cover_pos:0)
+sw_item_c:\white\MACH OVERSPEED TEST|PERFORM:(laminar/B738/push_button/mach_warn1_pos:1)||(laminar/B738/push_button/mach_warn2_pos:1)
+sw_item_c:\white\STALL WARNING TEST|PERFORM:(laminar/B738/push_button/stall_test1:1)||(laminar/B738/push_button/stall_test2:1)
 sw_item_c:\white\LEFT & RIGHT IRS MODE SELECTOR\grey\, OFF|SET:(laminar/B738/toggle_switch/irs_left:0)&&(laminar/B738/toggle_switch/irs_right:0)
 sw_item_c:\white\LEFT & RIGHT IRS MODE SELECTOR\grey\, NAV|SET:(laminar/B738/toggle_switch/irs_left:2)&&(laminar/B738/toggle_switch/irs_right:2)
 sw_itemvoid_c:\grey\  Verify ON DC lights illuminate then extinguish
 sw_itemvoid_c:\grey\  Verify ALIGN lights are illuminated           
-sw_item_c:\white\VOICE RECORDER SWITCH\grey\, AUTO|SET:(laminar/B738/toggle_switch/vcr:0)&&(laminar/B738/switches/fdr_cover_pos:0)
-sw_item_c:\white\MACH OVERSPEED TEST|PERFORM:(laminar/B738/push_button/mach_warn1_pos:1)||(laminar/B738/push_button/mach_warn2_pos:1)
-sw_item_c:\white\STALL WARNING TEST|PERFORM:(laminar/B738/push_button/stall_test1:1)||(laminar/B738/push_button/stall_test2:1)
 sw_item_c:\white\XPDR\grey\, 2000|SET:sim/cockpit/radios/transponder_code:2000
 sw_item_c:\white\COCKPIT LIGHTS|SET AS NEEDED
 sw_item_c:\white\WING & WHEEL WELL LIGHTS|SET AS REQUIRED

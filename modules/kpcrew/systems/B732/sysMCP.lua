@@ -55,7 +55,7 @@ function ()
 end)
 
 -- VORLOC
-sysMCP.vorlocSwitch = TwoStateToggleSwitch:new("vorloc","laminar/B738/autopilot/vorloc_status",0,"laminar/B738/autopilot/vorloc_press")
+sysMCP.vorlocSwitch = InopSwitch:new("vorloc")
 
 -- ALTHOLD
 sysMCP.altholdSwitch = TwoStateDrefSwitch:new("althold","FJS/732/Autopilot/FDAltHoldSwitch",0)
@@ -64,24 +64,24 @@ sysMCP.altholdSwitch = TwoStateDrefSwitch:new("althold","FJS/732/Autopilot/FDAlt
 sysMCP.approachSwitch = InopSwitch:new("approach")
 
 -- VS MODE
-sysMCP.vsSwitch = TwoStateToggleSwitch:new("vs","laminar/B738/autopilot/vs_status",0,"laminar/B738/autopilot/vs_press")
+sysMCP.vsSwitch = InopSwitch:new("vs")
 
 -- SPEED
-sysMCP.speedSwitch = TwoStateToggleSwitch:new("speed","laminar/B738/autopilot/speed_status1",0,"laminar/B738/autopilot/speed_press")
+sysMCP.speedSwitch = InopSwitch:new("speed")
 
 -- AUTOPILOT
-sysMCP.ap1Switch = TwoStateToggleSwitch:new("autopilot1","laminar/B738/autopilot/cmd_a_status",0,"laminar/B738/autopilot/cmd_a_press")
-sysMCP.ap2Switch = TwoStateToggleSwitch:new("autopilot2","laminar/B738/autopilot/cmd_b_status",0,"laminar/B738/autopilot/cmd_b_press")
+sysMCP.ap1Switch = InopSwitch:new("autopilot1")
+sysMCP.ap2Switch = InopSwitch:new("autopilot2")
 
 -- BACKCOURSE
 sysMCP.backcourse = InopSwitch:new("backcourse")
 
 -- TOGA
-sysMCP.togaPilotSwitch = TwoStateToggleSwitch:new("togapilot","laminar/B738/autopilot/ap_takeoff",0,"laminar/B738/autopilot/left_toga_press")
-sysMCP.togaCopilotSwitch = TwoStateToggleSwitch:new("togacopilot","laminar/B738/autopilot/ap_takeoff",0,"laminar/B738/autopilot/right_toga_press")
+sysMCP.togaPilotSwitch = InopSwitch:new("togapilot")
+sysMCP.togaCopilotSwitch = InopSwitch:new("togacopilot")
 
 -- ATHR
-sysMCP.athrSwitch = TwoStateToggleSwitch:new("athr","laminar/B738/autopilot/autothrottle_status1",0,"laminar/B738/autopilot/autothrottle_arm_toggle")
+sysMCP.athrSwitch = InopSwitch:new("athr")
 
 -- CRS 1&2
 
@@ -93,7 +93,7 @@ sysMCP.crsSelectorGroup:addSwitch(sysMCP.crs1Selector)
 sysMCP.crsSelectorGroup:addSwitch(sysMCP.crs2Selector)
 
 -- N1 Boeing
-sysMCP.n1Switch = TwoStateToggleSwitch:new("n1","laminar/B738/autopilot/n1_status",0,"laminar/B738/autopilot/n1_press")
+sysMCP.n1Switch = InopSwitch:new("n1")
 
 -- IAS
 sysMCP.iasSelector = MultiStateCmdSwitch:new("ias","sim/cockpit/autopilot/airspeed",0,"sim/autopilot/airspeed_down","sim/autopilot/airspeed_up")
@@ -136,19 +136,19 @@ end,
 nil)
 
 -- CWS Boeing only
-sysMCP.cwsaSwitch = TwoStateToggleSwitch:new("cwsa","laminar/B738/autopilot/cws_a_status",0,"laminar/B738/autopilot/cws_a_press")
-sysMCP.cwsbSwitch = TwoStateToggleSwitch:new("cwsb","laminar/B738/autopilot/cws_b_status",0,"laminar/B738/autopilot/cws_b_press")
+sysMCP.cwsaSwitch = InopSwitch:new("cwsa")
+sysMCP.cwsbSwitch = InopSwitch:new("cwsb")
 
 -- A/P DISENGAGE
-sysMCP.discAPSwitch = TwoStateToggleSwitch:new("apdisc","laminar/B738/autopilot/disconnect_pos",0,"laminar/B738/autopilot/disconnect_toggle")
-sysMCP.apDiscYoke = TwoStateToggleSwitch:new("discapyoke","laminar/B738/autopilot/disconnect_pos",0,"laminar/B738/autopilot/capt_disco_press")
+sysMCP.discAPSwitch = InopSwitch:new("apdisc")
+sysMCP.apDiscYoke = InopSwitch:new("discapyoke")
 
 -- NAVIGATION SWITCHES
-sysMCP.vhfNavSwitch = MultiStateCmdSwitch:new("vhfnav","laminar/B738/toggle_switch/vhf_nav_source",0,"laminar/B738/toggle_switch/vhf_nav_source_lft","laminar/B738/toggle_switch/vhf_nav_source_rgt")
-sysMCP.irsNavSwitch = MultiStateCmdSwitch:new("irsnav","laminar/B738/toggle_switch/irs_source",0,"laminar/B738/toggle_switch/irs_source_left","laminar/B738/toggle_switch/irs_source_right")
-sysMCP.fmcNavSwitch = MultiStateCmdSwitch:new("fmcnav","laminar/B738/toggle_switch/fmc_source",0,"laminar/B738/toggle_switch/fmc_source_left","laminar/B738/toggle_switch/fmc_source_right")
-sysMCP.displaySourceSwitch = MultiStateCmdSwitch:new("dispsrc","laminar/B738/toggle_switch/dspl_source",0,"laminar/B738/toggle_switch/dspl_source_left","laminar/B738/toggle_switch/dspl_source_right")
-sysMCP.displayControlSwitch = MultiStateCmdSwitch:new("dispctrl","laminar/B738/toggle_switch/dspl_ctrl_pnl",0,"laminar/B738/toggle_switch/dspl_ctrl_pnl_left","laminar/B738/toggle_switch/dspl_ctrl_pnl_right")
+sysMCP.vhfNavSwitch = InopSwitch:new("vhfnav")
+sysMCP.irsNavSwitch = InopSwitch:new("irsnav")
+sysMCP.fmcNavSwitch = InopSwitch:new("fmcnav")
+sysMCP.displaySourceSwitch = InopSwitch:new("dispsrc")
+sysMCP.displayControlSwitch = InopSwitch:new("dispctrl")
 
 sysMCP.fltdirSelector = MultiStateCmdSwitch:new("fltdir","FJS/732/Autopilot/FDModeSelector",0,"FJS/732/Autopilot/FD_SelectLeft","FJS/732/Autopilot/FD_SelectRight")
 sysMCP.apmodeSelector = MultiStateCmdSwitch:new("apmodes","FJS/732/Autopilot/APModeSelector",0,"FJS/732/Autopilot/NavSelectLeft","FJS/732/Autopilot/NavSelectRight")

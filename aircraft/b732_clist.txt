@@ -93,16 +93,13 @@ sw_continue:PREL PREFLIGHT PROCEDURE (F/O)
 #########
 sw_checklist:PREL PREFLIGHT PROCEDURE (F/O):PREL PREFLIGHT PROCEDURE
 #########
-sw_item_c:\white\Electrical Power Up supplementary procedure|Complete:1:1
-sw_item_c:\white\EMERGENCY EXIT LIGHTS\grey\, AREMD & GUARDED|SET:(laminar/B738/toggle_switch/emer_exit_lights:1.0)&&(laminar/B738/button_switch/cover_position[9]:0)
-sw_item_c:\white\ATTENDENCE BUTTON|PRESS:laminar/B738/push_button/attend_pos:>0
-sw_item_c:\white\LEFT & RIGHT IRS MODE SELECTOR\grey\, OFF|SET:(laminar/B738/toggle_switch/irs_left:0)&&(laminar/B738/toggle_switch/irs_right:0)
-sw_item_c:\white\LEFT & RIGHT IRS MODE SELECTOR\grey\, NAV|SET:(laminar/B738/toggle_switch/irs_left:2)&&(laminar/B738/toggle_switch/irs_right:2)
-sw_itemvoid_c:\grey\  Verify ON DC lights illuminate then extinguish
-sw_itemvoid_c:\grey\  Verify ALIGN lights are illuminated           
-sw_item_c:\white\VOICE RECORDER SWITCH\grey\, AUTO|SET:(laminar/B738/toggle_switch/vcr:0)&&(laminar/B738/switches/fdr_cover_pos:0)
-sw_item_c:\white\MACH OVERSPEED TEST|PERFORM:(laminar/B738/push_button/mach_warn1_pos:1)||(laminar/B738/push_button/mach_warn2_pos:1)
-sw_item_c:\white\STALL WARNING TEST|PERFORM:(laminar/B738/push_button/stall_test1:1)||(laminar/B738/push_button/stall_test2:1)
+sw_item_c:\white\EMERGENCY EXIT LIGHTS\grey\, AREMD & GUARDED|SET:(FJS/732/lights/EmerExitSwitch:1)&&(FJS/732/num/FlipPo_10:0)
+sw_item_c:\white\ATTENDENCE BUTTON|PRESS:FJS/732/Radios/AttCallButton:>0
+sw_item_c:\white\ELECTRICAL POWER UP|COMPLETE:((FJS/732/Elec/APUgen1Switch:1)&&(FJS/732/Elec/APUgen2Switch:1))||(FJS/732/Elec/P_GPUPwr1On:1)
+sw_item_c:\white\VOICE RECORDER SWITCH\grey\, AUTO|SET:FJS/732/num/FlipPo_15:0
+sw_item_c:\white\MACH OVERSPEED TEST|PERFORM:FJS/732/Annun/MachWarningTestButton:1
+sw_item_c:\white\STALL WARNING TEST|PERFORM:FJS/732/Annun/StallWarningSwitch:1
+
 sw_item_c:\white\XPDR\grey\, 2000|SET:sim/cockpit/radios/transponder_code:2000
 sw_item_c:\white\COCKPIT LIGHTS|SET AS NEEDED
 sw_item_c:\white\WING & WHEEL WELL LIGHTS|SET AS REQUIRED
@@ -121,7 +118,6 @@ sw_item_c:\white\HEADING\grey\, 001|SET:(laminar/B738/autopilot/mcp_hdg_dial:1)
 sw_item_c:\white\ALTITUDE\grey\, 4900|SET:(sim/cockpit/autopilot/altitude:4900)
 sw_item_c:\white\PARKING BRAKE\grey\, PULLED (ACTIVE)|SET:sim/cockpit2/controls/parking_brake_ratio:1
 sw_item_c:\white\CABIN UTILITY POWER\grey\, CHECKED|SET:laminar/B738/toggle_switch/cab_util_pos:1
-sw_item_c:\white\IFE PASSENGER SEAT POWER\grey\, ON|CHECKED:laminar/B738/toggle_switch/ife_pass_seat_pos:1
 
 
 #########

@@ -204,10 +204,9 @@ sysGeneral.noSmokingSwitch = TwoStateDrefSwitch:new("","FJS/732/lights/NoSmoking
 sysGeneral.seatBeltSwitch = TwoStateDrefSwitch:new("","FJS/732/lights/FastenBeltsSwitch",0)
 
 -- GPWS
-
 sysGeneral.flapInhibitSwitch 	= TwoStateDrefSwitch:new("","FJS/732/Annun/GPWS_InhibitSwitch",0)
-sysGeneral.gearInhibitSwitch 	= InopSwitch:new("","laminar/B738/toggle_switch/gpws_gear_pos",0)
-sysGeneral.terrainInhibitSwitch = InopSwitch:new("","laminar/B738/toggle_switch/gpws_terr_pos",0)
+sysGeneral.gearInhibitSwitch 	= InopSwitch:new("","",0)
+sysGeneral.terrainInhibitSwitch = InopSwitch:new("","",0)
 
 sysGeneral.flapInhibitCover 	= TwoStateToggleSwitch:new("","FJS/732/num/FlipPo_18",0)
 sysGeneral.gearInhibitCover 	= InopSwitch:new("")

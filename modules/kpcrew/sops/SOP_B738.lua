@@ -210,8 +210,8 @@ prelPreflightProc:addItem(kcIndirectProcedureItem:new("ATTENDENCE BUTTON","PRESS
 	-- ,function () sysGeneral.attendanceButton:actuate(modeOn)))
 prelPreflightProc:addItem(kcProcedureItem:new("ELECTRICAL POWER UP","COMPLETE",kcFlowItem.actorFO,1,
 	function () return 
-		(sysElectric.apuGenBus1:getStatus() == 1 && sysElectric.apuGenBus2:getStatus() == 1) ||
-		sysElectric.gpuAvailAnc:getStatus() == 1
+		(sysElectric.apuGenBus1:getStatus() == 1 and sysElectric.apuGenBus2:getStatus() == 1) or
+		sysElectric.gpuOnBus:getStatus() == 1
 	end))
 prelPreflightProc:addItem(kcProcedureItem:new("VOICE RECORDER SWITCH","AUTO",kcFlowItem.actorFO,2,
 	function () return  sysGeneral.voiceRecSwitch:getStatus() == modeOff and sysGeneral.vcrCover:getStatus() == modeOff end,

@@ -131,7 +131,7 @@ electricalPowerUpProc:addItem(kcSimpleProcedureItem:new("==== Activate External 
 electricalPowerUpProc:addItem(kcSimpleProcedureItem:new("  Use FJS Menu to turn Ground Power on.",
 	function () return activePrefSet:get("aircraft:powerup_apu") == true end))
 electricalPowerUpProc:addItem(kcProcedureItem:new("  #exchange|GRD|GROUND# POWER AVAILABLE LIGHT","ILLUMINATED",kcFlowItem.actorFO,2,
-	function () return sysElectric.gpuAvailAnc:getStatus() == modeOn end,nil,
+	function () return sysElectric.gpuAvailAnc:getStatus() == 1 end,nil,
 	function () return activePrefSet:get("aircraft:powerup_apu") == true end))
 electricalPowerUpProc:addItem(kcProcedureItem:new("  GROUND POWER SWITCH","ON",kcFlowItem.actorFO,2,
 	function () return get("FJS/732/Elec/P_GPUPwr1On") == 1 end,
@@ -175,11 +175,7 @@ electricalPowerUpProc:addItem(kcProcedureItem:new("   STANDBY #exchange|PWR|POWE
 -- ============ Preliminary Preflight Procedures ========
 -- EMERGENCY EXIT LIGHT.........ARM/ON GUARD CLOSED (F/O)
 -- ATTENDENCE BUTTON..........................PRESS (F/O)
---   Electrical Power Up supplementary procedure complete
--- IRS MODE SELECTORS...........................OFF (F/O)
--- IRS MODE SELECTORS......................THEN NAV (F/O)
---   Verify ON DC lights illuminate then extinguish
---   Verify ALIGN lights are illuminated           
+-- ELECTRICAL POWER UP.....................COMPLETE (F/O)
 -- VOICE RECORDER SWITCH.......................AUTO (F/O)
 -- MACH OVERSPEED TEST......................PERFORM (F/O)
 -- STALL WARNING TEST.......................PERFORM (F/O)
@@ -191,7 +187,7 @@ electricalPowerUpProc:addItem(kcProcedureItem:new("   STANDBY #exchange|PWR|POWE
 -- POSITION LIGHTS...............................ON (F/O)
 -- MCP...................................INITIALIZE (F/O)
 -- PARKING BRAKE................................SET (F/O)
--- IFE & GALLEY POWER............................ON (F/O)
+-- GALLEY POWER..................................ON (F/O)
 -- Next: CDU Preflight                             
 
 local prelPreflightProc = kcProcedure:new("PREL PREFLIGHT PROCEDURE (F/O)")
@@ -201,31 +197,17 @@ prelPreflightProc:addItem(kcProcedureItem:new("EMERGENCY EXIT LIGHT","ARM #excha
 prelPreflightProc:addItem(kcIndirectProcedureItem:new("ATTENDENCE BUTTON","PRESS",kcFlowItem.actorFO,2,"attendence_button",
 	function () return sysGeneral.attendanceButton:getStatus() > modeOff end))
 	-- ,function () sysGeneral.attendanceButton:actuate(modeOn)))
-prelPreflightProc:addItem(kcSimpleProcedureItem:new("Electrical Power Up supplementary procedure complete."))
-prelPreflightProc:addItem(kcIndirectProcedureItem:new("IRS MODE SELECTORS","OFF",kcFlowItem.actorFO,2,"irs_mode_initial_off",
-	function () return sysGeneral.irsUnitGroup:getStatus() == modeOff end,
-	function () sysGeneral.irsUnitGroup:setValue(sysGeneral.irsUnitOFF) end))
-prelPreflightProc:addItem(kcIndirectProcedureItem:new("IRS MODE SELECTORS","THEN ALIGN",kcFlowItem.actorFO,2,"irs_mode_nav_again",
-	function () return sysGeneral.irsUnitGroup:getStatus() == sysGeneral.irsUnitALIGN*2 end,
-	function () sysGeneral.irsUnitGroup:setValue(sysGeneral.irsUnitALIGN) end))
-prelPreflightProc:addItem(kcIndirectProcedureItem:new("  IRS LEFT ALIGN LIGHT","ILLUMINATES",kcFlowItem.actorFO,2,"irs_left_align",
-	function () return sysGeneral.irs1Align:getStatus() == modeOn end))
-prelPreflightProc:addItem(kcIndirectProcedureItem:new("  IRS RIGHT ALIGN LIGHT","ILLUMINATES",kcFlowItem.actorFO,2,"irs_right_align",
-	function () return sysGeneral.irs2Align:getStatus() == modeOn end))
-prelPreflightProc:addItem(kcIndirectProcedureItem:new("IRS MODE SELECTORS","THEN NAV",kcFlowItem.actorFO,2,"irs_mode_nav_again",
-	function () return sysGeneral.irsUnitGroup:getStatus() == sysGeneral.irsUnitNAV*2 end,
-	function () sysGeneral.irsUnitGroup:setValue(sysGeneral.irsUnitNAV) end))
--- prelPreflightProc:addItem(kcIndirectProcedureItem:new("  IRS LEFT ON DC","ILLUMINATES & EXTINGUISHES",kcFlowItem.actorFO,1,"irs_left_dc",
-	-- function () return sysGeneral.irs1OnDC:getStatus() == modeOn end))
--- prelPreflightProc:addItem(kcIndirectProcedureItem:new("  IRS RIGHT ON DC","ILLUMINATES & EXTINGUISHES",kcFlowItem.actorFO,1,"irs_right_dc",
-	-- function () return sysGeneral.irs2OnDC:getStatus() == modeOn end))
-prelPreflightProc:addItem(kcProcedureItem:new("VOICE RECORDER SWITCH","AUTO",kcFlowItem.actorFO,2,
+prelPreflightProc:addItem(kcProcedureItem:new("ELECTRICAL POWER UP","COMPLETE",kcFlowItem.actorFO,1,
+	function () return 
+		sysElectric.apuAvailAnc:getStatus() > 0 or sysElectric.gpuAvailAnc:getStatus() > 0
+	end))
+prelPreflightProc:addItem(kcProcedureItem:new("FLT RECORDER SWITCH","AUTO",kcFlowItem.actorFO,2,
 	function () return  sysGeneral.voiceRecSwitch:getStatus() == modeOff and sysGeneral.vcrCover:getStatus() == modeOff end,
 	function () sysGeneral.voiceRecSwitch:actuate(modeOn) sysGeneral.vcrCover:actuate(modeOff) end))
 prelPreflightProc:addItem(kcIndirectProcedureItem:new("MACH OVERSPEED TEST","PERFORM",kcFlowItem.actorFO,2,"mach_ovspd_test",
-	function () return get("laminar/B738/push_button/mach_warn1_pos") == 1 or get("laminar/B738/push_button/mach_warn2_pos") == 1 end))
+	function () return get("FJS/732/Annun/MachWarningTestButton") == 1 end))
 prelPreflightProc:addItem(kcIndirectProcedureItem:new("STALL WARNING TEST","PERFORM",kcFlowItem.actorFO,2,"stall_warning_test",
-	function () return get("laminar/B738/push_button/stall_test1") == 1 or get("laminar/B738/push_button/stall_test2") == 1 end))
+	function () return get("FJS/732/Annun/StallWarningSwitch") == 1 end))
 prelPreflightProc:addItem(kcProcedureItem:new("#exchange|XPDR|transponder#","SET 2000",kcFlowItem.actorFO,2,
 	function () return get("sim/cockpit/radios/transponder_code") == 2000 end))
 prelPreflightProc:addItem(kcProcedureItem:new("COCKPIT LIGHTS","%s|(kc_is_daylight()) and \"OFF\" or \"ON\"",kcFlowItem.actorFO,2,
@@ -255,19 +237,15 @@ prelPreflightProc:addItem(kcProcedureItem:new("#spell|MCP#","INITIALIZE",kcFlowI
 		sysMCP.crs2Selector:setValue(1)
 		sysMCP.iasSelector:setValue(activePrefSet:get("aircraft:mcp_def_spd"))
 		sysMCP.hdgSelector:setValue(activePrefSet:get("aircraft:mcp_def_hdg"))
-		sysMCP.turnRateSelector:adjustValue(3,0,4)
 		sysMCP.altSelector:setValue(activePrefSet:get("aircraft:mcp_def_alt"))
-		sysMCP.vspSelector:setValue(modeOff)
 		sysMCP.discAPSwitch:actuate(modeOff)
-		sysEFIS.mtrsPilot:actuate(modeOff)
-		sysEFIS.fpvPilot:actuate(modeOff)
 	end))
 prelPreflightProc:addItem(kcProcedureItem:new("PARKING BRAKE","SET",kcFlowItem.actorFO,2,
 	function () return sysGeneral.parkBrakeSwitch:getStatus() == modeOn end,
 	function () sysGeneral.parkBrakeSwitch:actuate(modeOn) end))
-prelPreflightProc:addItem(kcProcedureItem:new("#spell|IFE# & GALLEY POWER","ON",kcFlowItem.actorFO,3,
-	function () return sysElectric.ifePwr:getStatus() == modeOn and sysElectric.cabUtilPwr:getStatus() == modeOn end,
-	function () sysElectric.ifePwr:actuate(modeOn) sysElectric.cabUtilPwr:actuate(modeOn) end))
+prelPreflightProc:addItem(kcProcedureItem:new("#spell|GALLEY POWER","ON",kcFlowItem.actorFO,3,
+	function () return sysElectric.cabUtilPwr:getStatus() == modeOn end,
+	function () sysElectric.cabUtilPwr:actuate(modeOn) end))
 
 -- ================== CDU Preflight ==================
 -- INITIAL DATA (CPT)                              
@@ -1377,7 +1355,7 @@ local coldAndDarkProc = kcProcedure:new("SET AIRCRAFT TO COLD & DARK")
 -- ============  =============
 -- add the checklists and procedures to the active sop
 activeSOP:addProcedure(electricalPowerUpProc)
--- activeSOP:addProcedure(prelPreflightProc)
+activeSOP:addProcedure(prelPreflightProc)
 -- activeSOP:addProcedure(cduPreflightProc)
 -- activeSOP:addProcedure(preflightFOProc)
 -- activeSOP:addProcedure(preflightFO2Proc)
