@@ -230,12 +230,12 @@ function ()
 end)
 
 -- Gear Lights for annunciators
-sysGeneral.gearLeftGreenAnc = SimpleAnnunciator:new("green1", "FJS/732/Annun/SysAnnunBUT_118", 0)
-sysGeneral.gearRightGreenAnc = SimpleAnnunciator:new("green2","FJS/732/Annun/SysAnnunBUT_120", 0)
-sysGeneral.gearNodeGreenAnc = SimpleAnnunciator:new("green3", "FJS/732/Annun/SysAnnunBUT_122", 0)
-sysGeneral.gearLeftRedAnc = InopSwitch:new("red1", "FJS/732/Annun/SysAnnunBUT_117", 0)
-sysGeneral.gearRightRedAnc = InopSwitch:new("red2", "FJS/732/Annun/SysAnnunBUT_119", 0)
-sysGeneral.gearNodeRedAnc = InopSwitch:new("red3", "FJS/732/Annun/SysAnnunBUT_121", 0)
+sysGeneral.gearLeftGreenAnc = SimpleAnnunciator:new("green1", "FJS/732/Annun/SysAnnunLIT_118", 0)
+sysGeneral.gearRightGreenAnc = SimpleAnnunciator:new("green2","FJS/732/Annun/SysAnnunLIT_120", 0)
+sysGeneral.gearNodeGreenAnc = SimpleAnnunciator:new("green3", "FJS/732/Annun/SysAnnunLIT_122", 0)
+sysGeneral.gearLeftRedAnc = SimpleAnnunciator:new("red1", "FJS/732/Annun/SysAnnunLIT_117", 0)
+sysGeneral.gearRightRedAnc = SimpleAnnunciator:new("red2", "FJS/732/Annun/SysAnnunLIT_119", 0)
+sysGeneral.gearNodeRedAnc = SimpleAnnunciator:new("red3", "FJS/732/Annun/SysAnnunLIT_121", 0)
 
 -- light on when gears extended else 0
 sysGeneral.gearLightsAnc = CustomAnnunciator:new("gearlights", 

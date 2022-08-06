@@ -57,8 +57,8 @@ sysElectric.stbyPowerCover = TwoStateToggleSwitch:new("","laminar/B738/button_sw
 sysElectric.gpuSwitch = MultiStateCmdSwitch:new("","laminar/B738/electric/dc_gnd_service",0,"laminar/B738/toggle_switch/gpu_dn","laminar/B738/toggle_switch/gpu_up")
 
 -- APU Bus Switches
-sysElectric.apuGenBus1 = MultiStateCmdSwitch:new("","laminar/B738/electrical/apu_power_bus1",0,"laminar/B738/toggle_switch/apu_gen1_dn","laminar/B738/toggle_switch/apu_gen1_up")
-sysElectric.apuGenBus2 = MultiStateCmdSwitch:new("","laminar/B738/electrical/apu_power_bus2",0,"laminar/B738/toggle_switch/apu_gen2_dn","laminar/B738/toggle_switch/apu_gen2_up")
+sysElectric.apuGenBus1 = MultiStateCmdSwitch:new("","laminar/B738/electrical/apu_gen1_pos",0,"laminar/B738/toggle_switch/apu_gen1_up","laminar/B738/toggle_switch/apu_gen1_dn")
+sysElectric.apuGenBus2 = MultiStateCmdSwitch:new("","laminar/B738/electrical/apu_gen2_pos",0,"laminar/B738/toggle_switch/apu_gen2_up","laminar/B738/toggle_switch/apu_gen2_dn")
 
 -- GEN drive shaft
 sysElectric.genDrive1Switch = TwoStateCmdSwitch:new("","laminar/B738/one_way_switch/drive_disconnect1_pos",0,"laminar/B738/one_way_switch/drive_disconnect1","laminar/B738/one_way_switch/drive_disconnect1_off")
@@ -103,7 +103,8 @@ if get("laminar/B738/electric/dc_gnd_service") > 0 or (get("laminar/B738/electri
 
 -- APU GEN BUS OFF
 sysElectric.apuGenBusOff = CustomAnnunciator:new("apubus",function (self) 
-if get("laminar/B738/annunciator/apu_gen_off_bus") > 0 or (get("laminar/B738/annunciator/apu_gen_off_bus") == 0 and (get("laminar/B738/electrical/apu_power_bus1") == 1 or get("laminar/B738/electrical/apu_power_bus2") == 1)) then return 1 else return 0 end end)
+if get("laminar/B738/annunciator/apu_gen_off_bus") > 0 then return 1 else return 0 end end)
+-- if get("laminar/B738/annunciator/apu_gen_off_bus") > 0 or (get("laminar/B738/annunciator/apu_gen_off_bus") == 0 and (get("laminar/B738/electrical/apu_power_bus1") == 1 or get("laminar/B738/electrical/apu_power_bus2") == 1)) then return 1 else return 0 end end)
 
 sysElectric.transferBus1 = SimpleAnnunciator:new("trbus1","laminar/B738/annunciator/trans_bus_off1",0)
 sysElectric.transferBus2 = SimpleAnnunciator:new("trbus2","laminar/B738/annunciator/trans_bus_off2",0)

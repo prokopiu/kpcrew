@@ -31,12 +31,12 @@ local InopSwitch = require "kpcrew.systems.InopSwitch"
 --------- Switches
 
 -- Flight Directors
-sysMCP.fdirPilotSwitch = InopSwitch:new("fdirpilot")
+sysMCP.fdirPilotSwitch = MultiStateCmdSwitch:new("fdirpilot","FJS/732/Autopilot/FDModeSelector",0,"FJS/732/Autopilot/FD_SelectLeft","FJS/732/Autopilot/FD_SelectRight")
 sysMCP.fdirCoPilotSwitch = InopSwitch:new("fdircopilot")
 
 sysMCP.fdirGroup = SwitchGroup:new("fdirs")
 sysMCP.fdirGroup:addSwitch(sysMCP.fdirPilotSwitch)
-sysMCP.fdirGroup:addSwitch(sysMCP.fdirCoPilotSwitch)
+-- sysMCP.fdirGroup:addSwitch(sysMCP.fdirCoPilotSwitch)
 
 -- HDG SEL
 sysMCP.hdgselSwitch = TwoStateCustomSwitch:new("hdgsel","FJS/732/Autopilot/APHeadingSwitch",0,
@@ -123,7 +123,7 @@ sysMCP.lnavSwitch = InopSwitch:new("lnav")
 sysMCP.altSelector = MultiStateCmdSwitch:new("alt","sim/cockpit/autopilot/altitude",0,"sim/autopilot/altitude_down","sim/autopilot/altitude_up")
 
 -- ALT INTV
-sysMCP.altintvSwitch = TwoStateToggleSwitch:new("altintv","laminar/B738/autopilot/alt_interv_pos",0,"laminar/B738/autopilot/alt_interv")
+sysMCP.altintvSwitch = InopSwitch:new("altintv")
 
 -- VSP
 sysMCP.vspSelector = TwoStateCustomSwitch:new("vsp","FJS/732/Autopilot/PitchComKnob",0,

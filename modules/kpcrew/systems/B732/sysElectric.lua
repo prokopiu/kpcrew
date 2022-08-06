@@ -100,7 +100,7 @@ sysElectric.lowVoltageAnc = SimpleAnnunciator:new("lowvoltage","sim/cockpit2/ann
 sysElectric.apuRunningAnc = SimpleAnnunciator:new("apurunning","sim/cockpit2/electrical/APU_running",0)
 
 -- GPU AVAILABLE annunciator
-sysElectric.gpuAvailAnc = SimpleAnnunciator:new("gpuavail","FJS/732/Elec/P_GPUPwr1On",0)
+sysElectric.gpuAvailAnc = SimpleAnnunciator:new("gpuavail","FJS/732/Elec/GndPowerAvailable",0)
 sysElectric.apuAvailAnc = CustomAnnunciator:new("apuavail",
 function ()
 	if get("FJS/732/Elec/P_APUGen1On") > 0 or get("FJS/732/Elec/P_APUGen2On") > 0 then
@@ -122,7 +122,7 @@ end)
 -- APU GEN BUS OFF
 sysElectric.apuGenBusOff = CustomAnnunciator:new("apubus",
 function () 
-	if get("FJS/732/Annun/SysAnnunBUT_13") > 0 then
+	if get("FJS/732/Annun/SysAnnunLIT_13") > 0 then
 		return 1 
 	else 
 		return 0 

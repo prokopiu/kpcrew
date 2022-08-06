@@ -123,9 +123,10 @@ electricalPowerUpProc:addItem(kcProcedureItem:new("LANDING GEAR LEVER","DOWN",kc
 	function () return sysGeneral.GearSwitch:getStatus() == 0 end,
 	function () sysGeneral.GearSwitch:actuate(modeOn) end))
 electricalPowerUpProc:addItem(kcProcedureItem:new("  GREEN LANDING GEAR LIGHT","CHECK ILLUMINATED",kcFlowItem.actorFO,2,
-	function () return sysGeneral.gearLightsAnc:getStatus() == 0 end))
+	function () return sysGeneral.gearLightsAnc:getStatus() == 1 end))
 electricalPowerUpProc:addItem(kcProcedureItem:new("  RED LANDING GEAR LIGHT","CHECK EXTINGUISHED",kcFlowItem.actorFO,2,
 	function () return sysGeneral.gearLightsRed:getStatus() == 0 end))
+
 electricalPowerUpProc:addItem(kcSimpleProcedureItem:new("==== Activate External Power",
 	function () return activePrefSet:get("aircraft:powerup_apu") == true end))
 electricalPowerUpProc:addItem(kcSimpleProcedureItem:new("  Use FJS Menu to turn Ground Power on.",
@@ -137,6 +138,7 @@ electricalPowerUpProc:addItem(kcProcedureItem:new("  GROUND POWER SWITCH","ON",k
 	function () return get("FJS/732/Elec/P_GPUPwr1On") == 1 end,
 	function () sysElectric.gpuSwitch:actuate(1) end,
 	function () return activePrefSet:get("aircraft:powerup_apu") == true end))
+
 electricalPowerUpProc:addItem(kcSimpleProcedureItem:new("==== Activate APU",
 	function () return activePrefSet:get("aircraft:powerup_apu") == false end))
 electricalPowerUpProc:addItem(kcProcedureItem:new("  OVHT DET SWITCHES","NORMAL",kcFlowItem.actorFO,1,true,nil,
@@ -155,15 +157,18 @@ electricalPowerUpProc:addItem(kcProcedureItem:new("  #spell|APU#","START",kcFlow
 	function () return activePrefSet:get("aircraft:powerup_apu") == false end))
 electricalPowerUpProc:addItem(kcSimpleProcedureItem:new("    Hold APU switch in START position for 3-4 seconds.",
 	function () return activePrefSet:get("aircraft:powerup_apu") == false end))
-electricalPowerUpProc:addItem(kcProcedureItem:new("  #spell|APU# GEN OFF BUS LIGHT","ILLUMINATED",kcFlowItem.actorFO,1,
+electricalPowerUpProc:addItem(kcIndirectProcedureItem:new("  #spell|APU# GEN OFF BUS LIGHT","ILLUMINATED",kcFlowItem.actorFO,1,"apu_gen_off_bus",
 	function () return sysElectric.apuGenBusOff:getStatus() == 0 end,
 	function () sysElectric.apuStartSwitch:actuate(1) end,
 	function () return activePrefSet:get("aircraft:powerup_apu") == false end))
 electricalPowerUpProc:addItem(kcIndirectProcedureItem:new("  #spell|APU# GENERATOR BUS SWITCHES","ON",kcFlowItem.actorFO,2,"apugenson",
-	function () return sysElectric.apuGenSwitches:getStatus() > 0 end,nil,
+	function () return sysElectric.apuGenSwitches:getStatus() > 0 end,
+	function () sysElectric.apuGenSwitches:actuate(1) end,
 	function () return activePrefSet:get("aircraft:powerup_apu") == false end))
+	
 electricalPowerUpProc:addItem(kcProcedureItem:new("TRANSFER BUS LIGHTS","CHECK EXTINGUISHED",kcFlowItem.actorFO,2,
-	function () return sysElectric.transferBus1:getStatus() == modeOff and sysElectric.transferBus2:getStatus() == modeOff end))
+	function () return sysElectric.transferBus1:getStatus() == modeOff and sysElectric.transferBus2:getStatus() == modeOff end,
+	function () if activePrefSet:get("aircraft:powerup_apu") == true then sysElectric.apuGenSwitches:actuate(0) end end))
 electricalPowerUpProc:addItem(kcProcedureItem:new("SOURCE OFF LIGHTS","CHECK EXTINGUISHED",kcFlowItem.actorFO,2,
 	function () return sysElectric.sourceOff1:getStatus() == modeOff and sysElectric.sourceOff2:getStatus() == modeOff end))
 electricalPowerUpProc:addItem(kcProcedureItem:new("STANDBY POWER","ON",kcFlowItem.actorFO,2,
@@ -182,9 +187,10 @@ electricalPowerUpProc:addItem(kcProcedureItem:new("   STANDBY #exchange|PWR|POWE
 -- XPDR....................................SET 2000 (F/O)
 -- COCKPIT LIGHTS.....................SET AS NEEDED (F/O)
 -- WING & WHEEL WELL LIGHTS.........SET AS REQUIRED (F/O)
+-- POSITION LIGHTS...............................ON (F/O)
+-- ==== FUEL PUMPS
 -- FUEL PUMPS...............................ALL OFF (F/O)
 -- FUEL CROSS FEED..............................OFF (F/O)
--- POSITION LIGHTS...............................ON (F/O)
 -- MCP...................................INITIALIZE (F/O)
 -- PARKING BRAKE................................SET (F/O)
 -- GALLEY POWER..................................ON (F/O)
@@ -216,29 +222,34 @@ prelPreflightProc:addItem(kcProcedureItem:new("COCKPIT LIGHTS","%s|(kc_is_daylig
 prelPreflightProc:addItem(kcProcedureItem:new("WING #exchange|&|and# WHEEL WELL LIGHTS","%s|(kc_is_daylight()) and \"OFF\" or \"ON\"",kcFlowItem.actorFO,2,
 	function () return sysLights.wingSwitch:getStatus() == (kc_is_daylight() and 0 or 1) and sysLights.wheelSwitch:getStatus() == (kc_is_daylight() and 0 or 1) end,
 	function () sysLights.wingSwitch:actuate(kc_is_daylight() and 0 or 1) sysLights.wheelSwitch:actuate(kc_is_daylight() and 0 or 1) end))
-prelPreflightProc:addItem(kcProcedureItem:new("FUEL PUMPS","APU 1 PUMP ON, REST OFF",kcFlowItem.actorFO,2,
-	function () return sysFuel.allFuelPumpsOff:getStatus() == modeOff end,nil,
-	function () return not activePrefSet:get("aircraft:powerup_apu") end))
-prelPreflightProc:addItem(kcProcedureItem:new("FUEL PUMPS","ALL OFF",kcFlowItem.actorFO,2,
-	function () return sysFuel.allFuelPumpsOff:getStatus() == modeOn end,nil,
-	function () return activePrefSet:get("aircraft:powerup_apu") end))
-prelPreflightProc:addItem(kcProcedureItem:new("FUEL CROSS FEED","OFF",kcFlowItem.actorFO,2,
-	function () return sysFuel.crossFeed:getStatus() == modeOff end,
-	function () sysFuel.crossFeed:actuate(modeOff) end))
 prelPreflightProc:addItem(kcProcedureItem:new("POSITION LIGHTS","ON",kcFlowItem.actorFO,2,
 	function () return sysLights.positionSwitch:getStatus() ~= 0 end,
 	function () sysLights.positionSwitch:actuate(modeOn) end))
+
+prelPreflightProc:addItem(kcSimpleProcedureItem:new("==== FUEL PUMPS"))
+prelPreflightProc:addItem(kcProcedureItem:new("FUEL PUMPS","APU 1 PUMP ON, REST OFF",kcFlowItem.actorFO,2,
+	function () return sysFuel.allFuelPumpsOff:getStatus() == 1 end,nil,
+	function () return activePrefSet:get("aircraft:powerup_apu") end))
+prelPreflightProc:addItem(kcProcedureItem:new("FUEL PUMPS","ALL OFF",kcFlowItem.actorFO,2,
+	function () return sysFuel.allFuelPumpsOff:getStatus() == 0 end,nil,
+	function () return not activePrefSet:get("aircraft:powerup_apu") end))
+prelPreflightProc:addItem(kcProcedureItem:new("FUEL CROSS FEED","OFF",kcFlowItem.actorFO,2,
+	function () return sysFuel.crossFeed:getStatus() == modeOff end,
+	function () sysFuel.crossFeed:actuate(modeOff) end))
+
 prelPreflightProc:addItem(kcProcedureItem:new("#spell|MCP#","INITIALIZE",kcFlowItem.actorFO,2,
 	function () return sysMCP.altSelector:getStatus() == activePrefSet:get("aircraft:mcp_def_alt") end,
 	function () 
-		sysMCP.fdirGroup:actuate(modeOff)
-		sysMCP.athrSwitch:actuate(modeOff)
-		sysMCP.crs1Selector:setValue(1)
-		sysMCP.crs2Selector:setValue(1)
+		sysMCP.fltdirSelector:adjustValue(0,-1,5)
+		sysMCP.crsSelectorGroup:setValue(1)
 		sysMCP.iasSelector:setValue(activePrefSet:get("aircraft:mcp_def_spd"))
 		sysMCP.hdgSelector:setValue(activePrefSet:get("aircraft:mcp_def_hdg"))
 		sysMCP.altSelector:setValue(activePrefSet:get("aircraft:mcp_def_alt"))
-		sysMCP.discAPSwitch:actuate(modeOff)
+		sysMCP.apmodeSelector:adjustValue(0,0,3)
+		sysMCP.hdgmodeSelector:adjustValue(1,0,2)
+		sysMCP.pitchSelect:adjustValue(0,-1,1)
+		sysMCP.rollEngage:actuate(0)
+		sysMCP.pitchEngage:actuate(0)
 	end))
 prelPreflightProc:addItem(kcProcedureItem:new("PARKING BRAKE","SET",kcFlowItem.actorFO,2,
 	function () return sysGeneral.parkBrakeSwitch:getStatus() == modeOn end,

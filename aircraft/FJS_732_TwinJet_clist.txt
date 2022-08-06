@@ -35,16 +35,16 @@ sw_item_c:\white\DC POWER SWITCH\grey\, BAT|SET:FJS/732/Elec/DCmeterKnob:2
 sw_item_c:\white\BATTERY\grey\, GUARD CLOSED|SET:(sim/cockpit2/electrical/battery_on[0]:1)&&(FJS/732/num/FlipPo_01:0)&&(sim/operation/failures/rel_batter0:0)
 sw_item_c:\white\BATTERY VOLTAGE\grey\, MIN 24V|CHECKED:sim/cockpit2/electrical/battery_voltage_actual_volts:[0]>23
 sw_item_c:\white\STANDBY POWER\grey\, GUARD CLOSED|CHECKED:(sim/cockpit2/electrical/battery_on[0]:1)&&(FJS/732/num/FlipPo_07:0)&&(sim/operation/failures/rel_batter1:0)
-sw_item_c:\white\DOME WHITE\grey\, BRIGHT, DIM OR OFF|AS NEEDED:(FJS/732/lights/DomeWhiteSwitch:1)||(FJS/732/lights/DomeWhiteSwitch:-1)
+sw_item_c:\white\DOME WHITE\grey\, BRIGHT, DIM OR OFF|AS NEEDED:1:1
 sw_item_c:\white\CIRCUIT BREAKERS\grey\, ALL IN|CHECKED:1:1
 sw_itemvoid_c:\grey\Hydraulic System
 sw_item_c:\white\ELECTRIC HYDRAULIC PUMPS A & B\grey\, OFF|SET:(FJS/732/FltControls/Elec1HydPumpSwitch:0)&&(FJS/732/FltControls/Elec1HydPumpSwitch:0)
 sw_item_c:\white\ALTERNATE FLAPS POSITION\grey\, GUARD CLOSED|CHECKED:FJS/732/FltControls/AlternatFlapsMasterSwitch:0
 sw_itemvoid_c:\grey\Other
 sw_item_c:\white\WINDSHIELD WIPER SELECTORS\grey\, PARK (MAX 200KTS)|SET:FJS/732/AntiIce/WiperKnob:0
-sw_item_c:\white\LANDING GEAR LEVER\grey\, DOWN|CHECKED:FJS/732/FltControls/GearHandlePosition:1
-sw_item_c:\white\  GREEN LANDING GEAR LIGHT\grey\, ILLUMINATED|CHECKED:(FJS/732/Annun/SysAnnunBUT_118:>0)&&(FJS/732/Annun/SysAnnunBUT_120:>0)&&(FJS/732/Annun/SysAnnunBUT_122:>0)
-sw_item_c:\white\  RED LANDING GEAR LIGHT\grey\, EXTINGUISHED|CHECKED:(FJS/732/Annun/SysAnnunBUT_117:0)&&(FJS/732/Annun/SysAnnunBUT_119:0)&&(FJS/732/Annun/SysAnnunBUT_121:0)
+sw_item_c:\white\LANDING GEAR LEVER\grey\, DOWN|CHECKED:FJS/732/FltControls/GearHandlePosition:0
+sw_item_c:\white\  GREEN LANDING GEAR LIGHT\grey\, ILLUMINATED|CHECKED:(FJS/732/Annun/SysAnnunLIT_118:>0)&&(FJS/732/Annun/SysAnnunLIT_120:>0)&&(FJS/732/Annun/SysAnnunLIT_122:>0)
+sw_item_c:\white\  RED LANDING GEAR LIGHT\grey\, EXTINGUISHED|CHECKED:(FJS/732/Annun/SysAnnunLIT_117:0)&&(FJS/732/Annun/SysAnnunLIT_119:0)&&(FJS/732/Annun/SysAnnunLIT_121:0)
 sw_itemvoid:::::::::::::::: Activate External Power ::
 sw_itemvoid_c:\grey\Use FJS Menu to turn Ground Power on.
 sw_item_c:\white\GRD POWER AVAILABLE LIGHT\grey\, ILLUMINATED|CHECKED:FJS/732/Elec/GndPowerAvailable:1
@@ -65,7 +65,7 @@ sw_item_c:\white\DC POWER SWITCH\grey\, BAT|SET:FJS/732/Elec/DCmeterKnob:2
 sw_item_c:\white\BATTERY\grey\, GUARD CLOSED|SET:(sim/cockpit2/electrical/battery_on[0]:1)&&(FJS/732/num/FlipPo_01:0)&&(sim/operation/failures/rel_batter0:0)
 sw_item_c:\white\BATTERY VOLTAGE\grey\, MIN 24V|CHECKED:sim/cockpit2/electrical/battery_voltage_actual_volts:[0]>23
 sw_item_c:\white\STANDBY POWER\grey\, GUARD CLOSED|CHECKED:(sim/cockpit2/electrical/battery_on[0]:1)&&(FJS/732/num/FlipPo_07:0)&&(sim/operation/failures/rel_batter1:0)
-sw_item_c:\white\DOME WHITE\grey\, BRIGHT, DIM OR OFF|AS NEEDED:(FJS/732/lights/DomeWhiteSwitch:1)||(FJS/732/lights/DomeWhiteSwitch:-1)
+sw_item_c:\white\DOME WHITE\grey\, BRIGHT, DIM OR OFF|AS NEEDED:1:1
 sw_item_c:\white\CIRCUIT BREAKERS\grey\, ALL IN|CHECKED:1:1
 sw_itemvoid_c:\grey\Hydraulic System
 sw_item_c:\white\ELECTRIC HYDRAULIC PUMPS A & B\grey\, OFF|SET:(FJS/732/FltControls/Elec1HydPumpSwitch:0)&&(FJS/732/FltControls/Elec1HydPumpSwitch:0)
@@ -99,25 +99,22 @@ sw_item_c:\white\ELECTRICAL POWER UP|COMPLETE:((FJS/732/Elec/APUgen1Switch:1)&&(
 sw_item_c:\white\VOICE RECORDER SWITCH\grey\, AUTO|SET:FJS/732/num/FlipPo_15:0
 sw_item_c:\white\MACH OVERSPEED TEST|PERFORM:FJS/732/Annun/MachWarningTestButton:1
 sw_item_c:\white\STALL WARNING TEST|PERFORM:FJS/732/Annun/StallWarningSwitch:1
-
 sw_item_c:\white\XPDR\grey\, 2000|SET:sim/cockpit/radios/transponder_code:2000
 sw_item_c:\white\COCKPIT LIGHTS|SET AS NEEDED
 sw_item_c:\white\WING & WHEEL WELL LIGHTS|SET AS REQUIRED
-sw_item_c:\white\LEFT & RIGHT CENTER FUEL PUMPS\grey\, OFF|SET:(laminar/B738/fuel/fuel_tank_pos_ctr1:0)&&(laminar/B738/fuel/fuel_tank_pos_ctr2:0)&&(sim/operation/failures/rel_ele_fuepmp4:0)&&(sim/operation/failures/rel_ele_fuepmp5:0)
-sw_item_c:\white\AFT & FWD FUEL PUMPS 1\grey\, OFF|SET:(laminar/B738/fuel/fuel_tank_pos_lft1:0)&&(laminar/B738/fuel/fuel_tank_pos_lft2:0)&&(sim/operation/failures/rel_ele_fuepmp0:0)&&(sim/operation/failures/rel_ele_fuepmp1:0)
-sw_item_c:\white\FWD & AFT FUEL PUMPS 2\grey\, OFF|SET:(laminar/B738/fuel/fuel_tank_pos_rgt1:0)&&(laminar/B738/fuel/fuel_tank_pos_rgt2:0)&&(sim/operation/failures/rel_ele_fuepmp2:0)&&(sim/operation/failures/rel_ele_fuepmp3:0)
 sw_item_c:\white\POSITION LIGHTS\grey\, STEADY|SET:(sim/cockpit2/switches/navigation_lights_on:1)&&(sim/cockpit2/switches/strobe_lights_on:0)&&(sim/operation/failures/rel_lites_nav:0)
+sw_itemvoid:::::::::::::::: FUEL PUMPS ::
+sw_item_c:\white\LEFT & RIGHT CENTER FUEL PUMPS\grey\, OFF|SET:(FJS/732/Fuel/FuelPumpL1Switch:0)&&(FJS/732/Fuel/FuelPumpL2Switch:0)&&(FJS/732/Fuel/FuelPumpR1Switch:0)&&(FJS/732/Fuel/FuelPumpR1Switch:0)
+sw_item_c:\white\AFT & FWD FUEL PUMPS 1\grey\, OFF|SET:FJS/732/Fuel/FuelPumpC1Switch:0
+sw_item_c:\white\FWD & AFT FUEL PUMPS 2\grey\, OFF|SET:FJS/732/Fuel/FuelPumpC2Switch:0
 sw_itemvoid:::::::::::::::: MCP INITIALIZE ::
-sw_item_c:\white\COURSE 1 & 2\grey\, TO 001|SET:(laminar/B738/autopilot/course_pilot:001)&&(laminar/B738/autopilot/course_copilot:001)
-sw_item_c:\white\CAPTAIN FLIGHT DIRECTOR\grey\, OFF|SET:laminar/B738/autopilot/flight_director_pos:0
-sw_item_c:\white\FIRST OFFICER FLIGHT DIRECTOR\grey\, OFF|SET:laminar/B738/autopilot/flight_director_fo_pos:0
-sw_item_c:\white\AUTOPILOT DISENGAGE BAR\grey\, UP|CHECKED:laminar/B738/autopilot/disconnect_pos:0
-sw_item_c:\white\AUTOPILOTS\grey\, ALL OFF|CHECKED:(laminar/B738/autopilot/vnav_status1:0)&&(laminar/B738/autopilot/vnav_status1:0)&&(laminar/B738/autopilot/lnav_status:0)&&(laminar/B738/autopilot/lnav_status2:0)&&(laminar/B738/autopilot/vorloc_status:0)&&(laminar/B738/autopilot/n1_status:0)&&(laminar/B738/autopilot/speed_status1:0)&&(laminar/B738/autopilot/lvl_chg_status:0)&&(laminar/B738/autopilot/hdg_sel_status:0)&&(laminar/B738/autopilot/app_status:0)&&(laminar/B738/autopilot/alt_hld_status:0)&&(laminar/B738/autopilot/vs_status:0)&&(laminar/B738/autopilot/cmd_a_status:0)&&(laminar/B738/autopilot/cmd_b_status:0)&&(laminar/B738/autopilot/cws_a_status:0)&&(laminar/B738/autopilot/cws_b_status:0)
-sw_item_c:\white\BANK ANGLE BELOW FL300\grey\, 25 DEGREES|SET:laminar/B738/autopilot/bank_angle_pos:3
-sw_item_c:\white\HEADING\grey\, 001|SET:(laminar/B738/autopilot/mcp_hdg_dial:1)
+sw_item_c:\white\FLT DIR SELECTOR\grey\, OFF|SET:FJS/732/Autopilot/FDModeSelector:0
+sw_item_c:\white\COURSE 1 & 2\grey\, TO 001|SET:(sim/cockpit/radios/nav1_obs_degm:001)&&(sim/cockpit/radios/nav2_obs_degm2:001)
+sw_item_c:\white\AUTOPILOTS\grey\, ALL OFF|CHECKED:(FJS/732/Autopilot/APRollEngageSwitch:0)&&(FJS/732/Autopilot/APPitchEngageSwitch:0)&&(FJS/732/Autopilot/APPitchSelector:0)&&(FJS/732/Autopilot/APModeSelector:0)&&(FJS/732/Autopilot/APHeadingSwitch:1)
+sw_item_c:\white\HEADING\grey\, 001|SET:(sim/cockpit2/autopilot/heading_dial_deg_mag_pilot:1)
 sw_item_c:\white\ALTITUDE\grey\, 4900|SET:(sim/cockpit/autopilot/altitude:4900)
 sw_item_c:\white\PARKING BRAKE\grey\, PULLED (ACTIVE)|SET:sim/cockpit2/controls/parking_brake_ratio:1
-sw_item_c:\white\CABIN UTILITY POWER\grey\, CHECKED|SET:laminar/B738/toggle_switch/cab_util_pos:1
+sw_item_c:\white\CABIN UTILITY POWER\grey\, CHECKED|SET:FJS/732/Elec/GalleySwitch:1
 
 
 #########

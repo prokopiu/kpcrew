@@ -35,7 +35,7 @@ sw_item_c:\white\DC POWER SWITCH\grey\, BAT|SET:laminar/B738/knob/dc_power:2
 sw_item_c:\white\BATTERY VOLTAGE\grey\, MIN 24V|CHECKED:sim/cockpit2/electrical/battery_voltage_actual_volts:[0]>23
 sw_item_c:\white\BATTERY\grey\, GUARD CLOSED|SET:(sim/cockpit2/electrical/battery_on[0]:1)&&(laminar/B738/button_switch/cover_position[2]:0)&&(sim/operation/failures/rel_batter0:0)
 sw_item_c:\white\STANDBY POWER\grey\, GUARD CLOSED|CHECKED:(sim/cockpit2/electrical/battery_on[0]:1)&&(laminar/B738/button_switch/cover_position[3]:0)&&(sim/operation/failures/rel_batter1:0)
-sw_item_c:\white\DOME WHITE\grey\, BRIGHT, DIM OR OFF|AS NEEDED:(laminar/B738/toggle_switch/cockpit_dome_pos:1)||(laminar/B738/toggle_switch/cockpit_dome_pos:-1)
+sw_item_c:\white\DOME WHITE\grey\, BRIGHT, DIM OR OFF|AS NEEDED:1:1
 sw_item_c:\white\CIRCUIT BREAKERS\grey\, ALL IN|CHECKED:1:1
 sw_itemvoid_c:\grey\Hydraulic System
 sw_item_c:\white\ELECTRIC HYDRAULIC PUMPS A & B\grey\, OFF|SET:(laminar/B738/toggle_switch/electric_hydro_pumps1_pos:0)&&(laminar/B738/toggle_switch/electric_hydro_pumps2_pos:0)
@@ -65,11 +65,12 @@ sw_itemvoid_c:\grey\DC Electric Power
 sw_item_c:\white\DC POWER SWITCH\grey\, BAT|SET:laminar/B738/knob/dc_power:2
 sw_item_c:\white\BATTERY VOLTAGE\grey\, MIN 24V|CHECKED:sim/cockpit2/electrical/battery_voltage_actual_volts:[0]>23
 sw_item_c:\white\BATTERY\grey\, GUARD CLOSED|SET:(sim/cockpit2/electrical/battery_on[0]:1)&&(laminar/B738/button_switch/cover_position[2]:0)&&(sim/operation/failures/rel_batter0:0)
-sw_item_c:\white\STANDBY POWER\grey\, GUARD CLOSED|CHECKED:(sim/cockpit2/electrical/battery_on[0]:1)&&(laminar/B738/button_switch/cover_position[3]:0)&&(sim/operation/failures/rel_batter1:0)sw_item_c:\white\DOME WHITE\grey\, BRIGHT, DIM OR OFF|AS NEEDED:(laminar/B738/toggle_switch/cockpit_dome_pos:1)||(laminar/B738/toggle_switch/cockpit_dome_pos:-1)
+sw_item_c:\white\STANDBY POWER\grey\, GUARD CLOSED|CHECKED:(sim/cockpit2/electrical/battery_on[0]:1)&&(laminar/B738/button_switch/cover_position[3]:0)&&(sim/operation/failures/rel_batter1:0)
+sw_item_c:\white\DOME WHITE\grey\, BRIGHT, DIM OR OFF|AS NEEDED:1:1
 sw_item_c:\white\CIRCUIT BREAKERS\grey\, ALL IN|CHECKED:1:1
 sw_itemvoid_c:\grey\Hydraulic System
 sw_item_c:\white\ELECTRIC HYDRAULIC PUMPS A & B\grey\, OFF|SET:(laminar/B738/toggle_switch/electric_hydro_pumps1_pos:0)&&(laminar/B738/toggle_switch/electric_hydro_pumps2_pos:0)
-sw_item_c:\white\ALTERNATE FLAPS POSITION\grey\, GUARD CLOSED|CHECKED:laminar/B738/toggle_switch/alt_flaps_ctrl:0sw_item_c:\white\ELECTRIC HYDRAULIC PUMPS A & B\grey\, OFF|CHECKED:(laminar/B738/toggle_switch/electric_hydro_pumps1_pos:0)&&(laminar/B738/toggle_switch/electric_hydro_pumps2_pos:0)
+sw_item_c:\white\ALTERNATE FLAPS POSITION\grey\, GUARD CLOSED|CHECKED:laminar/B738/toggle_switch/alt_flaps_ctrl:0
 sw_itemvoid_c:\grey\Other
 sw_item_c:\white\WINDSHIELD WIPER SELECTORS\grey\, PARK (MAX 200KTS)|SET:(laminar/B738/switches/left_wiper_pos:0)&&(laminar/B738/switches/right_wiper_pos:0)
 sw_item_c:\white\LANDING GEAR LEVER\grey\, DOWN|CHECKED:laminar/B738/controls/gear_handle_down:1
@@ -102,10 +103,12 @@ sw_item_c:\white\ELECTRICAL POWER UP|COMPLETE:(laminar/B738/electric/dc_gnd_serv
 sw_item_c:\white\VOICE RECORDER SWITCH\grey\, AUTO|SET:(laminar/B738/toggle_switch/vcr:0)&&(laminar/B738/switches/fdr_cover_pos:0)
 sw_item_c:\white\MACH OVERSPEED TEST|PERFORM:(laminar/B738/push_button/mach_warn1_pos:1)||(laminar/B738/push_button/mach_warn2_pos:1)
 sw_item_c:\white\STALL WARNING TEST|PERFORM:(laminar/B738/push_button/stall_test1:1)||(laminar/B738/push_button/stall_test2:1)
+sw_itemvoid:::::::::::::::: IRS Alignment ::
 sw_item_c:\white\LEFT & RIGHT IRS MODE SELECTOR\grey\, OFF|SET:(laminar/B738/toggle_switch/irs_left:0)&&(laminar/B738/toggle_switch/irs_right:0)
 sw_item_c:\white\LEFT & RIGHT IRS MODE SELECTOR\grey\, NAV|SET:(laminar/B738/toggle_switch/irs_left:2)&&(laminar/B738/toggle_switch/irs_right:2)
 sw_itemvoid_c:\grey\  Verify ON DC lights illuminate then extinguish
-sw_itemvoid_c:\grey\  Verify ALIGN lights are illuminated           
+sw_item_c:\white\  IRS ALIGN LIGHTS\grey\, ILLUMINATED|CHECKED:(laminar/B738/annunciator/irs_align_left:>0)&&(laminar/B738/annunciator/irs_align_right:>0)
+sw_itemvoid:::::::::::::::: 
 sw_item_c:\white\XPDR\grey\, 2000|SET:sim/cockpit/radios/transponder_code:2000
 sw_item_c:\white\COCKPIT LIGHTS|SET AS NEEDED
 sw_item_c:\white\WING & WHEEL WELL LIGHTS|SET AS REQUIRED
