@@ -298,56 +298,36 @@ prelPreflightProc:addItem(kcProcedureItem:new("#spell|GALLEY POWER","ON",kcFlowI
 
 local cduPreflightProc = kcProcedure:new("CDU PREFLIGHT PROCEDURE (CPT)")
 cduPreflightProc:addItem(kcSimpleProcedureItem:new("INITIAL DATA (CPT)"))
-cduPreflightProc:addItem(kcIndirectProcedureItem:new("  IDENT page:","OPEN",kcFlowItem.actorCPT,1,"ident_page",
-	function () return string.find(sysFMC.fmcPageTitle:getStatus(),"IDENT") end))
+cduPreflightProc:addItem(kcProcedureItem:new("  IDENT page:","OPEN",kcFlowItem.actorCPT,1,function () return true end))
 cduPreflightProc:addItem(kcSimpleProcedureItem:new("    Verify Model and ENG RATING"))
 cduPreflightProc:addItem(kcSimpleProcedureItem:new("    Verify navigation database ACTIVE date"))
-cduPreflightProc:addItem(kcIndirectProcedureItem:new("  POS INIT page:","OPEN",kcFlowItem.actorCPT,1,"pos_init_page",
-	function () return string.find(sysFMC.fmcPageTitle:getStatus(),"POS INIT") end))
+cduPreflightProc:addItem(kcProcedureItem:new("  POS INIT page:","OPEN",kcFlowItem.actorCPT,1,function () return true end))
 cduPreflightProc:addItem(kcSimpleProcedureItem:new("    Verify time"))
-cduPreflightProc:addItem(kcIndirectProcedureItem:new("    REF AIRPORT","SET",kcFlowItem.actorCPT,1,"ref_airport_set",
-	function () return sysFMC.fmcRefAirportSet:getStatus() end))
+cduPreflightProc:addItem(kcProcedureItem:new("    REF AIRPORT","SET",kcFlowItem.actorCPT,1,function () return true end))
 cduPreflightProc:addItem(kcSimpleProcedureItem:new("NAVIGATION DATA (CPT)"))
-cduPreflightProc:addItem(kcIndirectProcedureItem:new("  RTE page:","OPEN",kcFlowItem.actorCPT,1,"rte_page",
-	function () return string.find(sysFMC.fmcPageTitle:getStatus(),"RTE ") end))
-cduPreflightProc:addItem(kcIndirectProcedureItem:new("    ORIGIN","SET",kcFlowItem.actorCPT,1,"origin_set",
-	function () return sysFMC.fmcOrigin:getStatus() end))
-cduPreflightProc:addItem(kcIndirectProcedureItem:new("    DEST","SET",kcFlowItem.actorCPT,1,"dest_set",
-	function () return sysFMC.fmcDestination:getStatus() end))
-cduPreflightProc:addItem(kcIndirectProcedureItem:new("    FLT NO","SET",kcFlowItem.actorCPT,1,"flt_no_entered",
-	function () return sysFMC.fmcFltNo:getStatus() end))
-cduPreflightProc:addItem(kcIndirectProcedureItem:new("    ROUTE","ENTER",kcFlowItem.actorCPT,1,"route_entered",
-	function () return sysFMC.fmcRouteEntered:getStatus() == true end))
-cduPreflightProc:addItem(kcIndirectProcedureItem:new("    ROUTE","ACTIVATE",kcFlowItem.actorCPT,1,"route_activated",
-	function () return sysFMC.fmcRouteActivated:getStatus() == true end))
-cduPreflightProc:addItem(kcProcedureItem:new("    ROUTE","EXECUTE",kcFlowItem.actorCPT,1,
-	function () return sysFMC.fmcRouteExecuted:getStatus() end))
-cduPreflightProc:addItem(kcIndirectProcedureItem:new("  DEPARTURES page:","OPEN",kcFlowItem.actorCPT,1,"departures_open",
-	function () return string.find(sysFMC.fmcPageTitle:getStatus(),"DEPARTURES") end))
+cduPreflightProc:addItem(kcProcedureItem:new("  RTE page:","OPEN",kcFlowItem.actorCPT,1,function () return true end))
+cduPreflightProc:addItem(kcProcedureItem:new("    ORIGIN","SET",kcFlowItem.actorCPT,1,function () return true end))
+cduPreflightProc:addItem(kcProcedureItem:new("    DEST","SET",kcFlowItem.actorCPT,1,function () return true end))
+cduPreflightProc:addItem(kcProcedureItem:new("    FLT NO","SET",kcFlowItem.actorCPT,1,function () return true end))
+cduPreflightProc:addItem(kcProcedureItem:new("    ROUTE","ENTER",kcFlowItem.actorCPT,1,function () return true end))
+cduPreflightProc:addItem(kcProcedureItem:new("    ROUTE","ACTIVATE",kcFlowItem.actorCPT,1,function () return true end))
+cduPreflightProc:addItem(kcProcedureItem:new("    ROUTE","EXECUTE",kcFlowItem.actorCPT,1,function () return true end))
+cduPreflightProc:addItem(kcProcedureItem:new("  DEPARTURES page:","OPEN",kcFlowItem.actorCPT,1,function () return true end))
 cduPreflightProc:addItem(kcSimpleProcedureItem:new("    Select runway and departure routing"))
-cduPreflightProc:addItem(kcProcedureItem:new("    ROUTE:","EXECUTE",kcFlowItem.actorCPT,1,
-	function () return sysFMC.fmcRouteExecuted:getStatus() end))
-cduPreflightProc:addItem(kcIndirectProcedureItem:new("  LEGS page:","OPEN",kcFlowItem.actorCPT,1,"legs_page_open",
-	function () return string.find(sysFMC.fmcPageTitle:getStatus(),"LEGS") end))
+cduPreflightProc:addItem(kcProcedureItem:new("    ROUTE:","EXECUTE",kcFlowItem.actorCPT,1,function () return true end))
+cduPreflightProc:addItem(kcProcedureItem:new("  LEGS page:","OPEN",kcFlowItem.actorCPT,1,function () return true end))
 cduPreflightProc:addItem(kcSimpleProcedureItem:new("    Verify or enter correct RNP for departure"))
 cduPreflightProc:addItem(kcSimpleProcedureItem:new("PERFORMANCE DATA (CPT)"))
-cduPreflightProc:addItem(kcIndirectProcedureItem:new("  PERF INIT page:","OPEN",kcFlowItem.actorCPT,1,"perf_init_page",
-	function () return string.find(sysFMC.fmcPageTitle:getStatus(),"PERF INIT") end))
-cduPreflightProc:addItem(kcIndirectProcedureItem:new("    ZFW","ENTER",kcFlowItem.actorCPT,1,"zfw_entered",
-	function () return sysFMC.fmcZFWEntered:getStatus() end))
-cduPreflightProc:addItem(kcIndirectProcedureItem:new("    GW","ENTER/VERIFY",kcFlowItem.actorCPT,1,"gw_entered",
-	function () return sysFMC.fmcGWEntered:getStatus() end))
-cduPreflightProc:addItem(kcIndirectProcedureItem:new("    RESERVES","ENTER/VERIFY",kcFlowItem.actorCPT,1,"reserves_entered",
-	function () return sysFMC.fmcReservesEntered:getStatus() end))
-cduPreflightProc:addItem(kcIndirectProcedureItem:new("    COST INDEX","ENTER",kcFlowItem.actorCPT,1,"cost_index_entered",
-	function () return sysFMC.fmcCIEntered:getStatus() end))
-cduPreflightProc:addItem(kcIndirectProcedureItem:new("    CRZ ALT","ENTER",kcFlowItem.actorCPT,1,"crz_alt_entered",
-	function () return sysFMC.fmcCrzAltEntered:getStatus() end))
-cduPreflightProc:addItem(kcIndirectProcedureItem:new("  N1 LIMIT page:","OPEN",kcFlowItem.actorCPT,1,"n1_limit_page",
-	function () return string.find(sysFMC.fmcPageTitle:getStatus(),"N1 LIMIT") end))
+cduPreflightProc:addItem(kcProcedureItem:new("  PERF INIT page:","OPEN",kcFlowItem.actorCPT,1,function () return true end))
+cduPreflightProc:addItem(kcProcedureItem:new("    ZFW","ENTER",kcFlowItem.actorCPT,1,function () return true end))
+cduPreflightProc:addItem(kcProcedureItem:new("    GW","ENTER/VERIFY",kcFlowItem.actorCPT,1,function () return true end))
+cduPreflightProc:addItem(kcProcedureItem:new("    RESERVES","ENTER/VERIFY",kcFlowItem.actorCPT,1,function () return true end))
+cduPreflightProc:addItem(kcProcedureItem:new("    COST INDEX","ENTER",kcFlowItem.actorCPT,1,function () return true end))
+cduPreflightProc:addItem(kcProcedureItem:new("    CRZ ALT","ENTER",kcFlowItem.actorCPT,1,function () return true end))
+cduPreflightProc:addItem(kcProcedureItem:new("  N1 LIMIT page:","OPEN",kcFlowItem.actorCPT,1,function () return true end))
 cduPreflightProc:addItem(kcSimpleProcedureItem:new("    Select assumed temp and/or fixed t/o rating"))
 cduPreflightProc:addItem(kcSimpleProcedureItem:new("    Select full or derated climb thrust"))
-cduPreflightProc:addItem(kcIndirectProcedureItem:new("  TAKEOFF REF page:","OPEN",kcFlowItem.actorCPT,1,"takeoff_ref_page",
+cduPreflightProc:addItem(kcProcedureItem:new("  TAKEOFF REF page:","OPEN",kcFlowItem.actorCPT,1,"takeoff_ref_page",
 	function () return string.find(sysFMC.fmcPageTitle:getStatus(),"TAKEOFF REF") end))
 cduPreflightProc:addItem(kcIndirectProcedureItem:new("    FLAPS","ENTER",kcFlowItem.actorCPT,1,"flaps_entered",
 	function () return sysFMC.fmcFlapsEntered:getStatus() end))

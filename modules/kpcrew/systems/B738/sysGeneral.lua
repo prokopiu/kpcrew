@@ -51,8 +51,8 @@ sysGeneral.cockpitDoor = TwoStateToggleSwitch:new("","laminar/B738/door/flt_dk_d
 
 -- Passenger Signs
 
-sysGeneral.seatBeltSwitch = MultiStateCmdSwitch:new("","laminar/B738/toggle_switch/seatbelt_sign_pos",0,"laminar/B738/toggle_switch/seatbelt_sign_up","laminar/B738/toggle_switch/seatbelt_sign_dn")
-sysGeneral.noSmokingSwitch = MultiStateCmdSwitch:new("","laminar/B738/toggle_switch/no_smoking_pos",0,"laminar/B738/toggle_switch/no_smoking_up","laminar/B738/toggle_switch/no_smoking_dn")
+sysGeneral.seatBeltSwitch = MultiStateCmdSwitch:new("","laminar/B738/toggle_switch/seatbelt_sign_pos",0,"laminar/B738/toggle_switch/seatbelt_sign_dn","laminar/B738/toggle_switch/seatbelt_sign_up")
+sysGeneral.noSmokingSwitch = MultiStateCmdSwitch:new("","laminar/B738/toggle_switch/no_smoking_pos",0,"laminar/B738/toggle_switch/no_smoking_dn","laminar/B738/toggle_switch/no_smoking_up")
 
 -- Baro standard toggle
 sysGeneral.barostdPilot = TwoStateToggleSwitch:new("barostdpilot","laminar/B738/EFIS/baro_set_std_pilot",0,"laminar/B738/EFIS_control/capt/push_button/std_press")
@@ -66,8 +66,8 @@ sysGeneral.barostdGroup:addSwitch(sysGeneral.barostdStandby)
 
 -- Baro mode
 sysGeneral.baroModePilot = TwoStateCmdSwitch:new("baromodepilot","laminar/B738/EFIS_control/capt/baro_in_hpa",0,"laminar/B738/EFIS_control/capt/baro_in_hpa_up","laminar/B738/EFIS_control/capt/baro_in_hpa_dn","nocommand")
-sysGeneral.baroModeCoPilot = TwoStateCmdSwitch:new("baromodecopilot","laminar/B738/EFIS_control/fo/baro_in_hpa",0,"laminar/B738/EFIS_control/fo/baro_in_hpa_dn","laminar/B738/EFIS_control/fo/baro_in_hpa_up","nocommand")
-sysGeneral.baroModeStandby = TwoStateToggleSwitch:new("baromodecopilot","laminar/B738/EFIS_control/fo/baro_in_hpa",0,"laminar/B738/EFIS_control/fo/baro_in_hpa_dn","laminar/B738/EFIS_control/fo/baro_in_hpa_up","nocommand")
+sysGeneral.baroModeCoPilot = TwoStateCmdSwitch:new("baromodecopilot","laminar/B738/EFIS_control/fo/baro_in_hpa",0,"laminar/B738/EFIS_control/fo/baro_in_hpa_up","laminar/B738/EFIS_control/fo/baro_in_hpa_dn","nocommand")
+sysGeneral.baroModeStandby = TwoStateToggleSwitch:new("baromodes","laminar/B738/EFIS_control/fo/baro_in_hpa",0,"laminar/B738/EFIS_control/fo/baro_in_hpa_dn","laminar/B738/EFIS_control/fo/baro_in_hpa_up","nocommand")
 
 sysGeneral.baroModeGroup = SwitchGroup:new("baromodegroup")
 sysGeneral.baroModeGroup:addSwitch(sysGeneral.baroModePilot)

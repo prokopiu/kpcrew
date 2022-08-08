@@ -6,7 +6,7 @@ local TwoStateCustomSwitch = {
 local Switch = require "kpcrew.systems.Switch"
 
 -- provide the dataref with switch state, commands for on, off and toggle. use "nocommand" if no tgl cmd
-function TwoStateCustomSwitch:new(name, statusDref, statusDrefIdx, funcOn, funcOff, funcToggle)
+function TwoStateCustomSwitch:new(name, statusDref, statusDrefIdx, funcOn, funcOff, funcToggle, funcStatus)
 
     TwoStateCustomSwitch.__index = TwoStateCustomSwitch
     setmetatable(TwoStateCustomSwitch, {
@@ -21,6 +21,7 @@ function TwoStateCustomSwitch:new(name, statusDref, statusDrefIdx, funcOn, funcO
 	obj.funcOn = funcOn
 	obj.funcOff = funcOff
 	obj.funcToggle = funcToggle
+	obj.funcStatus = funcStatus
 	obj.delay = self.defaultDelay
 	
     return obj
@@ -28,7 +29,11 @@ end
 
 -- return value of status dataref
 function TwoStateCustomSwitch:getStatus()
-	return get(self.statusDref,self.statusDrefIdx)
+	if type(self.funcStatus) == 'function' then
+		return self.funcStatus()
+	else
+		return get(self.statusDref,self.statusDrefIdx)
+	end
 end
 
 -- actuate the switch with given mode

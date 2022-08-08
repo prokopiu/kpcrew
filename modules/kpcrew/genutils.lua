@@ -639,3 +639,7 @@ end
 function kc_imgui_adf_radio(label,course,fine,standby,active,flip,ypos,id)
 	kc_imgui_radio(3,label,course,fine,standby,active,flip,ypos,id)
 end
+
+function kc_round_step(num,step)
+	return math.floor(num/step)*step
+end

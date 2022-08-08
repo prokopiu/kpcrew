@@ -81,10 +81,22 @@ sysMCP.togaPilotSwitch = InopSwitch:new("togapilot")
 sysMCP.togaCopilotSwitch = InopSwitch:new("togacopilot")
 
 -- ATHR
-sysMCP.athrSwitch = InopSwitch:new("athr")
+sysMCP.athrSwitch = TwoStateCustomSwitch:new("athr","",0,
+	function () 
+		sysEngines.ottoThrottle:actuate(modeOn) 
+	end,
+	function () 
+		sysEngines.ottoThrottle:actuate(modeOff) 
+	end,
+	function () 
+		sysEngines.ottoThrottle:actuate(modeToggle) 
+	end,
+	function () 
+		return sysEngines.ottoThrottle:getStatus()
+	end
+)
 
 -- CRS 1&2
-
 sysMCP.crs1Selector = MultiStateCmdSwitch:new("crs1","sim/cockpit/radios/nav1_obs_degm",0,"sim/radios/obs1_down","sim/radios/obs1_up")
 sysMCP.crs2Selector = MultiStateCmdSwitch:new("crs2","sim/cockpit/radios/nav2_obs_degm2",0,"sim/radios/copilot_obs2_down","sim/radios/copilot_obs2_up")
 
@@ -248,27 +260,29 @@ function sysMCP:render(ypos, height)
 		imgui.Button("M", 17, 25)
 		if imgui.IsItemActive() then 
 			kh_mcp_wnd_state = 1
-			float_wnd_set_geometry(kh_mcp_wnd, 0, ypos, 1120, ypos - height)
+			float_wnd_set_geometry(kh_mcp_wnd, 0, ypos, 1180, ypos - height)
 		end
 	end
 
 	sysMCP.vspSelector:setDefaultDelay(2)
 
 	kc_imgui_label_mcp("FD:",10)
-	kc_imgui_selector_mcp("%3s",sysMCP.fltdirSelector,10,fltmods,17)
-	kc_imgui_rotary_mcp("CRS1:%03d",sysMCP.crs1Selector,10,11)
+	kc_imgui_selector_mcp("%3s",sysMCP.fltdirSelector,10,fltmods,11)
+	kc_imgui_rotary_mcp("CRS1:%03d",sysMCP.crs1Selector,10,12)
 	kc_imgui_rotary_mcp("HDG:%03d",sysMCP.hdgSelector,10,13)
-	kc_imgui_rotary_mcp("CRS2:%03d",sysMCP.crs2Selector,10,16)
+	kc_imgui_rotary_mcp("CRS2:%03d",sysMCP.crs2Selector,10,14)
 	kc_imgui_toggle_button_mcp("AL",sysMCP.altholdSwitch,10,22,25)
-	kc_imgui_rotary_mcp((sysMCP.vspSelector:getStatus() >= 0) and "PITCH:+%02d" or "PITCH:%02d",sysMCP.vspSelector,10,15)
+	kc_imgui_rotary_mcp((sysMCP.vspSelector:getStatus() >= 0) and "PITCH:+%02d" or "PITCH:%02d",sysMCP.vspSelector,10,16)
 	kc_imgui_label_mcp("| A/P:",10)
-	kc_imgui_selector_mcp("%3s",sysMCP.apmodeSelector,10,apmods,18)
+	kc_imgui_selector_mcp("%3s",sysMCP.apmodeSelector,10,apmods,17)
 	kc_imgui_label_mcp("HDG:",10)
-	kc_imgui_selector_mcp("%3s",sysMCP.hdgmodeSelector,10,hdgmods,19)
+	kc_imgui_selector_mcp("%3s",sysMCP.hdgmodeSelector,10,hdgmods,18)
 	kc_imgui_toggle_button_mcp("RL",sysMCP.rollEngage,10,22,25)
 	kc_imgui_toggle_button_mcp("PT",sysMCP.pitchEngage,10,22,25)
-	kc_imgui_selector_mcp("%3s",sysMCP.pitchSelect,10,pitchmods,20)
-	kc_imgui_rotary_mcp("ALT:%05d",sysMCP.altSelector,10,14)
+	kc_imgui_selector_mcp("%3s",sysMCP.pitchSelect,10,pitchmods,21)
+	kc_imgui_rotary_mcp("ALT:%05d",sysMCP.altSelector,10,22)
+	kc_imgui_label_mcp("|",10)
+	kc_imgui_toggle_button_mcp("A/T",sysMCP.athrSwitch,10,30,25)
 
 
 end

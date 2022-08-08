@@ -42,7 +42,7 @@ sysAir.packSwitchGroup:addSwitch(sysAir.packLeftSwitch)
 sysAir.packSwitchGroup:addSwitch(sysAir.packRightSwitch)
 
 -- ISOLATION VLV
-sysAir.isoValveSwitch = TwoStateCmdSwitch:new("","laminar/B738/air/isolation_valve_pos",0,"laminar/B738/toggle_switch/iso_valve_dn","laminar/B738/toggle_switch/iso_valve_up")
+sysAir.isoValveSwitch = MultiStateCmdSwitch:new("","laminar/B738/air/isolation_valve_pos",0,"laminar/B738/toggle_switch/iso_valve_dn","laminar/B738/toggle_switch/iso_valve_up")
 
 -- BLEED AIR
 sysAir.bleedEng1Switch = TwoStateToggleSwitch:new("","laminar/B738/toggle_switch/bleed_air_1_pos",0,"laminar/B738/toggle_switch/bleed_air_1")
@@ -53,6 +53,12 @@ sysAir.engBleedGroup:addSwitch(sysAir.bleedEng2Switch)
 
 -- APU Bleed
 sysAir.apuBleedSwitch = TwoStateToggleSwitch:new("","laminar/B738/toggle_switch/bleed_air_apu_pos",0,"laminar/B738/toggle_switch/bleed_air_apu")
+
+-- PRESSURIZATION Cruise level
+sysAir.maxCruiseAltitude = MultiStateCmdSwitch:new("maxcrzlv","sim/cockpit2/pressurization/actuators/max_allowable_altitude_ft",0,"laminar/B738/knob/flt_alt_press_dn","laminar/B738/knob/flt_alt_press_up")
+
+-- PRESS Landing ALtitude
+sysAir.landingAltitude = MultiStateCmdSwitch:new("landalt","laminar/B738/pressurization/knobs/landing_alt",0,"laminar/B738/knob/land_alt_press_up","laminar/B738/knob/land_alt_press_dn")
 
 -- ======= Annunciators
 
