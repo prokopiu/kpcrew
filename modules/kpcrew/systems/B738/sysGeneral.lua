@@ -78,12 +78,12 @@ sysGeneral.baroModeGroup:addSwitch(sysGeneral.baroModeStandby)
 
 sysGeneral.baroPilot = MultiStateCmdSwitch:new("baropilot","laminar/B738/EFIS/baro_sel_in_hg_pilot",0,"laminar/B738/pilot/barometer_down","laminar/B738/pilot/barometer_up")
 sysGeneral.baroCoPilot = MultiStateCmdSwitch:new("barocopilot","laminar/B738/EFIS/baro_sel_in_hg_copilot",0,"laminar/B738/copilot/barometer_down","laminar/B738/copilot/barometer_up")
-sysGeneral.baroStandby = MultiStateCmdSwitch:new("barostandby","laminar/B738/knobs/standby_alt_baro",0,"laminar/B738/knob/standby_alt_baro_dn","laminar/B738/knob/standby_alt_baro_up")
+sysGeneral.baroStandby = InopSwitch:new("barostandby","laminar/B738/knobs/standby_alt_baro",0,"laminar/B738/knob/standby_alt_baro_dn","laminar/B738/knob/standby_alt_baro_up")
 
 sysGeneral.baroGroup = SwitchGroup:new("barogroup")
 sysGeneral.baroGroup:addSwitch(sysGeneral.baroPilot)
 sysGeneral.baroGroup:addSwitch(sysGeneral.baroCoPilot)
-sysGeneral.baroGroup:addSwitch(sysGeneral.baroStandby)
+-- sysGeneral.baroGroup:addSwitch(sysGeneral.baroStandby)
 
 --- systems not used by kphardware
 

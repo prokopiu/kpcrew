@@ -419,6 +419,7 @@ cduPreflightProc:addItem(kcIndirectProcedureItem:new("    V SPEEDS","ENTER",kcFl
 
 local preflightFOProc = kcProcedure:new("PREFLIGHT PROCEDURE (F/O)","running preflight procedure")
 preflightFOProc:setResize(false)
+
 preflightFOProc:addItem(kcSimpleProcedureItem:new("==== Flight control panel"))
 preflightFOProc:addItem(kcProcedureItem:new("FLIGHT CONTROL SWITCHES","GUARDS CLOSED",kcFlowItem.actorFO,2,
 	function () return sysControls.fltCtrlCovers:getStatus() == modeOff end,
@@ -561,8 +562,6 @@ preflightFOProc:addItem(kcProcedureItem:new("ENGINE ANTI-ICE SWITCHES","OFF",kcF
 -- IGNITION SELECT SWITCH................IGN L OR R (F/O)
 -- ENGINE START SWITCHES........................OFF (F/O)
 
--- local preflightFO2Proc = kcProcedure:new("PREFLIGHT PROCEDURE PART 2 (F/O)")
-
 preflightFOProc:addItem(kcSimpleProcedureItem:new("==== Hydraulic panel"))
 preflightFOProc:addItem(kcProcedureItem:new("ENGINE HYDRAULIC PUMPS SWITCHES","ON",kcFlowItem.actorFO,2,
 	function () return sysHydraulic.engHydPumpGroup:getStatus() == 2 end,
@@ -692,24 +691,34 @@ preflightFOProc:addItem(kcProcedureItem:new("FLIGHT PATH VECTOR SWITCH","OFF",kc
 preflightFOProc:addItem(kcProcedureItem:new("METERS SWITCH","OFF",kcFlowItem.actorFO,2,
 	function () return sysEFIS.mtrsPilot:getStatus() == 0 end,
 	function () sysEFIS.mtrsPilot:actuate(0) end))
-	
 preflightFOProc:addItem(kcProcedureItem:new("BAROMETRIC REFERENCE SELECTOR","%s|(activePrefSet:get(\"general:baro_mode_hpa\")) and \"HPA\" or \"IN\"",kcFlowItem.actorFO,1,
 	function () return sysGeneral.baroModeGroup:getStatus() == (activePrefSet:get("general:baro_mode_hpa") == true and 3 or 0) end,
 	function () if activePrefSet:get("general:baro_mode_hpa") then sysGeneral.baroModeGroup:actuate(1) else sysGeneral.baroModeGroup:actuate(0) end end))
-preflightFOProc:addItem(kcProcedureItem:new("BAROMETRIC SELECTOR","SET LOCAL ALTIMETER SETTING",kcFlowItem.actorFO,1))
-
-
+preflightFOProc:addItem(kcProcedureItem:new("BAROMETRIC SELECTORS TO LOCAL","%s|kc_getQNHString()",kcFlowItem.actorFO,1,
+	function () return get("laminar/B738/EFIS/baro_sel_in_hg_pilot") == math.ceil(get("sim/weather/barometer_sealevel_inhg")*100)/100 and 
+		get("laminar/B738/EFIS/baro_sel_in_hg_copilot") == math.ceil(get("sim/weather/barometer_sealevel_inhg")*100)/100 end,
+	function () set("laminar/B738/EFIS/baro_sel_in_hg_pilot",math.ceil(get("sim/weather/barometer_sealevel_inhg")*100)/100)
+				set("laminar/B738/EFIS/baro_sel_in_hg_copilot",math.ceil(get("sim/weather/barometer_sealevel_inhg")*100)/100) end))
+	
 preflightFOProc:addItem(kcProcedureItem:new("VOR/ADF SWITCHES","AS NEEDED",kcFlowItem.actorFO,1))
 preflightFOProc:addItem(kcProcedureItem:new("MODE SELECTOR","MAP",kcFlowItem.actorFO,2,
 	function () return sysEFIS.mapModePilot:getStatus() == sysEFIS.mapModeMAP end,
 	function () sysEFIS.mapModePilot:adjustValue(sysEFIS.mapModeMAP,0,3) end))
-preflightFOProc:addItem(kcProcedureItem:new("CENTER SWITCH","AS NEEDED",kcFlowItem.actorFO,1))
-preflightFOProc:addItem(kcProcedureItem:new("RANGE SELECTOR","AS NEEDED",kcFlowItem.actorFO,1))
-preflightFOProc:addItem(kcProcedureItem:new("TRAFFIC SWITCH","AS NEEDED",kcFlowItem.actorFO,1))
+preflightFOProc:addItem(kcProcedureItem:new("CENTER SWITCH","AS NEEDED",kcFlowItem.actorFO,1,
+	function () return sysEFIS.ctrPilot:getStatus() == 1 end,
+	function () sysEFIS.ctrPilot:actuate(1) end))
+preflightFOProc:addItem(kcProcedureItem:new("RANGE SELECTOR","AS NEEDED",kcFlowItem.actorFO,1,
+	function () return sysEFIS.mapZoomPilot:getStatus() == 0 end,
+	function () sysEFIS.mapZoomPilot:setValue(0) end))
+preflightFOProc:addItem(kcProcedureItem:new("TRAFFIC SWITCH","AS NEEDED",kcFlowItem.actorFO,1,
+	function () return sysEFIS.tfcPilot:getStatus() == 0 end,
+	function () sysEFIS.tfcPilot:actuate(0) end))
 preflightFOProc:addItem(kcProcedureItem:new("WEATHER RADAR","OFF",kcFlowItem.actorFO,2,
 	function () return sysEFIS.wxrPilot:getStatus() == 0 end,
 	function () sysEFIS.wxrPilot:actuate(0) end))
 preflightFOProc:addItem(kcProcedureItem:new("MAP SWITCHES","AS NEEDED",kcFlowItem.actorFO,1))
+
+preflightFOProc:addItem(kcSimpleProcedureItem:new("==== Other"))
 preflightFOProc:addItem(kcProcedureItem:new("OXYGEN","TEST AND SET",kcFlowItem.actorFO,2,"oxygentested",
 	function () return get("laminar/B738/push_button/oxy_test_cpt_pos") == 1 end))
 preflightFOProc:addItem(kcProcedureItem:new("CLOCK","SET",kcFlowItem.actorFO,1))
@@ -787,6 +796,7 @@ preflightFOProc:addItem(kcProcedureItem:new("ANTISKID INOP LIGHT","VERIFY EXTING
 -- TRANSPONDER PANEL............................SET (F/O)
 
 local preflightCPTProc = kcProcedure:new("PREFLIGHT PROCEDURE (CAPT)")
+preflightCPTProc:setResize(false)
 preflightCPTProc:addItem(kcIndirectProcedureItem:new("LIGHTS","TEST",kcFlowItem.actorCPT,1,"internal_lights_test",
 	function () return sysGeneral.lightTest:getStatus() == 1 end))
 
@@ -820,18 +830,14 @@ preflightCPTProc:addItem(kcProcedureItem:new("FLIGHT PATH VECTOR","%s|(activePre
 		if activePrefSet:get("aircraft:efis_fpv") then flag=1 else flag=0 end
 		sysEFIS.fpvPilot:actuate(flag) 
 	end))
-preflightCPTProc:addItem(kcProcedureItem:new("BAROMETRIC REFERENCE SELECTOR","%s|(activePrefSet:get(\"general:baro_mode_hpa\")) and \"HPA\" or \"IN\"",kcFlowItem.actorCPT,1,
-	function () 
-		return (sysGeneral.baroModePilot:getStatus() == 1 and activePrefSet:get("general:baro_mode_hpa") == true) 
-		or (sysGeneral.baroModePilot:getStatus() == 0 and activePrefSet:get("general:baro_mode_hpa") == false) end,
-	function () 
-		local flag = 0 
-		if activePrefSet:get("general:baro_mode_hpa") then flag=1 else flag=0 end
-		sysGeneral.baroModePilot:actuate(flag) 
-	end))
-preflightCPTProc:addItem(kcProcedureItem:new("BAROMETRIC SELECTOR","SET LOCAL ALTIMETER SETTING",kcFlowItem.actorCPT,3,
-	function () return sysGeneral.baroPilot:getStatus() == get("sim/weather/barometer_sealevel_inhg") end,
-	function () sysGeneral.baroGroup:setValue(get("sim/weather/barometer_sealevel_inhg")) end))
+preflightCPTProc:addItem(kcProcedureItem:new("BAROMETRIC REFERENCE SELECTOR","%s|(activePrefSet:get(\"general:baro_mode_hpa\")) and \"HPA\" or \"IN\"",kcFlowItem.actorFO,1,
+	function () return sysGeneral.baroModeGroup:getStatus() == (activePrefSet:get("general:baro_mode_hpa") == true and 3 or 0) end,
+	function () if activePrefSet:get("general:baro_mode_hpa") then sysGeneral.baroModeGroup:actuate(1) else sysGeneral.baroModeGroup:actuate(0) end end))
+preflightCPTProc:addItem(kcProcedureItem:new("BAROMETRIC SELECTORS TO LOCAL","%s|kc_getQNHString()",kcFlowItem.actorFO,1,
+	function () return get("laminar/B738/EFIS/baro_sel_in_hg_pilot") == math.ceil(get("sim/weather/barometer_sealevel_inhg")*100)/100 and 
+		get("laminar/B738/EFIS/baro_sel_in_hg_copilot") == math.ceil(get("sim/weather/barometer_sealevel_inhg")*100)/100 end,
+	function () set("laminar/B738/EFIS/baro_sel_in_hg_pilot",math.ceil(get("sim/weather/barometer_sealevel_inhg")*100)/100)
+				set("laminar/B738/EFIS/baro_sel_in_hg_copilot",math.ceil(get("sim/weather/barometer_sealevel_inhg")*100)/100) end))
 preflightCPTProc:addItem(kcProcedureItem:new("VOR/ADF SWITCHES","VOR",kcFlowItem.actorCPT,1,
 	function () return sysEFIS.voradf1Pilot:getStatus() == 1 and sysEFIS.voradf2Pilot:getStatus() == 1 end,
 	function () sysEFIS.voradf1Pilot:actuate(1) sysEFIS.voradf2Pilot:actuate(1) end))
