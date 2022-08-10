@@ -931,22 +931,32 @@ preflightCPTProc:addItem(kcProcedureItem:new("YAW DAMPER SWITCH","ON",kcFlowItem
 -- ENGINE START LEVERS.......................CUTOFF   (PF)
 -- GEAR PINS................................REMOVED   (PF)
 
-local preflightChkl = kcChecklist:new("PREFLIGHT CHECKLIST (PM)")
+local preflightChkl = kcChecklist:new("PREFLIGHT CHECKLIST (PM)","Here is the pre flight checklist")
 preflightChkl:addItem(kcIndirectChecklistItem:new("OXYGEN","TESTED #exchange|100 PERC|one hundred percent#",kcFlowItem.actorALL,2,"oxygentested",
 	function () return get("laminar/B738/push_button/oxy_test_cpt_pos") == 1 end))
 preflightChkl:addItem(kcChecklistItem:new("NAVIGATION & DISPLAY SWITCHES","NORMAL,AUTO",kcFlowItem.actorALL,1,
-	function () return sysMCP.vhfNavSwitch:getStatus() == 0 and sysMCP.irsNavSwitch:getStatus() == 0 and sysMCP.fmcNavSwitch:getStatus() == 0 and sysMCP.displaySourceSwitch:getStatus() == 0 and sysMCP.displayControlSwitch:getStatus() == 0 end))
+	function () return sysMCP.vhfNavSwitch:getStatus() == 0 and sysMCP.irsNavSwitch:getStatus() == 0 and sysMCP.fmcNavSwitch:getStatus() == 0 and sysMCP.displaySourceSwitch:getStatus() == 0 and sysMCP.displayControlSwitch:getStatus() == 0 end,
+	function () sysMCP.vhfNavSwitch:adjustValue(0,-1,1) 
+				sysMCP.irsNavSwitch:setValue(0)
+				sysMCP.fmcNavSwitch:setValue(0)
+				sysMCP.displaySourceSwitch:setValue(0)
+				sysMCP.displayControlSwitch:setValue(0) 
+	end
+))
 preflightChkl:addItem(kcChecklistItem:new("WINDOW HEAT","ON",kcFlowItem.actorPF,1,
-	function () return sysAice.windowHeatGroup:getStatus() == 4 end))
+	function () return sysAice.windowHeatGroup:getStatus() == 4 end,
+	function () sysAice.windowHeatGroup:actuate(1) end))
 preflightChkl:addItem(kcChecklistItem:new("PRESSURIZATION MODE SELECTOR","AUTO",kcFlowItem.actorPF,1,
-	function () return sysAir.pressModeSelector:getStatus() == 0 end))
+	function () return sysAir.pressModeSelector:getStatus() == 0 end,
+	function () sysAir.pressModeSelector:actuate(0) end))
 preflightChkl:addItem(kcManualChecklistItem:new("FLIGHT INSTRUMENTS","HEADING %i, ALTIMETER %i|math.floor(get(\"sim/cockpit2/gauges/indicators/heading_electric_deg_mag_pilot\"))|math.floor(get(\"laminar/B738/autopilot/altitude\"))",kcFlowItem.actorBOTH,6,"mc_flight_instruments",nil,nil,nil))
 preflightChkl:addItem(kcChecklistItem:new("PARKING BRAKE","SET",kcFlowItem.actorPF,1,
-	function () return sysGeneral.parkBrakeSwitch:getStatus() == 1 end))
+	function () return sysGeneral.parkBrakeSwitch:getStatus() == 1 end,
+	function () sysGeneral.parkBrakeSwitch:actuate(1) end))
 preflightChkl:addItem(kcChecklistItem:new("ENGINE START LEVERS","CUTOFF",kcFlowItem.actorPF,1,
-	function () return sysEngines.startLever1:getStatus() == 0 and sysEngines.startLever2:getStatus() == 0 end))
+	function () return sysEngines.startLeverGroup:getStatus() == 0 end,
+	function () sysEngines.startLeverGroup:actuate(0) end))
 preflightChkl:addItem(kcManualChecklistItem:new("GEAR PINS","REMOVED",kcFlowItem.actorPF,1,"mc_gearpins_removed",nil,nil,nil))
--- preflightChkl:addItem(kcSimpleChecklistItem:new("Preflight Checklist Completed"))
 
 -- ============= BEFORE START PROCEDURE (BOTH) ============
 -- FLIGHT DECK DOOR..............CLOSED AND LOCKED (F/O)
