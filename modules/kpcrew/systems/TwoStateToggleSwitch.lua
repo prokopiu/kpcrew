@@ -50,6 +50,40 @@ function TwoStateToggleSwitch:actuate(action)
 	end
 end
 
+-- actuate and hold
+function TwoStateToggleSwitch:repeatOn(action)
+	if action == modeOn then
+		if self:getStatus() ~= modeOn then
+			command_begin(self.tglcmd)
+		end
+	end
+	if action == modeOff then
+		if self:getStatus() ~= modeOff then
+			command_begin(self.tglcmd)
+		end
+	end
+	if action == modeToggle then
+		command_begin(self.tglcmd)
+	end
+end
+
+-- actuate and stop
+function TwoStateToggleSwitch:repeatOff(action)
+	if action == modeOn then
+		if self:getStatus() ~= modeOn then
+			command_end(self.tglcmd)
+		end
+	end
+	if action == modeOff then
+		if self:getStatus() ~= modeOff then
+			command_end(self.tglcmd)
+		end
+	end
+	if action == modeToggle then
+		command_end(self.tglcmd)
+	end
+end
+
 -- set the value
 function TwoStateToggleSwitch:setValue(value)
 	set_array(self.statusDref,self.statusDrefIdx)

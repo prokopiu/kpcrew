@@ -130,41 +130,56 @@ electricalPowerUpProc:addItem(kcProcedureItem:new("  GREEN LANDING GEAR LIGHT","
 electricalPowerUpProc:addItem(kcProcedureItem:new("  RED LANDING GEAR LIGHT","CHECK EXTINGUISHED",kcFlowItem.actorFO,2,
 	function () return sysGeneral.gearLightsRed:getStatus() == modeOff end))
 electricalPowerUpProc:addItem(kcIndirectProcedureItem:new("TAKEOFF CONFIG WARNING","TEST",kcFlowItem.actorFO,2,"takeoff_config_warn",
-	function () return get("laminar/B738/system/takeoff_config_warn") > 0 end))
+	function () return get("laminar/B738/system/takeoff_config_warn") > 0 end,
+	function () set_array("sim/cockpit2/engine/actuators/throttle_ratio",0,1) set_array("sim/cockpit2/engine/actuators/throttle_ratio",1,1) end))
 electricalPowerUpProc:addItem(kcSimpleProcedureItem:new("  Move thrust levers full forward and back to idle."))
+
 electricalPowerUpProc:addItem(kcSimpleProcedureItem:new("==== Activate External Power",
 	function () return activePrefSet:get("aircraft:powerup_apu") == true end))
 electricalPowerUpProc:addItem(kcSimpleProcedureItem:new("  Use Zibo EFB to turn Ground Power on.",
 	function () return activePrefSet:get("aircraft:powerup_apu") == true end))
 electricalPowerUpProc:addItem(kcProcedureItem:new("  #exchange|GRD|GROUND# POWER AVAILABLE LIGHT","ILLUMINATED",kcFlowItem.actorFO,2,
-	function () return sysElectric.gpuAvailAnc:getStatus() == modeOn end,nil,
+	function () return sysElectric.gpuAvailAnc:getStatus() == modeOn end,
+	function () set_array("sim/cockpit2/engine/actuators/throttle_ratio",0,0) set_array("sim/cockpit2/engine/actuators/throttle_ratio",1,0) end,
 	function () return activePrefSet:get("aircraft:powerup_apu") == true end))
 electricalPowerUpProc:addItem(kcProcedureItem:new("  GROUND POWER SWITCH","ON",kcFlowItem.actorFO,2,
-	function () return sysElectric.gpuSwitch:getStatus() == modeOn end,
+	function () return sysElectric.gpuOnBus:getStatus() == 1 end,
 	function () sysElectric.gpuSwitch:actuate(cmdDown) end,
 	function () return activePrefSet:get("aircraft:powerup_apu") == true end))
+
 electricalPowerUpProc:addItem(kcSimpleProcedureItem:new("==== Activate APU",
 	function () return activePrefSet:get("aircraft:powerup_apu") == false end))
-electricalPowerUpProc:addItem(kcProcedureItem:new("  OVHT DET SWITCHES","NORMAL",kcFlowItem.actorFO,1,true,nil,
+electricalPowerUpProc:addItem(kcProcedureItem:new("  OVHT DET SWITCHES","NORMAL",kcFlowItem.actorFO,1,true,
+	function () set_array("sim/cockpit2/engine/actuators/throttle_ratio",0,0) 
+				set_array("sim/cockpit2/engine/actuators/throttle_ratio",1,0) end,
 	function () return activePrefSet:get("aircraft:powerup_apu") == false end))
 electricalPowerUpProc:addItem(kcIndirectProcedureItem:new("  #exchange|OVHT|Overheat# FIRE TEST SWITCH","HOLD RIGHT",kcFlowItem.actorFO,2,"ovht_fire_test",
-	function () return  sysEngines.ovhtFireTestSwitch:getStatus() > modeOff end,nil,
+	function () return  sysEngines.ovhtFireTestSwitch:getStatus() > 0 end,
+	function () sysEngines.ovhtFireTestSwitch:repeatOn(1) end,
 	function () return activePrefSet:get("aircraft:powerup_apu") == false end))
-electricalPowerUpProc:addItem(kcProcedureItem:new("  MASTER FIRE WARN LIGHT","PUSH",kcFlowItem.actorFO,1,true,nil,
+electricalPowerUpProc:addItem(kcProcedureItem:new("  MASTER FIRE WARN LIGHT","PUSH",kcFlowItem.actorFO,1,true,
+	function () sysEngines.ovhtFireTestSwitch:repeatOff(0) end,
 	function () return activePrefSet:get("aircraft:powerup_apu") == false end))
 electricalPowerUpProc:addItem(kcIndirectProcedureItem:new("  ENGINES #exchange|EXT|Extinguischer# TEST SWITCH","TEST 1 TO LEFT",kcFlowItem.actorFO,2,"eng_ext_test_1",
-	function () return get("laminar/B738/toggle_switch/extinguisher_circuit_test") < 0 end,nil,
+	function () return get("laminar/B738/toggle_switch/extinguisher_circuit_test") < 0 end,
+	function () command_begin("laminar/B738/toggle_switch/exting_test_lft") end,
 	function () return activePrefSet:get("aircraft:powerup_apu") == false end))
 electricalPowerUpProc:addItem(kcIndirectProcedureItem:new("  ENGINES #exchange|EXT|Extinguischer# TEST SWITCH","TEST 2 TO RIGHT",kcFlowItem.actorFO,2,"eng_ext_test_2",
-	function () return get("laminar/B738/toggle_switch/extinguisher_circuit_test") > 0 end,nil,
+	function () return get("laminar/B738/toggle_switch/extinguisher_circuit_test") > 0 end,
+	function () command_end("laminar/B738/toggle_switch/exting_test_lft") 
+				command_begin("laminar/B738/toggle_switch/exting_test_rgt") end,
 	function () return activePrefSet:get("aircraft:powerup_apu") == false end))
 electricalPowerUpProc:addItem(kcProcedureItem:new("  #spell|APU#","START",kcFlowItem.actorFO,2,
-	function () return sysElectric.apuRunningAnc:getStatus() == modeOn end,nil,
+	function () return sysElectric.apuRunningAnc:getStatus() == modeOn end,
+	function () command_end("laminar/B738/toggle_switch/exting_test_rgt") 
+				command_once("laminar/B738/spring_toggle_switch/APU_start_pos_dn")
+				command_begin("laminar/B738/spring_toggle_switch/APU_start_pos_dn") end,
 	function () return activePrefSet:get("aircraft:powerup_apu") == false end))
 electricalPowerUpProc:addItem(kcSimpleProcedureItem:new("    Hold APU switch in START position for 3-4 seconds.",
 	function () return activePrefSet:get("aircraft:powerup_apu") == false end))
 electricalPowerUpProc:addItem(kcIndirectProcedureItem:new("  #spell|APU# GEN OFF BUS LIGHT","ILLUMINATED",kcFlowItem.actorFO,1,"apu_gen_bus_off",
-	function () return sysElectric.apuGenBusOff:getStatus() == modeOn end,nil,
+	function () return sysElectric.apuGenBusOff:getStatus() == modeOn end,
+	function () command_end("laminar/B738/spring_toggle_switch/APU_start_pos_dn") end,
 	function () return activePrefSet:get("aircraft:powerup_apu") == false end))
 electricalPowerUpProc:addItem(kcProcedureItem:new("  #spell|APU# GENERATOR BUS SWITCHES","ON",kcFlowItem.actorFO,2,
 	function () return sysElectric.apuGenBusOff:getStatus() == 0 end,

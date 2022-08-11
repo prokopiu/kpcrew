@@ -98,8 +98,7 @@ sysElectric.apuRunningAnc = SimpleAnnunciator:new("apurunning","sim/cockpit2/ele
 -- GPU AVAILABLE annunciator
 sysElectric.gpuAvailAnc = CustomAnnunciator:new("gpuavail",function (self) 
 if get("laminar/B738/annunciator/ground_power_avail") > 0 or (get("laminar/B738/annunciator/ground_power_avail") == 0 and (get("laminar/B738/electrical/apu_power_bus1") == 1 or get("laminar/B738/electrical/apu_power_bus2") == 1)) then return 1 else return 0 end end)
-sysElectric.gpuOnBus = CustomAnnunciator:new("apubus",function (self) 
-if get("laminar/B738/electric/dc_gnd_service") > 0 or (get("laminar/B738/electric/dc_gnd_service") == 0 and (get("laminar/B738/electrical/apu_power_bus1") == 1 or get("laminar/B738/electrical/apu_power_bus2") == 1)) then return 1 else return 0 end end)
+sysElectric.gpuOnBus = SimpleAnnunciator:new("gpubus","sim/cockpit/electrical/gpu_on",0)
 
 -- APU GEN BUS OFF
 sysElectric.apuGenBusOff = CustomAnnunciator:new("apubus",function (self) 
