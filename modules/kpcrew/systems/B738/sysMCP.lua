@@ -79,7 +79,7 @@ sysMCP.crsSelectorGroup:addSwitch(sysMCP.crs2Selector)
 sysMCP.n1Switch = TwoStateToggleSwitch:new("n1","laminar/B738/autopilot/n1_status",0,"laminar/B738/autopilot/n1_press")
 
 -- IAS
-sysMCP.iasSelector = MultiStateCmdSwitch:new("ias","sim/cockpit/autopilot/airspeed",0,"sim/autopilot/airspeed_down","sim/autopilot/airspeed_up")
+sysMCP.iasSelector = MultiStateCmdSwitch:new("ias","laminar/B738/autopilot/mcp_speed_dial_kts_mach",0,"sim/autopilot/airspeed_down","sim/autopilot/airspeed_up")
 
 -- KTS/MACH C/O
 sysMCP.machSwitch = TwoStateToggleSwitch:new("mach","laminar/B738/autopilot/change_over_pos",0,"laminar/B738/autopilot/change_over_press")
