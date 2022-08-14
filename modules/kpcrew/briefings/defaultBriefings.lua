@@ -268,6 +268,7 @@ approach:add(kcPreference:new("gateStand",1,kcPreference.typeList,"Gate/Stand|" 
 approach:add(kcPreference:new("parkingPosition","",kcPreference.typeText,"Parking Position|"))
 approach:add(kcPreference:new("powerAtGate",1,kcPreference.typeList,"Power at Stand|" .. APP_power_at_stand))
 approach:add(kcPreference:new("taxiIn","",kcPreference.typeText,"Taxi to Position via|"))
+
 -- =================== APPROACH BRIEFING ==================
 -- W eather highlites
 -- A ircraft - Type of aircraft and engines
