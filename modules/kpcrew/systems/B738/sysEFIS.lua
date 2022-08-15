@@ -97,8 +97,8 @@ sysEFIS.minsResetPilot = TwoStateToggleSwitch:new("minsresetpilot","laminar/B738
 sysEFIS.minsResetCopilot = TwoStateToggleSwitch:new("minsresetcopilot","laminar/B738/EFIS_control/fo/minimums_show",0,"laminar/B738/EFIS_control/fo/push_button/rst_press")
 
 -- MINS SET
-sysEFIS.minsPilot = MultiStateCmdSwitch:new("minspilot","laminar/B738/pfd/dh_pilot",0,"laminar/B738/pfd/dh_pilot_dn","laminar/B738/pfd/dh_pilot_up")
-sysEFIS.minsCopilot = MultiStateCmdSwitch:new("minscopilot","laminar/B738/pfd/dh_copilot",0,"laminar/B738/pfd/dh_copilot_dn","laminar/B738/pfd/dh_copilot_up")
+sysEFIS.minsPilot = MultiStateCmdSwitch:new("minspilot","laminar/B738/pfd/dh_pilot",0,"laminar/B738/pfd/dh_pilot_up","laminar/B738/pfd/dh_pilot_dn")
+sysEFIS.minsCopilot = MultiStateCmdSwitch:new("minscopilot","laminar/B738/pfd/dh_copilot",0,"laminar/B738/pfd/dh_copilot_up","laminar/B738/pfd/dh_copilot_dn")
 
 -- VOR/ADF 1
 sysEFIS.voradf1Pilot = MultiStateCmdSwitch:new("voradf1pilot","laminar/B738/EFIS_control/capt/vor1_off_pfd",0,"laminar/B738/EFIS_control/capt/vor1_off_dn","laminar/B738/EFIS_control/capt/vor1_off_up")

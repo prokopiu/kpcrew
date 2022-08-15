@@ -241,10 +241,10 @@ prelPreflightProc:addItem(kcIndirectProcedureItem:new("MACH OVERSPEED TEST 2","P
 	function () command_end("laminar/B738/push_button/mach_warn1_test") command_begin("laminar/B738/push_button/mach_warn2_test") end))
 prelPreflightProc:addItem(kcIndirectProcedureItem:new("IRS MODE SELECTORS","OFF",kcFlowItem.actorFO,2,"irs_mode_initial_off",
 	function () return sysGeneral.irsUnitGroup:getStatus() == modeOff end,
-	function () command_end("laminar/B738/push_button/mach_warn2_test") sysGeneral.irsUnitGroup:setValue(sysGeneral.irsUnitOFF) end))
+	function () command_end("laminar/B738/push_button/mach_warn2_test") sysGeneral.irsUnitGroup:adjustValue(sysGeneral.irsUnitOFF,0,2) end))
 prelPreflightProc:addItem(kcIndirectProcedureItem:new("IRS MODE SELECTORS","ALIGN",kcFlowItem.actorFO,2,"irs_mode_align",
 	function () return sysGeneral.irsUnitGroup:getStatus() == sysGeneral.irsUnitALIGN*2 end,
-	function () sysGeneral.irsUnitGroup:setValue(sysGeneral.irsUnitALIGN) end))
+	function () sysGeneral.irsUnitGroup:adjustValue(sysGeneral.irsUnitALIGN,0,2) end))
 prelPreflightProc:addItem(kcSimpleProcedureItem:new("  Verify ON DC lights illuminate then extinguish"))
 prelPreflightProc:addItem(kcIndirectProcedureItem:new("  IRS LEFT ALIGN LIGHT","ILLUMINATES",kcFlowItem.actorFO,2,"irs_left_align",
 	function () return sysGeneral.irs1Align:getStatus() == modeOn end))
@@ -252,7 +252,7 @@ prelPreflightProc:addItem(kcIndirectProcedureItem:new("  IRS RIGHT ALIGN LIGHT",
 	function () return sysGeneral.irs2Align:getStatus() == modeOn end))
 prelPreflightProc:addItem(kcIndirectProcedureItem:new("IRS MODE SELECTORS","THEN NAV",kcFlowItem.actorFO,2,"irs_mode_nav_again",
 	function () return sysGeneral.irsUnitGroup:getStatus() == sysGeneral.irsUnitNAV*2 end,
-	function () sysGeneral.irsUnitGroup:setValue(sysGeneral.irsUnitNAV) end))
+	function () sysGeneral.irsUnitGroup:adjustValue(sysGeneral.irsUnitNAV,0,2) end))
 prelPreflightProc:addItem(kcProcedureItem:new("#exchange|XPDR|transponder#","SET 2000",kcFlowItem.actorFO,2,
 	function () return get("sim/cockpit/radios/transponder_code") == 2000 end))
 prelPreflightProc:addItem(kcProcedureItem:new("COCKPIT LIGHTS","%s|(kc_is_daylight()) and \"OFF\" or \"ON\"",kcFlowItem.actorFO,2,
@@ -295,7 +295,9 @@ prelPreflightProc:addItem(kcProcedureItem:new("PARKING BRAKE","SET",kcFlowItem.a
 prelPreflightProc:addItem(kcProcedureItem:new("#spell|IFE# & GALLEY POWER","ON",kcFlowItem.actorFO,3,
 	function () return sysElectric.ifePwr:getStatus() == modeOn and sysElectric.cabUtilPwr:getStatus() == modeOn end,
 	function () sysElectric.ifePwr:actuate(modeOn) sysElectric.cabUtilPwr:actuate(modeOn) end))
--- prelPreflightProc:addItem(kcSimpleProcedureItem:new("Next CDU Preflight by Captain."))
+prelPreflightProc:addItem(kcProcedureItem:new("ELECTRIC HYDRAULIC PUMPS","ON",kcFlowItem.actorFO,3,
+	function () return sysHydraulic.elecHydPumpGroup:getStatus() == 2 end,
+	function () elecHydPumpGroup:actuate(modeOn) end))
 
 -- ================== CDU Preflight ==================
 -- INITIAL DATA (CPT)                              
@@ -718,11 +720,11 @@ preflightFOProc:addItem(kcProcedureItem:new("MINIMUMS REFERENCE SELECTOR","%s|(a
 	function () 
 		local flag = 0 
 		if activePrefSet:get("aircraft:efis_mins_dh") then flag=1 else flag=0 end
-		sysEFIS.minsTypeCopilot:actuate(flag) 
+		sysEFIS.minsTypeCopilot:actuate(flag) sysEFIS.minsTypePilot:actuate(flag) 
 	end))
 preflightFOProc:addItem(kcProcedureItem:new("DECISION HEIGHT OR ALTITUDE REFERENCE","%s FT|activeBriefings:get(\"arrival:decision\")",kcFlowItem.actorFO,1,
-	function () return sysEFIS.minsResetCopilot:getStatus() == 1 and math.ceil(sysEFIS.minsCopilot:getStatus()) == activeBriefings:get("arrival:decision") end,
-	function () sysEFIS.minsCopilot:adjustValue(activeBriefings:get("arrival:decision"),0,9000) end))
+	function () return sysEFIS.minsResetCopilot:getStatus() == 1 and kc_round_step(sysEFIS.minsPilot:getStatus()*1000,10)/1000 == activeBriefings:get("arrival:decision") end,
+	function () sysEFIS.minsCopilot:adjustValue(activeBriefings:get("arrival:decision"),0,9000) sysEFIS.minsPilot:adjustValue(activeBriefings:get("arrival:decision"),0,9000) end))
 preflightFOProc:addItem(kcProcedureItem:new("FLIGHT PATH VECTOR SWITCH","%s|(activePrefSet:get(\"aircraft:efis_fpv\")) and \"ON\" or \"OFF\"",kcFlowItem.actorFO,1,
 	function () 
 		return (sysEFIS.fpvCopilot:getStatus() == 0 and activePrefSet:get("aircraft:efis_fpv") == false) 
@@ -864,8 +866,8 @@ preflightCPTProc:addItem(kcProcedureItem:new("MINIMUMS REFERENCE SELECTOR","%s|(
 		if activePrefSet:get("aircraft:efis_mins_dh") then flag=1 else flag=0 end
 		sysEFIS.minsTypePilot:actuate(flag) 
 	end))
-preflightCPTProc:addItem(kcProcedureItem:new("DECISION HEIGHT OR ALTITUDE REFERENCE","SET",kcFlowItem.actorCPT,1,
-	function () return sysEFIS.minsResetPilot:getStatus() == 1 and math.ceil(sysEFIS.minsPilot:getStatus()) == activeBriefings:get("arrival:decision") end,
+preflightCPTProc:addItem(kcProcedureItem:new("DECISION HEIGHT OR ALTITUDE REFERENCE","%s FT|activeBriefings:get(\"arrival:decision\")",kcFlowItem.actorFO,1,
+	function () return sysEFIS.minsResetPilot:getStatus() == 1 and kc_round_step(sysEFIS.minsPilot:getStatus()*1000,10)/1000 == activeBriefings:get("arrival:decision") end,
 	function () sysEFIS.minsPilot:adjustValue(activeBriefings:get("arrival:decision"),0,9000) end))
 preflightCPTProc:addItem(kcProcedureItem:new("METERS SWITCH","%s|(activePrefSet:get(\"aircraft:efis_mtr\")) and \"MTRS\" or \"FEET\"",kcFlowItem.actorCPT,1,
 	function () 
@@ -1106,6 +1108,7 @@ beforeStartProc:addItem(kcProcedureItem:new("ANTI COLLISION LIGHT SWITCH","ON",k
 beforeStartProc:addItem(kcSimpleProcedureItem:new("Set Trim"))
 beforeStartProc:addItem(kcProcedureItem:new("  STABILIZER TRIM","%4.2f UNITS (%4.2f)|kc_round_step((8.2-(get(\"sim/flightmodel2/controls/elevator_trim\")/-0.119)+0.4)*10000,100)/10000|activeBriefings:get(\"takeoff:elevatorTrim\")",kcFlowItem.actorCPT,1,
 	function () return (kc_round_step((8.2-(get("sim/flightmodel2/controls/elevator_trim")/-0.119)+0.4)*10000,100)/10000) == activeBriefings:get("takeoff:elevatorTrim") end))
+beforeStartProc:addItem(kcSimpleProcedureItem:new("  Use trim wheel and bring values to match."))
 beforeStartProc:addItem(kcProcedureItem:new("  AILERON TRIM","0 UNITS (%3.2f)|sysControls.aileronTrimSwitch:getStatus()",kcFlowItem.actorCPT,2,
 	function () return sysControls.aileronTrimSwitch:getStatus() == 0 end,
 	function () sysControls.aileronTrimSwitch:setValue(0) end))
@@ -1423,7 +1426,8 @@ runwayEntryProc:addItem(kcProcedureItem:new("RWY TURNOFF LIGHTS","ON",kcFlowItem
 runwayEntryProc:addItem(kcProcedureItem:new("TAXI LIGHTS","OFF",kcFlowItem.actorCPT,2,
 	function () return sysLights.taxiSwitch:getStatus() == 0 end,
 	function () sysLights.taxiSwitch:actuate(0) end))
-
+	
+--	center pumps off
 
 -- =========== TAKEOFF & INITIAL CLIMB (BOTH) ===========
 -- AUTOTHROTTLE................................ARM   (PF)
@@ -1519,6 +1523,56 @@ takeoffClimbProc:addItem(kcProcedureItem:new("GEAR","OFF",kcFlowItem.actorPF,2,
 	function () return sysGeneral.GearSwitch:getStatus() == 0.5 end,
 	function () command_once("laminar/B738/push_button/gear_off") end))
 	
+takeoffClimbProc:addItem(kcIndirectProcedureItem:new("TRANSITION ALTITUDE","REACHED",kcFlowItem.actorPF,2,"to_trans_alt",
+	function () return get("sim/cockpit2/gauges/indicators/altitude_ft_pilot") > activeBriefings:get("departure:transalt") end,nil,
+	function () return activeBriefings:get("departure:transalt") > 10000 end))
+takeoffClimbProc:addItem(kcIndirectProcedureItem:new("ALTIMETERS","STD",kcFlowItem.actorPF,2,"to_altimeters",
+	function () return get("laminar/B738/EFIS/baro_set_std_pilot") == 1 end,
+	function () set("laminar/B738/EFIS/baro_sel_in_hg_pilot",29.92) set("laminar/B738/EFIS/baro_sel_in_hg_copilot",29.92) end,
+	function () return activeBriefings:get("departure:transalt") > 10000 end))
+
+takeoffClimbProc:addItem(kcIndirectProcedureItem:new("10.000 FT","REACHED",kcFlowItem.actorPF,2,"to_10000",
+	function () return get("sim/cockpit2/gauges/indicators/altitude_ft_pilot") > 10000 end,nil,
+	function () return activeBriefings:get("departure:transalt") <= 10000 end))
+takeoffClimbProc:addItem(kcProcedureItem:new("LANDING LIGHTS","OFF",kcFlowItem.actorFO,2,
+	function () return sysLights.landLightGroup:getStatus() == 0 end,
+	function () sysLights.landLightGroup:actuate(0) end,
+	function () return activeBriefings:get("departure:transalt") <= 10000 end))
+takeoffClimbProc:addItem(kcProcedureItem:new("RUNWAY TURNOFF LIGHT SWITCHES","OFF",kcFlowItem.actorFO,2,
+	function () return sysLights.rwyLightGroup:getStatus() == 0 end,
+	function () sysLights.rwyLightGroup:actuate(0) end,
+	function () return activeBriefings:get("departure:transalt") <= 10000 end))
+takeoffClimbProc:addItem(kcProcedureItem:new("FASTEN BELTS SWITCH","OFF",kcFlowItem.actorFO,2,
+	function () return sysGeneral.seatBeltSwitch:getStatus() == 0 end,
+	function () command_once("laminar/B738/toggle_switch/seatbelt_sign_up") command_once("laminar/B738/toggle_switch/seatbelt_sign_up") end,
+	function () return activeBriefings:get("departure:transalt") <= 10000 end))
+
+takeoffClimbProc:addItem(kcIndirectProcedureItem:new("10.000 FT","REACHED",kcFlowItem.actorPF,2,"to_10000",
+	function () return get("sim/cockpit2/gauges/indicators/altitude_ft_pilot") > 10000 end,nil,
+	function () return activeBriefings:get("departure:transalt") > 10000 end))
+takeoffClimbProc:addItem(kcProcedureItem:new("LANDING LIGHTS","OFF",kcFlowItem.actorFO,2,
+	function () return sysLights.landLightGroup:getStatus() == 0 end,
+	function () sysLights.landLightGroup:actuate(0) end,
+	function () return activeBriefings:get("departure:transalt") > 10000 end))
+takeoffClimbProc:addItem(kcProcedureItem:new("RUNWAY TURNOFF LIGHT SWITCHES","OFF",kcFlowItem.actorFO,2,
+	function () return sysLights.rwyLightGroup:getStatus() == 0 end,
+	function () sysLights.rwyLightGroup:actuate(0) end,
+	function () return activeBriefings:get("departure:transalt") > 10000 end))
+takeoffClimbProc:addItem(kcProcedureItem:new("FASTEN BELTS SWITCH","OFF",kcFlowItem.actorFO,2,
+	function () return sysGeneral.seatBeltSwitch:getStatus() == 0 end,
+	function () command_once("laminar/B738/toggle_switch/seatbelt_sign_up") command_once("laminar/B738/toggle_switch/seatbelt_sign_up") end,
+	function () return activeBriefings:get("departure:transalt") > 10000 end))
+
+takeoffClimbProc:addItem(kcIndirectProcedureItem:new("TRANSITION ALTITUDE","REACHED",kcFlowItem.actorPF,2,"to_trans_alt",
+	function () return get("sim/cockpit2/gauges/indicators/altitude_ft_pilot") > activeBriefings:get("departure:transalt") end,nil,
+	function () return activeBriefings:get("departure:transalt") <= 10000 end))
+takeoffClimbProc:addItem(kcIndirectProcedureItem:new("ALTIMETERS","STD",kcFlowItem.actorPF,2,"to_altimeters",
+	function () return get("laminar/B738/EFIS/baro_set_std_pilot") == 1 end,
+	function () set("laminar/B738/EFIS/baro_sel_in_hg_pilot",29.92) set("laminar/B738/EFIS/baro_sel_in_hg_copilot",29.92) end,
+	function () return activeBriefings:get("departure:transalt") <= 10000 end))
+
+-- center pumps on if >xxx
+	
 -- ============ AFTER TAKEOFF CHECKLIST (PM) ============
 -- ENGINE BLEEDS................................ON   (PM)
 -- PACKS......................................AUTO   (PM)
@@ -1544,45 +1598,30 @@ afterTakeoffChkl:addItem(kcChecklistItem:new("ALTIMETERS","SET",kcChecklistItem.
 	-- function () return get("laminar/B738/EFIS/baro_sel_in_hg_pilot") == 29.92 and get("laminar/B738/EFIS/baro_sel_in_hg_copilot") == 29.92 end,
 	-- function () set("laminar/B738/EFIS/baro_sel_in_hg_pilot",29.92) set("laminar/B738/EFIS/baro_sel_in_hg_copilot",29.92) end))
 
--- =============== CLIMB & CRUISE (BOTH) ================
--- If the center tank fuel pump switches were OFF for takeoff	
---   and the center tank contains more than 1000 lbs/500 kgs,	
---   set both center tank fuel pump switches ON above 10,000 feet	
--- During climb, set both center tank fuel pump switches OFF	
---   when center tank fuel quantity reaches approx. 1000 lbs/500 kgs	
--- LANDING LIGHTS	OFF AT OR ABOVE 10.000 FT
--- Set the passenger signs as needed.	
--- At transition altitude, set and crosscheck the altimeters to standard.	
--- Set both center tank fuel pump switches OFF when center tank	
---   fuel quantity reaches approx. 1000 lbs/500 kgs	
--- Before the top of descent, modify the active route 	
--- as needed for the arrival and approach.	
-
-
-local climbCruiseProc = kcProcedure:new("CLIMB & CRUISE")
-
-climbCruiseProc:addItem(kcSimpleChecklistItem:new("If center tank fuel pump switches were OFF for takeoff"))
-climbCruiseProc:addItem(kcSimpleChecklistItem:new("  and the center tank contains more than 1000 lbs/500 kgs,"))
-climbCruiseProc:addItem(kcSimpleChecklistItem:new("  set both center tank fuel pump switches ON above 10,000 feet"))
-climbCruiseProc:addItem(kcSimpleChecklistItem:new("During climb, set both center tank fuel pump switches OFF"))
-climbCruiseProc:addItem(kcSimpleChecklistItem:new("  when center tank fuel quantity reaches approx. 1000 lbs/500 kgs"))
-climbCruiseProc:addItem(kcChecklistItem:new("LANDING LIGHTS","OFF AT OR ABOVE 10.000 FT",kcChecklistItem.actorPNF,2))
-climbCruiseProc:addItem(kcSimpleChecklistItem:new("Set the passenger signs as needed."))
-climbCruiseProc:addItem(kcSimpleChecklistItem:new("At transition altitude, set altimeters to standard."))
-climbCruiseProc:addItem(kcSimpleChecklistItem:new("Before the top of descent, modify the active route"))
-climbCruiseProc:addItem(kcSimpleChecklistItem:new("  as needed for the arrival and approach."))
-
 -- ============ descent =============
-local descentProc = kcProcedure:new("DESCENT PROCEDURE")
-descentProc:addItem(kcSimpleChecklistItem:new("Set both center tank fuel pump switches OFF when center tank "))
-descentProc:addItem(kcSimpleChecklistItem:new("  fuel quantity reaches approximately 3000 pounds/1400 kilograms."))
-descentProc:addItem(kcSimpleChecklistItem:new("Verify that pressurization is set to landing altitude."))
-descentProc:addItem(kcSimpleChecklistItem:new("Review the system annunciator lights."))
-descentProc:addItem(kcSimpleChecklistItem:new("Recall and review the system annunciator lights."))
-descentProc:addItem(kcSimpleChecklistItem:new("Enter VREF on the APPROACH REF page."))
-descentProc:addItem(kcSimpleChecklistItem:new("Set the RADIO/BARO minimums as needed for the approach."))
-descentProc:addItem(kcSimpleChecklistItem:new("Set or verify the navigation radios and course for the approach."))
-descentProc:addItem(kcSimpleChecklistItem:new("Set the AUTO BRAKE select switch to the needed brake setting."))
+local descentProc = kcProcedure:new("DESCENT PROCEDURE","performing descent items")
+descentProc:addItem(kcProcedureItem:new("LEFT AND RIGHT CENTER FUEL PUMPS SWITCHES","OFF",kcFlowItem.actorFO,2,
+	function () return sysFuel.ctrFuelPumpGroup:getStatus() == 0 end,
+	function () sysFuel.ctrFuelPumpGroup:actuate(0) end,
+	function () return sysFuel.centerTankLbs:getStatus() > 3000 end))
+descentProc:addItem(kcSimpleProcedureItem:new("  If center tank quantity at or below 3,000 lbs/1400 kgs",
+	function () return sysFuel.centerTankLbs:getStatus() > 3000 end))
+descentProc:addItem(kcProcedureItem:new("PRESSURIZATION","LAND ALT %i FT|activeBriefings:get(\"arrival:aptElevation\")",kcChecklistItem.actorPM,1,
+	function () return sysAir.landingAltitude:getStatus() == kc_round_step(activeBriefings:get("arrival:aptElevation"),50) end,
+	function () sysAir.landingAltitude:setValue(kc_round_step(activeBriefings:get("arrival:aptElevation"),50)) end))
+descentProc:addItem(kcProcedureItem:new("RECALL","CHECKED ALL OFF",kcChecklistItem.actorPM,1,
+	function() return sysGeneral.annunciators:getStatus() == 0 end,
+	function() command_once("laminar/B738/push_button/capt_six_pack") end))
+descentProc:addItem(kcProcedureItem:new("VREF","SELECT IN FMC",kcProcedureItem.actorCPT,1,
+	function () return get("laminar/B738/FMS/vref") ~= 0 end))
+descentProc:addItem(kcProcedureItem:new("LANDING DATA","VREF %i, MINIMUMS %i|get(\"laminar/B738/FMS/vref\")|activeBriefings:get(\"arrival:decision\")",kcChecklistItem.actorBOTH,1,
+	function () return get("laminar/B738/FMS/vref") ~= 0 and 
+				sysEFIS.minsResetCopilot:getStatus() == 1 and 
+				kc_round_step(sysEFIS.minsPilot:getStatus()*1000,10)/1000 == activeBriefings:get("arrival:decision") end))
+descentProc:addItem(kcSimpleProcedureItem:new("Set or verify the navigation radios and course for the approach."))
+descentProc:addItem(kcProcedureItem:new("AUTO BRAKE SELECT SWITCH","%s|kc_pref_split(kc_LandingAutoBrake)[activeBriefings:get(\"approach:autobrake\")]",kcFlowItem.actorFO,2,
+	function () return sysGeneral.autobreak:getStatus() == activeBriefings:get("approach:autobrake") end,
+	function () sysGeneral.autobreak:adjustValue(activeBriefings:get("approach:autobrake"),1,5) end))
 descentProc:addItem(kcSimpleChecklistItem:new("Do the approach briefing."))
 
 -- =============== DESCENT CHECKLIST (PM) ===============
@@ -1594,7 +1633,7 @@ descentProc:addItem(kcSimpleChecklistItem:new("Do the approach briefing."))
 -- ======================================================
 
 local descentChkl = kcChecklist:new("DESCENT CHECKLIST (PM)")
-descentChkl:addItem(kcChecklistItem:new("#exchange|PRESSURIZATION|descent checklist. pressurization","LAND ALT %i FT|activeBriefings:get(\"arrival:aptElevation\")",kcChecklistItem.actorPM,1))
+descentChkl:addItem(kcChecklistItem:new("#exchange|PRESSURIZATION|descent checklist. pressurization","LAND ALT %i FT|activeBriefings:get(\"arrival:aptElevation\")",kcChecklistItem.actorPM,1,
 	function () return sysAir.landingAltitude:getStatus() == kc_round_step(activeBriefings:get("arrival:aptElevation"),50) end,
 	function () sysAir.landingAltitude:setValue(kc_round_step(activeBriefings:get("arrival:aptElevation"),50)) end))
 descentChkl:addItem(kcChecklistItem:new("RECALL","CHECKED",kcChecklistItem.actorPM,1,
@@ -1603,12 +1642,6 @@ descentChkl:addItem(kcChecklistItem:new("RECALL","CHECKED",kcChecklistItem.actor
 descentChkl:addItem(kcChecklistItem:new("AUTOBRAKE","%s|kc_LandingAutoBrake[activeBriefings:get(\"approach:autobrake\")]",kcChecklistItem.actorPM,1))
 descentChkl:addItem(kcChecklistItem:new("LANDING DATA","VREF %i, MINIMUMS %i|activeBriefings:get(\"approach:vref\")|activeBriefings:get(\"arrival:decision\")",kcChecklistItem.actorBOTH,1))
 descentChkl:addItem(kcChecklistItem:new("APPROACH BRIEFING","COMPLETED",kcChecklistItem.actorPM,1))
-
--- ============ approach =============
-local approachProc = kcProcedure:new("APPROACH PROCEDURE")
-
-
-
 
  -- =============== APPROACH CHECKLIST (PM) ==============
  -- ALTIMETERS............................QNH _____ (BOTH)
@@ -1619,11 +1652,10 @@ local approachChkl = kcChecklist:new("APPROACH CHECKLIST (PM)")
 approachChkl:addItem(kcChecklistItem:new("#exchange|ALTIMETERS|approach checklist. altimeters","QNH ___",kcChecklistItem.actorBOTH,1))
 approachChkl:addItem(kcChecklistItem:new("NAV AIDS","SET",kcChecklistItem.actorPM,1))
 
+ -- =============== LANDING PROCEDURE (PM) ===============
 local landingProc = kcProcedure:new("LANDING PROCEDURE (BOTH)")
 
-
  -- =============== LANDING CHECKLIST (PM) ===============
- -- ALTIMETERS............................QNH _____ (BOTH)
  -- CABIN....................................SECURE   (PF)
  -- ENGINE START SWITCHES......................CONT   (PF)
  -- SPEEDBRAKE................................ARMED   (PF)
@@ -1632,17 +1664,18 @@ local landingProc = kcProcedure:new("LANDING PROCEDURE (BOTH)")
  -- ======================================================
 
 local landingChkl = kcChecklist:new("LANDING CHECKLIST (PM)")
-landingChkl:addItem(kcChecklistItem:new("CABIN","SECURE",kcChecklistItem.actorPF,2))
+landingChkl:addItem(kcChecklistItem:new("#exchange|CABIN|landing checklist. cabin","SECURE",kcChecklistItem.actorPF,2))
 landingChkl:addItem(kcChecklistItem:new("ENGINE START SWITCHES","CONT",kcChecklistItem.actorPF,2,
 	function () return sysEngines.engStarterGroup:getStatus() == 4 end,
 	function () sysEngines.engStarterGroup:adjustValue(2,0,3) end)) 
 landingChkl:addItem(kcChecklistItem:new("SPEED BRAKE","ARMED",kcChecklistItem.actorPF,1,
-	function () return sysControls.spoilerLever:getStatus() == 0 end))
+	function () return get("laminar/B738/annunciator/speedbrake_armed") == 1 end))
 landingChkl:addItem(kcChecklistItem:new("LANDING GEAR","DOWN",kcChecklistItem.actorPF,2,
 	function () return sysGeneral.GearSwitch:getStatus() == modeOn end,
 	function () sysGeneral.GearSwitch:actuate(modeOn) end))
-landingChkl:addItem(kcChecklistItem:new("FLAPS","___, GREEN LIGHT",kcChecklistItem.actorPF,2))
-
+landingChkl:addItem(kcChecklistItem:new("FLAPS","%s GREEN LIGHT|activeBriefings:get(\"approach:flaps\")",kcChecklistItem.actorPM,2,
+	function () return sysControls.flapsSwitch:getStatus() == sysControls.flaps_pos[activeBriefings:get("approach:flaps")] 
+	and get("laminar/B738/annunciator/slats_extend") == 1 end)) 
 
 -- =========== AFTER LANDING PROCEDURE (F/O) ============
 -- SPEED BRAKE................................DOWN   (PF)
@@ -1660,7 +1693,6 @@ landingChkl:addItem(kcChecklistItem:new("FLAPS","___, GREEN LIGHT",kcChecklistIt
 -- TRAFFIC SWITCH..............................OFF   (FO)
 -- AUTOBRAKE...................................OFF   (FO)
 
--- ============ after landing =============
 local afterLandingProc = kcProcedure:new("AFTER LANDING PROCEDURE (F/O)","cleaning up")
 afterLandingProc:addItem(kcChecklistItem:new("SPEED BRAKE","DOWN",kcChecklistItem.actorPF,2,
 	function () return sysControls.spoilerLever:getStatus() == 0 end,
@@ -1705,14 +1737,17 @@ afterLandingProc:addItem(kcProcedureItem:new("TRANSPONDER","STBY",kcFlowItem.act
 	function () return sysRadios.xpdrSwitch:getStatus() == sysRadios.xpdrSTBY end,
 	function () sysRadios.xpdrSwitch:adjustValue(sysRadios.xpdrSTBY,0,5) end))
 
--- ============ shutdown =============
+-- ============= SHUTDOWN PROCEDURE (BOTH) ==============
+-- TAXI LIGHT SWITCH...........................OFF   (FO) 
+-- PARKING BRAKE...............................SET  (CPT)
+
 local shutdownProc = kcProcedure:new("SHUTDOWN PROCEDURE")
-shutdownProc:addItem(kcProcedureItem:new("PARKING BRAKE","SET",kcFlowItem.actorCPT,2,
-	function () return sysGeneral.parkBrakeSwitch:getStatus() == modeOn end,
-	function () sysGeneral.parkBrakeSwitch:actuate(modeOn) end))
 shutdownProc:addItem(kcProcedureItem:new("TAXI LIGHT SWITCH","OFF",kcFlowItem.actorFO,2,
 	function () return sysLights.taxiSwitch:getStatus() == 0 end,
 	function () sysLights.taxiSwitch:actuate(0) end))
+shutdownProc:addItem(kcProcedureItem:new("PARKING BRAKE","SET",kcFlowItem.actorCPT,2,
+	function () return sysGeneral.parkBrakeSwitch:getStatus() == modeOn end,
+	function () sysGeneral.parkBrakeSwitch:actuate(modeOn) end))
 shutdownProc:addItem(kcSimpleChecklistItem:new("Electrical power...Set"))
 --   If APU power is needed: F/O
 -- 	   Verify that the APU GENERATOR OFF BUS light is illuminated.
@@ -1878,15 +1913,12 @@ activeSOP:addChecklist(beforeStartChkl)
 activeSOP:addProcedure(pushstartProc)
 activeSOP:addProcedure(beforeTaxiProc)
 activeSOP:addChecklist(beforeTaxiChkl)
--- activeSOP:addProcedure(beforeTakeoffProc)
 activeSOP:addChecklist(beforeTakeoffChkl)
 activeSOP:addProcedure(runwayEntryProc)
 activeSOP:addProcedure(takeoffClimbProc)
 activeSOP:addChecklist(afterTakeoffChkl)
-activeSOP:addProcedure(climbCruiseProc)
 activeSOP:addProcedure(descentProc)
 activeSOP:addChecklist(descentChkl)
--- activeSOP:addProcedure(approachProc)
 activeSOP:addChecklist(approachChkl)
 activeSOP:addProcedure(landingProc)
 activeSOP:addChecklist(landingChkl)
@@ -1895,7 +1927,6 @@ activeSOP:addProcedure(shutdownProc)
 activeSOP:addChecklist(shutdownChkl)
 activeSOP:addProcedure(secureProc)
 activeSOP:addChecklist(secureChkl)
--- activeSOP:addChecklist(coldAndDarkProc)
 
 function getActiveSOP()
 	return activeSOP
