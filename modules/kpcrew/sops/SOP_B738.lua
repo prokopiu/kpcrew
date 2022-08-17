@@ -53,6 +53,9 @@ require("kpcrew.briefings.briefings_" .. kc_acf_icao)
 activeSOP = kcSOP:new("Zibo Mod SOP")
 
 -- ============ Electrical Power Up Procedure ===========
+-- All paper work on board and checked
+-- M E L and Technical Logbook checked
+
 -- ===== Initial checks
 -- DC Electric Power
 -- CIRCUIT BREAKERS (P6 PANEL)................CHECK (F/O)
@@ -61,10 +64,11 @@ activeSOP = kcSOP:new("Zibo Mod SOP")
 -- BATTERY VOLTAGE..........................MIN 24V (F/O)
 -- BATTERY SWITCH......................GUARD CLOSED (F/O)
 -- STANDBY POWER SWITCH................GUARD CLOSED (F/O)
--- CIRCUIT BREAKERS..........................ALL IN (F/O)
+
 -- Hydraulic System
--- ALTERNATE FLAPS MASTER SWITCH.......GUARD CLOSED (F/O)
 -- ELECTRIC HYDRAULIC PUMPS SWITCHES............OFF (F/O)
+-- ALTERNATE FLAPS MASTER SWITCH.......GUARD CLOSED (F/O)
+
 -- Other
 -- WINDSHIELD WIPER SELECTORS..................PARK (F/O)
 -- LANDING GEAR LEVER..........................DOWN (F/O)
@@ -96,6 +100,8 @@ activeSOP = kcSOP:new("Zibo Mod SOP")
 -- Next: Preliminary Preflight Procedure           
 
 local electricalPowerUpProc = kcProcedure:new("ELECTRICAL POWER UP (F/O)","performing ELECTRICAL POWER UP")
+electricalPowerUpProc:addItem(kcSimpleProcedureItem:new("All paper work on board and checked"))
+electricalPowerUpProc:addItem(kcSimpleProcedureItem:new("M E L and Technical Logbook checked"))
 electricalPowerUpProc:addItem(kcSimpleProcedureItem:new("==== Initial Checks"))
 electricalPowerUpProc:addItem(kcSimpleProcedureItem:new("DC Electric Power"))
 electricalPowerUpProc:addItem(kcProcedureItem:new("CIRCUIT BREAKERS (P6 PANEL)","CHECK",kcFlowItem.actorFO,3,true))
@@ -186,6 +192,8 @@ electricalPowerUpProc:addItem(kcProcedureItem:new("  #spell|APU# GENERATOR BUS S
 	function () return sysElectric.apuGenBusOff:getStatus() == 0 end,
 	function () sysElectric.apuGenBus1:adjustValue(1,-1,1) sysElectric.apuGenBus2:adjustValue(1,-1,1) end,
 	function () return activePrefSet:get("aircraft:powerup_apu") == false end))
+
+electricalPowerUpProc:addItem(kcSimpleProcedureItem:new("==== "))
 electricalPowerUpProc:addItem(kcProcedureItem:new("TRANSFER BUS LIGHTS","CHECK EXTINGUISHED",kcFlowItem.actorFO,2,
 	function () return sysElectric.transferBus1:getStatus() == modeOff and sysElectric.transferBus2:getStatus() == modeOff end))
 electricalPowerUpProc:addItem(kcProcedureItem:new("SOURCE OFF LIGHTS","CHECK EXTINGUISHED",kcFlowItem.actorFO,2,
@@ -194,7 +202,6 @@ electricalPowerUpProc:addItem(kcProcedureItem:new("STANDBY POWER","ON",kcFlowIte
 	function () return get("laminar/B738/electric/standby_bat_pos") > 0 end))
 electricalPowerUpProc:addItem(kcProcedureItem:new("   STANDBY #exchange|PWR|POWER# LIGHT","CHECK EXTINGUISHED",kcFlowItem.actorFO,2,
 	function () return sysElectric.stbyPwrOff:getStatus() == modeOff end))
-electricalPowerUpProc:addItem(kcProcedureItem:new("GPWS SYSTEM TEST","PERFORM",kcFlowItem.actorFO,2))
 
 -- ============ PRELIMINARY PREFLIGHT PROCEDURES ========
 -- EMERGENCY EXIT LIGHT.........ARM/ON GUARD CLOSED (F/O)
@@ -202,10 +209,15 @@ electricalPowerUpProc:addItem(kcProcedureItem:new("GPWS SYSTEM TEST","PERFORM",k
 -- ELECTRICAL POWER UP.....................COMPLETE (F/O)
 -- VOICE RECORDER SWITCH.......................AUTO (F/O)
 -- MACH OVERSPEED TEST......................PERFORM (F/O)
+-- STALL WARNING TEST.......................PERFORM (F/O)
+--   Wait for 4 minutes AC power if not functioning
+
+-- IRS Alignment
 -- IRS MODE SELECTORS...........................OFF (F/O)
 -- IRS MODE SELECTORS......................THEN NAV (F/O)
 --   Verify ON DC lights illuminate then extinguish
---   Verify ALIGN lights are illuminated           
+--   Verify ALIGN lights are illuminated     
+      
 -- XPDR....................................SET 2000 (F/O)
 -- COCKPIT LIGHTS.....................SET AS NEEDED (F/O)
 -- WING & WHEEL WELL LIGHTS.........SET AS REQUIRED (F/O)
@@ -215,6 +227,9 @@ electricalPowerUpProc:addItem(kcProcedureItem:new("GPWS SYSTEM TEST","PERFORM",k
 -- MCP...................................INITIALIZE (F/O)
 -- PARKING BRAKE................................SET (F/O)
 -- IFE & GALLEY POWER............................ON (F/O)
+
+-- Electric hydraulic pumps on for F/O walkaround
+-- ELECTRIC HYDRAULIC PUMPS SWITCHES.............ON (F/O)
 -- Next: CDU Preflight                             
 
 local prelPreflightProc = kcProcedure:new("PREL PREFLIGHT PROCEDURE (F/O)","preliminary pre flight")
@@ -239,9 +254,30 @@ prelPreflightProc:addItem(kcIndirectProcedureItem:new("MACH OVERSPEED TEST 1","P
 prelPreflightProc:addItem(kcIndirectProcedureItem:new("MACH OVERSPEED TEST 2","PERFORM",kcFlowItem.actorFO,2,"mach_ovspd_test2",
 	function () return get("laminar/B738/push_button/mach_warn2_pos") == 1 end,
 	function () command_end("laminar/B738/push_button/mach_warn1_test") command_begin("laminar/B738/push_button/mach_warn2_test") end))
+prelPreflightProc:addItem(kcIndirectProcedureItem:new("STALL WARNING TEST 1","PERFORM",kcFlowItem.actorFO,2,"stall_warning_test1",
+	function () return get("laminar/B738/push_button/stall_test1") == 1 end,
+	function () command_end("laminar/B738/push_button/mach_warn2_test") command_begin("laminar/B738/push_button/stall_test1_press") end))
+prelPreflightProc:addItem(kcIndirectProcedureItem:new("STALL WARNING TEST 2","PERFORM",kcFlowItem.actorFO,2,"stall_warning_test",
+	function () return get("laminar/B738/push_button/stall_test2") == 1 end,
+	function () command_end("laminar/B738/push_button/stall_test1_press") command_begin("laminar/B738/push_button/stall_test2_press") end))
+prelPreflightProc:addItem(kcSimpleProcedureItem:new("  Wait for 4 minutes AC power if not functioning"))
+
+prelPreflightProc:addItem(kcSimpleProcedureItem:new("==== Engine Panel"))
+prelPreflightProc:addItem(kcProcedureItem:new("EEC SWITCHES","ON",kcFlowItem.actorFO,2,
+	function () return sysEngines.eecSwitchGroup:getStatus() == 0 end,
+	function () sysEngines.eecSwitchGroup:actuate(1) end))
+prelPreflightProc:addItem(kcProcedureItem:new("EEC GUARDS","CLOSED",kcFlowItem.actorFO,2,
+	function () return sysEngines.eecGuardGroup:getStatus() == 0 end,
+	function () sysEngines.eecGuardGroup:actuate(0) end))
+prelPreflightProc:addItem(kcProcedureItem:new("EEC FAIL LIGHTS","EXTINGUISHED",kcFlowItem.actorFO,2,
+	function () return sysEngines.fadecFail:getStatus() == 0 end))
+prelPreflightProc:addItem(kcProcedureItem:new("REVERSER FAIL LIGHTS","EXTINGUISHED",kcFlowItem.actorFO,2,
+	function () return sysEngines.reversersFail:getStatus() == 0 end))
+
+prelPreflightProc:addItem(kcSimpleProcedureItem:new("==== IRS Alignment"))
 prelPreflightProc:addItem(kcIndirectProcedureItem:new("IRS MODE SELECTORS","OFF",kcFlowItem.actorFO,2,"irs_mode_initial_off",
 	function () return sysGeneral.irsUnitGroup:getStatus() == modeOff end,
-	function () command_end("laminar/B738/push_button/mach_warn2_test") sysGeneral.irsUnitGroup:adjustValue(sysGeneral.irsUnitOFF,0,2) end))
+	function () command_end("laminar/B738/push_button/stall_test2_press") sysGeneral.irsUnitGroup:adjustValue(sysGeneral.irsUnitOFF,0,2) end))
 prelPreflightProc:addItem(kcIndirectProcedureItem:new("IRS MODE SELECTORS","ALIGN",kcFlowItem.actorFO,2,"irs_mode_align",
 	function () return sysGeneral.irsUnitGroup:getStatus() == sysGeneral.irsUnitALIGN*2 end,
 	function () sysGeneral.irsUnitGroup:adjustValue(sysGeneral.irsUnitALIGN,0,2) end))
@@ -253,6 +289,9 @@ prelPreflightProc:addItem(kcIndirectProcedureItem:new("  IRS RIGHT ALIGN LIGHT",
 prelPreflightProc:addItem(kcIndirectProcedureItem:new("IRS MODE SELECTORS","THEN NAV",kcFlowItem.actorFO,2,"irs_mode_nav_again",
 	function () return sysGeneral.irsUnitGroup:getStatus() == sysGeneral.irsUnitNAV*2 end,
 	function () sysGeneral.irsUnitGroup:adjustValue(sysGeneral.irsUnitNAV,0,2) end))
+	
+prelPreflightProc:addItem(kcSimpleProcedureItem:new("==== Other"))
+
 prelPreflightProc:addItem(kcProcedureItem:new("#exchange|XPDR|transponder#","SET 2000",kcFlowItem.actorFO,2,
 	function () return get("sim/cockpit/radios/transponder_code") == 2000 end))
 prelPreflightProc:addItem(kcProcedureItem:new("COCKPIT LIGHTS","%s|(kc_is_daylight()) and \"OFF\" or \"ON\"",kcFlowItem.actorFO,2,
@@ -292,12 +331,16 @@ prelPreflightProc:addItem(kcProcedureItem:new("#spell|MCP#","INITIALIZE",kcFlowI
 prelPreflightProc:addItem(kcProcedureItem:new("PARKING BRAKE","SET",kcFlowItem.actorFO,2,
 	function () return sysGeneral.parkBrakeSwitch:getStatus() == modeOn end,
 	function () sysGeneral.parkBrakeSwitch:actuate(modeOn) end))
+prelPreflightProc:addItem(kcIndirectProcedureItem:new("GPWS SYSTEM TEST","PERFORM",kcFlowItem.actorFO,2,"gpwstest",
+	function () return get("laminar/B738/system/gpws_test_running") > 0 end,
+	function () command_begin("laminar/B738/push_button/gpws_test") end))
 prelPreflightProc:addItem(kcProcedureItem:new("#spell|IFE# & GALLEY POWER","ON",kcFlowItem.actorFO,3,
 	function () return sysElectric.ifePwr:getStatus() == modeOn and sysElectric.cabUtilPwr:getStatus() == modeOn end,
-	function () sysElectric.ifePwr:actuate(modeOn) sysElectric.cabUtilPwr:actuate(modeOn) end))
-prelPreflightProc:addItem(kcProcedureItem:new("ELECTRIC HYDRAULIC PUMPS","ON",kcFlowItem.actorFO,3,
+	function () command_end("laminar/B738/push_button/gpws_test") sysElectric.ifePwr:actuate(modeOn) sysElectric.cabUtilPwr:actuate(modeOn) end))
+prelPreflightProc:addItem(kcSimpleProcedureItem:new("Electric hydraulic pumps on for F/O walkaround"))
+prelPreflightProc:addItem(kcProcedureItem:new("ELECTRIC HYDRAULIC PUMPS SWITCHES","ON",kcFlowItem.actorFO,3,
 	function () return sysHydraulic.elecHydPumpGroup:getStatus() == 2 end,
-	function () elecHydPumpGroup:actuate(modeOn) end))
+	function () sysHydraulic.elecHydPumpGroup:actuate(modeOn) end))
 
 -- ================== CDU Preflight ==================
 -- INITIAL DATA (CPT)                              
@@ -398,7 +441,6 @@ cduPreflightProc:addItem(kcIndirectProcedureItem:new("    V SPEEDS","ENTER",kcFl
 	function () return sysFMC.fmcVspeedsEntered:getStatus() == true end))
 
 -- ================ Preflight Procedure =================
--- STALL WARNING TEST.......................PERFORM (F/O)
 -- ==== Flight control panel                            
 -- FLIGHT CONTROL SWITCHES............GUARDS CLOSED (F/O)
 -- FLIGHT SPOILER SWITCHES............GUARDS CLOSED (F/O)
@@ -442,12 +484,6 @@ cduPreflightProc:addItem(kcIndirectProcedureItem:new("    V SPEEDS","ENTER",kcFl
 local preflightFOProc = kcProcedure:new("PREFLIGHT PROCEDURE (F/O)","running preflight procedure")
 preflightFOProc:setResize(false)
 
-preflightFOProc:addItem(kcIndirectProcedureItem:new("STALL WARNING TEST 1","PERFORM",kcFlowItem.actorFO,2,"stall_warning_test1",
-	function () return get("laminar/B738/push_button/stall_test1") == 1 end,
-	function () command_end("laminar/B738/push_button/mach_warn2_test") command_begin("laminar/B738/push_button/stall_test1_press") end))
-preflightFOProc:addItem(kcIndirectProcedureItem:new("STALL WARNING TEST","PERFORM",kcFlowItem.actorFO,2,"stall_warning_test",
-	function () return get("laminar/B738/push_button/stall_test2") == 1 end,
-	function () command_end("laminar/B738/push_button/stall_test1_press") command_begin("laminar/B738/push_button/stall_test2_press") end))
 preflightFOProc:addItem(kcSimpleProcedureItem:new("==== Flight control panel"))
 preflightFOProc:addItem(kcProcedureItem:new("FLIGHT CONTROL SWITCHES","GUARDS CLOSED",kcFlowItem.actorFO,2,
 	function () return sysControls.fltCtrlCovers:getStatus() == modeOff end,
@@ -705,6 +741,7 @@ preflightFOProc:addItem(kcProcedureItem:new("ENGINE START SWITCHES","OFF",kcFlow
 -- LANDING GEAR LEVER............................DN (F/O)
 -- AUTO BRAKE SELECT SWITCH.....................RTO (F/O)
 -- ANTISKID INOP LIGHT..........VERIFY EXTINGUISHED (F/O)
+-- CARGO FIRE TEST
 
 preflightFOProc:addItem(kcSimpleProcedureItem:new("==== Mode control panel"))
 preflightFOProc:addItem(kcProcedureItem:new("COURSE NAV2","SET",kcFlowItem.actorFO,2,
@@ -805,6 +842,9 @@ preflightFOProc:addItem(kcProcedureItem:new("AUTO BRAKE SELECT SWITCH","#spell|R
 	function () sysGeneral.autobreak:actuate(0) end))
 preflightFOProc:addItem(kcProcedureItem:new("ANTISKID INOP LIGHT","VERIFY EXTINGUISHED",kcFlowItem.actorFO,2,
 	function () return get("laminar/B738/annunciator/anti_skid_inop") == 0 end))
+-- CARGO FIRE TEST
+
+
 
 -- ============= PREFLIGHT PROCEDURE (CAPT) ============
 -- LIGHTS.....................................TEST (CPT)

@@ -23,7 +23,7 @@ local APP_rwystate_list = "DRY|WET|CONTAMINATED"
 local APP_proctype_list = "STAR|VECTORS"
 -- Noise Abatement on arrival
 local APP_na_list = "NOT REQUIRED|SEE STAR"
--- parking positin options
+-- parking position options
 local APP_gatestand_list = "GATE|STAND|STAND PUSH-IN REQUIRED"
 -- power at gate
 local APP_power_at_stand = "EXTERNAL POWER|NO POWER"

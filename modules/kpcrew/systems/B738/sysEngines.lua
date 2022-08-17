@@ -49,6 +49,19 @@ sysEngines.engStarterGroup = SwitchGroup:new("engstarters")
 sysEngines.engStarterGroup:addSwitch(sysEngines.engStart1Switch)
 sysEngines.engStarterGroup:addSwitch(sysEngines.engStart2Switch)
 
+sysEngines.eecGuard1 = TwoStateToggleSwitch:new("eec1","laminar/B738/cover",0,"laminar/B738/button_switch_cover00")
+sysEngines.eecGuard2 = TwoStateToggleSwitch:new("eec2","laminar/B738/cover",1,"laminar/B738/button_switch_cover01")
+sysEngines.eecGuardGroup = SwitchGroup:new("eecguards")
+sysEngines.eecGuardGroup:addSwitch(sysEngines.eecGuard1)
+sysEngines.eecGuardGroup:addSwitch(sysEngines.eecGuard2)
+
+
+sysEngines.eecSwitch1 = TwoStateCmdSwitch:new("eecsw1","laminar/B738/annunciator/fadec1_off",0,"sim/fadec/fadec_1_on","sim/fadec/fadec_1_off")
+sysEngines.eecSwitch2 = TwoStateCmdSwitch:new("eecsw2","laminar/B738/annunciator/fadec2_off",0,"sim/fadec/fadec_2_on","sim/fadec/fadec_2_off")
+sysEngines.eecSwitchGroup = SwitchGroup:new("eecswitches")
+sysEngines.eecSwitchGroup:addSwitch(sysEngines.eecSwitch1)
+sysEngines.eecSwitchGroup:addSwitch(sysEngines.eecSwitch2)
+
 ----------- Annunciators
 
 -- ENGINE FIRE annunciator
@@ -96,5 +109,15 @@ sysEngines.reverseLever2 = SimpleAnnunciator:new("","laminar/B738/flt_ctrls/reve
 
 sysEngines.thrustLever1 = SimpleAnnunciator:new ("","laminar/B738/engine/thrust1_leveler",0)
 sysEngines.thrustLever2 = SimpleAnnunciator:new ("","laminar/B738/engine/thrust2_leveler",0)
+
+sysEngines.fadecFail = CustomAnnunciator:new("fadecfail",
+function () 
+	return (get("laminar/B738/annunciator/fadec_fail_0") + get("laminar/B738/annunciator/fadec_fail_1"))
+end)
+
+sysEngines.reversersFail = CustomAnnunciator:new("reversefail",
+function () 
+	return (get("laminar/B738/annunciator/reverser_fail_0") + get("laminar/B738/annunciator/reverser_fail_1"))
+end)
 
 return sysEngines
