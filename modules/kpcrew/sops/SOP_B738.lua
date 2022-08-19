@@ -58,8 +58,8 @@ activeSOP = kcSOP:new("Zibo Mod SOP")
 
 -- ===== Initial checks
 -- DC Electric Power
--- CIRCUIT BREAKERS (P6 PANEL)................CHECK (F/O)
--- CIRCUIT BREAKERS (CONTROL STAND,P18 PANEL).CHECK (F/O)
+-- CIRCUIT BREAKERS (P6 PANEL).........CHECK ALL IN (F/O)
+-- CIRCUIT BREAKERS (P18 PANEL)........CHECK ALL IN (F/O)
 -- DC POWER SWITCH..............................BAT (F/O)
 -- BATTERY VOLTAGE..........................MIN 24V (F/O)
 -- BATTERY SWITCH......................GUARD CLOSED (F/O)
@@ -68,6 +68,8 @@ activeSOP = kcSOP:new("Zibo Mod SOP")
 -- Hydraulic System
 -- ELECTRIC HYDRAULIC PUMPS SWITCHES............OFF (F/O)
 -- ALTERNATE FLAPS MASTER SWITCH.......GUARD CLOSED (F/O)
+-- FLAP LEVER..................................SET  (F/O)
+--   Set the flap lever to agree with the flap position.
 
 -- Other
 -- WINDSHIELD WIPER SELECTORS..................PARK (F/O)
@@ -102,14 +104,15 @@ activeSOP = kcSOP:new("Zibo Mod SOP")
 local electricalPowerUpProc = kcProcedure:new("ELECTRICAL POWER UP (F/O)","performing ELECTRICAL POWER UP")
 electricalPowerUpProc:addItem(kcSimpleProcedureItem:new("All paper work on board and checked"))
 electricalPowerUpProc:addItem(kcSimpleProcedureItem:new("M E L and Technical Logbook checked"))
-electricalPowerUpProc:addItem(kcSimpleProcedureItem:new("==== Initial Checks"))
-electricalPowerUpProc:addItem(kcSimpleProcedureItem:new("DC Electric Power"))
-electricalPowerUpProc:addItem(kcProcedureItem:new("CIRCUIT BREAKERS (P6 PANEL)","CHECK",kcFlowItem.actorFO,3,true))
-electricalPowerUpProc:addItem(kcProcedureItem:new("CIRCUIT BREAKERS (CONTROL STAND,P18 PANEL)","CHECK",kcFlowItem.actorFO,3,true))
+
+electricalPowerUpProc:addItem(kcSimpleProcedureItem:new("== Initial Checks"))
+electricalPowerUpProc:addItem(kcSimpleProcedureItem:new("==== DC Electric Power"))
+electricalPowerUpProc:addItem(kcProcedureItem:new("CIRCUIT BREAKERS (P6 PANEL)","CHECK ALL IN",kcFlowItem.actorFO,3,true))
+electricalPowerUpProc:addItem(kcProcedureItem:new("CIRCUIT BREAKERS (CONTROL STAND,P18 PANEL)","CHECK ALL IN",kcFlowItem.actorFO,3,true))
 electricalPowerUpProc:addItem(kcProcedureItem:new("DC POWER SWITCH","BAT",kcFlowItem.actorFO,2,
 	function () return sysElectric.dcPowerSwitch:getStatus() == sysElectric.dcPwrBAT end,
 	function () sysElectric.dcPowerSwitch:adjustValue(sysElectric.dcPwrBAT,0,6) end))
-electricalPowerUpProc:addItem(kcIndirectProcedureItem:new("BATTERY VOLTAGE","MIN 24V",kcFlowItem.actorFO,2,"bat24v",
+electricalPowerUpProc:addItem(kcIndirectProcedureItem:new("BATTERY VOLTAGE","CHECK MIN 24V",kcFlowItem.actorFO,2,"bat24v",
 	function () return sysElectric.batt1Volt:getStatus() > 23 end))
 electricalPowerUpProc:addItem(kcProcedureItem:new("BATTERY SWITCH","GUARD CLOSED",kcFlowItem.actorFO,2,
 	function () return sysElectric.batteryCover:getStatus() == modeOff end,
@@ -118,14 +121,19 @@ electricalPowerUpProc:addItem(kcProcedureItem:new("STANDBY POWER SWITCH","GUARD 
 	function () return sysElectric.stbyPowerCover:getStatus() == modeOff end,
 	function () sysElectric.stbyPowerCover:actuate(modeOff) end))
 electricalPowerUpProc:addItem(kcProcedureItem:new("CIRCUIT BREAKERS","ALL IN",kcFlowItem.actorFO,2,true))
-electricalPowerUpProc:addItem(kcSimpleProcedureItem:new("Hydraulic System"))
+
+electricalPowerUpProc:addItem(kcSimpleProcedureItem:new("==== Hydraulic System"))
 electricalPowerUpProc:addItem(kcProcedureItem:new("ELECTRIC HYDRAULIC PUMPS SWITCHES","OFF",kcFlowItem.actorFO,3,
 	function () return sysHydraulic.elecHydPumpGroup:getStatus() == 0 end,
 	function () sysHydraulic.elecHydPumpGroup:actuate(modeOff) end))
 electricalPowerUpProc:addItem(kcProcedureItem:new("ALTERNATE FLAPS MASTER SWITCH","GUARD CLOSED",kcFlowItem.actorFO,3,
 	function () return sysControls.altFlapsCover:getStatus() == modeOff end,
 	function () sysControls.altFlapsCover:actuate(modeOff) end))
-electricalPowerUpProc:addItem(kcSimpleProcedureItem:new("Other"))
+electricalPowerUpProc:addItem(kcIndirectProcedureItem:new("FLAP LEVER","SET CORRECTLY",kcFlowItem.actorFO,1,"initial_flap_lever",
+	function () return sysControls.flapsSwitch:getStatus() == 0 end))
+electricalPowerUpProc:addItem(kcSimpleProcedureItem:new("  Set the flap lever to agree with the flap position."))
+
+electricalPowerUpProc:addItem(kcSimpleProcedureItem:new("==== Other"))
 electricalPowerUpProc:addItem(kcProcedureItem:new("WINDSHIELD WIPER SELECTORS","PARK",kcFlowItem.actorFO,2,
 	function () return sysGeneral.wiperGroup:getStatus() == 0 end,
 	function () sysGeneral.wiperGroup:actuate(modeOff) end))
@@ -241,7 +249,7 @@ prelPreflightProc:addItem(kcIndirectProcedureItem:new("ATTENDENCE BUTTON","PRESS
 	function () sysGeneral.attendanceButton:repeatOn(1) end))
 prelPreflightProc:addItem(kcProcedureItem:new("ELECTRICAL POWER UP","COMPLETE",kcFlowItem.actorFO,1,
 	function () return 
-		(sysElectric.apuGenBus1:getStatus() == 1 and sysElectric.apuGenBus2:getStatus() == 1) or
+		sysElectric.apuGenBusOff:getStatus() == 0 or
 		sysElectric.gpuOnBus:getStatus() == 1
 	end,
 	function () sysGeneral.attendanceButton:repeatOff(1) end))
@@ -844,8 +852,6 @@ preflightFOProc:addItem(kcProcedureItem:new("ANTISKID INOP LIGHT","VERIFY EXTING
 	function () return get("laminar/B738/annunciator/anti_skid_inop") == 0 end))
 -- CARGO FIRE TEST
 
-
-
 -- ============= PREFLIGHT PROCEDURE (CAPT) ============
 -- LIGHTS.....................................TEST (CPT)
 -- ==== EFIS control panel
@@ -891,6 +897,10 @@ preflightFOProc:addItem(kcProcedureItem:new("ANTISKID INOP LIGHT","VERIFY EXTING
 -- WEATHER RADAR PANEL..........................SET (F/O)
 -- TRANSPONDER PANEL............................SET (F/O)
 -- YAW DAMPER SWITCH.............................ON (F/O)
+-- ==== Departue Briefing
+-- Threats
+-- MCP#
+-- Takeoff briefing 
 
 local preflightCPTProc = kcProcedure:new("PREFLIGHT PROCEDURE (CAPT)")
 preflightCPTProc:setResize(false)
@@ -1084,6 +1094,10 @@ preflightChkl:addItem(kcManualChecklistItem:new("GEAR PINS","REMOVED",kcFlowItem
 --   AILERON TRIM..........................0 UNITS (CPT)
 --   RUDDER TRIM...........................0 UNITS (CPT)
 -- Call for Before Start Checklist
+
+
+-- XPDR TO ALT OFF?
+
 
 local beforeStartProc = kcProcedure:new("BEFORE START PROCEDURE (BOTH)","Before start items")
 beforeStartProc:addItem(kcProcedureItem:new("FLIGHT DECK DOOR","CLOSED AND LOCKED",kcFlowItem.actorFO,2,

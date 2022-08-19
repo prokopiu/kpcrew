@@ -83,6 +83,7 @@ flight:add(kcPreference:new("takeoffFuel",0,kcPreference.typeInt,
 function ()
 	return "Takeoff Fuel " .. (activePrefSet:get("general:weight_kgs") == true and "KGS" or "LBS") .. "|100"
 end))
+flight:add(kcPreference:new("melIssues",0,kcPreference.typeList,"Minimum Equipment List issues|" .. kc_MELIssues))
 
 -- =================== DEPARTURE ==================
 local departure = kcPreferenceGroup:new("departure","DEPARTURE")
@@ -113,6 +114,10 @@ taxi:add(kcPreference:new("pushDirection",1,kcPreference.typeList,"Push Directio
 taxi:add(kcPreference:new("startSequence",1,kcPreference.typeList,"Start Sequence|" .. kc_StartSequence))
 taxi:add(kcPreference:new("taxiRoute","",kcPreference.typeText,"Taxi Route|"))
 
+-- TRIBETS?
+-- Threats, Rain, Weatjer, Traffic, Languag difficult, MEL issues? Minimum Equipment List
+-- Route checke
+
 
 -- =================== DEPARTURE BRIEFING ==================
 -- W eather highlites
@@ -134,7 +139,7 @@ function ()
     briefing = briefing .. "We have ATIS information " .. activeBriefings:get("departure:atisInfo") .. " The weather is " .. kc_buildAtisString() .. "\n\n"
 
 -- [A] ircraft
-    briefing = briefing .. "Today we are flying in a " .. kc_acf_name .. " with <engine and aircraft details from CDU>, we have no M E L issues today" .. "\n\n"
+    briefing = briefing .. "Today we are flying in a " .. kc_acf_name .. " with <engine and aircraft details from CDU>, we have " .. kc_split(kc_MELIssues,"|")[activeBriefings:get("flight:melIssues")] .. " today" .. "\n\n"
 
 -- [N] otams - highlite 
     briefing = briefing .. "NOTAMs highlites if there are any <may also include VATSIM/IVAO details etc" .. "\n\n"

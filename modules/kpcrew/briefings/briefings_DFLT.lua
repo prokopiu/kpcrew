@@ -12,6 +12,7 @@ kc_LandingAutoBrake = "OFF|1|2|3|MAX"
 kc_LandingPacks = "OFF|ON|UNDER PRESSURIZED"
 kc_LandingAntiice = "NOT REQUIRED|ENGINE ONLY|ENGINE AND WING"
 kc_StartSequence = "2 THEN 1|1 THEN 2"
+kc_MELIssues = "no M E L issues|some M E L issues"
 
 -- full list of approach types can be overwritten by aircraft
 APP_apptype_list = "ILS CAT 1|ILS CAT 2 OR 3|VOR|NDB|RNAV|VISUAL|TOUCH AND GO|CIRCLING"
