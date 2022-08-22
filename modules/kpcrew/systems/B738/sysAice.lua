@@ -64,4 +64,9 @@ function ()
 	end
 end)
 
+sysAice.windowHeatAnns = CustomAnnunciator:new("windoheat",
+function () return get("laminar/B738/annunciator/window_heat_l_fwd") + get("laminar/B738/annunciator/window_heat_l_side") +
+	get("laminar/B738/annunciator/window_heat_r_fwd") + get("laminar/B738/annunciator/window_heat_r_side")
+end)
+
 return sysAice

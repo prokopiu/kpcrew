@@ -78,4 +78,19 @@ sysFuel.centerTankKgs = SimpleAnnunciator:new("","laminar/B738/fuel/center_tank_
 sysFuel.allTanksLbs = SimpleAnnunciator:new("","laminar/B738/fuel/total_tank_lbs",0)
 sysFuel.allTanksKgs = SimpleAnnunciator:new("","laminar/B738/fuel/total_tank_kgs",0)
 
+sysFuel.valveAnns = CustomAnnunciator:new("",
+function () 
+	if get("laminar/B738/annunciator/eng1_valve_closed") + 
+		get("laminar/B738/annunciator/eng2_valve_closed") + 
+		get("laminar/B738/annunciator/spar1_valve_closed") + 
+		get("laminar/B738/annunciator/spar2_valve_closed") > 0 then
+		return 1
+	else
+		return 0
+	end
+end)
+
+sysFuel.xfeedVlvAnn = SimpleAnnunciator:new("","laminar/B738/annunciator/crossfeed",0)
+
+
 return sysFuel

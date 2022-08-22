@@ -83,7 +83,7 @@ flight:add(kcPreference:new("takeoffFuel",0,kcPreference.typeInt,
 function ()
 	return "Takeoff Fuel " .. (activePrefSet:get("general:weight_kgs") == true and "KGS" or "LBS") .. "|100"
 end))
-flight:add(kcPreference:new("melIssues",0,kcPreference.typeList,"Minimum Equipment List issues|" .. kc_MELIssues))
+flight:add(kcPreference:new("melIssues",1,kcPreference.typeList,"Minimum Equipment List issues|" .. kc_MELIssues))
 
 -- =================== DEPARTURE ==================
 local departure = kcPreferenceGroup:new("departure","DEPARTURE")
@@ -131,7 +131,7 @@ taxi:add(kcPreference:new("taxiRoute","",kcPreference.typeText,"Taxi Route|"))
 
 local depBriefing = kcPreferenceGroup:new("depBriefing","DEPARTURE BRIEFING")
 -- depBriefing:setInitialOpen(true)
-depBriefing:add(kcPreference:new("taxibriefing",
+depBriefing:add(kcPreference:new("flightbriefing",
 function () 
 	local briefing = "OK, I will be the pilot flying\n"
 -- [W] eather highlites
@@ -142,13 +142,20 @@ function ()
     briefing = briefing .. "Today we are flying in a " .. kc_acf_name .. " with <engine and aircraft details from CDU>, we have " .. kc_split(kc_MELIssues,"|")[activeBriefings:get("flight:melIssues")] .. " today" .. "\n\n"
 
 -- [N] otams - highlite 
-    briefing = briefing .. "NOTAMs highlites if there are any <may also include VATSIM/IVAO details etc" .. "\n\n"
+    briefing = briefing .. "NOTAMs highlites if there are any <may also include VATSIM/IVAO details etc>" .. "\n\n"
 
 -- [N] oise abatement proc
 	briefing = briefing .. "This will be a standard takeoff, noise abatement procedure " .. kc_split(DEP_nadp_list,"|")[activeBriefings:get("departure:depNADP")] .. "\n\n"
 
+-- [A] utomation AFDS LNAV/VNAV or other
+	
+	return briefing
+end,
+kcPreference.typeInfo,"Ready for the departure briefing?|"))
+
+depBriefing:add(kcPreference:new("taxibriefing",
+function () 
 -- [T] axi Taxiroute
-    briefing = briefing .. "As to our taxi route: \n" 	
 	local xtaxiroute = ""
 	if activeBriefings:get("taxi:gateStand") == 1 then
 		xtaxiroute = "This is a gate position, pushback required " .. kc_split(DEP_push_direction,"|")[activeBriefings:get("taxi:pushDirection")] .. "\n"
@@ -159,11 +166,18 @@ function ()
 	if activeBriefings:get("taxi:gateStand") == 3 or activeBriefings:get("taxi:pushDirection") == 1 then
 		xtaxiroute = "We require no pushback at this position, start clearance only\n"
 	end
-	briefing = briefing .. xtaxiroute
-	briefing = briefing .. "We will be taxiing to holding point runway " .. activeBriefings:get("departure:rwy") .. " via "
-	briefing = briefing .. activeBriefings:get("taxi:taxiRoute") .. "\n"
+	-- briefing = briefing .. xtaxiroute
+	xtaxiroute = xtaxiroute .. "We will be taxiing to holding point runway " .. activeBriefings:get("departure:rwy") .. " via "
+	xtaxiroute = xtaxiroute .. activeBriefings:get("taxi:taxiRoute") .. "\n\n"
 
+	return xtaxiroute
+end,
+kcPreference.typeInfo,"Taxi Briefing|"))
+
+depBriefing:add(kcPreference:new("deproute",
+function () 
 -- [R] outing 
+	local briefing = ""
 	local xdep = ""
 	if activeBriefings:get("departure:type") == 1 then
 		xdep = "This will be a standard instrument departure via " .. activeBriefings:get("departure:route") .. " transition " .. activeBriefings:get("departure:transition") .. "\n"
@@ -183,10 +197,15 @@ function ()
 	briefing = briefing .. "Minimum Safe Altitude along our initial route is ".. activeBriefings:get("takeoff:msa") .. "ft\n"
 	briefing = briefing .. "In case of forced return we are ".. kc_split(DEP_forced_return,"|")[activeBriefings:get("takeoff:forcedReturn")] .. "\n"
 	briefing = briefing .. "The takeoff speeds are set. V1 is ".. activeBriefings:get("takeoff:v1") .. ", Vr is " .. activeBriefings:get("takeoff:vr") .. " and V2 today " .. activeBriefings:get("takeoff:v2") .. "\n"
-	briefing = briefing .. "<Brief the departure procedure from CDU and charts" .. "\n"
+	briefing = briefing .. "<Brief the departure procedure from CDU and charts>" .. "\n\n"
 
--- [A] utomation AFDS LNAV/VNAV or other
-	
+	return briefing
+end,
+kcPreference.typeInfo,"Departure Route|"))
+
+depBriefing:add(kcPreference:new("security brief",
+function () 
+	local briefing = ""
 -- [M] iscellaneous
 	briefing = briefing .. "For the security brief:\n"
 	briefing = briefing .. "From 0 to 100 knots for any malfunction I will call reject and we will confirm the autobrakes are operating\n\n"
@@ -204,7 +223,7 @@ function ()
 	
 	return briefing
 end,
-kcPreference.typeInfo,"Ready for the departure briefing?|"))
+kcPreference.typeInfo,"Security Briefing|"))
 
 -- =================== TAKEOFF ==================
 local takeoff = kcPreferenceGroup:new("takeoff","TAKEOFF")

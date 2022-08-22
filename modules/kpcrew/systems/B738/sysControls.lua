@@ -45,8 +45,9 @@ sysControls.rudderReset = TwoStateToggleSwitch:new("rudderreset","sim/cockpit2/c
 sysControls.yawDamper = TwoStateToggleSwitch:new("yawdamper","laminar/B738/toggle_switch/yaw_dumper_pos",0,"laminar/B738/toggle_switch/yaw_dumper")
 
 -- flaps ctrl
-sysControls.altFlapsCtrl = MultiStateCmdSwitch:new("altflapsctrl","laminar/B738/toggle_switch/alt_flaps_ctrl",0,"laminar/B738/toggle_switch/alt_flaps_ctrl_dn","laminar/B738/toggle_switch/alt_flaps_ctrl_up")
+sysControls.altFlaps = MultiStateCmdSwitch:new("altflaps","laminar/B738/toggle_switch/alt_flaps_pos",0,"laminar/B738/toggle_switch/alt_flaps_ctrl_dn","laminar/B738/toggle_switch/alt_flaps_ctrl_up")
 sysControls.altFlapsCover = TwoStateToggleSwitch:new("altflapscover","laminar/B738/switches/alt_flaps_cover_pos",0,"laminar/B738/toggle_switch/alt_flaps_cover")
+sysControls.altFlapsCtrl = MultiStateCmdSwitch:new("altflapsctrl","laminar/B738/toggle_switch/alt_flaps_ctrl",0,"laminar/B738/toggle_switch/alt_flaps_ctrl_dn","laminar/B738/toggle_switch/alt_flaps_ctrl_up")
 
 -- flight controls
 sysControls.fltCtrlASwitch = MultiStateCmdSwitch:new("","laminar/B738/switches/flt_ctr_A_pos",0,"laminar/B738/toggle_switch/flt_ctr_A_dn","laminar/B738/toggle_switch/flt_ctr_A_up")
@@ -79,5 +80,18 @@ sysControls.spoilerLever = SimpleAnnunciator:new("","laminar/B738/flt_ctrls/spee
 
 -- Flaps extend
 sysControls.slatsExtended = SimpleAnnunciator:new("","laminar/B738/annunciator/slats_extend",0)
+
+sysControls.flapsPanelStatus = CustomAnnunciator:new("flapsstat",
+function () 
+	if get("laminar/B738/annunciator/hyd_stdby_rud") + 
+		get("laminar/B738/annunciator/std_rud_on") + 
+		get("laminar/B738/hydraulic/standby_on") + 
+		get("laminar/B738/hydraulic/standby_status") > 0 then	
+		return 1
+	else
+		return 0
+	end
+end)
+
 
 return sysControls

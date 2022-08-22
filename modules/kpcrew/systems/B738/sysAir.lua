@@ -2,6 +2,12 @@
 -- Air and Pneumatics functionality
 
 local sysAir = {
+	packModeOff = 0,
+	packModeAuto = 1,
+	packModeOn = 2,
+	isoVlvClosed = 0,
+	isoVlvAuto = 1,
+	isoVlvOpen = 2
 }
 
 local TwoStateDrefSwitch = require "kpcrew.systems.TwoStateDrefSwitch"

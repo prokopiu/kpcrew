@@ -10,6 +10,7 @@ flight:originIcao="AYPY"
 flight:destinationIcao="WAJJ"
 flight:cruiseLevel=320
 flight:takeoffFuel=8065
+flight:melIssues=1
 departure:AtisFrequency1=122.8
 departure:atisInfo="X"
 departure:clrFrequency=122.8

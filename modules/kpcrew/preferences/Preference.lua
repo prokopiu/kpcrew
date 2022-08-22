@@ -13,7 +13,9 @@ local kcPreference = {
 	typeText = 4,
 	typeList = 5,
 	typeCOMFreq = 6,
-	typeNAVFreq = 7
+	typeNAVFreq = 7,
+	colorGreen = 0xFF95C857,
+	colorWhite = 0xffffffff
 }
 
 -- Instantiate a new preference group
