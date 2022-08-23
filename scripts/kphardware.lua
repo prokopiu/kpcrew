@@ -6,10 +6,10 @@
 require "kpcrew.genutils"
 require "kpcrew.systems.activities"
 
-local KPH_VERSION = "2.3-alpha1"
+local KPH_VERSION = "2.3-alpha7"
 
 -- disable windows by changing from true to false
-local show_mcp_panel = false
+local show_mcp_panel = true
 local show_light_panel = false
 local show_radio_panel = false
 local show_efis_panel = false
@@ -38,11 +38,15 @@ end
 if PLANE_ICAO == "E135" or PLANE_ICAO == "E140" or PLANE_ICAO == "E145" or PLANE_ICAO == "E45X" then
 	kh_acf_icao = "ERJF"
 end
-if PLANE_ICAO == "MD82" then
-	kh_acf_icao = "MD82"
-end
+-- if PLANE_ICAO == "MD82" then
+	-- kh_acf_icao = "MD82"
+-- end
 if PLANE_ICAO == "B744" then
 	kh_acf_icao = "B744"
+end
+-- Jardesign A320neo
+if PLANE_ICAO == "A320" and PLANE_TAILNUMBER == "A320" then
+	kh_acf_icao = "A20N"
 end
 
 set("sim/private/controls/shadow/cockpit_near_adjust",0.09)

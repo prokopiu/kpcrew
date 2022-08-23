@@ -1,13 +1,13 @@
 --[[
 	*** KPCREW 2.3
-	Virtual copilot for X-PLane 11
+	Virtual copilot for X-Plane 11
 	Kosta Prokopiu, August 2022
 --]]
 
 require "kpcrew.genutils"
 require "kpcrew.systems.activities"
 
-kc_VERSION = "2.3-alpha6"
+kc_VERSION = "2.3-alpha7"
 
 logMsg ( "FWL: ** Starting KPCrew version " .. kc_VERSION .." **" )
 
@@ -21,10 +21,12 @@ if PLANE_ICAO == "B738" then
 	else
 		kc_acf_icao = "B738" -- Zibo Mod
 	end
-elseif PLANE_ICAO == "MD11" then
-	kc_acf_icao = "MD11"
+-- elseif PLANE_ICAO == "MD11" then
+	-- kc_acf_icao = "MD11"
 elseif PLANE_ICAO == "B732" then
 	kc_acf_icao = "B732"
+elseif PLANE_ICAO == "A320" and PLANE_TAILNUMBER == "A320" then -- Jardesign A320neo
+	kc_acf_icao = "A20N"
 end
 
 -- Aircraft Specific SOP/Checklist/Procedure Definitions

@@ -1,15 +1,11 @@
-general:assistance=2
+general:assistance=1
 general:weight_kgs=true
 general:baro_mode_hpa=true
 general:def_trans_alt=5000
 general:def_trans_lvl=50
 general:speakProcedure=false
 general:speakChecklist=false
-aircraft:efis_mins_dh=true
 aircraft:mcp_def_spd=100
 aircraft:mcp_def_hdg=1
 aircraft:mcp_def_alt=4900
 aircraft:powerup_apu=false
-aircraft:efis_mtr=false
-aircraft:efis_fpv=false
-aircraft:takeoff_cmda=true

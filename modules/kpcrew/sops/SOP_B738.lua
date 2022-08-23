@@ -240,6 +240,11 @@ electricalPowerUpProc:addItem(kcProcedureItem:new("   STANDBY #exchange|PWR|POWE
 -- Next: CDU Preflight                             
 
 local prelPreflightProc = kcProcedure:new("PREL PREFLIGHT PROCEDURE (F/O)","preliminary pre flight")
+-- Check fluids
+-- OIL QUANTITY
+-- HYDRAULIC QUANTITY
+-- OXYGEN BOTTLE
+
 prelPreflightProc:addItem(kcProcedureItem:new("EMERGENCY EXIT LIGHT","ARM #exchange|/ON GUARD CLOSED| #",kcFlowItem.actorFO,2,
 	function () return sysGeneral.emerExitLightsCover:getStatus() == modeOff  end,
 	function () sysGeneral.emerExitLightsCover:actuate(modeOff) end))
@@ -2026,12 +2031,12 @@ local coldAndDarkProc = kcProcedure:new("SET AIRCRAFT TO COLD & DARK")
 
 -- ============  =============
 -- add the checklists and procedures to the active sop
--- activeSOP:addProcedure(electricalPowerUpProc)
--- activeSOP:addProcedure(prelPreflightProc)
--- activeSOP:addProcedure(cduPreflightProc)
--- activeSOP:addProcedure(preflightFOProc)
--- activeSOP:addProcedure(preflightFO2Proc)
--- activeSOP:addProcedure(preflightFO3Proc)
+activeSOP:addProcedure(electricalPowerUpProc)
+activeSOP:addProcedure(prelPreflightProc)
+activeSOP:addProcedure(cduPreflightProc)
+activeSOP:addProcedure(preflightFOProc)
+activeSOP:addProcedure(preflightFO2Proc)
+activeSOP:addProcedure(preflightFO3Proc)
 activeSOP:addProcedure(preflightCPTProc)
 activeSOP:addChecklist(preflightChkl)
 activeSOP:addProcedure(beforeStartProc)

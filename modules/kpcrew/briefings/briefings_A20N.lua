@@ -1,4 +1,4 @@
-kc_acf_name = "X-Plane Default Aircraft"
+kc_acf_name = "JarDesign A320neo"
 
 kc_TakeoffThrust = "RATED|DE-RATED|ASSUMED TEMPERATURE|RATED AND ASSUMED|DE-RATED AND ASSUMED"
 kc_TakeoffFlaps = "1|2|3|4|5"
