@@ -80,6 +80,12 @@ sysGeneral.irsUnitGroup:addSwitch(sysGeneral.irsUnit1Switch)
 sysGeneral.irsUnitGroup:addSwitch(sysGeneral.irsUnit2Switch)
 sysGeneral.irsUnitGroup:addSwitch(sysGeneral.irsUnit3Switch)
 
+sysGeneral.wiperLeft = MultiStateCmdSwitch:new("wiperleft","laminar/B747/antiice/wndshlsd_wiper_L/sel_dial_pos",0,"laminar/B747/antiice/wndshlsd_wiper_L/sel_dial_dn","laminar/B747/antiice/wndshlsd_wiper_L/sel_dial_up")
+sysGeneral.wiperRight = MultiStateCmdSwitch:new("wiperright","laminar/B747/antiice/wndshlsd_wiper_R/sel_dial_pos",0,"laminar/B747/antiice/wndshlsd_wiper_R/sel_dial_dn","laminar/B747/antiice/wndshlsd_wiper_R/sel_dial_up")
+sysGeneral.wiperGroup = SwitchGroup:new("wipers")
+sysGeneral.wiperGroup:addSwitch(sysGeneral.wiperLeft)
+sysGeneral.wiperGroup:addSwitch(sysGeneral.wiperRight)
+
 ------------ Annunciators
 -- park brake
 sysGeneral.parkbrakeAnc = CustomAnnunciator:new("parkbrake",

@@ -25,6 +25,8 @@ if PLANE_ICAO == "B738" then
 	-- kc_acf_icao = "MD11"
 elseif PLANE_ICAO == "B732" then
 	kc_acf_icao = "B732"
+elseif PLANE_ICAO == "B744" then
+	kc_acf_icao = "B744"
 elseif PLANE_ICAO == "A320" and PLANE_TAILNUMBER == "A320" then -- Jardesign A320neo
 	kc_acf_icao = "A20N"
 end

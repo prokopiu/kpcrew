@@ -52,31 +52,35 @@ require("kpcrew.briefings.briefings_" .. kc_acf_icao)
 
 activeSOP = kcSOP:new("JarDesign A20N SOP")
 
--- ============ Preliminary Cockpit Preparation ===========
+-- =========== Preliminary Cockpit Preparation ==========
 -- All paper work on board and checked
 -- M E L and Technical Logbook checked
 
--- ENG MASTERS ...... . ............... OFF
--- ENG MODE SEL. ... . . ... . ....... . ... NORM
--- • WEATHER RADAR ... . ..... ... ... ... . . OFF
+-- ENG MASTERS..................................OFF (F/O)
+-- ENG MODE SEL................................NORM
+-- WEATHER RADAR................................OFF
 -- UG lever . ......... .. . . . ........... DOWN
--- Both WIPER selectors ... ..... .. . ...... OFF
--- BAT . .......... . . . .. ........ CHECK/AUTO
--- EXT POWER .......... .... ..... .. .... ON
--- APU FIRE ....... ..... . .... . .. CHECKITEST
--- APU ... . . ......... . ........ ~ .. AS RQRD
--- When APU AVAIL:
--- AIR COND panel ........ . ..... ... . . . . . SET
--- EXT POWER ......... . . ........ AS RQRD
--- • COCKPIT LIGHTS ... .. .. ..... .. .. AS RQRD
--- • ECAM RCL Ii> ... .................. PRESS
--- • ECAM OXY PRES/HYO QTY/ENG
+-- BOTH WIPER SELECTORS.........................OFF
+-- BAT...................................CHECK/AUTO
+-- ==== Activate External Power
+--   Use Ground Handling CDU menu to turn EXT Power on         
+-- EXT POWER.....................................ON
+--   EXT POWER AVAILABLE LIGHTS.........ILLUMINATED (F/O)
+--   EXT PWR 1 SWITCH............................ON (F/O)
+-- ==== Activate APU 
+--   APU FIRE..............................CHECK/TEST
+--   APU......................................START (F/O)
+--     Hold APU switch in START position for 3-4 seconds.
+--   AIR COND panel ........ . ..... ... . . . . . SET
+-- COCKPIT LIGHTS ... .. .. ..... .. .. AS RQRD
+-- ECAM RCL Ii> ... .................. PRESS
+-- ECAM OXY PRES/HYO QTY/ENG
 -- OIL QTY .... .... .. .. ...... .. . .... . CHECK
 -- FLAPS ........ . ...... . ... CHECK POSITION
--- • SPD BRK LEVER CHECK RET AND DISARMED
--- • PARKING BRAKE . . .. . .. .......... . .... ON
--- • ACCU/BRAKES PRESS . .. . ..... .. ... CHECK
--- • OEB IN QRH . ... . ...... .. .......... CHECK
+-- SPD BRK LEVER CHECK RET AND DISARMED
+-- PARKING BRAKE . . .. . .. .......... . .... ON
+-- ACCU/BRAKES PRESS . .. . ..... .. ... CHECK
+-- OEB IN QRH . ... . ...... .. .......... CHECK
 -- EMER EQPT . .... ... .. .. .......... . CHECK
 -- RAIN REPELLENT ... . .. .. . . . ..... . . CHECK
 -- C/8 panels . .. . . .... ...... ....... .. CHECK
@@ -85,7 +89,7 @@ activeSOP = kcSOP:new("JarDesign A20N SOP")
 -- Oriy asterisks r) items req.iired on transit stop.
 
 
-local prelCockpitPrep = kcProcedure:new("PRELIMINARY COCKPIT PREP (PNF)","performing Preliminary Cockpit Preparation")
+local prelCockpitPrep = kcProcedure:new("PRELIMINARY COCKPIT PREP","performing Preliminary Cockpit Preparation")
 prelCockpitPrep:addItem(kcSimpleProcedureItem:new("All paper work on board and checked"))
 prelCockpitPrep:addItem(kcSimpleProcedureItem:new("M E L and Technical Logbook checked"))
 

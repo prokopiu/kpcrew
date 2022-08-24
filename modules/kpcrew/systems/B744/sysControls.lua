@@ -24,7 +24,7 @@ local InopSwitch = require "kpcrew.systems.InopSwitch"
 --------- Switches
 
 -- Flaps 
-sysControls.flapsSwitch = MultiStateCmdSwitch:new("flaps","sim/flightmodel2/controls/flap_ratio",0,"sim/flight_controls/flaps_up","sim/flight_controls/flaps_down")
+sysControls.flapsSwitch = MultiStateCmdSwitch:new("flaps","laminar/B747/cablecontrols/flap_ratio",0,"sim/flight_controls/flaps_up","sim/flight_controls/flaps_down")
 
 -- Pitch Trim
 sysControls.pitchTrimSwitch = MultiStateCmdSwitch:new("pitchtrim","sim/cockpit2/controls/elevator_trim",0,"sim/flight_controls/pitch_trim_up","sim/flight_controls/pitch_trim_down")
@@ -41,7 +41,7 @@ sysControls.rudderReset = TwoStateToggleSwitch:new("rudderreset","sim/cockpit2/c
 
 sysControls.yawDamper = TwoStateToggleSwitch:new("yawdamper","sim/cockpit2/switches/yaw_damper_on",0,"sim/systems/yaw_damper_toggle")
 
-sysControls.altFlapsCtrl = InopSwitch:new("altflapsctrl")
+sysControls.altFlapsCtrl = MultiStateCmdSwitch:new("altflapsctrl","laminar/B747/flt_ctrls/alt_flaps/sel_dial_pos",0,"laminar/B747/flt_ctrls/flaps/alt_flaps/sel_dial_dn","laminar/B747/flt_ctrls/flaps/alt_flaps/sel_dial_up")
 
 --------- Annunciators
 

@@ -1,4 +1,4 @@
-local SOP_B738 = {
+local SOP_B744 = {
 }
 
 -- SOP related imports
@@ -50,166 +50,326 @@ require("kpcrew.briefings.briefings_" .. kc_acf_icao)
 
 -- Set up SOP =========================================================================
 
-activeSOP = kcSOP:new("Zibo Mod SOP")
+activeSOP = kcSOP:new("Sparky B744 SOP")
 
--- ============ Electrical Power Up Procedure ===========
+
+
+-- PREFLIGHT
+-- First Officer Captain
+-- EMERGENCY EQUIPMENT… … .… … .CHECKED
+-- FIRE PROTECTION………… ...……… CHECKED
+-- INTERRUPT SWITCHES……………………… ON
+-- PASSENGER OXYGEN…………… ..… … NORMAL
+-- STAB TRIM CUTOUT SWITCHES………… .AUTO
+-- NAV EQUIPMENT……………………… ..CHECKED
+-- OXYGEN AND INTERPHONE………… CHECKED
+-- GEAR PINS……………… ..……………… .STOWED
+-- FLIGHTDECK LIGHTS……………………… ..SET
+-- SERVICEABILITY……………………… .CHECKED
+-- FMC………………………… ...… … SET / CHECKED
+-- CREW BRIEFING………………… ..COMPLETED
+-- EEC PUSHBUTTONS…………………… .NORMAL
+-- IRS………………………………………………… NAV
+-- HYDRAULIC SYSTEM…………………………SET
+-- EMERGENCY LIGHTS…………… .……… .ARMED
+-- AUDIO SYSTEMS………………………… NORMAL
+-- INTERPHONE SWITCHES…………………… OFF
+-- ANTI-ICE SYSTEMS…………………………… .OFF
+-- WINDOW HEAT…………………………… ...… … ON
+-- YAW DAMPERS……………………… ..………… ON
+-- VOICE RECORDER……………………………… ON
+-- PRESSURIZATION……………………………… SET
+-- AIRCONDITIONING………………… ..………… SET
+-- BLEED PANEL……………………… .………… ..SET
+-- EXTERIOR LIGHTS (WING/LOGO)… … .… … SET
+-- EFIS CONTROL PANELS……………………… SET
+-- MODE CONTROL PANEL……………………… SET
+-- STANDBY INSTRUMENTS…………………… SET
+-- SPEEDBRAKES……… ...…………… .RETRACTED
+-- THRUST LEVERS… .……… DOWN AND CLOSED
+-- PARKING BRAKES…………………………… ...SET
+-- FUEL CONTROL SWITCHES……… ...… ..CUTOFF
+-- COMMUNICATIONS…………………………… .SET
+-- RADAR…………………………………………… SET
+-- NO SMOKING SIGN…………………………… ..ON
+-- EVAC SIGNAL………………… ...……………… ARM
+-- TRANSPONDER………………………………… SET
+-- SOURCE SELECTORS………………… ...… … .SET
+-- CLOCKS………………… ……………………… ..SET
+-- CRT SELECTORS………………………… NORMAL
+-- PFD……………………………………… CHECKED
+-- ND………………………………………… CHECKED
+-- AUTOBRAKES………………………………… RTO
+-- EIU SELECTOR……………………………… AUTO
+-- HDG REFERENCE SWITCH… .………… NORMAL
+-- FMC MASTER SELECTOR………………… LEFT
+-- GROUND PROX SYSTEM…………… CHECKED
+
+-- BEFORE STARTING
+-- First Officer Captain
+-- HYDRAULIC DEMAND PUMPS…………………… .
+-- .............................................AUTO, AUX (1 AND 4)
+-- BRAKE PRESSURE… … ..……………… .NORMAL
+-- FUEL QUANTITY……………… ..………… . ____KG
+-- FUEL SYSTEM………………………………… .SET
+-- X-FEEDS……… ………… OPEN (1 & 4 CLOSED)
+-- SEAT BELTS SIGN……………………………… ON
+-- NOTOC………………………………… .CHECKED
+-- SHIPS PAPERS………………………… ON BOARD
+-- PERFORMANCE DATA......… CHECKED AND SET
+-- V2……………………………… .………………… SET
+-- LNAV AND VNAV………… ...…………………… SET
+-- DOORS………………… ..………………… .CLOSED
+-- YELLOW DOOR SELECTORS AUTOMATIC… … ...
+-- …………………………………… ...… .ANNOUNCED
+-- RECALL………………………… .……… ..CHECKED
+-- ENGINE DISPLAY.……………………… SELECTED
+-- BEACON LIGHTS………… … …………… BOTH ON
+
+
+-- BEFORE TAXI
+-- First Officer Captain
+-- APU…………………………… ..………………… OFF
+-- HYDRAULIC DEMAND PUMPS..……… ALL AUTO
+-- ANTI-ICE SYSTEMS……… .…………………… SET
+-- AFT CARGO HEAT…………………………… .… ON
+-- RECALL……………………… ..………… .CHECKED
+-- GROUND EQUIPMENT……………… ..REMOVED
+
+-- (START TAXI)
+-- PARKING BRAKES……………………… .RELEASE
+-- EXTERIOR LIGHTS…………………… ..… TAXI ON
+-- TIMER/STOPWATCH...……………………… START
+
+
+-- TAXI OUT
+-- First Officer Captain
+-- ALTIMETERS……… (BOTH) ____ IN/hPa, ____FT
+-- ALLOWABLE TAKEOFF WEIGHT………………… ..
+-- ……………………………… ...(FO) MGL CHECKED
+-- THRUST LIMIT……………………………………… ..
+-- ………………… (FO) TAKEOFF ____ SELECTED
+-- (C) CROSSCHECKED
+-- FLAPS____ V2.(BOTH)____TAKEOFF NUMBERS
+-- .....................………………… .CHECKED AND SET
+-- (FO) V-SPEED ACTIVATED AND DISPLAYED
+-- FLAPS… … ..…………… ____,____,GREEN LIGHT
+-- RUDDER/AIL/STAB TRIMS………………………… .
+-- ……………… ..………… ZERO, ZERO, ____UNITS
+-- FLIGHT CONTROLS… … ...… … .FREE & NORMAL
+-- TAKEOFF DATA………… .……………… CHECKED
+-- CREW BRIEFING…………… .… ..… COMPLETED
+
+-- BEFORE TAKEOFF CHECK [TO]
+-- First Officer Captain
+-- FLIGHT ATTENDANTS..…………… ..… ..NOTIFIED
+-- PREPARE FOR TAKEOFF.………… ANNOUNCED
+-- EXTERIOR LIGHTS………………………………… ..
+-- ……… .… TAXI OFF, STROBE ON, LANDING ON
+-- FLAPS…………… .(C) ____, ____, GREEN LIGHT
+-- FLIGHT DIRECTOR...………………… .………… ON
+-- AUTO THROTTLE..………………………… ARMED
+-- TRANSPONDER… … ..………… CODE SET, TA/RA
+-- TAKE-OFF CLEARANCE.……………… RECEIVED
+
+-- AFTER TAKEOFF / CLIMB CHECK
+-- Pilot Not Flying Pilot Not Flying
+-- GEAR LEVER………………………… .UP AND OFF
+-- AUTOPILOT.....................................ENGAGE / ON
+-- LNAV……………………… ..……………………… ON
+-- VNAV………………………… .…………………… ON
+-- FLAPS…………………………………………… ....UP
+-- EXTERIOR LIGHTS...……………… LANDING OFF
+-- FLIGHT ATTENDANT ADVISORY……………… ON
+
+-- At the Transition Altitude
+-- Pilot Not Flying Pilot Not Flying
+-- ALTIMETERS..……………………… .29.92 IN / STD
+
+-- At the Cruise Altitude [CRZ]
+-- Pilot Not Flying Pilot Not Flying
+-- CRZ ATTITUDE/SPEED.………… ..… … CHECKED
+-- NO SMOKING/SEAT BELTS SIGNS..……… AUTO
+-- CRUISE…………………… (Captain) ANNOUNCED
+
+-- DESCENT CHECK [G/A]
+-- Pilot Not Flying Pilot Not Flying
+-- NO SMOKING/SEAT BELTS SIGNS…………… ON
+-- PRESSURIZATION……………………… CHECKED
+-- RECALL……………………… .………… ..CHECKED
+-- ALLOWABLE LANDING WEIGHT… ..… CHECKED
+-- APPROACH PREPARATION / FMC ARRIVALS… ..
+-- ..……………… ..…………………… … COMPLETED
+-- At the Transition Altitude
+-- Pilot Not Flying Pilot Not Flying
+-- ALTIMETERS..…………… .____ IN (hPa), ____FT
+-- APPROACH CHECK
+-- Pilot Not Flying Pilot Not Flying
+-- PREPARE FOR LANDING.………… ANNOUNCED
+-- EXTERIOR LIGHTS.………………… LANDING ON
+-- FLIGHT ATTENDANT ADVISORY............................
+-- ……………………………… ..COCKPIT IS STERILE
+-- APPROACH BRIEFING… .......................................
+-- ………………………… ..(Pilot Flying) COMPLETED
+-- MINIMUMS……………… ...……… (BOTH) ____ FT
+-- APPROACH FREQUENCY AND COURSE… ..… …
+-- ....…………………… .……… (BOTH) ______, ____°
+-- VREF.……… (BOTH) ____APPROACH NUMBERS
+-- ……………………………… ....CHECKED AND SET
+-- AUTOBRAKES.…………………………… ____ SET
+-- CREW BRIEFING………… .………… COMPLETED
+-- ALTIMETERS… ..………… . ____ IN (hPa), ____FT
+-- LANDING CHECK
+-- Pilot Not Flying Pilot Not Flying
+-- FLIGHT ATTENDANTS……… .………… .NOTIFIED
+-- GEAR LEVER..……… DOWN AND GREEN LIGHT
+-- SPEEDBRAKES… .………… .……………… ARMED
+-- FLAPS………………… ____, ____, GREEN LIGHT
+-- AFTER LANDING CHECK
+-- First Officer Captain
+-- LANDING & STROBE LIGHTS……………… .OFF
+-- TAXI LIGHT……………………………………… ON
+-- FLAPS… … ..……………………………………… ..UP
+-- STABILIZER TRIM…………………… .…………… .6
+-- SPEEDBRAKES.…………………………… ..DOWN
+-- RADAR……………… ..………………………… TEST
+-- TRANSPONDER………… ..…………… ..STANDBY
+-- AUTOBRAKES…………… ...…………………… OFF
+-- FLIGHT DIRECTOR..…………………………… OFF
+-- APU……… .……………… …………………… START
+
+-- PARKING CHECK
+-- First Officer Captain
+-- FLIGHT ATTENDANT ADVISORY… .......................
+-- ……………………………………… ...NON-STERILE
+-- TAXI LIGHT……… .……………………………… OFF
+-- TIMER/STOPWATCH… … ..………… STOP/RESET
+-- PARKING BRAKES……………………… ..… … SET
+-- ELECTRICAL SYSTEM..… … SET / APU AVAIL ON
+-- FUEL CONTROL SWITCHES…………… .CUTOFF
+-- NO SMOKING/SEAT BELTS SIGNS.………… .OFF
+-- HYDRAULIC DEMAND PUMPS…………… .… OFF
+-- FUEL SYSTEM..……………………………… ....OFF
+-- IRS…………………………………… .………… ..OFF
+-- BEACON LIGHTS……………… ..……………… OFF
+-- ANTI-ICE SYSTEMS………………………… ....OFF
+-- AFT CARGO HEAT……………………………… OFF
+-- WINDOW HEAT………… …………… .………… OFF
+-- YAW DAMPERS………………………………… .OFF
+-- AIRCONDITIONING…………………………… ..OFF
+-- FMC…………… ...……………… ..CLEAR ROUTES
+-- EXTERIOR LIGHTS (WING/LOGO).………… ..OFF
+
+-- SECURING CHECK
+-- INTEGRAL LIGHTS…………………… ...……… OFF
+-- TERMINATION CHECK
+-- (After Last Passenger Has Deplaned)
+-- EVAC SIGNAL…………………………………… OFF
+-- EMERGENCY LIGHTS………………………… .OFF
+-- PACKS…………………………………………… .OFF
+-- ELECTRICAL SYSTEM… … SET / APU AVAIL OFF
+-- APU…………… ………… ..……………………… OFF
+-- STANDBY POWER……………………………… OFF
+-- BATTERY………………………………………… OFF
+
+
+-- =============== POWER UP / SAFETY CHECK ==============
 -- All paper work on board and checked
 -- M E L and Technical Logbook checked
 
 -- ===== Initial checks
 -- DC Electric Power
--- CIRCUIT BREAKERS (P6 PANEL).........CHECK ALL IN (F/O)
--- CIRCUIT BREAKERS (P18 PANEL)........CHECK ALL IN (F/O)
--- DC POWER SWITCH..............................BAT (F/O)
--- BATTERY VOLTAGE..........................MIN 24V (F/O)
--- BATTERY SWITCH......................GUARD CLOSED (F/O)
--- STANDBY POWER SWITCH................GUARD CLOSED (F/O)
-
--- Hydraulic System
--- ELECTRIC HYDRAULIC PUMPS SWITCHES............OFF (F/O)
+-- CIRCUIT BREAKERS....................CHECK ALL IN (F/O)
+-- BATTERY SWITCH...............ON AND GUARD CLOSED (F/O)
+-- STANDBY POWER SWITCH........................AUTO (F/O)
+-- HYDRAULIC DEMAND PUMPS SWITCHES..............OFF (F/O)
+-- WINDSHIELD WIPER SELECTORS...................OFF (F/O)
 -- ALTERNATE FLAPS MASTER SWITCH.......GUARD CLOSED (F/O)
+-- LANDING GEAR LEVER..........................DOWN (F/O)
 -- FLAP LEVER..................................SET  (F/O)
 --   Set the flap lever to agree with the flap position.
-
--- Other
--- WINDSHIELD WIPER SELECTORS..................PARK (F/O)
--- LANDING GEAR LEVER..........................DOWN (F/O)
---   GREEN LANDING GEAR LIGHT.....CHECK ILLUMINATED (F/O)
---   RED LANDING GEAR LIGHT......CHECK EXTINGUISHED (F/O)
--- TAKEOFF CONFIG WARNING......................TEST (F/O)
---   Move thrust levers full forward and back to idle.
-
 -- ==== Activate External Power
---   Use Zibo EFB to turn Ground Power on.         
---   GRD POWER AVAILABLE LIGHT..........ILLUMINATED (F/O)
---   GROUND POWER SWITCH.........................ON (F/O)
-
+--   Use Ground Handling CDU menu to turn EXT Power on         
+--   EXT POWER AVAILABLE LIGHTS.........ILLUMINATED (F/O)
+--   EXT PWR 1 SWITCH............................ON (F/O)
 -- ==== Activate APU 
---   OVHT FIRE TEST SWITCH...............HOLD RIGHT (F/O)
---   MASTER FIRE WARN LIGHT....................PUSH (F/O)
---   ENGINES EXT TEST SWITCH.........TEST 1 TO LEFT (F/O)
---   ENGINES EXT TEST SWITCH........TEST 2 TO RIGHT (F/O)
 --   APU......................................START (F/O)
 --     Hold APU switch in START position for 3-4 seconds.
---     APU GEN OFF BUS LIGHT............ILLUMINATED (F/O)
---     APU GENERATOR BUS SWITCHES................ON (F/O)
+--   APU GEN OFF BUS LIGHT..............ILLUMINATED (F/O)
+--   APU GENERATOR BUS 1 SWITCH..................ON (F/O)
+--   APU BLEED AIR...............................ON (F/O)
+-- ISOLATION VALVES............................OPEN (F/O)
+-- PACK SWITCHES.............................NORMAL (F/O)
+-- NAV LIGHTS....................................ON (F/O)
 
--- TRANSFER BUS LIGHTS...........CHECK EXTINGUISHED (F/O)
--- SOURCE OFF LIGHTS.............CHECK EXTINGUISHED (F/O)
--- STANDBY POWER.................................ON (F/O)
---   STANDBY PWR LIGHT...........CHECK EXTINGUISHED (F/O)
--- GPWS TEST................................PERFORM (F/O)
--- Next: Preliminary Preflight Procedure           
-
-local electricalPowerUpProc = kcProcedure:new("ELECTRICAL POWER UP","performing ELECTRICAL POWER UP")
+local electricalPowerUpProc = kcProcedure:new("POWER UP / SAFETY CHECK","powering up the aircraft")
 electricalPowerUpProc:addItem(kcSimpleProcedureItem:new("All paper work on board and checked"))
 electricalPowerUpProc:addItem(kcSimpleProcedureItem:new("M E L and Technical Logbook checked"))
 
 electricalPowerUpProc:addItem(kcSimpleProcedureItem:new("== Initial Checks"))
 electricalPowerUpProc:addItem(kcSimpleProcedureItem:new("==== DC Electric Power"))
-electricalPowerUpProc:addItem(kcProcedureItem:new("CIRCUIT BREAKERS (P6 PANEL)","CHECK ALL IN",kcFlowItem.actorFO,3,true))
-electricalPowerUpProc:addItem(kcProcedureItem:new("CIRCUIT BREAKERS (CONTROL STAND,P18 PANEL)","CHECK ALL IN",kcFlowItem.actorFO,3,true))
-electricalPowerUpProc:addItem(kcProcedureItem:new("DC POWER SWITCH","BAT",kcFlowItem.actorFO,2,
-	function () return sysElectric.dcPowerSwitch:getStatus() == sysElectric.dcPwrBAT end,
-	function () sysElectric.dcPowerSwitch:adjustValue(sysElectric.dcPwrBAT,0,6) end))
-electricalPowerUpProc:addItem(kcIndirectProcedureItem:new("BATTERY VOLTAGE","CHECK MIN 24V",kcFlowItem.actorFO,2,"bat24v",
-	function () return get("laminar/B738/dc_volt_value") > 23 end))
-electricalPowerUpProc:addItem(kcProcedureItem:new("BATTERY SWITCH","GUARD CLOSED",kcFlowItem.actorFO,2,
-	function () return sysElectric.batteryCover:getStatus() == modeOff end,
-	function () sysElectric.batteryCover:actuate(modeOff) end))
-electricalPowerUpProc:addItem(kcProcedureItem:new("STANDBY POWER SWITCH","GUARD CLOSED",kcFlowItem.actorFO,2,
-	function () return sysElectric.stbyPowerCover:getStatus() == modeOff end,
-	function () sysElectric.stbyPowerCover:actuate(modeOff) end))
-
-electricalPowerUpProc:addItem(kcSimpleProcedureItem:new("==== Hydraulic System"))
-electricalPowerUpProc:addItem(kcProcedureItem:new("ELECTRIC HYDRAULIC PUMPS SWITCHES","OFF",kcFlowItem.actorFO,3,
-	function () return sysHydraulic.elecHydPumpGroup:getStatus() == 0 end,
-	function () sysHydraulic.elecHydPumpGroup:actuate(modeOff) end))
-electricalPowerUpProc:addItem(kcProcedureItem:new("ALTERNATE FLAPS MASTER SWITCH","GUARD CLOSED",kcFlowItem.actorFO,3,
-	function () return sysControls.altFlapsCover:getStatus() == modeOff end,
-	function () sysControls.altFlapsCover:actuate(modeOff) end))
-electricalPowerUpProc:addItem(kcIndirectProcedureItem:new("FLAP LEVER","SET CORRECTLY",kcFlowItem.actorFO,1,"initial_flap_lever",
-	function () return sysControls.flapsSwitch:getStatus() == 0 end))
-electricalPowerUpProc:addItem(kcSimpleProcedureItem:new("  Set the flap lever to agree with the flap position."))
-
-electricalPowerUpProc:addItem(kcSimpleProcedureItem:new("==== Other"))
-electricalPowerUpProc:addItem(kcProcedureItem:new("WINDSHIELD WIPER SELECTORS","PARK",kcFlowItem.actorFO,2,
+electricalPowerUpProc:addItem(kcProcedureItem:new("CIRCUIT BREAKERS","CHECK ALL IN",kcFlowItem.actorFO,3,true))
+electricalPowerUpProc:addItem(kcProcedureItem:new("BATTERY SWITCH","ON AND GUARD CLOSED",kcFlowItem.actorFO,2,
+	function () return sysElectric.batteryCover:getStatus() == 0 and sysElectric.batterySwitch:getStatus() == 1 end,
+	function () sysElectric.batterySwitch:actuate(1) sysElectric.batteryCover:actuate(0) end))
+electricalPowerUpProc:addItem(kcProcedureItem:new("STANDBY POWER SWITCH","AUTO",kcFlowItem.actorFO,2,
+	function () return sysElectric.stbyPowerSwitch:getStatus() == 1 end,
+	function () sysElectric.stbyPowerSwitch:setValue(1) end))
+electricalPowerUpProc:addItem(kcProcedureItem:new("HYDRAULIC DEMAND PUMP SWITCHES","OFF",kcFlowItem.actorFO,3,
+	function () return sysHydraulic.demandPumpGroup:getStatus() == 0 end,
+	function () sysHydraulic.demandPumpGroup:adjustValue(0,0,2) end))
+electricalPowerUpProc:addItem(kcProcedureItem:new("WINDSHIELD WIPERS","OFF",kcFlowItem.actorFO,2,
 	function () return sysGeneral.wiperGroup:getStatus() == 0 end,
-	function () sysGeneral.wiperGroup:actuate(modeOff) end))
+	function () sysGeneral.wiperGroup:adjustValue(0,0,2) end))
+electricalPowerUpProc:addItem(kcProcedureItem:new("ALTERNATE FLAPS MASTER SWITCH","OFF",kcFlowItem.actorFO,3,
+	function () return sysControls.altFlapsCtrl:getStatus() == 0 end,
+	function () sysControls.altFlapsCtrl:setValue(0) end))
 electricalPowerUpProc:addItem(kcProcedureItem:new("LANDING GEAR LEVER","DOWN",kcFlowItem.actorFO,2,
 	function () return sysGeneral.GearSwitch:getStatus() == modeOn end,
 	function () sysGeneral.GearSwitch:actuate(modeOn) end))
-electricalPowerUpProc:addItem(kcProcedureItem:new("  GREEN LANDING GEAR LIGHT","CHECK ILLUMINATED",kcFlowItem.actorFO,2,
-	function () return sysGeneral.gearLightsAnc:getStatus() == modeOn end))
-electricalPowerUpProc:addItem(kcProcedureItem:new("  RED LANDING GEAR LIGHT","CHECK EXTINGUISHED",kcFlowItem.actorFO,2,
-	function () return sysGeneral.gearLightsRed:getStatus() == modeOff end))
-electricalPowerUpProc:addItem(kcIndirectProcedureItem:new("TAKEOFF CONFIG WARNING","TEST",kcFlowItem.actorFO,2,"takeoff_config_warn",
-	function () return get("laminar/B738/system/takeoff_config_warn") > 0 end,
-	function () set_array("sim/cockpit2/engine/actuators/throttle_ratio",0,1) set_array("sim/cockpit2/engine/actuators/throttle_ratio",1,1) end))
-electricalPowerUpProc:addItem(kcSimpleProcedureItem:new("  Move thrust levers full forward and back to idle."))
+electricalPowerUpProc:addItem(kcIndirectProcedureItem:new("FLAP LEVER","SET CORRECTLY",kcFlowItem.actorFO,1,"initial_flap_lever",
+	function () return get("laminar/B747/cablecontrols/flap_ratio") == 0 end))
+electricalPowerUpProc:addItem(kcSimpleProcedureItem:new("  Set the flap lever to agree with the flap position."))
 
 electricalPowerUpProc:addItem(kcSimpleProcedureItem:new("==== Activate External Power",
 	function () return activePrefSet:get("aircraft:powerup_apu") == true end))
-electricalPowerUpProc:addItem(kcSimpleProcedureItem:new("  Use Zibo EFB to turn Ground Power on.",
+electricalPowerUpProc:addItem(kcSimpleProcedureItem:new("  Use Ground Handling CDU menu to turn Ground Power on.",
 	function () return activePrefSet:get("aircraft:powerup_apu") == true end))
-electricalPowerUpProc:addItem(kcProcedureItem:new("  #exchange|GRD|GROUND# POWER AVAILABLE LIGHT","ILLUMINATED",kcFlowItem.actorFO,2,
-	function () return sysElectric.gpuAvailAnc:getStatus() == modeOn end,
-	function () set_array("sim/cockpit2/engine/actuators/throttle_ratio",0,0) set_array("sim/cockpit2/engine/actuators/throttle_ratio",1,0) end,
+electricalPowerUpProc:addItem(kcProcedureItem:new("  #exchange|EXT|EXTERNAL# POWER AVAILABLE LIGHT","ILLUMINATED",kcFlowItem.actorFO,2,
+	function () return sysElectric.gpuAvailAnc:getStatus() == modeOn end,nil,
 	function () return activePrefSet:get("aircraft:powerup_apu") == true end))
-electricalPowerUpProc:addItem(kcProcedureItem:new("  GROUND POWER SWITCH","ON",kcFlowItem.actorFO,2,
+electricalPowerUpProc:addItem(kcProcedureItem:new("  EXTERNAL POWER 1 SWITCH","ON",kcFlowItem.actorFO,2,
 	function () return sysElectric.gpuOnBus:getStatus() == 1 end,
-	function () sysElectric.gpuSwitch:actuate(cmdDown) end,
+	function () sysElectric.extGen1Switch:actuate(modeOn) end,
 	function () return activePrefSet:get("aircraft:powerup_apu") == true end))
 
 electricalPowerUpProc:addItem(kcSimpleProcedureItem:new("==== Activate APU",
 	function () return activePrefSet:get("aircraft:powerup_apu") == false end))
-electricalPowerUpProc:addItem(kcProcedureItem:new("  OVHT DET SWITCHES","NORMAL",kcFlowItem.actorFO,1,true,
-	function () set_array("sim/cockpit2/engine/actuators/throttle_ratio",0,0) 
-				set_array("sim/cockpit2/engine/actuators/throttle_ratio",1,0) end,
-	function () return activePrefSet:get("aircraft:powerup_apu") == false end))
-electricalPowerUpProc:addItem(kcIndirectProcedureItem:new("  #exchange|OVHT|Overheat# FIRE TEST SWITCH","HOLD RIGHT",kcFlowItem.actorFO,2,"ovht_fire_test",
-	function () return  sysEngines.ovhtFireTestSwitch:getStatus() > 0 end,
-	function () sysEngines.ovhtFireTestSwitch:repeatOn(1) end,
-	function () return activePrefSet:get("aircraft:powerup_apu") == false end))
-electricalPowerUpProc:addItem(kcProcedureItem:new("  MASTER FIRE WARN LIGHT","PUSH",kcFlowItem.actorFO,1,true,
-	function () sysEngines.ovhtFireTestSwitch:repeatOff(0) end,
-	function () return activePrefSet:get("aircraft:powerup_apu") == false end))
-electricalPowerUpProc:addItem(kcIndirectProcedureItem:new("  ENGINES #exchange|EXT|Extinguischer# TEST SWITCH","TEST 1 TO LEFT",kcFlowItem.actorFO,2,"eng_ext_test_1",
-	function () return get("laminar/B738/toggle_switch/extinguisher_circuit_test") < 0 end,
-	function () command_begin("laminar/B738/toggle_switch/exting_test_lft") end,
-	function () return activePrefSet:get("aircraft:powerup_apu") == false end))
-electricalPowerUpProc:addItem(kcIndirectProcedureItem:new("  ENGINES #exchange|EXT|Extinguischer# TEST SWITCH","TEST 2 TO RIGHT",kcFlowItem.actorFO,2,"eng_ext_test_2",
-	function () return get("laminar/B738/toggle_switch/extinguisher_circuit_test") > 0 end,
-	function () command_end("laminar/B738/toggle_switch/exting_test_lft") 
-				command_begin("laminar/B738/toggle_switch/exting_test_rgt") end,
-	function () return activePrefSet:get("aircraft:powerup_apu") == false end))
 electricalPowerUpProc:addItem(kcProcedureItem:new("  #spell|APU#","START",kcFlowItem.actorFO,2,
-	function () return sysElectric.apuRunningAnc:getStatus() == modeOn end,
-	function () command_end("laminar/B738/toggle_switch/exting_test_rgt") 
-				command_once("laminar/B738/spring_toggle_switch/APU_start_pos_dn")
-				command_begin("laminar/B738/spring_toggle_switch/APU_start_pos_dn") end,
+	function () return sysElectric.apuRunningAnc:getStatus() == 1 end,
+	function () sysElectric.apuStartSwitch:setValue(2) end,
 	function () return activePrefSet:get("aircraft:powerup_apu") == false end))
-electricalPowerUpProc:addItem(kcSimpleProcedureItem:new("    Hold APU switch in START position for 3-4 seconds.",
+electricalPowerUpProc:addItem(kcSimpleProcedureItem:new("    Hold APU switch in START position for 2 seconds",
 	function () return activePrefSet:get("aircraft:powerup_apu") == false end))
-electricalPowerUpProc:addItem(kcIndirectProcedureItem:new("  #spell|APU# GEN OFF BUS LIGHT","ILLUMINATED",kcFlowItem.actorFO,1,"apu_gen_bus_off",
-	function () return sysElectric.apuGenBusOff:getStatus() == modeOn end,
-	function () command_end("laminar/B738/spring_toggle_switch/APU_start_pos_dn") end,
+electricalPowerUpProc:addItem(kcProcedureItem:new("  #spell|APU# GENERATOR BUS 1 SWITCH","ON",kcFlowItem.actorFO,2,
+	function () return sysElectric.apuOnBus:getStatus() == modeOn end,
+	function () sysElectric.apuBus1:actuate(modeOn) end,
 	function () return activePrefSet:get("aircraft:powerup_apu") == false end))
-electricalPowerUpProc:addItem(kcProcedureItem:new("  #spell|APU# GENERATOR BUS SWITCHES","ON",kcFlowItem.actorFO,2,
-	function () return sysElectric.apuGenBusOff:getStatus() == 0 end,
-	function () sysElectric.apuGenBus1:adjustValue(1,-1,1) sysElectric.apuGenBus2:adjustValue(1,-1,1) end,
+electricalPowerUpProc:addItem(kcProcedureItem:new("  #spell|APU# BLEED AIR","ON",kcFlowItem.actorFO,2,
+	function () return sysAir.apuBleedSwitch:getStatus() == modeOn end,
+	function () sysAir.apuBleedSwitch:actuate(modeOn) end,
 	function () return activePrefSet:get("aircraft:powerup_apu") == false end))
 
-electricalPowerUpProc:addItem(kcSimpleProcedureItem:new("==== "))
-electricalPowerUpProc:addItem(kcProcedureItem:new("TRANSFER BUS LIGHTS","CHECK EXTINGUISHED",kcFlowItem.actorFO,2,
-	function () return sysElectric.transferBus1:getStatus() == modeOff and sysElectric.transferBus2:getStatus() == modeOff end))
-electricalPowerUpProc:addItem(kcProcedureItem:new("SOURCE OFF LIGHTS","CHECK EXTINGUISHED",kcFlowItem.actorFO,2,
-	function () return sysElectric.sourceOff1:getStatus() == modeOff and sysElectric.sourceOff2:getStatus() == modeOff end))
-electricalPowerUpProc:addItem(kcProcedureItem:new("STANDBY POWER","ON",kcFlowItem.actorFO,2,
-	function () return get("laminar/B738/electric/standby_bat_pos") > 0 end))
-electricalPowerUpProc:addItem(kcProcedureItem:new("   STANDBY #exchange|PWR|POWER# LIGHT","CHECK EXTINGUISHED",kcFlowItem.actorFO,2,
-	function () return sysElectric.stbyPwrOff:getStatus() == modeOff end))
-
+electricalPowerUpProc:addItem(kcProcedureItem:new("ISOLATION VALVES","OPEN",kcFlowItem.actorFO,2,
+	function () return sysAir.isoValveGroup:getStatus() == 2 end,
+	function () sysAir.isoValveGroup:actuate(modeOn) end))
+electricalPowerUpProc:addItem(kcProcedureItem:new("PACK SWITCHES","NORMAL",kcFlowItem.actorFO,2,
+	function () return sysAir.packSwitchGroup:getStatus() == 3 end,
+	function () sysAir.packSwitchGroup:setValue(1) end))
+electricalPowerUpProc:addItem(kcProcedureItem:new("NAV LIGHTS","ON",kcFlowItem.actorFO,2,
+	function () return sysLights.positionSwitch:getStatus() == modeOn end,
+	function () sysLights.positionSwitch:actuate(1) end))
+	
 -- ============ PRELIMINARY PREFLIGHT PROCEDURES ========
 -- EMERGENCY EXIT LIGHT.........ARM/ON GUARD CLOSED (F/O)
 -- ATTENDENCE BUTTON..........................PRESS (F/O)
