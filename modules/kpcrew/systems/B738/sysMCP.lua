@@ -117,7 +117,7 @@ sysMCP.cwsbSwitch = TwoStateToggleSwitch:new("cwsb","laminar/B738/autopilot/cws_
 
 -- A/P DISENGAGE
 sysMCP.discAPSwitch = TwoStateToggleSwitch:new("apdisc","laminar/B738/autopilot/disconnect_pos",0,"laminar/B738/autopilot/disconnect_toggle")
-sysMCP.apDiscYoke = TwoStateToggleSwitch:new("discapyoke","laminar/B738/autopilot/disconnect_pos",0,"laminar/B738/autopilot/capt_disco_press")
+sysMCP.apDiscYoke = TwoStateToggleSwitch:new("apdisc","laminar/B738/autopilot/disconnect_pos",0,"laminar/B738/autopilot/disconnect_toggle")
 
 -- NAVIGATION SWITCHES
 sysMCP.vhfNavSwitch = MultiStateCmdSwitch:new("vhfnav","laminar/B738/toggle_switch/vhf_nav_source",0,"laminar/B738/toggle_switch/vhf_nav_source_lft","laminar/B738/toggle_switch/vhf_nav_source_rgt")

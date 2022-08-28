@@ -52,7 +52,7 @@ create_command("kp/xsp/alpha/white_left",	"Alpha WHITE Left", "", "", "")
 -- WHITE RIGHT
 create_command("kp/xsp/alpha/white_right",	"Alpha WHIRE Right", "", "", "")
 -- A/P DISC
-create_command("kp/xsp/alpha/AP_DISC",	"Alpha Autopilot Disc", "sysMCP.apDiscYoke:actuate(modeToggle)", "", "")
+create_command("kp/xsp/alpha/AP_DISC",	"Alpha Autopilot Disc", "sysMCP.apDiscYoke:actuate(2)", "", "")
 -- PTT
 create_command("kp/xsp/alpha/PTT",	"Alpha PTT", "", "", "")
 -- LEFT Rocker

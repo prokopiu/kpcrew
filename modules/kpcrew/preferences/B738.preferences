@@ -1,4 +1,4 @@
-general:assistance=2
+general:assistance=4
 general:weight_kgs=true
 general:baro_mode_hpa=true
 general:def_trans_alt=5000

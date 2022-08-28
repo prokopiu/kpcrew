@@ -44,7 +44,6 @@ sysEngines.ignSelectSwitch = MultiStateCmdSwitch:new("","laminar/B738/toggle_swi
 -- STARTER Switches
 sysEngines.engStart1Switch = MultiStateCmdSwitch:new("","laminar/B738/engine/starter1_pos",0,"laminar/B738/knob/eng1_start_left","laminar/B738/knob/eng1_start_right")
 sysEngines.engStart2Switch = MultiStateCmdSwitch:new("","laminar/B738/engine/starter2_pos",0,"laminar/B738/knob/eng2_start_left","laminar/B738/knob/eng2_start_right")
-
 sysEngines.engStarterGroup = SwitchGroup:new("engstarters")
 sysEngines.engStarterGroup:addSwitch(sysEngines.engStart1Switch)
 sysEngines.engStarterGroup:addSwitch(sysEngines.engStart2Switch)

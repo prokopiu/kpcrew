@@ -102,6 +102,10 @@ departure:add(kcPreference:new("rwyCond",1,kcPreference.typeList,"Runway Conditi
 departure:add(kcPreference:new("squawk","",kcPreference.typeText,"XPDR SQUAWK|"))
 departure:add(kcPreference:new("depFrequency",122.800,kcPreference.typeCOMFreq,"Departure Frequency|"))
 departure:add(kcPreference:new("initHeading",0,kcPreference.typeInt,"Initial Heading|1"))
+departure:add(kcPreference:new("nav1Frequency",109.000,kcPreference.typeNAVFreq,"NAV1/ILS Frequency|1"))
+departure:add(kcPreference:new("nav1Course",0,kcPreference.typeInt,"NAV1 CRS|10"))
+departure:add(kcPreference:new("nav2Frequency",109.000,kcPreference.typeNAVFreq,"NAV2 Frequency|2"))
+departure:add(kcPreference:new("nav2Course",0,kcPreference.typeInt,"NAV2 CRS|10"))
 
 -- =================== TAXIING BRIEFING ==================
 local taxi = kcPreferenceGroup:new("taxi","TAXI DETAILS")

@@ -29,7 +29,11 @@ local sysGeneral = {
 sysGeneral.parkBrakeSwitch = TwoStateToggleSwitch:new("parkbrake","sim/cockpit2/controls/parking_brake_ratio",0,"laminar/B738/push_button/park_brake_on_off")
 
 -- Landing Gear
-sysGeneral.GearSwitch = TwoStateCmdSwitch:new("gear","laminar/B738/controls/gear_handle_down",0,"sim/flight_controls/landing_gear_down","sim/flight_controls/landing_gear_up","laminar/B738/push_button/gear_off")
+-- sysGeneral.GearSwitch = TwoStateCmdSwitch:new("gear","laminar/B738/controls/gear_handle_down",0,"sim/flight_controls/landing_gear_down","sim/flight_controls/landing_gear_up","laminar/B738/push_button/gear_off")
+sysGeneral.GearSwitch = TwoStateCustomSwitch:new("gear","laminar/B738/controls/gear_handle_down",0,
+function () command_once("sim/flight_controls/landing_gear_down") end,
+function () command_once("sim/flight_controls/landing_gear_up") end,
+function () command_once("laminar/B738/push_button/gear_off") end)
 
 -- Doors
 sysGeneral.doorL1 = TwoStateToggleSwitch:new("doorl1","737u/doors/L1",0,"laminar/B738/door/fwd_L_toggle")
