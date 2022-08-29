@@ -114,10 +114,12 @@ sysGeneral.wiperGroup:addSwitch(sysGeneral.wiperRightSwitch)
 sysGeneral.emerExitLightsSwitch = MultiStateCmdSwitch:new("","laminar/B738/toggle_switch/emer_exit_lights",0,"laminar/B738/toggle_switch/emer_exit_lights_up","laminar/B738/toggle_switch/emer_exit_lights_dn")
 sysGeneral.emerExitLightsCover = TwoStateToggleSwitch:new("","laminar/B738/button_switch/cover_position",9,"laminar/B738/button_switch_cover09")
 
--- Voice recorder
+-- FDR recorder
+sysGeneral.fdrSwitch = TwoStateToggleSwitch:new("","laminar/B738/switches/fdr_pos",0,"laminar/B738/toggle_switch/fdr")
+sysGeneral.fdrCover = TwoStateToggleSwitch:new("","laminar/B738/switches/fdr_cover_pos",0,"laminar/B738/toggle_switch/fdr_cover")
 
-sysGeneral.voiceRecSwitch = TwoStateCmdSwitch:new("","laminar/B738/toggle_switch/vcr",0,"laminar/B738/toggle_switch/vcr_auto","laminar/B738/toggle_switch/vcr_on")
-sysGeneral.vcrCover = TwoStateToggleSwitch:new("","laminar/B738/switches/fdr_cover_pos",0,"laminar/B738/toggle_switch/fdr_cover")
+-- Voice Recorder
+sysGeneral.vcrSwitch = TwoStateCmdSwitch:new("","laminar/B738/toggle_switch/vcr",0,"laminar/B738/toggle_switch/vcr_auto","laminar/B738/toggle_switch/vcr_on")
 
 -- Attendence button 
 sysGeneral.attendanceButton = TwoStateToggleSwitch:new("","laminar/B738/push_button/attend_pos",0,"laminar/B738/push_button/attend")

@@ -212,10 +212,11 @@ electricalPowerUpProc:addItem(kcProcedureItem:new("   STANDBY #exchange|PWR|POWE
 -- EMERGENCY EXIT LIGHT.........ARM/ON GUARD CLOSED (F/O)
 -- ATTENDENCE BUTTON..........................PRESS (F/O)
 -- ELECTRICAL POWER UP.....................COMPLETE (F/O)
--- FLIGHT RECORDER SWITCH......................AUTO (F/O)
+-- FLIGHT DATA RECORDER SWITCH.................AUTO (F/O)
 -- MACH OVERSPEED TEST......................PERFORM (F/O)
 -- STALL WARNING TEST.......................PERFORM (F/O)
 --   Wait for 4 minutes AC power if not functioning
+-- VOICE RECORDER SWITCH.......................AUTO (F/O)
 
 -- ==== Engine Panel
 -- EEC SWITCHES..................................ON
@@ -263,9 +264,9 @@ prelPreflightProc:addItem(kcProcedureItem:new("ELECTRICAL POWER UP","COMPLETE",k
 		sysElectric.gpuOnBus:getStatus() == 1
 	end,
 	function () sysGeneral.attendanceButton:repeatOff(2) end))
-prelPreflightProc:addItem(kcProcedureItem:new("FLIGHT RECORDER SWITCH","GUARD CLOSED",kcFlowItem.actorFO,2,
-	function () return  sysGeneral.voiceRecSwitch:getStatus() == modeOff and sysGeneral.vcrCover:getStatus() == modeOff end,
-	function () sysGeneral.voiceRecSwitch:actuate(modeOn) sysGeneral.vcrCover:actuate(modeOff) end))
+prelPreflightProc:addItem(kcProcedureItem:new("FLIGHT DATA RECORDER SWITCH","GUARD CLOSED",kcFlowItem.actorFO,2,
+	function () return  sysGeneral.fdrSwitch:getStatus() == modeOff and sysGeneral.fdrCover:getStatus() == modeOff end,
+	function () sysGeneral.fdrSwitch:actuate(modeOn) sysGeneral.fdrCover:actuate(modeOff) end))
 prelPreflightProc:addItem(kcIndirectProcedureItem:new("MACH OVERSPEED TEST 1","PERFORM",kcFlowItem.actorFO,2,"mach_ovspd_test1",
 	function () return get("laminar/B738/push_button/mach_warn1_pos") == 1 end,
 	function () command_begin("laminar/B738/push_button/mach_warn1_test") end))
@@ -279,8 +280,9 @@ prelPreflightProc:addItem(kcIndirectProcedureItem:new("STALL WARNING TEST 2","PE
 	function () return get("laminar/B738/push_button/stall_test2") == 1 end,
 	function () command_end("laminar/B738/push_button/stall_test1_press") command_begin("laminar/B738/push_button/stall_test2_press") end))
 prelPreflightProc:addItem(kcSimpleProcedureItem:new("  Wait for 4 minutes AC power if not functioning"))
-
--- VOICE RECODER under 
+prelPreflightProc:addItem(kcProcedureItem:new("VOICE RECORDER SWITCH","AUTO",kcFlowItem.actorFO,2,
+	function () return  sysGeneral.vcrSwitch:getStatus() == modeOn end,
+	function () sysGeneral.vcrSwitch:actuate(modeOn) end))
 
 prelPreflightProc:addItem(kcSimpleProcedureItem:new("==== Engine Panel"))
 prelPreflightProc:addItem(kcProcedureItem:new("EEC SWITCHES","ON",kcFlowItem.actorFO,2,
@@ -2069,10 +2071,127 @@ secureChkl:addItem(kcChecklistItem:new("PACKS","OFF",kcChecklistItem.actorFO,2,
 -- ============ Cold & Dark =============
 local coldAndDarkProc = kcProcedure:new("SET AIRCRAFT TO COLD & DARK")
 
--- coldAndDarkProc:addItem(kcProcedureItem:new("XPDR","SET 2000","F/O",1,
+coldAndDarkProc:addItem(kcIndirectProcedureItem:new("OVERHEAD TOP","SET","SYS",1,"c_d_1",
+	function () return true end,
+	function () 
+		set("sim/private/controls/shadow/cockpit_near_adjust",0.09)
+		sysGeneral.fdrSwitch:actuate(modeOff) 
+		sysGeneral.fdrCover:actuate(modeOn)
+		sysGeneral.vcrSwitch:actuate(modeOff)
+		sysEngines.eecSwitchGroup:actuate(modeOn)
+		sysEngines.eecGuardGroup:actuate(modeOff)
+		sysGeneral.irsUnitGroup:adjustValue(sysGeneral.irsUnitOFF,0,2)
+		sysLights.domeLightSwitch:actuate(modeOff)
+		sysLights.instrLightGroup:actuate(modeOff)
+		sysGeneral.doorGroup:actuate(0)
+	end))
+coldAndDarkProc:addItem(kcIndirectProcedureItem:new("OVERHEAD COLUMN 1","SET","SYS",1,"c_d_2",
+	function () return true end,
+	function () 
+		sysMCP.vhfNavSwitch:adjustValue(0,-1,1)
+		sysMCP.irsNavSwitch:setValue(0)
+		sysMCP.fmcNavSwitch:setValue(0)
+		sysMCP.displaySourceSwitch:setValue(0)
+		sysMCP.displayControlSwitch:setValue(0)
+		sysControls.yawDamper:actuate(modeOff)
+		sysFuel.allFuelPumpGroup:actuate(modeOff)
+		sysFuel.crossFeed:actuate(modeOff)
+	end))
+coldAndDarkProc:addItem(kcIndirectProcedureItem:new("OVERHEAD COLUMN 2","SET","SYS",1,"c_d_3",
+	function () return true end,
+	function () 
+		sysElectric.dcPowerSwitch:adjustValue(sysElectric.dcPwrBAT,0,6)
+		sysElectric.stbyPowerSwitch:actuate(modeOn)
+		sysElectric.stbyPowerCover:actuate(modeOn) 
+		sysElectric.ifePwr:actuate(modeOff)
+		sysElectric.cabUtilPwr:actuate(modeOff)
+		sysGeneral.doorL1:actuate(1)
+		sysElectric.acPowerSwitch:adjustValue(sysElectric.acPwrGRD,0,6)
+		if activeBriefings:get("taxi:gateStand") > 1 then
+			if get("laminar/B738/airstairs_hide") == 1  then
+				command_once("laminar/B738/airstairs_toggle")
+			end
+		end
+		sysGeneral.wiperGroup:actuate(modeOff)
+	end))
+coldAndDarkProc:addItem(kcIndirectProcedureItem:new("OVERHEAD COLUMN 3","SET","SYS",1,"c_d_4",
+	function () return true end,
+	function () 
+		set("laminar/B738/toggle_switch/eq_cool_exhaust",0)
+		set("laminar/B738/toggle_switch/eq_cool_supply",0)
+		sysGeneral.emerExitLightsCover:actuate(modeOn)
+		sysGeneral.emerExitLightsSwitch:actuate(modeOff)
+		command_once("laminar/B738/toggle_switch/seatbelt_sign_up") 
+		command_once("laminar/B738/toggle_switch/seatbelt_sign_up") 
+		sysGeneral.noSmokingSwitch:setValue(0)
+	end))
+coldAndDarkProc:addItem(kcIndirectProcedureItem:new("OVERHEAD COLUMN 4","SET","SYS",1,"c_d_5",
+	function () return true end,
+	function () 
+		sysAice.windowHeatGroup:actuate(0)
+		sysAice.probeHeatGroup:actuate(0)
+		sysAice.wingAntiIce:actuate(0)
+		sysAice.engAntiIceGroup:actuate(0)
+		sysHydraulic.elecHydPumpGroup:actuate(modeOff)
+		sysHydraulic.engHydPumpGroup:actuate(modeOff)
+	end))
+coldAndDarkProc:addItem(kcIndirectProcedureItem:new("OVERHEAD COLUMN 5","SET","SYS",1,"c_d_6",
+	function () return true end,
+	function () 
+		set("laminar/B738/toggle_switch/air_temp_source",3)
+		sysAir.contCabTemp:setValue(0.5) 
+		sysAir.fwdCabTemp:setValue(0.5) 
+		sysAir.aftCabTemp:setValue(0.5)
+		set("laminar/B738/air/trim_air_pos",1)
+		sysAir.recircFanLeft:actuate(modeOff) 
+		sysAir.recircFanRight:actuate(modeOff)
+		sysAir.packSwitchGroup:setValue(0)
+		sysAir.bleedEng1Switch:actuate(0) 
+		sysAir.bleedEng2Switch:actuate(0)
+		sysAir.apuBleedSwitch:actuate(modeOff)
+		sysAir.isoValveSwitch:setValue(sysAir.isoVlvClosed)
+		sysAir.maxCruiseAltitude:setValue(0)
+		sysAir.landingAltitude:setValue(0)
+		command_once("laminar/B738/toggle_switch/air_valve_ctrl_left")
+		command_once("laminar/B738/toggle_switch/air_valve_ctrl_left")
+	end))
+coldAndDarkProc:addItem(kcIndirectProcedureItem:new("LIGHT PANEL","SET","SYS",1,"c_d_7",
+	function () return true end,
+	function () 
+		sysLights.landLightGroup:actuate(0)
+		sysLights.rwyLightGroup:actuate(0)
+		sysLights.taxiSwitch:actuate(0)
+		sysLights.logoSwitch:actuate(0)
+		sysLights.positionSwitch:actuate(0)
+		sysLights.beaconSwitch:actuate(0)
+		sysLights.wingSwitch:actuate(0)
+		sysLights.wheelSwitch:actuate(0)
+	end))
+coldAndDarkProc:addItem(kcIndirectProcedureItem:new("THE REST","SET","SYS",1,"c_d_8",
+	function () return true end,
+	function () 
+		command_once("laminar/B738/spring_toggle_switch/APU_start_pos_up")
+		command_once("laminar/B738/spring_toggle_switch/APU_start_pos_up")
+		command_once("laminar/B738/toggle_switch/gpu_up")
+		command_once("laminar/B738/push_button/flaps_0")
+		set("laminar/B738/flt_ctrls/speedbrake_lever",0)
+		sysGeneral.parkBrakeSwitch:actuate(modeOn)
+		sysEngines.startLever1:actuate(0) 
+		sysEngines.startLever2:actuate(0)
+		set("laminar/B738/fms/chock_status",1)
+		sysEngines.engStarterGroup:setValue(1)
+		sysRadios.xpdrSwitch:adjustValue(1,1,5)
+		sysGeneral.autobreak:actuate(1)
+		sysMCP.fdirGroup:actuate(0)
+		sysElectric.batteryCover:actuate(modeOn)
+		sysElectric.batterySwitch:actuate(modeOff)
+		command_once("sim/electrical/APU_off")
+		command_once("sim/electrical/GPU_off")
+	end))
 
 -- ============  =============
 -- add the checklists and procedures to the active sop
+activeSOP:addProcedure(coldAndDarkProc)
 activeSOP:addProcedure(electricalPowerUpProc)
 activeSOP:addProcedure(prelPreflightProc)
 activeSOP:addProcedure(cduPreflightProc)
