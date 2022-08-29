@@ -62,7 +62,7 @@ sysLights.rwyLightGroup:addSwitch(sysLights.rwyRightSwitch)
 sysLights.wingSwitch = TwoStateCmdSwitch:new("wing",drefGenericLights,0,"laminar/B738/switch/wing_light_on","laminar/B738/switch/wing_light_off","laminar/B738/switch/wing_light_toggle")
 
 -- Wheel well Lights
-sysLights.wheelSwitch = TwoStateDrefSwitch:new("wheel",drefGenericLights,5)
+sysLights.wheelSwitch = TwoStateCmdSwitch:new("wheel",drefGenericLights,5,"laminar/B738/switch/wheel_light_off","laminar/B738/switch/wheel_light_on")
 
 -- Dome Light
 sysLights.domeLightSwitch = TwoStateCustomSwitch:new("dome","laminar/B738/toggle_switch/cockpit_dome_pos",0,

@@ -42,7 +42,7 @@ sysElectric.dcPowerSwitch = MultiStateCmdSwitch:new("dcpower","laminar/B738/knob
 sysElectric.acPowerSwitch = MultiStateCmdSwitch:new("acpower","laminar/B738/knob/ac_power",0,"laminar/B738/knob/ac_power_dn","laminar/B738/knob/ac_power_up")
 
 -- BATTERY Switch
-sysElectric.batterySwitch = TwoStateCmdSwitch:new("","laminar/B738/electric/battery_pos",0,"laminar/B738/push_button/batt_full_off","laminar/B738/switch/battery_dn")
+sysElectric.batterySwitch = TwoStateCmdSwitch:new("","laminar/B738/electric/battery_pos",0,"laminar/B738/switch/battery_dn","laminar/B738/push_button/batt_full_off")
 sysElectric.batteryCover = TwoStateToggleSwitch:new("","laminar/B738/button_switch/cover_position",2,"laminar/B738/button_switch_cover02")
 
 -- Cabin Util Power Boeing
