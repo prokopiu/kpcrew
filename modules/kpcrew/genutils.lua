@@ -299,6 +299,28 @@ function kc_toDegMinSec(coordinate)
     return degrees .. "°" .. minutes .. "'" .. seconds .. "\"";
 end
 
+-- convert coordinates to CIVA INS format
+function kc_toDMS1(coordinate) 
+    local absolute = math.abs(coordinate);
+    local degrees  = math.floor(absolute);
+    local minutesNotTruncated = (absolute - degrees) * 60;
+    local minutes  = math.floor(minutesNotTruncated);
+    local seconds  = math.floor((minutesNotTruncated - minutes) * 60);
+
+    return string.format("%2.2i%2.2i%1.1i",degrees,minutes,seconds/10);
+end
+
+-- convert a coordinate from x-plane to INS [N/S|E/W]ddmms format
+function kc_convertINS(lat, lng) 
+    local latitude = kc_toDMS1(lat);
+    local latitudeCardinal = (lat >= 0) and "N" or "S";
+
+    local longitude = kc_toDMS1(lng);
+    local longitudeCardinal = (lng >= 0) and "E" or "W";
+
+    return string.format("%s%s %s%s",latitudeCardinal,latitude,longitudeCardinal,longitude);
+end
+
 -- convert position to full coordinate string with N/S and E/W
 function kc_convertDMS(lat, lng) 
     local latitude = kc_toDegMinSec(lat);

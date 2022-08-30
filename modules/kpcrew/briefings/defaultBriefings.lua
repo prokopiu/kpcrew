@@ -50,7 +50,8 @@ kcPreference.typeInfo,"Gross Weight / ZFW|"))
 
 information:add(kcPreference:new("currPosition",
 function () 
-	return kc_convertDMS(get("sim/flightmodel/position/latitude"),get("sim/flightmodel/position/longitude"))
+	return kc_convertDMS(get("sim/flightmodel/position/latitude"),get("sim/flightmodel/position/longitude")) .. "\n" ..
+	kc_convertINS(get("sim/flightmodel/position/latitude"),get("sim/flightmodel/position/longitude"))
 end,
 kcPreference.typeInfo,"Current Position|"))
 

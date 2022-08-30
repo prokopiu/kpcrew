@@ -535,6 +535,9 @@ cduPreflightProc:addItem(kcSimpleProcedureItem:new("FILL OUT KPCREW DEPARTURE BR
 
 local preflightFOProc = kcProcedure:new("PREFLIGHT PROCEDURE","running preflight procedure")
 preflightFOProc:setResize(false)
+preflightFOProc:addItem(kcProcedureItem:new("ELECTRIC HYDRAULIC PUMP SWITCHES","OFF",kcFlowItem.actorFO,3,
+	function () return sysHydraulic.elecHydPumpGroup:getStatus() == 0 end,
+	function () sysHydraulic.elecHydPumpGroup:actuate(modeOff) end))
 
 preflightFOProc:addItem(kcSimpleProcedureItem:new("==== Flight control panel"))
 preflightFOProc:addItem(kcProcedureItem:new("FLIGHT CONTROL SWITCHES","GUARDS CLOSED",kcFlowItem.actorFO,2,
@@ -1190,7 +1193,7 @@ preflightChkl:addItem(kcChecklistItem:new("ENGINE START LEVERS","CUTOFF",kcFlowI
 -- CDU DISPLAY.................................SET (BOTH)
 -- N1 BUGS...................................CHECK (BOTH)
 -- IAS BUGS....................................SET (BOTH)
--- Set MCP
+-- ==== Set MCP
 --   AUTOTHROTTLE ARM SWITCH...................ARM (CPT)
 --   IAS/MACH SELECTOR......................SET V2 (CPT)
 --   LNAV............................ARM AS NEEDED (CPT)
@@ -1199,26 +1202,22 @@ preflightChkl:addItem(kcChecklistItem:new("ENGINE START LEVERS","CUTOFF",kcFlowI
 --   INITIAL ALTITUDE..........................SET (CPT)
 -- TAXI AND TAKEOFF BRIEFINGS.............COMPLETE (BOTH)
 -- EXTERIOR DOORS....................VERIFY CLOSED (F/O)
--- START CLEARANCE..........................OBTAIN (BOTH)
+-- ==== START CLEARANCE
 --   Obtain a clearance to pressurize hydraulic systems.
 --   Obtain a clearance to start engines.
--- Set Fuel panel
+-- ==== Set Fuel panel
 --   CENTER FUEL PUMPS SWITCHES.................ON (F/O)
 --     If center tank quantity exceeds 1,000 lbs/460 kgs
 --   AFT AND FORWARD FUEL PUMPS SWITCHES........ON (F/O)
--- Set Hydraulic panel
+-- ==== Set Hydraulic panel
 --   ENGINE HYDRAULIC PUMP SWITCHES............OFF (F/O)
 --   ELECTRIC HYDRAULIC PUMP SWITCHES...........ON (F/O)
--- ANTI COLLISION LIGHT SWITCH..................ON (F/O)
--- Set Trim
+-- ==== Set Trim
 --   STABILIZER TRIM.....................___ UNITS (CPT)
 --   AILERON TRIM..........................0 UNITS (CPT)
 --   RUDDER TRIM...........................0 UNITS (CPT)
--- Call for Before Start Checklist
-
-
--- XPDR TO ALT OFF?
-
+-- ANTI COLLISION LIGHT SWITCH..................ON (F/O)
+-- WING & WHEEL WELL LIGHTS....................OFF (F/O)
 
 local beforeStartProc = kcProcedure:new("BEFORE START PROCEDURE","Before start items")
 beforeStartProc:addItem(kcProcedureItem:new("FLIGHT DECK DOOR","CLOSED AND LOCKED",kcFlowItem.actorFO,2,
@@ -1228,7 +1227,7 @@ beforeStartProc:addItem(kcSimpleProcedureItem:new("Set required CDU DISPLAY"))
 beforeStartProc:addItem(kcSimpleProcedureItem:new("Check N1 BUGS"))
 beforeStartProc:addItem(kcProcedureItem:new("IAS BUGS","SET",kcFlowItem.actorBOTH,2,
 	function () return sysFMC.noVSpeeds:getStatus() == 0 end))
-beforeStartProc:addItem(kcSimpleProcedureItem:new("Set MCP"))
+beforeStartProc:addItem(kcSimpleProcedureItem:new("==== Set MCP"))
 beforeStartProc:addItem(kcProcedureItem:new("  AUTOTHROTTLE ARM SWITCH","ARM",kcFlowItem.actorCPT,2,
 	function () return sysMCP.athrSwitch:getStatus() == 1 end,
 	function () sysMCP.athrSwitch:actuate(modeOn) end))
@@ -1253,10 +1252,10 @@ beforeStartProc:addItem(kcSimpleProcedureItem:new("TAXI AND TAKEOFF BRIEFINGS - 
 beforeStartProc:addItem(kcProcedureItem:new("EXTERIOR DOORS","VERIFY CLOSED",kcFlowItem.actorFO,1,
 	function () return sysGeneral.doorGroup:getStatus() == 0 end,
 	function () sysGeneral.doorGroup:actuate(0) end))
-beforeStartProc:addItem(kcSimpleProcedureItem:new("Obtain START CLEARANCE"))
+beforeStartProc:addItem(kcSimpleProcedureItem:new("==== START CLEARANCE"))
 beforeStartProc:addItem(kcSimpleProcedureItem:new("  Obtain a clearance to pressurize hydraulic systems."))
 beforeStartProc:addItem(kcSimpleProcedureItem:new("  Obtain a clearance to start engines."))
-beforeStartProc:addItem(kcSimpleProcedureItem:new("Set Fuel panel"))
+beforeStartProc:addItem(kcSimpleProcedureItem:new("==== Set Fuel panel"))
 beforeStartProc:addItem(kcProcedureItem:new("  LEFT AND RIGHT CENTER FUEL PUMPS SWITCHES","ON",kcFlowItem.actorFO,2,
 	function () return sysFuel.ctrFuelPumpGroup:getStatus() == 2 end,
 	function () sysFuel.ctrFuelPumpGroup:actuate(1) end,
@@ -1270,17 +1269,14 @@ beforeStartProc:addItem(kcSimpleProcedureItem:new("    If center tank quantity e
 beforeStartProc:addItem(kcProcedureItem:new("  AFT AND FORWARD FUEL PUMPS SWITCHES","ON",kcFlowItem.actorFO,2,
 	function () return sysFuel.wingFuelPumpGroup:getStatus() == 4 end,
 	function () sysFuel.wingFuelPumpGroup:actuate(1) end))
-beforeStartProc:addItem(kcSimpleProcedureItem:new("Set Hydraulic panel"))
+beforeStartProc:addItem(kcSimpleProcedureItem:new("==== Set Hydraulic panel"))
 beforeStartProc:addItem(kcProcedureItem:new("  ENGINE HYDRAULIC PUMP SWITCHES","OFF",kcFlowItem.actorFO,2,
 	function () return sysHydraulic.engHydPumpGroup:getStatus() == 0 end,
 	function () sysHydraulic.engHydPumpGroup:actuate(0) end))
 beforeStartProc:addItem(kcProcedureItem:new("  ELECTRIC HYDRAULIC PUMP SWITCHES","ON",kcFlowItem.actorFO,2,
 	function () return sysHydraulic.elecHydPumpGroup:getStatus() == 2 end,
 	function () sysHydraulic.elecHydPumpGroup:actuate(1) end))
-beforeStartProc:addItem(kcProcedureItem:new("ANTI COLLISION LIGHT SWITCH","ON",kcFlowItem.actorFO,2,
-	function () return sysLights.beaconSwitch:getStatus() == 1 end,
-	function () sysLights.beaconSwitch:actuate(1) end))
-beforeStartProc:addItem(kcSimpleProcedureItem:new("Set Trim"))
+beforeStartProc:addItem(kcSimpleProcedureItem:new("==== Set Trim"))
 beforeStartProc:addItem(kcProcedureItem:new("  STABILIZER TRIM","%4.2f UNITS (%4.2f)|kc_round_step((8.2-(get(\"sim/flightmodel2/controls/elevator_trim\")/-0.119)+0.4)*10000,100)/10000|activeBriefings:get(\"takeoff:elevatorTrim\")",kcFlowItem.actorCPT,1,
 	function () return (kc_round_step((8.2-(get("sim/flightmodel2/controls/elevator_trim")/-0.119)+0.4)*10000,100)/10000) == activeBriefings:get("takeoff:elevatorTrim") end))
 beforeStartProc:addItem(kcSimpleProcedureItem:new("  Use trim wheel and bring values to match."))
@@ -1290,6 +1286,9 @@ beforeStartProc:addItem(kcProcedureItem:new("  AILERON TRIM","0 UNITS (%3.2f)|sy
 beforeStartProc:addItem(kcProcedureItem:new("  RUDDER TRIM","0 UNITS (%3.2f)|sysControls.rudderTrimSwitch:getStatus()",kcFlowItem.actorCPT,2,
 	function () return sysControls.rudderTrimSwitch:getStatus() == 0 end,
 	function () sysControls.rudderTrimSwitch:setValue(0) end))
+beforeStartProc:addItem(kcProcedureItem:new("ANTI COLLISION LIGHT SWITCH","ON",kcFlowItem.actorFO,2,
+	function () return sysLights.beaconSwitch:getStatus() == 1 end,
+	function () sysLights.beaconSwitch:actuate(1) end))
 beforeStartProc:addItem(kcProcedureItem:new("WING #exchange|&|and# WHEEL WELL LIGHTS","OFF",kcFlowItem.actorFO,2,
 	function () return sysLights.wingSwitch:getStatus() == 0 and sysLights.wheelSwitch:getStatus() == 0 end,
 	function () sysLights.wingSwitch:actuate(0) sysLights.wheelSwitch:actuate(0) end))
@@ -1299,10 +1298,10 @@ beforeStartProc:addItem(kcProcedureItem:new("WING #exchange|&|and# WHEEL WELL LI
 -- FUEL..........................9999 KGS, PUMPS ON  (F/O)
 -- PASSENGER SIGNS..............................SET  (F/O)
 -- WINDOWS...................................LOCKED (BOTH)
--- MCP...................V2 999, HDG 999, ALT 99999  (CPT)
+-- MCP...................V2 999, HDG 999, ALT 99999   (PF)
 -- TAKEOFF SPEEDS............V1 999, VR 999, V2 999   (PF)
 -- CDU PREFLIGHT..........................COMPLETED   (PF)
--- RUDDER & AILERON TRIM.................FREE AND 0  (CPT)
+-- RUDDER & AILERON TRIM.................FREE AND 0   (PF)
 -- TAXI AND TAKEOFF BRIEFING..            COMPLETED   (PF)
 -- ANTI COLLISION LIGHT..........................ON  (F/O)
 -- =======================================================
@@ -1319,7 +1318,7 @@ beforeStartChkl:addItem(kcChecklistItem:new("FUEL","%i %s, PUMPS ON|activePrefSe
 	function () return sysFuel.allFuelPumpGroup:getStatus() == 6 end,
 	function () sysFuel.allFuelPumpGroup:actuate(1) end,
 	function () return sysFuel.centerTankLbs:getStatus() < 1000 end))
-beforeStartChkl:addItem(kcChecklistItem:new("PASSENGER SIGNS","SET",kcFlowItem.actorCPT,2,
+beforeStartChkl:addItem(kcChecklistItem:new("PASSENGER SIGNS","SET",kcFlowItem.actorFO,2,
 	function () return sysGeneral.seatBeltSwitch:getStatus() > 0 and sysGeneral.noSmokingSwitch:getStatus() > 0 end,
 	function () sysGeneral.seatBeltSwitch:adjustValue(1,0,2)  sysGeneral.noSmokingSwitch:adjustValue(1,0,2) end))
 beforeStartChkl:addItem(kcChecklistItem:new("WINDOWS","LOCKED",kcFlowItem.actorBOTH,2,true))
@@ -1331,7 +1330,7 @@ beforeStartChkl:addItem(kcChecklistItem:new("MCP","V2 %i, HDG %i, ALT %i|activeB
 	 end))
 beforeStartChkl:addItem(kcChecklistItem:new("TAKEOFF SPEEDS","V1 %i, VR %i, V2 %i|activeBriefings:get(\"takeoff:v1\")|activeBriefings:get(\"takeoff:vr\")|activeBriefings:get(\"takeoff:v2\")",kcFlowItem.actorPF,2))
 beforeStartChkl:addItem(kcChecklistItem:new("CDU PREFLIGHT","COMPLETED",kcFlowItem.actorPF,1))
-beforeStartChkl:addItem(kcChecklistItem:new("RUDDER & AILERON TRIM","FREE AND 0",kcFlowItem.actorCPT,1,
+beforeStartChkl:addItem(kcChecklistItem:new("RUDDER & AILERON TRIM","FREE AND 0",kcFlowItem.actorPF,1,
 	function () return sysControls.rudderTrimSwitch:getStatus() == 0 and sysControls.aileronTrimSwitch:getStatus() == 0 end,
 	function () sysControls.rudderTrimSwitch:setValue(0) sysControls.aileronTrimSwitch:setValue(0) end))
 beforeStartChkl:addItem(kcChecklistItem:new("TAXI AND TAKEOFF BRIEFING","COMPLETED",kcFlowItem.actorPF,1))
@@ -1365,6 +1364,8 @@ beforeStartChkl:addItem(kcChecklistItem:new("ANTI-COLLISION LIGHT SWITCH","ON",k
 -- PARKING BRAKE...............................SET  (F/O)
 --   When instructed by ground crew after pushback/towing
 -- Next BEFORE TAXI PROCEDURE
+
+-- XPDR TO ALT OFF?
 
 local pushstartProc = kcProcedure:new("PUSHBACK & ENGINE START","let's get ready for push and start")
 pushstartProc:addItem(kcIndirectProcedureItem:new("PARKING BRAKE","SET",kcFlowItem.actorFO,2,"pb_parkbrk_initial_set",
@@ -1882,7 +1883,6 @@ landingChkl:addItem(kcChecklistItem:new("FLAPS","%s, GREEN LIGHT|kc_pref_split(k
 -- APU.......................................START   (FO)
 --   Hold APU switch in START position for 3-4 seconds
 --   APU GEN OFF BUS LIGHT.............ILLUMINATED   (FO)
--- FLAPS........................................UP   (FO)
 -- PROBE HEAT..................................OFF   (FO)
 -- STROBES.....................................OFF   (FO)
 -- LANDING LIGHTS..............................OFF   (FO)
@@ -1890,6 +1890,7 @@ landingChkl:addItem(kcChecklistItem:new("FLAPS","%s, GREEN LIGHT|kc_pref_split(k
 -- ENGINE START SWITCHES.......................OFF   (FO)
 -- TRAFFIC SWITCH..............................OFF   (FO)
 -- AUTOBRAKE...................................OFF   (FO)
+-- FLAPS........................................UP   (FO)
 
 local afterLandingProc = kcProcedure:new("AFTER LANDING PROCEDURE","cleaning up")
 afterLandingProc:addItem(kcProcedureItem:new("SPEED BRAKE","DOWN",kcChecklistItem.actorPF,2,
