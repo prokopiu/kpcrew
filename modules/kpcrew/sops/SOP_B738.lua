@@ -101,7 +101,7 @@ activeSOP = kcSOP:new("Zibo Mod SOP")
 --   STANDBY PWR LIGHT............CHECK EXTINGUISHED (F/O)
 -- =======================================================
 
-local electricalPowerUpProc = kcProcedure:new("ELECTRICAL POWER UP","performing ELECTRICAL POWER UP")
+local electricalPowerUpProc = kcProcedure:new("ELECTRICAL POWER UP","performing ELECTRICAL POWER UP","Power up finished")
 electricalPowerUpProc:addItem(kcSimpleProcedureItem:new("All paper work on board and checked"))
 electricalPowerUpProc:addItem(kcSimpleProcedureItem:new("M E L and Technical Logbook checked"))
 
@@ -1591,7 +1591,7 @@ beforeTakeoffChkl:addItem(kcChecklistItem:new("STABILIZER TRIM","%3.2f UNITS (%3
 -- TAXI LIGHTS..................................OFF (CPT)
 -- ======================================================
 
-local runwayEntryProc = kcProcedure:new("RUNWAY ENTRY PROCEDURE","runway entry")
+local runwayEntryProc = kcProcedure:new("RUNWAY ENTRY PROCEDURE","runway entry","aircraft ready for takeoff")
 runwayEntryProc:addItem(kcProcedureItem:new("STROBES","ON",kcFlowItem.actorFO,2,
 	function () return sysLights.strobesSwitch:getStatus() == 1 end,
 	function () sysLights.strobesSwitch:actuate(1) end))
@@ -1630,6 +1630,7 @@ runwayEntryProc:addItem(kcProcedureItem:new("TAXI LIGHTS","OFF",kcFlowItem.actor
 -- AUTO BRAKE SELECT SWITCH....................OFF	(PNF)
 -- GEAR........................................OFF	(PNF)
 -- ENGINE START SWITCHES.......................OFF  (PNF)
+-- ======================================================
 
 --chrono
 local takeoffClimbProc = kcProcedure:new("TAKEOFF & INITIAL CLIMB","takeoff")
@@ -1838,7 +1839,7 @@ descentChkl:addItem(kcChecklistItem:new("APPROACH BRIEFING","COMPLETED",kcCheckl
  -- ALTIMETERS............................QNH _____ (BOTH)
  -- ======================================================
 
-local approachChkl = kcChecklist:new("APPROACH CHECKLIST")
+local approachChkl = kcChecklist:new("APPROACH CHECKLIST","","approach checklist completed")
 approachChkl:addItem(kcChecklistItem:new("#exchange|ALTIMETERS|approach checklist. altimeters","QNH %s|activeBriefings:get(\"arrival:atisQNH\")",kcChecklistItem.actorBOTH,1,true,
 	-- function () return get("laminar/B738/EFIS/baro_sel_in_hg_pilot") == activeBriefings:get("arrival:atisQNH") and 
 		-- get("laminar/B738/EFIS/baro_sel_in_hg_copilot") == activeBriefings:get("arrival:atisQNH") end,

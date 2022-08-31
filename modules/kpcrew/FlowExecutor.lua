@@ -58,12 +58,15 @@ function kcFlowExecutor:execute()
 	
 		-- execute the flow step by step
 		local stepState = step:getState()
-		if self.flow:getClassName() == "Checklist" then
-			kc_wnd_flow_action = 1 -- open flow window for checklist
+		if activePrefSet:get("general:flowAutoOpen") == true then
+			if kc_show_flow ~= true or kc_flow_wnd == nil then
+				-- kc_wnd_flow_action = 1 -- open flow window for active flow
+				kc_toggle_flow_window()
+			end
 		end
 
 		if self.flow:getActiveItemIndex() == 0 then
-			kc_speakNoText(0,self.flow:getSpeakName())
+			self.flow:speakName()
 			self.flow:setActiveItemIndex(1)
 			return
 		end
@@ -152,7 +155,12 @@ function kcFlowExecutor:execute()
 		end
 
 	elseif flowState == kcFlow.FINISH then
-
+		if activePrefSet:get("general:flowAutoOpen") == true then
+			if kc_show_flow then
+				kc_toggle_flow_window()
+			end
+		end
+		self.flow:speakFinal()
 	else
 		-- whatever needed when states do not match
 	end

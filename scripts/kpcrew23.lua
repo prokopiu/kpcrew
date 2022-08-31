@@ -126,6 +126,7 @@ function kc_close_flow_window()
 		kc_mstr_button_state = kc_mstr_state_new_flow
 	end
 	kc_show_flow_once = 0
+	kc_show_flow = false
 end 
 
 -- resize the window when a new flow is shown

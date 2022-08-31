@@ -21,7 +21,7 @@ local kcFlow = {
 
 -- Instantiate a new Procedure
 -- @tparam string name Name of the set (also used as title)
-function kcFlow:new(name, speakname)
+function kcFlow:new(name, speakname, finalstatement)
     kcFlow.__index = kcFlow
     local obj = {}
     setmetatable(obj, kcFlow)
@@ -33,21 +33,42 @@ function kcFlow:new(name, speakname)
 	obj.wnd = nil
 	obj.className = "Flow"
 	obj.resize = true
-	-- if speakname == nil then
-		-- obj.speakName = ""
-	-- else
-		obj.speakName = speakname
-	-- end 
+	obj.spokenName = speakname
+	obj.finalStatement = finalstatement
+	obj.nameSpoken = false
+	obj.finalSpoken = false
 	
     return obj
 end
 
 function kcFlow:setSpeakName(name)
-	self.speakName = name
+	self.spokenName = name
 end
 
 function kcFlow:getSpeakName()
-	return self.speakName
+	return self.spokenName
+end
+
+function kcFlow:speakName()
+	if self.spokenName ~= nil and self.nameSpoken == false then
+		kc_speakNoText(0,self.spokenName)
+	end
+	self.nameSpoken = true
+end
+
+function kcFlow:setFinalStatement(name)
+	self.finalStatement = name
+end
+
+function kcFlow:getFinalStatement()
+	return self.finalStatement
+end
+
+function kcFlow:speakFinal() 
+	if self.finalStatement ~= nil and self.finalSpoken == false then
+		kc_speakNoText(0,self.finalStatement)
+	end
+	self.finalSpoken = true
 end
 
 function kcFlow:setResize(flag)
@@ -155,7 +176,9 @@ end
 -- reset procedure and all below items
 function kcFlow:reset()
     self:setState(kcFlow.START)
-    self:setActiveItemIndex(1)
+    self.activeItemIndex = 0
+	self.nameSpoken = false
+	self.finalSpoken = false
 	-- reset all items in procedure
     for _, item in ipairs(self.items) do
         item:reset()

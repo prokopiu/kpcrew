@@ -10,7 +10,7 @@ local kcChecklist = {
 
 -- Instantiate a new Checklist
 -- @tparam string name Name of the set (also used as title)
-function kcChecklist:new(name,speakname)
+function kcChecklist:new(name, speakname, finalstatement)
     kcChecklist.__index = kcChecklist
     setmetatable(kcChecklist, {
         __index = kcFlow
@@ -19,7 +19,8 @@ function kcChecklist:new(name,speakname)
     setmetatable(obj, kcChecklist)
 
     obj.name = name
-	obj.speakName = speakname
+	obj.spokenName = speakname
+	obj.finalStatement = finalstatement
 	obj.className = "Checklist"
 
     return obj
