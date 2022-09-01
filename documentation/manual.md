@@ -1,5 +1,6 @@
-# KPCrew 2.2-alpha3 (12/2021)
-FlyWithLua scripts to simulate a virtual first officer in X-Plane 11. THIS IS A COMPLETE REWRITE AND STILL IN ALPHA. PLEASE REMOVE ANY OLDER KPCREW FILES FROM SCRIPTS AND MODULES FOLDER!
+# KPCrew 2.3-alpha1 (09/2022)
+FlyWithLua scripts to simulate a virtual first officer in X-Plane 11. 
+THIS IS A COMPLETE REWRITE AND STILL IN ALPHA. PLEASE REMOVE ANY OLDER KPCREW FILES FROM SCRIPTS AND MODULES FOLDER!
 
 ## Introduction
 Coming from the FSX/P3D world I know the FS2Crew products which I had for all payware aircraft if available. I always wished that I could get something like that for X-Plane. FlyWithLua turned out to be a great programming environment for X-Plane and I decided to try replicating something like FS2Crew for the Zibo B738. 
@@ -35,21 +36,29 @@ And get yourself BetterPushback if you really are one of those that have missed 
 KPCrew comes in a Zip-file and needs to be manually installed under your X-Plane-11 folder. The ZIP contains the following folders:
 - kpcrew
   - aircraft  --> contains aircraft specific files such as Flows or Honeycomb profiles
-    - KPCrew v2.2 B738 Flows.pdf --> current flows and checklists for Zibo Mod
-    - KPCREW Alpha Default.json --> a generic Honeycomb Alpha profile - works only with KPCrew
-    - KPCREW Bravo Profile.json --> a generic Honeycomb Bravo profile - works only with KPCrew
+    - KPCrew v2.3 B738 Flows.pdf --> current flows and checklists for Zibo Mod
+    - KPCREW Alpha Default.json --> a generic Honeycomb Alpha profile - works only with KPHardware
+    - KPCREW Bravo Profile.json --> a generic Honeycomb Bravo profile - works only with KPHardware
   - documentation  --> documentation for KPCrew
     - KPCrew Flows.xlsx  --> The Flows for all supported aircraft
     - manual.md  --> this manual
     - manual.pdf  --> PDF version of this manual
   - modules  --> files to go in the FlyWithlua module folder; all the KPCrew and aircraft modules
-    - B738_kpcrew.lua  --> the Zibo Mod Being 738 module
-    - kpcrew_imgui.lua  --> All the windows and dialogs of KPCrew
-    - kpcrew_checklists.lua  --> all the checklist related functionality
-    - kpcrew_data.lua  --> all the data and configuration related functionality
-    - kpcrew_config.lua  --> the base configuration - do not change; use Save and Load to have your own
+      - briefings --> briefing related files and saved briefings
+      - checklists --> checklist functionality
+      - hardware --> hardware modules
+        - honeycombAlpha.lua --> commands for Alpha Yoke
+        - honeycombBravo.lua --> commands for Bravo Throttle
+      - preferences --> preference related functions and saved preferences
+      - procedures --> procudre related functionality
+      - sop --> Standard Operating Procedures logic and aircraft modules
+      - systems --> all aircraft systems and functions (also for kphardware)
+        - B738 --> Zibo module
+        - DFLT --> XP11 default aircraft module
+      - .lua files with general logic
   - scripts  -->  files to go in the FlyWithlua module folder; the main lua script
-    - kpcrew2.lua  --> the main script to start KPCrew with supported aircraft
+    - kpcrew23.lua  --> the main script to start KPCrew with supported aircraft
+    - kphardware.lua --> if you choose to install this as well
   - readme.md  --> a readme file
   - LICENSE  --> the license terms
 
@@ -66,7 +75,8 @@ Modules and Scripts are FlyWithLua specific folders. Find them  here:
 **Make sure that you removed any older files from previous versions of KPCrew (2, 2.1 and 1.x also called Zibocrew)**
 
 ### How to Uninstall
-Simply remove all the above lua files from the **scripts** and **modules** folder.
+Simply remove all the above lua files and folders from the **scripts** and **modules** folder in Resources\plugins\FlyWithLua. 
+** DO NOT DELETE SCRIPTS AND MODULE FOLDER!! **
 
 ## How does it Work?
 

@@ -1,11 +1,6 @@
-# KPCrew 2.3-alpha1 (xx/2022) 
-
-Completely new approach to go away from complicated arrays and improved UIs.
-
-
-......
-
-FlyWithLua scripts to simulate a virtual first officer in X-Plane 11. THIS IS A COMPLETE REWRITE AND STILL IN ALPHA. OVERWRITE ANY FILES IN SCRIPTS AND MODULES FOLDER. THE OLDER KPCREW 2.2 WILL LIVE IN PARALLEL TO THE NEW APPROACH UNTIL I REPLACED THE FUNCTIONALITY COMPLETELY.
+# KPCrew 2.3-alpha1 (09/2022)
+FlyWithLua scripts to simulate a virtual first officer in X-Plane 11. 
+THIS IS A COMPLETE REWRITE AND STILL IN ALPHA. PLEASE REMOVE ANY OLDER KPCREW FILES FROM SCRIPTS AND MODULES FOLDER!
 
 ## Introduction
 Coming from the FSX/P3D world I know the FS2Crew products which I had for all payware aircraft if available. I always wished that I could get something like that for X-Plane. FlyWithLua turned out to be a great programming environment for X-Plane and I decided to try replicating something like FS2Crew for the Zibo B738. 
@@ -20,12 +15,11 @@ There are other tools out there which do similar things, the most versatile one 
 
 Having said that, KPCrew is one big programming exercise and I can understand that it will be difficult for people without experience in Lua programming to change or extend things. If you want to do that then look at other tools as mentioned above.
 
-### Other aircraft supported?
+### Other Aircraft Supported?
 
 Will there be other aircraft? Yes, it will also contain the FJS B737-200 and many other planes if I have the addon and find the time to research it.
 
 ### History of KPCrew
 KPCrew went through several iterations, initially I called it Zibocrew. The initial concept was clunky and inflexible. I think I now have a good enough concept to easily extend the scripts. I even have now background events. As it is with Lua, you can see all that I did but when you change code you are on your own – I will not have the time to support this or hold hands with the installation. This is one of the reasons why I hesitated to release this publicly.
-
 
 **[Go to the manual](documentation/manual.md)**
