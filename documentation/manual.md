@@ -44,7 +44,6 @@ KPCrew comes in a Zip-file and needs to be manually installed under your X-Plane
     - manual.md  --> this manual
     - manual.pdf  --> PDF version of this manual
   - modules  --> files to go in the FlyWithlua module folder; all the KPCrew and aircraft modules
-    - modules  --> files to go in the FlyWithlua module folder; all the KPCrew and aircraft modules
       - briefings --> briefing related files and saved briefings
       - checklists --> checklist functionality
       - hardware --> hardware modules
@@ -56,8 +55,7 @@ KPCrew comes in a Zip-file and needs to be manually installed under your X-Plane
       - systems --> all aircraft systems and functions (also for kphardware)
         - B738 --> Zibo module
         - DFLT --> XP11 default aircraft module
-        - .lua files with general logic
-      - .lua
+      - .lua files with general logic
   - scripts  -->  files to go in the FlyWithlua module folder; the main lua script
     - kpcrew23.lua  --> the main script to start KPCrew with supported aircraft
     - kphardware.lua --> if you choose to install this as well
@@ -77,7 +75,8 @@ Modules and Scripts are FlyWithLua specific folders. Find them  here:
 **Make sure that you removed any older files from previous versions of KPCrew (2, 2.1 and 1.x also called Zibocrew)**
 
 ### How to Uninstall
-Simply remove all the above lua files from the **scripts** and **modules** folder.
+Simply remove all the above lua files and folders from the **scripts** and **modules** folder in Resources\plugins\FlyWithLua. 
+** DO NOT DELETE SCRIPTS AND MODULE FOLDER!! **
 
 ## How does it Work?
 
