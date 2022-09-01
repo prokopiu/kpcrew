@@ -48,6 +48,22 @@ sysFMC 					= require("kpcrew.systems." .. kc_acf_icao .. ".sysFMC")
 
 require("kpcrew.briefings.briefings_" .. kc_acf_icao)
 
+kcSopFlightPhase = { [0] = "Cold&Dark", [1] = "Prel Preflight", [2] = "Preflight" }
+	-- phaseBeforeStart = 3,
+	-- phaseAfterStart = 4,
+	-- phaseTaxiTakeoff = 5,
+	-- phaseBeforeTakeoff = 6,
+	-- phaseTakeoff = 7,
+	-- phaseClimb = 8,
+	-- phaseEnroute = 9,
+	-- phaseDescent = 10,
+	-- phaseArrival = 11,
+	-- phaseApproach = 12,
+	-- phaseLanding = 13,
+	-- phaseTurnoff = 14,
+	-- phaseTaxiArrival = 15,
+	-- phaseShutdown = 16,
+	-- phaseTurnAround = 17
 -- Set up SOP =========================================================================
 
 activeSOP = kcSOP:new("Zibo Mod SOP")

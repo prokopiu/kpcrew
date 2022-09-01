@@ -11,6 +11,7 @@ kcChecklist = require "kpcrew.checklists.Checklist"
 kcChecklistItem = require "kpcrew.checklists.ChecklistItem"
 kcSimpleChecklistItem = require "kpcrew.checklists.SimpleChecklistItem"
 kcIndirectChecklistItem = require "kpcrew.checklists.IndirectChecklistItem"
+kcManualChecklistItem = require "kpcrew.checklists.ManualChecklistItem"
 
 kcProcedure = require "kpcrew.procedures.Procedure"
 kcProcedureItem = require "kpcrew.procedures.ProcedureItem"

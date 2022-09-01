@@ -161,6 +161,9 @@ function kcFlowExecutor:execute()
 			end
 		end
 		self.flow:speakFinal()
+		if activePrefSet:get("general:flowAutoJump") == true then
+			getActiveSOP():setNextFlowActive()
+		end
 	else
 		-- whatever needed when states do not match
 	end

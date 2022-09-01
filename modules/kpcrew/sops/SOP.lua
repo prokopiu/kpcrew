@@ -5,6 +5,24 @@
 -- @author Kosta Prokopiu
 -- @copyright 2022 Kosta Prokopiu
 local kcSOP = {
+	phaseColdAndDark = 0,
+	phasePrelPreflight = 1,
+	phasePreflight = 2,
+	phaseBeforeStart = 3,
+	phaseAfterStart = 4,
+	phaseTaxiTakeoff = 5,
+	phaseBeforeTakeoff = 6,
+	phaseTakeoff = 7,
+	phaseClimb = 8,
+	phaseEnroute = 9,
+	phaseDescent = 10,
+	phaseArrival = 11,
+	phaseApproach = 12,
+	phaseLanding = 13,
+	phaseTurnoff = 14,
+	phaseTaxiArrival = 15,
+	phaseShutdown = 16,
+	phaseTurnAround = 17
 }
 
 -- Instantiate a new preference set
@@ -23,7 +41,8 @@ function kcSOP:new(name)
 	obj.activeProcedureIndex = 1
     obj.bgrOnDemandProcs = {} -- list of SOP related background tasks
     obj.bgrMonitoringProcs = {} -- list of SOP related monitoring tasks
-
+	obj.flightPhase = 0
+	
     return obj
 end
 
@@ -31,6 +50,15 @@ end
 -- @treturn string name of SOP
 function kcSOP:getName()
     return self.name
+end
+
+-- set flight phase
+function kcSOP:setFlightPhase(phase)
+	self.flightPhase = phase
+end
+
+function kcSOP:getFlightPhase()
+	return self.flightPhase
 end
 
 -- Add a checklist object to checklists and flows
