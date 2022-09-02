@@ -14,6 +14,20 @@ kc_LandingAntiice = "NOT REQUIRED|ENGINE ONLY|ENGINE AND WING"
 kc_StartSequence = "2 THEN 1|1 THEN 2"
 kc_MELIssues = "no M E L issues|M E L issues"
 
+-- aircraft specs, weights in KG
+-- MAX ZERO FUEL WEIGHT:   62732 KG - 138300 LBS
+-- MAX TAKEOFF WEIGHT:     79016 KG - 174200 LBS
+-- MAX LANDING WEIGHT:     66361 KG - 146300 LBS
+-- MAX FUEL CAPACITY:      20900 KG -  46077 LBS
+-- FUEL FLOW PER HOUR:      2187 KG -   4825 LBS
+
+kc_DOW 		= 41510  -- Dry Operating Weight (aka OEW)
+kc_MZFW  	= 62732  -- Maximum Zero Fuel Weight
+kc_MaxFuel 	= 46077  -- Maximum Fuel Capacity
+kc_MTOW 	= 79016  -- Maximum Takeoff Weight
+kc_MLW  	= 66361  -- Maximum Landing Weight
+kc_FFPH 	=  2187  -- Fuel Flow per hour
+
 -- full list of approach types can be overwritten by aircraft
 APP_apptype_list = "ILS CAT 1|ILS CAT 2 OR 3|VOR|NDB|RNAV|VISUAL|TOUCH AND GO|CIRCLING"
 
@@ -22,6 +36,54 @@ APP_apu_list = "APU delayed start|APU|GPU"
 
 -- Reverse Thrust
 APP_rev_thrust_list = "NONE|MINIMUM|FULL"
+
+function kc_get_DOW()
+	if activePrefSet:get("general:weight_kgs") then
+		return kc_DOW
+	else
+		return kc_DOW * 2.20462262
+	end
+end
+
+function kc_get_MZFW()
+	if activePrefSet:get("general:weight_kgs") then
+		return kc_MZFW
+	else
+		return kc_MZFW * 2.20462262
+	end
+end
+
+function kc_get_MaxFuel()
+	if activePrefSet:get("general:weight_kgs") then
+		return kc_MaxFuel
+	else
+		return kc_MaxFuel * 2.20462262
+	end
+end
+
+function kc_get_MTOW()
+	if activePrefSet:get("general:weight_kgs") then
+		return kc_MTOW
+	else
+		return kc_MTOW * 2.20462262
+	end
+end
+
+function kc_get_MLW()
+	if activePrefSet:get("general:weight_kgs") then
+		return kc_MLW
+	else
+		return kc_MLW * 2.20462262
+	end
+end
+
+function kc_get_FFPH()
+	if activePrefSet:get("general:weight_kgs") then
+		return kc_FFPH
+	else
+		return kc_FFPH * 2.20462262
+	end
+end
 
 function kc_get_total_fuel()
 	if activePrefSet:get("general:weight_kgs") then

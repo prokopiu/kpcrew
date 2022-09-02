@@ -23,6 +23,62 @@ APP_apu_list = "APU delayed start|APU|GPU"
 -- Reverse Thrust
 APP_rev_thrust_list = "NONE|MINIMUM|FULL"
 
+-- aircraft specs, weights in KG
+kc_DOW 		= 0  -- Dry Operating Weight (aka OEW)
+kc_MZFW  	= 0  -- Maximum Zero Fuel Weight
+kc_MaxFuel 	= 0  -- Maximum Fuel Capacity
+kc_MTOW 	= 0  -- Maximum Takeoff Weight
+kc_MLW  	= 0  -- Maximum Landing Weight
+kc_FFPH 	= 0  -- Fuel Flow per hour
+
+function kc_get_DOW()
+	if activePrefSet:get("general:weight_kgs") then
+		return get("sim/aircraft/weight/acf_m_empty")
+	else
+		return get("sim/aircraft/weight/acf_m_empty") * 2.20462262
+	end
+end
+
+function kc_get_MZFW()
+	if activePrefSet:get("general:weight_kgs") then
+		return get("sim/aircraft/weight/acf_m_max") - kc_get_MaxFuel()
+	else
+		return get("sim/aircraft/weight/acf_m_max") * 2.20462262 - kc_get_MaxFuel()
+	end
+end
+
+function kc_get_MaxFuel()
+	if activePrefSet:get("general:weight_kgs") then
+		return get("sim/aircraft/weight/acf_m_fuel_tot")
+	else
+		return get("sim/aircraft/weight/acf_m_fuel_tot") * 2.20462262
+	end
+end
+
+function kc_get_MTOW()
+	if activePrefSet:get("general:weight_kgs") then
+		return get("sim/aircraft/weight/acf_m_max")
+	else
+		return get("sim/aircraft/weight/acf_m_max") * 2.20462262
+	end
+end
+
+function kc_get_MLW()
+	if activePrefSet:get("general:weight_kgs") then
+		return get("sim/aircraft/weight/acf_m_max")
+	else
+		return get("sim/aircraft/weight/acf_m_max") * 2.20462262
+	end
+end
+
+function kc_get_FFPH()
+	if activePrefSet:get("general:weight_kgs") then
+		return kc_FFPH
+	else
+		return kc_FFPH * 2.20462262
+	end
+end
+
 function kc_get_total_fuel()
 	if activePrefSet:get("general:weight_kgs") then
 		return get("sim/flightmodel/weight/m_fuel_total")

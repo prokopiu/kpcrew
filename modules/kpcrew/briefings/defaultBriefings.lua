@@ -38,15 +38,25 @@ information:setInitialOpen(true)
 information:add(kcPreference:new("aircraftType",function () return kc_acf_name .. " - " .. kc_acf_icao end,kcPreference.typeInfo,"Aircraft Type|"))
 
 information:add(kcPreference:new("totalFuel",
-function () return string.format("%6.6i %s",kc_get_total_fuel(),activePrefSet:get("general:weight_kgs") == true and "KGS" or "LBS") end,
+function () 
+	local wunit = activePrefSet:get("general:weight_kgs") == true and "KGS" or "LBS"
+	return string.format("%6.6i %s (MFUEL: %6.6i %s)",kc_get_total_fuel(),wunit,kc_get_MaxFuel(),wunit) 
+end,
 kcPreference.typeInfo,"Total Fuel|"))
 
 information:add(kcPreference:new("grosszfw",
 function () 
 	local wunit = activePrefSet:get("general:weight_kgs") == true and "KGS" or "LBS"
-	return string.format("%6.6i %s",kc_get_gross_weight(),wunit) .. " / " .. string.format("%6.6i %s",kc_get_zfw(),wunit)
+	return string.format("%6.6i %s",kc_get_gross_weight(),wunit) .. " / " .. string.format("%6.6i %s",kc_get_zfw(),wunit) .. " / " .. string.format("%6.6i %s",kc_get_MZFW(),wunit)
 end,
-kcPreference.typeInfo,"Gross Weight / ZFW|"))
+kcPreference.typeInfo,"Gross Weight / ZFW / MZFW|"))
+
+information:add(kcPreference:new("grosszfw",
+function () 
+	local wunit = activePrefSet:get("general:weight_kgs") == true and "KGS" or "LBS"
+	return string.format("%6.6i %s",kc_get_MTOW(),wunit) .. " / " .. string.format("%6.6i %s",kc_get_MLW(),wunit)
+end,
+kcPreference.typeInfo,"MTOW / MLW|"))
 
 information:add(kcPreference:new("currPosition",
 function () 
@@ -79,7 +89,12 @@ local flight = kcPreferenceGroup:new("flight","FLIGHT")
 flight:add(kcPreference:new("callsign","",kcPreference.typeText,"Callsign|"))
 flight:add(kcPreference:new("originIcao","",kcPreference.typeText,"Origin ICAO|"))
 flight:add(kcPreference:new("destinationIcao","",kcPreference.typeText,"Destination ICAO|"))
+flight:add(kcPreference:new("distance",0,kcPreference.typeInt,"Distance from OFP (nm)|10"))
 flight:add(kcPreference:new("cruiseLevel",0,kcPreference.typeInt,"Cruise Level (FL)|10"))
+flight:add(kcPreference:new("payload",0,kcPreference.typeInt,
+function ()
+	return "Total payload " .. (activePrefSet:get("general:weight_kgs") == true and "KGS" or "LBS") .. "|100"
+end))
 flight:add(kcPreference:new("takeoffFuel",0,kcPreference.typeInt,
 function ()
 	return "Takeoff Fuel " .. (activePrefSet:get("general:weight_kgs") == true and "KGS" or "LBS") .. "|100"

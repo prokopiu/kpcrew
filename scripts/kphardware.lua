@@ -29,21 +29,21 @@ if PLANE_ICAO == "B738" then
 		kh_acf_icao = "B738" -- Zibo Mod and variants
 	end
 end
-if PLANE_ICAO == "MD11" then
-	kh_acf_icao = "MD11"
-end
-if PLANE_ICAO == "B732" then
-	kh_acf_icao = "B732"
-end
-if PLANE_ICAO == "E135" or PLANE_ICAO == "E140" or PLANE_ICAO == "E145" or PLANE_ICAO == "E45X" then
-	kh_acf_icao = "ERJF"
-end
-if PLANE_ICAO == "MD82" then
-	kh_acf_icao = "MD82"
-end
-if PLANE_ICAO == "B744" then
-	kh_acf_icao = "B744"
-end
+-- if PLANE_ICAO == "MD11" then
+	-- kh_acf_icao = "MD11"
+-- end
+-- if PLANE_ICAO == "B732" then
+	-- kh_acf_icao = "B732"
+-- end
+-- if PLANE_ICAO == "E135" or PLANE_ICAO == "E140" or PLANE_ICAO == "E145" or PLANE_ICAO == "E45X" then
+	-- kh_acf_icao = "ERJF"
+-- end
+-- if PLANE_ICAO == "MD82" then
+	-- kh_acf_icao = "MD82"
+-- end
+-- if PLANE_ICAO == "B744" then
+	-- kh_acf_icao = "B744"
+-- end
 
 set("sim/private/controls/shadow/cockpit_near_adjust",0.09)
 

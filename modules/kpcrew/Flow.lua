@@ -37,6 +37,7 @@ function kcFlow:new(name, speakname, finalstatement)
 	obj.finalStatement = finalstatement
 	obj.nameSpoken = false
 	obj.finalSpoken = false
+	obj.flightPhase = 0
 	
     return obj
 end
@@ -54,6 +55,15 @@ function kcFlow:speakName()
 		kc_speakNoText(0,self.spokenName)
 	end
 	self.nameSpoken = true
+end
+
+-- set flight phase
+function kcFlow:setFlightPhase(phase)
+	self.flightPhase = phase
+end
+
+function kcFlow:getFlightPhase()
+	return self.flightPhase
 end
 
 function kcFlow:setFinalStatement(name)

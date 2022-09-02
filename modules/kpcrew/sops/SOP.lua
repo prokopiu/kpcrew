@@ -5,25 +5,32 @@
 -- @author Kosta Prokopiu
 -- @copyright 2022 Kosta Prokopiu
 local kcSOP = {
-	phaseColdAndDark = 0,
-	phasePrelPreflight = 1,
-	phasePreflight = 2,
-	phaseBeforeStart = 3,
-	phaseAfterStart = 4,
-	phaseTaxiTakeoff = 5,
-	phaseBeforeTakeoff = 6,
-	phaseTakeoff = 7,
-	phaseClimb = 8,
-	phaseEnroute = 9,
-	phaseDescent = 10,
-	phaseArrival = 11,
-	phaseApproach = 12,
-	phaseLanding = 13,
-	phaseTurnoff = 14,
-	phaseTaxiArrival = 15,
-	phaseShutdown = 16,
-	phaseTurnAround = 17
+	phaseColdAndDark 	= 1,
+	phasePrelPreflight 	= 2,
+	phasePreflight 		= 3,
+	phaseBeforeStart 	= 4,
+	phaseAfterStart 	= 5,
+	phaseTaxiTakeoff 	= 6,
+	phaseBeforeTakeoff 	= 7,
+	phaseTakeoff 		= 8,
+	phaseClimb 			= 9,
+	phaseEnroute 		= 10,
+	phaseDescent 		= 11,
+	phaseArrival 		= 12,
+	phaseApproach 		= 13,
+	phaseLanding 		= 14,
+	phaseTurnoff 		= 15,
+	phaseTaxiArrival 	= 16,
+	phaseShutdown 		= 17,
+	phaseTurnAround 	= 18,
+	phaseFlightPlanning = 19
 }
+
+kcSopFlightPhase = { [1] = "Cold & Dark", 	[2] = "Prel Preflight", [3] = "Preflight", 		[4] = "Before Start", 
+					 [5] = "After Start", 	[6] = "Taxi to Runway", [7] = "Before Takeoff", [8] = "Takeoff",
+					 [9] = "Climb", 		[10] = "Enroute", 		[11] = "Descent", 		[12] = "Arrival", 
+					 [13] = "Approach", 	[14] = "Landing", 		[15] = "Turnoff", 		[16] = "Taxi to Stand", 
+					 [17] = "Shutdown", 	[18] = "Turnaround", 	[19] = "Flight Planning", [0] = "" }
 
 -- Instantiate a new preference set
 -- @tparam string name Name of the SOP (also used as title)
@@ -41,7 +48,6 @@ function kcSOP:new(name)
 	obj.activeProcedureIndex = 1
     obj.bgrOnDemandProcs = {} -- list of SOP related background tasks
     obj.bgrMonitoringProcs = {} -- list of SOP related monitoring tasks
-	obj.flightPhase = 0
 	
     return obj
 end
@@ -49,16 +55,14 @@ end
 -- Get name/title of SOP
 -- @treturn string name of SOP
 function kcSOP:getName()
-    return self.name
+    return self.name 
 end
 
--- set flight phase
-function kcSOP:setFlightPhase(phase)
-	self.flightPhase = phase
-end
-
-function kcSOP:getFlightPhase()
-	return self.flightPhase
+function kcSOP:getPhaseString(phase)
+	if phase ~= nil and phase >= 0 then
+		return kcSopFlightPhase[phase]
+	end
+	return ""
 end
 
 -- Add a checklist object to checklists and flows
@@ -214,7 +218,7 @@ function kcSOP:render()
         imgui.PushStyleColor(imgui.constant.Col.Button, color)
 		imgui.PushStyleColor(imgui.constant.Col.ButtonActive, 0xFF001F9F)
 		imgui.PushStyleColor(imgui.constant.Col.ButtonHovered, 0xFF001F9F)
-		if imgui.Button(flow:getName(), self:getBtnWidth(), 18) then
+		if imgui.Button(flow:getName() .. " [" .. self:getPhaseString(flow:getFlightPhase()) .. "]", self:getBtnWidth(), 18) then
 			self:setActiveFlowIndex(kc_indexOf(flows,flow))
 		end
         imgui.PopStyleColor()
@@ -234,7 +238,7 @@ function kcSOP:getBtnWidth()
 	local namelen = 0
 	local flows = self:getAllFlows()
 	for _, flow in ipairs(flows) do
-		local nrchars = string.len(flow:getName())
+		local nrchars = string.len(flow:getName() .. " [" .. self:getPhaseString(flow:getFlightPhase()) .. "]")
 		if nrchars > namelen then
 			namelen = nrchars
 		end

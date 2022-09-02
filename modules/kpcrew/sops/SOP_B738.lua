@@ -48,22 +48,12 @@ sysFMC 					= require("kpcrew.systems." .. kc_acf_icao .. ".sysFMC")
 
 require("kpcrew.briefings.briefings_" .. kc_acf_icao)
 
-kcSopFlightPhase = { [0] = "Cold&Dark", [1] = "Prel Preflight", [2] = "Preflight" }
-	-- phaseBeforeStart = 3,
-	-- phaseAfterStart = 4,
-	-- phaseTaxiTakeoff = 5,
-	-- phaseBeforeTakeoff = 6,
-	-- phaseTakeoff = 7,
-	-- phaseClimb = 8,
-	-- phaseEnroute = 9,
-	-- phaseDescent = 10,
-	-- phaseArrival = 11,
-	-- phaseApproach = 12,
-	-- phaseLanding = 13,
-	-- phaseTurnoff = 14,
-	-- phaseTaxiArrival = 15,
-	-- phaseShutdown = 16,
-	-- phaseTurnAround = 17
+kcSopFlightPhase = { [1] = "Cold & Dark", 	[2] = "Prel Preflight", [3] = "Preflight", 		[4] = "Before Start", 
+					 [5] = "After Start", 	[6] = "Taxi to Runway", [7] = "Before Takeoff", [8] = "Takeoff",
+					 [9] = "Climb", 		[10] = "Enroute", 		[11] = "Descent", 		[12] = "Arrival", 
+					 [13] = "Approach", 	[14] = "Landing", 		[15] = "Turnoff", 		[16] = "Taxi to Stand", 
+					 [17] = "Shutdown", 	[18] = "Turnaround",	[19] = "Flightplanning", [0] = "" }
+					 
 -- Set up SOP =========================================================================
 
 activeSOP = kcSOP:new("Zibo Mod SOP")
@@ -118,6 +108,7 @@ activeSOP = kcSOP:new("Zibo Mod SOP")
 -- =======================================================
 
 local electricalPowerUpProc = kcProcedure:new("ELECTRICAL POWER UP","performing ELECTRICAL POWER UP","Power up finished")
+electricalPowerUpProc:setFlightPhase(1)
 electricalPowerUpProc:addItem(kcSimpleProcedureItem:new("All paper work on board and checked"))
 electricalPowerUpProc:addItem(kcSimpleProcedureItem:new("M E L and Technical Logbook checked"))
 
@@ -277,6 +268,7 @@ electricalPowerUpProc:addItem(kcProcedureItem:new("   STANDBY #exchange|PWR|POWE
 -- OXYGEN BOTTLE
 
 local prelPreflightProc = kcProcedure:new("PREL PREFLIGHT PROCEDURE","preliminary pre flight")
+prelPreflightProc:setFlightPhase(2)
 prelPreflightProc:addItem(kcProcedureItem:new("EMERGENCY EXIT LIGHT","ARM #exchange|/ON GUARD CLOSED| #",kcFlowItem.actorFO,2,
 	function () return sysGeneral.emerExitLightsCover:getStatus() == modeOff  end,
 	function () sysGeneral.emerExitLightsCover:actuate(modeOff) end))
@@ -430,6 +422,7 @@ prelPreflightProc:addItem(kcProcedureItem:new("ELECTRIC HYDRAULIC PUMPS SWITCHES
 
 
 local cduPreflightProc = kcProcedure:new("CDU PREFLIGHT PROCEDURE")
+cduPreflightProc:setFlightPhase(2)
 cduPreflightProc:addItem(kcSimpleProcedureItem:new("OBTAIN CLERANCE FROM ATC"))
 cduPreflightProc:addItem(kcSimpleProcedureItem:new("==== INITIAL DATA (CPT)"))
 cduPreflightProc:addItem(kcIndirectProcedureItem:new("  IDENT page:","OPEN",kcFlowItem.actorCPT,1,"ident_page",
@@ -553,6 +546,7 @@ cduPreflightProc:addItem(kcSimpleProcedureItem:new("FILL OUT KPCREW DEPARTURE BR
 
 local preflightFOProc = kcProcedure:new("PREFLIGHT PROCEDURE","running preflight procedure")
 preflightFOProc:setResize(false)
+preflightFOProc:setFlightPhase(3)
 preflightFOProc:addItem(kcProcedureItem:new("ELECTRIC HYDRAULIC PUMP SWITCHES","OFF",kcFlowItem.actorFO,3,
 	function () return sysHydraulic.elecHydPumpGroup:getStatus() == 0 end,
 	function () sysHydraulic.elecHydPumpGroup:actuate(modeOff) end))
@@ -1024,6 +1018,7 @@ preflightFOProc:addItem(kcProcedureItem:new("ANTISKID INOP LIGHT","VERIFY EXTING
 
 local preflightCPTProc = kcProcedure:new("PREFLIGHT PROCEDURE (CPT)")
 preflightCPTProc:setResize(false)
+preflightCPTProc:setFlightPhase(3)
 preflightCPTProc:addItem(kcIndirectProcedureItem:new("LIGHTS TEST","ON",kcFlowItem.actorCPT,1,"internal_lights_test",
 	function () return sysGeneral.lightTest:getStatus() == 1 end,
 	function () command_once("laminar/B738/toggle_switch/bright_test_up") end))
@@ -1181,6 +1176,7 @@ preflightCPTProc:addItem(kcProcedureItem:new("DEPARTURE BRIEFING","PERFORM",kcFl
 -- =======================================================
 
 local preflightChkl = kcChecklist:new("PREFLIGHT CHECKLIST")
+preflightChkl:setFlightPhase(3)
 preflightChkl:addItem(kcIndirectChecklistItem:new("#exchange|OXYGEN|pre flight checklist. oxygen","TESTED #exchange|100 PERC|one hundred percent#",kcFlowItem.actorBOTH,2,"oxygentestedcpt",
 	function () return get("laminar/B738/push_button/oxy_test_cpt_pos") == 1 end))
 preflightChkl:addItem(kcChecklistItem:new("NAVIGATION & DISPLAY SWITCHES","NORMAL,AUTO",kcFlowItem.actorFO,1,
@@ -1240,6 +1236,7 @@ preflightChkl:addItem(kcChecklistItem:new("ENGINE START LEVERS","CUTOFF",kcFlowI
 -- =======================================================
 
 local beforeStartProc = kcProcedure:new("BEFORE START PROCEDURE","Before start items")
+beforeStartProc:setFlightPhase(4)
 beforeStartProc:addItem(kcProcedureItem:new("FLIGHT DECK DOOR","CLOSED AND LOCKED",kcFlowItem.actorFO,2,
 	function () return sysGeneral.cockpitDoor:getStatus() == 0 end,
 	function () sysGeneral.cockpitDoor:actuate(0) end))
@@ -1327,6 +1324,7 @@ beforeStartProc:addItem(kcProcedureItem:new("WING #exchange|&|and# WHEEL WELL LI
 -- =======================================================
 
 local beforeStartChkl = kcChecklist:new("BEFORE START CHECKLIST")
+beforeStartChkl:setFlightPhase(4)
 beforeStartChkl:addItem(kcChecklistItem:new("#exchange|FLIGHT DECK DOOR|before start checklist. FLIGHT DECK DOOR","CLOSED AND LOCKED",kcFlowItem.actorFO,2,
 	function () return sysGeneral.cockpitDoor:getStatus() == 0 end,
 	function () sysGeneral.cockpitDoor:actuate(0) end))
@@ -1388,6 +1386,7 @@ beforeStartChkl:addItem(kcChecklistItem:new("ANTI-COLLISION LIGHT SWITCH","ON",k
 -- XPDR TO ALT OFF?
 
 local pushstartProc = kcProcedure:new("PUSHBACK & ENGINE START","let's get ready for push and start")
+pushstartProc:setFlightPhase(4)
 pushstartProc:addItem(kcIndirectProcedureItem:new("PARKING BRAKE","SET",kcFlowItem.actorCPT,2,"pb_parkbrk_initial_set",
 	function () return sysGeneral.parkBrakeSwitch:getStatus() == 1 end,
 	function () sysGeneral.parkBrakeSwitch:actuate(1) end ))
@@ -1478,6 +1477,7 @@ pushstartProc:addItem(kcProcedureItem:new("PARKING BRAKE","SET",kcFlowItem.actor
 -- =======================================================
 
 local beforeTaxiProc = kcProcedure:new("BEFORE TAXI PROCEDURE","before taxi procedure")
+beforeTaxiProc:setFlightPhase(5)
 beforeTaxiProc:addItem(kcProcedureItem:new("HYDRAULIC PUMP SWITCHES","ALL ON",kcFlowItem.actorFO,1,
 	function () return sysHydraulic.hydPumpGroup:getStatus() == 4 end,
 	function () sysHydraulic.hydPumpGroup:actuate(modeOn) end))
@@ -1551,6 +1551,7 @@ beforeTaxiProc:addItem(kcProcedureItem:new("RECALL","CHECK",kcFlowItem.actorBOTH
 -- =======================================================
 
 local beforeTaxiChkl = kcChecklist:new("BEFORE TAXI CHECKLIST")
+beforeTaxiChkl:setFlightPhase(5)
 beforeTaxiChkl:addItem(kcChecklistItem:new("#exchange|GENERATORS|before taxi checklist. generators","ON",kcChecklistItem.actorFO,1,
 	function () return sysElectric.gen1off:getStatus() == 0 and sysElectric.gen2off:getStatus() == 0 end))
 beforeTaxiChkl:addItem(kcChecklistItem:new("PROBE HEAT","ON",kcChecklistItem.actorFO,2,
@@ -1593,6 +1594,7 @@ beforeTaxiChkl:addItem(kcChecklistItem:new("GROUND EQUIPMENT","CLEAR",kcChecklis
 -- =======================================================
 
 local beforeTakeoffChkl = kcChecklist:new("BEFORE TAKEOFF CHECKLIST")
+beforeTakeoffChkl:setFlightPhase(7)
 beforeTakeoffChkl:addItem(kcChecklistItem:new("#exchange|FLAPS|before takeoff checklist. Flaps","%s, GREEN LIGHT|kc_pref_split(kc_TakeoffFlaps)[activeBriefings:get(\"takeoff:flaps\")]",kcChecklistItem.actorCPT,1,
 	function () return sysControls.flapsSwitch:getStatus() == sysControls.flaps_pos[activeBriefings:get("takeoff:flaps")] and get("laminar/B738/annunciator/slats_extend") == 1 end,
 	function () set("laminar/B738/flt_ctrls/flap_lever",sysControls.flaps_pos[activeBriefings:get("takeoff:flaps")]) end)) 
@@ -1608,6 +1610,7 @@ beforeTakeoffChkl:addItem(kcChecklistItem:new("STABILIZER TRIM","%3.2f UNITS (%3
 -- ======================================================
 
 local runwayEntryProc = kcProcedure:new("RUNWAY ENTRY PROCEDURE","runway entry","aircraft ready for takeoff")
+runwayEntryProc:setFlightPhase(7)
 runwayEntryProc:addItem(kcProcedureItem:new("STROBES","ON",kcFlowItem.actorFO,2,
 	function () return sysLights.strobesSwitch:getStatus() == 1 end,
 	function () sysLights.strobesSwitch:actuate(1) end))
@@ -1650,6 +1653,7 @@ runwayEntryProc:addItem(kcProcedureItem:new("TAXI LIGHTS","OFF",kcFlowItem.actor
 
 --chrono
 local takeoffClimbProc = kcProcedure:new("TAKEOFF & INITIAL CLIMB","takeoff")
+takeoffClimbProc:setFlightPhase(8)
 takeoffClimbProc:addItem(kcProcedureItem:new("AUTOTHROTTLE","ARM",kcFlowItem.actorPF,2,
 	function () return sysMCP.athrSwitch:getStatus() == 1 end,
 	function () sysMCP.athrSwitch:actuate(modeOn) end))
@@ -1782,6 +1786,7 @@ takeoffClimbProc:addItem(kcProcedureItem:new("ENGINE START SWITCHES","OFF",kcFlo
 -- ======================================================
 
 local afterTakeoffChkl = kcChecklist:new("AFTER TAKEOFF CHECKLIST")
+afterTakeoffChkl:setFlightPhase(9)
 afterTakeoffChkl:addItem(kcChecklistItem:new("#exchange|ENGINE BLEEDS|after takeoff checklist. engine bleeds","ON",kcChecklistItem.actorPM,2,
 	function () return sysAir.engBleedGroup:getStatus() == 2 end,
 	function () sysAir.engBleedGroup:actuate(1) end))
@@ -1808,6 +1813,7 @@ afterTakeoffChkl:addItem(kcChecklistItem:new("FLAPS","UP, NO LIGHTS",kcChecklist
 
 
 local descentProc = kcProcedure:new("DESCENT PROCEDURE","performing descent items")
+descentProc:setFlightPhase(11)
 descentProc:addItem(kcProcedureItem:new("LEFT AND RIGHT CENTER FUEL PUMPS SWITCHES","OFF",kcFlowItem.actorFO,2,
 	function () return sysFuel.ctrFuelPumpGroup:getStatus() == 0 end,
 	function () sysFuel.ctrFuelPumpGroup:actuate(0) end,
@@ -1840,6 +1846,7 @@ descentProc:addItem(kcProcedureItem:new("AUTO BRAKE SELECT SWITCH","%s|kc_pref_s
 -- ======================================================
 
 local descentChkl = kcChecklist:new("DESCENT CHECKLIST")
+descentChkl:setFlightPhase(11)
 descentChkl:addItem(kcChecklistItem:new("#exchange|PRESSURIZATION|descent checklist. pressurization","LAND ALT %i FT|activeBriefings:get(\"arrival:aptElevation\")",kcChecklistItem.actorPM,1,
 	function () return sysAir.landingAltitude:getStatus() == kc_round_step(activeBriefings:get("arrival:aptElevation"),50) end,
 	function () sysAir.landingAltitude:setValue(kc_round_step(activeBriefings:get("arrival:aptElevation"),50)) end))
@@ -1856,6 +1863,7 @@ descentChkl:addItem(kcChecklistItem:new("APPROACH BRIEFING","COMPLETED",kcCheckl
  -- ======================================================
 
 local approachChkl = kcChecklist:new("APPROACH CHECKLIST","","approach checklist completed")
+approachChkl:setFlightPhase(11)
 approachChkl:addItem(kcChecklistItem:new("#exchange|ALTIMETERS|approach checklist. altimeters","QNH %s|activeBriefings:get(\"arrival:atisQNH\")",kcChecklistItem.actorBOTH,1,true,
 	-- function () return get("laminar/B738/EFIS/baro_sel_in_hg_pilot") == activeBriefings:get("arrival:atisQNH") and 
 		-- get("laminar/B738/EFIS/baro_sel_in_hg_copilot") == activeBriefings:get("arrival:atisQNH") end,
@@ -1864,6 +1872,7 @@ approachChkl:addItem(kcChecklistItem:new("#exchange|ALTIMETERS|approach checklis
 
  -- =============== LANDING PROCEDURE (PM) ===============
 local landingProc = kcProcedure:new("LANDING PROCEDURE")
+landingProc:setFlightPhase(13)
 landingProc:addItem(kcProcedureItem:new("LANDING LIGHTS","ON",kcFlowItem.actorCPT,2,
 	function () return sysLights.landLightGroup:getStatus() > 1 end,
 	function () sysLights.landLightGroup:actuate(1) end))
@@ -1884,6 +1893,7 @@ landingProc:addItem(kcProcedureItem:new("SPEED BRAKE","ARMED",kcChecklistItem.ac
  -- ======================================================
 
 local landingChkl = kcChecklist:new("LANDING CHECKLIST")
+landingChkl:setFlightPhase(13)
 landingChkl:addItem(kcChecklistItem:new("#exchange|ENGINE START SWITCHES|landing checklist. ENGINE START SWITCHES","CONT",kcChecklistItem.actorPF,2,
 	function () return sysEngines.engStarterGroup:getStatus() == 4 end,
 	function () sysEngines.engStarterGroup:setValue(2) end)) 
@@ -1914,6 +1924,7 @@ landingChkl:addItem(kcChecklistItem:new("FLAPS","%s, GREEN LIGHT|kc_pref_split(k
 -- FLAPS........................................UP   (FO)
 
 local afterLandingProc = kcProcedure:new("AFTER LANDING PROCEDURE","cleaning up")
+afterLandingProc:setFlightPhase(15)
 afterLandingProc:addItem(kcProcedureItem:new("SPEED BRAKE","DOWN",kcChecklistItem.actorPF,2,
 	function () return sysControls.spoilerLever:getStatus() == 0 end,
 	function () set("laminar/B738/flt_ctrls/speedbrake_lever",0) end))
@@ -1965,6 +1976,7 @@ afterLandingProc:addItem(kcIndirectProcedureItem:new("  #spell|APU# GEN OFF BUS 
 -- PARKING BRAKE...............................SET  (CPT)
 
 local shutdownProc = kcProcedure:new("SHUTDOWN PROCEDURE")
+shutdownProc:setFlightPhase(17)
 shutdownProc:addItem(kcProcedureItem:new("TAXI LIGHT SWITCH","OFF",kcFlowItem.actorFO,2,
 	function () return sysLights.taxiSwitch:getStatus() == 0 end,
 	function () sysLights.taxiSwitch:actuate(0) end))
@@ -2049,6 +2061,7 @@ shutdownProc:addItem(kcProcedureItem:new("TRANSPONDER","STBY",kcChecklistItem.ac
  -- ======================================================
 
 local shutdownChkl = kcChecklist:new("SHUTDOWN CHECKLIST")
+shutdownChkl:setFlightPhase(17)
 shutdownChkl:addItem(kcChecklistItem:new("FUEL PUMPS","ONE PUMP ON FOR APU, REST OFF",kcChecklistItem.actorFO,2,
 	function () return sysFuel.allFuelPumpsOff:getStatus() == modeOff end,nil,
 	function () return not activePrefSet:get("aircraft:powerup_apu") end))
@@ -2084,6 +2097,7 @@ shutdownChkl:addItem(kcChecklistItem:new("WEATHER RADAR","OFF",kcChecklistItem.a
 -- ======================================================
 
 local secureChkl = kcChecklist:new("SECURE CHECKLIST")
+secureChkl:setFlightPhase(1)
 secureChkl:addItem(kcChecklistItem:new("#exchange|IRS MODE SELECTORS|SECURE CHECKLIST. I R S MODE SELECTORS","OFF",kcChecklistItem.actorFO,1,
 	function () return sysGeneral.irsUnitGroup:getStatus() == modeOff end,
 	function () sysGeneral.irsUnitGroup:setValue(sysGeneral.irsUnitOFF) end))
@@ -2099,6 +2113,7 @@ secureChkl:addItem(kcChecklistItem:new("PACKS","OFF",kcChecklistItem.actorFO,2,
 
 -- ================= Cold & Dark State ==================
 local coldAndDarkProc = kcProcedure:new("SECURE THE AIRCRAFT")
+coldAndDarkProc:setFlightPhase(1)
 coldAndDarkProc:addItem(kcIndirectProcedureItem:new("OVERHEAD TOP","SET","SYS",1,"c_d_1",
 	function () return true end,
 	function () 
@@ -2223,6 +2238,7 @@ coldAndDarkProc:addItem(kcIndirectProcedureItem:new("THE REST","SET","SYS",1,"c_
 
 -- ================= Turn Around State ==================
 local turnAroundProc = kcProcedure:new("AIRCRAFT TURN AROUND")
+turnAroundProc:setFlightPhase(18)
 turnAroundProc:addItem(kcIndirectProcedureItem:new("OVERHEAD TOP","SET","SYS",1,"c_d_1",
 	function () return true end,
 	function () 
