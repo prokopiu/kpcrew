@@ -57,6 +57,7 @@ function ()
 	return string.format("%6.6i %s",kc_get_MTOW(),wunit) .. " / " .. string.format("%6.6i %s",kc_get_MLW(),wunit)
 end,
 kcPreference.typeInfo,"MTOW / MLW|"))
+information:add(kcPreference:new("melIssues",1,kcPreference.typeList,"Minimum Equipment List issues|" .. kc_MELIssues))
 
 information:add(kcPreference:new("currPosition",
 function () 
@@ -86,11 +87,19 @@ kcPreference.typeInfo,"Local METAR|"))
 -- =================== FLIGHT DATA ==================
 local flight = kcPreferenceGroup:new("flight","FLIGHT")
 -- flight:setInitialOpen(true)
-flight:add(kcPreference:new("callsign","",kcPreference.typeText,"Callsign|"))
+flight:add(kcPreference:new("callsign","",kcPreference.typeText,"ATC Callsign|"))
 flight:add(kcPreference:new("originIcao","",kcPreference.typeText,"Origin ICAO|"))
 flight:add(kcPreference:new("destinationIcao","",kcPreference.typeText,"Destination ICAO|"))
-flight:add(kcPreference:new("distance",0,kcPreference.typeInt,"Distance from OFP (nm)|10"))
+flight:add(kcPreference:new("alternateIcao","",kcPreference.typeText,"Alternate ICAO|"))
+flight:add(kcPreference:new("distance",0,kcPreference.typeInt,"Air Distance from OFP (nm)|10"))
 flight:add(kcPreference:new("cruiseLevel",0,kcPreference.typeInt,"Cruise Level (FL)|10"))
+flight:add(kcPreference:new("criticalMORA",0,kcPreference.typeInt,"Critical MORA (FT)|100"))
+flight:add(kcPreference:new("averageWind","",kcPreference.typeText,"Average Wind (999/99)|"))
+flight:add(kcPreference:new("averageWC",0,kcPreference.typeInt,"Average Wind Component|1"))
+flight:add(kcPreference:new("averageISA",0,kcPreference.typeInt,"Average ISA|1"))
+if kc_show_cost_index then 
+	flight:add(kcPreference:new("costIndex",0,kcPreference.typeInt,"Cost Index|1"))
+end
 flight:add(kcPreference:new("payload",0,kcPreference.typeInt,
 function ()
 	return "Total payload " .. (activePrefSet:get("general:weight_kgs") == true and "KGS" or "LBS") .. "|100"
@@ -99,7 +108,21 @@ flight:add(kcPreference:new("takeoffFuel",0,kcPreference.typeInt,
 function ()
 	return "Takeoff Fuel " .. (activePrefSet:get("general:weight_kgs") == true and "KGS" or "LBS") .. "|100"
 end))
-flight:add(kcPreference:new("melIssues",1,kcPreference.typeList,"Minimum Equipment List issues|" .. kc_MELIssues))
+flight:add(kcPreference:new("Finres",0,kcPreference.typeInt,
+function ()
+	return "Final Reserve + Alternate " .. (activePrefSet:get("general:weight_kgs") == true and "KGS" or "LBS") .. "|100"
+end))
+if kc_show_load_button then
+	flight:add(kcPreference:new("loadbutton",0,kcPreference.typeExecButton,"Payload & Fuel|Load |kc_set_payload()"))
+end
+
+information:add(kcPreference:new("FlightTimes",
+function () 
+	return "OFF: " .. activeBckVars:get("general:timesOFF") .. "Z OUT: " .. activeBckVars:get("general:timesOUT") 
+	.. "Z\nIN : " .. activeBckVars:get("general:timesIN") .. "Z  ON: " .. activeBckVars:get("general:timesON") .. "Z"
+end,
+kcPreference.typeInfo,"Flight Times|"))
+
 
 -- =================== DEPARTURE ==================
 local departure = kcPreferenceGroup:new("departure","DEPARTURE")
@@ -276,11 +299,10 @@ kcPreference.typeInfo,"Taxi|"))
 -- Briefing setup
 activeBriefings:addGroup(information)
 activeBriefings:addGroup(flight)
-activeBriefings:addGroup(departure)
 activeBriefings:addGroup(taxi)
+activeBriefings:addGroup(departure)
 activeBriefings:addGroup(takeoff)
 activeBriefings:addGroup(depBriefing)
--- activeBriefings:addGroup(tobrief)
 activeBriefings:addGroup(arrival)
 activeBriefings:addGroup(approach)
 activeBriefings:addGroup(appbrief)

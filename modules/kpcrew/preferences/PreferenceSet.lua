@@ -80,6 +80,13 @@ function kcPreferenceSet:get(inkey)
 	end
 end
 
+function kcPreferenceSet:set(inkey, value)
+	local pref = self:find(inkey)
+	if pref ~= nil then
+		return pref:setValue(value)
+	end
+end
+
 -- ===== UI related functionality =====
 -- Get the required window height calculated on all preferences and groups
 -- @treturn int height in pixel

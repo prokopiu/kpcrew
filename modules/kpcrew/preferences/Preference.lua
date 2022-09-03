@@ -14,6 +14,7 @@ local kcPreference = {
 	typeList = 5,
 	typeCOMFreq = 6,
 	typeNAVFreq = 7,
+	typeExecButton = 8,
 	colorGreen = 0xFF95C857,
 	colorWhite = 0xffffffff
 }
@@ -186,6 +187,16 @@ function kcPreference:render()
 			end
 		imgui.PopID()
 	end
+
+	if self.datatype == self.typeExecButton then
+		imgui.PushID(splitTitle[1])
+			if imgui.Button(splitTitle[2]) then
+				local fnct = loadstring(splitTitle[3])
+				fnct()
+			end
+		imgui.PopID()
+	end
+
 end
 
 -- return the line to be written into the .preferences file

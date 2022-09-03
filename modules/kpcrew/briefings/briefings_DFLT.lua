@@ -30,6 +30,12 @@ kc_MaxFuel 	= 0  -- Maximum Fuel Capacity
 kc_MTOW 	= 0  -- Maximum Takeoff Weight
 kc_MLW  	= 0  -- Maximum Landing Weight
 kc_FFPH 	= 0  -- Fuel Flow per hour
+kc_MFL1		=  4204  -- max fuel in tank left
+kc_MFL2		=  9331  -- max fuel in tank center
+kc_MFL3		=  4204  -- max fuel in tank right
+
+kc_show_load_button = true
+kc_show_cost_index = false
 
 function kc_get_DOW()
 	if activePrefSet:get("general:weight_kgs") then
@@ -97,6 +103,19 @@ end
 
 function kc_get_zfw()
 	return kc_get_gross_weight()-kc_get_total_fuel()
+end
+
+function kc_set_payload()
+	set("sim/flightmodel/weight/m_fixed",activeBriefings:get("flight:payload"))
+	local fgoal = activeBriefings:get("flight:takeoffFuel")
+	set("sim/flightmodel/weight/m_fuel2",math.min(kc_MFL2,fgoal/2))
+	set("sim/flightmodel/weight/m_fuel3",math.min(kc_MFL2,fgoal/2))
+	local fdiff = fgoal - (kc_MFL2 + kc_MFL3)
+	if fdiff > 0 then
+		set("sim/flightmodel/weight/m_fuel1",math.min(kc_MFL1,fdiff))
+	else
+		set("sim/flightmodel/weight/m_fuel1",0)
+	end
 end
 
 -- briefings to be more aircraft specific

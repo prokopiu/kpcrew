@@ -1389,7 +1389,7 @@ local pushstartProc = kcProcedure:new("PUSHBACK & ENGINE START","let's get ready
 pushstartProc:setFlightPhase(4)
 pushstartProc:addItem(kcIndirectProcedureItem:new("PARKING BRAKE","SET",kcFlowItem.actorCPT,2,"pb_parkbrk_initial_set",
 	function () return sysGeneral.parkBrakeSwitch:getStatus() == 1 end,
-	function () sysGeneral.parkBrakeSwitch:actuate(1) end ))
+	function () sysGeneral.parkBrakeSwitch:actuate(1) activeBckVars:set("general:timesOFF",kc_dispTimeHHMM(get("sim/time/zulu_time_sec"))) end ))
 pushstartProc:addItem(kcProcedureItem:new("PUSHBACK SERVICE","ENGAGE",kcFlowItem.actorCPT,2))
 pushstartProc:addItem(kcSimpleProcedureItem:new("Engine Start may be done during pushback or towing"))
 pushstartProc:addItem(kcProcedureItem:new("COMMUNICATION WITH GROUND","ESTABLISH",kcFlowItem.actorCPT,2))
@@ -1656,7 +1656,7 @@ local takeoffClimbProc = kcProcedure:new("TAKEOFF & INITIAL CLIMB","takeoff")
 takeoffClimbProc:setFlightPhase(8)
 takeoffClimbProc:addItem(kcProcedureItem:new("AUTOTHROTTLE","ARM",kcFlowItem.actorPF,2,
 	function () return sysMCP.athrSwitch:getStatus() == 1 end,
-	function () sysMCP.athrSwitch:actuate(modeOn) end))
+	function () sysMCP.athrSwitch:actuate(modeOn) activeBckVars:set("general:timesOUT",kc_dispTimeHHMM(get("sim/time/zulu_time_sec"))) end))
 takeoffClimbProc:addItem(kcProcedureItem:new("A/P MODES","%s|kc_pref_split(kc_TakeoffApModes)[activeBriefings:get(\"takeoff:apMode\")]",kcFlowItem.actorPF,2,
 	function () 
 		if activeBriefings:get("takeoff:apMode") == 1 then
@@ -1927,7 +1927,7 @@ local afterLandingProc = kcProcedure:new("AFTER LANDING PROCEDURE","cleaning up"
 afterLandingProc:setFlightPhase(15)
 afterLandingProc:addItem(kcProcedureItem:new("SPEED BRAKE","DOWN",kcChecklistItem.actorPF,2,
 	function () return sysControls.spoilerLever:getStatus() == 0 end,
-	function () set("laminar/B738/flt_ctrls/speedbrake_lever",0) end))
+	function () set("laminar/B738/flt_ctrls/speedbrake_lever",0) activeBckVars:set("general:timesIN",kc_dispTimeHHMM(get("sim/time/zulu_time_sec"))) end))
 afterLandingProc:addItem(kcProcedureItem:new("CHRONO & ET","STOP",kcChecklistItem.actorCPT,2))
 afterLandingProc:addItem(kcProcedureItem:new("WX RADAR","OFF",kcChecklistItem.actorCPT,2,
 	function () return sysEFIS.wxrPilot:getStatus() == 0 end,
@@ -1979,7 +1979,7 @@ local shutdownProc = kcProcedure:new("SHUTDOWN PROCEDURE")
 shutdownProc:setFlightPhase(17)
 shutdownProc:addItem(kcProcedureItem:new("TAXI LIGHT SWITCH","OFF",kcFlowItem.actorFO,2,
 	function () return sysLights.taxiSwitch:getStatus() == 0 end,
-	function () sysLights.taxiSwitch:actuate(0) end))
+	function () sysLights.taxiSwitch:actuate(0) activeBckVars:set("general:timesON",kc_dispTimeHHMM(get("sim/time/zulu_time_sec"))) end))
 shutdownProc:addItem(kcProcedureItem:new("PARKING BRAKE","SET",kcFlowItem.actorCPT,2,
 	function () return sysGeneral.parkBrakeSwitch:getStatus() == modeOn end,
 	function () sysGeneral.parkBrakeSwitch:actuate(modeOn) end))
@@ -2118,6 +2118,10 @@ coldAndDarkProc:addItem(kcIndirectProcedureItem:new("OVERHEAD TOP","SET","SYS",1
 	function () return true end,
 	function () 
 		set("sim/private/controls/shadow/cockpit_near_adjust",0.09)
+		activeBckVars:set("general:timesOFF","==:==")
+		activeBckVars:set("general:timesOUT","==:==")
+		activeBckVars:set("general:timesIN","==:==")
+		activeBckVars:set("general:timesON","==:==")
 		sysGeneral.fdrSwitch:actuate(modeOff) 
 		sysGeneral.fdrCover:actuate(modeOn)
 		sysGeneral.vcrSwitch:actuate(modeOff)
@@ -2403,6 +2407,10 @@ turnAroundProc:addItem(kcIndirectProcedureItem:new("THE REST","SET","SYS",1,"c_d
 			sysLights.domeLightSwitch:actuate(modeOn)
 			sysLights.instrLightGroup:actuate(modeOn)
 		end
+		activeBckVars:set("general:timesOFF","==:==")
+		activeBckVars:set("general:timesOUT","==:==")
+		activeBckVars:set("general:timesIN","==:==")
+		activeBckVars:set("general:timesON","==:==")
 		command_once("laminar/B738/push_button/flaps_0")
 		set("laminar/B738/flt_ctrls/speedbrake_lever",0)
 		sysGeneral.parkBrakeSwitch:actuate(modeOn)

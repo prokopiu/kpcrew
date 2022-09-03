@@ -23,10 +23,16 @@ kc_MELIssues = "no M E L issues|M E L issues"
 
 kc_DOW 		= 41510  -- Dry Operating Weight (aka OEW)
 kc_MZFW  	= 62732  -- Maximum Zero Fuel Weight
-kc_MaxFuel 	= 46077  -- Maximum Fuel Capacity
+kc_MaxFuel 	= 21611  -- Maximum Fuel Capacity
 kc_MTOW 	= 79016  -- Maximum Takeoff Weight
 kc_MLW  	= 66361  -- Maximum Landing Weight
 kc_FFPH 	=  2187  -- Fuel Flow per hour
+kc_MFL1		=  4112  -- max fuel in tank left
+kc_MFL2		= 13385  -- max fuel in tank center
+kc_MFL3		=  4112  -- max fuel in tank right
+
+kc_show_load_button = true
+kc_show_cost_index = true
 
 -- full list of approach types can be overwritten by aircraft
 APP_apptype_list = "ILS CAT 1|ILS CAT 2 OR 3|VOR|NDB|RNAV|VISUAL|TOUCH AND GO|CIRCLING"
@@ -105,6 +111,19 @@ function kc_get_zfw()
 	return kc_get_gross_weight()-kc_get_total_fuel()
 end
 
+function kc_set_payload()
+	set("sim/flightmodel/weight/m_fixed",activeBriefings:get("flight:payload"))
+	local fgoal = activeBriefings:get("flight:takeoffFuel")
+	set("sim/flightmodel/weight/m_fuel1",math.min(kc_MFL1,fgoal/2))
+	set("sim/flightmodel/weight/m_fuel3",math.min(kc_MFL3,fgoal/2))
+	local fdiff = fgoal - (kc_MFL1 + kc_MFL3)
+	if fdiff > 0 then
+		set("sim/flightmodel/weight/m_fuel2",math.min(kc_MFL2,fdiff))
+	else
+		set("sim/flightmodel/weight/m_fuel2",0)
+	end
+end
+
 -- briefings to be more aircraft specific
 function kc_dep_brief_flight() 
 	local briefing = "OK, I will be the pilot flying\n"
@@ -113,7 +132,7 @@ function kc_dep_brief_flight()
     briefing = briefing .. "We have ATIS information " .. activeBriefings:get("departure:atisInfo") .. " The weather is " .. kc_buildAtisString() .. "\n\n"
 
 -- [A] ircraft
-    briefing = briefing .. "Today we are flying in a " .. kc_acf_name .. " with <engine and aircraft details from CDU>, we have " .. kc_split(kc_MELIssues,"|")[activeBriefings:get("flight:melIssues")] .. " today" .. "\n\n"
+    briefing = briefing .. "Today we are flying in a " .. kc_acf_name .. " with <engine and aircraft details from CDU>, we have " .. kc_split(kc_MELIssues,"|")[activeBriefings:get("information:melIssues")] .. " today" .. "\n\n"
 
 -- [N] otams - highlite 
     briefing = briefing .. "NOTAMs highlites if there are any <may also include VATSIM/IVAO details etc>" .. "\n\n"
