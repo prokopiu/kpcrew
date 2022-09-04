@@ -156,6 +156,13 @@ sysGeneral.autobreak = MultiStateCmdSwitch:new("","laminar/B738/autobrake/autobr
 -- Lights Test
 sysGeneral.lightTest = TwoStateCmdSwitch:new("","laminar/B738/toggle_switch/bright_test",0,"laminar/B738/toggle_switch/bright_test_ip","laminar/B738/toggle_switch/bright_test_dn")
 
+-- capt chronometer
+sysGeneral.clockDispModeCPT = MultiStateCmdSwitch:new("","laminar/B738/clock/clock_display_mode_capt",0,"laminar/B738/push_button/chrono_disp_mode_capt","laminar/B738/push_button/chrono_disp_mode_capt")
+sysGeneral.clockDispModeFO = MultiStateCmdSwitch:new("","laminar/B738/clock/clock_display_mode_fo",0,"laminar/B738/push_button/chrono_disp_mode_fo","laminar/B738/push_button/chrono_disp_mode_fo")
+sysGeneral.clockDispModeGrp = SwitchGroup:new("dispmodeclock")
+sysGeneral.clockDispModeGrp:addSwitch(sysGeneral.clockDispModeCPT)
+sysGeneral.clockDispModeGrp:addSwitch(sysGeneral.clockDispModeFO)
+
 ------------ Annunciators
 -- park brake
 sysGeneral.parkbrakeAnc = CustomAnnunciator:new("parkbrake",
