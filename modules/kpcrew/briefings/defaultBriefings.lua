@@ -35,6 +35,12 @@ require("kpcrew.briefings.briefings_" .. kc_acf_icao)
 
 local information = kcPreferenceGroup:new("information","INFORMATION")
 information:setInitialOpen(true)
+information:add(kcPreference:new("flightState",
+function () 
+	return kcSopFlightPhase[activeBckVars:get("general:flight_state")]
+end,
+kcPreference.typeInfo,"Flight State|0xFF0000FF"))
+
 information:add(kcPreference:new("aircraftType",function () return kc_acf_name .. " - " .. kc_acf_icao end,kcPreference.typeInfo,"Aircraft Type|"))
 
 information:add(kcPreference:new("totalFuel",
@@ -83,6 +89,13 @@ function ()
 	return kc_buildAtisString()
 end,
 kcPreference.typeInfo,"Local METAR|"))
+information:add(kcPreference:new("FlightTimes",
+function () 
+	return "OFF: " .. activeBckVars:get("general:timesOFF") .. "Z OUT: " .. activeBckVars:get("general:timesOUT") 
+	.. "Z\nIN : " .. activeBckVars:get("general:timesIN") .. "Z  ON: " .. activeBckVars:get("general:timesON") .. "Z"
+end,
+kcPreference.typeInfo,"Flight Times|0xFF0000FF"))
+
 
 -- =================== FLIGHT DATA ==================
 local flight = kcPreferenceGroup:new("flight","FLIGHT")
@@ -115,14 +128,6 @@ end))
 if kc_show_load_button then
 	flight:add(kcPreference:new("loadbutton",0,kcPreference.typeExecButton,"Payload & Fuel|Load |kc_set_payload()"))
 end
-
-information:add(kcPreference:new("FlightTimes",
-function () 
-	return "OFF: " .. activeBckVars:get("general:timesOFF") .. "Z OUT: " .. activeBckVars:get("general:timesOUT") 
-	.. "Z\nIN : " .. activeBckVars:get("general:timesIN") .. "Z  ON: " .. activeBckVars:get("general:timesON") .. "Z"
-end,
-kcPreference.typeInfo,"Flight Times|"))
-
 
 -- =================== DEPARTURE ==================
 local departure = kcPreferenceGroup:new("departure","DEPARTURE")
@@ -223,9 +228,6 @@ local arrival = kcPreferenceGroup:new("arrival","ARRIVAL")
 -- arrival:setInitialOpen(true)
 arrival:add(kcPreference:new("atisFrequency2",122.800,kcPreference.typeCOMFreq,"ATIS Frequency|"))
 arrival:add(kcPreference:new("atisInfo","",kcPreference.typeText,"ATIS Information|"))
-arrival:add(kcPreference:new("appType",1,kcPreference.typeList,"Expect Approach|" .. kc_apptypes))
-arrival:add(kcPreference:new("rwy","",kcPreference.typeText,"Arrival Runway|"))
-arrival:add(kcPreference:new("rwyCond",1,kcPreference.typeList,"Runway Condition|" .. kc_APP_rwystate_list))
 arrival:add(kcPreference:new("translvl",activePrefSet:get("general:def_trans_lvl"),kcPreference.typeInt,"Transition Level|100"))
 arrival:add(kcPreference:new("atisWind","",kcPreference.typeText,"ATIS Wind HDG/SPD|"))
 arrival:add(kcPreference:new("atisVisibility","",kcPreference.typeText,"ATIS Visibility km|"))
@@ -237,13 +239,9 @@ arrival:add(kcPreference:new("arrType",1,kcPreference.typeList,"Arrival Type|" .
 arrival:add(kcPreference:new("appFrequency",122.800,kcPreference.typeCOMFreq,"Approach Frequency|"))
 arrival:add(kcPreference:new("route","",kcPreference.typeText,"Arrival Route|"))
 arrival:add(kcPreference:new("transition","",kcPreference.typeText,"Arrival Transition|"))
-arrival:add(kcPreference:new("arrNADP",1,kcPreference.typeList,"NADP|" .. kc_APP_na_list))
 arrival:add(kcPreference:new("msa",0,kcPreference.typeInt,"Arrival MSA (ft)|100"))
-arrival:add(kcPreference:new("fafAltitude",0,kcPreference.typeInt,"FAF Altitude (ft)|100"))
-arrival:add(kcPreference:new("decision",0,kcPreference.typeInt,"Decision Height/Altitude|10"))
 arrival:add(kcPreference:new("aptElevation",0,kcPreference.typeInt,"Airport Elevation (ft)|100"))
-arrival:add(kcPreference:new("gaHeading",0,kcPreference.typeInt,"Go-Around Heading|10"))
-arrival:add(kcPreference:new("gaAltitude",0,kcPreference.typeInt,"Go-Around altitutde (ft)|100"))
+arrival:add(kcPreference:new("arrNADP",1,kcPreference.typeList,"NADP|" .. kc_APP_na_list))
 
 -- =================== APPROACH ==================
 local approach = kcPreferenceGroup:new("approach","APPROACH")
@@ -254,6 +252,11 @@ approach:add(kcPreference:new("nav1Frequency",109.000,kcPreference.typeNAVFreq,"
 approach:add(kcPreference:new("nav1Course",0,kcPreference.typeInt,"NAV1 CRS|10"))
 approach:add(kcPreference:new("nav2Frequency",109.000,kcPreference.typeNAVFreq,"NAV2 Frequency|2"))
 approach:add(kcPreference:new("nav2Course",0,kcPreference.typeInt,"NAV2 CRS|10"))
+approach:add(kcPreference:new("appType",1,kcPreference.typeList,"Expect Approach|" .. kc_apptypes))
+approach:add(kcPreference:new("rwy","",kcPreference.typeText,"Arrival Runway|"))
+approach:add(kcPreference:new("rwyCond",1,kcPreference.typeList,"Runway Condition|" .. kc_APP_rwystate_list))
+approach:add(kcPreference:new("fafAltitude",0,kcPreference.typeInt,"FAF Altitude (ft)|100"))
+approach:add(kcPreference:new("decision",0,kcPreference.typeInt,"Decision Height/Altitude|10"))
 approach:add(kcPreference:new("flaps",1,kcPreference.typeList,"Landing Flaps|" .. kc_LandingFlaps))
 approach:add(kcPreference:new("vapp",0,kcPreference.typeInt,"Vapp|1"))
 approach:add(kcPreference:new("vref",0,kcPreference.typeInt,"Vref|1"))

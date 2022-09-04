@@ -665,3 +665,11 @@ end
 function kc_round_step(num,step)
 	return math.floor(num/step)*step
 end
+
+function kc_format_thousand(value)
+    local s = string.format("%d", math.floor(value))
+    local pos = string.len(s) % 3
+    if pos == 0 then pos = 3 end
+    return string.sub(s, 1, pos)
+    .. string.gsub(string.sub(s, pos+1), "(...)", ".%1")
+end

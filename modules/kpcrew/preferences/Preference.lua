@@ -126,7 +126,10 @@ function kcPreference:render()
 	end
 	
 	if self.datatype == self.typeInfo then
-		imgui.PushStyleColor(imgui.constant.Col.Text, 0xFF95C857)
+		if splitTitle[2] == nil or splitTitle[2] == "" then
+			splitTitle[2] = 0xFF95C857
+		end
+		imgui.PushStyleColor(imgui.constant.Col.Text, splitTitle[2])
 		imgui.PushTextWrapPos(330)
 		imgui.TextUnformatted(self:getValue())
 		imgui.PopTextWrapPos()
@@ -160,10 +163,10 @@ function kcPreference:render()
 
 	if self.datatype == self.typeCOMFreq then
 		imgui.PushID(splitTitle[1])
-			local changed, textin = imgui.InputFloat("", self:getValue(), 0.005, 1.00, "%6.3f")
+			local changed, textin = imgui.InputInt("", self:getValue(), 5, 100)
 			imgui.SameLine()
 			if imgui.Button("<->") then
-				set("sim/cockpit2/radios/actuators/com1_frequency_hz_833",(self:getValue()*1000)) 
+				set("sim/cockpit2/radios/actuators/com1_frequency_hz_833",self:getValue()) 
 			end
 			if changed then
 				self:setValue(textin)
@@ -173,13 +176,13 @@ function kcPreference:render()
 
 	if self.datatype == self.typeNAVFreq then
 		imgui.PushID(splitTitle[1])
-			local changed, textin = imgui.InputFloat("", self:getValue(), 0.005, 1.00, "%5.2f")
+			local changed, textin = imgui.InputInt("", self:getValue(), 5, 100)
 			imgui.SameLine()
 			if imgui.Button("<->") then
 				if splitTitle[2] ~= "2" then 
-					set("sim/cockpit2/radios/actuators/nav1_frequency_hz",(self:getValue()*100)) 
+					set("sim/cockpit2/radios/actuators/nav1_frequency_hz",self:getValue()) 
 				else
-					set("sim/cockpit2/radios/actuators/nav2_frequency_hz",(self:getValue()*100)) 
+					set("sim/cockpit2/radios/actuators/nav2_frequency_hz",self:getValue()) 
 				end
 			end
 			if changed then

@@ -64,6 +64,7 @@ function kcFlowExecutor:execute()
 				kc_toggle_flow_window()
 			end
 		end
+		activeBckVars:set("general:flight_state",self.flow:getFlightPhase())
 
 		if self.flow:getActiveItemIndex() == 0 then
 			self.flow:speakName()
