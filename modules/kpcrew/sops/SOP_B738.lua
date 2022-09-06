@@ -827,7 +827,7 @@ preflightFOProc:addItem(kcProcedureItem:new("IGNITION SELECT SWITCH","IGN L OR R
 	function () return sysEngines.ignSelectSwitch:getStatus() ~= 0 end))
 preflightFOProc:addItem(kcProcedureItem:new("ENGINE START SWITCHES","OFF",kcFlowItem.actorFO,2,
 	function () return sysEngines.engStarterGroup:getStatus() == 2 end,
-	function () sysEngines.engStarterGroup:setValue(1) end)) 
+	function () sysEngines.engStarterGroup:adjustValue(1,0,3) end)) 
 
 -- ========== PREFLIGHT PROCEDURE PART 3 (F/O) ===========
 -- ==== Mode control panel right
@@ -1801,7 +1801,7 @@ takeoffClimbProc:addItem(kcIndirectProcedureItem:new("ALTIMETERS","STD",kcFlowIt
 	function () return activeBriefings:get("departure:transalt") <= 10000 end))
 takeoffClimbProc:addItem(kcProcedureItem:new("ENGINE START SWITCHES","OFF",kcFlowItem.actorPM,1,
 	function () return sysEngines.engStarterGroup:getStatus() == 2 end,
-	function () sysEngines.engStarterGroup:setValue(1) end))
+	function () sysEngines.engStarterGroup:adjustValue(1,0,3) end))
 
 -- center pumps on if >xxx
 	
@@ -1891,7 +1891,7 @@ descentChkl:addItem(kcChecklistItem:new("APPROACH BRIEFING","COMPLETED",kcCheckl
  -- ======================================================
 
 local approachChkl = kcChecklist:new("APPROACH CHECKLIST","","approach checklist completed")
-approachChkl:setFlightPhase(11)
+approachChkl:setFlightPhase(13)
 approachChkl:addItem(kcChecklistItem:new("#exchange|ALTIMETERS|approach checklist. altimeters","QNH %s |activeBriefings:get(\"arrival:atisQNH\")",kcChecklistItem.actorBOTH,1,true,
 	function () 
 		if activePrefSet:get("general:baro_mode_hpa") then
@@ -1913,7 +1913,17 @@ approachChkl:addItem(kcChecklistItem:new("#exchange|ALTIMETERS|approach checklis
 	end))
 approachChkl:addItem(kcChecklistItem:new("NAVIGATION AIDS","SET AND CHECKED",kcChecklistItem.actorBOTH,1,true,nil,nil))
 
- -- =============== LANDING PROCEDURE (PM) ===============
+-- =============== LANDING PROCEDURE (PM) ===============
+-- LANDING LIGHTS,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,ON  (CPT)
+-- RWY TURNOFF LIGHTS...........................ON  (CPT)
+-- ENGINE START SWITCHES......................CONT   (PM)
+-- SPEED BRAKE...............................ARMED   (PF)
+-- COURSE NAV 1................................SET  (CPT)
+-- COURSE NAV2.................................SET   (FO)
+-- GO AROUND ALTITUDE......................... SET   (PM)
+-- GO AROUND HEADING...........................SET   (PM)
+-- ======================================================
+
 local landingProc = kcProcedure:new("LANDING PROCEDURE")
 landingProc:setFlightPhase(13)
 landingProc:addItem(kcProcedureItem:new("LANDING LIGHTS","ON",kcFlowItem.actorCPT,2,
@@ -1922,9 +1932,9 @@ landingProc:addItem(kcProcedureItem:new("LANDING LIGHTS","ON",kcFlowItem.actorCP
 landingProc:addItem(kcProcedureItem:new("RWY TURNOFF LIGHTS","ON",kcFlowItem.actorCPT,2,
 	function () return sysLights.rwyLightGroup:getStatus() > 0 end,
 	function () sysLights.rwyLightGroup:actuate(1) end))
-landingProc:addItem(kcProcedureItem:new("ENGINE START SWITCHES","CONT",kcChecklistItem.actorPF,2,
+landingProc:addItem(kcProcedureItem:new("ENGINE START SWITCHES","CONT",kcChecklistItem.actorPM,2,
 	function () return sysEngines.engStarterGroup:getStatus() == 4 end,
-	function () sysEngines.engStarterGroup:setValue(2) end)) 
+	function () sysEngines.engStarterGroup:adjustValue(2,0,3) end)) 
 landingProc:addItem(kcProcedureItem:new("SPEED BRAKE","ARMED",kcChecklistItem.actorPF,1,
 	function () return get("laminar/B738/annunciator/speedbrake_armed") == 1 end,
 	function () kc_speakNoText(0,"Speed brake armed?") end))
@@ -1934,12 +1944,6 @@ landingProc:addItem(kcProcedureItem:new("COURSE NAV 1","SET %s|activeBriefings:g
 landingProc:addItem(kcProcedureItem:new("COURSE NAV2","SET %s|activeBriefings:get(\"approach:nav2Course\")",kcFlowItem.actorFO,2,
 	function() return math.ceil(sysMCP.crs2Selector:getStatus()) == activeBriefings:get("approach:nav2Course") end,
 	function() sysMCP.crs2Selector:setValue(activeBriefings:get("approach:nav2Course")) end))
-landingProc:addItem(kcProcedureItem:new("GO AROUND ALTITUDE","SET %s|activeBriefings:get(\"approach:gaaltitude\")",kcFlowItem.actorFO,2,
-	function() return sysMCP.altSelector:getStatus()  == activeBriefings:get("approach:gaaltitude") end,
-	function() sysMCP.altSelector:setValue(activeBriefings:get("approach:gaaltitude")) end))
-landingProc:addItem(kcProcedureItem:new("GO AROUND HEADING","SET %s|activeBriefings:get(\"approach:gaheading\")",kcFlowItem.actorFO,2,
-	function() return sysMCP.hdgSelector:getStatus() == activeBriefings:get("approach:gaheading") end,
-	function() sysMCP.hdgSelector:setValue(activeBriefings:get("approach:gaheading")) end))
 
  -- =============== LANDING CHECKLIST (PM) ===============
  -- ENGINE START SWITCHES......................CONT   (PF)
@@ -1952,7 +1956,7 @@ local landingChkl = kcChecklist:new("LANDING CHECKLIST","","landing checklist co
 landingChkl:setFlightPhase(13)
 landingChkl:addItem(kcChecklistItem:new("#exchange|ENGINE START SWITCHES|landing checklist. ENGINE START SWITCHES","CONT",kcChecklistItem.actorPF,2,
 	function () return sysEngines.engStarterGroup:getStatus() == 4 end,
-	function () sysEngines.engStarterGroup:setValue(2) end)) 
+	function () sysEngines.engStarterGroup:adjustValue(2,0,3) end)) 
 landingChkl:addItem(kcChecklistItem:new("SPEED BRAKE","ARMED",kcChecklistItem.actorPF,1,
 	function () return get("laminar/B738/annunciator/speedbrake_armed") == 1 end))
 landingChkl:addItem(kcChecklistItem:new("LANDING GEAR","DOWN",kcChecklistItem.actorPF,2,
@@ -1962,6 +1966,12 @@ landingChkl:addItem(kcChecklistItem:new("FLAPS","%s, GREEN LIGHT|kc_pref_split(k
 	function () return sysControls.flapsSwitch:getStatus() == sysControls.flaps_pos[activeBriefings:get("approach:flaps")+5] 
 	and get("laminar/B738/annunciator/slats_extend") == 1 end,
 	function () set("laminar/B738/flt_ctrls/flap_lever",sysControls.flaps_pos[activeBriefings:get("approach:flaps")+5]) end))
+landingChkl:addItem(kcChecklistItem:new("GO AROUND ALTITUDE","SET %s|activeBriefings:get(\"approach:gaaltitude\")",kcFlowItem.actorPM,2,
+	function() return sysMCP.altSelector:getStatus()  == activeBriefings:get("approach:gaaltitude") end,
+	function() sysMCP.altSelector:setValue(activeBriefings:get("approach:gaaltitude")) end))
+landingChkl:addItem(kcChecklistItem:new("GO AROUND HEADING","SET %s|activeBriefings:get(\"approach:gaheading\")",kcFlowItem.actorPM,2,
+	function() return sysMCP.hdgSelector:getStatus() == activeBriefings:get("approach:gaheading") end,
+	function() sysMCP.hdgSelector:setValue(activeBriefings:get("approach:gaheading")) end))
 
 -- ============== AFTER LANDING PROCEDURE ===============
 -- SPEED BRAKE................................DOWN   (PF)
@@ -2311,7 +2321,7 @@ coldAndDarkProc:addItem(kcIndirectProcedureItem:new("THE REST","SET","SYS",1,"c_
 		sysEngines.startLever1:actuate(0) 
 		sysEngines.startLever2:actuate(0)
 		set("laminar/B738/fms/chock_status",1)
-		sysEngines.engStarterGroup:setValue(1)
+		sysEngines.engStarterGroup:adjustValue(1,0,3)
 		sysRadios.xpdrSwitch:adjustValue(1,1,5)
 		sysGeneral.autobreak:actuate(1)
 		sysMCP.fdirGroup:actuate(0)
@@ -2516,7 +2526,7 @@ turnAroundProc:addItem(kcIndirectProcedureItem:new("THE REST","SET","SYS",1,"c_d
 		sysEngines.startLever1:actuate(0) 
 		sysEngines.startLever2:actuate(0)
 		set("laminar/B738/fms/chock_status",1)
-		sysEngines.engStarterGroup:setValue(1)
+		sysEngines.engStarterGroup:adjustValue(1,0,3)
 		sysRadios.xpdrSwitch:adjustValue(1,1,5)
 		sysGeneral.autobreak:actuate(1)
 		sysMCP.fdirGroup:actuate(0)
