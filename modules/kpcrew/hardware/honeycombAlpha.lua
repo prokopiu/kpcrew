@@ -1,16 +1,16 @@
 -- Hardware specific modules - Honeycomb Alpha Yoke
 
 -- ALT
-create_command("kp/xsp/alpha/ALT_on",	"Alpha ALT On", "", "", "")
-create_command("kp/xsp/alpha/ALT_off",	"Alpha ALT Off", "", "", "")
+create_command("kp/xsp/alpha/ALT_on",	"Alpha ALT On", "sysElectric.alt1Switch:actuate(modeOn)", "", "")
+create_command("kp/xsp/alpha/ALT_off",	"Alpha ALT Off", "sysElectric.alt1Switch:actuate(modeOff)", "", "")
 
 -- BAT
-create_command("kp/xsp/alpha/BAT_on",	"Alpha BAT On", "", "", "")
-create_command("kp/xsp/alpha/BAT_off",	"Alpha BAT Off", "", "", "")
+create_command("kp/xsp/alpha/BAT_on",	"Alpha BAT On", "sysElectric.bat1Switch:actuate(modeOn)", "", "")
+create_command("kp/xsp/alpha/BAT_off",	"Alpha BAT Off", "sysElectric.bat1Switch:actuate(modeOff)", "", "")
 
 -- AVIONICS BUS 1
-create_command("kp/xsp/alpha/AVIONICS_BUS1_on",	"Alpha AVIONICS BUS1 On", "", "", "")
-create_command("kp/xsp/alpha/AVIONICS_BUS1_off","Alpha AVIONICS BUS1 Off", "", "", "")
+create_command("kp/xsp/alpha/AVIONICS_BUS1_on",	"Alpha AVIONICS BUS1 On", "sysElectric.avionicsBus:actuate(modeOn)", "", "")
+create_command("kp/xsp/alpha/AVIONICS_BUS1_off","Alpha AVIONICS BUS1 Off", "sysElectric.avionicsBus:actuate(modeOff)", "", "")
 
 -- AVIONICS 2
 create_command("kp/xsp/alpha/AVIONICS_BUS2_on",	"Alpha AVIONICS BUS2 On", "", "", "")
@@ -37,15 +37,15 @@ create_command("kp/xsp/alpha/STROBE_on",	"Alpha STROBE On", "sysLights.strobesSw
 create_command("kp/xsp/alpha/STROBE_off",	"Alpha STROBE Off", "sysLights.strobesSwitch:actuate(modeOff)", "", "")
 
 -- MAGNETO OFF
-create_command("kp/xsp/alpha/MAGNETO_OFF",	"Alpha MAGNETO OFF", "", "", "")
+create_command("kp/xsp/alpha/MAGNETO_OFF",	"Alpha MAGNETO OFF", "sysEngines.magnetos:adjustValue(0,0,3)", "", "")
 -- R
-create_command("kp/xsp/alpha/MAGNETO_R",	"Alpha MAGNETO R", "", "", "")
+create_command("kp/xsp/alpha/MAGNETO_R",	"Alpha MAGNETO R", "sysEngines.magnetos:adjustValue(1,0,3)", "", "")
 -- L
-create_command("kp/xsp/alpha/MAGNETO_L",	"Alpha MAGNETO L", "", "", "")
+create_command("kp/xsp/alpha/MAGNETO_L",	"Alpha MAGNETO L", "sysEngines.magnetos:adjustValue(2,0,3)", "", "")
 -- BOTH
-create_command("kp/xsp/alpha/MAGNETO_BOTH",	"Alpha MAGNETO BOTH", "", "", "")
+create_command("kp/xsp/alpha/MAGNETO_BOTH",	"Alpha MAGNETO BOTH", "sysEngines.magnetos:adjustValue(3,0,3)", "", "")
 -- START
-create_command("kp/xsp/alpha/MAGNETO_START",	"Alpha MAGNETO START", "", "", "")
+create_command("kp/xsp/alpha/MAGNETO_START","Alpha MAGNETO START", "sysEngines.magStart:actuate(1)", "", "")
 
 -- WHITE LEFT
 create_command("kp/xsp/alpha/white_left",	"Alpha WHITE Left", "", "", "")

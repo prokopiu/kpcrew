@@ -465,7 +465,7 @@ function kc_toggle_pref_window()
 	end
 end
 
-if kc_file_exists(SCRIPT_DIRECTORY .. "..\\Modules\\kpcrew\\preferences\\" .. kc_acf_icao .. ".preferences") then
+if kc_file_exists(SCRIPT_DIRECTORY .. "..\\Modules\\kpcrew_prefs\\" .. kc_acf_icao .. ".preferences") then
 	getActivePrefs():load()
 end
 
@@ -539,7 +539,7 @@ function bckWindowOpen()
 	end
 end
 
-if kc_file_exists(SCRIPT_DIRECTORY .. "..\\Modules\\kpcrew\\preferences\\briefings.preferences") then
+if kc_file_exists(SCRIPT_DIRECTORY .. "..\\Modules\\kpcrew_prefs\\briefings.preferences") then
 	getActiveBriefings():load()
 end
 

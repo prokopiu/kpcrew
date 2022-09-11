@@ -45,6 +45,17 @@ sysElectric.acPowerSwitch = MultiStateCmdSwitch:new("acpower","laminar/B738/knob
 sysElectric.batterySwitch = TwoStateCmdSwitch:new("","laminar/B738/electric/battery_pos",0,"laminar/B738/switch/battery_dn","laminar/B738/push_button/batt_full_off")
 sysElectric.batteryCover = TwoStateToggleSwitch:new("","laminar/B738/button_switch/cover_position",2,"laminar/B738/button_switch_cover02")
 
+-- GA Battery Masters
+sysElectric.bat1Switch = InopSwitch:new("bat1")
+sysElectric.bat2Switch = InopSwitch:new("bat2")
+
+-- GA Alternator Masters
+sysElectric.alt1Switch = InopSwitch:new("alt1")
+sysElectric.alt2Switch = InopSwitch:new("alt2")
+
+-- GA Avionics Bus
+sysElectric.avionicsBus = InopSwitch:new("avionics")
+
 -- Cabin Util Power Boeing
 sysElectric.cabUtilPwr = TwoStateToggleSwitch:new("cabutil","laminar/B738/toggle_switch/cab_util_pos",0,"laminar/B738/autopilot/cab_util_toggle")
 sysElectric.ifePwr = TwoStateToggleSwitch:new("ifepwr","laminar/B738/toggle_switch/ife_pass_seat_pos",0,"laminar/B738/autopilot/ife_pass_seat_toggle")

@@ -61,6 +61,10 @@ sysEngines.eecSwitchGroup = SwitchGroup:new("eecswitches")
 sysEngines.eecSwitchGroup:addSwitch(sysEngines.eecSwitch1)
 sysEngines.eecSwitchGroup:addSwitch(sysEngines.eecSwitch2)
 
+-- GA Magnetos
+sysEngines.magnetos = InopSwitch:new("magnetos")
+sysEngines.magStart = InopSwitch:new("magstart")
+
 ----------- Annunciators
 
 -- ENGINE FIRE annunciator

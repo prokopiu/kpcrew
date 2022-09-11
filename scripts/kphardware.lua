@@ -126,6 +126,14 @@ create_command("kp/xsp/systems/baro_mode_tgl","Baro inch/mb toggle","sysGeneral.
 create_command("kp/xsp/systems/all_baro_down","All baro down","sysGeneral.baroGroup:actuate(cmdDown)","","")
 create_command("kp/xsp/systems/all_baro_up","All baro up","sysGeneral.baroGroup:actuate(cmdUp)","","")
 
+----------------- Electric --------------------
+create_command("kp/xsp/electric/bat1_master_on","Battery Master 1 On","sysElectric.bat1Switch:actuate(modeOn)","","")
+create_command("kp/xsp/electric/bat1_master_off","Battery Master 1 Off","sysElectric.bat1Switch:actuate(modeOff)","","")
+create_command("kp/xsp/electric/alt1_on","Alternator 1 On","sysElectric.alt1Switch:actuate(modeOn)","","")
+create_command("kp/xsp/electric/alt1_off","Alternator 1 Off","sysElectric.alt1Switch:actuate(modeOff)","","")
+create_command("kp/xsp/electric/avionics_on","Avionics On","sysElectric.avionicsBus:actuate(modeOn)","","")
+create_command("kp/xsp/electric/avionics_off","Avionics Off","sysElectric.avionicsBus:actuate(modeOf)","","")
+
 ----------------- Flight Controls --------------------
 
 create_command("kp/xsp/controls/flaps_up","Flaps 1 Up","sysControls.flapsSwitch:actuate(sysControls.flapsUp)","","")
