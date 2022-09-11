@@ -21,7 +21,7 @@ local drefLLRight = "laminar/B738/switch/land_lights_right_pos"
 local drefRWYLeft = "laminar/B738/toggle_switch/rwy_light_left"
 local drefRWYRight = "laminar/B738/toggle_switch/rwy_light_right"
 local drefPanelBright = "laminar/B738/electric/panel_brightness"
-local drefGenericLights = "sim/cockpit2/switches/generic_lights_switch"
+local drefGenericLights = "laminar/B738/electric/generic_brightness"
 
 -- Beacons or Anticollision Lights, single, onoff, command driven
 sysLights.beaconSwitch = TwoStateCmdSwitch:new("beacon","sim/cockpit/electrical/beacon_lights_on",0,"sim/lights/beacon_lights_on","sim/lights/beacon_lights_off","sim/lights/beacon_lights_toggle")

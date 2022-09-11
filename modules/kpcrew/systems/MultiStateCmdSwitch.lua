@@ -70,13 +70,21 @@ end
 function MultiStateCmdSwitch:adjustValue(value,min,max)
 	if value <= max and value >= min then
 		local cnt = max - min + 1
-		if value < get(self.statusDref,self.statusDrefIdx) then
-			while cnt > 0 and get(self.statusDref,self.statusDrefIdx) > min and get(self.statusDref,self.statusDrefIdx) ~= value do
+		local drefvalue = nil
+		
+		if self.statusDrefIdx > 0 then
+			drefvalue = get(self.statusDref,self.statusDrefIdx)
+		else
+			drefvalue = get(self.statusDref)
+		end
+
+		if value < drefvalue then
+			while cnt > 0 and drefvalue > min and drefvalue ~= value do
 				cnt = cnt -1
 				command_once(self.decrcmd)
 			end
 		else
-			while cnt > 0 and get(self.statusDref,self.statusDrefIdx) < max and get(self.statusDref,self.statusDrefIdx) ~= value do
+			while cnt > 0 and drefvalue < max and drefvalue ~= value do
 				cnt = cnt -1
 				command_once(self.incrcmd)
 			end

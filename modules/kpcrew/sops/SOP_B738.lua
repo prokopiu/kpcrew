@@ -600,7 +600,7 @@ preflightFOProc:addItem(kcIndirectProcedureItem:new("FUEL CROSS FEED","ON FOR TE
 	function () return sysFuel.crossFeed:getStatus() == modeOn end,
 	function () sysFuel.crossFeed:actuate(modeOn) end))
 preflightFOProc:addItem(kcIndirectProcedureItem:new("CROSS FEED VALVE","CHECK DIM",kcFlowItem.actorFO,2,"xfeeddim",
-	function () return sysFuel.xfeedVlvAnn:getStatus() == 0.5 end))
+	function () return sysFuel.xfeedVlvAnn:getStatus() > 0 end))
 preflightFOProc:addItem(kcProcedureItem:new("FUEL CROSS FEED","OFF",kcFlowItem.actorFO,2,
 	function () return sysFuel.crossFeed:getStatus() == modeOff end,
 	function () sysFuel.crossFeed:actuate(modeOff) end))
@@ -677,7 +677,11 @@ preflightFOProc:addItem(kcProcedureItem:new("NO SMOKING SWITCH","ON OR AUTO",kcF
 	function () sysGeneral.noSmokingSwitch:setValue(1) end))
 preflightFOProc:addItem(kcProcedureItem:new("FASTEN BELTS SWITCH","ON OR AUTO",kcFlowItem.actorFO,2,
 	function () return sysGeneral.seatBeltSwitch:getStatus() > 0 end,
-	function () command_once("laminar/B738/toggle_switch/seatbelt_sign_dn") end))
+	function () 
+		command_once("laminar/B738/toggle_switch/seatbelt_sign_up") 
+		command_once("laminar/B738/toggle_switch/seatbelt_sign_up") 
+		command_once("laminar/B738/toggle_switch/seatbelt_sign_dn") 
+	end))
 preflightFOProc:addItem(kcProcedureItem:new("WINDSHIELD WIPER SELECTORS","PARK",kcFlowItem.actorFO,2,
 	function () return sysGeneral.wiperGroup:getStatus() == 0 end,
 	function () sysGeneral.wiperGroup:actuate(0) end))
@@ -957,8 +961,8 @@ preflightFOProc:addItem(kcProcedureItem:new("LANDING GEAR LEVER","DN",kcFlowItem
 	function () return sysGeneral.GearSwitch:getStatus() == 1 end,
 	function () sysGeneral.GearSwitch:actuate(1) end))
 preflightFOProc:addItem(kcProcedureItem:new("AUTO BRAKE SELECT SWITCH","#spell|RTO#",kcFlowItem.actorFO,2,
-	function () return sysGeneral.autobreak:getStatus() == 0 end,
-	function () sysGeneral.autobreak:actuate(0) end))
+	function () return sysGeneral.autobrake:getStatus() == 0 end,
+	function () command_once("laminar/B738/knob/autobrake_rto") end))
 preflightFOProc:addItem(kcProcedureItem:new("ANTISKID INOP LIGHT","VERIFY EXTINGUISHED",kcFlowItem.actorFO,2,
 	function () return get("laminar/B738/annunciator/anti_skid_inop") == 0 end))
 
@@ -1270,7 +1274,12 @@ beforeStartProc:addItem(kcProcedureItem:new("  INITIAL ALTITUDE","SET %05d|activ
 beforeStartProc:addItem(kcSimpleProcedureItem:new("TAXI AND TAKEOFF BRIEFINGS - COMPLETE?"))
 beforeStartProc:addItem(kcProcedureItem:new("EXTERIOR DOORS","VERIFY CLOSED",kcFlowItem.actorFO,1,
 	function () return sysGeneral.doorGroup:getStatus() == 0 end,
-	function () sysGeneral.doorGroup:actuate(0) end))
+	function () 
+		if get("laminar/B738/airstairs_hide") == 0  then
+			command_once("laminar/B738/airstairs_toggle")
+		end
+		sysGeneral.doorGroup:actuate(0) 
+	end))
 beforeStartProc:addItem(kcSimpleProcedureItem:new("==== START CLEARANCE"))
 beforeStartProc:addItem(kcSimpleProcedureItem:new("  Obtain a clearance to pressurize hydraulic systems."))
 beforeStartProc:addItem(kcSimpleProcedureItem:new("  Obtain a clearance to start engines."))
@@ -1310,7 +1319,12 @@ beforeStartProc:addItem(kcProcedureItem:new("ANTI COLLISION LIGHT SWITCH","ON",k
 	function () sysLights.beaconSwitch:actuate(1) end))
 beforeStartProc:addItem(kcProcedureItem:new("WING #exchange|&|and# WHEEL WELL LIGHTS","OFF",kcFlowItem.actorFO,2,
 	function () return sysLights.wingSwitch:getStatus() == 0 and sysLights.wheelSwitch:getStatus() == 0 end,
-	function () sysLights.wingSwitch:actuate(0) sysLights.wheelSwitch:actuate(0) end))
+	function () 
+		sysLights.wingSwitch:actuate(0) 
+		sysLights.wheelSwitch:actuate(0) 
+		sysEFIS.minsResetPilot:actuate(0)
+		sysEFIS.minsResetCopilot:actuate(0)
+	end))
 
 -- ============= BEFORE START CHECKLIST (F/O) ============
 -- FLIGHT DECK DOOR...............CLOSED AND LOCKED  (F/O)
@@ -1391,7 +1405,7 @@ local pushstartProc = kcProcedure:new("PUSHBACK & ENGINE START","let's get ready
 pushstartProc:setFlightPhase(4)
 pushstartProc:addItem(kcIndirectProcedureItem:new("PARKING BRAKE","SET",kcFlowItem.actorCPT,2,"pb_parkbrk_initial_set",
 	function () return sysGeneral.parkBrakeSwitch:getStatus() == 1 end,
-	function () sysGeneral.parkBrakeSwitch:actuate(1) activeBckVars:set("general:timesOFF",kc_dispTimeHHMM(get("sim/time/zulu_time_sec"))) end ))
+	function () sysGeneral.parkBrakeSwitch:actuate(1) sysLights.domeLightSwitch:actuate(0) activeBckVars:set("general:timesOFF",kc_dispTimeHHMM(get("sim/time/zulu_time_sec"))) end ))
 pushstartProc:addItem(kcProcedureItem:new("PUSHBACK SERVICE","ENGAGE",kcFlowItem.actorCPT,2))
 pushstartProc:addItem(kcSimpleProcedureItem:new("Engine Start may be done during pushback or towing"))
 pushstartProc:addItem(kcProcedureItem:new("COMMUNICATION WITH GROUND","ESTABLISH",kcFlowItem.actorCPT,2))
@@ -1529,11 +1543,19 @@ beforeTaxiProc:addItem(kcProcedureItem:new("FLAP LEVER","SET TAKEOFF FLAPS %s|kc
 beforeTaxiProc:addItem(kcProcedureItem:new("LE FLAPS EXT GREEN LIGHT","ILLUMINATED",kcFlowItem.actorFO,1,
 	function () return get("laminar/B738/annunciator/slats_extend") == 1 end))
 beforeTaxiProc:addItem(kcIndirectProcedureItem:new("FLIGHT CONTROLS","CHECK",kcFlowItem.actorBOTH,1,"fccheck",
-function () return get("sim/flightmodel2/wing/rudder1_deg") > 18 end))
-beforeTaxiProc:addItem(kcProcedureItem:new("TRANSPONDER","AS NEEDED",kcFlowItem.actorFO,1))
+	function () return get("sim/flightmodel2/wing/rudder1_deg") > 18 end,
+	function () command_once("laminar/B738/LDU_control/push_button/MFD_SYS") end))
 beforeTaxiProc:addItem(kcProcedureItem:new("RECALL","CHECK",kcFlowItem.actorBOTH,1,
 	function() return sysGeneral.annunciators:getStatus() == 0 end,
 	function() command_once("laminar/B738/push_button/capt_six_pack") end))
+beforeTaxiProc:addItem(kcProcedureItem:new("TRANSPONDER","TARA",kcFlowItem.actorFO,1,
+	function () return sysRadios.xpdrSwitch:getStatus() == 5 end,
+	function () sysRadios.xpdrSwitch:adjustValue(sysRadios.xpdrTARA,0,5) command_once("laminar/B738/LDU_control/push_button/MFD_SYS") end,
+	function () return activePrefSet:get("general:xpdrusa") == false end))
+beforeTaxiProc:addItem(kcProcedureItem:new("TRANSPONDER","STBY",kcFlowItem.actorFO,1,
+	function () return sysRadios.xpdrSwitch:getStatus() == 1 end,
+	function () sysRadios.xpdrSwitch:adjustValue(1,1,5) command_once("laminar/B738/LDU_control/push_button/MFD_SYS") end,
+	function () return activePrefSet:get("general:xpdrusa") == true end))
 
 -- chrono
 	
@@ -1579,8 +1601,8 @@ beforeTaxiChkl:addItem(kcChecklistItem:new("RECALL","CHECKED",kcChecklistItem.ac
 	function() return sysGeneral.annunciators:getStatus() == 0 end,
 	function() command_once("laminar/B738/push_button/capt_six_pack") end))
 beforeTaxiChkl:addItem(kcChecklistItem:new("AUTOBRAKE","RTO",kcChecklistItem.actorCPT,2,
-	function () return sysGeneral.autobreak:getStatus() == 0 end,
-	function () sysGeneral.autobreak:actuate(0) end))
+	function () return sysGeneral.autobrake:getStatus() == 0 end,
+	function () command_once("laminar/B738/knob/autobrake_rto") end))
 beforeTaxiChkl:addItem(kcChecklistItem:new("ENGINE START LEVERS","IDLE DETENT",kcChecklistItem.actorCPT,2,
 	function () return sysEngines.startLeverGroup:getStatus() == 2 end))
 beforeTaxiChkl:addItem(kcIndirectChecklistItem:new("FLIGHT CONTROLS","CHECK",kcFlowItem.actorCPT,1,"fccheck",
@@ -1684,6 +1706,10 @@ takeoffClimbProc:addItem(kcProcedureItem:new("A/P MODES","%s|kc_pref_split(kc_Ta
 			sysMCP.lvlchgSwitch:actuate(1)
 		else
 		end
+		if get("laminar/B738/airstairs_hide") == 0  then
+			command_once("laminar/B738/airstairs_toggle")
+		end
+		sysGeneral.doorGroup:actuate(0)
 	end))
 takeoffClimbProc:addItem(kcIndirectProcedureItem:new("THRUST SETTING","40% N1",kcFlowItem.actorPF,1,"to40percent",
 	function () return get("laminar/B738/engine/indicators/N1_percent_1") > 40 end))
@@ -1727,8 +1753,8 @@ takeoffClimbProc:addItem(kcProcedureItem:new("CMD-A","ON",kcFlowItem.actorPM,2,
 	function () return sysMCP.ap1Switch:getStatus() == 1 end,
 	function () if activePrefSet:get("takeoff_cmda") == true then sysMCP.ap1Switch:actuate(1) end kc_speakNoText(0,"command a") end))
 takeoffClimbProc:addItem(kcProcedureItem:new("AUTO BRAKE SELECT SWITCH","OFF",kcFlowItem.actorFO,2,
-	function () return sysGeneral.autobreak:getStatus() == 1 end,
-	function () sysGeneral.autobreak:actuate(1) end))
+	function () return sysGeneral.autobrake:getStatus() == 1 end,
+	function () command_once("laminar/B738/knob/autobrake_off") end))
 takeoffClimbProc:addItem(kcProcedureItem:new("GEAR","OFF",kcFlowItem.actorPM,2,
 	function () return sysGeneral.GearSwitch:getStatus() == 0.5 end,
 	function () command_once("laminar/B738/push_button/gear_off") end))
@@ -1762,7 +1788,10 @@ takeoffClimbProc:addItem(kcProcedureItem:new("RUNWAY TURNOFF LIGHT SWITCHES","OF
 	function () return activeBriefings:get("departure:transalt") <= 10000 end))
 takeoffClimbProc:addItem(kcProcedureItem:new("FASTEN BELTS SWITCH","OFF",kcFlowItem.actorPM,2,
 	function () return sysGeneral.seatBeltSwitch:getStatus() == 0 end,
-	function () command_once("laminar/B738/toggle_switch/seatbelt_sign_up") command_once("laminar/B738/toggle_switch/seatbelt_sign_up") end,
+	function () 
+		command_once("laminar/B738/toggle_switch/seatbelt_sign_up") 
+		command_once("laminar/B738/toggle_switch/seatbelt_sign_up") 
+	end,
 	function () return activeBriefings:get("departure:transalt") <= 10000 end))
 
 takeoffClimbProc:addItem(kcIndirectProcedureItem:new("10.000 FT","ANNOUNCE REACHED",kcFlowItem.actorPM,2,"to_10000",
@@ -1778,7 +1807,10 @@ takeoffClimbProc:addItem(kcProcedureItem:new("RUNWAY TURNOFF LIGHT SWITCHES","OF
 	function () return activeBriefings:get("departure:transalt") > 10000 end))
 takeoffClimbProc:addItem(kcProcedureItem:new("FASTEN BELTS SWITCH","OFF",kcFlowItem.actorPM,2,
 	function () return sysGeneral.seatBeltSwitch:getStatus() == 0 end,
-	function () command_once("laminar/B738/toggle_switch/seatbelt_sign_up") command_once("laminar/B738/toggle_switch/seatbelt_sign_up") end,
+	function () 
+		command_once("laminar/B738/toggle_switch/seatbelt_sign_up") 
+		command_once("laminar/B738/toggle_switch/seatbelt_sign_up") 
+	end,
 	function () return activeBriefings:get("departure:transalt") > 10000 end))
 
 takeoffClimbProc:addItem(kcIndirectProcedureItem:new("TRANSITION ALTITUDE","ANNOUNCE REACHED",kcFlowItem.actorPM,2,"to_trans_alt",
@@ -1858,8 +1890,18 @@ descentProc:addItem(kcProcedureItem:new("LANDING DATA","VREF %i, MINIMUMS %i|get
 				math.floor(sysEFIS.minsPilot:getStatus()) == activeBriefings:get("approach:decision") end))
 descentProc:addItem(kcSimpleProcedureItem:new("Set or verify the navigation radios and course for the approach."))
 descentProc:addItem(kcProcedureItem:new("AUTO BRAKE SELECT SWITCH","%s|kc_pref_split(kc_LandingAutoBrake)[activeBriefings:get(\"approach:autobrake\")]",kcFlowItem.actorFO,2,
-	function () return sysGeneral.autobreak:getStatus() == activeBriefings:get("approach:autobrake") end,
-	function () sysGeneral.autobreak:adjustValue(activeBriefings:get("approach:autobrake"),1,5) end))
+	function () return sysGeneral.autobrake:getStatus() == activeBriefings:get("approach:autobrake") end,
+	function () 
+		if activeBriefings:get("approach:autobrake") == 2 then
+			command_once("laminar/B738/knob/autobrake_1")
+		elseif activeBriefings:get("approach:autobrake") == 3 then
+			command_once("laminar/B738/knob/autobrake_2")
+		elseif activeBriefings:get("approach:autobrake") == 4 then
+			command_once("laminar/B738/knob/autobrake_3")
+		elseif activeBriefings:get("approach:autobrake") == 5 then
+			command_once("laminar/B738/knob/autobrake_max")
+		end
+	end))
 
 -- =============== DESCENT CHECKLIST (PM) ===============
 -- PRESSURIZATION...................LAND ALT _____   (PM)
@@ -1906,7 +1948,11 @@ arrivalProc:addItem(kcProcedureItem:new("LANDING LIGHTS","ON",kcFlowItem.actorPM
 	function () return activeBriefings:get("arrival:translvl") > 100 end))
 arrivalProc:addItem(kcProcedureItem:new("FASTEN BELTS SWITCH","ON",kcFlowItem.actorPM,2,
 	function () return sysGeneral.seatBeltSwitch:getStatus() > 0 end,
-	function () command_once("laminar/B738/toggle_switch/seatbelt_sign_dn") command_once("laminar/B738/toggle_switch/seatbelt_sign_dn") end,
+	function () 
+		command_once("laminar/B738/toggle_switch/seatbelt_sign_up") 
+		command_once("laminar/B738/toggle_switch/seatbelt_sign_up") 
+		command_once("laminar/B738/toggle_switch/seatbelt_sign_dn") 
+	end,
 	function () return activeBriefings:get("arrival:translvl") > 100 end))
 
 arrivalProc:addItem(kcIndirectProcedureItem:new("TRANSITION LEVEL","ANNOUNCE REACHED",kcFlowItem.actorPM,2,"ldg_trans_lvl",
@@ -1924,6 +1970,12 @@ arrivalProc:addItem(kcIndirectProcedureItem:new("ALTIMETERS","QNH %s |activeBrie
 	end,
 	function () 
 	    kc_speakNoText(0,"transition level")
+		if get("laminar/B738/EFIS/baro_set_std_pilot") == 1 then 
+			command_once("laminar/B738/EFIS_control/capt/push_button/std_press")
+		end
+		if get("laminar/B738/EFIS/baro_set_std_copilot") == 1 then 
+			command_once("laminar/B738/EFIS_control/fo/push_button/std_press")
+		end
 		if activePrefSet:get("general:baro_mode_hpa") then
 			set("laminar/B738/EFIS/baro_sel_in_hg_pilot", activeBriefings:get("arrival:atisQNH") * 0.02952999)
 			set("laminar/B738/EFIS/baro_sel_in_hg_copilot", activeBriefings:get("arrival:atisQNH") * 0.02952999) 
@@ -1949,6 +2001,12 @@ arrivalProc:addItem(kcIndirectProcedureItem:new("ALTIMETERS","QNH %s |activeBrie
 	end,
 	function () 
 	    kc_speakNoText(0,"transition level")
+		if get("laminar/B738/EFIS/baro_set_std_pilot") == 1 then 
+			command_once("laminar/B738/EFIS_control/capt/push_button/std_press")
+		end
+		if get("laminar/B738/EFIS/baro_set_std_copilot") == 1 then 
+			command_once("laminar/B738/EFIS_control/fo/push_button/std_press")
+		end
 		if activePrefSet:get("general:baro_mode_hpa") then
 			set("laminar/B738/EFIS/baro_sel_in_hg_pilot", activeBriefings:get("arrival:atisQNH") * 0.02952999)
 			set("laminar/B738/EFIS/baro_sel_in_hg_copilot", activeBriefings:get("arrival:atisQNH") * 0.02952999) 
@@ -1968,12 +2026,26 @@ arrivalProc:addItem(kcProcedureItem:new("LANDING LIGHTS","ON",kcFlowItem.actorPM
 	function () return activeBriefings:get("arrival:translvl") <= 100 end))
 arrivalProc:addItem(kcProcedureItem:new("FASTEN BELTS SWITCH","ON",kcFlowItem.actorPM,2,
 	function () return sysGeneral.seatBeltSwitch:getStatus() > 0 end,
-	function () command_once("laminar/B738/toggle_switch/seatbelt_sign_dn") command_once("laminar/B738/toggle_switch/seatbelt_sign_dn") end,
+	function () 
+		command_once("laminar/B738/toggle_switch/seatbelt_sign_up") 
+		command_once("laminar/B738/toggle_switch/seatbelt_sign_up") 
+		command_once("laminar/B738/toggle_switch/seatbelt_sign_dn") 
+	end,
 	function () return activeBriefings:get("arrival:translvl") <= 100 end))
 
 arrivalProc:addItem(kcProcedureItem:new("AUTO BRAKE SELECT SWITCH","%s|kc_pref_split(kc_LandingAutoBrake)[activeBriefings:get(\"approach:autobrake\")]",kcFlowItem.actorFO,2,
-	function () return sysGeneral.autobreak:getStatus() == activeBriefings:get("approach:autobrake") end,
-	function () sysGeneral.autobreak:adjustValue(activeBriefings:get("approach:autobrake"),1,5) end))
+	function () return sysGeneral.autobrake:getStatus() == activeBriefings:get("approach:autobrake") end,
+	function () 
+		if activeBriefings:get("approach:autobrake") == 2 then
+			command_once("laminar/B738/knob/autobrake_1")
+		elseif activeBriefings:get("approach:autobrake") == 3 then
+			command_once("laminar/B738/knob/autobrake_2")
+		elseif activeBriefings:get("approach:autobrake") == 4 then
+			command_once("laminar/B738/knob/autobrake_3")
+		elseif activeBriefings:get("approach:autobrake") == 5 then
+			command_once("laminar/B738/knob/autobrake_max")
+		end
+	end))
 arrivalProc:addItem(kcProcedureItem:new("LOGO LIGHT SWITCH","%s|(kc_is_daylight()) and \"OFF\" or \"ON\"",kcFlowItem.actorFO,2,
 	function () return sysLights.logoSwitch:getStatus() == (kc_is_daylight() and 0 or 1) end,
 	function () sysLights.logoSwitch:actuate( kc_is_daylight() and 0 or 1) end ))
@@ -2114,13 +2186,18 @@ afterLandingProc:addItem(kcProcedureItem:new("TRAFFIC SWITCH","OFF",kcFlowItem.a
 	function () return sysEFIS.tfcPilot:getStatus() == 0 end,
 	function () sysEFIS.tfcPilot:actuate(0) end))
 afterLandingProc:addItem(kcProcedureItem:new("AUTOBRAKE","OFF",kcFlowItem.actorFO,2,
-	function () return sysGeneral.autobreak:getStatus() == 1 end,
-	function () sysGeneral.autobreak:adjustValue(1,1,5) end))
-afterLandingProc:addItem(kcProcedureItem:new("TRANSPONDER","STBY",kcFlowItem.actorFO,2,
+	function () return sysGeneral.autobrake:getStatus() == 1 end,
+	function () command_once("laminar/B738/knob/autobrake_off") end))
+afterLandingProc:addItem(kcProcedureItem:new("TRANSPONDER","TARA",kcFlowItem.actorFO,1,
+	function () return sysRadios.xpdrSwitch:getStatus() == 5 end,
+	function () sysRadios.xpdrSwitch:adjustValue(sysRadios.xpdrTARA,0,5) end,
+	function () return activePrefSet:get("general:xpdrusa") == false end))
+afterLandingProc:addItem(kcProcedureItem:new("TRANSPONDER","STBY",kcFlowItem.actorFO,1,
 	function () return sysRadios.xpdrSwitch:getStatus() == 1 end,
-	function () sysRadios.xpdrSwitch:adjustValue(1,1,5) end))
+	function () sysRadios.xpdrSwitch:adjustValue(1,1,5) end,
+	function () return activePrefSet:get("general:xpdrusa") == true end))
 afterLandingProc:addItem(kcProcedureItem:new("FLAPS","UP",kcFlowItem.actorFO,2,
-	function () return sysControls.flapsSwitch:getStatus() == 0 and sysControls.slatsExtended:getStatus() == 0 end,
+	function () return sysControls.flapsSwitch:getStatus() == 0 end,
 	function () set("laminar/B738/flt_ctrls/flap_lever",0) end))
 afterLandingProc:addItem(kcProcedureItem:new("#spell|APU#","START",kcFlowItem.actorFO,2,
 	function () return sysElectric.apuRunningAnc:getStatus() == modeOn end,
@@ -2159,6 +2236,9 @@ afterLandingProc:addItem(kcIndirectProcedureItem:new("  #spell|APU# GEN OFF BUS 
 
 local shutdownProc = kcProcedure:new("SHUTDOWN PROCEDURE","shutting down","ready for shutdown checklist")
 shutdownProc:setFlightPhase(17)
+shutdownProc:addItem(kcProcedureItem:new("TRANSPONDER","STBY",kcChecklistItem.actorFO,2,
+	function () return sysRadios.xpdrSwitch:getStatus() == 1 end,
+	function () sysRadios.xpdrSwitch:adjustValue(1,1,5) end))
 shutdownProc:addItem(kcProcedureItem:new("TAXI LIGHT SWITCH","OFF",kcFlowItem.actorFO,2,
 	function () return sysLights.taxiSwitch:getStatus() == 0 end,
 	function () sysLights.taxiSwitch:actuate(0) activeBckVars:set("general:timesON",kc_dispTimeHHMM(get("sim/time/zulu_time_sec"))) end))
@@ -2174,7 +2254,10 @@ shutdownProc:addItem(kcProcedureItem:new("ENGINE START LEVERS","CUTOFF",kcFlowIt
 	function () return sysEngines.startLever1:getStatus() == 0 and sysEngines.startLever2:getStatus() == 0 end))
 shutdownProc:addItem(kcProcedureItem:new("FASTEN BELTS SWITCH","OFF",kcFlowItem.actorFO,2,
 	function () return sysGeneral.seatBeltSwitch:getStatus() == 0 end,
-	function () sysGeneral.seatBeltSwitch:adjustValue(0,0,2) end))
+	function () 
+		command_once("laminar/B738/toggle_switch/seatbelt_sign_up") 
+		command_once("laminar/B738/toggle_switch/seatbelt_sign_up") 
+	end))
 shutdownProc:addItem(kcProcedureItem:new("ANTI COLLISION LIGHT SWITCH","OFF",kcFlowItem.actorFO,2,
 	function () return sysLights.beaconSwitch:getStatus() == 0 end,
 	function () sysLights.beaconSwitch:actuate(0) end))
@@ -2224,9 +2307,6 @@ shutdownProc:addItem(kcProcedureItem:new("APU BLEED AIR SWITCH","ON",kcFlowItem.
 shutdownProc:addItem(kcProcedureItem:new("FLIGHT DIRECTOR SWITCHES","OFF",kcFlowItem.actorFO,2,
 	function () return sysMCP.fdirGroup:getStatus() == 0 end,
 	function () sysMCP.fdirGroup:actuate(0) end))
-shutdownProc:addItem(kcProcedureItem:new("TRANSPONDER","STBY",kcChecklistItem.actorFO,2,
-	function () return sysRadios.xpdrSwitch:getStatus() == 1 end,
-	function () sysRadios.xpdrSwitch:adjustValue(1,1,5) end))
 
  -- ============== SHUTDOWN CHECKLIST (F/O) ==============
  -- FUEL PUMPS..................................OFF  (F/O)
@@ -2409,7 +2489,8 @@ coldAndDarkProc:addItem(kcIndirectProcedureItem:new("THE REST","SET","SYS",1,"c_
 		set("laminar/B738/fms/chock_status",1)
 		sysEngines.engStarterGroup:setValue(1)
 		sysRadios.xpdrSwitch:adjustValue(1,1,5)
-		sysGeneral.autobreak:actuate(1)
+		-- sysGeneral.autobrake:adjustValue(1,0,5)
+		command_once("laminar/B738/knob/autobrake_off")
 		sysMCP.fdirGroup:actuate(0)
 		sysElectric.batteryCover:actuate(modeOn)
 		sysElectric.batterySwitch:actuate(modeOff)
@@ -2592,7 +2673,8 @@ turnAroundProc:addItem(kcIndirectProcedureItem:new("THE REST","SET","SYS",1,"c_d
 		set("laminar/B738/fms/chock_status",1)
 		sysEngines.engStarterGroup:setValue(1)
 		sysRadios.xpdrSwitch:adjustValue(1,1,5)
-		sysGeneral.autobreak:actuate(1)
+		-- sysGeneral.autobrake:adjustValue(1,1,5)
+		command_once("laminar/B738/knob/autobrake_off")
 		sysMCP.fdirGroup:actuate(0)
 		sysMCP.fdirGroup:actuate(modeOff)
 		sysMCP.athrSwitch:actuate(modeOff)
