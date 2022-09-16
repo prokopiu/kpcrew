@@ -38,38 +38,27 @@ local sysElectric = {
 ------------- Switches
 
 -- DC and AC PWR knobs
-sysElectric.dcPowerSwitch = MultiStateCmdSwitch:new("dcpower","laminar/B738/knob/dc_power",0,"laminar/B738/knob/dc_power_dn","laminar/B738/knob/dc_power_up")
-sysElectric.acPowerSwitch = MultiStateCmdSwitch:new("acpower","laminar/B738/knob/ac_power",0,"laminar/B738/knob/ac_power_dn","laminar/B738/knob/ac_power_up")
+sysElectric.dcPowerSwitch = MultiStateCmdSwitch:new("dcpower","laminar/B738/knob/dc_power",0,"laminar/B738/knob/dc_power_dn","laminar/B738/knob/dc_power_up",0,6,true)
+sysElectric.acPowerSwitch = MultiStateCmdSwitch:new("acpower","laminar/B738/knob/ac_power",0,"laminar/B738/knob/ac_power_dn","laminar/B738/knob/ac_power_up",0,6,true)
 
 -- BATTERY Switch
 sysElectric.batterySwitch = TwoStateCmdSwitch:new("","laminar/B738/electric/battery_pos",0,"laminar/B738/switch/battery_dn","laminar/B738/push_button/batt_full_off")
 sysElectric.batteryCover = TwoStateToggleSwitch:new("","laminar/B738/button_switch/cover_position",2,"laminar/B738/button_switch_cover02")
-
--- GA Battery Masters
-sysElectric.bat1Switch = InopSwitch:new("bat1")
-sysElectric.bat2Switch = InopSwitch:new("bat2")
-
--- GA Alternator Masters
-sysElectric.alt1Switch = InopSwitch:new("alt1")
-sysElectric.alt2Switch = InopSwitch:new("alt2")
-
--- GA Avionics Bus
-sysElectric.avionicsBus = InopSwitch:new("avionics")
 
 -- Cabin Util Power Boeing
 sysElectric.cabUtilPwr = TwoStateToggleSwitch:new("cabutil","laminar/B738/toggle_switch/cab_util_pos",0,"laminar/B738/autopilot/cab_util_toggle")
 sysElectric.ifePwr = TwoStateToggleSwitch:new("ifepwr","laminar/B738/toggle_switch/ife_pass_seat_pos",0,"laminar/B738/autopilot/ife_pass_seat_toggle")
 
 -- Standby Power
-sysElectric.stbyPowerSwitch = MultiStateCmdSwitch:new("","laminar/B738/electric/standby_bat_pos",0,"laminar/B738/switch/standby_bat_left","laminar/B738/switch/standby_bat_right")
+sysElectric.stbyPowerSwitch = MultiStateCmdSwitch:new("","laminar/B738/electric/standby_bat_pos",0,"laminar/B738/switch/standby_bat_left","laminar/B738/switch/standby_bat_right",-1,1,false)
 sysElectric.stbyPowerCover = TwoStateToggleSwitch:new("","laminar/B738/button_switch/cover_position",3,"laminar/B738/button_switch_cover03")
 
 -- Ground Power
-sysElectric.gpuSwitch = MultiStateCmdSwitch:new("","laminar/B738/electric/dc_gnd_service",0,"laminar/B738/toggle_switch/gpu_dn","laminar/B738/toggle_switch/gpu_up")
+sysElectric.gpuSwitch = MultiStateCmdSwitch:new("","laminar/B738/electric/dc_gnd_service",0,"laminar/B738/toggle_switch/gpu_dn","laminar/B738/toggle_switch/gpu_up",-1,1,true)
 
 -- APU Bus Switches
-sysElectric.apuGenBus1 = MultiStateCmdSwitch:new("","laminar/B738/electrical/apu_gen1_pos",0,"laminar/B738/toggle_switch/apu_gen1_up","laminar/B738/toggle_switch/apu_gen1_dn")
-sysElectric.apuGenBus2 = MultiStateCmdSwitch:new("","laminar/B738/electrical/apu_gen2_pos",0,"laminar/B738/toggle_switch/apu_gen2_up","laminar/B738/toggle_switch/apu_gen2_dn")
+sysElectric.apuGenBus1 = MultiStateCmdSwitch:new("","laminar/B738/electrical/apu_gen1_pos",0,"laminar/B738/toggle_switch/apu_gen1_up","laminar/B738/toggle_switch/apu_gen1_dn",-1,1,true)
+sysElectric.apuGenBus2 = MultiStateCmdSwitch:new("","laminar/B738/electrical/apu_gen2_pos",0,"laminar/B738/toggle_switch/apu_gen2_up","laminar/B738/toggle_switch/apu_gen2_dn",-1,1,true)
 
 -- GEN drive shaft
 sysElectric.genDrive1Switch = TwoStateCmdSwitch:new("","laminar/B738/one_way_switch/drive_disconnect1_pos",0,"laminar/B738/one_way_switch/drive_disconnect1","laminar/B738/one_way_switch/drive_disconnect1_off")
@@ -89,14 +78,14 @@ sysElectric.busTransSwitch = TwoStateCmdSwitch:new("","sim/cockpit2/electrical/c
 sysElectric.busTransCover = TwoStateToggleSwitch:new("","laminar/B738/button_switch/cover_position",6,"laminar/B738/button_switch_cover06")
 
 -- GEN Switches
-sysElectric.gen1Switch = MultiStateCmdSwitch:new("","laminar/B738/electrical/gen1_pos",0,"laminar/B738/toggle_switch/gen1_dn","laminar/B738/toggle_switch/gen1_up")
-sysElectric.gen2Switch = MultiStateCmdSwitch:new("","laminar/B738/electrical/gen2_pos",0,"laminar/B738/toggle_switch/gen2_dn","laminar/B738/toggle_switch/gen2_up")
+sysElectric.gen1Switch = MultiStateCmdSwitch:new("","laminar/B738/electrical/gen1_pos",0,"laminar/B738/toggle_switch/gen1_dn","laminar/B738/toggle_switch/gen1_up",-1,1,true)
+sysElectric.gen2Switch = MultiStateCmdSwitch:new("","laminar/B738/electrical/gen2_pos",0,"laminar/B738/toggle_switch/gen2_dn","laminar/B738/toggle_switch/gen2_up",-1,1,true)
 
 sysElectric.genSwitchGroup = SwitchGroup:new("genswitches")
 sysElectric.genSwitchGroup:addSwitch(sysElectric.gen1Switch)
 sysElectric.genSwitchGroup:addSwitch(sysElectric.gen2Switch)
 
-sysElectric.apuStartSwitch = MultiStateCmdSwitch:new("","laminar/B738/spring_toggle_switch/APU_start_pos",0,"laminar/B738/spring_toggle_switch/APU_start_pos_dn","laminar/B738/spring_toggle_switch/APU_start_pos_up")
+sysElectric.apuStartSwitch = MultiStateCmdSwitch:new("","laminar/B738/spring_toggle_switch/APU_start_pos",0,"laminar/B738/spring_toggle_switch/APU_start_pos_dn","laminar/B738/spring_toggle_switch/APU_start_pos_up",-1,1,true)
 
 -- ======== Annunciators
 

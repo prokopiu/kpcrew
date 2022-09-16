@@ -7,7 +7,10 @@ local sysAir = {
 	packModeOn = 2,
 	isoVlvClosed = 0,
 	isoVlvAuto = 1,
-	isoVlvOpen = 2
+	isoVlvOpen = 2,
+	airVlvAuto = 0,
+	airVlvAltn = 1,
+	airVlvMan = 2
 }
 
 local TwoStateDrefSwitch = require "kpcrew.systems.TwoStateDrefSwitch"
@@ -26,7 +29,7 @@ local drefPackRightANC = "laminar/B738/annunciator/pack_right"
 -- ======= Switches
 
 -- PRESS MODE
-sysAir.pressModeSelector = MultiStateCmdSwitch:new("","laminar/B738/toggle_switch/air_valve_ctrl",0,"laminar/B738/toggle_switch/air_valve_ctrl_left","laminar/B738/toggle_switch/air_valve_ctrl_right")
+sysAir.pressModeSelector = MultiStateCmdSwitch:new("","laminar/B738/toggle_switch/air_valve_ctrl",0,"laminar/B738/toggle_switch/air_valve_ctrl_left","laminar/B738/toggle_switch/air_valve_ctrl_right",0,2,false)
 
 -- AIR temperature
 sysAir.contCabTemp = TwoStateDrefSwitch:new("","laminar/B738/air/cont_cab_temp/rheostat",0)
@@ -41,14 +44,14 @@ sysAir.recircFanLeft = TwoStateToggleSwitch:new("","laminar/B738/air/l_recirc_fa
 sysAir.recircFanRight = TwoStateToggleSwitch:new("","laminar/B738/air/r_recirc_fan_pos",0,"laminar/B738/toggle_switch/r_recirc_fan")
 
 -- PACK switches
-sysAir.packLeftSwitch = MultiStateCmdSwitch:new("","laminar/B738/air/l_pack_pos",0,"laminar/B738/toggle_switch/l_pack_dn","laminar/B738/toggle_switch/l_pack_up")
-sysAir.packRightSwitch = MultiStateCmdSwitch:new("","laminar/B738/air/r_pack_pos",0,"laminar/B738/toggle_switch/r_pack_dn","laminar/B738/toggle_switch/r_pack_up")
+sysAir.packLeftSwitch = MultiStateCmdSwitch:new("","laminar/B738/air/l_pack_pos",0,"laminar/B738/toggle_switch/l_pack_dn","laminar/B738/toggle_switch/l_pack_up",0,2,false)
+sysAir.packRightSwitch = MultiStateCmdSwitch:new("","laminar/B738/air/r_pack_pos",0,"laminar/B738/toggle_switch/r_pack_dn","laminar/B738/toggle_switch/r_pack_up",0,2,false)
 sysAir.packSwitchGroup = SwitchGroup:new("PackBleeds")
 sysAir.packSwitchGroup:addSwitch(sysAir.packLeftSwitch)
 sysAir.packSwitchGroup:addSwitch(sysAir.packRightSwitch)
 
 -- ISOLATION VLV
-sysAir.isoValveSwitch = MultiStateCmdSwitch:new("","laminar/B738/air/isolation_valve_pos",0,"laminar/B738/toggle_switch/iso_valve_dn","laminar/B738/toggle_switch/iso_valve_up")
+sysAir.isoValveSwitch = MultiStateCmdSwitch:new("","laminar/B738/air/isolation_valve_pos",0,"laminar/B738/toggle_switch/iso_valve_dn","laminar/B738/toggle_switch/iso_valve_up",0,2,false)
 
 -- BLEED AIR
 sysAir.bleedEng1Switch = TwoStateToggleSwitch:new("","laminar/B738/toggle_switch/bleed_air_1_pos",0,"laminar/B738/toggle_switch/bleed_air_1")
@@ -61,10 +64,10 @@ sysAir.engBleedGroup:addSwitch(sysAir.bleedEng2Switch)
 sysAir.apuBleedSwitch = TwoStateToggleSwitch:new("","laminar/B738/toggle_switch/bleed_air_apu_pos",0,"laminar/B738/toggle_switch/bleed_air_apu")
 
 -- PRESSURIZATION Cruise level
-sysAir.maxCruiseAltitude = MultiStateCmdSwitch:new("maxcrzlv","sim/cockpit2/pressurization/actuators/max_allowable_altitude_ft",0,"laminar/B738/knob/flt_alt_press_dn","laminar/B738/knob/flt_alt_press_up")
+sysAir.maxCruiseAltitude = MultiStateCmdSwitch:new("maxcrzlv","sim/cockpit2/pressurization/actuators/max_allowable_altitude_ft",0,"laminar/B738/knob/flt_alt_press_dn","laminar/B738/knob/flt_alt_press_up",-1000,42000,false)
 
 -- PRESS Landing ALtitude
-sysAir.landingAltitude = MultiStateCmdSwitch:new("landalt","laminar/B738/pressurization/knobs/landing_alt",0,"laminar/B738/knob/land_alt_press_up","laminar/B738/knob/land_alt_press_dn")
+sysAir.landingAltitude = MultiStateCmdSwitch:new("landalt","laminar/B738/pressurization/knobs/landing_alt",0,"laminar/B738/knob/land_alt_press_up","laminar/B738/knob/land_alt_press_dn",-1000,13600,false)
 
 -- ======= Annunciators
 

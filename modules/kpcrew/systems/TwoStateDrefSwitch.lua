@@ -1,87 +1,46 @@
 -- switch with mode on/off and toggle function via dataref
-local TwoStateDrefSwitch = {}
+--
+-- @classmod TwoStateDrefSwitch
+-- @author Kosta Prokopiu
+-- @copyright 2022 Kosta Prokopiu
+local khTwoStateDrefSwitch = {}
 
 local Switch = require "kpcrew.systems.Switch"
 
 -- provide the dataref with switch state, dref to set mode in
-function TwoStateDrefSwitch:new(name, dataref, datarefidx)
+-- @tparam string name of element
+-- @tparam string dataref for elemnts status
+-- @tparam int index of element dataref
+-- @treturn Switch the created base element
+function khTwoStateDrefSwitch:new(name, dataref, datarefidx)
 
-    TwoStateDrefSwitch.__index = TwoStateDrefSwitch
-    setmetatable(TwoStateDrefSwitch, {
+    khTwoStateDrefSwitch.__index = khTwoStateDrefSwitch
+    setmetatable(khTwoStateDrefSwitch, {
         __index = Switch
     })
 
-    local obj = Switch:new(name)
-    setmetatable(obj, TwoStateDrefSwitch)
+    local obj = Switch:new(name, dataref, datarefidx)
+    setmetatable(obj, khTwoStateDrefSwitch)
 
-	obj.name = name
-	obj.dataref = dataref
-	obj.datarefidx = datarefidx
-	
     return obj
 end
 
--- return value of status dataref
-function TwoStateDrefSwitch:getStatus()
-	if self.datarefidx < 0 then
-		return get(self.dataref,0)
-	else
-		return get(self.dataref,self.datarefidx)
-	end
-end
-
 -- actuate the switch with given mode
-function TwoStateDrefSwitch:actuate(action)
+-- @tparam int action 0=off 1=on 2=tgl
+function khTwoStateDrefSwitch:actuate(action)
 	if action ~= modeToggle then
 		if self:getStatus() ~= action then
-			if self.datarefidx == 0 then
-				set(self.dataref,action)
-			else
-				if self.datarefidx == -1 then
-					set_array(self.dataref,0,action)
-				else
-					set_array(self.dataref,self.datarefidx,action)
-				end
-			end
+			self:setValue(action)
 		end
 	else
 		if self:getStatus() ~= 0 then
-			if self.datarefidx == 0 then
-				set(self.dataref,0)
-			else
-				if self.datarefidx == -1 then
-					set_array(self.dataref,0,0)
-				else
-					set_array(self.dataref,self.datarefidx,0)
-				end
-			end
+			self:setValue(0)
 		else
-			if self.datarefidx == 0 then
-				set(self.dataref,1)
-			else
-				if self.datarefidx == -1 then
-					set_array(self.dataref,0,1)
-				else
-					set_array(self.dataref,self.datarefidx,1)
-				end
-			end
+			self:setValue(1)
 		end
 	end
 end
 
--- set the value directly where possible (dref can be written)
-function TwoStateDrefSwitch:setValue(value)
-	if self.datarefidx == 0 then
-		set(self.dataref,value)
-	else
-		if self.datarefidx == -1 then
-			set_array(self.dataref,0,value)
-		else
-			set_array(self.dataref,self.datarefidx,value)
-		end
-	end
-end
-
-return TwoStateDrefSwitch
+return khTwoStateDrefSwitch
 
 

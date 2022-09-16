@@ -22,9 +22,8 @@ local drefVNAVLight = "sim/cockpit2/autopilot/fms_vnav"
 
 --------- Switches
 
--- Flight Directors
+-- Flight Directors (DFLT only one supported)
 sysMCP.fdirPilotSwitch = TwoStateDrefSwitch:new("","sim/cockpit2/autopilot/flight_director_mode",0)
-
 sysMCP.fdirGroup = SwitchGroup:new("fdirs")
 sysMCP.fdirGroup:addSwitch(sysMCP.fdirPilotSwitch)
 

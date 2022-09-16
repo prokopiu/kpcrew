@@ -1,15 +1,19 @@
 -- interface for a group of switches
-local SwitchGroup = {
+
+-- @classmod SwitchGroup
+-- @author Kosta Prokopiu
+-- @copyright 2022 Kosta Prokopiu
+local khSwitchGroup = {
 }
 
--- local utils = require "kpcrew.genutils"
-
--- new switch object
-function SwitchGroup:new(name)
-    SwitchGroup.__index = SwitchGroup
+-- Base constructor for SwitchGroup
+-- @tparam string name of element
+-- @treturn SwitchGroup the created base element
+function khSwitchGroup:new(name)
+    khSwitchGroup.__index = khSwitchGroup
 
     local obj = {}
-    setmetatable(obj, SwitchGroup)
+    setmetatable(obj, khSwitchGroup)
 
     obj.name = name
 	obj.switches = {}
@@ -18,28 +22,36 @@ function SwitchGroup:new(name)
 end
 
 -- get name of switch object
-function SwitchGroup:getName()
+-- @treturn string name
+function khSwitchGroup:getName()
     return self.name
 end
 
-function SwitchGroup:addSwitch(newSwitch)
+-- add switch to group
+-- @tparam newSwitch Switch based element
+function khSwitchGroup:addSwitch(newSwitch)
     table.insert(self.switches, newSwitch)
 end
 
--- execute a switch group
-function SwitchGroup:actuate(action)
+-- actuate all switches in the switch group
+-- @tparam int action code (modeOn, modeOff...)
+function khSwitchGroup:actuate(action)
     for _, switch in ipairs(self.switches) do
         switch:actuate(action)
     end	
 end
 
-function SwitchGroup:setValue(value)
+-- set the value of a status dref in a switch
+-- @tparam <type> new value of dataref
+function khSwitchGroup:setValue(value)
     for _, switch in ipairs(self.switches) do
         switch:setValue(value)
     end	
 end
 
-function SwitchGroup:getStatus()
+-- return the summed up status values
+-- @treturn <type> dataref value
+function khSwitchGroup:getStatus()
 	local stat = 0
     for _, switch in ipairs(self.switches) do
         stat = stat + switch:getStatus()
@@ -47,10 +59,4 @@ function SwitchGroup:getStatus()
 	return stat
 end
 
-function SwitchGroup:adjustValue(value,min,max)
-    for _, switch in ipairs(self.switches) do
-        switch:adjustValue(value,min,max)
-    end	
-end
-
-return SwitchGroup
+return khSwitchGroup

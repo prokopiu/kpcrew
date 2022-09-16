@@ -26,10 +26,6 @@ local drefEngine2Fire = "sim/cockpit2/annunciators/engine_fires"
 -- Reverse Toggle
 sysEngines.reverseToggle = TwoStateToggleSwitch:new("reverse","sim/cockpit/warnings/annunciators/reverse",0,"sim/engines/thrust_reverse_toggle") 
 
--- GA Magnetos
-sysEngines.magnetos = MultiStateCmdSwitch:new("magnetos","sim/cockpit/engine/ignition_on",0,"sim/magnetos/magnetos_down_1","sim/magnetos/magnetos_up_1")
-sysEngines.magStart = TwoStateToggleSwitch:new("magstart","sim/cockpit/engine/ignition_on",0,"sim/ignition/engage_starter_1")
-
 ----------- Annunciators
 
 -- ENGINE FIRE annunciator

@@ -21,48 +21,48 @@ local sysRadio = {
 }
 
 -- ===== COM Radios =====
-sysRadio.com1StbyFine = MultiStateCmdSwitch:new("","sim/cockpit/radios/com1_stdby_freq_hz",0,"sim/radios/stby_com1_fine_down_833","sim/radios/stby_com1_fine_up_833")
-sysRadio.com1StbyCourse = MultiStateCmdSwitch:new("","sim/cockpit/radios/com1_stdby_freq_hz",0,"sim/radios/stby_com1_coarse_down","sim/radios/stby_com1_coarse_up")
+sysRadio.com1StbyFine = MultiStateCmdSwitch:new("","sim/cockpit2/radios/actuators/com1_standby_frequency_hz_833",0,"sim/radios/stby_com1_fine_down_833","sim/radios/stby_com1_fine_up_833",118000,136990,false)
+sysRadio.com1StbyCourse = MultiStateCmdSwitch:new("","sim/cockpit2/radios/actuators/com1_standby_frequency_hz_833",0,"sim/radios/stby_com1_coarse_down","sim/radios/stby_com1_coarse_up",118000,136990,false)
 sysRadio.com1Flip = TwoStateToggleSwitch:new("","sim/cockpit2/radios/actuators/com1_right_is_selected",0,"sim/radios/com1_standy_flip")
 
 sysRadio.com1ActiveFreq = SimpleAnnunciator:new("","sim/cockpit2/radios/actuators/com1_frequency_hz_833",0)
 sysRadio.com1StandbyFreq = SimpleAnnunciator:new("","sim/cockpit2/radios/actuators/com1_standby_frequency_hz_833",0)
 
-sysRadio.com2StbyFine = MultiStateCmdSwitch:new("","sim/cockpit/radios/com2_stdby_freq_hz",0,"sim/radios/stby_com2_fine_down_833","sim/radios/stby_com2_fine_up_833")
-sysRadio.com2StbyCourse = MultiStateCmdSwitch:new("","sim/cockpit/radios/com2_stdby_freq_hz",0,"sim/radios/stby_com2_coarse_down","sim/radios/stby_com2_coarse_up")
+sysRadio.com2StbyFine = MultiStateCmdSwitch:new("","sim/cockpit2/radios/actuators/com1_standby_frequency_hz_833",0,"sim/radios/stby_com2_fine_down_833","sim/radios/stby_com2_fine_up_833",118000,136990,false)
+sysRadio.com2StbyCourse = MultiStateCmdSwitch:new("","sim/cockpit2/radios/actuators/com1_standby_frequency_hz_833",0,"sim/radios/stby_com2_coarse_down","sim/radios/stby_com2_coarse_up",118000,136990,false)
 sysRadio.com2Flip = TwoStateToggleSwitch:new("","sim/cockpit2/radios/actuators/com2_right_is_selected",0,"sim/radios/com2_standy_flip")
 
 sysRadio.com2ActiveFreq = SimpleAnnunciator:new("","sim/cockpit2/radios/actuators/com2_frequency_hz_833",0)
 sysRadio.com2StandbyFreq = SimpleAnnunciator:new("","sim/cockpit2/radios/actuators/com2_standby_frequency_hz_833",0)
 
 -- ===== NAV Radios =====
-sysRadio.nav1StbyFine = MultiStateCmdSwitch:new("","sim/cockpit/radios/nav1_stdby_freq_hz",0,"sim/radios/stby_nav1_fine_down","sim/radios/stby_nav1_fine_up")
-sysRadio.nav1StbyCourse = MultiStateCmdSwitch:new("","sim/cockpit/radios/nav1_stdby_freq_hz",0,"sim/radios/stby_nav1_coarse_down","sim/radios/stby_nav1_coarse_up")
+sysRadio.nav1StbyFine = MultiStateCmdSwitch:new("","sim/cockpit/radios/nav1_stdby_freq_hz",0,"sim/radios/stby_nav1_fine_down","sim/radios/stby_nav1_fine_up",10800,11795,false)
+sysRadio.nav1StbyCourse = MultiStateCmdSwitch:new("","sim/cockpit/radios/nav1_stdby_freq_hz",0,"sim/radios/stby_nav1_coarse_down","sim/radios/stby_nav1_coarse_up",10800,11795,false)
 sysRadio.nav1Flip = TwoStateToggleSwitch:new("","sim/cockpit2/radios/actuators/nav1_right_is_selected",0,"sim/radios/nav1_standy_flip")
 
 sysRadio.nav1ActiveFreq = SimpleAnnunciator:new("","laminar/radios/pilot/nav_freq",0)
 sysRadio.nav1StandbyFreq = SimpleAnnunciator:new("","sim/cockpit/radios/nav1_stdby_freq_hz",0)
 
-sysRadio.nav2StbyFine = MultiStateCmdSwitch:new("","sim/cockpit/radios/nav2_stdby_freq_hz",0,"sim/radios/stby_nav2_fine_down","sim/radios/stby_nav2_fine_up")
-sysRadio.nav2StbyCourse = MultiStateCmdSwitch:new("","sim/cockpit/radios/nav2_stdby_freq_hz",0,"sim/radios/stby_nav2_coarse_down","sim/radios/stby_nav2_coarse_up")
+sysRadio.nav2StbyFine = MultiStateCmdSwitch:new("","sim/cockpit/radios/nav2_stdby_freq_hz",0,"sim/radios/stby_nav2_fine_down","sim/radios/stby_nav2_fine_up",10800,11795,false)
+sysRadio.nav2StbyCourse = MultiStateCmdSwitch:new("","sim/cockpit/radios/nav2_stdby_freq_hz",0,"sim/radios/stby_nav2_coarse_down","sim/radios/stby_nav2_coarse_up",10800,11795,false)
 sysRadio.nav2Flip = TwoStateToggleSwitch:new("","sim/cockpit2/radios/actuators/nav2_right_is_selected",0,"sim/radios/nav2_standy_flip")
 
 sysRadio.nav2ActiveFreq = SimpleAnnunciator:new("","laminar/radios/copilot/nav_freq_fo",0)
 sysRadio.nav2StandbyFreq = SimpleAnnunciator:new("","sim/cockpit/radios/nav2_stdby_freq_hz",0)
 
 -- ===== ADF =====
-sysRadio.adf1StbyFine = MultiStateCmdSwitch:new("","sim/cockpit/radios/adf1_stdby_freq_hz",0,"sim/radios/stby_adf1_ones_tens_down","sim/radios/stby_adf1_ones_tens_up")
-sysRadio.adf1StbyCourse = MultiStateCmdSwitch:new("","sim/cockpit/radios/adf1_stdby_freq_hz",0,"sim/radios/stby_adf1_hundreds_thous_down","sim/radios/stby_adf1_hundreds_thous_up")
+sysRadio.adf1StbyFine = MultiStateCmdSwitch:new("","sim/cockpit/radios/adf1_stdby_freq_hz",0,"sim/radios/stby_adf1_ones_tens_down","sim/radios/stby_adf1_ones_tens_up",190,1750,false)
+sysRadio.adf1StbyCourse = MultiStateCmdSwitch:new("","sim/cockpit/radios/adf1_stdby_freq_hz",0,"sim/radios/stby_adf1_hundreds_thous_down","sim/radios/stby_adf1_hundreds_thous_up",190,1750,false)
 sysRadio.adf1Flip = TwoStateToggleSwitch:new("","sim/cockpit2/radios/actuators/adf1_right_is_selected",0,"sim/radios/adf1_standy_flip")
 
 sysRadio.adf1ActiveFreq = SimpleAnnunciator:new("","sim/cockpit/radios/adf1_freq_hz",0)
 sysRadio.adf1StandbyFreq = SimpleAnnunciator:new("","sim/cockpit/radios/adf1_stdby_freq_hz",0)
 
-sysRadio.adf2StbyFine = MultiStateCmdSwitch:new("","sim/cockpit/radios/adf2_stdby_freq_hz",0,"sim/radios/stby_adf2_ones_tens_down","sim/radios/stby_adf2_ones_tens_up")
-sysRadio.adf2StbyCourse = MultiStateCmdSwitch:new("","sim/cockpit/radios/adf2_stdby_freq_hz",0,"sim/radios/stby_adf2_hundreds_thous_down","sim/radios/stby_adf2_hundreds_thous_up")
+sysRadio.adf2StbyFine = MultiStateCmdSwitch:new("","sim/cockpit/radios/adf2_stdby_freq_hz",0,"sim/radios/stby_adf2_ones_tens_down","sim/radios/stby_adf2_ones_tens_up",190,1750,false)
+sysRadio.adf2StbyCourse = MultiStateCmdSwitch:new("","sim/cockpit/radios/adf2_stdby_freq_hz",0,"sim/radios/stby_adf2_hundreds_thous_down","sim/radios/stby_adf2_hundreds_thous_up",190,1750,false)
 sysRadio.adf2Flip = TwoStateToggleSwitch:new("","sim/cockpit2/radios/actuators/adf2_right_is_selected",0,"sim/radios/adf2_standy_flip")
 
-sysRadio.xpdrSwitch = MultiStateCmdSwitch:new ("","laminar/B738/knob/transponder_pos",0,"laminar/B738/knob/transponder_mode_dn","laminar/B738/knob/transponder_mode_up")
+sysRadio.xpdrSwitch = MultiStateCmdSwitch:new ("","laminar/B738/knob/transponder_pos",0,"laminar/B738/knob/transponder_mode_dn","laminar/B738/knob/transponder_mode_up",0,5,true)
 
 sysRadio.adf2ActiveFreq = SimpleAnnunciator:new("","sim/cockpit/radios/adf2_freq_hz",0)
 sysRadio.adf2StandbyFreq = SimpleAnnunciator:new("","sim/cockpit/radios/adf2_stdby_freq_hz",0)

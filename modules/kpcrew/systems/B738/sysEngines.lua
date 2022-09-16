@@ -13,6 +13,7 @@ local CustomAnnunciator = require "kpcrew.systems.CustomAnnunciator"
 local TwoStateToggleSwitch = require "kpcrew.systems.TwoStateToggleSwitch"
 local MultiStateCmdSwitch = require "kpcrew.systems.MultiStateCmdSwitch"
 local InopSwitch = require "kpcrew.systems.InopSwitch"
+local KeepPressedSwitchCmd	= require "kpcrew.systems.KeepPressedSwitchCmd"
 
 --------- Switches
 
@@ -36,14 +37,14 @@ sysEngines.startLeverGroup:addSwitch(sysEngines.startLever1)
 sysEngines.startLeverGroup:addSwitch(sysEngines.startLever2)
 
 -- OVHT Test
-sysEngines.ovhtFireTestSwitch = TwoStateToggleSwitch:new("","laminar/B738/toggle_switch/fire_test",0,"laminar/B738/toggle_switch/fire_test_rgt")
+sysEngines.ovhtFireTestSwitch = KeepPressedSwitchCmd:new("OVHTtest","laminar/B738/toggle_switch/fire_test",0,"laminar/B738/toggle_switch/fire_test_rgt")
 
 -- IGN select
-sysEngines.ignSelectSwitch = MultiStateCmdSwitch:new("","laminar/B738/toggle_switch/eng_start_source",0,"laminar/B738/toggle_switch/eng_start_source_left","laminar/B738/toggle_switch/eng_start_source_right")
+sysEngines.ignSelectSwitch = MultiStateCmdSwitch:new("","laminar/B738/toggle_switch/eng_start_source",0,"laminar/B738/toggle_switch/eng_start_source_left","laminar/B738/toggle_switch/eng_start_source_right",-1,1,false)
 
 -- STARTER Switches
-sysEngines.engStart1Switch = MultiStateCmdSwitch:new("","laminar/B738/engine/starter1_pos",0,"laminar/B738/knob/eng1_start_left","laminar/B738/knob/eng1_start_right")
-sysEngines.engStart2Switch = MultiStateCmdSwitch:new("","laminar/B738/engine/starter2_pos",0,"laminar/B738/knob/eng2_start_left","laminar/B738/knob/eng2_start_right")
+sysEngines.engStart1Switch = MultiStateCmdSwitch:new("","laminar/B738/engine/starter1_pos",0,"laminar/B738/knob/eng1_start_left","laminar/B738/knob/eng1_start_right",0,3,true)
+sysEngines.engStart2Switch = MultiStateCmdSwitch:new("","laminar/B738/engine/starter2_pos",0,"laminar/B738/knob/eng2_start_left","laminar/B738/knob/eng2_start_right",0,3,true)
 sysEngines.engStarterGroup = SwitchGroup:new("engstarters")
 sysEngines.engStarterGroup:addSwitch(sysEngines.engStart1Switch)
 sysEngines.engStarterGroup:addSwitch(sysEngines.engStart2Switch)
@@ -60,10 +61,6 @@ sysEngines.eecSwitch2 = TwoStateCmdSwitch:new("eecsw2","laminar/B738/annunciator
 sysEngines.eecSwitchGroup = SwitchGroup:new("eecswitches")
 sysEngines.eecSwitchGroup:addSwitch(sysEngines.eecSwitch1)
 sysEngines.eecSwitchGroup:addSwitch(sysEngines.eecSwitch2)
-
--- GA Magnetos
-sysEngines.magnetos = InopSwitch:new("magnetos")
-sysEngines.magStart = InopSwitch:new("magstart")
 
 ----------- Annunciators
 

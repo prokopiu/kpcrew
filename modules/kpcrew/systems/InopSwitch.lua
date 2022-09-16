@@ -1,34 +1,33 @@
-local InopSwitch = {}
+-- Switch placeholder with no function
+-- use when aircraft does not support standard elements
+
+-- @classmod InopSwitch
+-- @author Kosta Prokopiu
+-- @copyright 2022 Kosta Prokopiu
+local khInopSwitch = {}
 
 local Switch = require "kpcrew.systems.Switch"
 
-function InopSwitch:new(name)
+-- Constructor for InopSwitch
+-- @tparam string name of element
+-- @treturn Switch the created element
+function khInopSwitch:new(name)
 
-    InopSwitch.__index = InopSwitch
-    setmetatable(InopSwitch, {
+    khInopSwitch.__index = khInopSwitch
+    setmetatable(khInopSwitch, {
         __index = Switch
     })
 
-    local obj = Switch:new(name)
-    setmetatable(obj, InopSwitch)
+    local obj = Switch:new(name,"",0)
+    setmetatable(obj, khInopSwitch)
 
     return obj
 end
 
--- return value of status dataref
-function InopSwitch:getStatus()
+-- return the current element dataref value
+-- @treturn 0
+function khInopSwitch:getStatus()
 	return 0
 end
 
--- actuate the switch with given mode
-function InopSwitch:actuate(action)
-end
-
--- set the value
-function InopSwitch:setValue(value)
-end
-
-function InopSwitch:adjustValue(value,min,max)
-end
-
-return InopSwitch
+return khInopSwitch

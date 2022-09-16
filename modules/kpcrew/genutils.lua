@@ -18,8 +18,6 @@ color_dark_grey 	= 0xFF606060
 color_left_display 	= 0xFFA0AFFF
 color_ocean_blue 	= 0xFFEC652B
 
--- color_checklist		= 0xFF2F4F4F
--- color_procedure		= 0xFF808000
 color_checklist		= 0xFF0F0F0F
 color_procedure		= 0xFF202000
 
@@ -443,7 +441,7 @@ function kc_imgui_rotary_mcp(label,system,ypos,id)
     imgui.PushID(id)
 	imgui.Button("-", 15, 25)
 	if imgui.IsItemActive() then
-		system:actuate(slowDown)
+		system:step(slowDown)
 	end
 	imgui.PopID()
 	
@@ -457,7 +455,7 @@ function kc_imgui_rotary_mcp(label,system,ypos,id)
     imgui.PushID(id)
 	imgui.Button("+", 15, 25)
 	if imgui.IsItemActive() then
-		system:actuate(slowUp)
+		system:step(slowUp)
 	end
 	imgui.PopID()
 
@@ -478,7 +476,7 @@ function kc_imgui_selector_mcp(label,system,ypos,sarray,id)
     imgui.PushID(id)
 	imgui.Button("-", 15, 25)
 	if imgui.IsItemActive() then
-		system:actuate(slowDown)
+		system:step(slowDown)
 	end
 	imgui.PopID()
 	
@@ -492,7 +490,7 @@ function kc_imgui_selector_mcp(label,system,ypos,sarray,id)
     imgui.PushID(id)
 	imgui.Button("+", 15, 25)
 	if imgui.IsItemActive() then
-		system:actuate(slowUp)
+		system:step(slowUp)
 	end
 	imgui.PopID()
 
@@ -573,7 +571,7 @@ function kc_imgui_radio(radio,label,course,fine,standby,active,flip,ypos,id)
     imgui.PushID(id)
 	imgui.Button("--", 20, 25)
 	if imgui.IsItemActive() then
-		course:actuate(slowDown)
+		course:step(slowDown)
 	end
 	imgui.PopID()
 	
@@ -581,7 +579,7 @@ function kc_imgui_radio(radio,label,course,fine,standby,active,flip,ypos,id)
     imgui.PushID(id)
 	imgui.Button("-", 20, 25)
 	if imgui.IsItemActive() then
-		fine:actuate(slowDown)
+		fine:step(slowDown)
 	end
 	imgui.PopID()
 	
@@ -632,7 +630,7 @@ function kc_imgui_radio(radio,label,course,fine,standby,active,flip,ypos,id)
     imgui.PushID(id)
 	imgui.Button("+", 20, 25)
 	if imgui.IsItemActive() then
-		fine:actuate(slowUp)
+		fine:step(slowUp)
 	end
 	imgui.PopID()
 
@@ -640,7 +638,7 @@ function kc_imgui_radio(radio,label,course,fine,standby,active,flip,ypos,id)
     imgui.PushID(id)
 	imgui.Button("++", 20, 25)
 	if imgui.IsItemActive() then
-		course:actuate(slowUp)
+		course:step(slowUp)
 	end
 	imgui.PopID()
 

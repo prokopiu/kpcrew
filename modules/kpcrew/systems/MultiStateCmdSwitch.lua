@@ -1,38 +1,71 @@
--- switch with mode on/off and toggle function via command
+-- Rotaries and multi-state switches
 
-local MultiStateCmdSwitch = { 
+-- @classmod MultiStateCmdSwitch
+-- @author Kosta Prokopiu
+-- @copyright 2022 Kosta Prokopiu
+local khMultiStateCmdSwitch = { 
 	defaultDelay = 3 
 }
 
 local Switch = require "kpcrew.systems.Switch"
 
--- provide the dataref with switch state, commands for on, off and toggle. use "nocommand" if no tgl cmd
-function MultiStateCmdSwitch:new(name, statusDref, statusDrefIdx, decrcmd, incrcmd)
+-- Provide the dataref with switch state, commands for on, off and toggle. use "nocommand" if no tgl cmd
+-- @tparam string name of element
+-- @tparam string dataref for elemnts status
+-- @tparam int index of element dataref
+-- @tparam string decrcmd command string to reduce the int value
+-- @tparam string incrcmd command string to increase the int value
+-- @tparam int minvalue minimal value for the switch
+-- @tparam int maxvalue maximal value for the switch
+-- @tparam boolean readonly = true cannot use setValue()
+-- @treturn Switch the created base element
+function khMultiStateCmdSwitch:new(name, statusDref, statusDrefIdx, decrcmd, incrcmd, minvalue, maxvalue, readonly)
 
-    MultiStateCmdSwitch.__index = MultiStateCmdSwitch
-    setmetatable(MultiStateCmdSwitch, {
+    khMultiStateCmdSwitch.__index = khMultiStateCmdSwitch
+    setmetatable(khMultiStateCmdSwitch, {
         __index = Switch
     })
 
-    local obj = Switch:new(name)
-    setmetatable(obj, MultiStateCmdSwitch)
+    local obj = Switch:new(name, statusDref, statusDrefIdx)
+    setmetatable(obj, khMultiStateCmdSwitch)
 
-	obj.statusDref = statusDref
-	obj.statusDrefIdx = statusDrefIdx
 	obj.decrcmd = decrcmd
 	obj.incrcmd = incrcmd
+	obj.minvalue = minvalue
+	obj.maxvalue = maxvalue
+	obj.readonly = readonly
 	obj.delay = self.defaultDelay
 	
     return obj
-end
 
--- return value of status dataref
-function MultiStateCmdSwitch:getStatus()
-	return get(self.statusDref,self.statusDrefIdx)
 end
 
 -- actuate the switch with given mode
-function MultiStateCmdSwitch:actuate(action)
+-- @tparam int action code (goal to reach)
+function khMultiStateCmdSwitch:actuate(value)
+	if self.readonly == true then
+		if value <= self.maxvalue and value >= self.minvalue then
+			local cnt = self.maxvalue - self.minvalue + 1
+			if value < self:getStatus() then
+				while cnt > 0 and self:getStatus() > self.minvalue and self:getStatus() ~= value do
+					cnt = cnt -1
+					command_once(self.decrcmd)
+				end
+			else
+				while cnt > 0 and self:getStatus() < self.maxvalue and self:getStatus() ~= value do
+					cnt = cnt -1
+					command_once(self.incrcmd)
+				end
+			end
+		end
+	else
+		self:setValue(value)
+	end
+end
+
+-- perform a single step up or down
+-- @tparam int 0=down, 1=up, 10=delayed down, 11=delayed up
+function khMultiStateCmdSwitch:step(action)
 	if action == cmdUp then
 		command_once(self.incrcmd)
 	end
@@ -57,45 +90,11 @@ function MultiStateCmdSwitch:actuate(action)
 	end
 end
 
--- set the value directly where possible (dref can be written)
-function MultiStateCmdSwitch:setValue(value)
-	if self.statusDrefIdx > 0 then
-		set_array(self.statusDref,self.statusDrefIdx,value)
-	else
-		set(self.statusDref,value)
-	end
-end
-
--- set the value directly where possible 
-function MultiStateCmdSwitch:adjustValue(value,min,max)
-	if value <= max and value >= min then
-		local cnt = max - min + 1
-		local drefvalue = nil
-		
-		if self.statusDrefIdx > 0 then
-			drefvalue = get(self.statusDref,self.statusDrefIdx)
-		else
-			drefvalue = get(self.statusDref)
-		end
-
-		if value < drefvalue then
-			while cnt > 0 and drefvalue > min and drefvalue ~= value do
-				cnt = cnt -1
-				command_once(self.decrcmd)
-			end
-		else
-			while cnt > 0 and drefvalue < max and drefvalue ~= value do
-				cnt = cnt -1
-				command_once(self.incrcmd)
-			end
-		end
-	end
-end
-
 -- adjust the delay for repeated calls
-function MultiStateCmdSwitch:setDefaultDelay(delay)
+-- @tparam int cycles to delay next step
+function khMultiStateCmdSwitch:setDefaultDelay(delay)
 	self.defaultDelay = delay
 end
 
-return MultiStateCmdSwitch
+return khMultiStateCmdSwitch
 

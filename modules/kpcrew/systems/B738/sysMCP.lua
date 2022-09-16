@@ -68,8 +68,8 @@ sysMCP.athrSwitch = TwoStateToggleSwitch:new("athr","laminar/B738/autopilot/auto
 
 -- CRS 1&2
 
-sysMCP.crs1Selector = MultiStateCmdSwitch:new("crs1","laminar/B738/autopilot/course_pilot",0,"laminar/B738/autopilot/course_pilot_dn","laminar/B738/autopilot/course_pilot_up")
-sysMCP.crs2Selector = MultiStateCmdSwitch:new("crs2","laminar/B738/autopilot/course_copilot",0,"laminar/B738/autopilot/course_copilot_dn","laminar/B738/autopilot/course_copilot_up")
+sysMCP.crs1Selector = MultiStateCmdSwitch:new("crs1","laminar/B738/autopilot/course_pilot",0,"laminar/B738/autopilot/course_pilot_dn","laminar/B738/autopilot/course_pilot_up",0,359,false)
+sysMCP.crs2Selector = MultiStateCmdSwitch:new("crs2","laminar/B738/autopilot/course_copilot",0,"laminar/B738/autopilot/course_copilot_dn","laminar/B738/autopilot/course_copilot_up",0,359,false)
 
 sysMCP.crsSelectorGroup = SwitchGroup:new("crs")
 sysMCP.crsSelectorGroup:addSwitch(sysMCP.crs1Selector)
@@ -79,7 +79,7 @@ sysMCP.crsSelectorGroup:addSwitch(sysMCP.crs2Selector)
 sysMCP.n1Switch = TwoStateToggleSwitch:new("n1","laminar/B738/autopilot/n1_status",0,"laminar/B738/autopilot/n1_press")
 
 -- IAS
-sysMCP.iasSelector = MultiStateCmdSwitch:new("ias","laminar/B738/autopilot/mcp_speed_dial_kts_mach",0,"sim/autopilot/airspeed_down","sim/autopilot/airspeed_up")
+sysMCP.iasSelector = MultiStateCmdSwitch:new("ias","laminar/B738/autopilot/mcp_speed_dial_kts_mach",0,"sim/autopilot/airspeed_down","sim/autopilot/airspeed_up",100,340,false)
 
 -- KTS/MACH C/O
 sysMCP.machSwitch = TwoStateToggleSwitch:new("mach","laminar/B738/autopilot/change_over_pos",0,"laminar/B738/autopilot/change_over_press")
@@ -94,22 +94,22 @@ sysMCP.vnavSwitch = TwoStateToggleSwitch:new("vnav",drefVNAVLight,0,"laminar/B73
 sysMCP.lvlchgSwitch = TwoStateToggleSwitch:new("lvlchg",drefLVLCHGLight,0,"laminar/B738/autopilot/lvl_chg_press")
 
 -- HDG
-sysMCP.hdgSelector = MultiStateCmdSwitch:new("hdg","laminar/B738/autopilot/mcp_hdg_dial",0,"laminar/B738/autopilot/heading_dn","laminar/B738/autopilot/heading_up")
+sysMCP.hdgSelector = MultiStateCmdSwitch:new("hdg","laminar/B738/autopilot/mcp_hdg_dial",0,"laminar/B738/autopilot/heading_dn","laminar/B738/autopilot/heading_up",0,359,false)
 
 -- TURNRATE
-sysMCP.turnRateSelector = MultiStateCmdSwitch:new("turnrate","laminar/B738/autopilot/bank_angle_pos",0,"laminar/B738/autopilot/bank_angle_dn","laminar/B738/autopilot/bank_angle_up")
+sysMCP.turnRateSelector = MultiStateCmdSwitch:new("turnrate","laminar/B738/autopilot/bank_angle_pos",0,"laminar/B738/autopilot/bank_angle_dn","laminar/B738/autopilot/bank_angle_up",0,4,true)
 
 -- LNAV
 sysMCP.lnavSwitch = TwoStateToggleSwitch:new("lnav",drefLNAVLight,0,"laminar/B738/autopilot/lnav_press")
 
 -- ALT
-sysMCP.altSelector = MultiStateCmdSwitch:new("alt","laminar/B738/autopilot/mcp_alt_dial",0,"laminar/B738/autopilot/altitude_dn","laminar/B738/autopilot/altitude_up")
+sysMCP.altSelector = MultiStateCmdSwitch:new("alt","laminar/B738/autopilot/mcp_alt_dial",0,"laminar/B738/autopilot/altitude_dn","laminar/B738/autopilot/altitude_up",0,50000,false)
 
 -- ALT INTV
 sysMCP.altintvSwitch = TwoStateToggleSwitch:new("altintv","laminar/B738/autopilot/alt_interv_pos",0,"laminar/B738/autopilot/alt_interv")
 
 -- VSP
-sysMCP.vspSelector = MultiStateCmdSwitch:new("vsp","laminar/B738/autopilot/ap_vvi_pos",0,"sim/autopilot/vertical_speed_down","sim/autopilot/vertical_speed_up")
+sysMCP.vspSelector = MultiStateCmdSwitch:new("vsp","laminar/B738/autopilot/ap_vvi_pos",0,"sim/autopilot/vertical_speed_down","sim/autopilot/vertical_speed_up",-7900,7900,true)
 
 -- CWS Boeing only
 sysMCP.cwsaSwitch = TwoStateToggleSwitch:new("cwsa","laminar/B738/autopilot/cws_a_status",0,"laminar/B738/autopilot/cws_a_press")
@@ -120,11 +120,11 @@ sysMCP.discAPSwitch = TwoStateToggleSwitch:new("apdisc","laminar/B738/autopilot/
 sysMCP.apDiscYoke = TwoStateToggleSwitch:new("apdisc","laminar/B738/autopilot/disconnect_pos",0,"laminar/B738/autopilot/disconnect_toggle")
 
 -- NAVIGATION SWITCHES
-sysMCP.vhfNavSwitch = MultiStateCmdSwitch:new("vhfnav","laminar/B738/toggle_switch/vhf_nav_source",0,"laminar/B738/toggle_switch/vhf_nav_source_lft","laminar/B738/toggle_switch/vhf_nav_source_rgt")
-sysMCP.irsNavSwitch = MultiStateCmdSwitch:new("irsnav","laminar/B738/toggle_switch/irs_source",0,"laminar/B738/toggle_switch/irs_source_left","laminar/B738/toggle_switch/irs_source_right")
-sysMCP.fmcNavSwitch = MultiStateCmdSwitch:new("fmcnav","laminar/B738/toggle_switch/fmc_source",0,"laminar/B738/toggle_switch/fmc_source_left","laminar/B738/toggle_switch/fmc_source_right")
-sysMCP.displaySourceSwitch = MultiStateCmdSwitch:new("dispsrc","laminar/B738/toggle_switch/dspl_source",0,"laminar/B738/toggle_switch/dspl_source_left","laminar/B738/toggle_switch/dspl_source_right")
-sysMCP.displayControlSwitch = MultiStateCmdSwitch:new("dispctrl","laminar/B738/toggle_switch/dspl_ctrl_pnl",0,"laminar/B738/toggle_switch/dspl_ctrl_pnl_left","laminar/B738/toggle_switch/dspl_ctrl_pnl_right")
+sysMCP.vhfNavSwitch = MultiStateCmdSwitch:new("vhfnav","laminar/B738/toggle_switch/vhf_nav_source",0,"laminar/B738/toggle_switch/vhf_nav_source_lft","laminar/B738/toggle_switch/vhf_nav_source_rgt",-1,1,true)
+sysMCP.irsNavSwitch = MultiStateCmdSwitch:new("irsnav","laminar/B738/toggle_switch/irs_source",0,"laminar/B738/toggle_switch/irs_source_left","laminar/B738/toggle_switch/irs_source_right",-1,1,true)
+sysMCP.fmcNavSwitch = MultiStateCmdSwitch:new("fmcnav","laminar/B738/toggle_switch/fmc_source",0,"laminar/B738/toggle_switch/fmc_source_left","laminar/B738/toggle_switch/fmc_source_right",-1,1,true)
+sysMCP.displaySourceSwitch = MultiStateCmdSwitch:new("dispsrc","laminar/B738/toggle_switch/dspl_source",0,"laminar/B738/toggle_switch/dspl_source_left","laminar/B738/toggle_switch/dspl_source_right",-1,1,false)
+sysMCP.displayControlSwitch = MultiStateCmdSwitch:new("dispctrl","laminar/B738/toggle_switch/dspl_ctrl_pnl",0,"laminar/B738/toggle_switch/dspl_ctrl_pnl_left","laminar/B738/toggle_switch/dspl_ctrl_pnl_right",-1,1,true)
 
 ---------- Annunciators
 

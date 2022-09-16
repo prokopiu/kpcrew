@@ -1,6 +1,6 @@
 -- Standard Flow Item to be added to procedures or checklists
 --
--- @classmod ProcedureItem
+-- @classmod FlowItem
 -- @author Kosta Prokopiu
 -- @copyright 2022 Kosta Prokopiu
 
@@ -42,6 +42,7 @@ local kcFlowItem = {
 -- @tparam function reference validFunc shall return true or false to verify if condition is met
 -- @tparam function reference  actionFunc will be executed and make changes to aircraft settings
 -- @tparam function reference  skipFunc if true will skip the item and not diaply in list
+-- @treturn local object
 function kcFlowItem:new(challengeText,responseText,actor,waittime,validFunc,actionFunc,skipFunc)
     kcFlowItem.__index = kcFlowItem
     local obj = {}

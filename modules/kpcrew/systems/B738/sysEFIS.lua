@@ -37,12 +37,12 @@ local InopSwitch = require "kpcrew.systems.InopSwitch"
 ------------- Switches
 
 -- MAP ZOOM
-sysEFIS.mapZoomPilot = MultiStateCmdSwitch:new("mapzoompilot","laminar/B738/EFIS/capt/map_range",0,"laminar/B738/EFIS_control/capt/map_range_dn","laminar/B738/EFIS_control/capt/map_range_up")
-sysEFIS.mapZoomCopilot = MultiStateCmdSwitch:new("mapzoomcopilot","laminar/B738/EFIS/fo/map_range",0,"laminar/B738/EFIS_control/fo/map_range_dn","laminar/B738/EFIS_control/fo/map_range_up")
+sysEFIS.mapZoomPilot = MultiStateCmdSwitch:new("mapzoompilot","laminar/B738/EFIS/capt/map_range",0,"laminar/B738/EFIS_control/capt/map_range_dn","laminar/B738/EFIS_control/capt/map_range_up",0,7,false)
+sysEFIS.mapZoomCopilot = MultiStateCmdSwitch:new("mapzoomcopilot","laminar/B738/EFIS/fo/map_range",0,"laminar/B738/EFIS_control/fo/map_range_dn","laminar/B738/EFIS_control/fo/map_range_up",0,7,false)
 
 -- MAP MODE
-sysEFIS.mapModePilot = MultiStateCmdSwitch:new("mapmodepilot","laminar/B738/EFIS_control/capt/map_mode_pos",0,"laminar/B738/EFIS_control/capt/map_mode_dn","laminar/B738/EFIS_control/capt/map_mode_up")
-sysEFIS.mapModeCopilot = MultiStateCmdSwitch:new("mapmodecopilot","laminar/B738/EFIS_control/fo/map_mode_pos",0,"laminar/B738/EFIS_control/fo/map_mode_dn","laminar/B738/EFIS_control/fo/map_mode_up")
+sysEFIS.mapModePilot = MultiStateCmdSwitch:new("mapmodepilot","laminar/B738/EFIS_control/capt/map_mode_pos",0,"laminar/B738/EFIS_control/capt/map_mode_dn","laminar/B738/EFIS_control/capt/map_mode_up",0,3,false)
+sysEFIS.mapModeCopilot = MultiStateCmdSwitch:new("mapmodecopilot","laminar/B738/EFIS_control/fo/map_mode_pos",0,"laminar/B738/EFIS_control/fo/map_mode_dn","laminar/B738/EFIS_control/fo/map_mode_up",0,3,false)
 
 -- CTR
 sysEFIS.ctrPilot = TwoStateToggleSwitch:new("ctrpilot","laminar/B738/EFIS_control/capt/exp_map",0,"laminar/B738/EFIS_control/capt/push_button/ctr_press")
@@ -89,25 +89,24 @@ sysEFIS.mtrsPilot = TwoStateToggleSwitch:new("mtrspilot","laminar/B738/PFD/capt/
 sysEFIS.mtrsCopilot = TwoStateToggleSwitch:new("mtrscopilot","laminar/B738/PFD/fo/alt_mode_is_meters",0,"laminar/B738/EFIS_control/fo/push_button/mtrs_press")
 
 -- MINS type
-sysEFIS.minsTypePilot = MultiStateCmdSwitch:new("minstypepilot","laminar/B738/EFIS_control/cpt/minimums",0,"laminar/B738/EFIS_control/cpt/minimums_dn","laminar/B738/EFIS_control/cpt/minimums_up")
-sysEFIS.minsTypeCopilot = MultiStateCmdSwitch:new("minstypecopilot","laminar/B738/EFIS_control/fo/minimums",0,"laminar/B738/EFIS_control/fo/minimums_dn","laminar/B738/EFIS_control/cpt/minimums_up")
+sysEFIS.minsTypePilot = MultiStateCmdSwitch:new("minstypepilot","laminar/B738/EFIS_control/cpt/minimums",0,"laminar/B738/EFIS_control/cpt/minimums_dn","laminar/B738/EFIS_control/cpt/minimums_up",0,1,false)
+sysEFIS.minsTypeCopilot = MultiStateCmdSwitch:new("minstypecopilot","laminar/B738/EFIS_control/fo/minimums",0,"laminar/B738/EFIS_control/fo/minimums_dn","laminar/B738/EFIS_control/cpt/minimums_up",0,1,false)
 
 -- MINS RESET
 sysEFIS.minsResetPilot = TwoStateToggleSwitch:new("minsresetpilot","laminar/B738/EFIS_control/cpt/minimums_show",0,"laminar/B738/EFIS_control/capt/push_button/rst_press")
 sysEFIS.minsResetCopilot = TwoStateToggleSwitch:new("minsresetcopilot","laminar/B738/EFIS_control/fo/minimums_show",0,"laminar/B738/EFIS_control/fo/push_button/rst_press")
 
 -- MINS SET
-sysEFIS.minsPilot = MultiStateCmdSwitch:new("minspilot","laminar/B738/pfd/dh_pilot",0,"laminar/B738/pfd/dh_pilot_up","laminar/B738/pfd/dh_pilot_dn")
-sysEFIS.minsCopilot = MultiStateCmdSwitch:new("minscopilot","laminar/B738/pfd/dh_copilot",0,"laminar/B738/pfd/dh_copilot_up","laminar/B738/pfd/dh_copilot_dn")
+sysEFIS.minsPilot = MultiStateCmdSwitch:new("minspilot","laminar/B738/pfd/dh_pilot",0,"laminar/B738/pfd/dh_pilot_dn","laminar/B738/pfd/dh_pilot_up",0,999,false)
+sysEFIS.minsCopilot = MultiStateCmdSwitch:new("minscopilot","laminar/B738/pfd/dh_copilot",0,"laminar/B738/pfd/dh_copilot_dn","laminar/B738/pfd/dh_copilot_up",0,999,false)
 
 -- VOR/ADF 1
-sysEFIS.voradf1Pilot = MultiStateCmdSwitch:new("voradf1pilot","laminar/B738/EFIS_control/capt/vor1_off_pfd",0,"laminar/B738/EFIS_control/capt/vor1_off_dn","laminar/B738/EFIS_control/capt/vor1_off_up")
-sysEFIS.voradf1Copilot = MultiStateCmdSwitch:new("voradf1copilot","laminar/B738/EFIS_control/fo/vor1_off_pfd",0,"laminar/B738/EFIS_control/fo/vor1_off_dn","laminar/B738/EFIS_control/fo/vor1_off_up")
+sysEFIS.voradf1Pilot = MultiStateCmdSwitch:new("voradf1pilot","laminar/B738/EFIS_control/capt/vor1_off_pfd",0,"laminar/B738/EFIS_control/capt/vor1_off_dn","laminar/B738/EFIS_control/capt/vor1_off_up",-1,1,true)
+sysEFIS.voradf1Copilot = MultiStateCmdSwitch:new("voradf1copilot","laminar/B738/EFIS_control/fo/vor1_off_pfd",0,"laminar/B738/EFIS_control/fo/vor1_off_dn","laminar/B738/EFIS_control/fo/vor1_off_up",-1,1,true)
 
 -- VOR/ADF 2
-sysEFIS.voradf2Pilot = MultiStateCmdSwitch:new("vorad2pilot","laminar/B738/EFIS_control/capt/vor2_off_pfd",0,"laminar/B738/EFIS_control/capt/vor2_off_dn","laminar/B738/EFIS_control/capt/vor2_off_up")
-sysEFIS.voradf2Copilot = MultiStateCmdSwitch:new("vorad2copilot","laminar/B738/EFIS_control/fo/vor2_off_pfd",0,"laminar/B738/EFIS_control/fo/vor2_off_dn","laminar/B738/EFIS_control/fo/vor2_off_up")
-
+sysEFIS.voradf2Pilot = MultiStateCmdSwitch:new("vorad2pilot","laminar/B738/EFIS_control/capt/vor2_off_pfd",0,"laminar/B738/EFIS_control/capt/vor2_off_dn","laminar/B738/EFIS_control/capt/vor2_off_up",-1,1,true)
+sysEFIS.voradf2Copilot = MultiStateCmdSwitch:new("vorad2copilot","laminar/B738/EFIS_control/fo/vor2_off_pfd",0,"laminar/B738/EFIS_control/fo/vor2_off_dn","laminar/B738/EFIS_control/fo/vor2_off_up",-1,1,true)
 
 ------------- Annunciators
 

@@ -1,21 +1,30 @@
 -- switch with mode on/off and toggle function via command
-local TwoStateCmdSwitch = {}
+
+-- @classmod TwoStateCmdSwitch
+-- @author Kosta Prokopiu
+-- @copyright 2022 Kosta Prokopiu
+local khTwoStateCmdSwitch = {}
 
 local Switch = require "kpcrew.systems.Switch"
 
 -- provide the dataref with switch state, commands for on, off and toggle. use "nocommand" if no tgl cmd
-function TwoStateCmdSwitch:new(name, statusDref, statusDrefIdx, oncmd, offcmd, tglcmd)
+-- @tparam string name of element
+-- @tparam string dataref for elemnts status
+-- @tparam int index of element dataref
+-- @tparam string oncmd command to turn element on
+-- @tparam string offcmd command to turn element of
+-- @tparam string tglcmd command to toggle element status on/off
+-- @treturn Switch the created base element
+function khTwoStateCmdSwitch:new(name, statusDref, statusDrefIdx, oncmd, offcmd, tglcmd)
 
-    TwoStateCmdSwitch.__index = TwoStateCmdSwitch
-    setmetatable(TwoStateCmdSwitch, {
+    khTwoStateCmdSwitch.__index = khTwoStateCmdSwitch
+    setmetatable(khTwoStateCmdSwitch, {
         __index = Switch
     })
 
-    local obj = Switch:new(name)
-    setmetatable(obj, TwoStateCmdSwitch)
+    local obj = Switch:new(name, statusDref, statusDrefIdx)
+    setmetatable(obj, khTwoStateCmdSwitch)
 
-	obj.statusDref = statusDref
-	obj.statusDrefIdx = statusDrefIdx
 	obj.oncmd = oncmd
 	obj.offcmd = offcmd
 	obj.tglcmd = tglcmd
@@ -23,13 +32,9 @@ function TwoStateCmdSwitch:new(name, statusDref, statusDrefIdx, oncmd, offcmd, t
     return obj
 end
 
--- return value of status dataref
-function TwoStateCmdSwitch:getStatus()
-	return get(self.statusDref,self.statusDrefIdx)
-end
-
 -- actuate the switch with given mode
-function TwoStateCmdSwitch:actuate(action)
+-- @tparam int action code (modeOn, modeOff, modeToggle [0,1,2])
+function khTwoStateCmdSwitch:actuate(action)
 	if action == modeOn then
 		command_once(self.oncmd)
 	end
@@ -49,5 +54,5 @@ function TwoStateCmdSwitch:actuate(action)
 	end
 end
 
-return TwoStateCmdSwitch
+return khTwoStateCmdSwitch
 

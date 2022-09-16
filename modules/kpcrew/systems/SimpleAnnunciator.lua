@@ -1,33 +1,29 @@
--- interface for an Annunciator
-local SimpleAnnunciator = {
+-- simple annunciator on/off
+
+-- @classmod SimpleAnnunciator
+-- @author Kosta Prokopiu
+-- @copyright 2022 Kosta Prokopiu
+local khSimpleAnnunciator = {
 }
 
 local Annunciator = require "kpcrew.systems.Annunciator"
 
--- new switch object
-function SimpleAnnunciator:new(name, statusDref, statusDrefIdx)
+-- Constructor for on off annunciator
+-- @tparam string name of element
+-- @tparam string dataref for elements status
+-- @tparam int index of element dataref (set -1 if only accessible via dateref_array to reach [0])
+-- @treturn Annunciator the created base element
+function khSimpleAnnunciator:new(name, statusDref, statusDrefIdx)
 
-    SimpleAnnunciator.__index = SimpleAnnunciator
-    setmetatable(SimpleAnnunciator, {
+    khSimpleAnnunciator.__index = khSimpleAnnunciator
+    setmetatable(khSimpleAnnunciator, {
         __index = Annunciator
     })
 
-    local obj = Annunciator:new(name)
-    setmetatable(obj, SimpleAnnunciator)
-
-	obj.statusDref = statusDref
-	obj.statusDrefIdx = statusDrefIdx
+    local obj = Annunciator:new(name, statusDref, statusDrefIdx)
+    setmetatable(obj, khSimpleAnnunciator)
 
     return obj
 end
 
--- get name of switch object
-function SimpleAnnunciator:getName()
-    return self.name
-end
-
-function SimpleAnnunciator:getStatus()
-	return get(self.statusDref,self.statusDrefIdx)
-end
-
-return SimpleAnnunciator
+return khSimpleAnnunciator

@@ -1,32 +1,37 @@
--- interface for an CustomAnnunciator
-local CustomAnnunciator = {
+-- interface for an Custom Annunciator with scripting
+
+-- @classmod CustomAnnunciator
+-- @author Kosta Prokopiu
+-- @copyright 2022 Kosta Prokopiu
+local khCustomAnnunciator = {
 }
 
 local Annunciator = require "kpcrew.systems.Annunciator"
 
 -- new switch object
-function CustomAnnunciator:new(name, funcStatus)
+-- Constructor for custom scroipt annunciator
+-- @tparam string name of element
+-- @tparam function logic for setting annunciator 1 or 0
+-- @treturn Annunciator the created base element
+function khCustomAnnunciator:new(name, funcStatus)
 
-    CustomAnnunciator.__index = CustomAnnunciator
-    setmetatable(CustomAnnunciator, {
+    khCustomAnnunciator.__index = khCustomAnnunciator
+    setmetatable(khCustomAnnunciator, {
         __index = Annunciator
     })
 
-    local obj = Annunciator:new(name)
-    setmetatable(obj, CustomAnnunciator)
+    local obj = Annunciator:new(name, "", 0)
+    setmetatable(obj, khCustomAnnunciator)
 
 	obj.funcStatus = funcStatus
 
     return obj
 end
 
--- get name of switch object
-function CustomAnnunciator:getName()
-    return self.name
-end
-
-function CustomAnnunciator:getStatus()
+-- return custom status
+-- @treturn <type> status value
+function khCustomAnnunciator:getStatus()
 	return self.funcStatus()
 end
 
-return CustomAnnunciator
+return khCustomAnnunciator
