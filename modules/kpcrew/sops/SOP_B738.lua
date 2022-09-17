@@ -352,11 +352,11 @@ prelPreflightProc:addItem(kcProcedureItem:new("WING #exchange|&|and# WHEEL WELL 
 	function () return sysLights.wingSwitch:getStatus() == (kc_is_daylight() and 0 or 1) and sysLights.wheelSwitch:getStatus() == (kc_is_daylight() and 0 or 1) end,
 	function () sysLights.wingSwitch:actuate(kc_is_daylight() and 0 or 1) sysLights.wheelSwitch:actuate(kc_is_daylight() and 0 or 1) end))
 prelPreflightProc:addItem(kcProcedureItem:new("FUEL PUMPS","APU 1 PUMP ON, REST OFF",kcFlowItem.actorFO,2,
-	function () return sysFuel.allFuelPumpsOff:getStatus() == modeOff end,
+	function () return sysFuel.allFuelPumpGroup:getStatus() == 1 end,
 	function () sysFuel.allFuelPumpGroup:actuate(modeOff) sysFuel.fuelPumpLeftAft:actuate(modeOn) end,
 	function () return not activePrefSet:get("aircraft:powerup_apu") end))
 prelPreflightProc:addItem(kcProcedureItem:new("FUEL PUMPS","ALL OFF",kcFlowItem.actorFO,2,
-	function () return sysFuel.allFuelPumpsOff:getStatus() == modeOn end,
+	function () return sysFuel.allFuelPumpGroup:getStatus() == 0 end,
 	function () sysFuel.allFuelPumpGroup:actuate(modeOff) end,
 	function () return activePrefSet:get("aircraft:powerup_apu") end))
 prelPreflightProc:addItem(kcProcedureItem:new("FUEL CROSS FEED","OFF",kcFlowItem.actorFO,2,
@@ -600,13 +600,14 @@ preflightFOProc:addItem(kcProcedureItem:new("SOURCE SELECTOR","AUTO",kcFlowItem.
 preflightFOProc:addItem(kcProcedureItem:new("CONTROL PANEL SELECT SWITCH","NORMAL",kcFlowItem.actorFO,2,
 	function() return sysMCP.displayControlSwitch:getStatus() == 0 end,
 	function () sysMCP.displayControlSwitch:setValue(0) end))
+	
 preflightFOProc:addItem(kcSimpleProcedureItem:new("==== Fuel panel"))
 preflightFOProc:addItem(kcProcedureItem:new("FUEL PUMPS","APU 1 PUMP ON, REST OFF",kcFlowItem.actorFO,2,
-	function () return sysFuel.allFuelPumpsOff:getStatus() == 1 end,
+	function () return sysFuel.allFuelPumpGroup:getStatus() == 1 end,
 	function () sysFuel.allFuelPumpGroup:actuate(modeOff) sysFuel.fuelPumpLeftAft:actuate(modeOn) end,
 	function () return not activePrefSet:get("aircraft:powerup_apu") end))
 preflightFOProc:addItem(kcProcedureItem:new("FUEL PUMPS","ALL OFF",kcFlowItem.actorFO,2,
-	function () return sysFuel.allFuelPumpsOff:getStatus() == 0 end,
+	function () return sysFuel.allFuelPumpGroup:getStatus() == 0 end,
 	function () sysFuel.allFuelPumpGroup:actuate(modeOff) end,
 	function () return activePrefSet:get("aircraft:powerup_apu") end))
 preflightFOProc:addItem(kcProcedureItem:new("FUEL VALVE ANNUNCIATORS","DIM",kcFlowItem.actorFO,2,
@@ -615,7 +616,7 @@ preflightFOProc:addItem(kcIndirectProcedureItem:new("FUEL CROSS FEED","ON FOR TE
 	function () return sysFuel.crossFeed:getStatus() == modeOn end,
 	function () sysFuel.crossFeed:actuate(modeOn) end))
 preflightFOProc:addItem(kcIndirectProcedureItem:new("CROSS FEED VALVE","CHECK DIM",kcFlowItem.actorFO,2,"xfeeddim",
-	function () return sysFuel.xfeedVlvAnn:getStatus() == 0.5 end))
+	function () return sysFuel.xfeedVlvAnn:getStatus() > 0 end))
 preflightFOProc:addItem(kcProcedureItem:new("FUEL CROSS FEED","OFF",kcFlowItem.actorFO,2,
 	function () return sysFuel.crossFeed:getStatus() == modeOff end,
 	function () sysFuel.crossFeed:actuate(modeOff) end))
@@ -819,8 +820,8 @@ preflightFOProc:addItem(kcProcedureItem:new("LOGO LIGHT SWITCH","%s|(kc_is_dayli
 	function () return sysLights.logoSwitch:getStatus() == (kc_is_daylight() and 0 or 1) end,
 	function () sysLights.logoSwitch:actuate( kc_is_daylight() and 0 or 1) end ))
 preflightFOProc:addItem(kcProcedureItem:new("POSITION LIGHT SWITCH","ON",kcFlowItem.actorFO,2,
-	function () return sysLights.positionSwitch:getStatus() == modeOn end,
-	function () sysLights.positionSwitch:step(cmdDown) end))
+	function () return sysLights.positionSwitch:getStatus() ~= 0  end,
+	function () sysLights.positionSwitch:actuate(1) end))
 preflightFOProc:addItem(kcProcedureItem:new("ANTI-COLLISION LIGHT SWITCH","OFF",kcFlowItem.actorFO,2,
 	function () return sysLights.beaconSwitch:getStatus() == 0 end,
 	function () sysLights.beaconSwitch:actuate(0) end))
@@ -2222,7 +2223,7 @@ afterLandingProc:addItem(kcProcedureItem:new("TRANSPONDER","STBY",kcFlowItem.act
 	function () sysRadios.xpdrSwitch:actuate(1) end,
 	function () return activePrefSet:get("general:xpdrusa") == true end))
 afterLandingProc:addItem(kcProcedureItem:new("FLAPS","UP",kcFlowItem.actorFO,2,
-	function () return sysControls.flapsSwitch:getStatus() == 0 and sysControls.slatsExtended:getStatus() == 0 end,
+	function () return sysControls.flapsSwitch:getStatus() == 0 end,
 	function () sysControls.flapsSwitch:setValue(0) end))
 afterLandingProc:addItem(kcProcedureItem:new("#spell|APU#","START",kcFlowItem.actorFO,2,
 	function () return sysElectric.apuRunningAnc:getStatus() == modeOn end,
@@ -2252,6 +2253,7 @@ afterLandingProc:addItem(kcIndirectProcedureItem:new("  #spell|APU# GEN OFF BUS 
 -- IFE/PASS SEAT POWER SWITCH..................OFF  (CPT)
 -- WING ANTI-ICE SWITCH........................OFF   (FO)
 -- ENGINE ANTI-ICE SWITCHES....................OFF   (FO)
+-- PROBE HEAT..................................OFF   (FO)
 -- ENGINE HYDRAULIC PUMPS SWITCHES..............ON   (FO)
 -- ELECTRIC HYDRAULIC PUMPS SWITCHES...........OFF   (FO)
 -- RECIRCULATION FAN SWITCHES.................AUTO   (FO)
@@ -2302,11 +2304,11 @@ shutdownProc:addItem(kcProcedureItem:new("ANTI COLLISION LIGHT SWITCH","OFF",kcF
 	function () return sysLights.beaconSwitch:getStatus() == 0 end,
 	function () sysLights.beaconSwitch:actuate(0) end))
 shutdownProc:addItem(kcProcedureItem:new("FUEL PUMPS","APU 1 PUMP ON, REST OFF",kcFlowItem.actorCPT,2,
-	function () return sysFuel.allFuelPumpsOff:getStatus() == 1 end,
+	function () return sysFuel.allFuelPumpGroup:getStatus() == 1 end,
 	function () sysFuel.allFuelPumpGroup:actuate(modeOff) sysFuel.fuelPumpLeftAft:actuate(modeOn) end,
 	function () return activeBriefings:get("approach:powerAtGate") == 1 end))
 shutdownProc:addItem(kcProcedureItem:new("FUEL PUMPS","ALL OFF",kcFlowItem.actorFO,2,
-	function () return sysFuel.allFuelPumpsOff:getStatus() == 0 end,
+	function () return sysFuel.allFuelPumpGroup:getStatus() == 0 end,
 	function () sysFuel.allFuelPumpGroup:actuate(modeOff) end,
 	function () return activeBriefings:get("approach:powerAtGate") == 2 end))
 shutdownProc:addItem(kcProcedureItem:new("CAB/UTIL POWER SWITCH","ON",kcFlowItem.actorCPT,1,
@@ -2321,6 +2323,9 @@ shutdownProc:addItem(kcProcedureItem:new("WING ANTI-ICE SWITCH","OFF",kcFlowItem
 shutdownProc:addItem(kcProcedureItem:new("ENGINE ANTI-ICE SWITCHES","OFF",kcFlowItem.actorFO,2,
 	function () return sysAice.engAntiIceGroup:getStatus() == 0 end,
 	function () sysAice.engAntiIceGroup:actuate(0) end))
+shutdownProc:addItem(kcProcedureItem:new("PROBE HEAT","OFF",kcChecklistItem.actorFO,2,
+	function () return sysAice.probeHeatGroup:getStatus() = 0 end,
+	function () sysAice.probeHeatGroup:actuate(0) end))
 shutdownProc:addItem(kcProcedureItem:new("ENGINE HYDRAULIC PUMPS SWITCHES","ON",kcFlowItem.actorFO,2,
 	function () return sysHydraulic.engHydPumpGroup:getStatus() == 2 end,
 	function () sysHydraulic.engHydPumpGroup:actuate(1) end))
@@ -2383,8 +2388,8 @@ shutdownChkl:addItem(kcChecklistItem:new("FUEL PUMPS","OFF",kcChecklistItem.acto
 	function () return sysFuel.allFuelPumpGroup:getStatus() == 0 end,
 	function () sysFuel.allFuelPumpGroup:actuate(modeOff) end,
 	function () return activeBriefings:get("approach:powerAtGate") == 2 end))
-shutdownChkl:addItem(kcChecklistItem:new("PROBE HEAT","AUTO/OFF",kcChecklistItem.actorFO,2,
-	function () return sysAice.probeHeatGroup:getStatus() < 3 end,
+shutdownChkl:addItem(kcChecklistItem:new("PROBE HEAT","OFF",kcChecklistItem.actorFO,2,
+	function () return sysAice.probeHeatGroup:getStatus() == 0 end,
 	function () sysAice.probeHeatGroup:actuate(0) end))
 shutdownChkl:addItem(kcChecklistItem:new("HYDRAULIC PANEL","SET",kcChecklistItem.actorFO,2))
 shutdownChkl:addItem(kcChecklistItem:new("FLAPS","UP",kcChecklistItem.actorCPT,2,
