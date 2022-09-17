@@ -33,6 +33,14 @@ function khSwitchGroup:addSwitch(newSwitch)
     table.insert(self.switches, newSwitch)
 end
 
+-- step through all switches in the switch group
+-- @tparam int action code (cmdUp, cmdDown, ......)
+function khSwitchGroup:step(action)
+    for _, switch in ipairs(self.switches) do
+        switch:step(action)
+    end	
+end
+
 -- actuate all switches in the switch group
 -- @tparam int action code (modeOn, modeOff...)
 function khSwitchGroup:actuate(action)

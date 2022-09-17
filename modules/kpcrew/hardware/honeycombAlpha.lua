@@ -12,7 +12,7 @@ create_command("kp/xsp/alpha/BAT_off",	"Alpha BAT Off", "sysElectric.bat1Switch:
 create_command("kp/xsp/alpha/AVIONICS_BUS1_on",	"Alpha AVIONICS BUS1 On", "sysElectric.avionicsBus:actuate(modeOn)", "", "")
 create_command("kp/xsp/alpha/AVIONICS_BUS1_off","Alpha AVIONICS BUS1 Off", "sysElectric.avionicsBus:actuate(modeOff)", "", "")
 
--- AVIONICS 2
+-- AVIONICS BUS 2
 create_command("kp/xsp/alpha/AVIONICS_BUS2_on",	"Alpha AVIONICS BUS2 On", "", "", "")
 create_command("kp/xsp/alpha/AVIONICS_BUS2_off","Alpha AVIONICS BUS2 Off", "", "", "")
 
@@ -51,20 +51,25 @@ create_command("kp/xsp/alpha/MAGNETO_START","Alpha MAGNETO START", "sysEngines.m
 create_command("kp/xsp/alpha/white_left",	"Alpha WHITE Left", "", "", "")
 -- WHITE RIGHT
 create_command("kp/xsp/alpha/white_right",	"Alpha WHIRE Right", "", "", "")
+
 -- A/P DISC
 create_command("kp/xsp/alpha/AP_DISC",	"Alpha Autopilot Disc", "sysMCP.apDiscYoke:actuate(2)", "", "")
+
 -- PTT
 create_command("kp/xsp/alpha/PTT",	"Alpha PTT", "", "", "")
+
 -- LEFT Rocker
 create_command("kp/xsp/alpha/LEFT_ROCK_forward",	"Alpha Left Rocker forward", "", "", "")
 create_command("kp/xsp/alpha/LEFT_ROCK_backward",	"Alpha Left Rocker backward", "", "", "")
+
 -- RIGHT Rocker
 create_command("kp/xsp/alpha/RIGHT_ROCK_forward",	"Alpha Right Rocker forward", "", "", "")
 create_command("kp/xsp/alpha/RIGHT_ROCK_backward",	"Alpha Right Rocker backward", "", "", "")
+
 -- UPPER Rocker
 create_command("kp/xsp/alpha/UPPER_ROCK_left",	"Alpha Upper Rocker Left", "", "", "")
 create_command("kp/xsp/alpha/UPPER_ROCK_right",	"Alpha Upper Rocker Right", "", "", "")
+
 -- LOWER Rocker
 create_command("kp/xsp/alpha/LOWER_ROCK_left",	"Alpha Lower Rocker Left", "", "", "")
 create_command("kp/xsp/alpha/LOWER_ROCK_right",	"Alpha Lower Rocker Right", "", "", "")
-

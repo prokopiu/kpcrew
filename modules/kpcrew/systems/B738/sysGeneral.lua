@@ -1,50 +1,57 @@
 -- B738 airplane 
 -- aircraft general systems
 
-local TwoStateDrefSwitch = require "kpcrew.systems.TwoStateDrefSwitch"
-local TwoStateCmdSwitch = require "kpcrew.systems.TwoStateCmdSwitch"
-local TwoStateCustomSwitch = require "kpcrew.systems.TwoStateCustomSwitch"
-local SwitchGroup  = require "kpcrew.systems.SwitchGroup"
-local SimpleAnnunciator = require "kpcrew.systems.SimpleAnnunciator"
-local CustomAnnunciator = require "kpcrew.systems.CustomAnnunciator"
-local TwoStateToggleSwitch = require "kpcrew.systems.TwoStateToggleSwitch"
-local MultiStateCmdSwitch = require "kpcrew.systems.MultiStateCmdSwitch"
-local InopSwitch = require "kpcrew.systems.InopSwitch"
-local KeepPressedSwitchCmd	= require "kpcrew.systems.KeepPressedSwitchCmd"
-
+-- @classmod sysGeneral
+-- @author Kosta Prokopiu
+-- @copyright 2022 Kosta Prokopiu
 local sysGeneral = {
-	irsUnitMin = 0,
-	irsUnitMax = 3,
-	irsUnitOFF = 0,
-	irsUnitALIGN = 1,
-	irsUnitNAV = 2,
-	irsUnitATT = 3;
-
-	wiperPark = 0,
-	wiperInt = 1,
-	wiperLow = 2,
-	wiperHigh = 3
+	irsUnitMin 		= 0,
+	irsUnitMax 		= 3,
+	irsUnitOFF 		= 0,
+	irsUnitALIGN 	= 1,
+	irsUnitNAV 		= 2,
+	irsUnitATT 		= 3,
+	
+	wiperPark 		= 0,
+	wiperInt 		= 1,
+	wiperLow 		= 2,
+	wiperHigh 		= 3
 }
 
+local TwoStateDrefSwitch 	= require "kpcrew.systems.TwoStateDrefSwitch"
+local TwoStateCmdSwitch	 	= require "kpcrew.systems.TwoStateCmdSwitch"
+local TwoStateCustomSwitch 	= require "kpcrew.systems.TwoStateCustomSwitch"
+local SwitchGroup  			= require "kpcrew.systems.SwitchGroup"
+local SimpleAnnunciator 	= require "kpcrew.systems.SimpleAnnunciator"
+local CustomAnnunciator 	= require "kpcrew.systems.CustomAnnunciator"
+local TwoStateToggleSwitch	= require "kpcrew.systems.TwoStateToggleSwitch"
+local MultiStateCmdSwitch 	= require "kpcrew.systems.MultiStateCmdSwitch"
+local InopSwitch 			= require "kpcrew.systems.InopSwitch"
+
 -- Parking Brake
-sysGeneral.parkBrakeSwitch = TwoStateToggleSwitch:new("parkbrake","sim/cockpit2/controls/parking_brake_ratio",0,"laminar/B738/push_button/park_brake_on_off")
+sysGeneral.parkBrakeSwitch 	= TwoStateToggleSwitch:new("parkbrake","sim/cockpit2/controls/parking_brake_ratio",0,
+	"laminar/B738/push_button/park_brake_on_off")
 
 -- Landing Gear
--- sysGeneral.GearSwitch = TwoStateCmdSwitch:new("gear","laminar/B738/controls/gear_handle_down",0,"sim/flight_controls/landing_gear_down","sim/flight_controls/landing_gear_up","laminar/B738/push_button/gear_off")
-sysGeneral.GearSwitch = TwoStateCustomSwitch:new("gear","laminar/B738/controls/gear_handle_down",0,
+sysGeneral.GearSwitch 		= TwoStateCustomSwitch:new("gear","laminar/B738/controls/gear_handle_down",0,
 function () command_once("sim/flight_controls/landing_gear_down") end,
 function () command_once("sim/flight_controls/landing_gear_up") end,
 function () command_once("laminar/B738/push_button/gear_off") end)
 
 -- Doors
-sysGeneral.doorL1 = TwoStateToggleSwitch:new("doorl1","737u/doors/L1",0,"laminar/B738/door/fwd_L_toggle")
-sysGeneral.doorL2 = TwoStateToggleSwitch:new("doorl2","737u/doors/L2",0,"laminar/B738/door/aft_L_toggle")
-sysGeneral.doorR1 = TwoStateToggleSwitch:new("doorr1","737u/doors/R1",0,"laminar/B738/door/fwd_R_toggle")
-sysGeneral.doorR2 = TwoStateToggleSwitch:new("doorr2","737u/doors/R2",0,"laminar/B738/door/aft_R_toggle")
-sysGeneral.doorFCargo = TwoStateToggleSwitch:new("doorfcargo","737u/doors/Fwd_Cargo",0,"laminar/B738/door/fwd_cargo_toggle")
-sysGeneral.doorACargo = TwoStateToggleSwitch:new("dooracrago","737u/doors/aft_Cargo",0,"laminar/B738/door/aft_cargo_toggle")
-
-sysGeneral.doorGroup = SwitchGroup:new("doors")
+sysGeneral.doorL1			= TwoStateToggleSwitch:new("doorl1","737u/doors/L1",0,
+	"laminar/B738/door/fwd_L_toggle")
+sysGeneral.doorL2			= TwoStateToggleSwitch:new("doorl2","737u/doors/L2",0,
+	"laminar/B738/door/aft_L_toggle")
+sysGeneral.doorR1			= TwoStateToggleSwitch:new("doorr1","737u/doors/R1",0,
+	"laminar/B738/door/fwd_R_toggle")
+sysGeneral.doorR2			= TwoStateToggleSwitch:new("doorr2","737u/doors/R2",0,
+	"laminar/B738/door/aft_R_toggle")
+sysGeneral.doorFCargo		= TwoStateToggleSwitch:new("doorfcargo","737u/doors/Fwd_Cargo",0,
+	"laminar/B738/door/fwd_cargo_toggle")
+sysGeneral.doorACargo 		= TwoStateToggleSwitch:new("dooracrago","737u/doors/aft_Cargo",0,
+	"laminar/B738/door/aft_cargo_toggle")
+sysGeneral.doorGroup 		= SwitchGroup:new("doors")
 sysGeneral.doorGroup:addSwitch(sysGeneral.doorL1)
 sysGeneral.doorGroup:addSwitch(sysGeneral.doorL2)
 sysGeneral.doorGroup:addSwitch(sysGeneral.doorR1)
@@ -52,40 +59,48 @@ sysGeneral.doorGroup:addSwitch(sysGeneral.doorR2)
 sysGeneral.doorGroup:addSwitch(sysGeneral.doorFCargo)
 sysGeneral.doorGroup:addSwitch(sysGeneral.doorACargo)
 
-sysGeneral.cockpitDoor = TwoStateToggleSwitch:new("","laminar/B738/door/flt_dk_door_ratio",0,"laminar/B738/toggle_switch/flt_dk_door_open")
+sysGeneral.cockpitDoor 		= TwoStateToggleSwitch:new("","laminar/B738/door/flt_dk_door_ratio",0,
+	"laminar/B738/toggle_switch/flt_dk_door_open")
 
 -- Passenger Signs
 
-sysGeneral.seatBeltSwitch = MultiStateCmdSwitch:new("","laminar/B738/toggle_switch/seatbelt_sign_pos",0,"laminar/B738/toggle_switch/seatbelt_sign_dn","laminar/B738/toggle_switch/seatbelt_sign_up",0,2,true)
-sysGeneral.noSmokingSwitch = MultiStateCmdSwitch:new("","laminar/B738/toggle_switch/no_smoking_pos",0,"laminar/B738/toggle_switch/no_smoking_dn","laminar/B738/toggle_switch/no_smoking_up",0,2,true)
+sysGeneral.seatBeltSwitch 	= MultiStateCmdSwitch:new("","laminar/B738/toggle_switch/seatbelt_sign_pos",0,
+	"laminar/B738/toggle_switch/seatbelt_sign_dn","laminar/B738/toggle_switch/seatbelt_sign_up",0,2,true)
+sysGeneral.noSmokingSwitch 	= MultiStateCmdSwitch:new("","laminar/B738/toggle_switch/no_smoking_pos",0,
+	"laminar/B738/toggle_switch/no_smoking_dn","laminar/B738/toggle_switch/no_smoking_up",0,2,true)
 
 -- Baro standard toggle
-sysGeneral.barostdPilot = TwoStateToggleSwitch:new("barostdpilot","laminar/B738/EFIS/baro_set_std_pilot",0,"laminar/B738/EFIS_control/capt/push_button/std_press")
-sysGeneral.barostdCopilot = TwoStateToggleSwitch:new("barostdcopilot","laminar/B738/EFIS/baro_set_std_copilot",0,"laminar/B738/EFIS_control/fo/push_button/std_press")
-sysGeneral.barostdStandby = TwoStateToggleSwitch:new("barostdstandby","laminar/B738/gauges/standby_alt_std_mode",0,"laminar/B738/toggle_switch/standby_alt_baro_std")
-
-sysGeneral.barostdGroup = SwitchGroup:new("barostdgroup")
+sysGeneral.barostdPilot 	= TwoStateToggleSwitch:new("barostdpilot","laminar/B738/EFIS/baro_set_std_pilot",0,
+	"laminar/B738/EFIS_control/capt/push_button/std_press")
+sysGeneral.barostdCopilot 	= TwoStateToggleSwitch:new("barostdcopilot","laminar/B738/EFIS/baro_set_std_copilot",0,
+	"laminar/B738/EFIS_control/fo/push_button/std_press")
+sysGeneral.barostdStandby 	= TwoStateToggleSwitch:new("barostdstandby","laminar/B738/gauges/standby_alt_std_mode",0,
+	"laminar/B738/toggle_switch/standby_alt_baro_std")
+sysGeneral.barostdGroup 	= SwitchGroup:new("barostdgroup")
 sysGeneral.barostdGroup:addSwitch(sysGeneral.barostdPilot)
 sysGeneral.barostdGroup:addSwitch(sysGeneral.barostdCopilot)
 sysGeneral.barostdGroup:addSwitch(sysGeneral.barostdStandby)
 
 -- Baro mode
-sysGeneral.baroModePilot = TwoStateCmdSwitch:new("baromodepilot","laminar/B738/EFIS_control/capt/baro_in_hpa",0,"laminar/B738/EFIS_control/capt/baro_in_hpa_up","laminar/B738/EFIS_control/capt/baro_in_hpa_dn","nocommand")
-sysGeneral.baroModeCoPilot = TwoStateCmdSwitch:new("baromodecopilot","laminar/B738/EFIS_control/fo/baro_in_hpa",0,"laminar/B738/EFIS_control/fo/baro_in_hpa_up","laminar/B738/EFIS_control/fo/baro_in_hpa_dn","nocommand")
-sysGeneral.baroModeStandby = TwoStateToggleSwitch:new("baromodes","laminar/B738/EFIS_control/fo/baro_in_hpa",0,"laminar/B738/EFIS_control/fo/baro_in_hpa_dn","laminar/B738/EFIS_control/fo/baro_in_hpa_up","nocommand")
-
-sysGeneral.baroModeGroup = SwitchGroup:new("baromodegroup")
+sysGeneral.baroModePilot 	= TwoStateCmdSwitch:new("baromodepilot","laminar/B738/EFIS_control/capt/baro_in_hpa",0,
+	"laminar/B738/EFIS_control/capt/baro_in_hpa_up","laminar/B738/EFIS_control/capt/baro_in_hpa_dn","nocommand")
+sysGeneral.baroModeCoPilot 	= TwoStateCmdSwitch:new("baromodecopilot","laminar/B738/EFIS_control/fo/baro_in_hpa",0,
+	"laminar/B738/EFIS_control/fo/baro_in_hpa_up","laminar/B738/EFIS_control/fo/baro_in_hpa_dn","nocommand")
+sysGeneral.baroModeStandby 	= TwoStateToggleSwitch:new("baromodes","laminar/B738/EFIS_control/fo/baro_in_hpa",0,
+	"laminar/B738/EFIS_control/fo/baro_in_hpa_dn","laminar/B738/EFIS_control/fo/baro_in_hpa_up","nocommand")
+sysGeneral.baroModeGroup 	= SwitchGroup:new("baromodegroup")
 sysGeneral.baroModeGroup:addSwitch(sysGeneral.baroModePilot)
 sysGeneral.baroModeGroup:addSwitch(sysGeneral.baroModeCoPilot)
 sysGeneral.baroModeGroup:addSwitch(sysGeneral.baroModeStandby)
 
 -- Baro value
-
-sysGeneral.baroPilot = MultiStateCmdSwitch:new("baropilot","laminar/B738/EFIS/baro_sel_in_hg_pilot",0,"laminar/B738/pilot/barometer_down","laminar/B738/pilot/barometer_up",22,32,false)
-sysGeneral.baroCoPilot = MultiStateCmdSwitch:new("barocopilot","laminar/B738/EFIS/baro_sel_in_hg_copilot",0,"laminar/B738/copilot/barometer_down","laminar/B738/copilot/barometer_up",22,32,false)
-sysGeneral.baroStandby = MultiStateCmdSwitch:new("barostandby","laminar/B738/knobs/standby_alt_baro",0,"laminar/B738/knob/standby_alt_baro_dn","laminar/B738/knob/standby_alt_baro_up",22,32,false)
-
-sysGeneral.baroGroup = SwitchGroup:new("barogroup")
+sysGeneral.baroPilot 		= MultiStateCmdSwitch:new("baropilot","laminar/B738/EFIS/baro_sel_in_hg_pilot",0,
+	"laminar/B738/pilot/barometer_down","laminar/B738/pilot/barometer_up",22,32,false)
+sysGeneral.baroCoPilot 		= MultiStateCmdSwitch:new("barocopilot","laminar/B738/EFIS/baro_sel_in_hg_copilot",0,
+	"laminar/B738/copilot/barometer_down","laminar/B738/copilot/barometer_up",22,32,false)
+sysGeneral.baroStandby 		= MultiStateCmdSwitch:new("barostandby","laminar/B738/knobs/standby_alt_baro",0,
+	"laminar/B738/knob/standby_alt_baro_dn","laminar/B738/knob/standby_alt_baro_up",22,32,false)
+sysGeneral.baroGroup 		= SwitchGroup:new("barogroup")
 sysGeneral.baroGroup:addSwitch(sysGeneral.baroPilot)
 sysGeneral.baroGroup:addSwitch(sysGeneral.baroCoPilot)
 sysGeneral.baroGroup:addSwitch(sysGeneral.baroStandby)

@@ -2,20 +2,20 @@ local SOP_DFLT = {
 }
 
 -- SOP related imports
-kcSOP = require "kpcrew.sops.SOP"
+kcSOP 					= require "kpcrew.sops.SOP"
 
-kcFlow = require "kpcrew.Flow"
-kcFlowItem = require ("kpcrew.FlowItem")
+kcFlow 					= require "kpcrew.Flow"
+kcFlowItem 				= require ("kpcrew.FlowItem")
 
-kcChecklist = require "kpcrew.checklists.Checklist"
-kcChecklistItem = require "kpcrew.checklists.ChecklistItem"
-kcSimpleChecklistItem = require "kpcrew.checklists.SimpleChecklistItem"
+kcChecklist 			= require "kpcrew.checklists.Checklist"
+kcChecklistItem 		= require "kpcrew.checklists.ChecklistItem"
+kcSimpleChecklistItem 	= require "kpcrew.checklists.SimpleChecklistItem"
 kcIndirectChecklistItem = require "kpcrew.checklists.IndirectChecklistItem"
-kcManualChecklistItem = require "kpcrew.checklists.ManualChecklistItem"
+kcManualChecklistItem 	= require "kpcrew.checklists.ManualChecklistItem"
 
-kcProcedure = require "kpcrew.procedures.Procedure"
-kcProcedureItem = require "kpcrew.procedures.ProcedureItem"
-kcSimpleProcedureItem = require "kpcrew.procedures.SimpleProcedureItem"
+kcProcedure 			= require "kpcrew.procedures.Procedure"
+kcProcedureItem 		= require "kpcrew.procedures.ProcedureItem"
+kcSimpleProcedureItem 	= require "kpcrew.procedures.SimpleProcedureItem"
 kcIndirectProcedureItem = require "kpcrew.procedures.IndirectProcedureItem"
 
 -- Systems related imports
@@ -27,6 +27,7 @@ TwoStateCustomSwitch 	= require "kpcrew.systems.TwoStateCustomSwitch"
 TwoStateToggleSwitch 	= require "kpcrew.systems.TwoStateToggleSwitch"
 MultiStateCmdSwitch 	= require "kpcrew.systems.MultiStateCmdSwitch"
 InopSwitch 				= require "kpcrew.systems.InopSwitch"
+KeepPressedSwitchCmd	= require "kpcrew.systems.KeepPressedSwitchCmd"
 
 SwitchGroup  			= require "kpcrew.systems.SwitchGroup"
 
@@ -44,6 +45,9 @@ sysAir 					= require("kpcrew.systems." .. kc_acf_icao .. ".sysAir")
 sysAice 				= require("kpcrew.systems." .. kc_acf_icao .. ".sysAice")	
 sysMCP 					= require("kpcrew.systems." .. kc_acf_icao .. ".sysMCP")	
 sysEFIS 				= require("kpcrew.systems." .. kc_acf_icao .. ".sysEFIS")	
+sysFMC 					= require("kpcrew.systems." .. kc_acf_icao .. ".sysFMC")	
+
+require("kpcrew.briefings.briefings_" .. kc_acf_icao)
 
 
 -- Set up SOP =========================================================================

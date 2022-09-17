@@ -414,7 +414,7 @@ function kc_imgui_toggle_button_mcp(label,system,ypos,width,height)
 	imgui.PushStyleColor(imgui.constant.Col.ButtonActive, color_mcp_active)
 	imgui.PushStyleColor(imgui.constant.Col.ButtonHovered, color_mcp_hover)
 	imgui.PushStyleColor(imgui.constant.Col.Text,color_mcp_text)
-	if system:getStatus() > 0 then 
+	if system:getStatus() ~= 0 then 
 		imgui.PushStyleColor(imgui.constant.Col.Text,color_mcp_on)
 	else
 		imgui.PushStyleColor(imgui.constant.Col.Text,color_mcp_off)
@@ -550,7 +550,7 @@ function kc_imgui_simple_actuator(label,system,action,ypos,width,height)
 	imgui.PushStyleColor(imgui.constant.Col.ButtonHovered, color_mcp_hover)
 	imgui.PushStyleColor(imgui.constant.Col.Text,color_mcp_text)
 	if imgui.Button(label, width, height) then
-		system:actuate(action)
+		system:step(action)
 	end
 	imgui.PopStyleColor()
 	imgui.PopStyleColor()

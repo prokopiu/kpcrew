@@ -2,20 +2,20 @@ local SOP_B738 = {
 }
 
 -- SOP related imports
-kcSOP = require "kpcrew.sops.SOP"
+kcSOP 					= require "kpcrew.sops.SOP"
 
-kcFlow = require "kpcrew.Flow"
-kcFlowItem = require ("kpcrew.FlowItem")
+kcFlow 					= require "kpcrew.Flow"
+kcFlowItem 				= require ("kpcrew.FlowItem")
 
-kcChecklist = require "kpcrew.checklists.Checklist"
-kcChecklistItem = require "kpcrew.checklists.ChecklistItem"
-kcSimpleChecklistItem = require "kpcrew.checklists.SimpleChecklistItem"
+kcChecklist 			= require "kpcrew.checklists.Checklist"
+kcChecklistItem 		= require "kpcrew.checklists.ChecklistItem"
+kcSimpleChecklistItem 	= require "kpcrew.checklists.SimpleChecklistItem"
 kcIndirectChecklistItem = require "kpcrew.checklists.IndirectChecklistItem"
-kcManualChecklistItem = require "kpcrew.checklists.ManualChecklistItem"
+kcManualChecklistItem 	= require "kpcrew.checklists.ManualChecklistItem"
 
-kcProcedure = require "kpcrew.procedures.Procedure"
-kcProcedureItem = require "kpcrew.procedures.ProcedureItem"
-kcSimpleProcedureItem = require "kpcrew.procedures.SimpleProcedureItem"
+kcProcedure 			= require "kpcrew.procedures.Procedure"
+kcProcedureItem 		= require "kpcrew.procedures.ProcedureItem"
+kcSimpleProcedureItem 	= require "kpcrew.procedures.SimpleProcedureItem"
 kcIndirectProcedureItem = require "kpcrew.procedures.IndirectProcedureItem"
 
 -- Systems related imports
