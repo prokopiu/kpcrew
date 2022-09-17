@@ -28,36 +28,47 @@ local drefEngine1Oil 	 	= "laminar/B738/engine/eng1_oil_press"
 local drefEngine2Oil 	 	= "laminar/B738/engine/eng2_oil_press"
 
 -- Reverse Toggle
-sysEngines.reverseToggle 	= TwoStateToggleSwitch:new("reverse","sim/cockpit/warnings/annunciators/reverse",0,"sim/engines/thrust_reverse_toggle") 
+sysEngines.reverseToggle 	= TwoStateToggleSwitch:new("reverse","sim/cockpit/warnings/annunciators/reverse",0,
+	"sim/engines/thrust_reverse_toggle") 
 
 -- engine start levers (fuel)
-sysEngines.startLever1 		= TwoStateCmdSwitch:new("","laminar/B738/engine/mixture_ratio1",0,"laminar/B738/engine/mixture1_idle","laminar/B738/engine/mixture1_cutoff","laminar/B738/engine/mixture1_toggle")
-sysEngines.startLever2 		= TwoStateCmdSwitch:new("","laminar/B738/engine/mixture_ratio2",0,"laminar/B738/engine/mixture2_idle","laminar/B738/engine/mixture2_cutoff","laminar/B738/engine/mixture2_toggle")
+sysEngines.startLever1 		= TwoStateCmdSwitch:new("","laminar/B738/engine/mixture_ratio1",0,
+	"laminar/B738/engine/mixture1_idle","laminar/B738/engine/mixture1_cutoff","laminar/B738/engine/mixture1_toggle")
+sysEngines.startLever2 		= TwoStateCmdSwitch:new("","laminar/B738/engine/mixture_ratio2",0,
+	"laminar/B738/engine/mixture2_idle","laminar/B738/engine/mixture2_cutoff","laminar/B738/engine/mixture2_toggle")
 sysEngines.startLeverGroup 	= SwitchGroup:new("startLevers")
 sysEngines.startLeverGroup:addSwitch(sysEngines.startLever1)
 sysEngines.startLeverGroup:addSwitch(sysEngines.startLever2)
 
 -- OVHT Test
-sysEngines.ovhtFireTestSwitch = KeepPressedSwitchCmd:new("OVHTtest","laminar/B738/toggle_switch/fire_test",0,"laminar/B738/toggle_switch/fire_test_rgt")
+sysEngines.ovhtFireTestSwitch = KeepPressedSwitchCmd:new("OVHTtest","laminar/B738/toggle_switch/fire_test",0,
+	"laminar/B738/toggle_switch/fire_test_rgt")
 
 -- IGN select
-sysEngines.ignSelectSwitch 	= MultiStateCmdSwitch:new("","laminar/B738/toggle_switch/eng_start_source",0,"laminar/B738/toggle_switch/eng_start_source_left","laminar/B738/toggle_switch/eng_start_source_right",-1,1,false)
+sysEngines.ignSelectSwitch 	= MultiStateCmdSwitch:new("","laminar/B738/toggle_switch/eng_start_source",0,
+	"laminar/B738/toggle_switch/eng_start_source_left","laminar/B738/toggle_switch/eng_start_source_right",-1,1,false)
 
 -- STARTER Switches
-sysEngines.engStart1Switch 	= MultiStateCmdSwitch:new("","laminar/B738/engine/starter1_pos",0,"laminar/B738/knob/eng1_start_left","laminar/B738/knob/eng1_start_right",0,3,true)
-sysEngines.engStart2Switch 	= MultiStateCmdSwitch:new("","laminar/B738/engine/starter2_pos",0,"laminar/B738/knob/eng2_start_left","laminar/B738/knob/eng2_start_right",0,3,true)
+sysEngines.engStart1Switch 	= MultiStateCmdSwitch:new("","laminar/B738/engine/starter1_pos",0,
+	"laminar/B738/knob/eng1_start_left","laminar/B738/knob/eng1_start_right",0,3,true)
+sysEngines.engStart2Switch 	= MultiStateCmdSwitch:new("","laminar/B738/engine/starter2_pos",0,
+	"laminar/B738/knob/eng2_start_left","laminar/B738/knob/eng2_start_right",0,3,true)
 sysEngines.engStarterGroup 	= SwitchGroup:new("engstarters")
 sysEngines.engStarterGroup:addSwitch(sysEngines.engStart1Switch)
 sysEngines.engStarterGroup:addSwitch(sysEngines.engStart2Switch)
 
-sysEngines.eecGuard1 		= TwoStateToggleSwitch:new("eec1","laminar/B738/cover",0,"laminar/B738/button_switch_cover00")
-sysEngines.eecGuard2 		= TwoStateToggleSwitch:new("eec2","laminar/B738/cover",1,"laminar/B738/button_switch_cover01")
+sysEngines.eecGuard1 		= TwoStateToggleSwitch:new("eec1","laminar/B738/cover",0,
+	"laminar/B738/button_switch_cover00")
+sysEngines.eecGuard2 		= TwoStateToggleSwitch:new("eec2","laminar/B738/cover",1,
+	"laminar/B738/button_switch_cover01")
 sysEngines.eecGuardGroup 	= SwitchGroup:new("eecguards")
 sysEngines.eecGuardGroup:addSwitch(sysEngines.eecGuard1)
 sysEngines.eecGuardGroup:addSwitch(sysEngines.eecGuard2)
 
-sysEngines.eecSwitch1 		= TwoStateCmdSwitch:new("eecsw1","laminar/B738/annunciator/fadec1_off",0,"sim/fadec/fadec_1_on","sim/fadec/fadec_1_off")
-sysEngines.eecSwitch2 		= TwoStateCmdSwitch:new("eecsw2","laminar/B738/annunciator/fadec2_off",0,"sim/fadec/fadec_2_on","sim/fadec/fadec_2_off")
+sysEngines.eecSwitch1 		= TwoStateCmdSwitch:new("eecsw1","laminar/B738/annunciator/fadec1_off",0,
+	"sim/fadec/fadec_1_on","sim/fadec/fadec_1_off")
+sysEngines.eecSwitch2 		= TwoStateCmdSwitch:new("eecsw2","laminar/B738/annunciator/fadec2_off",0,
+	"sim/fadec/fadec_2_on","sim/fadec/fadec_2_off")
 sysEngines.eecSwitchGroup 	= SwitchGroup:new("eecswitches")
 sysEngines.eecSwitchGroup:addSwitch(sysEngines.eecSwitch1)
 sysEngines.eecSwitchGroup:addSwitch(sysEngines.eecSwitch2)

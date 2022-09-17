@@ -37,6 +37,8 @@ sysGeneral.GearSwitch 		= TwoStateCustomSwitch:new("gear","laminar/B738/controls
 function () command_once("sim/flight_controls/landing_gear_down") end,
 function () command_once("sim/flight_controls/landing_gear_up") end,
 function () command_once("laminar/B738/push_button/gear_off") end)
+-- ,
+-- function () return get("laminar/B738/controls/gear_handle_down") end)
 
 -- Doors
 sysGeneral.doorL1			= TwoStateToggleSwitch:new("doorl1","737u/doors/L1",0,
@@ -167,7 +169,7 @@ sysGeneral.gearInhibitCover 	= TwoStateToggleSwitch:new("","laminar/B738/toggle_
 sysGeneral.terrainInhibitCover 	= TwoStateToggleSwitch:new("","laminar/B738/toggle_switch/gpws_terr_cover_pos",0,"laminar/B738/toggle_switch/gpws_terr_cover")
 
 -- Autobrake
-sysGeneral.autobreak = MultiStateCmdSwitch:new("","laminar/B738/autobrake/autobrake_pos",0,"laminar/B738/knob/autobrake_dn","laminar/B738/knob/autobrake_up",0,5,true)
+sysGeneral.autobrake = MultiStateCmdSwitch:new("","laminar/B738/autobrake/autobrake_pos",0,"laminar/B738/knob/autobrake_dn","laminar/B738/knob/autobrake_up",0,5,true)
 
 -- Lights Test
 sysGeneral.lightTest = TwoStateCmdSwitch:new("","laminar/B738/toggle_switch/bright_test",0,"laminar/B738/toggle_switch/bright_test_ip","laminar/B738/toggle_switch/bright_test_dn")

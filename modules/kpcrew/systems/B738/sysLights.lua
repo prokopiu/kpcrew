@@ -32,11 +32,11 @@ sysLights.beaconSwitch 		= TwoStateCmdSwitch:new("beacon","sim/cockpit/electrica
 	"sim/lights/beacon_lights_on","sim/lights/beacon_lights_off","sim/lights/beacon_lights_toggle")
 
 -- ** Position Lights, single onoff command driven
-sysLights.positionSwitch 	= TwoStateCmdSwitch:new("position","sim/cockpit2/switches/navigation_lights_on",0,
+sysLights.positionSwitch 	= TwoStateCmdSwitch:new("position","laminar/B738/toggle_switch/position_light_pos",0,
 	"laminar/B738/toggle_switch/position_light_steady","laminar/B738/toggle_switch/position_light_off","nocommand")
 
 -- ** Strobe Lights, single onoff command driven
-sysLights.strobesSwitch 	= TwoStateCmdSwitch:new("strobes","sim/cockpit/electrical/strobe_lights_on",0,
+sysLights.strobesSwitch 	= TwoStateCmdSwitch:new("strobes","laminar/B738/toggle_switch/position_light_pos",0,
 	"laminar/B738/toggle_switch/position_light_strobe","laminar/B738/toggle_switch/position_light_off","nocommand")
 
 -- ** Taxi/Nose Lights, single onoff command driven
@@ -74,11 +74,11 @@ sysLights.rwyLightGroup:addSwitch(sysLights.rwyRightSwitch)
 
 -- ** Wing Lights
 sysLights.wingSwitch 		= TwoStateCmdSwitch:new("wing",drefGenericLights,0,
-	"laminar/B738/switch/wing_light_on","laminar/B738/switch/wing_light_off","laminar/B738/switch/wing_light_toggle")
+	"laminar/B738/toggle_switch/wing_light","laminar/B738/switch/wing_light_off","laminar/B738/switch/wing_light_toggle")
 
 -- ** Wheel well Lights
 sysLights.wheelSwitch 		= TwoStateCmdSwitch:new("wheel",drefGenericLights,5,
-	"laminar/B738/switch/wheel_light_off","laminar/B738/switch/wheel_light_on","nocommand")
+	"laminar/B738/toggle_switch/wheel_light","laminar/B738/switch/wheel_light_on","nocommand")
 
 -- ** Dome Light
 sysLights.domeLightSwitch 	= TwoStateCmdSwitch:new("dome","laminar/B738/toggle_switch/cockpit_dome_pos",0,
@@ -117,7 +117,7 @@ end)
 sysLights.beaconAnc 		= SimpleAnnunciator:new("beaconlights","sim/cockpit/electrical/beacon_lights_on",0)
 
 -- ** Position Light(s) status
-sysLights.positionAnc 		= SimpleAnnunciator:new("positionlights","sim/cockpit2/switches/navigation_lights_on",0)
+sysLights.positionAnc 		= SimpleAnnunciator:new("positionlights","laminar/B738/toggle_switch/position_light_pos",0)
 
 -- ** Strobe Light(s) status
 sysLights.strobesAnc 		= SimpleAnnunciator:new("strobelights","sim/cockpit2/switches/navigation_lights_on",0)

@@ -52,7 +52,7 @@ sysMCP.vsSwitch 			= TwoStateToggleSwitch:new("vs",drefVSLight,0,"sim/autopilot/
 sysMCP.speedSwitch 			= TwoStateToggleSwitch:new("speed",drefSPDLight,0,"sim/autopilot/autothrottle_toggle")
 
 -- AUTOPILOT
-sysMCP.ap1Switch 			= TwoStateToggleSwitch:new("autopilot1","sim/cockpit/autopilot/autopilot_mode",0,
+sysMCP.ap1Switch 			= TwoStateToggleSwitch:new("autopilot1","sim/cockpit2/autopilot/servos_on",0,
 	"sim/autopilot/servos_toggle")
 
 -- BACKCOURSE
@@ -172,7 +172,7 @@ end)
 sysMCP.altAnc 				= SimpleAnnunciator:new("altanc","sim/cockpit2/autopilot/altitude_hold_status",0)
 
 -- A/P mode annunciator
-sysMCP.apAnc 				= SimpleAnnunciator:new("autopilotanc","sim/cockpit2/autopilot/autopilot_on_or_cws",0)
+sysMCP.apAnc 				= SimpleAnnunciator:new("autopilotanc","sim/cockpit2/autopilot/servos_on",0)
 
 -- BC mode annunciator
 sysMCP.bcAnc 				= InopSwitch:new("bc")
@@ -204,27 +204,27 @@ function sysMCP:render(ypos,height)
 		imgui.Button("M", 17, 25)
 		if imgui.IsItemActive() then 
 			kh_mcp_wnd_state = 1
-			float_wnd_set_geometry(kh_mcp_wnd, 0, ypos, 1000, ypos-height)
+			float_wnd_set_geometry(kh_mcp_wnd, 0, ypos, 920, ypos-height)
 		end
 	end
 
-	sysMCP.crs1Selector:setDefaultDelay(4)
+	sysMCP.crs1Selector:setDefaultDelay(3)
 	sysMCP.iasSelector:setDefaultDelay(4)
-	sysMCP.hdgSelector:setDefaultDelay(4)
+	sysMCP.hdgSelector:setDefaultDelay(3)
 	sysMCP.altSelector:setDefaultDelay(4)
 	sysMCP.vspSelector:setDefaultDelay(8)
 
 	kc_imgui_rotary_mcp("CRS:%03d",sysMCP.crs1Selector,10,11)
 	kc_imgui_toggle_button_mcp("FD",sysMCP.fdirGroup,10,22,25)
 	kc_imgui_toggle_button_mcp("AT",sysMCP.athrSwitch,10,22,25)
-	kc_imgui_toggle_button_mcp("N1",sysMCP.n1Switch,10,22,25)
+	-- kc_imgui_toggle_button_mcp("N1",sysMCP.n1Switch,10,22,25)
 	kc_imgui_toggle_button_mcp("SP",sysMCP.speedSwitch,10,22,25)
 	kc_imgui_rotary_mcp("SPD:%03d",sysMCP.iasSelector,10,12)
 	kc_imgui_toggle_button_mcp("VN",sysMCP.vnavSwitch,10,22,25)
-	kc_imgui_toggle_button_mcp("LC",sysMCP.lvlchgSwitch,10,22,25)
+	-- kc_imgui_toggle_button_mcp("LC",sysMCP.lvlchgSwitch,10,22,25)
 	kc_imgui_rotary_mcp("HDG:%03d",sysMCP.hdgSelector,10,13)
 	kc_imgui_toggle_button_mcp("HD",sysMCP.hdgselSwitch,10,22,25)
-	kc_imgui_toggle_button_mcp("LN",sysMCP.lnavSwitch,10,22,25)
+	-- kc_imgui_toggle_button_mcp("LN",sysMCP.lnavSwitch,10,22,25)
 	kc_imgui_toggle_button_mcp("LO",sysMCP.vorlocSwitch,10,22,25)
 	kc_imgui_toggle_button_mcp("AP",sysMCP.approachSwitch,10,22,25)
 	kc_imgui_rotary_mcp("ALT:%05d",sysMCP.altSelector,10,14)

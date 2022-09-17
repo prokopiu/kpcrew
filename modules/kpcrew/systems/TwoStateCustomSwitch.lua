@@ -43,7 +43,14 @@ function khTwoStateCustomSwitch:getStatus()
 	if type(self.funcStatus) == 'function' then
 		return self.funcStatus()
 	else
-		return self:getStatus()
+		if self.statusDrefIdx == 0 then
+			return get(self.statusDref)
+		end
+		if self.statusDrefIdx < 0 then
+			return get(self.statusDref,0)
+		else
+			return get(self.statusDref,self.statusDrefIdx)
+		end
 	end
 end
 
