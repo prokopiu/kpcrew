@@ -5,10 +5,11 @@
 -- @classmod IndirectChecklistItem
 -- @author Kosta Prokopiu
 -- @copyright 2022 Kosta Prokopiu
-
 local kcIndirectChecklistItem = {
 	colorFailed 		= color_orange
 }
+
+local FlowItem 			= require "kpcrew.FlowItem"
 
 -- Instantiate a new IndirectChecklistItem
 -- @tparam string challengeText is the left hand text 
@@ -21,22 +22,15 @@ local kcIndirectChecklistItem = {
 function kcIndirectChecklistItem:new(challengeText,responseText,actor,waittime,procvar,validFunc,actionFunc,skipFunc)
     kcIndirectChecklistItem.__index = kcIndirectChecklistItem
     setmetatable(kcIndirectChecklistItem, {
-        __index = kcFlowItem
+        __index = FlowItem
     })
-    local obj = kcFlowItem:new()
+    local obj = FlowItem:new(challengeText,responseText,actor,waittime,validFunc,actionFunc,skipFunc)
     setmetatable(obj, kcIndirectChecklistItem)
 
-	obj.challengeText = challengeText
-	obj.responseText = responseText
-	obj.actor = actor
-	obj.waittime = waittime -- second
 	obj.valid = true
 	obj.color = color_orange
-	obj.validFunc = validFunc
-	obj.actionFunc = actionFunc
-	obj.responseFunc = responseFunc
-	obj.skipFunc = skipFunc
 	obj.procvar = procvar
+
 	obj.className = "IndirectChecklistItem"
 
 	obj.conditionMet = false  -- if condition was met set to true
@@ -46,22 +40,24 @@ function kcIndirectChecklistItem:new(challengeText,responseText,actor,waittime,p
     return obj
 end
 
+-- get checklist specific state color
 function kcIndirectChecklistItem:getStateColor()
 	local statecolors = { 
-		kcFlowItem.colorInitial,	-- INIT 
-		kcFlowItem.colorActive,     -- RUN
-		kcFlowItem.colorPause,      -- PAUSE
-		kcFlowItem.colorFailed,    	-- FAIL
-		kcFlowItem.colorSuccess,    -- DONE
-		kcFlowItem.colorManual,     -- SKIP
-		kcFlowItem.colorActive	    -- RESUME 
+		FlowItem.colorInitial,	-- INIT 
+		FlowItem.colorActive,   -- RUN
+		FlowItem.colorPause,    -- PAUSE
+		FlowItem.colorFailed,   -- FAIL
+		FlowItem.colorSuccess,  -- DONE
+		FlowItem.colorManual,   -- SKIP
+		FlowItem.colorActive	-- RESUME 
 	}
 
 	return statecolors[self.state + 1]
 end
 
+-- reset an indirect checklist item
 function kcIndirectChecklistItem:reset()
-    self:setState(kcFlowItem.INIT)
+    self:setState(FlowItem.INIT)
 	self.valid = true
 	self.color = color_orange
 
@@ -72,6 +68,7 @@ function kcIndirectChecklistItem:reset()
 	end
 end
 
+-- check validity and set procvar accordingly
 function kcIndirectChecklistItem:isValid()
 	local procvar = getBckVars():find("procvars:" .. self.procvar)
 	if procvar ~= nil then

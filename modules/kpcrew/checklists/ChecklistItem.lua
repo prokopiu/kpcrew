@@ -3,9 +3,10 @@
 -- @classmod ChecklistItem
 -- @author Kosta Prokopiu
 -- @copyright 2022 Kosta Prokopiu
-
 local kcChecklistItem = {
 }
+
+local FlowItem 			= require "kpcrew.FlowItem"
 
 -- Instantiate a new ProcedureItem
 -- @tparam string challengeText is the left hand text 
@@ -18,19 +19,11 @@ local kcChecklistItem = {
 function kcChecklistItem:new(challengeText,responseText,actor,waittime,validFunc,actionFunc,skipFunc)
     kcChecklistItem.__index = kcChecklistItem
 	setmetatable(kcChecklistItem, {
-        __index = kcFlowItem
+        __index = FlowItem
     })
-    local obj = kcFlowItem:new()
+    local obj = FlowItem:new(challengeText,responseText,actor,waittime,validFunc,actionFunc,skipFunc)
     setmetatable(obj, kcChecklistItem)
 
-	obj.challengeText = challengeText
-	obj.responseText = responseText
-	obj.actor = actor
-	obj.waittime = waittime -- second
-	obj.validFunc = validFunc
-	obj.responseFunc = responseFunc
-	obj.actionFunc = actionFunc
-	obj.skipFunc = skipFunc
 	obj.className = "ChecklistItem"
 
     return obj
@@ -38,13 +31,13 @@ end
 
 function kcChecklistItem:getStateColor()
 	local statecolors = { 
-		color_grey, 				-- INIT
-		kcFlowItem.colorActive, 	-- RUN
-		kcFlowItem.colorPause, 		-- PAUSE
-		kcFlowItem.colorFailed,  	-- FAIL
-		kcFlowItem.colorSuccess,	-- DONE
-		kcFlowItem.colorManual, 	-- SKIP
-		kcFlowItem.colorActive 		-- RESUME
+		color_grey, 			-- INIT
+		FlowItem.colorActive, 	-- RUN
+		FlowItem.colorPause, 	-- PAUSE
+		FlowItem.colorFailed,  	-- FAIL
+		FlowItem.colorSuccess,	-- DONE
+		FlowItem.colorManual, 	-- SKIP
+		FlowItem.colorActive 	-- RESUME
 	}
 
 	return statecolors[self.state + 1]

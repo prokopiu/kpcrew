@@ -91,30 +91,30 @@ end
 -- Get the required window height calculated on all preferences and groups
 -- @treturn int height in pixel
 function kcPreferenceSet:getWndHeight()
-	local wndHeight = 700
-	-- for _, group in ipairs(self.preferenceGroups) do
-		-- wndHeight = wndHeight + group:getWndHeight()
-	-- end
+	local wndHeight = activeBckVars:get(self.name .. ":win_height")
 	return wndHeight
 end
 
 -- Get the required window width
 -- @treturn int width in pixel
 function kcPreferenceSet:getWndWidth()
-	return 350
+	local wndWidth = activeBckVars:get(self.name .. ":win_width")
+	return wndWidth
 end
 
 -- Get the x-position for the window
 -- @treturn int position on left side of the screen
 function kcPreferenceSet:getWndXPos()
+	local wndxpos = activeBckVars:get(self.name .. ":win_pos_x")
 	local win_width = get("sim/graphics/view/window_width")
-	return win_width - self:getWndWidth() - 330
+	return win_width - self:getWndWidth() - wndxpos
 end
 
 -- Get the y-position for the window
 -- @treturn int position from top of screen
 function kcPreferenceSet:getWndYPos()
-	return 70
+	local wndypos = activeBckVars:get(self.name .. ":win_pos_y")
+	return wndypos
 end
 
 -- Render all preferences and groups in imgui window

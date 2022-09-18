@@ -16,6 +16,7 @@ local CustomAnnunciator 	= require "kpcrew.systems.CustomAnnunciator"
 local TwoStateToggleSwitch	= require "kpcrew.systems.TwoStateToggleSwitch"
 local MultiStateCmdSwitch 	= require "kpcrew.systems.MultiStateCmdSwitch"
 local InopSwitch 			= require "kpcrew.systems.InopSwitch"
+local KeepPressedSwitchCmd	= require "kpcrew.systems.KeepPressedSwitchCmd"
 
 --------- Switches
 

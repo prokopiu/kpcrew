@@ -3,12 +3,14 @@
 -- @classmod FlowExecutor
 -- @author Kosta Prokopiu
 -- @copyright 2022 Kosta Prokopiu
-
 local kcFlowExecutor = {
 	type_procedure = 0,
 	type_checklist = 1,
 	type_background = 2
 }
+
+local Flow				= require "kpcrew.Flow"
+local FlowItem 			= require "kpcrew.FlowItem"
 
 -- Instantiate FlowExecutor
 function kcFlowExecutor:new(flow)
@@ -38,7 +40,7 @@ end
 
 local function jump2NextStep(flow)
 	if not flow:hasNextItem() then
-		flow:setState(kcFlow.FINISH)
+		flow:setState(Flow.FINISH)
 	else
 		flow:setNextItemActive()
 	end
@@ -54,7 +56,7 @@ function kcFlowExecutor:execute()
 	-- logMsg("Flow: [" .. self.flow:getClassName() .. "] " .. flowState .. " - Step: " .. step:getState())
 
 	-- running flow
-	if flowState == kcFlow.RUN then
+	if flowState == Flow.RUN then
 	
 		-- execute the flow step by step
 		local stepState = step:getState()
@@ -75,7 +77,7 @@ function kcFlowExecutor:execute()
 		self.nextStepTime = kc_getPcTime() + step:getWaitTime()
 
 		-- initial state
-		if stepState == kcFlowItem.INIT then
+		if stepState == FlowItem.INIT then
 			-- speak challenge text, for procedures this is the whole line
 			step:speakChallengeText()
 			-- execute automatic steps if available
@@ -84,56 +86,56 @@ function kcFlowExecutor:execute()
 			end
 
 			if not step:isValid() then
-				step:setState(kcFlowItem.FAIL)
-				self.flow:setState(kcFlow.HALT)
+				step:setState(FlowItem.FAIL)
+				self.flow:setState(Flow.HALT)
 				if self.flow:getClassName() == "Checklist" then
 					if step:getClassName() == "ManualChecklistItem" then
 						step:execute()
 					end
 				end
 			end
-			if self.flow:getClassName() == "Checklist" and step:getState() ~= kcFlowItem.RUN and step:getClassName() ~= "SimpleChecklistItem" then
-				step:setState(kcFlowItem.PAUSE)
-				self.flow:setState(kcFlow.PAUSE)
+			if self.flow:getClassName() == "Checklist" and step:getState() ~= FlowItem.RUN and step:getClassName() ~= "SimpleChecklistItem" then
+				step:setState(FlowItem.PAUSE)
+				self.flow:setState(Flow.PAUSE)
 			end
 			if step:isValid() then
 				if step:getWaitTime() > 0 then
-					self.flow:setState(kcFlow.WAIT)
+					self.flow:setState(Flow.WAIT)
 				else
-					step:setState(kcFlowItem.DONE)
+					step:setState(FlowItem.DONE)
 				end
 			end
-		elseif stepState == kcFlowItem.RUN then
+		elseif stepState == FlowItem.RUN then
 			if step:isValid() then
 				step:speakResponseText()
 				if step:getWaitTime() > 0 then
-					self.flow:setState(kcFlow.WAIT)
+					self.flow:setState(Flow.WAIT)
 				else
-					step:setState(kcFlowItem.DONE)
+					step:setState(FlowItem.DONE)
 				end
 			end
 
-		elseif stepState == kcFlowItem.FAIL then
+		elseif stepState == FlowItem.FAIL then
 			if step:isValid() then
-				step:setState(kcFlowItem.PAUSE)
+				step:setState(FlowItem.PAUSE)
 			end
 				
-		elseif stepState == kcFlowItem.SKIP then
+		elseif stepState == FlowItem.SKIP then
 			jump2NextStep(self.flow)	
 			
-		elseif stepState == kcFlowItem.RESUME then
+		elseif stepState == FlowItem.RESUME then
 			if not step:isValid() then
-				step:setState(kcFlowItem.FAIL)
+				step:setState(FlowItem.FAIL)
 			end
 			if step:isValid() then
 				if step:getWaitTime() > 0 then
-					self.flow:setState(kcFlow.WAIT)
+					self.flow:setState(Flow.WAIT)
 				else
 					step:speakResponseText()
-					step:setState(kcFlowItem.DONE)
+					step:setState(FlowItem.DONE)
 				end
 			end
-		elseif stepState == kcFlowItem.DONE then
+		elseif stepState == FlowItem.DONE then
 			jump2NextStep(self.flow)
 
 		else
@@ -141,21 +143,21 @@ function kcFlowExecutor:execute()
 		end
 		
 	-- waiting on delay
-	elseif flowState == kcFlow.WAIT then
+	elseif flowState == Flow.WAIT then
 		if kc_getPcTime() >= self.nextStepTime then 
-			step:setState(kcFlowItem.DONE)
+			step:setState(FlowItem.DONE)
 			jump2NextStep(self.flow)
-			self.flow:setState(kcFlow.RUN)
+			self.flow:setState(Flow.RUN)
 		end
 		
 	-- paused by user or fail
-	elseif flowState == kcFlow.HALT then
+	elseif flowState == Flow.HALT then
 		if step:isValid() then
-			step:setState(kcFlowItem.RESUME)
-			self.flow:setState(kcFlow.RUN)
+			step:setState(FlowItem.RESUME)
+			self.flow:setState(Flow.RUN)
 		end
 
-	elseif flowState == kcFlow.FINISH then
+	elseif flowState == Flow.FINISH then
 		if activePrefSet:get("general:flowAutoOpen") == true then
 			if kc_show_flow then
 				kc_toggle_flow_window()

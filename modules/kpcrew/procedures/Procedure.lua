@@ -4,23 +4,21 @@
 -- @classmod Procedure
 -- @author Kosta Prokopiu
 -- @copyright 2022 Kosta Prokopiu
-
 local kcProcedure = {
 }
+
+local Flow				= require "kpcrew.Flow"
 
 -- Instantiate a new Procedure
 -- @tparam string name Name of the set (also used as title)
 function kcProcedure:new(name, speakname, finalstatement)
     kcProcedure.__index = kcProcedure
    setmetatable(kcProcedure, {
-        __index = kcFlow
+        __index = Flow
     })
-    local obj = kcFlow:new()
+    local obj = Flow:new(name, speakname, finalStatement)
     setmetatable(obj, kcProcedure)
 
-    obj.name = name
-	obj.spokenName = speakname
-	obj.finalStatement = finalstatement
 	obj.className = "Procedure"
 
     return obj

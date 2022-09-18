@@ -4,7 +4,6 @@
 -- @classmod Flow
 -- @author Kosta Prokopiu
 -- @copyright 2022 Kosta Prokopiu
-
 local kcFlow = {
     START 			= 0,
     RUN 			= 1,
@@ -19,8 +18,13 @@ local kcFlow = {
 	colorCompleted 	= color_dark_green
 }
 
+local FlowItem 			= require "kpcrew.FlowItem"
+
 -- Instantiate a new Procedure
--- @tparam string name Name of the set (also used as title)
+-- @tparam string name Name of the flow
+-- @tparam string speakname name of the flow to be spoken at beginning
+-- @tparam string finalstatement Text to speak at end of flow
+-- @treturn Flow the created flow object
 function kcFlow:new(name, speakname, finalstatement)
     kcFlow.__index = kcFlow
     local obj = {}
@@ -28,28 +32,41 @@ function kcFlow:new(name, speakname, finalstatement)
 
     obj.name = name
     obj.state = self.START
+	obj.finalStatement = finalstatement
+
     obj.items = {}
     obj.activeItemIndex = 0
 	obj.wnd = nil
-	obj.className = "Flow"
 	obj.resize = true
 	obj.spokenName = speakname
-	obj.finalStatement = finalstatement
 	obj.nameSpoken = false
 	obj.finalSpoken = false
 	obj.flightPhase = 0
 	
+	obj.className = "Flow"
+	
     return obj
 end
 
+-- Get name/title of flow
+-- @treturn string name of set
+function kcFlow:getName()
+    return self.name
+end
+
+-- Get name of flow object
+-- @treturn string name of element
 function kcFlow:setSpeakName(name)
 	self.spokenName = name
 end
 
+-- Get name of element for speaking
+-- @treturn string name of element
 function kcFlow:getSpeakName()
 	return self.spokenName
 end
 
+-- speak the name of the flow
 function kcFlow:speakName()
 	if self.spokenName ~= nil and self.nameSpoken == false then
 		kc_speakNoText(0,self.spokenName)
@@ -58,22 +75,30 @@ function kcFlow:speakName()
 end
 
 -- set flight phase
+-- @tparam int id of phase in SOP
 function kcFlow:setFlightPhase(phase)
 	self.flightPhase = phase
 end
 
+-- get the current flight phase in SOP
+-- @treturn string name
 function kcFlow:getFlightPhase()
 	return self.flightPhase
 end
 
-function kcFlow:setFinalStatement(name)
-	self.finalStatement = name
+-- change final statement string
+-- @tparam string statement
+function kcFlow:setFinalStatement(statement)
+	self.finalStatement = statement
 end
 
+-- get final statement
+-- @treturn string statement
 function kcFlow:getFinalStatement()
 	return self.finalStatement
 end
 
+-- speak the final statement of flow
 function kcFlow:speakFinal() 
 	if self.finalStatement ~= nil and self.finalSpoken == false then
 		kc_speakNoText(0,self.finalStatement)
@@ -81,57 +106,61 @@ function kcFlow:speakFinal()
 	self.finalSpoken = true
 end
 
+-- set the resize flag
+-- @tparam boolean true enable resizing
 function kcFlow:setResize(flag)
 	self.resize = flag
 end
 
+-- get the resize flag
+-- @treturn boolean flag
 function kcFlow:getResize()
 	return self.resize
 end
 
--- Get name/title of procedure
--- @treturn string name of set
-function kcFlow:getName()
-    return self.name
-end
-
 -- return the type of flow for distinction later
--- @treturn string "Procedure"
+-- @treturn string "Flow" or "Procedure" or "Checklist"
 function kcFlow:getClassName()
 	return self.className
 end
 
 -- set state of procedure
+-- @tparam int state current state of flow (see list above)
 function kcFlow:setState(state)
     self.state = state
 end
 
 -- get state of procedure
+-- @treturn int state of flow
 function kcFlow:getState()
     return self.state
 end
 
 -- return the color code linked to the state
+-- @treturn int state matching color code
 function kcFlow:getStateColor()
 	local statecolors = { self.colorNotStarted, self.colorInProgress, self.colorPaused, self.colorPaused, self.colorCompleted, self.colorPaused }
 	return statecolors[self.state + 1]
 end
 
 -- add a new procedure item at the end
+-- @tparam FlowItem new flowitem to add at the end
 function kcFlow:addItem(item)
     table.insert(self.items, item)
 end
 
 -- get all procedure items
+-- @treturn array of flow items
 function kcFlow:getAllItems()
     return self.items
 end
 
 -- return number of active procedure items
+-- @treturn int number of items in flow
 function kcFlow:getNumberOfItems()
 	local cnt = 0
 	for _, item in ipairs(self.items) do
-		if item:getState() ~= kcFlowItem.SKIP then
+		if item:getState() ~= FlowItem.SKIP then
 			cnt = cnt + 1
 		end
 	end
@@ -139,6 +168,7 @@ function kcFlow:getNumberOfItems()
 end
 
 -- get the currently active item
+-- @treturn int current index
 function kcFlow:getActiveItem()
 	if self.activeItemIndex == 0 then 
 		return self.items[1]
@@ -148,6 +178,7 @@ function kcFlow:getActiveItem()
 end
 
 -- set the active procedure item
+-- @tparam int itemIndex index of next item to work on
 function kcFlow:setActiveItemIndex(itemIndex)
     if itemIndex >= 1 and itemIndex <= #self.items then
 		self.activeItemIndex = itemIndex
@@ -156,16 +187,20 @@ function kcFlow:setActiveItemIndex(itemIndex)
     end
 end
 
+-- get the active flow item
+-- @treturn int index of currently active item
 function kcFlow:getActiveItemIndex()
 	return self.activeItemIndex
 end 
 
 -- is there another item left or at end?
+-- @treturn boolean true if still items available
 function kcFlow:hasNextItem()
     return self.activeItemIndex < #self.items
 end
 
 -- Take the next procedure item as active item
+-- @treturn int index of next item to execute, -1 if at end
 function kcFlow:setNextItemActive()
 	if self:hasNextItem() then
 		self.activeItemIndex = self.activeItemIndex + 1
@@ -173,7 +208,7 @@ function kcFlow:setNextItemActive()
     while self:hasNextItem() 
 	and (self.items[self.activeItemIndex]:getClassName() == "SimpleProcedureItem"
 			or self.items[self.activeItemIndex]:getClassName() == "SimpleChecklistItem"
-			or self.items[self.activeItemIndex]:getState() == kcFlowItem.SKIP) do
+			or self.items[self.activeItemIndex]:getState() == FlowItem.SKIP) do
 		self.activeItemIndex = self.activeItemIndex + 1
 	end
 	if self.activeItemIndex <= #self.items then
@@ -267,12 +302,12 @@ function kcFlow:render()
 	local items = self:getAllItems()
 	for _, item in ipairs(items) do
 		if item:isValid() ~= true then
-			item:setColor(kcFlowItem.colorFailed)
+			item:setColor(FlowItem.colorFailed)
 		else
 			item:setColor(item:getStateColor())
 		end
 		-- remove skipped items
-		if item:getState() ~= kcFlowItem.SKIP then
+		if item:getState() ~= FlowItem.SKIP then
 			imgui.SetCursorPosY(imgui.GetCursorPosY() + 5)
 			imgui.PushStyleColor(imgui.constant.Col.Text,item:getColor()) 
 				imgui.TextUnformatted(item:getLine(self:getLineLength()))

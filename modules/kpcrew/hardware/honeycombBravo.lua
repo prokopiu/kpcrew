@@ -1,5 +1,19 @@
 -- Hardware specific modules - Honeycomb Bravo Throttle
 
+local sysLights 			= require("kpcrew.systems." .. kc_acf_icao .. ".sysLights")
+local sysGeneral 			= require("kpcrew.systems." .. kc_acf_icao .. ".sysGeneral")	
+local sysControls 			= require("kpcrew.systems." .. kc_acf_icao .. ".sysControls")	
+local sysEngines 			= require("kpcrew.systems." .. kc_acf_icao .. ".sysEngines")	
+local sysElectric 			= require("kpcrew.systems." .. kc_acf_icao .. ".sysElectric")	
+local sysHydraulic 			= require("kpcrew.systems." .. kc_acf_icao .. ".sysHydraulic")	
+local sysFuel 				= require("kpcrew.systems." .. kc_acf_icao .. ".sysFuel")	
+local sysAir 				= require("kpcrew.systems." .. kc_acf_icao .. ".sysAir")	
+local sysAice 				= require("kpcrew.systems." .. kc_acf_icao .. ".sysAice")	
+local sysMCP 				= require("kpcrew.systems." .. kc_acf_icao .. ".sysMCP")	
+local sysEFIS 				= require("kpcrew.systems." .. kc_acf_icao .. ".sysEFIS")	
+local sysFMC 				= require("kpcrew.systems." .. kc_acf_icao .. ".sysFMC")	
+local sysRadios				= require("kpcrew.systems." .. kc_acf_icao .. ".sysRadios")	
+
 xsp_bravo_mode = 1
 xsp_bravo_layer = 0
 xsp_fine_coarse = 1

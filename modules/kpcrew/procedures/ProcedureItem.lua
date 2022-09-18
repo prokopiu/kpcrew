@@ -3,9 +3,10 @@
 -- @classmod ProcedureItem
 -- @author Kosta Prokopiu
 -- @copyright 2022 Kosta Prokopiu
-
 local kcProcedureItem = {
 }
+
+local FlowItem 			= require "kpcrew.FlowItem"
 
 -- Instantiate a new ProcedureItem
 -- @tparam string challengeText is the left hand text 
@@ -18,19 +19,13 @@ local kcProcedureItem = {
 function kcProcedureItem:new(challengeText,responseText,actor,waittime,validFunc,actionFunc,skipFunc)
     kcProcedureItem.__index = kcProcedureItem
 	setmetatable(kcProcedureItem, {
-        __index = kcFlowItem
+        __index = FlowItem
     })
-    local obj = kcFlowItem:new()
+    local obj = FlowItem:new(challengeText,responseText,actor,waittime,validFunc,actionFunc,skipFunc)
     setmetatable(obj, kcProcedureItem)
 
-	obj.challengeText = challengeText
-	obj.responseText = responseText	
-	obj.actor = actor
-	obj.waittime = waittime
-	obj.validFunc = validFunc
-	obj.actionFunc = actionFunc
-	obj.skipFunc = skipFunc
-	obj.state = kcFlowItem.INIT
+	obj.state = FlowItem.INIT
+
 	obj.className = "ProcedureItem"
 
     return obj

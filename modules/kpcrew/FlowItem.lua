@@ -3,7 +3,6 @@
 -- @classmod FlowItem
 -- @author Kosta Prokopiu
 -- @copyright 2022 Kosta Prokopiu
-
 local kcFlowItem = {
     INIT		 		= 0,
 	RUN					= 1,
@@ -48,43 +47,50 @@ function kcFlowItem:new(challengeText,responseText,actor,waittime,validFunc,acti
     local obj = {}
     setmetatable(obj, kcFlowItem)
 
-	obj.state = kcFlowItem.INIT
+	obj.state = self.INIT
 	obj.challengeText = challengeText
 	obj.responseText = responseText	
 	obj.origResponseText = responseText
 	obj.actor = actor
 	obj.waittime = waittime
 	obj.valid = true
-	obj.color = kcFlowItem.colorInitial
+	obj.color = self.colorInitial
 	obj.validFunc = validFunc
 	obj.actionFunc = actionFunc
 	obj.skipFunc = skipFunc
+
 	obj.className = "FlowItem"
 
     return obj
 end
 
+-- return the type of flow for distinction later
+-- @treturn string "Flow" or "Procedure" or "Checklist"
 function kcFlowItem:getClassName()
 	return self.className
 end
 
 -- return true if the actor for the item is the sim pilot
+-- @treturn boolean true = is the user's role as CPT,PF,LHS
 function kcFlowItem:isUserRole()
 	local userroles = {	self.actorPF, self.actorCPT, self.actorLHS }
 	return kc_hasValue(userroles, self.actor)
 end	
 	
 -- get the actor string for this checklist item
+-- @treturn string role name
 function kcFlowItem:getActor()
 	return self.actor
 end
 
 -- get the left hand action text for the item
+-- @treturn string challenge text
 function kcFlowItem:getChallengeText()
     return self.challengeText
 end
 
 -- set left hand action text
+-- @tparam string text challenge text
 function kcFlowItem:setChallengeText(text)
 	self.challengeText = text
 end
@@ -114,73 +120,82 @@ function kcFlowItem:getResponseText()
 	end
 end
 
--- speak the challenge text
+-- speak the response text
 function kcFlowItem:speakResponseText()
 	kc_speakNoText(0,kc_parse_string(self:getResponseText()))
 end
 
 -- set the right hand result text for the item
+-- @tparam string text response text
 function kcFlowItem:setResponseText(text)
 	self.responseText = text
 end
 
 -- get the time in seconds this item is to be waited on
+-- @treturn int seconds
 function kcFlowItem:getWaitTime()
 	return self.waittime
 end
 
 -- set the wait time in seconds
+-- @tparam int number of seconds
 function kcFlowItem:setWaitTime(seconds)
 	self.waittime = seconds
 end
 
 -- change the state of the checklist item
+-- @tparam int state id
 function kcFlowItem:setState(state)
     self.state = state
 end
 
 -- get the current state of this checklist item
+-- @treturn int get state id
 function kcFlowItem:getState()
 	if type(self.skipFunc) == 'function' then
 		if self.skipFunc() then
-			return kcFlowItem.SKIP
+			return self.SKIP
 		end
 	end
     return self.state
 end
 
 -- get current color of the procedure item
+-- @treturn int color code
 function kcFlowItem:getColor()
 	return self.color
 end
 
 -- set the color of the checklist item
+-- @tparam int color code
 function kcFlowItem:setColor(color)
 	self.color = color
 end
 
 -- return the color code linked to the state
+-- @treturn int matching color code for item
 function kcFlowItem:getStateColor()
 	local statecolors = { 
-		kcFlowItem.colorInitial,	-- INIT 
-		kcFlowItem.colorActive,     -- RUN
-		kcFlowItem.colorPause,      -- PAUSE
-		kcFlowItem.colorFailed,    	-- FAIL
-		kcFlowItem.colorSuccess,    -- DONE
-		kcFlowItem.colorManual,     -- SKIP
-		kcFlowItem.colorActive	    -- RESUME 
+		self.colorInitial,	-- INIT 
+		self.colorActive,   -- RUN
+		self.colorPause,    -- PAUSE
+		self.colorFailed,   -- FAIL
+		self.colorSuccess,  -- DONE
+		self.colorManual,   -- SKIP
+		self.colorActive	-- RESUME 
 	}
 	return statecolors[self.state + 1]
 end
 
 -- reset the item to its initial state
 function kcFlowItem:reset()
-    self:setState(kcFlowItem.INIT)
+    self:setState(self.INIT)
 	self.valid = true
 	self:setColor(self.colorInitial)
 end
 
 -- are the conditions for this item met?
+-- @treturn boolean true = valid
 function kcFlowItem:isValid()
 	if type(self.validFunc) == 'function' then
 		self.valid = self.validFunc(self)

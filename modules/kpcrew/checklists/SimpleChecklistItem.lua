@@ -1,12 +1,13 @@
 -- Simple Checklist Item to be added to checklist
 -- This item only displays text and does not execute or change
 --
--- @classmod ProcedureItem
+-- @classmod SimpleChecklistItem
 -- @author Kosta Prokopiu
 -- @copyright 2022 Kosta Prokopiu
-
 local kcSimpleChecklistItem = {
 }
+
+local FlowItem 			= require "kpcrew.FlowItem"
 
 -- Instantiate a new SimpleProcedureItem
 -- @tparam string challengeText is the left hand text 
@@ -14,18 +15,15 @@ local kcSimpleChecklistItem = {
 function kcSimpleChecklistItem:new(challengeText, skipFunc)
     kcSimpleChecklistItem.__index = kcSimpleChecklistItem
     setmetatable(kcSimpleChecklistItem, {
-        __index = kcFlowItem
+        __index = FlowItem
     })
-    local obj = kcFlowItem:new()
+    local obj = FlowItem:new(challengeText,"","",0,nil,nil,skipFunc)
     setmetatable(obj, kcSimpleChecklistItem)
 
-    obj.challengeText = challengeText
-    obj.responseText = ""
-	obj.actor = ""
-	obj.waittime = 0
 	obj.color = color_white
 	obj.valid = true
 	obj.skipFunc = skipFunc
+
 	obj.className = "SimpleChecklistItem"
 	
     return obj
@@ -36,25 +34,29 @@ function kcSimpleChecklistItem:isValid()
 	return true
 end
 
+-- wait time is always 0
 function kcSimpleChecklistItem:getWaitTime()
 	return 0
 end
 
+-- adapted states
 function kcSimpleChecklistItem:getState()
  	if type(self.skipFunc) == 'function' then
 		if self.skipFunc() == true then
-			return kcFlowItem.SKIP
+			return FlowItem.SKIP
 		end
 	end
-   return kcFlowItem.INIT
+   return FlowItem.INIT
 end
 
+-- always return white
 function kcSimpleChecklistItem:getStateColor()
 	return color_white
 end
 
+-- adapted reset
 function kcSimpleChecklistItem:reset()
-    self:setState(kcFlowItem.INIT)
+    self:setState(FlowItem.INIT)
 	self.valid = true
 	self.color = color_white
 end

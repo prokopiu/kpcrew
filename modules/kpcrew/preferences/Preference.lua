@@ -15,6 +15,7 @@ local kcPreference = {
 	typeCOMFreq = 6,
 	typeNAVFreq = 7,
 	typeExecButton = 8,
+	typeDivider = 9,
 	colorGreen = 0xFF95C857,
 	colorWhite = 0xffffffff
 }
@@ -123,6 +124,11 @@ function kcPreference:render()
 				self:setValue(textin)
 			end
 		imgui.PopID()
+	end
+	
+	if self.datatype == self.typeDivider then
+		imgui.PushTextWrapPos(330)
+		imgui.PopTextWrapPos()
 	end
 	
 	if self.datatype == self.typeInfo then

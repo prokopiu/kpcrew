@@ -112,7 +112,8 @@ function kc_get_zfw()
 end
 
 function kc_set_payload()
-	set("sim/flightmodel/weight/m_fixed",activeBriefings:get("flight:payload"))
+	local payload = activeBriefings:get("flight:takeoffFuel") -- - kc_DOW
+	set("sim/flightmodel/weight/m_fixed", payload)
 	local fgoal = activeBriefings:get("flight:takeoffFuel")
 	set("sim/flightmodel/weight/m_fuel1",math.min(kc_MFL1,fgoal/2))
 	set("sim/flightmodel/weight/m_fuel3",math.min(kc_MFL3,fgoal/2))
@@ -122,6 +123,13 @@ function kc_set_payload()
 	else
 		set("sim/flightmodel/weight/m_fuel2",0)
 	end
+end
+
+function kc_set_takeoff_details()
+	activeBriefings:set("takeoff:v1",get("laminar/B738/FMS/v1_set"))
+	activeBriefings:set("takeoff:vr",get("laminar/B738/FMS/vr"))
+	activeBriefings:set("takeoff:v2",get("laminar/B738/FMS/v2_set"))
+	activeBriefings:set("takeoff:elevatorTrim",get("laminar/B738/FMS/trim_calc"))
 end
 
 -- briefings to be more aircraft specific

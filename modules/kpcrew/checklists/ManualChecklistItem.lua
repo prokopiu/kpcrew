@@ -4,29 +4,29 @@
 -- @classmod ManualChecklistItem
 -- @author Kosta Prokopiu
 -- @copyright 2022 Kosta Prokopiu
-
 local kcManualChecklistItem = {
 }
 
-function kcManualChecklistItem:new(challengeText,responseText,actor,waittime,procvar,validFunc,actionFunc,skipFunc)
+local FlowItem 			= require "kpcrew.FlowItem"
 
+-- Instantiate a new ManualChecklistItem
+-- @tparam string challengeText is the left hand text 
+-- @tparam string responseText is specific state of the item
+-- @tparam string actor is the actor for the item; see list below
+-- @tparam int wait time in seconds during execution 
+-- @tparam function reference validFunc shall return true or false to verify if condition is met
+-- @tparam function reference  actionFunc will be executed and make changes to aircraft settings
+-- @tparam function reference  skipFunc if true will skip the item and not diaply in list
+function kcManualChecklistItem:new(challengeText,responseText,actor,waittime,procvar,validFunc,actionFunc,skipFunc)
     kcManualChecklistItem.__index = kcManualChecklistItem
     setmetatable(kcManualChecklistItem, {
-        __index = kcFlowItem
+        __index = FlowItem
     })
 
-    local obj = kcFlowItem:new()
+    local obj = FlowItem:new(challengeText,responseText,actor,waittime,validFunc,actionFunc,skipFunc)
     setmetatable(obj, kcManualChecklistItem)
 
-	obj.challengeText = challengeText
-	obj.responseText = responseText
-	obj.actor = actor
-	obj.waittime = waittime -- second
 	obj.valid = true
-	obj.validFunc = validFunc
-	obj.actionFunc = actionFunc
-	obj.responseFunc = responseFunc
-	obj.skipFunc = skipFunc
 	obj.procvar = procvar
 
 	obj.className = "ManualChecklistItem"
@@ -38,20 +38,22 @@ function kcManualChecklistItem:new(challengeText,responseText,actor,waittime,pro
     return obj
 end
 
+-- override state colors
 function kcManualChecklistItem:getStateColor()
 	local statecolors = { 
-		kcFlowItem.colorInitial,	-- INIT 
-		kcFlowItem.colorActive,     -- RUN
-		kcFlowItem.colorPause,      -- PAUSE
-		color_orange,		    	-- FAIL
-		kcFlowItem.colorSuccess,    -- DONE
-		kcFlowItem.colorManual,     -- SKIP
-		kcFlowItem.colorActive	    -- RESUME 
+		FlowItem.colorInitial,	-- INIT 
+		FlowItem.colorActive,   -- RUN
+		FlowItem.colorPause,    -- PAUSE
+		color_orange,		    -- FAIL
+		FlowItem.colorSuccess,  -- DONE
+		FlowItem.colorManual,   -- SKIP
+		FlowItem.colorActive	-- RESUME 
 	}
 
 	return statecolors[self.state + 1]
 end
 
+-- override valid detection
 function kcManualChecklistItem:isValid()
 	if activePrefSet:get("general:assistance") < 2 then 
 		return true
@@ -65,13 +67,15 @@ function kcManualChecklistItem:isValid()
 	end
 end
 
+-- Override execute
 function kcManualChecklistItem:execute()
 	local proc_var = getBckVars():find("procvars:" .. self.procvar)
 	proc_var:setValue(true)
 end
 
+-- Override reset
 function kcManualChecklistItem:reset()
-    self:setState(kcFlowItem.INIT)
+    self:setState(FlowItem.INIT)
 	self.valid = true
 
 	self.conditionMet = false

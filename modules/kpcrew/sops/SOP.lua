@@ -26,6 +26,8 @@ local kcSOP = {
 	phaseFlightPlanning = 19
 }
 
+local Flow				= require "kpcrew.Flow"
+
 kcSopFlightPhase = { [1] = "Cold & Dark", 	[2] = "Prel Preflight", [3] = "Preflight", 		[4] = "Before Start", 
 					 [5] = "After Start", 	[6] = "Taxi to Runway", [7] = "Before Takeoff", [8] = "Takeoff",
 					 [9] = "Climb", 		[10] = "Enroute", 		[11] = "Descent", 		[12] = "Arrival", 
@@ -209,7 +211,7 @@ function kcSOP:render()
 		if flow:getClassName() == "Checklist" then	
 			color = color_checklist
 		end
-		if flow:getState() == kcFlow.FINISH then
+		if flow:getState() == Flow.FINISH then
 			color = color_green
 		end
 		if kc_indexOf(flows,flow) == self.activeFlowIndex then

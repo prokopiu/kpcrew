@@ -8,6 +8,7 @@ general:speakChecklist=false
 general:flowAutoOpen=false
 general:flowAutoClose=true
 general:flowAutoJump=true
+general:xpdrusa=false
 aircraft:efis_mins_dh=true
 aircraft:mcp_def_spd=100
 aircraft:mcp_def_hdg=1

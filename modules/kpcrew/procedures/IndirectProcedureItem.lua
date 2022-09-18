@@ -10,6 +10,8 @@ local kcIndirectProcedureItem = {
 	colorFailed = color_orange
 }
 
+local FlowItem 			= require "kpcrew.FlowItem"
+
 -- Instantiate a new IndirectProcedureItem
 -- @tparam string challengeText is the left hand text 
 -- @tparam string responseText is specific state of the item
@@ -21,21 +23,13 @@ local kcIndirectProcedureItem = {
 function kcIndirectProcedureItem:new(challengeText,responseText,actor,waittime,procvar,validFunc,actionFunc,skipFunc)
     kcIndirectProcedureItem.__index = kcIndirectProcedureItem
     setmetatable(kcIndirectProcedureItem, {
-        __index = kcFlowItem
+        __index = FlowItem
     })
-    local obj = kcFlowItem:new()
+    local obj = FlowItem:new(challengeText,responseText,actor,waittime,validFunc,actionFunc,skipFunc)
     setmetatable(obj, kcIndirectProcedureItem)
 
-	obj.challengeText = challengeText
-	obj.responseText = responseText	
-	obj.actor = actor
-	obj.waittime = waittime
 	obj.valid = true
 	obj.color = color_orange
-	obj.validFunc = validFunc
-	obj.actionFunc = actionFunc
-	obj.responseFunc = responseFunc
-	obj.skipFunc = skipFunc
 	obj.procvar = procvar
 
 	obj.conditionMet = false  -- if condition was met set to true
@@ -63,7 +57,7 @@ end
 
 -- reset the item to its initial state
 function kcIndirectProcedureItem:reset()
-    self:setState(kcFlowItem.INIT)
+    self:setState(FlowItem.INIT)
 	self.valid = true
 	self.color = color_orange
 
