@@ -1,12 +1,12 @@
 activeBckVars = kcPreferenceSet:new("BackgroundVars")
 
 local group1 = kcPreferenceGroup:new("general","General Variables")
-group1:add(kcPreference:new("simversion",		" ",	kcPreference.typeText,	"Simversion|"))
-group1:add(kcPreference:new("flight_state",		1,		kcPreference.typeInt,	"Flight State|1"))
-group1:add(kcPreference:new("timesOUT",			"==:==",kcPreference.typeText,	"Actual Time out|00:00"))
-group1:add(kcPreference:new("timesOFF",			"==:==",kcPreference.typeText,	"Actual Time off block|00:00"))
-group1:add(kcPreference:new("timesIN",			"==:==",kcPreference.typeText,	"Actual Time in|00:00"))
-group1:add(kcPreference:new("timesON",			"==:==",kcPreference.typeText,	"Actual Time on blocks|00:00"))
+group1:add(kcPreference:new("simversion",		" ",		kcPreference.typeText,	"Simversion|"))
+group1:add(kcPreference:new("flight_state",		1,			kcPreference.typeInt,	"Flight State|1"))
+group1:add(kcPreference:new("timesOUT",			"==:==",	kcPreference.typeText,	"Actual Time out|00:00"))
+group1:add(kcPreference:new("timesOFF",			"==:==",	kcPreference.typeText,	"Actual Time off block|00:00"))
+group1:add(kcPreference:new("timesIN",			"==:==",	kcPreference.typeText,	"Actual Time in|00:00"))
+group1:add(kcPreference:new("timesON",			"==:==",	kcPreference.typeText,	"Actual Time on blocks|00:00"))
 
 local group2 = kcPreferenceGroup:new("ui","UI Settings")
 group2:add(kcPreference:new("sop_wnd_ypos",		 70,		kcPreference.typeInt,	"SOP Window Y Pos|"))

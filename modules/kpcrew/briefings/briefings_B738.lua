@@ -112,8 +112,10 @@ function kc_get_zfw()
 end
 
 function kc_set_payload()
-	local payload = activeBriefings:get("flight:takeoffFuel") -- - kc_DOW
-	set("sim/flightmodel/weight/m_fixed", payload)
+	if activeBckVars:get("general:simversion") < 12000 then
+		local payload = activeBriefings:get("flight:takeoffFuel") -- - kc_DOW
+		set("sim/flightmodel/weight/m_fixed", payload)
+	end
 	local fgoal = activeBriefings:get("flight:takeoffFuel")
 	set("sim/flightmodel/weight/m_fuel1",math.min(kc_MFL1,fgoal/2))
 	set("sim/flightmodel/weight/m_fuel3",math.min(kc_MFL3,fgoal/2))

@@ -160,18 +160,14 @@ function kc_getQNHString()
 	return QNHstring
 end
 
--- build a makeshift ATIS string from XP11 weather - very simplistic
-function kc_buildAtisString()
-	
-	local ATISstring = string.format("%2.2i%2.2i%2.2iZ ", get("sim/cockpit2/clock_timer/current_day"),get("sim/cockpit2/clock_timer/zulu_time_hours"),get("sim/cockpit2/clock_timer/zulu_time_minutes"))
-	
+-- individual metar functions to be used also in other areas
+function kc_METAR_wind()
 	local windstring = string.format("%3.3i%2.2i", get("sim/weather/wind_direction_degt[0]"),get("sim/weather/wind_speed_kt[0]"))
 	if get("sim/weather/shear_speed_kt[0]") > 0 then
 		windstring = windstring .. "G" .. string.format("%2.2i", get("sim/weather/shear_speed_kt[0]")) .. "KT"
 	else
 		windstring = windstring .. "KT"
 	end
-	
 	if get("sim/weather/shear_direction_degt[0]") > 30 and get("sim/weather/wind_speed_kt[0]") > 6 then
 		windstring = windstring .. " " .. string.format("%2.2iV%2.2i", (get("sim/weather/wind_direction_degt[0]")-get("sim/weather/shear_direction_degt[0]")),(get("sim/weather/wind_direction_degt[0]")+get("sim/weather/shear_direction_degt[0]"))) 
 	end
@@ -179,24 +175,10 @@ function kc_buildAtisString()
 	if get("sim/weather/shear_direction_degt[0]") > 90 and get("sim/weather/wind_speed_kt[0]") < 6 then
 		windstring = string.format("VRB%2.2iKT", get("sim/weather/wind_speed_kt[0]")) 
 	end
+	return windstring
+end
 
-	ATISstring = ATISstring .. windstring
-	
-	local APTAltitude = get("sim/cockpit2/autopilot/altitude_readout_preselector")
-	local CLDcoverage = get("sim/weather/cloud_coverage[0]")
-	local CLDstring = ""
-	if (CLDcoverage > 1 and CLDcoverage < 6) then
-		CLDstring = CLDstring .. string.format("%s%3.3i ",WX_Cloudcover_list[CLDcoverage],(get("sim/weather/cloud_base_msl_m[0]")*3.28-APTAltitude)/100)
-	end
-	local CLDcoverage = get("sim/weather/cloud_coverage[1]")
-	if (CLDcoverage > 1 and CLDcoverage < 6) then
-		CLDstring = CLDstring .. string.format("%s%3.3i ",WX_Cloudcover_list[CLDcoverage],(get("sim/weather/cloud_base_msl_m[1]")*3.28-APTAltitude)/100)
-	end
-	local CLDcoverage = get("sim/weather/cloud_coverage[2]")
-	if (CLDcoverage > 1 and CLDcoverage < 6) then
-		CLDstring = CLDstring .. string.format("%s%3.3i ",WX_Cloudcover_list[CLDcoverage],(get("sim/weather/cloud_base_msl_m[2]")*3.28-APTAltitude)/100)
-	end
-	
+function kc_METAR_visibility()
 	local visiblestring = ""
 	local visibility = get("sim/weather/visibility_reported_m")
 	if (visibility >= 10000) then
@@ -214,9 +196,10 @@ function kc_buildAtisString()
 	if (visibility < 800) then
 		visiblestring = "FG "
 	end
+	return visiblestring
+end
 
--- sim/weather/thunderstorm_percent
-	
+function kc_METAR_precip()
 	local precipitation = ""
 	if get("sim/weather/precipitation_on_aircraft_ratio") > 0 then
 		if get("sim/weather/precipitation_on_aircraft_ratio") < 0.01 then
@@ -243,7 +226,28 @@ function kc_buildAtisString()
 			end
 		end
 	end
-	
+	return precipitation
+end
+
+function kc_METAR_clouds()
+	local APTAltitude = get("sim/cockpit2/autopilot/altitude_readout_preselector")
+	local CLDcoverage = get("sim/weather/cloud_coverage[0]")
+	local CLDstring = ""
+	if (CLDcoverage > 1 and CLDcoverage < 6) then
+		CLDstring = CLDstring .. string.format("%s%3.3i ",WX_Cloudcover_list[CLDcoverage],(get("sim/weather/cloud_base_msl_m[0]")*3.28-APTAltitude)/100)
+	end
+	local CLDcoverage = get("sim/weather/cloud_coverage[1]")
+	if (CLDcoverage > 1 and CLDcoverage < 6) then
+		CLDstring = CLDstring .. string.format("%s%3.3i ",WX_Cloudcover_list[CLDcoverage],(get("sim/weather/cloud_base_msl_m[1]")*3.28-APTAltitude)/100)
+	end
+	local CLDcoverage = get("sim/weather/cloud_coverage[2]")
+	if (CLDcoverage > 1 and CLDcoverage < 6) then
+		CLDstring = CLDstring .. string.format("%s%3.3i ",WX_Cloudcover_list[CLDcoverage],(get("sim/weather/cloud_base_msl_m[2]")*3.28-APTAltitude)/100)
+	end
+	return CLDstring
+end
+
+function kc_METAR_temps()
 	local ambtemp = get("sim/weather/temperature_ambient_c")
 	local duepoint = get("sim/weather/dewpoi_sealevel_c")
 	local tempstring = ""
@@ -257,8 +261,11 @@ function kc_buildAtisString()
 	else
 		tempstring=tempstring .. string.format("%2.2i", duepoint)
 	end
-	ATISstring = ATISstring .. " " .. visiblestring .. precipitation .. "" .. CLDstring .. tempstring
-	
+	return tempstring
+end
+
+function kc_METAR_VCond()
+	local visibility = get("sim/weather/visibility_reported_m")
 	local cavokcld1 = get("sim/weather/cloud_base_msl_m[0]") > 5000 or get("sim/weather/cloud_coverage[0]") == 0
 	local cavokcld2 = get("sim/weather/cloud_base_msl_m[1]") > 5000 or get("sim/weather/cloud_coverage[1]") == 0
 	local cavokcld3 = get("sim/weather/cloud_base_msl_m[2]") > 5000 or get("sim/weather/cloud_coverage[2]") == 0
@@ -266,7 +273,38 @@ function kc_buildAtisString()
 	if visibility > 10000 and cavokcld1 and cavokcld2 and cavokcld3 then
 		vcond = "CAVOK"
 	end
+	return vcond
+end
 
+function kc_fill_to_metar()
+	activeBriefings:set("departure:atisWind",kc_METAR_wind())
+	activeBriefings:set("departure:atisVisibility",kc_METAR_visibility())
+	activeBriefings:set("departure:atisPrecipit",kc_METAR_precip())
+	activeBriefings:set("departure:atisClouds",kc_METAR_clouds())
+	activeBriefings:set("departure:atisTemps",kc_METAR_temps())
+	activeBriefings:set("departure:atisQNH",kc_getQNHString())
+	activeBriefings:set("departure:atisVcond",kc_METAR_VCond())
+end
+
+-- build a makeshift ATIS string from XP11 weather - very simplistic
+function kc_buildAtisString()
+	
+	local ATISstring = string.format("%2.2i%2.2i%2.2iZ ", get("sim/cockpit2/clock_timer/current_day"),get("sim/cockpit2/clock_timer/zulu_time_hours"),get("sim/cockpit2/clock_timer/zulu_time_minutes"))
+	
+	local windstring = kc_METAR_wind()
+	
+	local CLDstring = kc_METAR_clouds()
+	
+	local precipitation = kc_METAR_precip()	
+	
+	local visiblestring = kc_METAR_visibility()
+	
+	local tempstring = kc_METAR_temps()
+	
+	ATISstring = ATISstring .. windstring .. " " .. visiblestring .. precipitation .. "" .. CLDstring .. tempstring
+	
+	local vcond = kc_METAR_VCond()
+	
 	ATISstring = ATISstring .. " " .. kc_getQNHString() .. " " .. vcond
 	return ATISstring
 end

@@ -1,0 +1,9 @@
+general.weight_units=false
+general.defTransAlt=18000
+general.defTransLvl=180
+B738.baro_hpa=false
+B738.mins_dh=false
+B738.powerup=true
+B738.mcp_def_spd=110
+B738.mcp_def_hdg=111
+B738.mcp_def_alt=1900
