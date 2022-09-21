@@ -103,6 +103,18 @@ function ()
 end,
 kcPreference.typeInfo,"Flight Times|0xFF0000FF"))
 
+-- copy the return to aircraft setting to the approach section
+function kc_copy_return_approach()
+	activeBriefings:set("approach:nav1Frequency",activeBriefings:get("departure:nav1Frequency"))
+	activeBriefings:set("approach:nav1Course",activeBriefings:get("departure:nav1Course"))
+	activeBriefings:set("approach:nav2Frequency",activeBriefings:get("departure:nav2Frequency"))
+	activeBriefings:set("approach:nav2Course",activeBriefings:get("departure:nav2Course"))
+	activeBriefings:set("approach:appType",activeBriefings:get("departure:appType"))
+	activeBriefings:set("approach:fafAltitude",activeBriefings:get("departure:fafAltitude"))
+	activeBriefings:set("approach:decision",activeBriefings:get("departure:decision"))
+	activeBriefings:set("approach:gaheading",activeBriefings:get("departure:gaheading"))
+	activeBriefings:set("approach:gaaltitude",activeBriefings:get("departure:gaaltitude"))
+end
 
 -- =================== FLIGHT DATA ==================
 local flight = kcPreferenceGroup:new("flight","FLIGHT")
@@ -160,6 +172,8 @@ departure:add(kcPreference:new("rwy","",kcPreference.typeText,"Departure Runway|
 departure:add(kcPreference:new("rwyCond",1,kcPreference.typeList,"Runway Condition|" .. kc_DEP_rwystate_list))
 departure:add(kcPreference:new("initHeading",0,kcPreference.typeInt,"Initial Heading|1"))
 departure:add(kcPreference:new("initAlt",4900,kcPreference.typeInt,"Initial Altitude (ft)|100"))
+departure:add(kcPreference:new("crs1",0,kcPreference.typeInt,"Initial CRS 1|1"))
+departure:add(kcPreference:new("crs2",0,kcPreference.typeInt,"Initial CRS 2|1"))
 
 departure:add(kcPreference:new("div",0,kcPreference.typeDivider,"Departure Routing -------------|"))
 departure:add(kcPreference:new("type",1,kcPreference.typeList,"Departure Type|" .. kc_DEP_proctype_list))
@@ -167,12 +181,20 @@ departure:add(kcPreference:new("route","",kcPreference.typeText,"Departure Route
 departure:add(kcPreference:new("transition","",kcPreference.typeText,"Departure Transition|"))
 departure:add(kcPreference:new("depNADP",1,kcPreference.typeList,"NADP|" .. kc_DEP_nadp_list))
 departure:add(kcPreference:new("depFrequency",122.800,kcPreference.typeCOMFreq,"Departure Frequency|"))
+
+departure:add(kcPreference:new("div",0,kcPreference.typeDivider,"Return to Airport -------------|"))
+departure:add(kcPreference:new("appType",1,kcPreference.typeList,"Expect Approach|" .. kc_apptypes))
 departure:add(kcPreference:new("nav1Frequency",109.000,kcPreference.typeNAVFreq,"NAV1/ILS Frequency|1"))
 departure:add(kcPreference:new("nav1Course",0,kcPreference.typeInt,"NAV1 CRS|10"))
 departure:add(kcPreference:new("nav2Frequency",109.000,kcPreference.typeNAVFreq,"NAV2 Frequency|2"))
 departure:add(kcPreference:new("nav2Course",0,kcPreference.typeInt,"NAV2 CRS|10"))
+departure:add(kcPreference:new("fafAltitude",0,kcPreference.typeInt,"FAF Altitude (ft)|100"))
+departure:add(kcPreference:new("decision",0,kcPreference.typeInt,"Decision Height/Altitude|10"))
+departure:add(kcPreference:new("gaheading",0,kcPreference.typeInt,"Go-Around Heading|10"))
+departure:add(kcPreference:new("gaaltitude",0,kcPreference.typeInt,"Go-Around Altitude|100"))
+departure:add(kcPreference:new("copybutton",0,kcPreference.typeExecButton,"Set approach section|Copy |kc_copy_return_approach()"))
 
--- =================== TAXIING BRIEFING ==================
+-- =================== TAXI BRIEFING ==================
 local taxi = kcPreferenceGroup:new("taxi","TAXI DETAILS")
 -- taxi:setInitialOpen(true)
 taxi:add(kcPreference:new("gndFrequency1",122.800,kcPreference.typeCOMFreq,"Ground Frequency|"))
@@ -240,8 +262,6 @@ takeoff:add(kcPreference:new("msa",0,kcPreference.typeInt,"Departure MSA (ft)|10
 takeoff:add(kcPreference:new("v1",0,kcPreference.typeInt,"V1|1"))
 takeoff:add(kcPreference:new("vr",0,kcPreference.typeInt,"VR|1"))
 takeoff:add(kcPreference:new("v2",0,kcPreference.typeInt,"V2|1"))
-takeoff:add(kcPreference:new("crs1",0,kcPreference.typeInt,"CRS 1|1"))
-takeoff:add(kcPreference:new("crs2",0,kcPreference.typeInt,"CRS 2|1"))
 takeoff:add(kcPreference:new("apMode",1,kcPreference.typeList,"Autopilot Modes|" .. kc_TakeoffApModes))
 takeoff:add(kcPreference:new("fmctobutton",0,kcPreference.typeExecButton,"Load FMS Takeoff Data|Load |kc_set_takeoff_details()"))
 

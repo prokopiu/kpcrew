@@ -81,6 +81,7 @@ sysRadio.adf2ActiveFreq 	= SimpleAnnunciator:new("","sim/cockpit/radios/adf2_fre
 sysRadio.adf2StandbyFreq 	= SimpleAnnunciator:new("","sim/cockpit/radios/adf2_stdby_freq_hz",0)
 
 sysRadio.xpdrSwitch 		= InopSwitch:new ("xpdr")
+sysRadio.xpdrCode 			= TwoStateDrefSwitch:new ("xpdr","sim/cockpit/radios/transponder_code",0)
 
 
 -- render the MCP part

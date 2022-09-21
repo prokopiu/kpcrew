@@ -31,7 +31,7 @@ local InopSwitch 			= require "kpcrew.systems.InopSwitch"
 --------- Switches
 
 -- ** Flaps 
-sysControls.flapsSwitch 	= MultiStateCmdSwitch:new("flaps","sim/flightmodel2/controls/flap_ratio",0,
+sysControls.flapsSwitch 	= MultiStateCmdSwitch:new("flaps","sim/cockpit2/controls/flap_ratio",0,
 "sim/flight_controls/flaps_up","sim/flight_controls/flaps_down",0,1,false)
 
 -- ** Pitch Trim

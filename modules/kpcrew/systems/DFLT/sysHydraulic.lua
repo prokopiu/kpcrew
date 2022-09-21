@@ -20,6 +20,9 @@ local InopSwitch 			= require "kpcrew.systems.InopSwitch"
 local drefHydPressure1 		= "sim/cockpit2/hydraulics/indicators/hydraulic_pressure_1"
 local drefHydPressure2 		= "sim/cockpit2/hydraulics/indicators/hydraulic_pressure_2"
 
+-- HYD Electric Pump
+sysHydraulic.elecHydPumpGroup = TwoStateDrefSwitch:new("hydpump","sim/cockpit2/switches/electric_hydraulic_pump_on",0)
+
 -- LOW HYDRAULIC annunciator
 sysHydraulic.hydraulicLowAnc = CustomAnnunciator:new("hydrauliclow",
 function ()

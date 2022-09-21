@@ -82,6 +82,10 @@ sysGeneral.irsUnitGroup:addSwitch(sysGeneral.irsUnit1Switch)
 sysGeneral.irsUnitGroup:addSwitch(sysGeneral.irsUnit2Switch)
 sysGeneral.irsUnitGroup:addSwitch(sysGeneral.irsUnit3Switch)
 
+-- Windshield Wipers
+sysGeneral.wiperSwitch = MultiStateCmdSwitch:new("wipers","sim/cockpit2/switches/wiper_speed",0,
+	"sim/systems/wipers_dn","sim/systems/wipers_up",0,3,false)
+
 ------------ Annunciators
 -- park brake
 sysGeneral.parkbrakeAnc 	= CustomAnnunciator:new("parkbrake",

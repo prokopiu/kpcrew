@@ -1026,7 +1026,7 @@ preflightFOProc:addItem(ProcedureItem:new("ANTISKID INOP LIGHT","VERIFY EXTINGUI
 -- ADF RADIOS....................................SET (F/O)
 -- =======================================================
 
-local preflightCPTProc = Procedure:new("PREFLIGHT PROCEDURE (CPT)")
+local preflightCPTProc = Procedure:new("PREFLIGHT PROCEDURE (CPT)","","Ready for preflight checklist")
 preflightCPTProc:setResize(false)
 preflightCPTProc:setFlightPhase(3)
 preflightCPTProc:addItem(IndirectProcedureItem:new("LIGHTS TEST","ON",FlowItem.actorCPT,1,"internal_lights_test",
@@ -1170,11 +1170,6 @@ preflightCPTProc:addItem(ProcedureItem:new("AUDIO CONTROL PANEL","SET",FlowItem.
 preflightCPTProc:addItem(ProcedureItem:new("ADF RADIOS","SET",FlowItem.actorCPT,1))
 preflightCPTProc:addItem(SimpleProcedureItem:new("==== Briefing"))
 preflightCPTProc:addItem(ProcedureItem:new("DEPARTURE BRIEFING","PERFORM",FlowItem.actorCPT,1))
-
--- ==== Departure Briefing
--- Threats
--- MCP#
--- Takeoff briefing 
 
 -- ================= PREFLIGHT CHECKLIST ================= 
 -- OXYGEN..............................TESTED, 100% (BOTH)
@@ -2123,6 +2118,34 @@ landingProc:addItem(ProcedureItem:new("GO AROUND ALTITUDE","SET %s|activeBriefin
 landingProc:addItem(ProcedureItem:new("GO AROUND HEADING","SET %s|activeBriefings:get(\"approach:gaheading\")",FlowItem.actorPM,2,
 	function() return sysMCP.hdgSelector:getStatus() == activeBriefings:get("approach:gaheading") end,
 	function() sysMCP.hdgSelector:setValue(activeBriefings:get("approach:gaheading")) end))
+landingProc:addItem(IndirectProcedureItem:new("FLAPS 1 SPEED","REACHED",FlowItem.actorPNF,2,"ldgflap1spd",
+	function () return get("sim/cockpit2/gauges/indicators/airspeed_kts_pilot") < get("laminar/B738/pfd/flaps_1") end))
+landingProc:addItem(ProcedureItem:new("FLAPS 1","SET",FlowItem.actorPNF,2,"ldgflap1set",
+	function () return sysControls.flapsSwitch:getStatus() == 0.125 end))
+landingProc:addItem(IndirectProcedureItem:new("FLAPS 5 SPEED","REACHED",FlowItem.actorPNF,2,"ldgflap5spd",
+	function () return get("sim/cockpit2/gauges/indicators/airspeed_kts_pilot") < get("laminar/B738/pfd/flaps_5") end))
+landingProc:addItem(ProcedureItem:new("FLAPS 5","SET",FlowItem.actorPNF,2,"ldgflap5set",
+	function () return sysControls.flapsSwitch:getStatus() == 0.375 end))
+landingProc:addItem(IndirectProcedureItem:new("FLAPS 10 SPEED","REACHED",FlowItem.actorPNF,2,"ldgflap10spd",
+	function () return get("sim/cockpit2/gauges/indicators/airspeed_kts_pilot") < get("laminar/B738/pfd/flaps_10") end))
+landingProc:addItem(IndirectProcedureItem:new("FLAPS 10","SET",FlowItem.actorPNF,2,"ldgflap10set",
+	function () return sysControls.flapsSwitch:getStatus() == 0.500 end))
+landingProc:addItem(IndirectProcedureItem:new("LANDING GEAR","DOWN",FlowItem.actorPNF,2,"ldggeardown",
+	function () return sysGeneral.GearSwitch:getStatus() == modeOn end))
+landingProc:addItem(IndirectProcedureItem:new("FLAPS 15 SPEED","REACHED",FlowItem.actorPNF,2,"ldgflap15spd",
+	function () return get("sim/cockpit2/gauges/indicators/airspeed_kts_pilot") < get("laminar/B738/pfd/flaps_15") end))
+landingProc:addItem(IndirectProcedureItem:new("FLAPS 15","SET",FlowItem.actorPNF,2,"ldgflap15set",
+	function () return sysControls.flapsSwitch:getStatus() == 0.625 end))
+landingProc:addItem(IndirectProcedureItem:new("FLAPS 25 SPEED","REACHED",FlowItem.actorPNF,2,"ldgflap25spd",
+	function () return get("sim/cockpit2/gauges/indicators/airspeed_kts_pilot") < get("laminar/B738/pfd/flaps_25") end))
+landingProc:addItem(IndirectProcedureItem:new("FLAPS 25","SET",FlowItem.actorPNF,2,"ldgflap25set",
+	function () return sysControls.flapsSwitch:getStatus() == 0.75 end))
+landingProc:addItem(IndirectProcedureItem:new("FLAPS 30","SET",FlowItem.actorPNF,2,"ldgflap30set",
+	function () return sysControls.flapsSwitch:getStatus() == 0.875 end,nil,
+	function () return activeBriefings:get("approach:flaps") < 2 end))
+landingProc:addItem(IndirectProcedureItem:new("FLAPS 40","SET",FlowItem.actorPNF,2,"ldgflap40set",
+	function () return sysControls.flapsSwitch:getStatus() == 0.875 end,nil,
+	function () return activeBriefings:get("approach:flaps") < 3 end))
 
  -- =============== LANDING CHECKLIST (PM) ===============
  -- ENGINE START SWITCHES......................CONT   (PF)

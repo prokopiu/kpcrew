@@ -16,14 +16,16 @@ local CustomAnnunciator 	= require "kpcrew.systems.CustomAnnunciator"
 local TwoStateToggleSwitch	= require "kpcrew.systems.TwoStateToggleSwitch"
 local MultiStateCmdSwitch 	= require "kpcrew.systems.MultiStateCmdSwitch"
 local InopSwitch 			= require "kpcrew.systems.InopSwitch"
+local KeepPressedSwitchCmd	= require "kpcrew.systems.KeepPressedSwitchCmd"
 
 --------- Switches
 
 -- ** BATTERY Switch
-sysElectric.batterySwitch 	= InopSwitch:new("battery1")
+sysElectric.batterySwitch 	= TwoStateCmdSwitch:new("battery1","sim/cockpit/electrical/battery_array_on",-1,"sim/electrical/battery_1_on","sim/electrical/battery_1_off","sim/electrical/battery_1_toggle")
+sysElectric.battery2Switch 	= TwoStateCmdSwitch:new("battery2","sim/cockpit/electrical/battery_array_on",1,"sim/electrical/battery_2_on","sim/electrical/battery_2_off","sim/electrical/battery_2_toggle")
 
 -- Ground Power
-sysElectric.gpuSwitch 		= InopSwitch:new("GPU")
+sysElectric.gpuSwitch 		= TwoStateCmdSwitch:new("GPU","sim/cockpit/electrical/gpu_on",0,"sim/electrical/GPU_on","sim/electrical/GPU_off","sim/electrical/GPU_toggle")
 
 -- APU Bus Switches
 sysElectric.apuGenBus1 		= InopSwitch:new("apubus1")
@@ -36,7 +38,7 @@ sysElectric.genSwitchGroup:addSwitch(sysElectric.gen1Switch)
 sysElectric.genSwitchGroup:addSwitch(sysElectric.gen2Switch)
 
 -- APU Starter
-sysElectric.apuStartSwitch 	= InopSwitch:new("apu")
+sysElectric.apuStartSwitch 	= KeepPressedSwitchCmd:new("apu","sim/cockpit2/electrical/APU_running",0,"sim/electrical/APU_start")
 
 --------- Annunciators
 
@@ -45,5 +47,8 @@ sysElectric.lowVoltageAnc 	= SimpleAnnunciator:new("lowvoltage","sim/cockpit2/an
 
 -- APU RUNNING annunciator
 sysElectric.apuRunningAnc 	= SimpleAnnunciator:new("apurunning","sim/cockpit2/electrical/APU_running",0)
+
+sysElectric.apuGenBusOff = SimpleAnnunciator:new("","sim/cockpit/electrical/generator_apu_on",0)
+sysElectric.gpuOnBus = SimpleAnnunciator:new("","sim/cockpit/electrical/gpu_on",0)
 
 return sysElectric
