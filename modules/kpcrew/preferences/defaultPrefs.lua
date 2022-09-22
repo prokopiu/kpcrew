@@ -9,7 +9,7 @@ generalGroup:add(kcPreference:new("weight_kgs",true,kcPreference.typeToggle,"Wei
 generalGroup:add(kcPreference:new("baro_mode_hpa",true,kcPreference.typeToggle,"EFIS Default Baro Mode (Both)|HPA|IN"))
 generalGroup:add(kcPreference:new("def_trans_alt",5000,kcPreference.typeInt,"Default Transition Altitude (ft)|100"))
 generalGroup:add(kcPreference:new("def_trans_lvl",50,kcPreference.typeInt,"Default Transition Level (FL)|10"))
-generalGroup:add(kcPreference:new("speakProcedure",false,kcPreference.typeToggle,"Speak Procedures|Talk|Quiet"))
+-- generalGroup:add(kcPreference:new("speakProcedure",false,kcPreference.typeToggle,"Speak Procedures|Talk|Quiet"))
 generalGroup:add(kcPreference:new("speakChecklist",false,kcPreference.typeToggle,"Speak Checklists|All|Only Challenge"))
 generalGroup:add(kcPreference:new("flowAutoOpen",false,kcPreference.typeToggle,"Flow window on start|Open flows|Do not open flows"))
 generalGroup:add(kcPreference:new("flowAutoClose",false,kcPreference.typeToggle,"Flow window at end|Close flows|Do not close flows"))
