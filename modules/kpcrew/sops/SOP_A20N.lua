@@ -49,72 +49,69 @@ kcSopFlightPhase = { [1] = "Cold & Dark", 	[2] = "Prel Preflight", [3] = "Prefli
 
 activeSOP = kcSOP:new("JarDesign A20N SOP")
 
-
-
-
-
-
--- ============== PRELIMINARY COCKPIT PREP ===============
+-- ============ PRELIMINARY COCKPIT PREP (PM) ============
 -- ==== AIRCRAFT SETUP
--- WEATHER RADAR................................OFF  (F/O)
---   PWS........................................OFF  (F/O)
---   GAIN KNOB.............................AUTO/CAL  (F/O)
---   MODE SELECTOR......................AS REQUIRED  (F/O)
--- ENGINE MASTERS 1 & 2.........................OFF  (F/O)
--- ENGINE MODE SELECTOR........................NORM  (F/O)
--- LANDING GEAR LEVER..........................DOWN  (F/O)
--- BOTH WIPER SELECTORS.........................OFF  (F/O)
+-- ENGINE MASTERS 1 & 2.........................OFF   (PM)
+-- ENGINE MODE SELECTOR........................NORM   (PM)
+-- WEATHER RADAR................................OFF   (PM)
+-- LANDING GEAR LEVER..........................DOWN   (PM)
+-- BOTH WIPER SELECTORS.........................OFF   (PM)
+
 -- ==== BATTERY CHECK & EXTERNAL POWER
--- BAT 1 / BAT 2............CHECK BOTH ABOVE 25.5 V  (F/O)
--- BAT 1 / BAT 2.................................ON  (F/O)
+-- BAT 1 / BAT 2............CHECK BOTH ABOVE 25.5 V   (PM)
+-- BAT 1 / BAT 2.................................ON   (PM)
+
 -- ==== Activate External Power
--- EXT POWER if available........................ON  (F/O)
+-- EXT POWER if available........................ON   (PM)
 --   Use Ground Handling CDU menu to turn EXT Power on         
+
 -- ==== Activate APU 
--- APU FIRE..........................IN and GUARDED  (F/O)
--- APU FIRE TEST..............................PRESS  (F/O)
--- APU MASTER PB..............................PRESS  (F/O)
+-- APU FIRE..........................IN and GUARDED   (PM)
+-- APU FIRE TEST.........................CHECK/TEST   (PM)
+-- APU MASTER PB..............................PRESS   (PM)
 --   After master switch, wait 3s 
--- APU START PB...............................PRESS  (F/O)
--- APU BLEED.....................................ON  (F/O)
--- ==== ADIRS
--- ADIRS L,R,C..................................NAV  (F/O)
---   Switch one at a time waiting for the BAT light
---   to go off before switching the next one on.
+-- APU START PB...............................PRESS   (PM)
+
 -- ==== LIGHT UP
--- COCKPIT LIGHTS...........................AS RQRD  (F/O) 
+-- COCKPIT LIGHTS...........................AS RQRD   (PM) 
+
 -- ==== AIRCRAFT ACCEPTANCE
--- ECAM RCL...............................PRESS 3 S  (F/O)
+-- ECAM RCL...............................PRESS 3 S   (PM)
 --   Recalls warnings cleared during last flight
 -- All paper work on board and checked
 -- M E L and Technical Logbook checked
+
 -- ==== ECAM SD PAGES
--- ENG SD PAGE.........................OIL QUANTITY  (F/O)
+-- ENG SD PAGE.........................OIL QUANTITY   (PM)
 --   NEO=10.6qt+0.45qt/h
--- HYD SD PAGE..........CHECK RESERVOIR FLUID LEVEL  (F/O)
--- DOOR SD PAGE..................CHECK OXY PRESSURE  (F/O)
+-- HYD SD PAGE..........CHECK RESERVOIR FLUID LEVEL   (PM)
+-- DOOR SD PAGE..................CHECK OXY PRESSURE   (PM)
+
 -- ==== FCTL
--- FLAPS.............................CHECK POSITION  (F/O)
+-- FLAPS.............................CHECK POSITION   (PM)
 --   ECAM flaps position agrees with handle position
--- SPEEDBRAKE LEVER......CHECK RETRACTED & DISARMED  (F/O)
+-- SPEEDBRAKE LEVER......CHECK RETRACTED & DISARMED   (PM)
+
 -- ==== BRAKES
--- PARKING BRAKE.................................ON  (F/O)
--- ACCU PRESS INDICATOR............CHECK GREEN BAND  (F/O)
+-- PARKING BRAKE.................................ON   (PM)
+-- ACCU PRESS INDICATOR............CHECK GREEN BAND   (PM)
 --   (if not use Y elec pump)
--- PARKING BRAKE INDICATOR....................CHECK  (F/O)
+-- PARKING BRAKE INDICATOR....................CHECK   (PM)
 -- Alternate Brake – Check:
--- YELLOW ELEC PUMP.............................OFF  (F/O) 
--- CHOCKS........................................ON  (F/O)
--- PARKING BRAKES...............................OFF  (F/O)
---   Brake Pedals – Press to Check Pressure on 
---   Brake Pressure Indicator
---   Brake Pedals Release – Parking Brakes ON
--- PARKING BRAKES................................ON  (F/O)
--- EMERGENCY EQUIPMENT........................CHECK  (F/O)
--- CB PANELS..................................CHECK  (F/O)
--- RAIN REPELLENT.............................CHECK  (F/O)
--- CIRCUIT BREAKERS..........................ALL IN  (F/O)
--- GEAR PINS & COVERS............ONBOARD and STOWED  (F/O)
+--   YELLOW ELEC PUMP...........................OFF   (PM) 
+--   CHOCKS......................................ON   (PM)
+--   PARKING BRAKES.............................OFF   (PM)
+--     Brake Pedals – Press to Check Pressure on 
+--     Brake Pressure Indicator
+--     Brake Pedals Release – Parking Brakes ON
+--   PARKING BRAKES..............................ON   (PM)
+  
+-- ==== REST
+-- EMERGENCY EQUIPMENT........................CHECK   (PM)
+-- CB PANELS..................................CHECK   (PM)
+-- RAIN REPELLENT.............................CHECK   (PM)
+-- CIRCUIT BREAKERS..........................ALL IN   (PM)
+-- GEAR PINS & COVERS............ONBOARD AND STOWED   (PM)
 -- =======================================================
 
 local prelCockpitPrep = kcProcedure:new("PRELIMINARY COCKPIT PREP","performing Preliminary Cockpit Preparation","I am going for the walk around")
@@ -122,46 +119,130 @@ prelCockpitPrep:addItem(kcSimpleProcedureItem:new("All paper work on board and c
 prelCockpitPrep:addItem(kcSimpleProcedureItem:new("M E L and Technical Logbook checked"))
 
 
--- ============== COCKPIT PREPARATION (CPT) ==============
--- ==== Overhead Left Column
--- CREW OXY SUPPLY...............................ON  (CPT)
--- RCRD GND CTL..................................ON  (CPT)
--- CVR TEST.....................PRESS & HOLD 3 SECS  (CPT)
--- EVAC SWITCH..........................CAPT & PURS  (CPT)
--- ==== Overhead Center Column
+-- ============== COCKPIT PREPARATION (PF) ===============
+-- == Overhead Left Column
+-- CREW OXY SUPPLY...............................ON  
+-- RCRD GND CTL..................................ON  
+-- CVR TEST.....................PRESS & HOLD 3 SECS  
+-- GPWS.............................NO WHITE LIGHTS
+-- EVAC SWITCH..........................CAPT & PURS  
+-- ADIRS L,R,C..................................NAV
+--   Switch one at a time waiting for the BAT light
+--   to go off before switching the next one on.
+
+-- == Overhead Center Column
+-- ==== Lights panel
 -- SEAT BELTS...................................OFF
 -- NO SMOKING...............................ON/AUTO
 -- EMERGENCY EXIT LIGHT.........................ARM
 -- ANNUNCIATOR LIGHT...........................TEST
+
+-- ==== ANTI-ICE & PRESSURIZATION
 -- WING-ANTI-ICE................................OFF
 -- ENGINE ANTI-ICE..............................OFF
 -- PROBE/WINDOW HEAT.....................CHECK AUTO
 -- CABIN PRESSURE LDG ELEV.....................AUTO
 --   ECAM PRESS page check LDG ELEV being AUTO
+
+-- ==== AIR COND Panel
 -- APU BLEED............................AS REQUIRED
 -- CROSSBLEED..................................AUTO
 -- PACK FLOW SELECTOR.......................AS RQRD
+
+-- ==== Electrical Panel
+-- NO WHITE LIGHTS..........................CHECKED
 -- BAT 1 PB & BAT 2 PB..................OFF then ON
 --   This initiates a charging cycle of the batts.
 --   10 s after setting all BAT PB ON, check on the
 --   ECAM ELEC page that the current charge of the
 --   battery is below 60 A, and is decreasing.
--- FUEL PUMP SWITCHES............................ON
+-- 
+-- ==== FUEL Panel
+-- FUEL PUMP SWITCHES........................ALL ON
 -- FUEL MODE SELECTOR..........................AUTO
+--
+-- ==== FIRE Panel
 -- ENG 1 and 2 FIRE TEST.............PRESS and HOLD
 --   (check for 7 items)
 -- APU FIRE..........................IN and GUARDED
 -- APU FIRE TEST..............................PRESS
--- ==== Overhead Top Panel
--- OVERHEAD MAINTENANCE PANEL.............NO WHITES
--- AUDIO SWITCHING SELECTOR....................NORM
--- ==== Overhead Left Column
+--
+-- == Overhead Left Column
+-- ==== CARGO Panel
+-- AFT CARGO HEAT.........................MID RANGE
+-- CARGO SMOKE TEST............................PUSH
+-- ====
 -- THIRD AUDIO CONTROL PANEL.......PA knob – Recept
 --   - This allows cabin attendant announcements to
 --     be recorded on the CVR.
 --   - Set volume at or above medium range.
--- AFT CARGO HEAT.........................MID RANGE
--- CARGO SMOKE TEST............................PUSH
+
+-- == Central Panel
+-- STANDBY INSTR (ISIS).......................CHECK
+--   Indications normal – no flags / Set QNH
+-- CLOCK..................................CHECK/SET
+--   Check time is UTC, switch to GPS
+-- A/SKID & N/W STRG SWITCH......................ON
+
+-- == Pedestal
+-- RMP (Radio Management Panel)............ON & SET
+-- ACP (Audio Control Panel)............AS REQUIRED
+-- WEATHER RADAR................................OFF
+-- PWS..........................................OFF
+-- COCKPIT DOOR..............................NORMAL
+-- SWITCHING PANEL...........................NORMAL
+-- THRUST LEVERS.........................CHECK IDLE
+-- SPEED BRAKE LEVER...............RETRACT & DISARM
+-- PARK BRK HANDLE.........................CHECK ON
+-- GRAVITY GEAR EXTN.........................STOWED
+-- RMP2 (Radio Management Panel)...........ON & SET
+-- ACP2 (Audio Control Panel)...........AS REQUIRED
+-- ==== ATC / TCAS
+--   XPDR CODE.................................2000
+--   SYSTEM 1...................................SET
+--   XPDR...................................STANDBY
+--   ALT REPORTING...............................ON
+-- =======================================================
+
+-- FMGC SETUP PROCEDURE
+
+
+-- =========== FINAL COCKPIT PREPARATION (F/O) ===========
+-- ==== EFIS Panel
+-- QNH ON EFIS..................................SET (BOTH)
+--   Check altitude is same as airport elevation
+-- FLIGHT DIRECTORS..............................ON (BOTH)
+-- ILS/LS.......................................OFF (BOTH)
+-- NAVIGATION DISPLAY MODE & RANGE..............SET (BOTH)
+-- ADF/VOR SWITCHES.............................VOR (BOTH)
+-- CSTR..........................................ON (BOTH)
+
+-- ==== FCU for Departure
+-- FMGC.................................INITIALIZED   (PF)
+-- SPD MACH WINDOW...........................DASHED   (PF)
+--   100 displayed until Perf page is completed
+-- HDG WINDOW................................DASHED   (PF)
+-- ALT WINDOW...................INITIAL CLEARED ALT   (PF)
+-- V/S WINDOW................................DASHED   (PF)
+
+-- ==== Cockpit
+-- OXYGEN MASK.................................TEST (BOTH)
+-- LOUDSPEAKERS VOLUME...........................ON (BOTH)
+-- SLIDING WINDOWS..................CLOSED & LOCKED (BOTH)
+-- PFD & ND BRIGHTNESS......................AS RQRD (BOTH)
+--   PFD / ND indications CHECK NORMAL
+
+-- ==== Pedestal
+-- RMP (Radio Management Panel)............ON & SET
+-- ACP..................................AS REQUIRED
+-- TRANSPONDER.................................STBY
+-- =======================================================
+
+
+-- FINAL COCKPI PREPARATION 20 min prior to pushback
+
+
+-- ==== Overhead Left Column
 -- ==== FCU Panel
 -- QNH ON EFIS..................................SET
 --   Check altitude is same as airport elevation
@@ -169,11 +250,6 @@ prelCockpitPrep:addItem(kcSimpleProcedureItem:new("M E L and Technical Logbook c
 -- ILS/LS...................................AS RQRD
 -- EFIS CONTROL PANEL...............SET AS REQUIRED
 -- ADF/VOR SWITCH...........................AS RQRD
--- FMGC.................................INITIALIZED
--- SPD MACH WINDOW...........................DASHED
---   100 displayed until Perf page is completed
--- HDG WINDOW................................DASHED
--- ALT WINDOW...................INITIAL CLEARED ALT
 -- OXYGEN MASK.................................TEST
 --   LOUDSPEAKERS................................ON
 --   INT reception knob (on ACP).PRESS OUT - ADJUST
@@ -183,49 +259,9 @@ prelCockpitPrep:addItem(kcSimpleProcedureItem:new("M E L and Technical Logbook c
 -- PFD & ND BRIGHTNESS......................AS RQRD
 --   PFD / ND indications CHECK NORMAL
 -- EGPWS TERRAIN SWITCH..........................ON
--- STANDBY INSTR..............................CHECK
---   Indications normal – no flags / Set QNH
--- A/SKID & N/W STRG SWITCH......................ON
--- CLOCK..................................CHECK/SET
---   Check time is UTC, switch to GPS
 -- ECAM................................PRESS RECALL
 --   Check ECAM STATUS display
--- ==== Pedestal
--- RMP (Radio Management Panel)............ON & SET
--- ACP..................................AS REQUIRED
--- WEATHER RADAR................................OFF
--- PWS..........................................OFF
--- SPEED BRAKE LEVER...............RETRACT & DISARM
--- GRAVITY GEAR EXTN.........................STOWED
--- PARK BRK HANDLE.........................CHECK ON
--- THRUST LEVERS...............................IDLE
 -- =======================================================
-
-
-
--- ============== COCKPIT PREPARATION (F/O) ==============
--- ==== FCU Panel
--- QNH ON EFIS..................................SET
---   Check altitude is same as airport elevation
--- FLIGHT DIRECTOR...............................ON
--- ILS/LS...................................AS RQRD
--- EFIS CONTROL PANEL...............SET AS REQUIRED
--- ADF/VOR SWITCH...........................AS RQRD
--- OXYGEN MASK.................................TEST
---   LOUDSPEAKERS................................ON
---   INT reception knob (on ACP).PRESS OUT - ADJUST
---   INT/RAD SWITCH.............................INT
--- SLIDING WINDOWS..................CLOSED & LOCKED
--- PFD & ND BRIGHTNESS......................AS RQRD
---   PFD / ND indications CHECK NORMAL
--- ==== Pedestal
--- RMP (Radio Management Panel)............ON & SET
--- ACP..................................AS REQUIRED
--- TRANSPONDER.................................STBY
--- =======================================================
-
-
--- FINAL COCKPI PREPARATION 20 min prior to pushback
 
 
 
@@ -310,6 +346,8 @@ prelCockpitPrep:addItem(kcSimpleProcedureItem:new("M E L and Technical Logbook c
 local CockpitPrep = kcProcedure:new("COCKPIT PREPARATION (BOTH)","starting cockpit preparation")
 
 local CockpitPrepChkl = kcChecklist:new("COCKPIT PREPARATION CHECKLIST")
+
+
 
 
 -- BEFORE START
