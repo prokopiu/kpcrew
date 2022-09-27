@@ -93,12 +93,13 @@ electricalPowerUpProc:addItem(ProcedureItem:new("BATTERY SWITCH","ON",FlowItem.a
 	function () 
 		sysElectric.batterySwitch:actuate(modeOn) 
 		if kc_is_daylight() then		
-			sysLights.domeLightSwitch:actuate(modeOff)
-			sysLights.instrLightGroup:actuate(modeOff)
+			sysLights.domeLightSwitch:actuate(0)
+			sysLights.instrLightGroup:actuate(0)
 		else
-			sysLights.domeLightSwitch:actuate(modeOn)
-			sysLights.instrLightGroup:actuate(modeOn)
+			sysLights.domeLightSwitch:actuate(1)
+			sysLights.instrLightGroup:actuate(1)
 		end
+		sysLights.instr3Light:actuate(1)
 	end))
 
 electricalPowerUpProc:addItem(SimpleProcedureItem:new("==== Hydraulic System"))
@@ -122,7 +123,7 @@ electricalPowerUpProc:addItem(SimpleProcedureItem:new("==== Activate External Po
 	function () return activePrefSet:get("aircraft:powerup_apu") == true end))
 electricalPowerUpProc:addItem(ProcedureItem:new("  GROUND POWER","CONNECTED",FlowItem.actorFO,2,
 	function () return sysElectric.gpuSwitch:getStatus() == 1 end,
-	function () sysElectric.gpuSwitch:actuate(cmdDown) end,
+	function () sysElectric.gpuSwitch:actuate(1) end,
 	function () return activePrefSet:get("aircraft:powerup_apu") == true end))
 electricalPowerUpProc:addItem(SimpleProcedureItem:new("  Ensure that GPU is on Bus",
 	function () return activePrefSet:get("aircraft:powerup_apu") == true end))
@@ -141,6 +142,7 @@ electricalPowerUpProc:addItem(IndirectProcedureItem:new("  #spell|APU#","RUNNING
 	function () return activePrefSet:get("aircraft:powerup_apu") == false end))
 electricalPowerUpProc:addItem(SimpleProcedureItem:new("Bring #spell|APU# power on bus",
 	function () return activePrefSet:get("aircraft:powerup_apu") == false end))
+
 
 -- ============ PRELIMINARY PREFLIGHT PROCEDURES =========
 -- ELECTRICAL POWER UP......................COMPLETE (F/O)
@@ -208,6 +210,51 @@ prelPreflightProc:addItem(SimpleProcedureItem:new("Electric hydraulic pumps on f
 prelPreflightProc:addItem(ProcedureItem:new("ELECTRIC HYDRAULIC PUMPS SWITCHES","ON",FlowItem.actorFO,3,
 	function () return sysHydraulic.elecHydPumpGroup:getStatus() == 1 end,
 	function () sysHydraulic.elecHydPumpGroup:actuate(modeOn) end))
+
+-- ================ Preflight Procedure ==================
+-- ==== Flight control panel                            
+-- YAW DAMPER SWITCH..............................ON (F/O)
+
+-- ==== Fuel panel                                      
+-- FUEL PUMP SWITCHES........................ALL OFF (F/O)
+--   If APU running turn one of the left fuel pumps on
+-- FUEL CROSS FEED...............................OFF (F/O)
+-- CROSS FEED VALVE LIGHT...............EXTINGUISHED (F/O)
+
+-- ==== Electrical panel                                
+-- BATTERY SWITCH.......................GUARD CLOSED (F/O)
+-- CAB/UTIL POWER SWITCH..........................ON (F/O)
+-- IFE/PASS SEAT POWER SWITCH.....................ON (F/O)
+-- STANDBY POWER SWITCH.................GUARD CLOSED (F/O)
+-- GEN DRIVE DISCONNECT SWITCHES.......GUARDS CLOSED (F/O)
+-- BUS TRANSFER SWITCH..................GUARD CLOSED (F/O)
+
+-- ==== APU start if required
+-- Overheat and fire protection panel              
+-- OVHT FIRE TEST SWITCH..................HOLD RIGHT (F/O)
+-- MASTER FIRE WARN LIGHT.......................PUSH (F/O)
+-- ENGINES EXT TEST SWITCH............TEST 1 TO LEFT (F/O)
+-- ENGINES EXT TEST SWITCH...........TEST 2 TO RIGHT (F/O)
+-- APU PANEL
+-- APU SWITCH..................................START (F/O)
+--   Hold APU switch in START position for 3-4 seconds.
+-- APU GEN OFF BUS LIGHT.................ILLUMINATED (F/O)
+-- APU GENERATOR BUS SWITCHES.....................ON (F/O)
+
+-- ==== Overhead items
+-- EQUIPMENT COOLING SWITCHES...................NORM (F/O)
+-- EMERGENCY EXIT LIGHTS SWITCH.........GUARD CLOSED (F/O)
+-- NO SMOKING SWITCH..............................ON (F/O)
+-- FASTEN BELTS SWITCH............................ON (F/O)
+-- WINDSHIELD WIPER SELECTORS...................PARK (F/O)
+
+-- ==== Anti-Ice
+-- WINDOW HEAT SWITCHES...........................ON (F/O)
+-- WINDOW HEAT ANNUNCIATORS............. ILLUMINATED (F/O)
+-- PROBE HEAT SWITCHES...........................OFF (F/O)
+-- WING ANTI-ICE SWITCH..........................OFF (F/O)
+-- ENGINE ANTI-ICE SWITCHES......................OFF (F/O)
+-- =======================================================
 
 
 -- ============  =============

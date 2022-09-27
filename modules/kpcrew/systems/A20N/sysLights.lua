@@ -62,13 +62,11 @@ sysLights.wheelSwitch = TwoStateDrefSwitch:new("wheel",drefGenericLights,5)
 sysLights.domeLightSwitch = TwoStateDrefSwitch:new("wheel","sim/cockpit/electrical/cockpit_lights",0)
 
 -- Instrument Lights
-sysLights.instr1Light = TwoStateDrefSwitch:new("",drefInstrLights,-1)
-sysLights.instr2Light = TwoStateDrefSwitch:new("",drefInstrLights,2)
-sysLights.instr3Light = TwoStateDrefSwitch:new("",drefPanelLights,1)
-sysLights.instr4Light = TwoStateDrefSwitch:new("",drefPanelLights,2)
-sysLights.instr5Light = TwoStateDrefSwitch:new("",drefPanelLights,3)
-sysLights.instr6Light = TwoStateDrefSwitch:new("",drefInstrLights,3)
-sysLights.instr7Light = TwoStateDrefSwitch:new("",drefInstrLights,4)
+sysLights.instr1Light = TwoStateDrefSwitch:new("","sim/custom/xap/extlight/cockp_left_br",0)
+sysLights.instr2Light = TwoStateDrefSwitch:new("","sim/custom/xap/intlight/int_pan_ped_lt",0)
+sysLights.instr3Light = TwoStateDrefSwitch:new("","sim/custom/xap/intlight/FCU_lt_rot",0)
+sysLights.instr4Light = TwoStateDrefSwitch:new("","sim/custom/xap/intlight/FCU_led_lt_rot",0)
+sysLights.instr5Light = TwoStateDrefSwitch:new("","sim/custom/xap/intlight/ovhd_int_lt",0)
 
 sysLights.instrLightGroup = SwitchGroup:new("instrumentlights")
 sysLights.instrLightGroup:addSwitch(sysLights.instr1Light)
@@ -76,8 +74,7 @@ sysLights.instrLightGroup:addSwitch(sysLights.instr2Light)
 sysLights.instrLightGroup:addSwitch(sysLights.instr3Light)
 sysLights.instrLightGroup:addSwitch(sysLights.instr4Light)
 sysLights.instrLightGroup:addSwitch(sysLights.instr5Light)
-sysLights.instrLightGroup:addSwitch(sysLights.instr6Light)
-sysLights.instrLightGroup:addSwitch(sysLights.instr7Light)
+sysLights.instrLightGroup:setValue(0)
 
 --------- Annunciators
 -- annunciator to mark any landing lights on

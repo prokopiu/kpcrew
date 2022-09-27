@@ -47,7 +47,7 @@ kcSopFlightPhase = { [1] = "Cold & Dark", 	[2] = "Prel Preflight", [3] = "Prefli
 
 -- Set up SOP =========================================================================
 
-activeSOP = kcSOP:new("JarDesign A20N SOP")
+activeSOP = SOP:new("JarDesign A20N SOP")
 
 -- ============ PRELIMINARY COCKPIT PREP (PM) ============
 -- ==== AIRCRAFT SETUP
@@ -114,6 +114,82 @@ activeSOP = kcSOP:new("JarDesign A20N SOP")
 -- GEAR PINS & COVERS............ONBOARD AND STOWED   (PM)
 -- =======================================================
 
+local prelCockpitPrep = Procedure:new("PRELIMINARY COCKPIT PREPARATION","performing preliminary cockpit preparation","Setup finished")
+prelCockpitPrep:setFlightPhase(1)
+prelCockpitPrep:addItem(SimpleProcedureItem:new("==== AIRCRAFT SETUP"))
+prelCockpitPrep:addItem(ProcedureItem:new("ENGINE MASTERS 1 & 2","OFF",FlowItem.actorPM,1,
+	function () return sysEngines.engMstrGroup:getStatus() == 0 end,
+	function () sysEngines.engMstrGroup:actuate(0) end))
+prelCockpitPrep:addItem(ProcedureItem:new("ENGINE MODE SELECTOR","NORM",FlowItem.actorPM,1,
+	function () return sysEngines.engModeSelector:getStatus() == sysEngines.engModeNorm end,
+	function () sysEngines.engModeSelector:setValue(sysEngines.engModeNorm) end))
+prelCockpitPrep:addItem(ProcedureItem:new("WEATHER RADAR","OFF",FlowItem.actorPM,1,
+	function () return sysEFIS.wxrPilot:getStatus() == 0 end,
+	function () sysEFIS.wxrPilot:actuate(0) end))
+prelCockpitPrep:addItem(ProcedureItem:new("LANDING GEAR LEVER","DOWN",FlowItem.actorPM,1,
+	function () return sysGeneral.GearSwitch:getStatus() == modeOn end,
+	function () sysGeneral.GearSwitch:actuate(modeOn) end))
+prelCockpitPrep:addItem(ProcedureItem:new("BOTH WIPER SELECTORS","OFF",FlowItem.actorPM,1,
+	function () return sysGeneral.wiperGroup:getStatus() == sysGeneral.wiperPosOff end,
+	function () sysGeneral.wiperGroup:setValue(sysGeneral.wiperPosOff) end))
+
+prelCockpitPrep:addItem(SimpleProcedureItem:new("==== BATTERY CHECK & EXTERNAL POWER"))
+prelCockpitPrep:addItem(ProcedureItem:new("BAT 1 / BAT 2","CHECK BOTH ABOVE 25.5 V",FlowItem.actorPM,1,
+	function () return sysElectric.bat1Volt:getStatus() > 24 and sysElectric.bat2Volt:getStatus() > 24 end))
+prelCockpitPrep:addItem(ProcedureItem:new("BAT 1 / BAT 2","ON",FlowItem.actorPM,1,
+	function () return sysElectric.batterySwitch:getStatus() == 1 and sysElectric.battery2Switch:getStatus() == 1 end,
+	function () sysElectric.batterySwitch:setValue(1) sysElectric.battery2Switch:setValue(1) end))
+
+prelCockpitPrep:addItem(SimpleProcedureItem:new("==== Activate External Power",
+	function () return activePrefSet:get("aircraft:powerup_apu") == true end))
+prelCockpitPrep:addItem(ProcedureItem:new("EXT POWER","CONNECTED",FlowItem.actorPM,1,
+	function () return sysElectric.gpuConnect:getStatus() == 1 end,
+	function () sysElectric.gpuConnect:setValue(1) end,
+	function () return activePrefSet:get("aircraft:powerup_apu") == true end))
+prelCockpitPrep:addItem(SimpleProcedureItem:new("  Use Ground Handling CDU menu to turn EXT Power on",
+	function () return activePrefSet:get("aircraft:powerup_apu") == true end))
+prelCockpitPrep:addItem(ProcedureItem:new("EXT POWER","ON",FlowItem.actorPM,1,
+	function () return sysElectric.gpuSwitch:getStatus() == 1 end,
+	function () sysElectric.gpuSwitch:setValue(1) end,
+	function () return activePrefSet:get("aircraft:powerup_apu") == true end))
+
+prelCockpitPrep:addItem(SimpleProcedureItem:new("==== Activate APU",
+	function () return activePrefSet:get("aircraft:powerup_apu") == false end))
+prelCockpitPrep:addItem(ProcedureItem:new("APU FIRE","IN AND GUARDED",FlowItem.actorPM,1,true,nil,
+	function () return activePrefSet:get("aircraft:powerup_apu") == false end))
+prelCockpitPrep:addItem(IndirectProcedureItem:new("APU FIRE TEST","CHECK/TEST",FlowItem.actorPM,2,"apufiretest",
+	function () return sysEngines.apuFireTest:getStatus() == 1 end,
+	function () sysEngines.apuFireTest:setValue(1) end,
+	function () return activePrefSet:get("aircraft:powerup_apu") == false end))
+prelCockpitPrep:addItem(ProcedureItem:new("APU MASTER PB","PRESS",FlowItem.actorPM,3,
+	function () return sysElectric.apuMaster:getStatus() == 1 end,
+	function () sysEngines.apuFireTest:setValue(0) sysElectric.apuMaster:setValue(1) end,
+	function () return activePrefSet:get("aircraft:powerup_apu") == false end))
+prelCockpitPrep:addItem(SimpleProcedureItem:new("  After master switch, wait 3s",
+	function () return activePrefSet:get("aircraft:powerup_apu") == false end))
+prelCockpitPrep:addItem(ProcedureItem:new("APU START PB","PRESS",FlowItem.actorPM,3,
+	function () return sysElectric.apuStarter:getStatus() > 0 end,
+	function () sysElectric.apuStarter:setValue(1) end,
+	function () return activePrefSet:get("aircraft:powerup_apu") == false end))
+
+prelCockpitPrep:addItem(SimpleProcedureItem:new("==== LIGHT UP"))
+prelCockpitPrep:addItem(ProcedureItem:new("COCKPIT LIGHTS","AS REQUIRED",FlowItem.actorPM,1,true,
+	function () 
+		if kc_is_daylight() then		
+			sysLights.instrLightGroup:actuate(0)
+		else
+			sysLights.instrLightGroup:actuate(1)
+		end
+	end))
+
+-- ==== LIGHT UP
+-- COCKPIT LIGHTS...........................AS RQRD   (PM) 
+
+-- ==== AIRCRAFT ACCEPTANCE
+-- ECAM RCL...............................PRESS 3 S   (PM)
+--   Recalls warnings cleared during last flight
+-- All paper work on board and checked
+-- M E L and Technical Logbook checked
 
 -- ============== COCKPIT PREPARATION (PF) ===============
 -- == Overhead Left Column
@@ -756,7 +832,7 @@ activeSOP = kcSOP:new("JarDesign A20N SOP")
 
 -- ============  =============
 -- add the checklists and procedures to the active sop
--- activeSOP:addProcedure(prelCockpitPrep)
+activeSOP:addProcedure(prelCockpitPrep)
 -- activeSOP:addProcedure(cockpitPrep)
 
 function getActiveSOP()

@@ -1,22 +1,28 @@
--- DFLT airplane 
+-- A20N JarDesign airplane 
 -- aircraft general systems
 
+-- @classmod sysGeneral
+-- @author Kosta Prokopiu
+-- @copyright 2022 Kosta Prokopiu
 local sysGeneral = {
+	wiperPosOff 	= 0,
+	wiperPosSlow 	= 1,
+	wiperPosFast	= 2
 }
 
-local TwoStateDrefSwitch = require "kpcrew.systems.TwoStateDrefSwitch"
-local TwoStateCmdSwitch = require "kpcrew.systems.TwoStateCmdSwitch"
-local TwoStateCustomSwitch = require "kpcrew.systems.TwoStateCustomSwitch"
-local SwitchGroup  = require "kpcrew.systems.SwitchGroup"
-local SimpleAnnunciator = require "kpcrew.systems.SimpleAnnunciator"
-local CustomAnnunciator = require "kpcrew.systems.CustomAnnunciator"
-local TwoStateToggleSwitch = require "kpcrew.systems.TwoStateToggleSwitch"
-local MultiStateCmdSwitch = require "kpcrew.systems.MultiStateCmdSwitch"
-local InopSwitch = require "kpcrew.systems.InopSwitch"
-local Annunciator = require "kpcrew.systems.Annunciator"
+local TwoStateDrefSwitch 	= require "kpcrew.systems.TwoStateDrefSwitch"
+local TwoStateCmdSwitch	 	= require "kpcrew.systems.TwoStateCmdSwitch"
+local TwoStateCustomSwitch 	= require "kpcrew.systems.TwoStateCustomSwitch"
+local SwitchGroup  			= require "kpcrew.systems.SwitchGroup"
+local Annunciator 			= require "kpcrew.systems.Annunciator"
+local SimpleAnnunciator 	= require "kpcrew.systems.SimpleAnnunciator"
+local CustomAnnunciator 	= require "kpcrew.systems.CustomAnnunciator"
+local TwoStateToggleSwitch	= require "kpcrew.systems.TwoStateToggleSwitch"
+local MultiStateCmdSwitch 	= require "kpcrew.systems.MultiStateCmdSwitch"
+local InopSwitch 			= require "kpcrew.systems.InopSwitch"
 
-local drefCurrentBaro = "sim/weather/barometer_sealevel_inhg"
-local drefSlider = "sim/cockpit2/switches/custom_slider_on"
+local drefCurrentBaro 		= "sim/weather/barometer_sealevel_inhg"
+local drefSlider 			= "sim/cockpit2/switches/custom_slider_on"
 
 -- Parking Brake
 sysGeneral.parkBrakeSwitch = TwoStateToggleSwitch:new("parkbrake","sim/cockpit2/controls/parking_brake_ratio",0,"sim/flight_controls/brakes_toggle_max")
@@ -79,6 +85,13 @@ sysGeneral.irsUnitGroup = SwitchGroup:new("irsunits")
 sysGeneral.irsUnitGroup:addSwitch(sysGeneral.irsUnit1Switch)
 sysGeneral.irsUnitGroup:addSwitch(sysGeneral.irsUnit2Switch)
 sysGeneral.irsUnitGroup:addSwitch(sysGeneral.irsUnit3Switch)
+
+-- Wiper Switches
+sysGeneral.wiperLeft = TwoStateDrefSwitch:new("wiperleft","sim/custom/xap/icerain/wiper_l",0)
+sysGeneral.wiperRight = TwoStateDrefSwitch:new("wiperleft","sim/custom/xap/icerain/wiper_r",0)
+sysGeneral.wiperGroup = SwitchGroup:new("wipers")
+sysGeneral.wiperGroup:addSwitch(sysGeneral.wiperLeft)
+sysGeneral.wiperGroup:addSwitch(sysGeneral.wiperRight)
 
 ------------ Annunciators
 -- park brake
