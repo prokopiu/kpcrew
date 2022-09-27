@@ -78,4 +78,32 @@ Modules and Scripts are FlyWithLua specific folders. Find them  here:
 Simply remove all the above lua files and folders from the **scripts** and **modules** folder in Resources\plugins\FlyWithLua. 
 ** DO NOT DELETE SCRIPTS AND MODULE FOLDER!! **
 
+## How does KPCrew work
+### Startup
+Once you have installed the lua files in the correct places, next time your X-Plane starts it will also automatically start KPCrew. If you have loaded one of the supported aircraft add-ons (currently the Zibo Mod B738) you can call up the control window on the bottom right of the X-Plane window. Either use a custom key/button with command "_kp/crew/openmaster_" called "_KPCrew Open Master Window_" or find the Macro "_KPCrew Toggle Control Window_".
+
+![Control Window](https://github.com/prokopiu/kpcrew/blob/kpcrew23/documentation/images/controlwindow.png)
+
+### The Control Window
+
+These are the elements of the Control Window:
+
+ - **[SOP]**: Opens the Standard Operating Procedure window with all associated flows
+ - **[FLOW]**: Opens the currently selected flow (Procedure or Checklist)
+ - **[<-]**: Select previous item
+ - **[FLOW WINDOW]**: Information where in the flow you are and the status of the flow item. Click to execute master button.
+ - **[->]**: Select next item. Cn also be used to skip flows and flow items
+ - **[RESET]**: Resets the currently selected flow
+ - **[BRIEF]**: Shows the flight briefing window to provide information to KPCrew
+ - **[PREF]**: Shows the preferences to set for KPCrew
+ - **[>]**: Minimize the control window (master window)
+	
+
+### Listing and Selecting Flows
+
+Each supported aircraft has an SOP defined which can be looked at by opening the SOP window.
+
+![Control Window](https://github.com/prokopiu/kpcrew/blob/kpcrew23/documentation/images/sopwindow.png)
+
+By double-clicking on a line, you select the respective flow. It should show in the control window. You can also use the [<-] and [->] button in the control window to move through flows. Red means the flow selected or the cursor over it, green means the flow was executed in an automatic mode and is finished. Dark green background mark procedures, black background are checklists. There are slightly different rules with checklists and procedures.
 
