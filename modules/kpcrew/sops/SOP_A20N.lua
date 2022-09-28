@@ -182,14 +182,51 @@ prelCockpitPrep:addItem(ProcedureItem:new("COCKPIT LIGHTS","AS REQUIRED",FlowIte
 		end
 	end))
 
--- ==== LIGHT UP
--- COCKPIT LIGHTS...........................AS RQRD   (PM) 
+prelCockpitPrep:addItem(SimpleProcedureItem:new("==== AIRCRAFT ACCEPTANCE"))
+prelCockpitPrep:addItem(ProcedureItem:new("ECAM RCL","PRESS 3 S",FlowItem.actorPM,1,true,nil))
+prelCockpitPrep:addItem(SimpleProcedureItem:new("   Recalls warnings cleared during last flight"))
+prelCockpitPrep:addItem(SimpleProcedureItem:new("All paper work on board and checked"))
+prelCockpitPrep:addItem(SimpleProcedureItem:new("M E L and Technical Logbook checked"))
 
--- ==== AIRCRAFT ACCEPTANCE
--- ECAM RCL...............................PRESS 3 S   (PM)
---   Recalls warnings cleared during last flight
--- All paper work on board and checked
--- M E L and Technical Logbook checked
+prelCockpitPrep:addItem(SimpleProcedureItem:new("==== ECAM SD PAGES"))
+prelCockpitPrep:addItem(ProcedureItem:new("ENG SD PAGE","OIL QTY > 10.6 QT",FlowItem.actorPM,1,
+	function () return sysEngines.oilqty1:getStatus() > 10 and sysEngines.oilqty2:getStatus() > 10 end,
+	function () sysGeneral.ECAMMode:setValue(sysGeneral.ecamModeENG) end))
+prelCockpitPrep:addItem(SimpleProcedureItem:new("  NEO=10.6qt+0.45qt/h"))
+prelCockpitPrep:addItem(ProcedureItem:new("HYD SD PAGE","CHECK RESERVOIR FLUID LEVEL",FlowItem.actorPM,3,true,
+	function () sysGeneral.ECAMMode:setValue(sysGeneral.ecamModeHYD) end))
+prelCockpitPrep:addItem(ProcedureItem:new("DOOR SD PAGE","CHECK OXY PRESSURE",FlowItem.actorPM,3,
+	function () return sysGeneral.oxyPsi:getStatus() > 1800 end,
+	function () sysGeneral.ECAMMode:setValue(sysGeneral.ecamModeDOOR) end))
+
+prelCockpitPrep:addItem(SimpleProcedureItem:new("==== FCTL"))
+prelCockpitPrep:addItem(ProcedureItem:new("FLAPS","UP",FlowItem.actorPM,1,
+	function () return sysControls.flapsSwitch:getStatus() == 0 end,
+	function () sysControls.flapsSwitch:setValue(0) end))
+prelCockpitPrep:addItem(ProcedureItem:new("SPEED BRAKE","CHECK RETRACTED & DISARMED",FlowItem.actorPM,1,
+	function () return sysControls.speedBrake:getStatus() == 0 end,
+	function () sysControls.speedBrake:setValue(0) end))
+
+prelCockpitPrep:addItem(SimpleProcedureItem:new("==== BRAKES"))
+prelCockpitPrep:addItem(ProcedureItem:new("PARKING BRAKE","ON",FlowItem.actorPM,1,
+	function () return sysGeneral.parkBrakeSwitch:getStatus() == 1 end,
+	function () sysGeneral.parkBrakeSwitch:actuate(1) end))
+prelCockpitPrep:addItem(ProcedureItem:new("ACCU PRESS INDICATOR","CHECK GREEN BAND",FlowItem.actorPM,1,
+	function () return sysHydraulic.accuPress:getStatus() > 3 end))
+prelCockpitPrep:addItem(SimpleProcedureItem:new("  If not use Y elec pump"))
+prelCockpitPrep:addItem(ProcedureItem:new("PARKING BRAKE INDICATOR","CHECK",FlowItem.actorPM,1,
+	function () return sysHydraulic.leftBrakePress:getStatus() > 1 and sysHydraulic.rightBrakePress:getStatus() > 1 end))
+
+-- Alternate Brake – Check:
+--   YELLOW ELEC PUMP...........................OFF   (PM) 
+--   CHOCKS......................................ON   (PM)
+--   PARKING BRAKES.............................OFF   (PM)
+--     Brake Pedals – Press to Check Pressure on 
+--     Brake Pressure Indicator
+--     Brake Pedals Release – Parking Brakes ON
+--   PARKING BRAKES..............................ON   (PM)
+
+
 
 -- ============== COCKPIT PREPARATION (PF) ===============
 -- == Overhead Left Column

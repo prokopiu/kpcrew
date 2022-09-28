@@ -1,18 +1,42 @@
 kc_acf_name = "JarDesign A320neo"
 
-kc_TakeoffThrust = "RATED|DE-RATED|ASSUMED TEMPERATURE|RATED AND ASSUMED|DE-RATED AND ASSUMED"
-kc_TakeoffFlaps = "1|2|3|4|5"
-kc_TakeoffAntiice = "NOT REQUIRED|ENGINE ONLY|ENGINE AND WING"
-kc_TakeoffPacks = "ON|AUTO|OFF"
-kc_TakeoffBleeds = "OFF|ON|UNDER PRESSURIZED"
-kc_TakeoffApModes = "LNAV/VNAV|HDG/FLCH"
-kc_apptypes = "ILS CAT 1|ILS CAT 2 OR 3|VOR|NDB|RNAV|VISUAL|TOUCH AND GO|CIRCLING"
-kc_LandingFlaps = "3|4|5"
-kc_LandingAutoBrake = "OFF|1|2|3|MAX"
-kc_LandingPacks = "OFF|ON|UNDER PRESSURIZED"
-kc_LandingAntiice = "NOT REQUIRED|ENGINE ONLY|ENGINE AND WING"
-kc_StartSequence = "2 THEN 1|1 THEN 2"
-kc_MELIssues = "no M E L issues|some M E L issues"
+kc_TakeoffThrust 	= "RATED|DE-RATED|ASSUMED TEMPERATURE|RATED AND ASSUMED|DE-RATED AND ASSUMED"
+kc_TakeoffFlaps 	= "1|2"
+kc_TakeoffAntiice 	= "NOT REQUIRED|ENGINE ONLY|ENGINE AND WING"
+kc_TakeoffPacks 	= "ON|AUTO|OFF"
+kc_TakeoffBleeds 	= "OFF|ON|UNDER PRESSURIZED"
+kc_TakeoffApModes 	= "LNAV/VNAV|HDG/FLCH"
+kc_apptypes 		= "ILS CAT 1|ILS CAT 2 OR 3|VOR|NDB|RNAV|VISUAL|TOUCH AND GO|CIRCLING"
+kc_LandingFlaps 	= "3|4"
+kc_LandingAutoBrake = "OFF|LO|MED|MAX"
+kc_LandingPacks 	= "OFF|ON|UNDER PRESSURIZED"
+kc_LandingAntiice 	= "NOT REQUIRED|ENGINE ONLY|ENGINE AND WING"
+kc_StartSequence 	= "2 THEN 1|1 THEN 2"
+kc_MELIssues 		= "no M E L issues|some M E L issues"
+
+-- aircraft specs, weights in KG
+-- EMPTY WEIGHT:			41000 KG -  90389 LBS
+-- MAX ZERO FUEL WEIGHT:	63000 KG -  11684 LBS
+-- MAX TAKEOFF WEIGHT:		78000 KG - 174200 LBS
+-- MAX LANDING WEIGHT:		66000 KG - 171961 LBS
+-- MAX FUEL CAPACITY:		18740 KG -  41315 LBS
+-- FUEL FLOW PER HOUR:		 1352 KG -   2980 LBS
+
+kc_DOW 		= 41000  -- Dry Operating Weight (aka OEW)
+kc_MZFW  	= 63000  -- Maximum Zero Fuel Weight
+kc_MaxFuel 	= 18740  -- Maximum Fuel Capacity
+kc_MaxPayld = 22000  -- Maximum Payload to be set
+kc_MTOW 	= 78000  -- Maximum Takeoff Weight
+kc_MLW  	= 66000  -- Maximum Landing Weight
+kc_FFPH 	=  1352  -- Fuel Flow per hour
+kc_MFL1		=   850  -- max fuel in tank left aux
+kc_MFL2		=  5530  -- max fuel in tank left
+kc_MFL3		=  5960  -- max fuel in tank center
+kc_MFL4		=  5530  -- max fuel in tank right
+kc_MFL5		=   850  -- max fuel in tank right aux
+
+kc_show_load_button = true
+kc_show_cost_index = true
 
 -- full list of approach types can be overwritten by aircraft
 APP_apptype_list = "ILS CAT 1|ILS CAT 2 OR 3|VOR|NDB|RNAV|VISUAL|TOUCH AND GO|CIRCLING"
@@ -23,19 +47,67 @@ APP_apu_list = "APU delayed start|APU|GPU"
 -- Reverse Thrust
 APP_rev_thrust_list = "NONE|MINIMUM|FULL"
 
+function kc_get_DOW()
+	if activePrefSet:get("general:weight_kgs") then
+		return kc_DOW
+	else
+		return kc_DOW * 2.20462262
+	end
+end
+
+function kc_get_MZFW()
+	if activePrefSet:get("general:weight_kgs") then
+		return kc_MZFW
+	else
+		return kc_MZFW * 2.20462262
+	end
+end
+
+function kc_get_MaxFuel()
+	if activePrefSet:get("general:weight_kgs") then
+		return kc_MaxFuel
+	else
+		return kc_MaxFuel * 2.20462262
+	end
+end
+
+function kc_get_MTOW()
+	if activePrefSet:get("general:weight_kgs") then
+		return kc_MTOW
+	else
+		return kc_MTOW * 2.20462262
+	end
+end
+
+function kc_get_MLW()
+	if activePrefSet:get("general:weight_kgs") then
+		return kc_MLW
+	else
+		return kc_MLW * 2.20462262
+	end
+end
+
+function kc_get_FFPH()
+	if activePrefSet:get("general:weight_kgs") then
+		return kc_FFPH
+	else
+		return kc_FFPH * 2.20462262
+	end
+end
+
 function kc_get_total_fuel()
 	if activePrefSet:get("general:weight_kgs") then
-		return get("sim/flightmodel/weight/m_fuel_total")
+		return get("jd/fuel/m_total")
 	else
-		return get("sim/flightmodel/weight/m_fuel_total")*2.20462262
+		return get("jd/fuel/m_total")*2.20462262
 	end
 end
 
 function kc_get_gross_weight()
 	if activePrefSet:get("general:weight_kgs") then
-		return get("sim/flightmodel/weight/m_total")
+		return get("jd/weight/m_total")
 	else
-		return get("sim/flightmodel/weight/m_total")*2.20462262
+		return get("jd/weight/m_total")*2.20462262
 	end	
 end
 
@@ -43,6 +115,32 @@ function kc_get_zfw()
 	return kc_get_gross_weight()-kc_get_total_fuel()
 end
 
+function kc_set_payload()
+	local fgoal = activeBriefings:get("flight:takeoffFuel")
+	
+	if fgoal < kc_MFL2+kc_MFL4 then
+		set("sim/custom/xap/fuel/t0",0)
+		set("sim/custom/xap/fuel/t1",fgoal / 2)
+		set("sim/custom/xap/fuel/t2",0)
+		set("sim/custom/xap/fuel/t3",fgoal / 2)
+		set("sim/custom/xap/fuel/t4",0)
+	end
+	if fgoal > kc_MFL2+kc_MFL4 then
+		set("sim/custom/xap/fuel/t0",0)
+		set("sim/custom/xap/fuel/t1",kc_MFL2)
+		set("sim/custom/xap/fuel/t2",fgoal-kc_MFL2-kc_MFL4)
+		set("sim/custom/xap/fuel/t3",kc_MFL4)
+		set("sim/custom/xap/fuel/t4",0)
+	end
+	if fgoal > kc_MaxFuel-2*kc_MFL1 then
+		set("sim/custom/xap/fuel/t0",(kc_MaxFuel-fgoal)/2)
+		set("sim/custom/xap/fuel/t1",kc_MFL2)
+		set("sim/custom/xap/fuel/t2",kc_MFL3)
+		set("sim/custom/xap/fuel/t3",kc_MFL4)
+		set("sim/custom/xap/fuel/t4",(kc_MaxFuel-fgoal)/2)
+	end
+	set("sim/aircraft/weight/acf_m_fuel_tot",fgoal)
+end
 -- briefings to be more aircraft specific
 function kc_dep_brief_flight() 
 	local briefing = "OK, I will be the pilot flying\n"

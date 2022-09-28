@@ -88,4 +88,7 @@ function ()
 	end
 end)
 
+sysEngines.oilqty1 = SimpleAnnunciator:new("oilqty1","sim/custom/xap/engines/oilquan_eng1",0)
+sysEngines.oilqty2 = SimpleAnnunciator:new("oilqty1","sim/custom/xap/engines/oilquan_eng2",0)
+
 return sysEngines

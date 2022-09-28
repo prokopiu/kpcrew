@@ -24,6 +24,7 @@ kc_MELIssues = "no M E L issues|M E L issues"
 kc_DOW 		= 41510  -- Dry Operating Weight (aka OEW)
 kc_MZFW  	= 62732  -- Maximum Zero Fuel Weight
 kc_MaxFuel 	= 21611  -- Maximum Fuel Capacity
+kc_MaxPayld = 22000  -- Maximum Payload to be set     *********************************************
 kc_MTOW 	= 79016  -- Maximum Takeoff Weight
 kc_MLW  	= 66361  -- Maximum Landing Weight
 kc_FFPH 	=  2187  -- Fuel Flow per hour

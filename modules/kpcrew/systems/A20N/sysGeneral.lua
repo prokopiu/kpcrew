@@ -7,7 +7,18 @@
 local sysGeneral = {
 	wiperPosOff 	= 0,
 	wiperPosSlow 	= 1,
-	wiperPosFast	= 2
+	wiperPosFast	= 2,
+	ecamModeENG		= 11,
+	ecamModeBLEED	= 7,
+	ecamModePRESS	= 3,
+	ecamModeELEC	= 6,
+	ecamModeHYD		= 0,
+	ecamModeFUEL	= 1,
+	ecamModeAPU		= 2,
+	ecamModeCOND	= 8,
+	ecamModeDOOR	= 9,
+	ecamModeWHEEL	= 5,
+	ecamModeFCTL	= 4
 }
 
 local TwoStateDrefSwitch 	= require "kpcrew.systems.TwoStateDrefSwitch"
@@ -93,6 +104,8 @@ sysGeneral.wiperGroup = SwitchGroup:new("wipers")
 sysGeneral.wiperGroup:addSwitch(sysGeneral.wiperLeft)
 sysGeneral.wiperGroup:addSwitch(sysGeneral.wiperRight)
 
+sysGeneral.ECAMMode = TwoStateDrefSwitch:new("lecammode","sim/custom/xap/disp/sys/mode",0)
+
 ------------ Annunciators
 -- park brake
 sysGeneral.parkbrakeAnc = CustomAnnunciator:new("parkbrake",
@@ -163,6 +176,9 @@ sysGeneral.baroInhg = CustomAnnunciator:new("inhg",
 function () 
 	return get("sim/cockpit2/gauges/actuators/barometer_setting_in_hg_pilot") 
 end)
+
+-- Oxygen pressure
+sysGeneral.oxyPsi = SimpleAnnunciator:new("oxypsi","xhsi/mfd/crew_oxy_psi",0)
 
 
 return sysGeneral

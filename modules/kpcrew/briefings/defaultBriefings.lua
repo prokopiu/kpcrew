@@ -40,13 +40,13 @@ information:add(kcPreference:new("simversion",
 function () 
 	return activeBckVars:get("general:simversion")
 end,
-kcPreference.typeInfo,"X-Plane Version|0xFF0000FF"))
+kcPreference.typeInfo,"X-Plane Version|0xFF00FFFF"))
 
 information:add(kcPreference:new("flightState",
 function () 
 	return kcSopFlightPhase[activeBckVars:get("general:flight_state")]
 end,
-kcPreference.typeInfo,"Flight State|0xFF0000FF"))
+kcPreference.typeInfo,"Flight State|0xFF00FFFF"))
 
 information:add(kcPreference:new("aircraftType",function () return kc_acf_name .. " - " .. kc_acf_icao end,kcPreference.typeInfo,"Aircraft Type|"))
 
@@ -62,7 +62,7 @@ function ()
 	local wunit = activePrefSet:get("general:weight_kgs") == true and "KGS" or "LBS"
 	return string.format("%6.6i %s",kc_get_gross_weight(),wunit) .. " / " .. string.format("%6.6i %s",kc_get_zfw(),wunit) .. " / " .. string.format("%6.6i %s",kc_get_MZFW(),wunit)
 end,
-kcPreference.typeInfo,"Gross Weight / ZFW / MZFW|"))
+kcPreference.typeInfo,"Gross Weight / ZFW / MZFW|" .. (kc_get_gross_weight() > kc_get_MTOW() and "0xFF0000FF" or "0xFF95C857")))
 
 information:add(kcPreference:new("grosszfw",
 function () 
@@ -101,7 +101,7 @@ function ()
 	return "OFF: " .. activeBckVars:get("general:timesOFF") .. "Z OUT: " .. activeBckVars:get("general:timesOUT") 
 	.. "Z\nIN : " .. activeBckVars:get("general:timesIN") .. "Z  ON: " .. activeBckVars:get("general:timesON") .. "Z"
 end,
-kcPreference.typeInfo,"Flight Times|0xFF0000FF"))
+kcPreference.typeInfo,"Flight Times|0xFF00FFFF"))
 
 -- copy the return to aircraft setting to the approach section
 function kc_copy_return_approach()
@@ -142,9 +142,17 @@ flight:add(kcPreference:new("Finres",0,kcPreference.typeInt,
 function ()
 	return "Final Reserve + Alternate " .. (activePrefSet:get("general:weight_kgs") == true and "KGS" or "LBS") .. "|100"
 end))
+flight:add(kcPreference:new("usablefuel",
+function () 
+	local wunit = activePrefSet:get("general:weight_kgs") == true and "KGS" or "LBS"
+	return string.format("%6.6i %s",activeBriefings:get("flight:takeoffFuel")-activeBriefings:get("flight:Finres"),wunit) 
+end,
+kcPreference.typeInfo,"Usable Fuel|0xFF00FFFF"))
+
+
 flight:add(kcPreference:new("toweight",0,kcPreference.typeInt,
 function ()
-	return "Zero Fuel Weight " .. (activePrefSet:get("general:weight_kgs") == true and "KGS" or "LBS") .. "|100"
+	return "Payload " .. (activePrefSet:get("general:weight_kgs") == true and "KGS" or "LBS") .. "|100"
 end))
 if kc_show_load_button then
 	flight:add(kcPreference:new("loadbutton",0,kcPreference.typeExecButton,"Payload & Fuel|Load |kc_set_payload()"))
