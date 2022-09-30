@@ -1,18 +1,21 @@
--- DFLT airplane 
+-- A20N JarDesign airplane 
 -- MCP functionality
 
+-- @classmod sysMCP
+-- @author Kosta Prokopiu
+-- @copyright 2022 Kosta Prokopiu
 local sysMCP = {
 }
 
-local TwoStateDrefSwitch = require "kpcrew.systems.TwoStateDrefSwitch"
-local TwoStateCmdSwitch = require "kpcrew.systems.TwoStateCmdSwitch"
-local TwoStateCustomSwitch = require "kpcrew.systems.TwoStateCustomSwitch"
-local SwitchGroup  = require "kpcrew.systems.SwitchGroup"
-local SimpleAnnunciator = require "kpcrew.systems.SimpleAnnunciator"
-local CustomAnnunciator = require "kpcrew.systems.CustomAnnunciator"
-local TwoStateToggleSwitch = require "kpcrew.systems.TwoStateToggleSwitch"
-local MultiStateCmdSwitch = require "kpcrew.systems.MultiStateCmdSwitch"
-local InopSwitch = require "kpcrew.systems.InopSwitch"
+local TwoStateDrefSwitch 	= require "kpcrew.systems.TwoStateDrefSwitch"
+local TwoStateCmdSwitch	 	= require "kpcrew.systems.TwoStateCmdSwitch"
+local TwoStateCustomSwitch 	= require "kpcrew.systems.TwoStateCustomSwitch"
+local SwitchGroup  			= require "kpcrew.systems.SwitchGroup"
+local SimpleAnnunciator 	= require "kpcrew.systems.SimpleAnnunciator"
+local CustomAnnunciator 	= require "kpcrew.systems.CustomAnnunciator"
+local TwoStateToggleSwitch	= require "kpcrew.systems.TwoStateToggleSwitch"
+local MultiStateCmdSwitch 	= require "kpcrew.systems.MultiStateCmdSwitch"
+local InopSwitch 			= require "kpcrew.systems.InopSwitch"
 
 local drefVORLocLight = "sim/cockpit2/autopilot/nav_status"
 local drefLNAVLight = "sim/cockpit2/radios/actuators/HSI_source_select_pilot"

@@ -8,6 +8,7 @@ local sysGeneral = {
 	wiperPosOff 	= 0,
 	wiperPosSlow 	= 1,
 	wiperPosFast	= 2,
+	
 	ecamModeENG		= 11,
 	ecamModeBLEED	= 7,
 	ecamModePRESS	= 3,
@@ -18,7 +19,11 @@ local sysGeneral = {
 	ecamModeCOND	= 8,
 	ecamModeDOOR	= 9,
 	ecamModeWHEEL	= 5,
-	ecamModeFCTL	= 4
+	ecamModeFCTL	= 4,
+	
+	adirsModeOFF	= 0,
+	adirsModeNAV	= 1,
+	adirsModeATT	= 2
 }
 
 local TwoStateDrefSwitch 	= require "kpcrew.systems.TwoStateDrefSwitch"
@@ -58,9 +63,9 @@ sysGeneral.doorGroup:addSwitch(sysGeneral.doorFCargo)
 sysGeneral.doorGroup:addSwitch(sysGeneral.doorACargo)
 
 -- Baro standard toggle
-sysGeneral.barostdPilot = TwoStateToggleSwitch:new("barostdpilot","laminar/B738/EFIS/baro_set_std_pilot",0,"laminar/B738/EFIS_control/capt/push_button/std_press")
-sysGeneral.barostdCopilot = TwoStateToggleSwitch:new("barostdcopilot","laminar/B738/EFIS/baro_set_std_copilot",0,"laminar/B738/EFIS_control/fo/push_button/std_press")
-sysGeneral.barostdStandby = TwoStateToggleSwitch:new("barostdstandby","laminar/B738/gauges/standby_alt_std_mode",0,"laminar/B738/toggle_switch/standby_alt_baro_std")
+-- sysGeneral.barostdPilot = TwoStateToggleSwitch:new("barostdpilot","laminar/B738/EFIS/baro_set_std_pilot",0,"laminar/B738/EFIS_control/capt/push_button/std_press")
+-- sysGeneral.barostdCopilot = TwoStateToggleSwitch:new("barostdcopilot","laminar/B738/EFIS/baro_set_std_copilot",0,"laminar/B738/EFIS_control/fo/push_button/std_press")
+-- sysGeneral.barostdStandby = TwoStateToggleSwitch:new("barostdstandby","laminar/B738/gauges/standby_alt_std_mode",0,"laminar/B738/toggle_switch/standby_alt_baro_std")
 
 sysGeneral.barostdGroup = SwitchGroup:new("barostdgroup")
 sysGeneral.barostdGroup:addSwitch(sysGeneral.barostdPilot)
@@ -88,10 +93,9 @@ sysGeneral.baroGroup:addSwitch(sysGeneral.baroPilot)
 sysGeneral.baroGroup:addSwitch(sysGeneral.baroCoPilot)
 sysGeneral.baroGroup:addSwitch(sysGeneral.baroStandby)
 
-sysGeneral.irsUnit1Switch = InopSwitch:new("irsunit1")
-sysGeneral.irsUnit2Switch = InopSwitch:new("irsunit2")
-sysGeneral.irsUnit3Switch = InopSwitch:new("irsunit3")
-
+sysGeneral.irsUnit1Switch = TwoStateDrefSwitch:new("irsunit1","sim/custom/xap/adirs/mode_sel_1",0)
+sysGeneral.irsUnit2Switch = TwoStateDrefSwitch:new("irsunit2","sim/custom/xap/adirs/mode_sel_2",0)
+sysGeneral.irsUnit3Switch = TwoStateDrefSwitch:new("irsunit3","sim/custom/xap/adirs/mode_sel_3",0)
 sysGeneral.irsUnitGroup = SwitchGroup:new("irsunits")
 sysGeneral.irsUnitGroup:addSwitch(sysGeneral.irsUnit1Switch)
 sysGeneral.irsUnitGroup:addSwitch(sysGeneral.irsUnit2Switch)
@@ -104,7 +108,38 @@ sysGeneral.wiperGroup = SwitchGroup:new("wipers")
 sysGeneral.wiperGroup:addSwitch(sysGeneral.wiperLeft)
 sysGeneral.wiperGroup:addSwitch(sysGeneral.wiperRight)
 
+-- ECAM Mode panel
 sysGeneral.ECAMMode = TwoStateDrefSwitch:new("lecammode","sim/custom/xap/disp/sys/mode",0)
+
+-- Chocks
+sysGeneral.chocksLeft = TwoStateDrefSwitch:new("checksleft","sim/custom/xap/chocks_l",0)
+sysGeneral.chocksRight = TwoStateDrefSwitch:new("checksright","sim/custom/xap/chocks_r",0)
+sysGeneral.chocksGroup = SwitchGroup:new("chocks")
+sysGeneral.chocksGroup:addSwitch(sysGeneral.chocksLeft)
+sysGeneral.chocksGroup:addSwitch(sysGeneral.chocksRight)
+
+-- OxygenSupply
+sysGeneral.oxyCrewSupply = TwoStateDrefSwitch:new("crewOxySupl","sim/custom/xap/oxy/crewsupp",0)
+
+-- Passenger Signs
+sysGeneral.seatBeltSwitch 	= TwoStateDrefSwitch:new("seatbelts","sim/cockpit/switches/fasten_seat_belts",0)
+sysGeneral.noSmokingSwitch 	= TwoStateDrefSwitch:new("nosmoking","sim/cockpit/switches/no_smoking",0)
+sysGeneral.emerExitLights = TwoStateDrefSwitch:new("emerexitlight","sim/custom/xap/extlight/emer_ext_lt",0)
+
+-- CLOCK
+sysGeneral.timerStartStop = TwoStateToggleSwitch:new("timerstartstop","sim/time/timer_is_running_sec",0,"sim/instruments/timer_start_stop")
+sysGeneral.timerReset = TwoStateToggleSwitch:new("timerreset","sim/cockpit2/clock_timer/timer_running",0,"sim/instruments/timer_reset")
+sysGeneral.etReset = TwoStateDrefSwitch:new("etreset","sim/custom/xap/et_timer/mode",0)
+
+-- Anti Skid
+sysGeneral.antiSkid = TwoStateDrefSwitch:new("antiskid","sim/custom/xap/wheels/ant_skeed",0)
+
+-- WX Radar
+sysGeneral.wxRadar = TwoStateDrefSwitch:new("exradar","sim/cockpit2/EFIS/EFIS_weather_on",0)
+
+-- Cockpit Doors
+sysGeneral.cockpitDoor = TwoStateDrefSwitch:new("cockpitdoor","sim/custom/xap/c_door",0)
+sysGeneral.cockpitLock = TwoStateDrefSwitch:new("cockpitLock","jd/c_door/lock",0)
 
 ------------ Annunciators
 -- park brake
@@ -179,6 +214,20 @@ end)
 
 -- Oxygen pressure
 sysGeneral.oxyPsi = SimpleAnnunciator:new("oxypsi","xhsi/mfd/crew_oxy_psi",0)
+
+-- GPWS annunciator group
+sysGeneral.gpwsAnnunciators = CustomAnnunciator:new("gpwsannunc",
+function () 
+	local sum = get("sim/custom/xap/gpws_flap") +
+				get("sim/custom/xap/gpws_gs") +
+				get("sim/custom/xap/gpws_sys") +
+				get("sim/custom/xap/gpws_terr")
+	if sum < 4 then 
+		return 1
+	else
+		return 0
+	end
+end)
 
 
 return sysGeneral

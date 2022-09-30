@@ -45,6 +45,9 @@ sysEngines.engModeSelector = TwoStateDrefSwitch:new("engmode","sim/custom/xap/en
 
 -- Fire Tests
 sysEngines.apuFireTest = TwoStateDrefSwitch:new("apufire","sim/custom/xap/firetest/apu",0)
+sysEngines.eng1FireTest = TwoStateDrefSwitch:new("eng1fire","sim/custom/xap/firetest/e1",0)
+sysEngines.eng2FireTest = TwoStateDrefSwitch:new("eng2fire","sim/custom/xap/firetest/e2",0)
+
 
 ----------- Annunciators
 
@@ -90,5 +93,8 @@ end)
 
 sysEngines.oilqty1 = SimpleAnnunciator:new("oilqty1","sim/custom/xap/engines/oilquan_eng1",0)
 sysEngines.oilqty2 = SimpleAnnunciator:new("oilqty1","sim/custom/xap/engines/oilquan_eng2",0)
+
+sysEngines.thrustLever1 	= SimpleAnnunciator:new ("","jd/eng1/n1_tla",0)
+sysEngines.thrustLever2 	= SimpleAnnunciator:new ("","jd/eng2/n1_tla",0)
 
 return sysEngines

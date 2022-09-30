@@ -41,4 +41,26 @@ sysElectric.apuRunningAnc = SimpleAnnunciator:new("apurunning","sim/cockpit2/ele
 sysElectric.bat1Volt = SimpleAnnunciator:new("bat1volt","sim/custom/xap/elec/bat1_ind_volt",0)
 sysElectric.bat2Volt = SimpleAnnunciator:new("bat2volt","sim/custom/xap/elec/bat2_ind_volt",0)
 
+-- Electric white lights check
+sysElectric.elecWhiteLights = CustomAnnunciator:new ("elecWhite",
+function ()
+	local onesum = 
+		get("sim/custom/xap/elec/lft_gen_on") +
+		get("sim/custom/xap/elec/rgh_gen_on") +
+		get("sim/custom/xap/elec/apu_gen_on") +
+		get("sim/custom/xap/elec/galley") +
+		get("sim/custom/xap/elec/commrc") +
+		get("sim/custom/xap/elec/bat2_on") +
+		get("sim/custom/xap/elec/bat1_on")
+
+	local nullsum =
+		get("sim/custom/xap/elec/acess_alt") +
+		get("sim/custom/xap/elec/bus_tie")
+		
+	if onesum == 7 and nullsum == 0 then
+		return 0
+	else
+		return 1
+	end
+end)
 return sysElectric

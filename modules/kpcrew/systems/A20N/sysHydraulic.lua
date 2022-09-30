@@ -29,6 +29,13 @@ sysHydraulic.accuPress = SimpleAnnunciator:new("accupress","sim/custom/xap/brake
 sysHydraulic.leftBrakePress = SimpleAnnunciator:new("leftbrkpress","sim/custom/xap/brakes/left_br_press",0)
 sysHydraulic.rightBrakePress = SimpleAnnunciator:new("rghtbrkpress","sim/custom/xap/brakes/rght_br_press",0)
 
+-- Hydraulic pumps
+sysHydraulic.yellowElecPumpSwitch = TwoStateDrefSwitch:new("elecyellowpump","sim/custom/xap/hydr/y/elpump/mode",0)
+sysHydraulic.blueElecPumpSwitch = TwoStateDrefSwitch:new("elecbluewpump","sim/custom/xap/hydr/b/elpump/mode",0)
+sysHydraulic.ptuSwitch = TwoStateDrefSwitch:new("ptu","sim/custom/xap/hydr/ptu/mode",0)
+sysHydraulic.eng1Pump = TwoStateDrefSwitch:new("eng1pump","sim/custom/xap/hydr/g/engpump/mode",0)
+sysHydraulic.eng2Pump = TwoStateDrefSwitch:new("eng1pump","sim/custom/xap/hydr/y/engpump/mode",0)
+
 -- LOW HYDRAULIC annunciator
 sysHydraulic.hydraulicLowAnc = CustomAnnunciator:new("hydrauliclow",
 function ()
