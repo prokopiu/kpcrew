@@ -155,7 +155,7 @@ end
 -- Read all preferences from file
 function kcPreferenceSet:load()
 	for _, group in ipairs(self.preferenceGroups) do
-		filePrefs = io.open(SCRIPT_DIRECTORY .. "..\\Modules\\kpcrew_prefs\\" .. self.filename .. ".preferences", "r")
+		local filePrefs = io.open(SCRIPT_DIRECTORY .. "..\\Modules\\kpcrew_prefs\\" .. self.filename .. ".preferences", "r")
 		if filePrefs then
 			group:load(filePrefs)
 			filePrefs:close()

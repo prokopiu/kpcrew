@@ -150,121 +150,63 @@ function kc_unparse_string(instring)
 end
 
 -- return QNH string
-function kc_getQNHString()
+function kc_getQNHString(metar_data)
 	local QNHstring = ""
-	if activePrefSet:get("general:baro_mode_hpa") then
-		QNHstring = string.format("Q%4.4i",get("sim/weather/barometer_sealevel_inhg") / 0.02952999)
-	else
-		QNHstring = string.format("A%4.4i",((get("sim/weather/barometer_sealevel_inhg") * 10^2)*10^-2)*100)
-	end
+	QNHstring = QNHstring .. metar_data.pressure
 	return QNHstring
 end
 
 -- individual metar functions to be used also in other areas
-function kc_METAR_wind()
-	local windstring = string.format("%3.3i%2.2i", get("sim/weather/wind_direction_degt[0]"),get("sim/weather/wind_speed_kt[0]"))
-	if get("sim/weather/shear_speed_kt[0]") > 0 then
-		windstring = windstring .. "G" .. string.format("%2.2i", get("sim/weather/shear_speed_kt[0]")) .. "KT"
-	else
-		windstring = windstring .. "KT"
-	end
-	if get("sim/weather/shear_direction_degt[0]") > 30 and get("sim/weather/wind_speed_kt[0]") > 6 then
-		windstring = windstring .. " " .. string.format("%2.2iV%2.2i", (get("sim/weather/wind_direction_degt[0]")-get("sim/weather/shear_direction_degt[0]")),(get("sim/weather/wind_direction_degt[0]")+get("sim/weather/shear_direction_degt[0]"))) 
-	end
-
-	if get("sim/weather/shear_direction_degt[0]") > 90 and get("sim/weather/wind_speed_kt[0]") < 6 then
-		windstring = string.format("VRB%2.2iKT", get("sim/weather/wind_speed_kt[0]")) 
-	end
+function kc_METAR_wind(metar_data)
+	local windstring = ""
+		if metar_data.wind.direction == "VRB" then
+			windstring = string.format("VRB%2.2i", metar_data.wind.speed)
+		else
+			windstring = string.format("%3.3i%2.2i", metar_data.wind.direction, metar_data.wind.speed)
+		end
+		if metar_data.wind.gust ~= nil then
+			windstring = windstring .. "G" .. metar_data.wind.gust .. "KT"
+		else
+			windstring = windstring .. "KT"
+		end
 	return windstring
 end
 
-function kc_METAR_visibility()
+function kc_METAR_visibility(metar_data)
 	local visiblestring = ""
-	local visibility = get("sim/weather/visibility_reported_m")
-	if (visibility >= 10000) then
-		visiblestring = "9999 "
-	end
-	if (visibility < 9000) then
-		visiblestring = string.format("%4.4i",visibility) .. " "
-	end
-	if (visibility < 4500) then
-		visiblestring = "HZ "
-	end
-	if (visibility < 1500) then
-		visiblestring = "BR "
-	end
-	if (visibility < 800) then
-		visiblestring = "FG "
+	for i = 1, table.getn(metar_data.visibility),1 do
+		visiblestring = visiblestring .. metar_data.visibility[i].distance .. " "
 	end
 	return visiblestring
+	
 end
 
-function kc_METAR_precip()
+function kc_METAR_precip(metar_data)
 	local precipitation = ""
-	if get("sim/weather/precipitation_on_aircraft_ratio") > 0 then
-		if get("sim/weather/precipitation_on_aircraft_ratio") < 0.01 then
-			precipitation = "DZ "
-		end
-		if get("sim/weather/precipitation_on_aircraft_ratio") > 0.01 then
-			precipitation = "-RN "
-		end
-		if get("sim/weather/precipitation_on_aircraft_ratio") > 0.05 then
-			precipitation = "RN "
-		end
-		if get("sim/weather/precipitation_on_aircraft_ratio") > 0.1 then
-			precipitation = "+RN "
-		end
-		if get("sim/weather/temperature_ambient_c") < 0 then
-			if get("sim/weather/precipitation_on_aircraft_ratio") > 0.01 then
-				precipitation = "-SN "
-			end
-			if get("sim/weather/precipitation_on_aircraft_ratio") > 0.05 then
-				precipitation = "SN "
-			end
-			if get("sim/weather/precipitation_on_aircraft_ratio") > 0.1 then
-				precipitation = "+SN "
-			end
-		end
+    local PHENOMENA = { 'DZ', 'RA', 'SN', 'SG', 'IC', 'PL', 'GR', 'GS', 'UP', 'BR', 'FG', 'FU', 'VA', 'DU', 'SA', 'HZ', 'PY', 'PO', 'SQ', 'FC', 'SS', 'DS'}
+
+	if metar_data.weather.phenomena ~= nil then 
+		precipitation = precipitation .. PHENOMENA[metar_data.weather.phenomena]  .. " "
 	end
 	return precipitation
 end
 
-function kc_METAR_clouds()
-	local APTAltitude = get("sim/cockpit2/autopilot/altitude_readout_preselector")
-	local CLDcoverage = get("sim/weather/cloud_coverage[0]")
+function kc_METAR_clouds(metar_data)
+	local CLOUD_COVERAGE  = { [1] = "CLR", [2] = "FEW", [3] = "SCT", [4] = "BKN", [5] = "OVC" }
 	local CLDstring = ""
-	if (CLDcoverage > 1 and CLDcoverage < 6) then
-		CLDstring = CLDstring .. string.format("%s%3.3i ",WX_Cloudcover_list[CLDcoverage],(get("sim/weather/cloud_base_msl_m[0]")*3.28-APTAltitude)/100)
-	end
-	local CLDcoverage = get("sim/weather/cloud_coverage[1]")
-	if (CLDcoverage > 1 and CLDcoverage < 6) then
-		CLDstring = CLDstring .. string.format("%s%3.3i ",WX_Cloudcover_list[CLDcoverage],(get("sim/weather/cloud_base_msl_m[1]")*3.28-APTAltitude)/100)
-	end
-	local CLDcoverage = get("sim/weather/cloud_coverage[2]")
-	if (CLDcoverage > 1 and CLDcoverage < 6) then
-		CLDstring = CLDstring .. string.format("%s%3.3i ",WX_Cloudcover_list[CLDcoverage],(get("sim/weather/cloud_base_msl_m[2]")*3.28-APTAltitude)/100)
+	for i = 1, table.getn(metar_data.clouds),1 do
+		CLDstring = CLDstring .. CLOUD_COVERAGE[metar_data.clouds[i].coverage] .. string.format("%3.3i",metar_data.clouds[i].altitude) .. " "
 	end
 	return CLDstring
 end
 
-function kc_METAR_temps()
-	local ambtemp = get("sim/weather/temperature_ambient_c")
-	local duepoint = get("sim/weather/dewpoi_sealevel_c")
+function kc_METAR_temps(metar_data)
 	local tempstring = ""
-	if (ambtemp<0) then
-		tempstring=string.format("M%2.2i/", ambtemp*-1)
-	else
-		tempstring=string.format("%2.2i/", ambtemp)
-	end
-	if (duepoint<0) then
-		tempstring=tempstring .. string.format("M%2.2i", duepoint*-1)
-	else
-		tempstring=tempstring .. string.format("%2.2i", duepoint)
-	end
+	tempstring = tempstring .. metar_data.temperature .. "/" .. metar_data.dewpoint
 	return tempstring
 end
 
-function kc_METAR_VCond()
+function kc_METAR_VCond(metar_data)
 	local visibility = get("sim/weather/visibility_reported_m")
 	local cavokcld1 = get("sim/weather/cloud_base_msl_m[0]") > 5000 or get("sim/weather/cloud_coverage[0]") == 0
 	local cavokcld2 = get("sim/weather/cloud_base_msl_m[1]") > 5000 or get("sim/weather/cloud_coverage[1]") == 0
@@ -277,13 +219,23 @@ function kc_METAR_VCond()
 end
 
 function kc_fill_to_metar()
-	activeBriefings:set("departure:atisWind",kc_METAR_wind())
-	activeBriefings:set("departure:atisVisibility",kc_METAR_visibility())
-	activeBriefings:set("departure:atisPrecipit",kc_METAR_precip())
-	activeBriefings:set("departure:atisClouds",kc_METAR_clouds())
-	activeBriefings:set("departure:atisTemps",kc_METAR_temps())
-	activeBriefings:set("departure:atisQNH",kc_getQNHString())
-	activeBriefings:set("departure:atisVcond",kc_METAR_VCond())
+	activeBriefings:set("departure:atisWind",kc_METAR_wind(kc_metardata_local))
+	activeBriefings:set("departure:atisVisibility",kc_METAR_visibility(kc_metardata_local))
+	activeBriefings:set("departure:atisClouds",kc_METAR_clouds(kc_metardata_local))
+	activeBriefings:set("departure:atisPrecipit",kc_METAR_precip(kc_metardata_local))
+	activeBriefings:set("departure:atisTemps",kc_METAR_temps(kc_metardata_local))
+	activeBriefings:set("departure:atisQNH",kc_getQNHString(kc_metardata_local))
+	-- activeBriefings:set("departure:atisVcond",kc_METAR_VCond(kc_metardata_local))
+end
+
+function kc_fill_ldg_metar()
+	activeBriefings:set("arrival:atisWind",kc_METAR_wind(kc_metardata_dest))
+	activeBriefings:set("arrival:atisVisibility",kc_METAR_visibility(kc_metardata_dest))
+	activeBriefings:set("arrival:atisClouds",kc_METAR_clouds(kc_metardata_dest))
+	activeBriefings:set("arrival:atisPrecipit",kc_METAR_precip(kc_metardata_dest))
+	activeBriefings:set("arrival:atisTemps",kc_METAR_temps(kc_metardata_dest))
+	activeBriefings:set("arrival:atisQNH",kc_getQNHString(kc_metardata_dest))
+	-- activeBriefings:set("arrival:atisVcond",kc_METAR_VCond(kc_metardata_dest))
 end
 
 -- build a makeshift ATIS string from XP11 weather - very simplistic
@@ -410,6 +362,14 @@ function kc_hasValue (array, value)
         end
     end
     return false
+end
+-- get length of array/table
+function kc_getLength (array)
+	local lnum = 0
+    for i, v in ipairs(array) do
+		lnum = lnum +1 
+    end
+    return lnum
 end
 
 -- get daylight 0=dark 1=bright

@@ -30,7 +30,57 @@ kc_WX_Cloud_list = "NO|FEW|SCATTERED|BROKEN|OVERCAST"
 
 -- load aircraft specific briefing values
 require("kpcrew.briefings.briefings_" .. kc_acf_icao)
+local http 		= require("socket.http")
+local metar 	= require("kpcrew.metar")
+local xml2lua 	= require("xml2lua")
+local handler 	= require("xmlhandler.tree")
+local DataOfp = {}
 
+kc_metar_read = 0
+kc_metar_local = ""
+kc_metar_dest = ""
+kc_metar_altn = ""
+kc_metardata_local = nil
+kc_metardata_dest = nil
+
+function kc_download_simbrief()
+	local webResponse, webStatus = http.request("http://www.simbrief.com/api/xml.fetcher.php?username=" .. activePrefSet:get("general:simbriefuser"))
+	if webStatus == 200 then
+		local f = io.open(SCRIPT_DIRECTORY .. "..\\Modules\\kpcrew_prefs\\simbrief.xml", "w+")
+		f:write(webResponse)
+		f:close()
+	end
+    local xmlfile = xml2lua.loadFile(SCRIPT_DIRECTORY .. "..\\Modules\\kpcrew_prefs\\simbrief.xml")
+	local parser = xml2lua.parser(handler)
+	parser:parse(xmlfile)
+
+	DataOfp["Status"] = handler.root.OFP.fetch.status
+
+	if DataOfp["Status"] == "Success" then
+		activeBriefings:set("flight:callsign",handler.root.OFP.atc.callsign)
+		activeBriefings:set("flight:originIcao",handler.root.OFP.origin.icao_code)
+		activeBriefings:set("flight:destinationIcao",handler.root.OFP.destination.icao_code)
+		activeBriefings:set("flight:alternateIcao",handler.root.OFP.alternate.icao_code)
+		activeBriefings:set("flight:costIndex",handler.root.OFP.general.costindex)
+		activeBriefings:set("flight:distance",handler.root.OFP.general.air_distance)
+		activeBriefings:set("flight:cruiseLevel",handler.root.OFP.general.initial_altitude / 100)
+		activeBriefings:set("flight:averageWind",handler.root.OFP.general.avg_wind_dir .. "/" .. handler.root.OFP.general.avg_wind_spd)
+		activeBriefings:set("flight:averageWC",handler.root.OFP.general.avg_wind_comp)
+		activeBriefings:set("flight:averageISA",handler.root.OFP.general.avg_temp_dev)
+		activeBriefings:set("flight:takeoffFuel",handler.root.OFP.fuel.plan_ramp)
+		activeBriefings:set("flight:Finres",handler.root.OFP.fuel.alternate_burn+handler.root.OFP.fuel.reserve)
+		activeBriefings:set("flight:toweight",handler.root.OFP.weights.payload)
+		activeBriefings:set("flight:route",handler.root.OFP.general.route)
+
+		activeBriefings:set("departure:transalt",handler.root.OFP.origin.trans_alt)
+		activeBriefings:set("departure:rwy",handler.root.OFP.origin.plan_rwy)
+		activeBriefings:set("departure:initAlt",handler.root.OFP.general.initial_altitude)
+
+		activeBriefings:set("arrival:translvl",handler.root.OFP.destination.trans_level/100)
+		activeBriefings:set("arrival:aptElevation",handler.root.OFP.destination.elevation)
+		activeBriefings:set("approach:rwy",handler.root.OFP.destination.plan_rwy)
+	end
+end
 -- ============== Information =============
 
 local information = kcPreferenceGroup:new("information","INFORMATION")
@@ -93,9 +143,38 @@ kcPreference.typeInfo,"Local/Zulu Time|"))
 
 information:add(kcPreference:new("localMetar",
 function () 
-	return kc_buildAtisString()
+	if kc_metar_read > 0 then 
+		kc_metar_read = kc_metar_read - 1
+		return kc_metar_local
+	else
+		local response, status = http.request(activeBckVars:get("general:vatsimUrl") .. activeBriefings:get("flight:originIcao"))
+		kc_metar_read = 1800 * 5
+		kc_metar_local = response
+		local m = metar.new(activeBriefings:get("flight:originIcao"))
+		kc_metardata_local = m:get_metar_data(kc_metar_local)
+		local response, status = http.request(activeBckVars:get("general:vatsimUrl") .. activeBriefings:get("flight:destinationIcao"))
+		kc_metar_dest = response
+		local m = metar.new(activeBriefings:get("flight:destinationIcao"))
+		kc_metardata_dest = m:get_metar_data(kc_metar_dest)
+		local response, status = http.request(activeBckVars:get("general:vatsimUrl") .. activeBriefings:get("flight:alternateIcao"))
+		kc_metar_altn = response
+		return kc_metar_local
+	end
+	-- return kc_buildAtisString()
 end,
 kcPreference.typeInfo,"Local METAR|"))
+information:add(kcPreference:new("destMetar",
+function () 
+	return kc_metar_dest
+end,
+kcPreference.typeInfo,"Destination METAR|"))
+information:add(kcPreference:new("altnMetar",
+function () 
+	return kc_metar_altn
+end,
+kcPreference.typeInfo,"Alternate METAR|"))
+information:add(kcPreference:new("metarbutton",0,kcPreference.typeExecButton,"Reload METAR|Load METAR|kc_metar_read = 0"))
+
 information:add(kcPreference:new("FlightTimes",
 function () 
 	return "OFF: " .. activeBckVars:get("general:timesOFF") .. "Z OUT: " .. activeBckVars:get("general:timesOUT") 
@@ -119,10 +198,14 @@ end
 -- =================== FLIGHT DATA ==================
 local flight = kcPreferenceGroup:new("flight","FLIGHT")
 -- flight:setInitialOpen(true)
+flight:add(kcPreference:new("simbrief",0,kcPreference.typeExecButton,"Simbrief|Fetch |kc_download_simbrief()"))
+
 flight:add(kcPreference:new("callsign","",kcPreference.typeText,"ATC Callsign|"))
 flight:add(kcPreference:new("originIcao","",kcPreference.typeText,"Origin ICAO|"))
 flight:add(kcPreference:new("destinationIcao","",kcPreference.typeText,"Destination ICAO|"))
 flight:add(kcPreference:new("alternateIcao","",kcPreference.typeText,"Alternate ICAO|"))
+flight:add(kcPreference:new("route","",kcPreference.typeInfo,"Route|"))
+
 flight:add(kcPreference:new("div",0,kcPreference.typeDivider,"Cruise Parameters -------------|"))
 if kc_show_cost_index then 
 	flight:add(kcPreference:new("costIndex",0,kcPreference.typeInt,"Cost Index|1"))
@@ -164,7 +247,7 @@ local departure = kcPreferenceGroup:new("departure","DEPARTURE")
 departure:add(kcPreference:new("AtisFrequency1",122.800,kcPreference.typeCOMFreq,"ATIS Frequency|"))
 departure:add(kcPreference:new("atisInfo","",kcPreference.typeText,"ATIS Information|"))
 departure:add(kcPreference:new("atisWind","",kcPreference.typeText,"ATIS Wind HDG/SPD|"))
-departure:add(kcPreference:new("atisVisibility","",kcPreference.typeText,"ATIS Visibility km|"))
+departure:add(kcPreference:new("atisVisibility","",kcPreference.typeText,"ATIS Visibility m|"))
 departure:add(kcPreference:new("atisPrecipit",1,kcPreference.typeText,"ATIS Precipitation|"))
 departure:add(kcPreference:new("atisClouds",1,kcPreference.typeText,"ATIS Clouds|"))
 departure:add(kcPreference:new("atisTemps","",kcPreference.typeText,"ATIS Temp/Dewpoint|"))
@@ -228,6 +311,10 @@ taxi:add(kcPreference:new("taxiRoute","",kcPreference.typeText,"Taxi Route|"))
 -- A utomation AFDS LNAV/VNAV or other
 -- M iscellaneous - any specialities and other non mentioned items of intereset	
 
+function kc_speakDepBrief()
+	kc_speakNoText(0,kc_dep_brief_flight() .. ". For the taxi briefing: " .. kc_dep_brief_taxi() .. kc_dep_brief_departure() .. ".the safety brief" .. kc_dep_brief_safety())
+end
+
 local depBriefing = kcPreferenceGroup:new("depBriefing","DEPARTURE BRIEFING")
 -- depBriefing:setInitialOpen(true)
 depBriefing:add(kcPreference:new("flightbriefing",
@@ -253,6 +340,7 @@ function ()
 	return kc_dep_brief_safety()
 end,
 kcPreference.typeInfo,"Safety Briefing|"))
+depBriefing:add(kcPreference:new("depbriefspeak",0,kcPreference.typeExecButton,"Departure Briefing|Speak |kc_speakDepBrief()"))
 
 -- =================== TAKEOFF ==================
 local takeoff = kcPreferenceGroup:new("takeoff","TAKEOFF")
@@ -279,12 +367,13 @@ local arrival = kcPreferenceGroup:new("arrival","ARRIVAL")
 arrival:add(kcPreference:new("atisFrequency2",122.800,kcPreference.typeCOMFreq,"ATIS Frequency|"))
 arrival:add(kcPreference:new("atisInfo","",kcPreference.typeText,"ATIS Information|"))
 arrival:add(kcPreference:new("atisWind","",kcPreference.typeText,"ATIS Wind HDG/SPD|"))
-arrival:add(kcPreference:new("atisVisibility","",kcPreference.typeText,"ATIS Visibility km|"))
+arrival:add(kcPreference:new("atisVisibility","",kcPreference.typeText,"ATIS Visibility m|"))
 arrival:add(kcPreference:new("atisPrecipit",1,kcPreference.typeText,"ATIS Precipitation|"))
 arrival:add(kcPreference:new("atisClouds",1,kcPreference.typeText,"ATIS Clouds|"))
 arrival:add(kcPreference:new("atisTemps","",kcPreference.typeText,"ATIS Temp/Dewpoint|"))
 arrival:add(kcPreference:new("atisQNH","",kcPreference.typeText,"ATIS QNH|"))
 arrival:add(kcPreference:new("atisVcond","",kcPreference.typeText,"ATIS Conditions|"))
+arrival:add(kcPreference:new("metarldg",0,kcPreference.typeExecButton,"METAR|Load |kc_fill_ldg_metar()"))
 
 arrival:add(kcPreference:new("div",0,kcPreference.typeDivider,"Arrival ------------|"))
 arrival:add(kcPreference:new("appFrequency",122.800,kcPreference.typeCOMFreq,"Approach Frequency|"))

@@ -39,7 +39,7 @@ sysRadios					= require("kpcrew.systems." .. kc_acf_icao .. ".sysRadios")
 
 require("kpcrew.briefings.briefings_" .. kc_acf_icao)
 
-kcSopFlightPhase = { [1] = "Cold & Dark", 	[2] = "Prel Preflight", [3] = "Preflight", 		[4] = "Before Start", 
+kcSopFlightPhase = { [1] = "Cold & Dark", 	[2] = "Prel Cockpit Prep", [3] = "Cockpit Prep", 		[4] = "Before Start", 
 					 [5] = "After Start", 	[6] = "Taxi to Runway", [7] = "Before Takeoff", [8] = "Takeoff",
 					 [9] = "Climb", 		[10] = "Enroute", 		[11] = "Descent", 		[12] = "Arrival", 
 					 [13] = "Approach", 	[14] = "Landing", 		[15] = "Turnoff", 		[16] = "Taxi to Stand", 
@@ -487,6 +487,7 @@ cockpitPrep:addItem(ProcedureItem:new("ALT REPORTING","ON",FlowItem.actorPF,1,
 	function () sysRadios.xpdrAltRpt:setValue(1) end))
 
 -- FMGC SETUP PROCEDURE
+-- D-I-F-R-I-P+P-S
 
 -- =========== FINAL COCKPIT PREPARATION (F/O) ===========
 -- ==== EFIS Panel
@@ -633,6 +634,16 @@ finalCockpitPrep:addItem(SimpleProcedureItem:new("==== EFIS Panel"))
 -- BARO REF....................................____ (BOTH)
 -- =======================================================
 
+local cockpitPrepChkl = Checklist:new("COCKPIT PREPARATION CHECKLIST","","COCKPIT PREPARATION CHECKLIST completed")
+cockpitPrepChkl:setFlightPhase(3)
+cockpitPrepChkl:addItem(ChecklistItem:new("GEAR PINS & COVERS","REMOVED",FlowItem.actorPF,1,true,nil))
+cockpitPrepChkl:addItem(ChecklistItem:new("FUEL QUANTITY","____KG",FlowItem.actorPF,1,true,nil))
+cockpitPrepChkl:addItem(SimpleChecklistItem:new("  check FOB & distribution on FUEL SD page"))
+cockpitPrepChkl:addItem(ChecklistItem:new("SEAT BELT","ON",FlowItem.actorPF,1,true,nil))
+cockpitPrepChkl:addItem(ChecklistItem:new("ADIRS","NAV",FlowItem.actorPF,1,true,nil))
+cockpitPrepChkl:addItem(ChecklistItem:new("BARO REF","____",FlowItem.actorBOTH,1,true,nil))
+
+
 -- ========= BEFORE PUSHBACK AND START CLEARANCE =========
 -- SEAT POSITION.............................ADJUST (BOTH)
 -- FUEL......CROSS CHECK (ECAM FOB & FPL/LOADSHEET)   (PF)
@@ -647,10 +658,29 @@ finalCockpitPrep:addItem(SimpleProcedureItem:new("==== EFIS Panel"))
 -- WINDOWS / DOORS...................CHECKED CLOSED (BOTH)
 -- THRUST LEVERS...............................IDLE   (PF)
 -- ACCU PRESSURE INDICATOR....................CHECK   (PF)
--- TAKEOFF CG/TRIM POS..check and set (BOTH)
+--   TAKEOFF CG/TRIM POS..check and set (BOTH)
 
 -- APU START NOW and GPU disconnected
 -- =======================================================
+
+
+local beforePushStart = Procedure:new("FINAL COCKPIT PREPARATION","","ready for cockpit preparation checklist")
+beforePushStart:setFlightPhase(4)
+beforePushStart:addItem(ProcedureItem:new("SEAT POSITION","ADJUST",FlowItem.actorBOTH,1,true,nil))
+beforePushStart:addItem(ProcedureItem:new("FUEL","CROSS CHECK (ECAM FOB & FPL/LOADSHEET)",FlowItem.actorPF,1,true,nil))
+beforePushStart:addItem(ProcedureItem:new("LOAD SHEET","CHECK / REVISE",FlowItem.actorBOTH,1,true,nil))
+beforePushStart:addItem(ProcedureItem:new("FMS T/O DATA","REVISE",FlowItem.actorBOTH,1,true,nil))
+beforePushStart:addItem(ProcedureItem:new("MCDU","FMS PERF TO PAGE",FlowItem.actorPF,1,true,nil))
+beforePushStart:addItem(ProcedureItem:new("MCDU","FMS F-PLN PAGE",FlowItem.actorPM,1,true,nil))
+beforePushStart:addItem(ProcedureItem:new("EXTERNAL POWER","DISCONNECT",FlowItem.actorPM,1,true,nil))
+beforePushStart:addItem(ProcedureItem:new("PUSH / START CLEARANCE","OBTAIN",FlowItem.actorPM,1,true,nil))
+beforePushStart:addItem(ProcedureItem:new("BEACON","ON",FlowItem.actorPF,1,true,nil))
+beforePushStart:addItem(ProcedureItem:new("ATC TRANSPONDER","SET AS REQUIRED",FlowItem.actorPM,1,true,nil))
+beforePushStart:addItem(ProcedureItem:new("WINDOWS / DOORS","CHECKED CLOSED",FlowItem.actorBOTH,1,true,nil))
+beforePushStart:addItem(ProcedureItem:new("THRUST LEVERS","IDLE",FlowItem.actorPF,1,true,nil))
+beforePushStart:addItem(ProcedureItem:new("ACCU PRESSURE INDICATOR","CHECK",FlowItem.actorPF,1,true,nil))
+beforePushStart:addItem(SimpleProcedureItem:new("  TAKEOFF CG/TRIM POS..check and set (BOTH)"))
+beforePushStart:addItem(SimpleProcedureItem:new("  APU START NOW and GPU disconnected"))
 
 
 -- =============== BEFORE START CHECKLIST ================
@@ -661,6 +691,13 @@ finalCockpitPrep:addItem(SimpleProcedureItem:new("==== EFIS Panel"))
 -- BEACON........................................ON   (PF)
 -- =======================================================
 
+local beforeStartChkl = Checklist:new("BEFORE START CHECKLIST","","BEFORE START CHECKLIST completed")
+beforeStartChkl:setFlightPhase(4)
+beforeStartChkl:addItem(ChecklistItem:new("PARKING BRAKE","ON",FlowItem.actorPF,1,true,nil))
+beforeStartChkl:addItem(ChecklistItem:new("T.O. SPEEDS & THRUST","____",FlowItem.actorBOTH,1,true,nil))
+beforeStartChkl:addItem(SimpleChecklistItem:new("  PF V1,VR,V2 & thrust setting FMS PERF"))
+beforeStartChkl:addItem(ChecklistItem:new("WINDOWS","CLOSED",FlowItem.actorBOTH,1,true,nil))
+beforeStartChkl:addItem(ChecklistItem:new("BEACON","ON",FlowItem.actorPF,1,true,nil))
 
 -- =============== PUSHBACK & ENGINE START ===============
 -- PARKING BRAKE................................SET   (PF)
@@ -704,6 +741,10 @@ finalCockpitPrep:addItem(SimpleProcedureItem:new("==== EFIS Panel"))
 --   LOCKOUT PIN REMOVED.....................VERIFY   (PF)
 -- =======================================================
 
+-- beforePushStart:addItem(ProcedureItem:new("","",FlowItem.actorPF,1,true,nil))
+-- beforePushStart:addItem(SimpleProcedureItem:new(""))
+
+
 -- ===================== AFTER START =====================
 -- ENGINE MODE SELECTOR......................NORMAL   (PF)
 -- APU BLEED....................................OFF   (PF)
@@ -728,6 +769,12 @@ finalCockpitPrep:addItem(SimpleProcedureItem:new("==== EFIS Panel"))
 -- RUDDER TRIM..............................NEUTRAL   (PF)
 -- =======================================================
 
+local afterStartChkl = Checklist:new("AFTER START CHECKLIST","","AFTER START CHECKLIST completed")
+afterStartChkl:setFlightPhase(5)
+afterStartChkl:addItem(ChecklistItem:new("ANTI ICE","AS REQUIRED",FlowItem.actorPF,1,true,nil))
+afterStartChkl:addItem(ChecklistItem:new("ECAM STATUS","CHECKED",FlowItem.actorPF,1,true,nil))
+afterStartChkl:addItem(ChecklistItem:new("PITCH TRIM","_% SET",FlowItem.actorPF,1,true,nil))
+afterStartChkl:addItem(ChecklistItem:new("RUDDER TRIM","NEUTRAL",FlowItem.actorPF,1,true,nil))
 
 -- ================= BEFORE TAXI PROCEDURE ===============
 -- == PRE-REQ
@@ -769,6 +816,21 @@ finalCockpitPrep:addItem(SimpleProcedureItem:new("==== EFIS Panel"))
 --   - TO CONFIG NORM
 -- =======================================================
 
+local taxiChkl = Checklist:new("TAXI CHECKLIST","","TAXI CHECKLIST completed")
+taxiChkl:setFlightPhase(6)
+taxiChkl:addItem(ChecklistItem:new("FLIGHT CONTROLS","CHECKED",FlowItem.actorBOTH,1,true,nil))
+taxiChkl:addItem(ChecklistItem:new("FLAP SETTINGS","CONF ___",FlowItem.actorBOTH,1,true,nil))
+taxiChkl:addItem(ChecklistItem:new("RADAR & PRED W/S","ON & AUTO",FlowItem.actorPF,1,true,nil))
+taxiChkl:addItem(ChecklistItem:new("ENG MODE","IGNITION|NORM",FlowItem.actorPF,1,true,nil))
+-- taxiChkl:addItem(ChecklistItem:new("START SEL","",FlowItem.actorPF,1,true,nil))
+taxiChkl:addItem(ChecklistItem:new("ECAM MEMO","TO - NO BLUE",FlowItem.actorPF,1,true,nil))
+taxiChkl:addItem(SimpleChecklistItem:new("  - AUTO BRK MAX"))
+taxiChkl:addItem(SimpleChecklistItem:new("  - SIGNS ON"))
+taxiChkl:addItem(SimpleChecklistItem:new("  - CABIN READY"))
+taxiChkl:addItem(SimpleChecklistItem:new("  - SPLRS ARM"))
+taxiChkl:addItem(SimpleChecklistItem:new("  - FLAPS TO"))
+taxiChkl:addItem(SimpleChecklistItem:new("  - TO CONFIG NORM"))
+
 -- =============== BEFORE TAKEOFF PROCEDURE ==============
 -- BRAKE FANS.................................CHECK   (PM)
 -- LINEUP CLEARANCE..........................OBTAIN   (PM)
@@ -787,6 +849,11 @@ finalCockpitPrep:addItem(SimpleProcedureItem:new("==== EFIS Panel"))
 -- PACK 1 & 2......................____ AS REQUIRED   (PM)
 -- =======================================================
 
+local lineUpChkl = Checklist:new("LINE-UP CHECKLIST","","line up CHECKLIST completed")
+lineUpChkl:setFlightPhase(7)
+lineUpChkl:addItem(ChecklistItem:new("T.O. RUNWAY","____",FlowItem.actorBOTH,1,true,nil))
+lineUpChkl:addItem(ChecklistItem:new("TCAS","TA/RA",FlowItem.actorPM,1,true,nil))
+lineUpChkl:addItem(ChecklistItem:new("PACK 1 & 2","__ AS REQUIRED",FlowItem.actorPM,1,true,nil))
 
 -- =========== TAKEOFF & INITIAL CLIMB (BOTH) ============
 -- TAKEOFF CLEARANCE........................OBTAIN   (PM)
@@ -945,6 +1012,13 @@ finalCockpitPrep:addItem(SimpleProcedureItem:new("==== EFIS Panel"))
 -- ENG MODE SEL................................____   (PF)
 -- =======================================================
 
+local approachChkl = Checklist:new("APPROACH CHECKLIST","","approach CHECKLIST completed")
+approachChkl:setFlightPhase(12)
+approachChkl:addItem(ChecklistItem:new("BARO REF","____",FlowItem.actorBOTH,1,true,nil))
+approachChkl:addItem(ChecklistItem:new("SEAT BELTS","ON",FlowItem.actorPM,1,true,nil))
+approachChkl:addItem(ChecklistItem:new("MINIMUM","____",FlowItem.actorPF,1,true,nil))
+approachChkl:addItem(ChecklistItem:new("AUTO BRAKE","____",FlowItem.actorPF,1,true,nil))
+approachChkl:addItem(ChecklistItem:new("ENG MODE SEL","____",FlowItem.actorPF,1,true,nil))
 
 -- =============== LANDING PROCEDURE (PM) ================
 -- LANDING LIGHTS................................ON   (PF)
@@ -969,7 +1043,7 @@ finalCockpitPrep:addItem(SimpleProcedureItem:new("==== EFIS Panel"))
 -- =======================================================
 
 -- ================== LANDING CHECKLIST ==================
--- ECAM MEMO................................NO BLUE   (PM)
+-- ECAM MEMO..........................LDG - NO BLUE   (PM)
 --   - LDG GEAR DN
 --   - SIGNS ON
 --   - CABIN READY
@@ -977,7 +1051,14 @@ finalCockpitPrep:addItem(SimpleProcedureItem:new("==== EFIS Panel"))
 --   - FLAPS SET
 -- =======================================================
 
-
+local landingChkl = Checklist:new("LANDING CHECKLIST","","landing CHECKLIST completed")
+landingChkl:setFlightPhase(14)
+landingChkl:addItem(ChecklistItem:new("ECAM MEMO","LDG - NO BLUE",FlowItem.actorPM,1,true,nil))
+landingChkl:addItem(SimpleChecklistItem:new("  - LDG GEAR DN"))
+landingChkl:addItem(SimpleChecklistItem:new("  - SIGNS ON"))
+landingChkl:addItem(SimpleChecklistItem:new("  - CABIN READY"))
+landingChkl:addItem(SimpleChecklistItem:new("  - SPLRS ARM"))
+landingChkl:addItem(SimpleChecklistItem:new("  - FLAPS SET"))
 
 -- ============== AFTER LANDING PROCEDURE ================
 -- GROUND SPOILERS...........................DISARM   (PF)
@@ -1003,6 +1084,9 @@ finalCockpitPrep:addItem(SimpleProcedureItem:new("==== EFIS Panel"))
 -- RADAR & PRED W/S.............................OFF   (PM)
 -- =======================================================
 
+local afterLandingChkl = Checklist:new("AFTER LANDING CHECKLIST","","after landing CHECKLIST completed")
+afterLandingChkl:setFlightPhase(15)
+afterLandingChkl:addItem(ChecklistItem:new("RADAR & PRED W/S","OFF",FlowItem.actorPM,1,true,nil))
 
 -- ================== PARKING PROCEDURE ==================
 -- TAXI LIGHT SWITCH............................OFF   (PF) 
@@ -1036,6 +1120,12 @@ finalCockpitPrep:addItem(SimpleProcedureItem:new("==== EFIS Panel"))
 -- FUEL PUMPS...................................OFF   (PF)
 -- =======================================================
 
+local parkingChkl = Checklist:new("PARKING CHECKLIST","","parking CHECKLIST completed")
+parkingChkl:setFlightPhase(17)
+parkingChkl:addItem(ChecklistItem:new("PARK BRK OR CHOCKS","SET",FlowItem.actorPF,1,true,nil))
+parkingChkl:addItem(ChecklistItem:new("ENGINES","OFF",FlowItem.actorPF,1,true,nil))
+parkingChkl:addItem(ChecklistItem:new("WING LIGHTS","OFF",FlowItem.actorPF,1,true,nil))
+parkingChkl:addItem(ChecklistItem:new("FUEL PUMPS","OFF",FlowItem.actorPF,1,true,nil))
 
 -- =========== SECURING THE AIRCRAFT PROCEDURE ===========
 -- PARKING BRAKE...........................CHECK ON   (PF)
@@ -1058,12 +1148,27 @@ finalCockpitPrep:addItem(SimpleProcedureItem:new("==== EFIS Panel"))
 -- BATTERIES....................................OFF   (PM)
 -- =======================================================
 
-
+local securingChkl = Checklist:new("SECURING THE AIRCRAFT CHECKLIST","","securing the aircraft CHECKLIST completed")
+securingChkl:setFlightPhase(1)
+securingChkl:addItem(ChecklistItem:new("OXYGEN","OFF",FlowItem.actorPM,1,true,nil))
+securingChkl:addItem(ChecklistItem:new("EMERGENCY EXIT LIGHTS","OFF",FlowItem.actorPM,1,true,nil))
+securingChkl:addItem(ChecklistItem:new("EFB","OFF",FlowItem.actorPM,1,true,nil))
+securingChkl:addItem(ChecklistItem:new("BATTERIES","OFF",FlowItem.actorPM,1,true,nil))
 
 -- ============  =============
 -- add the checklists and procedures to the active sop
 activeSOP:addProcedure(prelCockpitPrep)
 activeSOP:addProcedure(cockpitPrep)
+activeSOP:addProcedure(finalCockpitPrep)
+activeSOP:addProcedure(cockpitPrepChkl)
+activeSOP:addProcedure(beforePushStart)
+activeSOP:addProcedure(beforeStartChkl)
+activeSOP:addProcedure(afterStartChkl)
+activeSOP:addProcedure(lineUpChkl)
+activeSOP:addProcedure(approachChkl)
+activeSOP:addProcedure(landingChkl)
+activeSOP:addProcedure(afterLandingChkl)
+activeSOP:addProcedure(securingChkl)
 
 function getActiveSOP()
 	return activeSOP

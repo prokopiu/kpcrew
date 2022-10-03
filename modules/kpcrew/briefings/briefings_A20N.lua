@@ -146,16 +146,16 @@ function kc_dep_brief_flight()
 	local briefing = "OK, I will be the pilot flying\n"
 -- [W] eather highlites
 	briefing = briefing .. "We are located at " .. activeBriefings:get("flight:originIcao") .. " parking stand " .. activeBriefings:get("taxi:parkingStand") .. "\n"
-    briefing = briefing .. "We have ATIS information " .. activeBriefings:get("departure:atisInfo") .. " The weather is " .. kc_buildAtisString() .. "\n\n"
+    briefing = briefing .. "We have ATIS information " .. activeBriefings:get("departure:atisInfo") .. ". <The weather is " .. activeBriefings:get("information:localMetar") .. ">.\n\n"
 
 -- [A] ircraft
-    briefing = briefing .. "Today we are flying in a " .. kc_acf_name .. " with <engine and aircraft details from CDU>, we have " .. kc_split(kc_MELIssues,"|")[activeBriefings:get("flight:melIssues")] .. " today" .. "\n\n"
+    briefing = briefing .. "Today we are flying in a " .. kc_acf_name .. ". <Engine and aircraft details from CDU>. We have " .. kc_split(kc_MELIssues,"|")[activeBriefings:get("information:melIssues")] .. " today." .. "\n\n"
 
 -- [N] otams - highlite 
-    briefing = briefing .. "NOTAMs highlites if there are any <may also include VATSIM/IVAO details etc>" .. "\n\n"
+    briefing = briefing .. "<NOTAMs highlites if there are any may also include VATSIM/IVAO details etc>" .. "\n\n"
 
 -- [N] oise abatement proc
-	briefing = briefing .. "This will be a standard takeoff, noise abatement procedure " .. kc_split(kc_DEP_nadp_list,"|")[activeBriefings:get("departure:depNADP")] .. "\n\n"
+	briefing = briefing .. "This will be a standard takeoff, noise abatement procedure " .. kc_split(kc_DEP_nadp_list,"|")[activeBriefings:get("departure:depNADP")] .. ".\n\n"
 
 -- [A] utomation AFDS LNAV/VNAV or other
 	
@@ -166,17 +166,17 @@ function kc_dep_brief_taxi()
 -- [T] axi Taxiroute
 	local xtaxiroute = ""
 	if activeBriefings:get("taxi:gateStand") == 1 then
-		xtaxiroute = "This is a gate position, pushback required " .. kc_split(kc_DEP_push_direction,"|")[activeBriefings:get("taxi:pushDirection")] .. "\n"
+		xtaxiroute = "This is a gate position, pushback required " .. kc_split(kc_DEP_push_direction,"|")[activeBriefings:get("taxi:pushDirection")] .. ".\n"
 	end
 	if activeBriefings:get("taxi:gateStand") == 2 then
-		xtaxiroute = "This is an outer position, pushback required " .. kc_split(kc_DEP_push_direction,"|")[activeBriefings:get("taxi:pushDirection")] .. "\n"
+		xtaxiroute = "This is an outer position, pushback required " .. kc_split(kc_DEP_push_direction,"|")[activeBriefings:get("taxi:pushDirection")] .. ".\n"
 	end
 	if activeBriefings:get("taxi:gateStand") == 3 or activeBriefings:get("taxi:pushDirection") == 1 then
-		xtaxiroute = "We require no pushback at this position, start clearance only\n"
+		xtaxiroute = "We require no pushback at this position, start clearance only.\n"
 	end
 	-- briefing = briefing .. xtaxiroute
 	xtaxiroute = xtaxiroute .. "We will be taxiing to holding point runway " .. activeBriefings:get("departure:rwy") .. " via "
-	xtaxiroute = xtaxiroute .. activeBriefings:get("taxi:taxiRoute") .. "\n\n"
+	xtaxiroute = xtaxiroute .. activeBriefings:get("taxi:taxiRoute") .. ".\n\n"
 
 	return xtaxiroute
 end
@@ -186,23 +186,23 @@ function kc_dep_brief_departure()
 	local briefing = ""
 	local xdep = ""
 	if activeBriefings:get("departure:type") == 1 then
-		xdep = "This will be a standard instrument departure via " .. activeBriefings:get("departure:route") .. " transition " .. activeBriefings:get("departure:transition") .. "\n"
+		xdep = "This will be a standard instrument departure via " .. activeBriefings:get("departure:route") .. " transition " .. activeBriefings:get("departure:transition") .. ".\n"
 	end
 	if activeBriefings:get("departure:type") == 2 then
-		xdep = "The departure will be ATC vectors\n"
+		xdep = "The departure will be ATC vectors.\n"
 	end
 	if activeBriefings:get("departure:type") == 3 then
-		xdep = "The departure will be via tracking\n"
+		xdep = "The departure will be via tracking.\n"
 	end
 	briefing = briefing .. xdep 
-	briefing = briefing .. "We will take off from runway " .. activeBriefings:get("departure:rwy")  .. ". Runway conditions are " .. kc_split(kc_DEP_rwystate_list,"|")[activeBriefings:get("departure:rwyCond")] .. "\n"
-	briefing = briefing .. "Initial altitude will be " .. activeBriefings:get("departure:initAlt") .. " ft. Today's cruise altitude will be FL " .. activeBriefings:get("flight:cruiseLevel") .. "\n" 
-	briefing = briefing .. "Transition altitude is " .. activeBriefings:get("departure:transalt") .. " the initial heading is " .. activeBriefings:get("departure:initHeading") .. "\n"
-	briefing = briefing .. "We will use Flaps " .. kc_split(kc_TakeoffFlaps,"|")[activeBriefings:get("takeoff:flaps")] .. " for takeoff\n"
-	briefing = briefing .. "Our take off thrust is " .. kc_split(kc_TakeoffThrust,"|")[activeBriefings:get("takeoff:thrust")] .. " Anti Ice is " .. kc_split(kc_TakeoffAntiice,"|")[activeBriefings:get("takeoff:antiice")] .. ",bleeds will be " .. kc_split(kc_TakeoffBleeds,"|")[activeBriefings:get("takeoff:bleeds")] .. "\n"
-	briefing = briefing .. "Minimum Safe Altitude along our initial route is ".. activeBriefings:get("takeoff:msa") .. "ft\n"
-	briefing = briefing .. "In case of forced return we are ".. kc_split(kc_DEP_forced_return,"|")[activeBriefings:get("takeoff:forcedReturn")] .. "\n"
-	briefing = briefing .. "The takeoff speeds are set. V1 is ".. activeBriefings:get("takeoff:v1") .. ", Vr is " .. activeBriefings:get("takeoff:vr") .. " and V2 today " .. activeBriefings:get("takeoff:v2") .. "\n"
+	briefing = briefing .. "We will take off from runway " .. activeBriefings:get("departure:rwy")  .. ". Runway conditions are " .. kc_split(kc_DEP_rwystate_list,"|")[activeBriefings:get("departure:rwyCond")] .. ".\n"
+	briefing = briefing .. "Initial altitude will be " .. activeBriefings:get("departure:initAlt") .. " ft. Today's cruise altitude will be FL " .. activeBriefings:get("flight:cruiseLevel") .. ".\n" 
+	briefing = briefing .. "Transition altitude is " .. activeBriefings:get("departure:transalt") .. " the initial heading is " .. activeBriefings:get("departure:initHeading") .. ".\n"
+	briefing = briefing .. "We will use Flaps " .. kc_split(kc_TakeoffFlaps,"|")[activeBriefings:get("takeoff:flaps")] .. " for takeoff.\n"
+	briefing = briefing .. "Our take off thrust is " .. kc_split(kc_TakeoffThrust,"|")[activeBriefings:get("takeoff:thrust")] .. " Anti Ice is " .. kc_split(kc_TakeoffAntiice,"|")[activeBriefings:get("takeoff:antiice")] .. ",bleeds will be " .. kc_split(kc_TakeoffBleeds,"|")[activeBriefings:get("takeoff:bleeds")] .. ".\n"
+	briefing = briefing .. "Minimum Safe Altitude along our initial route is ".. activeBriefings:get("takeoff:msa") .. "ft.\n"
+	briefing = briefing .. "In case of forced return we are ".. kc_split(kc_DEP_forced_return,"|")[activeBriefings:get("takeoff:forcedReturn")] .. ".\n"
+	briefing = briefing .. "The takeoff speeds are set. V1 is ".. activeBriefings:get("takeoff:v1") .. ", Vr is " .. activeBriefings:get("takeoff:vr") .. " and V2 today " .. activeBriefings:get("takeoff:v2") .. ".\n"
 	briefing = briefing .. "<Brief the departure procedure from CDU and charts>" .. "\n\n"
 
 	return briefing
@@ -212,17 +212,17 @@ function kc_dep_brief_safety()
 	local briefing = ""
 -- [M] iscellaneous
 	briefing = briefing .. "For the safety brief:\n"
-	briefing = briefing .. "From 0 to 100 knots for any malfunction I will call reject and we will confirm the autobrakes are operating\n\n"
-	briefing = briefing .. "If not operating I will apply maximum manual breaking and maximum symmetric reverse thrust and come to a full stop on the runway\n\n"
-	briefing = briefing .. "After full stop on the runway we decide on course of further actions\n\n"
-	briefing = briefing .. "From 100 knots to V1 I will reject only for one of the following reasons, engine fire, engine failure or takeoff configuration warning horn\n\n"
-	briefing = briefing .. "At and above V1 we will continue into the air and the only actions for you below 400 feet are to silence any alarm bells and confirm any failures\n\n"
-	briefing = briefing .. "Above 400 feet I will call for failure action drills as required and you'll perform memory items\n\n"
-	briefing = briefing .. "At 800 feet above field elevation I will call for altitude hold and we will retract the flaps on schedule\n\n"
-	briefing = briefing .. "At 1500 feet I will call for the checklist\n\n"
-	briefing = briefing .. "If we are above maximum landing weight we will make decision on whether to perform an overweight landing if the situation requires\n\n"
-	briefing = briefing .. "If we have a wheel well, engine or wing fire, I will turn the aircraft in such a way the flames will be downwind and we will evacuate through the upwind side\n\n"
-	briefing = briefing .. "If we have a cargo fire you need to ensure emergency services do not open the cargo doors until evac is completed\n\n"
+	briefing = briefing .. "From 0 to 100 knots for any malfunction I will call reject and we will confirm the autobrakes are operating.\n\n"
+	briefing = briefing .. "If not operating I will apply maximum manual breaking and maximum symmetric reverse thrust and come to a full stop on the runway.\n\n"
+	briefing = briefing .. "After full stop on the runway we decide on course of further actions.\n\n"
+	briefing = briefing .. "From 100 knots to V1 I will reject only for one of the following reasons, engine fire, engine failure or takeoff configuration warning horn.\n\n"
+	briefing = briefing .. "At and above V1 we will continue into the air and the only actions for you below 400 feet are to silence any alarm bells and confirm any failures.\n\n"
+	briefing = briefing .. "Above 400 feet I will call for failure action drills as required and you'll perform memory items.\n\n"
+	briefing = briefing .. "At 800 feet above field elevation I will call for altitude hold and we will retract the flaps on schedule.\n\n"
+	briefing = briefing .. "At 1500 feet I will call for the checklist.\n\n"
+	briefing = briefing .. "If we are above maximum landing weight we will make decision on whether to perform an overweight landing if the situation requires.\n\n"
+	briefing = briefing .. "If we have a wheel well, engine or wing fire, I will turn the aircraft in such a way the flames will be downwind and we will evacuate through the upwind side.\n\n"
+	briefing = briefing .. "If we have a cargo fire you need to ensure emergency services do not open the cargo doors until evac is completed.\n\n"
 	briefing = briefing .. "Any questions or concerns?\n\n"
 	
 	return briefing

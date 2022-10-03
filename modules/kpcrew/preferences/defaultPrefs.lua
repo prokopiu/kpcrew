@@ -15,6 +15,7 @@ generalGroup:add(kcPreference:new("flowAutoOpen",false,kcPreference.typeToggle,"
 generalGroup:add(kcPreference:new("flowAutoClose",false,kcPreference.typeToggle,"Flow window at end|Close flows|Do not close flows"))
 generalGroup:add(kcPreference:new("flowAutoJump",false,kcPreference.typeToggle,"On end of flow|Jump to next flow|Do not not jump"))
 generalGroup:add(kcPreference:new("xpdrusa",false,kcPreference.typeToggle,"Transponder|USA XPDR mode|EUR XPDR mode"))
+generalGroup:add(kcPreference:new("simbriefuser"," ",kcPreference.typeText,"SIMBRIEF Username|"))
 
 
 activePrefSet:addGroup(generalGroup)
