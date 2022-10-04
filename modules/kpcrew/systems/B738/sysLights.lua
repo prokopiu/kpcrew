@@ -77,12 +77,11 @@ sysLights.wingSwitch 		= TwoStateCmdSwitch:new("wing",drefGenericLights,0,
 	"laminar/B738/toggle_switch/wing_light","laminar/B738/switch/wing_light_off","laminar/B738/switch/wing_light_toggle")
 
 -- ** Wheel well Lights
-sysLights.wheelSwitch 		= TwoStateCmdSwitch:new("wheel",drefGenericLights,5,
-	"laminar/B738/toggle_switch/wheel_light","laminar/B738/switch/wheel_light_on","nocommand")
+sysLights.wheelSwitch 		= TwoStateDrefSwitch:new("wheel","laminar/B738/toggle_switch/wheel_light",0)
 
 -- ** Dome Light
-sysLights.domeLightSwitch 	= TwoStateCmdSwitch:new("dome","laminar/B738/toggle_switch/cockpit_dome_pos",0,
-	"laminar/B738/toggle_switch/cockpit_dome_dn","laminar/B738/toggle_switch/cockpit_dome_up","nocommand")
+sysLights.domeLightSwitch 	= MultiStateCmdSwitch:new("dome","laminar/B738/toggle_switch/cockpit_dome_pos",0,
+	"laminar/B738/toggle_switch/cockpit_dome_dn","laminar/B738/toggle_switch/cockpit_dome_up",-1,1,true)
 
 -- ** Instrument Lights
 sysLights.instr1Light		= TwoStateDrefSwitch:new("instr1",drefPanelBright,-1)

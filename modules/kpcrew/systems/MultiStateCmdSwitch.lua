@@ -49,7 +49,7 @@ function khMultiStateCmdSwitch:actuate(value)
 			if value < self:getStatus() then
 				while cnt > 0 and self:getStatus() > self.minvalue and self:getStatus() ~= value do
 					cnt = cnt -1
-					command_once(self.decrcmd)
+					command_once(self.decrcmd) 
 				end
 			else
 				while cnt > 0 and self:getStatus() < self.maxvalue and self:getStatus() ~= value do

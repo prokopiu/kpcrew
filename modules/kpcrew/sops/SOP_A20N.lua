@@ -198,8 +198,7 @@ prelCockpitPrep:addItem(ProcedureItem:new("ENG SD PAGE","OIL QTY > 10.6 QT",Flow
 prelCockpitPrep:addItem(SimpleProcedureItem:new("  NEO=10.6qt+0.45qt/h"))
 prelCockpitPrep:addItem(ProcedureItem:new("HYD SD PAGE","CHECK RESERVOIR FLUID LEVEL",FlowItem.actorPM,3,true,
 	function () sysGeneral.ECAMMode:setValue(sysGeneral.ecamModeHYD) end))
-prelCockpitPrep:addItem(ProcedureItem:new("DOOR SD PAGE","CHECK OXY PRESSURE",FlowItem.actorPM,3,
-	function () return sysGeneral.oxyPsi:getStatus() > 1800 end,
+prelCockpitPrep:addItem(ProcedureItem:new("DOOR SD PAGE","CHECK OXY PRESSURE",FlowItem.actorPM,3,true,
 	function () sysGeneral.ECAMMode:setValue(sysGeneral.ecamModeDOOR) end))
 
 prelCockpitPrep:addItem(SimpleProcedureItem:new("==== FCTL"))

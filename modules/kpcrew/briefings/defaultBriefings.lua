@@ -32,8 +32,8 @@ kc_WX_Cloud_list = "NO|FEW|SCATTERED|BROKEN|OVERCAST"
 require("kpcrew.briefings.briefings_" .. kc_acf_icao)
 local http 		= require("socket.http")
 local metar 	= require("kpcrew.metar")
-local xml2lua 	= require("xml2lua")
-local handler 	= require("xmlhandler.tree")
+local xml2lua 	= require("kpcrew.xml2lua")
+local handler 	= require("kpcrew.xmlhandler.tree")
 local DataOfp = {}
 
 kc_metar_read = 0
@@ -44,41 +44,46 @@ kc_metardata_local = nil
 kc_metardata_dest = nil
 
 function kc_download_simbrief()
-	local webResponse, webStatus = http.request("http://www.simbrief.com/api/xml.fetcher.php?username=" .. activePrefSet:get("general:simbriefuser"))
-	if webStatus == 200 then
-		local f = io.open(SCRIPT_DIRECTORY .. "..\\Modules\\kpcrew_prefs\\simbrief.xml", "w+")
-		f:write(webResponse)
-		f:close()
-	end
-    local xmlfile = xml2lua.loadFile(SCRIPT_DIRECTORY .. "..\\Modules\\kpcrew_prefs\\simbrief.xml")
-	local parser = xml2lua.parser(handler)
-	parser:parse(xmlfile)
+	if activePrefSet:get("general:simbriefuser") ~= nil and activePrefSet:get("general:simbriefuser") ~= " " then
+		local webResponse, webStatus = http.request("http://www.simbrief.com/api/xml.fetcher.php?username=" .. activePrefSet:get("general:simbriefuser"))
+		logMsg(webResponse)
+		if webStatus == 200 then
+			local f = io.open(SCRIPT_DIRECTORY .. "..\\Modules\\kpcrew_prefs\\simbrief.xml", "w+")
+			f:write(webResponse)
+			f:close()
+		end
+		local xmlfile = xml2lua.loadFile(SCRIPT_DIRECTORY .. "..\\Modules\\kpcrew_prefs\\simbrief.xml")
+		local parser = xml2lua.parser(handler)
+		parser:parse(xmlfile)
 
-	DataOfp["Status"] = handler.root.OFP.fetch.status
+		DataOfp["Status"] = handler.root.OFP.fetch.status
 
-	if DataOfp["Status"] == "Success" then
-		activeBriefings:set("flight:callsign",handler.root.OFP.atc.callsign)
-		activeBriefings:set("flight:originIcao",handler.root.OFP.origin.icao_code)
-		activeBriefings:set("flight:destinationIcao",handler.root.OFP.destination.icao_code)
-		activeBriefings:set("flight:alternateIcao",handler.root.OFP.alternate.icao_code)
-		activeBriefings:set("flight:costIndex",handler.root.OFP.general.costindex)
-		activeBriefings:set("flight:distance",handler.root.OFP.general.air_distance)
-		activeBriefings:set("flight:cruiseLevel",handler.root.OFP.general.initial_altitude / 100)
-		activeBriefings:set("flight:averageWind",handler.root.OFP.general.avg_wind_dir .. "/" .. handler.root.OFP.general.avg_wind_spd)
-		activeBriefings:set("flight:averageWC",handler.root.OFP.general.avg_wind_comp)
-		activeBriefings:set("flight:averageISA",handler.root.OFP.general.avg_temp_dev)
-		activeBriefings:set("flight:takeoffFuel",handler.root.OFP.fuel.plan_ramp)
-		activeBriefings:set("flight:Finres",handler.root.OFP.fuel.alternate_burn+handler.root.OFP.fuel.reserve)
-		activeBriefings:set("flight:toweight",handler.root.OFP.weights.payload)
-		activeBriefings:set("flight:route",handler.root.OFP.general.route)
+		if DataOfp["Status"] == "Success" then
+			activeBriefings:set("flight:callsign",handler.root.OFP.atc.callsign)
+			activeBriefings:set("flight:originIcao",handler.root.OFP.origin.icao_code)
+			activeBriefings:set("flight:destinationIcao",handler.root.OFP.destination.icao_code)
+			activeBriefings:set("flight:alternateIcao",handler.root.OFP.alternate.icao_code)
+			activeBriefings:set("flight:costIndex",handler.root.OFP.general.costindex)
+			activeBriefings:set("flight:distance",handler.root.OFP.general.air_distance)
+			activeBriefings:set("flight:cruiseLevel",handler.root.OFP.general.initial_altitude / 100)
+			activeBriefings:set("flight:averageWind",handler.root.OFP.general.avg_wind_dir .. "/" .. handler.root.OFP.general.avg_wind_spd)
+			activeBriefings:set("flight:averageWC",handler.root.OFP.general.avg_wind_comp)
+			activeBriefings:set("flight:averageISA",handler.root.OFP.general.avg_temp_dev)
+			activeBriefings:set("flight:takeoffFuel",handler.root.OFP.fuel.plan_ramp)
+			activeBriefings:set("flight:Finres",handler.root.OFP.fuel.alternate_burn+handler.root.OFP.fuel.reserve)
+			activeBriefings:set("flight:toweight",handler.root.OFP.weights.payload)
+			activeBriefings:set("flight:route",handler.root.OFP.general.route)
 
-		activeBriefings:set("departure:transalt",handler.root.OFP.origin.trans_alt)
-		activeBriefings:set("departure:rwy",handler.root.OFP.origin.plan_rwy)
-		activeBriefings:set("departure:initAlt",handler.root.OFP.general.initial_altitude)
+			activeBriefings:set("departure:transalt",handler.root.OFP.origin.trans_alt)
+			activeBriefings:set("departure:rwy",handler.root.OFP.origin.plan_rwy)
+			activeBriefings:set("departure:initAlt",handler.root.OFP.general.initial_altitude)
 
-		activeBriefings:set("arrival:translvl",handler.root.OFP.destination.trans_level/100)
-		activeBriefings:set("arrival:aptElevation",handler.root.OFP.destination.elevation)
-		activeBriefings:set("approach:rwy",handler.root.OFP.destination.plan_rwy)
+			activeBriefings:set("arrival:translvl",handler.root.OFP.destination.trans_level/100)
+			activeBriefings:set("arrival:aptElevation",handler.root.OFP.destination.elevation)
+			activeBriefings:set("approach:rwy",handler.root.OFP.destination.plan_rwy)
+		end
+	else
+		kc_speakNoText(1,"no simbrief user set")
 	end
 end
 -- ============== Information =============

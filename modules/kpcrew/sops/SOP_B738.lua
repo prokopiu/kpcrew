@@ -98,6 +98,22 @@ activeSOP = SOP:new("Zibo Mod SOP")
 --   STANDBY PWR LIGHT............CHECK EXTINGUISHED (F/O)
 -- =======================================================
 
+local testProc = Procedure:new("TEST","","")
+testProc:setFlightPhase(1)
+testProc:addItem(ProcedureItem:new("LIGHTS","SET","SYS",1,
+	function () return true end,
+	function () 
+		if kc_is_daylight() then 
+			sysLights.domeLightSwitch:actuate(0)
+		sysLights.instrLightGroup:actuate(0)
+		else
+			sysLights.domeLightSwitch:actuate(-1)
+		sysLights.instrLightGroup:actuate(1)
+		end
+sysLights.wheelSwitch:actuate(kc_is_daylight() and 0 or 1)
+	end))
+
+
 local electricalPowerUpProc = Procedure:new("ELECTRICAL POWER UP","performing ELECTRICAL POWER UP","Power up finished")
 electricalPowerUpProc:setFlightPhase(1)
 electricalPowerUpProc:addItem(SimpleProcedureItem:new("All paper work on board and checked"))
@@ -117,10 +133,10 @@ electricalPowerUpProc:addItem(ProcedureItem:new("BATTERY SWITCH","GUARD CLOSED",
 	function () 
 		sysElectric.batteryCover:actuate(modeOff) 
 		if kc_is_daylight() then		
-			sysLights.domeLightSwitch:actuate(modeOff)
+			sysLights.domeLightSwitch:actuate(0)
 			sysLights.instrLightGroup:actuate(modeOff)
 		else
-			sysLights.domeLightSwitch:actuate(modeOn)
+			sysLights.domeLightSwitch:actuate(-1)
 			sysLights.instrLightGroup:actuate(modeOn)
 		end
 	end))
@@ -337,7 +353,7 @@ prelPreflightProc:addItem(ProcedureItem:new("#exchange|XPDR|transponder#","SET 2
 	function () sysRadios.xpdrCode:actuate(2000) end))
 prelPreflightProc:addItem(ProcedureItem:new("COCKPIT LIGHTS","%s|(kc_is_daylight()) and \"OFF\" or \"ON\"",FlowItem.actorFO,2,
 	function () return sysLights.domeAnc:getStatus() == (kc_is_daylight() and 0 or 1) end,
-	function () sysLights.domeLightSwitch:actuate(kc_is_daylight() and 0 or 1) end))
+	function () sysLights.domeLightSwitch:actuate(kc_is_daylight() and 0 or -1) end))
 prelPreflightProc:addItem(ProcedureItem:new("WING #exchange|&|and# WHEEL WELL LIGHTS","%s|(kc_is_daylight()) and \"OFF\" or \"ON\"",FlowItem.actorFO,2,
 	function () return sysLights.wingSwitch:getStatus() == (kc_is_daylight() and 0 or 1) and sysLights.wheelSwitch:getStatus() == (kc_is_daylight() and 0 or 1) end,
 	function () sysLights.wingSwitch:actuate(kc_is_daylight() and 0 or 1) sysLights.wheelSwitch:actuate(kc_is_daylight() and 0 or 1) end))
@@ -885,9 +901,9 @@ preflightFOProc:addItem(ProcedureItem:new("MINIMUMS REFERENCE SELECTOR","%s|(act
 	end))
 preflightFOProc:addItem(ProcedureItem:new("DECISION HEIGHT OR ALTITUDE REFERENCE","%s FT|activeBriefings:get(\"approach:decision\")",FlowItem.actorFO,1,
 	function () return sysEFIS.minsResetCopilot:getStatus() == 1 and 
-		(math.floor(sysEFIS.minsCopilot:getStatus()) == activeBriefings:get("approach:decision") or
-		math.ceil(sysEFIS.minsCopilot:getStatus()) == activeBriefings:get("approach:decision")) end,
-	function () sysEFIS.minsCopilot:setValue(activeBriefings:get("approach:decision")) end))
+		math.floor(sysEFIS.minsCopilot:getStatus()) == activeBriefings:get("approach:decision") end,
+	function () sysEFIS.minsCopilot:setValue(activeBriefings:get("approach:decision")) 
+		set("laminar/B738/EFIS_control/fo/minimums_show",1) end))
 
 preflightFOProc:addItem(ProcedureItem:new("FLIGHT PATH VECTOR SWITCH","%s|(activePrefSet:get(\"aircraft:efis_fpv\")) and \"ON\" or \"OFF\"",FlowItem.actorFO,1,
 	function () 
@@ -1051,9 +1067,9 @@ preflightCPTProc:addItem(ProcedureItem:new("MINIMUMS REFERENCE SELECTOR","%s|(ac
 	end))
 preflightCPTProc:addItem(ProcedureItem:new("DECISION HEIGHT OR ALTITUDE REFERENCE","%s FT|activeBriefings:get(\"approach:decision\")",FlowItem.actorFO,1,
 	function () return sysEFIS.minsResetPilot:getStatus() == 1 and 
-		(math.floor(sysEFIS.minsPilot:getStatus()) == activeBriefings:get("approch:decision") or
-		math.ceil(sysEFIS.minsPilot:getStatus()) == activeBriefings:get("approach:decision")) end,
-	function () sysEFIS.minsPilot:setValue(activeBriefings:get("approach:decision")) end))
+		math.floor(sysEFIS.minsPilot:getStatus()) == activeBriefings:get("approch:decision") end,
+	function () sysEFIS.minsPilot:setValue(activeBriefings:get("approach:decision")) 
+		set("laminar/B738/EFIS_control/cpt/minimums_show",1) end))
 preflightCPTProc:addItem(ProcedureItem:new("METERS SWITCH","%s|(activePrefSet:get(\"aircraft:efis_mtr\")) and \"MTRS\" or \"FEET\"",FlowItem.actorCPT,1,
 	function () 
 		return (sysEFIS.mtrsPilot:getStatus() == 0 and activePrefSet:get("aircraft:efis_mtr") == false) 
@@ -1408,7 +1424,7 @@ pushstartProc:addItem(IndirectProcedureItem:new("PARKING BRAKE","SET",FlowItem.a
 	function () return sysGeneral.parkBrakeSwitch:getStatus() == 1 end,
 	function () sysGeneral.parkBrakeSwitch:actuate(1) 
 		activeBckVars:set("general:timesOFF",kc_dispTimeHHMM(get("sim/time/zulu_time_sec"))) 
-		sysLights.domeLightSwitch:actuate(modeOff)
+		sysLights.domeLightSwitch:actuate(0)
 	end))
 pushstartProc:addItem(ProcedureItem:new("PUSHBACK SERVICE","ENGAGE",FlowItem.actorCPT,2))
 pushstartProc:addItem(SimpleProcedureItem:new("Engine Start may be done during pushback or towing"))
@@ -1890,8 +1906,10 @@ descentProc:addItem(ProcedureItem:new("VREF","SELECT IN FMC",FlowItem.actorPF,1,
 	function () return get("laminar/B738/FMS/vref") ~= 0 end))
 descentProc:addItem(ProcedureItem:new("LANDING DATA","VREF %i, MINIMUMS %i|get(\"laminar/B738/FMS/vref\")|activeBriefings:get(\"approach:decision\")",FlowItem.actorPM,1,
 	function () return get("laminar/B738/FMS/vref") ~= 0 and 
-				sysEFIS.minsResetCopilot:getStatus() == 1 and 
-				math.floor(sysEFIS.minsPilot:getStatus()) == activeBriefings:get("approach:decision") end))
+				sysEFIS.minsResetPilot:getStatus() == 1 and 
+				math.floor(sysEFIS.minsPilot:getStatus()) == activeBriefings:get("approach:decision") end,
+	function () sysEFIS.minsPilot:setValue(activeBriefings:get("approach:decision")) 
+		set ("laminar/B738/EFIS_control/cpt/minimums_show",1) end))
 descentProc:addItem(SimpleProcedureItem:new("Set or verify the navigation radios and course for the approach."))
 descentProc:addItem(ProcedureItem:new("AUTO BRAKE SELECT SWITCH","%s|kc_pref_split(kc_LandingAutoBrake)[activeBriefings:get(\"approach:autobrake\")]",FlowItem.actorPM,2,
 	function () return sysGeneral.autobrake:getStatus() == activeBriefings:get("approach:autobrake") end,
@@ -1925,7 +1943,9 @@ descentChkl:addItem(ChecklistItem:new("RECALL","CHECKED",FlowItem.actorBOTH,1,
 	function() command_once("laminar/B738/push_button/capt_six_pack") end))
 descentChkl:addItem(ChecklistItem:new("AUTOBRAKE","%s|kc_pref_split(kc_LandingAutoBrake)[activeBriefings:get(\"approach:autobrake\")]",FlowItem.actorPM,1))
 descentChkl:addItem(ChecklistItem:new("LANDING DATA","VREF %i, MINIMUMS %i|activeBriefings:get(\"approach:vref\")|activeBriefings:get(\"approach:decision\")",FlowItem.actorBOTH,1,
-	function () return get("laminar/B738/FMS/vref") ~= 0 and math.floor(sysEFIS.minsPilot:getStatus()) == activeBriefings:get("approach:decision") end))
+	function () return get("laminar/B738/FMS/vref") ~= 0 and math.floor(sysEFIS.minsPilot:getStatus()) == activeBriefings:get("approach:decision") end,
+	function () sysEFIS.minsPilot:setValue(activeBriefings:get("approach:decision")) 
+		set ("laminar/B738/EFIS_control/cpt/minimums_show",1) end))
 descentChkl:addItem(ChecklistItem:new("APPROACH BRIEFING","COMPLETED",FlowItem.actorPF,1))
 
 -- ================= ARRIVAL PROCEDURE ==================
@@ -2461,7 +2481,7 @@ coldAndDarkProc:addItem(IndirectProcedureItem:new("OVERHEAD TOP","SET","SYS",1,"
 		sysEngines.eecSwitchGroup:actuate(modeOn)
 		sysEngines.eecGuardGroup:actuate(modeOff)
 		sysGeneral.irsUnitGroup:actuate(sysGeneral.irsUnitOFF)
-		sysLights.domeLightSwitch:actuate(modeOff)
+		sysLights.domeLightSwitch:actuate(0)
 		sysLights.instrLightGroup:actuate(modeOff)
 		-- sysGeneral.doorGroup:actuate(0)
 	end))
@@ -2750,10 +2770,10 @@ turnAroundProc:addItem(IndirectProcedureItem:new("THE REST","SET","SYS",1,"c_d_8
 	function () return true end,
 	function () 
 		if kc_is_daylight() then		
-			sysLights.domeLightSwitch:actuate(modeOff)
+			sysLights.domeLightSwitch:actuate(0)
 			sysLights.instrLightGroup:actuate(modeOff)
 		else
-			sysLights.domeLightSwitch:actuate(modeOn)
+			sysLights.domeLightSwitch:actuate(-1)
 			sysLights.instrLightGroup:actuate(modeOn)
 		end
 		activeBckVars:set("general:timesOFF","==:==")
@@ -2791,6 +2811,7 @@ turnAroundProc:addItem(IndirectProcedureItem:new("THE REST","SET","SYS",1,"c_d_8
 
 -- ============  =============
 -- add the checklists and procedures to the active sop
+activeSOP:addProcedure(testProc)
 activeSOP:addProcedure(electricalPowerUpProc)
 activeSOP:addProcedure(prelPreflightProc)
 activeSOP:addProcedure(turnAroundProc)

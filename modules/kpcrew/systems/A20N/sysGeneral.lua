@@ -213,7 +213,7 @@ function ()
 end)
 
 -- Oxygen pressure
-sysGeneral.oxyPsi = SimpleAnnunciator:new("oxypsi","xhsi/mfd/crew_oxy_psi",0)
+-- sysGeneral.oxyPsi = SimpleAnnunciator:new("oxypsi","xhsi/mfd/",0)
 
 -- GPWS annunciator group
 sysGeneral.gpwsAnnunciators = CustomAnnunciator:new("gpwsannunc",
@@ -228,6 +228,7 @@ function ()
 		return 0
 	end
 end)
+
 
 
 return sysGeneral
