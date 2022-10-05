@@ -100,17 +100,13 @@ activeSOP = SOP:new("Zibo Mod SOP")
 
 local testProc = Procedure:new("TEST","","")
 testProc:setFlightPhase(1)
-testProc:addItem(ProcedureItem:new("LIGHTS","SET","SYS",1,
+testProc:addItem(IndirectProcedureItem:new("OXYGEN","TEST AND SET",FlowItem.actorFO,2,"oxygentestedfo",
+	function () return get("laminar/B738/push_button/oxy_test_cpt_pos") == 1 end,
+	function () command_begin("laminar/B738/push_button/oxy_test_cpt")  end))
+testProc:addItem(ProcedureItem:new("TEST","SET","SYS",1,
 	function () return true end,
 	function () 
-		if kc_is_daylight() then 
-			sysLights.domeLightSwitch:actuate(0)
-		sysLights.instrLightGroup:actuate(0)
-		else
-			sysLights.domeLightSwitch:actuate(-1)
-		sysLights.instrLightGroup:actuate(1)
-		end
-sysLights.wheelSwitch:actuate(kc_is_daylight() and 0 or 1)
+		command_end("laminar/B738/push_button/oxy_test_cpt")
 	end))
 
 
@@ -287,8 +283,8 @@ electricalPowerUpProc:addItem(ProcedureItem:new("   STANDBY #exchange|PWR|POWER#
 local prelPreflightProc = Procedure:new("PREL PREFLIGHT PROCEDURE","preliminary pre flight","I finished the preliminary preflight")
 prelPreflightProc:setFlightPhase(2)
 prelPreflightProc:addItem(ProcedureItem:new("EMERGENCY EXIT LIGHT","ARM #exchange|/ON GUARD CLOSED| #",FlowItem.actorFO,2,
-	function () return sysGeneral.emerExitLightsCover:getStatus() == modeOff  end,
-	function () sysGeneral.emerExitLightsCover:actuate(modeOff) end))
+	function () return sysGeneral.emerExitLightsCover:getStatus() == 0  end,
+	function () sysGeneral.emerExitLightsCover:actuate(0) end))
 prelPreflightProc:addItem(IndirectProcedureItem:new("ATTENDENCE BUTTON","PRESS",FlowItem.actorFO,2,"attendence_button",
 	function () return sysGeneral.attendanceButton:getStatus() > modeOff end,
 	function () sysGeneral.attendanceButton:repeatOn() end))
@@ -692,8 +688,8 @@ preflightFOProc:addItem(ProcedureItem:new("EQUIPMENT COOLING SWITCHES","NORM",Fl
 	function () return sysGeneral.equipCoolExhaust:getStatus() == modeOff and sysGeneral.equipCoolSupply:getStatus() == 0 end,
 	function () sysGeneral.equipCoolExhaust:actuate(modeOff) sysGeneral.equipCoolSupply:actuate(modeOff) end))
 preflightFOProc:addItem(ProcedureItem:new("EMERGENCY EXIT LIGHTS SWITCH","GUARD CLOSED",FlowItem.actorFO,2,
-	function () return sysGeneral.emerExitLightsCover:getStatus() == modeOff end,
-	function () sysGeneral.emerExitLightsCover:actuate(modeOff) end))
+	function () return sysGeneral.emerExitLightsCover:getStatus() == 0 end,
+	function () sysGeneral.emerExitLightsCover:actuate(0) end))
 preflightFOProc:addItem(ProcedureItem:new("NO SMOKING SWITCH","ON OR AUTO",FlowItem.actorFO,2,
 	function () return sysGeneral.noSmokingSwitch:getStatus() > 0 end,
 	function () sysGeneral.noSmokingSwitch:setValue(1) end))
@@ -897,13 +893,13 @@ preflightFOProc:addItem(ProcedureItem:new("MINIMUMS REFERENCE SELECTOR","%s|(act
 	function () 
 		local flag = 0 
 		if activePrefSet:get("aircraft:efis_mins_dh") then flag=0 else flag=1 end
-		sysEFIS.minsTypeCopilot:setValue(flag) sysEFIS.minsTypePilot:setValue(flag) 
+		sysEFIS.minsTypeCopilot:actuate(flag) 
 	end))
 preflightFOProc:addItem(ProcedureItem:new("DECISION HEIGHT OR ALTITUDE REFERENCE","%s FT|activeBriefings:get(\"approach:decision\")",FlowItem.actorFO,1,
 	function () return sysEFIS.minsResetCopilot:getStatus() == 1 and 
 		math.floor(sysEFIS.minsCopilot:getStatus()) == activeBriefings:get("approach:decision") end,
 	function () sysEFIS.minsCopilot:setValue(activeBriefings:get("approach:decision")) 
-		set("laminar/B738/EFIS_control/fo/minimums_show",1) end))
+				sysEFIS.minsResetCopilot:actuate(1) end))
 
 preflightFOProc:addItem(ProcedureItem:new("FLIGHT PATH VECTOR SWITCH","%s|(activePrefSet:get(\"aircraft:efis_fpv\")) and \"ON\" or \"OFF\"",FlowItem.actorFO,1,
 	function () 
@@ -963,12 +959,12 @@ preflightFOProc:addItem(ProcedureItem:new("MAIN PANEL DISPLAY UNITS SELECTOR","N
 preflightFOProc:addItem(ProcedureItem:new("LOWER DISPLAY UNIT SELECTOR","NORM",FlowItem.actorFO,2,
 	function () return sysGeneral.lowerDuFO:getStatus() == 0 end,
 	function () sysGeneral.lowerDuFO:setValue(0) end))
-preflightFOProc:addItem(IndirectProcedureItem:new("OXYGEN","TEST AND SET",FlowItem.actorFO,2,"oxygentestedfo",
+preflightFOProc:addItem(IndirectProcedureItem:new("OXYGEN","TEST AND SET",FlowItem.actorFO,1,"oxygentestedfo",
 	function () return get("laminar/B738/push_button/oxy_test_fo_pos") == 1 end,
 	function () command_begin("laminar/B738/push_button/oxy_test_fo")  end))
 	
 preflightFOProc:addItem(SimpleProcedureItem:new("==== GROUND PROXIMITY panel"))
-preflightFOProc:addItem(ProcedureItem:new("FLAP INHIBIT SWITCH","GUARD CLOSED",FlowItem.actorFO,2,
+preflightFOProc:addItem(ProcedureItem:new("FLAP INHIBIT SWITCH","GUARD CLOSED",FlowItem.actorFO,1,
 	function () return sysGeneral.flapInhibitCover:getStatus() == 0 end,
 	function () command_end("laminar/B738/push_button/oxy_test_fo") sysGeneral.flapInhibitCover:actuate(0) end))
 preflightFOProc:addItem(ProcedureItem:new("GEAR INHIBIT SWITCH","GUARD CLOSED",FlowItem.actorFO,2,
@@ -1063,13 +1059,13 @@ preflightCPTProc:addItem(ProcedureItem:new("MINIMUMS REFERENCE SELECTOR","%s|(ac
 		command_end("laminar/B738/push_button/oxy_test_cpt") 
 		local flag = 0 
 		if activePrefSet:get("aircraft:efis_mins_dh") then flag=0 else flag=1 end
-		sysEFIS.minsTypePilot:setValue(flag) 
+		sysEFIS.minsTypePilot:actuate(flag) 
 	end))
 preflightCPTProc:addItem(ProcedureItem:new("DECISION HEIGHT OR ALTITUDE REFERENCE","%s FT|activeBriefings:get(\"approach:decision\")",FlowItem.actorFO,1,
 	function () return sysEFIS.minsResetPilot:getStatus() == 1 and 
 		math.floor(sysEFIS.minsPilot:getStatus()) == activeBriefings:get("approch:decision") end,
 	function () sysEFIS.minsPilot:setValue(activeBriefings:get("approach:decision")) 
-		set("laminar/B738/EFIS_control/cpt/minimums_show",1) end))
+				sysEFIS.minsResetPilot:actuate(1) end))
 preflightCPTProc:addItem(ProcedureItem:new("METERS SWITCH","%s|(activePrefSet:get(\"aircraft:efis_mtr\")) and \"MTRS\" or \"FEET\"",FlowItem.actorCPT,1,
 	function () 
 		return (sysEFIS.mtrsPilot:getStatus() == 0 and activePrefSet:get("aircraft:efis_mtr") == false) 
@@ -1178,7 +1174,11 @@ preflightCPTProc:addItem(IndirectProcedureItem:new("CARGO FIRE TEST","PERFORM",F
 	function () command_begin("laminar/B738/push_button/cargo_fire_test_push") end))
 preflightCPTProc:addItem(ProcedureItem:new("WEATHER RADAR PANEL","SET",FlowItem.actorCPT,1,true,
 	function () command_end("laminar/B738/push_button/cargo_fire_test_push") end))
-preflightCPTProc:addItem(ProcedureItem:new("TRANSPONDER PANEL","SET",FlowItem.actorCPT,1))
+preflightCPTProc:addItem(ProcedureItem:new("TRANSPONDER PANEL","SET",FlowItem.actorCPT,1,true,
+	function ()
+		sysRadios.xpdrCode:actuate(2000)
+		sysRadios.xpdrSwitch:actuate(sysRadios.xpdrStby)
+	end))
 
 preflightCPTProc:addItem(SimpleProcedureItem:new("==== Radio tuning panel"))
 preflightCPTProc:addItem(ProcedureItem:new("VHF COMMUNICATIONS RADIOS","SET",FlowItem.actorCPT,1))
@@ -1200,8 +1200,7 @@ preflightCPTProc:addItem(ProcedureItem:new("DEPARTURE BRIEFING","PERFORM",FlowIt
 
 local preflightChkl = Checklist:new("PREFLIGHT CHECKLIST","","preflight checklist completed")
 preflightChkl:setFlightPhase(3)
-preflightChkl:addItem(IndirectChecklistItem:new("#exchange|OXYGEN|pre flight checklist. oxygen","TESTED #exchange|100 PERC|one hundred percent#",FlowItem.actorBOTH,2,"oxygentestedcpt",
-	function () return get("laminar/B738/push_button/oxy_test_cpt_pos") == 1 end))
+preflightChkl:addItem(IndirectChecklistItem:new("#exchange|OXYGEN|pre flight checklist. oxygen","TESTED #exchange|100 PERC|one hundred percent#",FlowItem.actorBOTH,2,"oxygentestedcpt",true))
 preflightChkl:addItem(ChecklistItem:new("NAVIGATION & DISPLAY SWITCHES","NORMAL,AUTO",FlowItem.actorFO,1,
 	function () return sysMCP.vhfNavSwitch:getStatus() == 0 and sysMCP.irsNavSwitch:getStatus() == 0 and sysMCP.fmcNavSwitch:getStatus() == 0 and sysMCP.displaySourceSwitch:getStatus() == 0 and sysMCP.displayControlSwitch:getStatus() == 0 end,
 	function () sysMCP.vhfNavSwitch:actuate(0) 
@@ -1569,12 +1568,20 @@ beforeTaxiProc:addItem(ProcedureItem:new("RECALL","CHECK",FlowItem.actorBOTH,1,
 	function() return sysGeneral.annunciators:getStatus() == 0 end,
 	function() command_once("laminar/B738/push_button/capt_six_pack") end))
 beforeTaxiProc:addItem(ProcedureItem:new("TRANSPONDER","TARA",FlowItem.actorFO,1,
-	function () return sysRadios.xpdrSwitch:getStatus() == 5 end,
-	function () sysRadios.xpdrSwitch:actuate(sysRadios.xpdrTARA) command_once("laminar/B738/LDU_control/push_button/MFD_SYS") end,
+	function () return sysRadios.xpdrSwitch:getStatus() == sysRadios.xpdrTARA end,
+	function () 
+		sysRadios.xpdrSwitch:actuate(sysRadios.xpdrTARA) 
+		sysRadios.xpdrCode:actuate(activeBriefings:get("departure:squawk"))
+		command_once("laminar/B738/LDU_control/push_button/MFD_SYS")
+	end,
 	function () return activePrefSet:get("general:xpdrusa") == false end))
 beforeTaxiProc:addItem(ProcedureItem:new("TRANSPONDER","STBY",FlowItem.actorFO,1,
-	function () return sysRadios.xpdrSwitch:getStatus() == 1 end,
-	function () sysRadios.xpdrSwitch:actuate(1) command_once("laminar/B738/LDU_control/push_button/MFD_SYS") end,
+	function () return sysRadios.xpdrSwitch:getStatus() == sysRadios.xpdrStby end,
+	function () 
+		sysRadios.xpdrSwitch:actuate(sysRadios.xpdrStby) 
+		sysRadios.xpdrCode:actuate(activeBriefings:get("departure:squawk"))
+		command_once("laminar/B738/LDU_control/push_button/MFD_SYS")
+	end,
 	function () return activePrefSet:get("general:xpdrusa") == true end))
 
 -- chrono
@@ -1657,8 +1664,11 @@ runwayEntryProc:addItem(ProcedureItem:new("STROBES","ON",FlowItem.actorFO,2,
 	function () return sysLights.strobesSwitch:getStatus() == 1 end,
 	function () sysLights.strobesSwitch:actuate(1) end))
 runwayEntryProc:addItem(ProcedureItem:new("TRANSPONDER","ON",FlowItem.actorFO,2,
-	function () return sysRadios.xpdrSwitch:getStatus() == 5 end,
-	function () sysRadios.xpdrSwitch:actuate(sysRadios.xpdrTARA) end))
+	function () return sysRadios.xpdrSwitch:getStatus() == sysRadios.xpdrTARA end,
+	function () 
+		sysRadios.xpdrSwitch:actuate(sysRadios.xpdrTARA)
+		sysRadios.xpdrCode:actuate(activeBriefings:get("departure:squawk"))
+	end))		
 runwayEntryProc:addItem(ProcedureItem:new("LANDING LIGHTS","ON",FlowItem.actorCPT,2,
 	function () return sysLights.landLightGroup:getStatus() > 1 end,
 	function () sysLights.landLightGroup:actuate(1) end))
@@ -1908,8 +1918,12 @@ descentProc:addItem(ProcedureItem:new("LANDING DATA","VREF %i, MINIMUMS %i|get(\
 	function () return get("laminar/B738/FMS/vref") ~= 0 and 
 				sysEFIS.minsResetPilot:getStatus() == 1 and 
 				math.floor(sysEFIS.minsPilot:getStatus()) == activeBriefings:get("approach:decision") end,
-	function () sysEFIS.minsPilot:setValue(activeBriefings:get("approach:decision")) 
-		set ("laminar/B738/EFIS_control/cpt/minimums_show",1) end))
+	function ()
+				local flag = 0 
+				if activePrefSet:get("aircraft:efis_mins_dh") then flag=0 else flag=1 end
+				sysEFIS.minsTypePilot:actuate(flag) 
+				sysEFIS.minsPilot:setValue(activeBriefings:get("approach:decision")) 
+				sysEFIS.minsResetPilot:actuate(1) end))
 descentProc:addItem(SimpleProcedureItem:new("Set or verify the navigation radios and course for the approach."))
 descentProc:addItem(ProcedureItem:new("AUTO BRAKE SELECT SWITCH","%s|kc_pref_split(kc_LandingAutoBrake)[activeBriefings:get(\"approach:autobrake\")]",FlowItem.actorPM,2,
 	function () return sysGeneral.autobrake:getStatus() == activeBriefings:get("approach:autobrake") end,
@@ -1944,8 +1958,12 @@ descentChkl:addItem(ChecklistItem:new("RECALL","CHECKED",FlowItem.actorBOTH,1,
 descentChkl:addItem(ChecklistItem:new("AUTOBRAKE","%s|kc_pref_split(kc_LandingAutoBrake)[activeBriefings:get(\"approach:autobrake\")]",FlowItem.actorPM,1))
 descentChkl:addItem(ChecklistItem:new("LANDING DATA","VREF %i, MINIMUMS %i|activeBriefings:get(\"approach:vref\")|activeBriefings:get(\"approach:decision\")",FlowItem.actorBOTH,1,
 	function () return get("laminar/B738/FMS/vref") ~= 0 and math.floor(sysEFIS.minsPilot:getStatus()) == activeBriefings:get("approach:decision") end,
-	function () sysEFIS.minsPilot:setValue(activeBriefings:get("approach:decision")) 
-		set ("laminar/B738/EFIS_control/cpt/minimums_show",1) end))
+	function () 
+				local flag = 0 
+				if activePrefSet:get("aircraft:efis_mins_dh") then flag=0 else flag=1 end
+				sysEFIS.minsTypePilot:actuate(flag) 
+				sysEFIS.minsPilot:setValue(activeBriefings:get("approach:decision")) 
+				sysEFIS.minsResetPilot:actuate(1) end))
 descentChkl:addItem(ChecklistItem:new("APPROACH BRIEFING","COMPLETED",FlowItem.actorPF,1))
 
 -- ================= ARRIVAL PROCEDURE ==================
@@ -2273,12 +2291,12 @@ afterLandingProc:addItem(ProcedureItem:new("AUTOBRAKE","OFF",FlowItem.actorFO,2,
 	function () return sysGeneral.autobrake:getStatus() == 1 end,
 	function () sysGeneral.autobrake:actuate(1) end))
 afterLandingProc:addItem(ProcedureItem:new("TRANSPONDER","TARA",FlowItem.actorFO,1,
-	function () return sysRadios.xpdrSwitch:getStatus() == 5 end,
+	function () return sysRadios.xpdrSwitch:getStatus() == sysRadios.xpdrTARA end,
 	function () sysRadios.xpdrSwitch:actuate(sysRadios.xpdrTARA) end,
 	function () return activePrefSet:get("general:xpdrusa") == false end))
 afterLandingProc:addItem(ProcedureItem:new("TRANSPONDER","STBY",FlowItem.actorFO,1,
-	function () return sysRadios.xpdrSwitch:getStatus() == 1 end,
-	function () sysRadios.xpdrSwitch:actuate(1) end,
+	function () return sysRadios.xpdrSwitch:getStatus() == sysRadios.xpdrStby end,
+	function () sysRadios.xpdrSwitch:actuate(sysRadios.xpdrStby) end,
 	function () return activePrefSet:get("general:xpdrusa") == true end))
 afterLandingProc:addItem(ProcedureItem:new("FLAPS","UP",FlowItem.actorFO,2,
 	function () return sysControls.flapsSwitch:getStatus() == 0 end,
@@ -2410,8 +2428,8 @@ shutdownProc:addItem(ProcedureItem:new("FLIGHT DIRECTOR SWITCHES","OFF",FlowItem
 	function () return sysMCP.fdirGroup:getStatus() == 0 end,
 	function () sysMCP.fdirGroup:actuate(0) end))
 shutdownProc:addItem(ProcedureItem:new("TRANSPONDER","STBY",FlowItem.actorFO,2,
-	function () return sysRadios.xpdrSwitch:getStatus() == 1 end,
-	function () sysRadios.xpdrSwitch:actuate(1) end))
+	function () return sysRadios.xpdrSwitch:getStatus() == sysRadios.xpdrStby end,
+	function () sysRadios.xpdrSwitch:actuate(sysRadios.xpdrStby) end))
 shutdownProc:addItem(ProcedureItem:new("MCP","RESET",FlowItem.actorFO,2,
 	function () return sysMCP.altSelector:getStatus() == activePrefSet:get("aircraft:mcp_def_alt") end,
 	function () 
@@ -2518,8 +2536,8 @@ coldAndDarkProc:addItem(IndirectProcedureItem:new("OVERHEAD COLUMN 3","SET","SYS
 	function () 
 		set("laminar/B738/toggle_switch/eq_cool_exhaust",0)
 		set("laminar/B738/toggle_switch/eq_cool_supply",0)
-		sysGeneral.emerExitLightsCover:actuate(modeOn)
-		sysGeneral.emerExitLightsSwitch:actuate(modeOff)
+		sysGeneral.emerExitLightsCover:actuate(1)
+		sysGeneral.emerExitLightsSwitch:actuate(0)
 		command_once("laminar/B738/toggle_switch/seatbelt_sign_up") 
 		command_once("laminar/B738/toggle_switch/seatbelt_sign_up") 
 		sysGeneral.noSmokingSwitch:setValue(0)
@@ -2582,14 +2600,17 @@ coldAndDarkProc:addItem(IndirectProcedureItem:new("THE REST","SET","SYS",1,"c_d_
 		sysEngines.startLever2:actuate(0)
 		set("laminar/B738/fms/chock_status",1)
 		sysEngines.engStarterGroup:actuate(1)
-		sysRadios.xpdrSwitch:actuate(1)
+		sysRadios.xpdrSwitch:actuate(sysRadios.xpdrStby)
 		sysGeneral.autobrake:actuate(1)
 		sysMCP.fdirGroup:actuate(0)
 		sysElectric.batteryCover:actuate(modeOn)
 		sysElectric.batterySwitch:actuate(modeOff)
 		command_once("sim/electrical/APU_off")
 		command_once("sim/electrical/GPU_off")
-		sysGeneral.emerExitLightsCover:actuate(modeOff)
+		sysGeneral.emerExitLightsCover:actuate(1)
+		sysGeneral.emerExitLightsSwitch:actuate(0)
+		sysEFIS.minsResetPilot:actuate(0)
+		sysEFIS.minsResetCopilot:actuate(0)
 	end))
 
 -- =============== SECURE CHECKLIST (F/O) ===============
@@ -2605,8 +2626,8 @@ secureChkl:addItem(ChecklistItem:new("#exchange|IRS MODE SELECTORS|SECURE CHECKL
 	function () return sysGeneral.irsUnitGroup:getStatus() == modeOff end,
 	function () sysGeneral.irsUnitGroup:setValue(sysGeneral.irsUnitOFF) end))
 secureChkl:addItem(ChecklistItem:new("EMERGENCY EXIT LIGHTS","OFF",FlowItem.actorFO,2,
-	function () return sysGeneral.emerExitLightsCover:getStatus() == modeOff  end,
-	function () sysGeneral.emerExitLightsCover:actuate(modeOff) end))
+	function () return sysGeneral.emerExitLightsSwitch:getStatus() == 0  end,
+	function () sysGeneral.emerExitLightsCover:actuate(1) sysGeneral.emerExitLightsSwitch:actuate(0) end))
 secureChkl:addItem(ChecklistItem:new("WINDOW HEAT","OFF",FlowItem.actorFO,2,
 	function () return sysAice.windowHeatGroup:getStatus() == 0 end,
 	function () sysAice.windowHeatGroup:actuate(0) end))
@@ -2710,8 +2731,8 @@ turnAroundProc:addItem(IndirectProcedureItem:new("OVERHEAD COLUMN 3","SET","SYS"
 	function () 
 		set("laminar/B738/toggle_switch/eq_cool_exhaust",0)
 		set("laminar/B738/toggle_switch/eq_cool_supply",0)
-		sysGeneral.emerExitLightsCover:actuate(modeOff)
-		sysGeneral.emerExitLightsSwitch:actuate(modeOn)
+		sysGeneral.emerExitLightsCover:actuate(0)
+		sysGeneral.emerExitLightsSwitch:actuate(1)
 		command_once("laminar/B738/toggle_switch/seatbelt_sign_up") 
 		command_once("laminar/B738/toggle_switch/seatbelt_sign_up") 
 		command_once("laminar/B738/toggle_switch/seatbelt_sign_dn") 
@@ -2787,7 +2808,7 @@ turnAroundProc:addItem(IndirectProcedureItem:new("THE REST","SET","SYS",1,"c_d_8
 		sysEngines.startLever2:actuate(0)
 		set("laminar/B738/fms/chock_status",1)
 		sysEngines.engStarterGroup:actuate(1)
-		sysRadios.xpdrSwitch:actuate(1)
+		sysRadios.xpdrSwitch:actuate(sysRadios.xpdrStby)
 		sysGeneral.autobrake:actuate(1)
 		sysMCP.fdirGroup:actuate(0)
 		sysMCP.fdirGroup:actuate(modeOff)
@@ -2807,11 +2828,13 @@ turnAroundProc:addItem(IndirectProcedureItem:new("THE REST","SET","SYS",1,"c_d_8
 				command_once("laminar/B738/airstairs_toggle")
 			end
 		end
+		sysEFIS.minsResetPilot:actuate(0)
+		sysEFIS.minsResetCopilot:actuate(0)
 	end))
 
 -- ============  =============
 -- add the checklists and procedures to the active sop
-activeSOP:addProcedure(testProc)
+-- activeSOP:addProcedure(testProc)
 activeSOP:addProcedure(electricalPowerUpProc)
 activeSOP:addProcedure(prelPreflightProc)
 activeSOP:addProcedure(turnAroundProc)

@@ -118,16 +118,48 @@ sysEFIS.mtrsCopilot 		= TwoStateToggleSwitch:new("mtrscopilot","laminar/B738/PFD
 	"laminar/B738/EFIS_control/fo/push_button/mtrs_press")
 
 -- MINS type
-sysEFIS.minsTypePilot 		= MultiStateCmdSwitch:new("minstypepilot","laminar/B738/EFIS_control/cpt/minimums",0,
-	"laminar/B738/EFIS_control/cpt/minimums_dn","laminar/B738/EFIS_control/cpt/minimums_up",0,1,false)
-sysEFIS.minsTypeCopilot 	= MultiStateCmdSwitch:new("minstypecopilot","laminar/B738/EFIS_control/fo/minimums",0,
-	"laminar/B738/EFIS_control/fo/minimums_dn","laminar/B738/EFIS_control/cpt/minimums_up",0,1,false)
+sysEFIS.minsTypePilot 		= TwoStateCustomSwitch:new("minstypepilot","laminar/B738/EFIS_control/cpt/minimums",0,
+	function () 
+		set("laminar/B738/EFIS_control/cpt/minimums",1)
+		set("laminar/B738/EFIS_control/cpt/minimums_pfd",1)
+	end,
+	function () 
+		set("laminar/B738/EFIS_control/cpt/minimums",0)
+		set("laminar/B738/EFIS_control/cpt/minimums_pfd",0)
+	end,
+	function () 
+		if get("laminar/B738/EFIS_control/cpt/minimums") == 0 then
+			set("laminar/B738/EFIS_control/cpt/minimums",1)
+			set("laminar/B738/EFIS_control/cpt/minimums_pfd",1)
+		else
+			set("laminar/B738/EFIS_control/cpt/minimums",0)
+			set("laminar/B738/EFIS_control/cpt/minimums_pfd",0)
+		end
+	end
+)
+sysEFIS.minsTypeCopilot 	= TwoStateCustomSwitch:new("minstypecopilot","laminar/B738/EFIS_control/fo/minimums",0,
+	function () 
+		set("laminar/B738/EFIS_control/fo/minimums",1)
+		set("laminar/B738/EFIS_control/fo/minimums_pfd",1)
+	end,
+	function () 
+		set("laminar/B738/EFIS_control/fo/minimums",0)
+		set("laminar/B738/EFIS_control/fo/minimums_pfd",0)
+	end,
+	function () 
+		if get("laminar/B738/EFIS_control/fo/minimums") == 0 then
+			set("laminar/B738/EFIS_control/fo/minimums",1)
+			set("laminar/B738/EFIS_control/fo/minimums_pfd",1)
+		else
+			set("laminar/B738/EFIS_control/fo/minimums",0)
+			set("laminar/B738/EFIS_control/fo/minimums_pfd",0)
+		end
+	end
+)
 
 -- MINS RESET
-sysEFIS.minsResetPilot 		= TwoStateToggleSwitch:new("minsresetpilot","laminar/B738/EFIS_control/cpt/minimums_show",0,
-	"laminar/B738/EFIS_control/capt/push_button/rst_press")
-sysEFIS.minsResetCopilot 	= TwoStateToggleSwitch:new("minsresetcopilot","laminar/B738/EFIS_control/fo/minimums_show",0,
-	"laminar/B738/EFIS_control/fo/push_button/rst_press")
+sysEFIS.minsResetPilot 		= TwoStateDrefSwitch:new("minsresetpilot","laminar/B738/EFIS_control/cpt/minimums_show",0)
+sysEFIS.minsResetCopilot 	= TwoStateDrefSwitch:new("minsresetcopilot","laminar/B738/EFIS_control/fo/minimums_show",0)
 
 -- MINS SET
 sysEFIS.minsPilot 			= MultiStateCmdSwitch:new("minspilot","laminar/B738/pfd/dh_pilot",0,
