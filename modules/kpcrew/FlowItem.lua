@@ -205,8 +205,12 @@ end
 
 -- execute the automation function if available
 function kcFlowItem:execute()
-	if type(self.actionFunc) == 'function' then
-		self.actionFunc()
+	if activePrefSet:get("general:assistance") > 2 then
+		if (activePrefSet:get("general:assistance") == 3 and self:isUserRole() == false) or activePrefSet:get("general:assistance") == 4 then
+			if type(self.actionFunc) == 'function' then
+				self.actionFunc()
+			end
+		end
 	end
 end
 	

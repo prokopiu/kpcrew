@@ -152,13 +152,16 @@ end
 -- return QNH string
 function kc_getQNHString(metar_data)
 	local QNHstring = ""
-	QNHstring = QNHstring .. metar_data.pressure
+	if metar_data.pressure ~= nil then
+		QNHstring = QNHstring .. metar_data.pressure
+	end
 	return QNHstring
 end
 
 -- individual metar functions to be used also in other areas
 function kc_METAR_wind(metar_data)
 	local windstring = ""
+	if metar_data.wind ~= nil then
 		if metar_data.wind.direction == "VRB" then
 			windstring = string.format("VRB%2.2i", metar_data.wind.speed)
 		else
@@ -169,23 +172,25 @@ function kc_METAR_wind(metar_data)
 		else
 			windstring = windstring .. "KT"
 		end
+	end
 	return windstring
 end
 
 function kc_METAR_visibility(metar_data)
 	local visiblestring = ""
-	for i = 1, table.getn(metar_data.visibility),1 do
-		visiblestring = visiblestring .. metar_data.visibility[i].distance .. " "
+	if metar_data.visibility ~= nil then
+		for i = 1, table.getn(metar_data.visibility),1 do
+			visiblestring = visiblestring .. metar_data.visibility[i].distance .. " "
+		end
 	end
-	return visiblestring
-	
+	return visiblestring	
 end
 
 function kc_METAR_precip(metar_data)
 	local precipitation = ""
     local PHENOMENA = { 'DZ', 'RA', 'SN', 'SG', 'IC', 'PL', 'GR', 'GS', 'UP', 'BR', 'FG', 'FU', 'VA', 'DU', 'SA', 'HZ', 'PY', 'PO', 'SQ', 'FC', 'SS', 'DS'}
 
-	if metar_data.weather.phenomena ~= nil then 
+	if metar_data.weather ~= nil and metar_data.weather.phenomena ~= nil then 
 		precipitation = precipitation .. PHENOMENA[metar_data.weather.phenomena]  .. " "
 	end
 	return precipitation
@@ -194,29 +199,33 @@ end
 function kc_METAR_clouds(metar_data)
 	local CLOUD_COVERAGE  = { [1] = "CLR", [2] = "FEW", [3] = "SCT", [4] = "BKN", [5] = "OVC" }
 	local CLDstring = ""
-	for i = 1, table.getn(metar_data.clouds),1 do
-		CLDstring = CLDstring .. CLOUD_COVERAGE[metar_data.clouds[i].coverage] .. string.format("%3.3i",metar_data.clouds[i].altitude) .. " "
+	if metar_data.clouds ~= nil then
+		for i = 1, table.getn(metar_data.clouds),1 do
+			CLDstring = CLDstring .. CLOUD_COVERAGE[metar_data.clouds[i].coverage] .. string.format("%3.3i",metar_data.clouds[i].altitude) .. " "
+		end
 	end
 	return CLDstring
 end
 
 function kc_METAR_temps(metar_data)
 	local tempstring = ""
-	tempstring = tempstring .. metar_data.temperature .. "/" .. metar_data.dewpoint
+	if metar_data.temperature ~= nil and metar_data.dewpoint ~= nil then
+		tempstring = tempstring .. metar_data.temperature .. "/" .. metar_data.dewpoint
+	end
 	return tempstring
 end
 
-function kc_METAR_VCond(metar_data)
-	local visibility = get("sim/weather/visibility_reported_m")
-	local cavokcld1 = get("sim/weather/cloud_base_msl_m[0]") > 5000 or get("sim/weather/cloud_coverage[0]") == 0
-	local cavokcld2 = get("sim/weather/cloud_base_msl_m[1]") > 5000 or get("sim/weather/cloud_coverage[1]") == 0
-	local cavokcld3 = get("sim/weather/cloud_base_msl_m[2]") > 5000 or get("sim/weather/cloud_coverage[2]") == 0
-	local vcond = ""
-	if visibility > 10000 and cavokcld1 and cavokcld2 and cavokcld3 then
-		vcond = "CAVOK"
-	end
-	return vcond
-end
+-- function kc_METAR_VCond(metar_data)
+	-- local visibility = get("sim/weather/visibility_reported_m")
+	-- local cavokcld1 = get("sim/weather/cloud_base_msl_m[0]") > 5000 or get("sim/weather/cloud_coverage[0]") == 0
+	-- local cavokcld2 = get("sim/weather/cloud_base_msl_m[1]") > 5000 or get("sim/weather/cloud_coverage[1]") == 0
+	-- local cavokcld3 = get("sim/weather/cloud_base_msl_m[2]") > 5000 or get("sim/weather/cloud_coverage[2]") == 0
+	-- local vcond = ""
+	-- if visibility > 10000 and cavokcld1 and cavokcld2 and cavokcld3 then
+		-- vcond = "CAVOK"
+	-- end
+	-- return vcond
+-- end
 
 function kc_fill_to_metar()
 	activeBriefings:set("departure:atisWind",kc_METAR_wind(kc_metardata_local))

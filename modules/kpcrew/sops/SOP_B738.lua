@@ -395,7 +395,9 @@ prelPreflightProc:addItem(ProcedureItem:new("#spell|IFE# & GALLEY POWER","ON",Fl
 prelPreflightProc:addItem(SimpleProcedureItem:new("Electric hydraulic pumps on for F/O walk-around"))
 prelPreflightProc:addItem(ProcedureItem:new("ELECTRIC HYDRAULIC PUMPS SWITCHES","ON",FlowItem.actorFO,3,
 	function () return sysHydraulic.elecHydPumpGroup:getStatus() == 2 end,
-	function () sysHydraulic.elecHydPumpGroup:actuate(modeOn) end))
+	function () sysHydraulic.elecHydPumpGroup:actuate(modeOn) 
+				kc_wnd_brief_action=1
+	end))
 
 -- ==================== CDU Preflight ====================
 -- ==== INITIAL DATA (CPT)                              
@@ -442,7 +444,8 @@ cduPreflightProc:setFlightPhase(2)
 cduPreflightProc:addItem(SimpleProcedureItem:new("OBTAIN CLERANCE FROM ATC"))
 cduPreflightProc:addItem(SimpleProcedureItem:new("==== INITIAL DATA (CPT)"))
 cduPreflightProc:addItem(IndirectProcedureItem:new("  IDENT page:","OPEN",FlowItem.actorCPT,1,"ident_page",
-	function () return string.find(sysFMC.fmcPageTitle:getStatus(),"IDENT") end))
+	function () return string.find(sysFMC.fmcPageTitle:getStatus(),"IDENT") end,
+	function () kc_wnd_brief_action=1 end))
 cduPreflightProc:addItem(SimpleProcedureItem:new("    Verify Model and ENG RATING"))
 cduPreflightProc:addItem(SimpleProcedureItem:new("    Verify navigation database ACTIVE date"))
 cduPreflightProc:addItem(IndirectProcedureItem:new("  POS INIT page:","OPEN",FlowItem.actorCPT,1,"pos_init_page",
@@ -924,7 +927,7 @@ preflightFOProc:addItem(ProcedureItem:new("METERS SWITCH","%s|(activePrefSet:get
 preflightFOProc:addItem(ProcedureItem:new("BAROMETRIC REFERENCE SELECTOR","%s|(activePrefSet:get(\"general:baro_mode_hpa\")) and \"HPA\" or \"IN\"",FlowItem.actorFO,1,
 	function () return sysGeneral.baroModeGroup:getStatus() == (activePrefSet:get("general:baro_mode_hpa") == true and 3 or 0) end,
 	function () if activePrefSet:get("general:baro_mode_hpa") then sysGeneral.baroModeGroup:actuate(1) else sysGeneral.baroModeGroup:actuate(0) end end))
-preflightFOProc:addItem(ProcedureItem:new("BAROMETRIC SELECTORS TO LOCAL","%s|kc_getQNHString()",FlowItem.actorFO,1,
+preflightFOProc:addItem(ProcedureItem:new("BAROMETRIC SELECTORS TO LOCAL","%s|kc_getQNHString(kc_metar_local)",FlowItem.actorFO,1,
 	function () return get("laminar/B738/EFIS/baro_sel_in_hg_pilot") == math.ceil(get("sim/weather/barometer_sealevel_inhg")*100)/100 and 
 		get("laminar/B738/EFIS/baro_sel_in_hg_copilot") == math.ceil(get("sim/weather/barometer_sealevel_inhg")*100)/100 end,
 	function () set("laminar/B738/EFIS/baro_sel_in_hg_pilot",math.ceil(get("sim/weather/barometer_sealevel_inhg")*100)/100)
@@ -1063,7 +1066,7 @@ preflightCPTProc:addItem(ProcedureItem:new("MINIMUMS REFERENCE SELECTOR","%s|(ac
 	end))
 preflightCPTProc:addItem(ProcedureItem:new("DECISION HEIGHT OR ALTITUDE REFERENCE","%s FT|activeBriefings:get(\"approach:decision\")",FlowItem.actorFO,1,
 	function () return sysEFIS.minsResetPilot:getStatus() == 1 and 
-		math.floor(sysEFIS.minsPilot:getStatus()) == activeBriefings:get("approch:decision") end,
+		math.floor(sysEFIS.minsPilot:getStatus()) == activeBriefings:get("approach:decision") end,
 	function () sysEFIS.minsPilot:setValue(activeBriefings:get("approach:decision")) 
 				sysEFIS.minsResetPilot:actuate(1) end))
 preflightCPTProc:addItem(ProcedureItem:new("METERS SWITCH","%s|(activePrefSet:get(\"aircraft:efis_mtr\")) and \"MTRS\" or \"FEET\"",FlowItem.actorCPT,1,
@@ -1088,7 +1091,7 @@ preflightCPTProc:addItem(ProcedureItem:new("FLIGHT PATH VECTOR","%s|(activePrefS
 preflightCPTProc:addItem(ProcedureItem:new("BAROMETRIC REFERENCE SELECTOR","%s|(activePrefSet:get(\"general:baro_mode_hpa\")) and \"HPA\" or \"IN\"",FlowItem.actorCPT,1,
 	function () return sysGeneral.baroModeGroup:getStatus() == (activePrefSet:get("general:baro_mode_hpa") == true and 3 or 0) end,
 	function () if activePrefSet:get("general:baro_mode_hpa") then sysGeneral.baroModeGroup:actuate(1) else sysGeneral.baroModeGroup:actuate(0) end end))
-preflightCPTProc:addItem(ProcedureItem:new("BAROMETRIC SELECTORS TO LOCAL","%s|kc_getQNHString()",FlowItem.actorFO,1,
+preflightCPTProc:addItem(ProcedureItem:new("BAROMETRIC SELECTORS TO LOCAL","%s|kc_getQNHString(kc_metar_local)",FlowItem.actorFO,1,
 	function () return get("laminar/B738/EFIS/baro_sel_in_hg_pilot") == math.ceil(get("sim/weather/barometer_sealevel_inhg")*100)/100 and 
 		get("laminar/B738/EFIS/baro_sel_in_hg_copilot") == math.ceil(get("sim/weather/barometer_sealevel_inhg")*100)/100 end,
 	function () set("laminar/B738/EFIS/baro_sel_in_hg_pilot",math.ceil(get("sim/weather/barometer_sealevel_inhg")*100)/100)
@@ -2830,6 +2833,7 @@ turnAroundProc:addItem(IndirectProcedureItem:new("THE REST","SET","SYS",1,"c_d_8
 		end
 		sysEFIS.minsResetPilot:actuate(0)
 		sysEFIS.minsResetCopilot:actuate(0)
+		kc_wnd_brief_action=1
 	end))
 
 -- ============  =============
