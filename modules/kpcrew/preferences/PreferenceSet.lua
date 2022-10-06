@@ -62,7 +62,9 @@ function kcPreferenceSet:find(inkey)
 			local splits = kc_split(inkey,":")
 			if splits[1] == group:getName() then
 				local found = group:find(splits[2])
-				return found
+				if found ~= nil then
+					return found
+				end
 			end
 		end
 	end

@@ -100,13 +100,10 @@ activeSOP = SOP:new("Zibo Mod SOP")
 
 local testProc = Procedure:new("TEST","","")
 testProc:setFlightPhase(1)
-testProc:addItem(IndirectProcedureItem:new("OXYGEN","TEST AND SET",FlowItem.actorFO,2,"oxygentestedfo",
-	function () return get("laminar/B738/push_button/oxy_test_cpt_pos") == 1 end,
-	function () command_begin("laminar/B738/push_button/oxy_test_cpt")  end))
 testProc:addItem(ProcedureItem:new("TEST","SET","SYS",1,
 	function () return true end,
 	function () 
-		command_end("laminar/B738/push_button/oxy_test_cpt")
+		kc_speakNoText(1,activeBriefings:get("flight:distance"))
 	end))
 
 
@@ -898,10 +895,10 @@ preflightFOProc:addItem(ProcedureItem:new("MINIMUMS REFERENCE SELECTOR","%s|(act
 		if activePrefSet:get("aircraft:efis_mins_dh") then flag=0 else flag=1 end
 		sysEFIS.minsTypeCopilot:actuate(flag) 
 	end))
-preflightFOProc:addItem(ProcedureItem:new("DECISION HEIGHT OR ALTITUDE REFERENCE","%s FT|activeBriefings:get(\"approach:decision\")",FlowItem.actorFO,1,
+preflightFOProc:addItem(ProcedureItem:new("DECISION HEIGHT OR ALTITUDE REFERENCE","%s FT|activeBriefings:get(\"departure:decision\")",FlowItem.actorFO,1,
 	function () return sysEFIS.minsResetCopilot:getStatus() == 1 and 
-		math.floor(sysEFIS.minsCopilot:getStatus()) == activeBriefings:get("approach:decision") end,
-	function () sysEFIS.minsCopilot:setValue(activeBriefings:get("approach:decision")) 
+		math.floor(sysEFIS.minsCopilot:getStatus()) == activeBriefings:get("departure:decision") end,
+	function () sysEFIS.minsCopilot:setValue(activeBriefings:get("departure:decision")) 
 				sysEFIS.minsResetCopilot:actuate(1) end))
 
 preflightFOProc:addItem(ProcedureItem:new("FLIGHT PATH VECTOR SWITCH","%s|(activePrefSet:get(\"aircraft:efis_fpv\")) and \"ON\" or \"OFF\"",FlowItem.actorFO,1,
@@ -1064,10 +1061,10 @@ preflightCPTProc:addItem(ProcedureItem:new("MINIMUMS REFERENCE SELECTOR","%s|(ac
 		if activePrefSet:get("aircraft:efis_mins_dh") then flag=0 else flag=1 end
 		sysEFIS.minsTypePilot:actuate(flag) 
 	end))
-preflightCPTProc:addItem(ProcedureItem:new("DECISION HEIGHT OR ALTITUDE REFERENCE","%s FT|activeBriefings:get(\"approach:decision\")",FlowItem.actorFO,1,
+preflightCPTProc:addItem(ProcedureItem:new("DECISION HEIGHT OR ALTITUDE REFERENCE","%s FT|activeBriefings:get(\"departure:decision\")",FlowItem.actorFO,1,
 	function () return sysEFIS.minsResetPilot:getStatus() == 1 and 
-		math.floor(sysEFIS.minsPilot:getStatus()) == activeBriefings:get("approach:decision") end,
-	function () sysEFIS.minsPilot:setValue(activeBriefings:get("approach:decision")) 
+		math.floor(sysEFIS.minsPilot:getStatus()) == activeBriefings:get("departure:decision") end,
+	function () sysEFIS.minsPilot:setValue(activeBriefings:get("departure:decision")) 
 				sysEFIS.minsResetPilot:actuate(1) end))
 preflightCPTProc:addItem(ProcedureItem:new("METERS SWITCH","%s|(activePrefSet:get(\"aircraft:efis_mtr\")) and \"MTRS\" or \"FEET\"",FlowItem.actorCPT,1,
 	function () 
@@ -1134,7 +1131,7 @@ preflightCPTProc:addItem(ProcedureItem:new("CLOCK","SET UTC",FlowItem.actorCPT,1
 	function () sysGeneral.clockDispModeCPT:actuate(1) sysGeneral.clockDispModeFO:actuate(3) end))
 preflightCPTProc:addItem(ProcedureItem:new("NOSE WHEEL STEERING SWITCH","GUARD CLOSED",FlowItem.actorCPT,1,
 	function () return get("laminar/B738/switches/nose_steer_pos") == 1 end,
-	function () set("laminar/B738/switches/nose_steer_pos",1) end))
+	function () command_once("laminar/B738/switch/nose_steer_norm")  end))
 
 preflightCPTProc:addItem(SimpleProcedureItem:new("==== Display select panel"))
 preflightCPTProc:addItem(ProcedureItem:new("MAIN PANEL DISPLAY UNITS SELECTOR","NORM",FlowItem.actorCPT,2,
@@ -2838,7 +2835,7 @@ turnAroundProc:addItem(IndirectProcedureItem:new("THE REST","SET","SYS",1,"c_d_8
 
 -- ============  =============
 -- add the checklists and procedures to the active sop
--- activeSOP:addProcedure(testProc)
+activeSOP:addProcedure(testProc)
 activeSOP:addProcedure(electricalPowerUpProc)
 activeSOP:addProcedure(prelPreflightProc)
 activeSOP:addProcedure(turnAroundProc)
