@@ -2002,12 +2002,14 @@ arrivalProc:addItem(IndirectProcedureItem:new("TRANSITION LEVEL","ANNOUNCE REACH
 	function () return activeBriefings:get("arrival:translvl") <= 100 end))
 arrivalProc:addItem(IndirectProcedureItem:new("ALTIMETERS","QNH %s |activeBriefings:get(\"arrival:atisQNH\")",FlowItem.actorBOTH,2,"ldg_altimeters",
 	function () 
-		if activePrefSet:get("general:baro_mode_hpa") then
-			return 	get("laminar/B738/EFIS/baro_sel_in_hg_pilot") == activeBriefings:get("arrival:atisQNH") * 0.02952999 and 
-					get("laminar/B738/EFIS/baro_sel_in_hg_copilot") == activeBriefings:get("arrival:atisQNH") * 0.02952999
-		else
-			return 	get("laminar/B738/EFIS/baro_sel_in_hg_pilot") == activeBriefings:get("arrival:atisQNH") and 
-					get("laminar/B738/EFIS/baro_sel_in_hg_copilot") == activeBriefings:get("arrival:atisQNH")
+		if activeBriefings:get("arrival:atisQNH") ~= "" then
+			if activePrefSet:get("general:baro_mode_hpa") then
+				return 	get("laminar/B738/EFIS/baro_sel_in_hg_pilot") == tonumber(activeBriefings:get("arrival:atisQNH")) * 0.02952999 and 
+						get("laminar/B738/EFIS/baro_sel_in_hg_copilot") == tonumber(activeBriefings:get("arrival:atisQNH")) * 0.02952999
+			else
+				return 	get("laminar/B738/EFIS/baro_sel_in_hg_pilot") == tonumber(activeBriefings:get("arrival:atisQNH")) and 
+						get("laminar/B738/EFIS/baro_sel_in_hg_copilot") == tonumber(activeBriefings:get("arrival:atisQNH"))
+			end
 		end
 	end,
 	function () 
@@ -2018,12 +2020,14 @@ arrivalProc:addItem(IndirectProcedureItem:new("ALTIMETERS","QNH %s |activeBriefi
 		if get("laminar/B738/EFIS/baro_set_std_copilot") == 1 then 
 			command_once("laminar/B738/EFIS_control/fo/push_button/std_press")
 		end
-		if activePrefSet:get("general:baro_mode_hpa") then
-			set("laminar/B738/EFIS/baro_sel_in_hg_pilot", activeBriefings:get("arrival:atisQNH") * 0.02952999)
-			set("laminar/B738/EFIS/baro_sel_in_hg_copilot", activeBriefings:get("arrival:atisQNH") * 0.02952999) 
-		else
-			set("laminar/B738/EFIS/baro_sel_in_hg_pilot", activeBriefings:get("arrival:atisQNH"))
-			set("laminar/B738/EFIS/baro_sel_in_hg_copilot", activeBriefings:get("arrival:atisQNH")) 			
+		if activeBriefings:get("arrival:atisQNH") ~= "" then
+			if activePrefSet:get("general:baro_mode_hpa") then
+				set("laminar/B738/EFIS/baro_sel_in_hg_pilot", tonumber(activeBriefings:get("arrival:atisQNH")) * 0.02952999)
+				set("laminar/B738/EFIS/baro_sel_in_hg_copilot", tonumber(activeBriefings:get("arrival:atisQNH")) * 0.02952999) 
+			else
+				set("laminar/B738/EFIS/baro_sel_in_hg_pilot", tonumber(activeBriefings:get("arrival:atisQNH")))
+				set("laminar/B738/EFIS/baro_sel_in_hg_copilot", tonumber(activeBriefings:get("arrival:atisQNH")))
+			end
 		end
 	end,
 	function () return activeBriefings:get("arrival:translvl") <= 100 end))
@@ -2033,12 +2037,14 @@ arrivalProc:addItem(IndirectProcedureItem:new("TRANSITION LEVEL","ANNOUNCE REACH
 	function () return activeBriefings:get("arrival:translvl") > 100 end))
 arrivalProc:addItem(IndirectProcedureItem:new("ALTIMETERS","QNH %s |activeBriefings:get(\"arrival:atisQNH\")",FlowItem.actorBOTH,2,"ldg_altimeters",
 	function () 
-		if activePrefSet:get("general:baro_mode_hpa") then
-			return 	get("laminar/B738/EFIS/baro_sel_in_hg_pilot") == activeBriefings:get("arrival:atisQNH") * 0.02952999 and 
-					get("laminar/B738/EFIS/baro_sel_in_hg_copilot") == activeBriefings:get("arrival:atisQNH") * 0.02952999
-		else
-			return 	get("laminar/B738/EFIS/baro_sel_in_hg_pilot") == activeBriefings:get("arrival:atisQNH") and 
-					get("laminar/B738/EFIS/baro_sel_in_hg_copilot") == activeBriefings:get("arrival:atisQNH")
+		if activeBriefings:get("arrival:atisQNH") ~= "" then
+			if activePrefSet:get("general:baro_mode_hpa") then
+				return 	get("laminar/B738/EFIS/baro_sel_in_hg_pilot") == tonumber(activeBriefings:get("arrival:atisQNH")) * 0.02952999 and 
+						get("laminar/B738/EFIS/baro_sel_in_hg_copilot") == tonumber(activeBriefings:get("arrival:atisQNH")) * 0.02952999
+			else
+				return 	get("laminar/B738/EFIS/baro_sel_in_hg_pilot") == tonumber(activeBriefings:get("arrival:atisQNH")) and 
+						get("laminar/B738/EFIS/baro_sel_in_hg_copilot") == tonumber(activeBriefings:get("arrival:atisQNH"))
+			end
 		end
 	end,
 	function () 
@@ -2049,12 +2055,14 @@ arrivalProc:addItem(IndirectProcedureItem:new("ALTIMETERS","QNH %s |activeBriefi
 		if get("laminar/B738/EFIS/baro_set_std_copilot") == 1 then 
 			command_once("laminar/B738/EFIS_control/fo/push_button/std_press")
 		end
-		if activePrefSet:get("general:baro_mode_hpa") then
-			set("laminar/B738/EFIS/baro_sel_in_hg_pilot", activeBriefings:get("arrival:atisQNH") * 0.02952999)
-			set("laminar/B738/EFIS/baro_sel_in_hg_copilot", activeBriefings:get("arrival:atisQNH") * 0.02952999) 
-		else
-			set("laminar/B738/EFIS/baro_sel_in_hg_pilot", activeBriefings:get("arrival:atisQNH"))
-			set("laminar/B738/EFIS/baro_sel_in_hg_copilot", activeBriefings:get("arrival:atisQNH")) 			
+		if activeBriefings:get("arrival:atisQNH") ~= "" then
+			if activePrefSet:get("general:baro_mode_hpa") then
+				set("laminar/B738/EFIS/baro_sel_in_hg_pilot", tonumber(activeBriefings:get("arrival:atisQNH")) * 0.02952999)
+				set("laminar/B738/EFIS/baro_sel_in_hg_copilot", tonumber(activeBriefings:get("arrival:atisQNH")) * 0.02952999) 
+			else
+				set("laminar/B738/EFIS/baro_sel_in_hg_pilot", tonumber(activeBriefings:get("arrival:atisQNH")))
+				set("laminar/B738/EFIS/baro_sel_in_hg_copilot", tonumber(activeBriefings:get("arrival:atisQNH")))
+			end
 		end
 	end,
 	function () return activeBriefings:get("arrival:translvl") > 100 end))
@@ -2101,22 +2109,26 @@ local approachChkl = Checklist:new("APPROACH CHECKLIST","","approach checklist c
 approachChkl:setFlightPhase(13)
 approachChkl:addItem(ChecklistItem:new("#exchange|ALTIMETERS|approach checklist. altimeters","QNH %s |activeBriefings:get(\"arrival:atisQNH\")",FlowItem.actorBOTH,1,true,
 	function () 
-		if activePrefSet:get("general:baro_mode_hpa") then
-			return 	get("laminar/B738/EFIS/baro_sel_in_hg_pilot") == activeBriefings:get("arrival:atisQNH") * 0.02952999 and 
-					get("laminar/B738/EFIS/baro_sel_in_hg_copilot") == activeBriefings:get("arrival:atisQNH") * 0.02952999
-		else
-			return 	get("laminar/B738/EFIS/baro_sel_in_hg_pilot") == activeBriefings:get("arrival:atisQNH") and 
-					get("laminar/B738/EFIS/baro_sel_in_hg_copilot") == activeBriefings:get("arrival:atisQNH")
+		if activeBriefings:get("arrival:atisQNH") ~= "" then
+			if activePrefSet:get("general:baro_mode_hpa") then
+				return 	get("laminar/B738/EFIS/baro_sel_in_hg_pilot") == tonumber(activeBriefings:get("arrival:atisQNH")) * 0.02952999 and 
+						get("laminar/B738/EFIS/baro_sel_in_hg_copilot") == tonumber(activeBriefings:get("arrival:atisQNH")) * 0.02952999
+			else
+				return 	get("laminar/B738/EFIS/baro_sel_in_hg_pilot") == tonumber(activeBriefings:get("arrival:atisQNH")) and 
+						get("laminar/B738/EFIS/baro_sel_in_hg_copilot") == tonumber(activeBriefings:get("arrival:atisQNH"))
+			end
 		end
 	end,
 	function () 
+		if activeBriefings:get("arrival:atisQNH") ~= "" then
 			if activePrefSet:get("general:baro_mode_hpa") then
-				set("laminar/B738/EFIS/baro_sel_in_hg_pilot", activeBriefings:get("arrival:atisQNH") * 0.02952999)
-				set("laminar/B738/EFIS/baro_sel_in_hg_copilot", activeBriefings:get("arrival:atisQNH") * 0.02952999) 
+				set("laminar/B738/EFIS/baro_sel_in_hg_pilot", tonumber(activeBriefings:get("arrival:atisQNH")) * 0.02952999)
+				set("laminar/B738/EFIS/baro_sel_in_hg_copilot", tonumber(activeBriefings:get("arrival:atisQNH")) * 0.02952999) 
 			else
-				set("laminar/B738/EFIS/baro_sel_in_hg_pilot", activeBriefings:get("arrival:atisQNH"))
-				set("laminar/B738/EFIS/baro_sel_in_hg_copilot", activeBriefings:get("arrival:atisQNH")) 			
+				set("laminar/B738/EFIS/baro_sel_in_hg_pilot", tonumber(activeBriefings:get("arrival:atisQNH")))
+				set("laminar/B738/EFIS/baro_sel_in_hg_copilot", tonumber(activeBriefings:get("arrival:atisQNH")))
 			end
+		end
 	end))
 approachChkl:addItem(ChecklistItem:new("NAVIGATION AIDS","SET AND CHECKED",FlowItem.actorBOTH,1,true,nil,nil))
 

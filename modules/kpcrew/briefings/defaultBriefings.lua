@@ -375,7 +375,7 @@ takeoff:add(kcPreference:new("fmctobutton",0,kcPreference.typeExecButton,"Load F
 -- =================== ARRIVAL ==================
 local arrival = kcPreferenceGroup:new("arrival","ARRIVAL ATIS")
 -- arrival:setInitialOpen(true)
-arrival:add(kcPreference:new("atisFrequency2",122.800,kcPreference.typeCOMFreq,"ATIS Frequency|"))
+arrival:add(kcPreference:new("atisFrequency2",122800,kcPreference.typeCOMFreq,"ATIS Frequency|"))
 arrival:add(kcPreference:new("atisInfo","",kcPreference.typeText,"ATIS Information|"))
 arrival:add(kcPreference:new("atisWind","",kcPreference.typeText,"ATIS Wind HDG/SPD|"))
 arrival:add(kcPreference:new("atisVisibility","",kcPreference.typeText,"ATIS Visibility m|"))
