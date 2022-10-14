@@ -151,6 +151,20 @@ function kc_set_takeoff_details()
 	activeBriefings:set("takeoff:elevatorTrim",get("laminar/B738/FMS/trim_calc"))
 end
 
+-- set the landing details v-speeds, trim
+function kc_set_landing_details()
+	activeBriefings:set("approach:vref",get("laminar/B738/FMS/vref"))
+	activeBriefings:set("approach:vapp",get("laminar/B738/FMS/vref")+get("laminar/B738/FMS/approach_wind_corr"))
+	local ldgflaps = get("laminar/B738/FMS/approach_flaps")
+	if ldgflaps == 15 then 
+		activeBriefings:set("approach:flaps",1)
+	elseif ldgflaps == 30 then
+		activeBriefings:set("approach:flaps",2)
+	elseif ldgflaps == 40 then
+		activeBriefings:set("approach:flaps",3)
+	end
+end
+
 -- briefings to be more aircraft specific
 function kc_dep_brief_flight() 
 	local briefing = "OK, I will be the pilot flying\n"

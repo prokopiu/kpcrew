@@ -122,6 +122,20 @@ function kc_set_payload()
 	end
 end
 
+-- set the takeoff details v-speeds, trim
+function kc_set_takeoff_details()
+	-- activeBriefings:set("takeoff:v1",get("laminar/B738/FMS/v1_set"))
+	-- activeBriefings:set("takeoff:vr",get("laminar/B738/FMS/vr"))
+	-- activeBriefings:set("takeoff:v2",get("laminar/B738/FMS/v2_set"))
+	-- activeBriefings:set("takeoff:elevatorTrim",get("laminar/B738/FMS/trim_calc"))
+end
+
+-- set the landing details v-speeds, trim
+function kc_set_landing_details()
+	-- activeBriefings:set("approach:vref",get("laminar/B738/FMS/vref"))
+	-- activeBriefings:set("approach:vapp",get("laminar/B738/FMS/vref")+5)
+end
+
 -- briefings to be more aircraft specific
 function kc_dep_brief_flight() 
 	local briefing = "OK, I will be the pilot flying\n"

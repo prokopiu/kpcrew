@@ -432,6 +432,7 @@ approach1:add(kcPreference:new("autobrake",1,kcPreference.typeList,"Autobrake|" 
 approach1:add(kcPreference:new("packs",1,kcPreference.typeList,"Packs|" .. kc_LandingPacks))
 approach1:add(kcPreference:new("antiice",1,kcPreference.typeList,"Anti Ice|" .. kc_LandingAntiice))
 approach1:add(kcPreference:new("reversethrust",1,kcPreference.typeList,"Reverse Thrust|" .. APP_rev_thrust_list))
+approach1:add(kcPreference:new("fmcldgbutton",0,kcPreference.typeExecButton,"Load FMS Landing Data|Load FMC Landing Data|kc_set_landing_details()"))
 
 local approach2 = kcPreferenceGroup:new("approach","APPROACH GROUND")
 -- approach:add(kcPreference:new("div",0,kcPreference.typeDivider,"On Ground ------------|"))
