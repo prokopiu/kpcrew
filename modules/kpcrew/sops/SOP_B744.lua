@@ -1,58 +1,53 @@
+-- Standard Operating Procedure for mSparks B744
+
+-- @classmod SOP_B744
+-- @author Kosta Prokopiu
+-- @copyright 2022 Kosta Prokopiu
 local SOP_B744 = {
 }
 
 -- SOP related imports
-kcSOP = require "kpcrew.sops.SOP"
+local SOP					= require "kpcrew.sops.SOP"
 
-kcFlow = require "kpcrew.Flow"
-kcFlowItem = require ("kpcrew.FlowItem")
+local Flow					= require "kpcrew.Flow"
+local FlowItem 				= require "kpcrew.FlowItem"
 
-kcChecklist = require "kpcrew.checklists.Checklist"
-kcChecklistItem = require "kpcrew.checklists.ChecklistItem"
-kcSimpleChecklistItem = require "kpcrew.checklists.SimpleChecklistItem"
-kcIndirectChecklistItem = require "kpcrew.checklists.IndirectChecklistItem"
-kcManualChecklistItem = require "kpcrew.checklists.ManualChecklistItem"
+local Checklist 			= require "kpcrew.checklists.Checklist"
+local ChecklistItem 		= require "kpcrew.checklists.ChecklistItem"
+local SimpleChecklistItem 	= require "kpcrew.checklists.SimpleChecklistItem"
+local IndirectChecklistItem = require "kpcrew.checklists.IndirectChecklistItem"
+local ManualChecklistItem 	= require "kpcrew.checklists.ManualChecklistItem"
 
-kcProcedure = require "kpcrew.procedures.Procedure"
-kcProcedureItem = require "kpcrew.procedures.ProcedureItem"
-kcSimpleProcedureItem = require "kpcrew.procedures.SimpleProcedureItem"
-kcIndirectProcedureItem = require "kpcrew.procedures.IndirectProcedureItem"
+local Procedure 			= require "kpcrew.procedures.Procedure"
+local ProcedureItem 		= require "kpcrew.procedures.ProcedureItem"
+local SimpleProcedureItem 	= require "kpcrew.procedures.SimpleProcedureItem"
+local IndirectProcedureItem = require "kpcrew.procedures.IndirectProcedureItem"
 
--- Systems related imports
-
--- classes for systems switches 
-TwoStateDrefSwitch 		= require "kpcrew.systems.TwoStateDrefSwitch"
-TwoStateCmdSwitch 		= require "kpcrew.systems.TwoStateCmdSwitch"
-TwoStateCustomSwitch 	= require "kpcrew.systems.TwoStateCustomSwitch"
-TwoStateToggleSwitch 	= require "kpcrew.systems.TwoStateToggleSwitch"
-MultiStateCmdSwitch 	= require "kpcrew.systems.MultiStateCmdSwitch"
-InopSwitch 				= require "kpcrew.systems.InopSwitch"
-
-SwitchGroup  			= require "kpcrew.systems.SwitchGroup"
-
-SimpleAnnunciator 		= require "kpcrew.systems.SimpleAnnunciator"
-CustomAnnunciator 		= require "kpcrew.systems.CustomAnnunciator"
-
-sysLights 				= require("kpcrew.systems." .. kc_acf_icao .. ".sysLights")
-sysGeneral 				= require("kpcrew.systems." .. kc_acf_icao .. ".sysGeneral")	
-sysControls 			= require("kpcrew.systems." .. kc_acf_icao .. ".sysControls")	
-sysEngines 				= require("kpcrew.systems." .. kc_acf_icao .. ".sysEngines")	
-sysElectric 			= require("kpcrew.systems." .. kc_acf_icao .. ".sysElectric")	
-sysHydraulic 			= require("kpcrew.systems." .. kc_acf_icao .. ".sysHydraulic")	
-sysFuel 				= require("kpcrew.systems." .. kc_acf_icao .. ".sysFuel")	
-sysAir 					= require("kpcrew.systems." .. kc_acf_icao .. ".sysAir")	
-sysAice 				= require("kpcrew.systems." .. kc_acf_icao .. ".sysAice")	
-sysMCP 					= require("kpcrew.systems." .. kc_acf_icao .. ".sysMCP")	
-sysEFIS 				= require("kpcrew.systems." .. kc_acf_icao .. ".sysEFIS")	
-sysFMC 					= require("kpcrew.systems." .. kc_acf_icao .. ".sysFMC")	
+sysLights 					= require("kpcrew.systems." .. kc_acf_icao .. ".sysLights")
+sysGeneral 					= require("kpcrew.systems." .. kc_acf_icao .. ".sysGeneral")	
+sysControls 				= require("kpcrew.systems." .. kc_acf_icao .. ".sysControls")	
+sysEngines 					= require("kpcrew.systems." .. kc_acf_icao .. ".sysEngines")	
+sysElectric 				= require("kpcrew.systems." .. kc_acf_icao .. ".sysElectric")	
+sysHydraulic 				= require("kpcrew.systems." .. kc_acf_icao .. ".sysHydraulic")	
+sysFuel 					= require("kpcrew.systems." .. kc_acf_icao .. ".sysFuel")	
+sysAir 						= require("kpcrew.systems." .. kc_acf_icao .. ".sysAir")	
+sysAice 					= require("kpcrew.systems." .. kc_acf_icao .. ".sysAice")	
+sysMCP 						= require("kpcrew.systems." .. kc_acf_icao .. ".sysMCP")	
+sysEFIS 					= require("kpcrew.systems." .. kc_acf_icao .. ".sysEFIS")	
+sysFMC 						= require("kpcrew.systems." .. kc_acf_icao .. ".sysFMC")	
+sysRadios					= require("kpcrew.systems." .. kc_acf_icao .. ".sysRadios")	
 
 require("kpcrew.briefings.briefings_" .. kc_acf_icao)
+
+kcSopFlightPhase = { [1] = "Cold & Dark", 	[2] = "Prel Cockpit Prep", [3] = "Cockpit Prep", 		[4] = "Before Start", 
+					 [5] = "After Start", 	[6] = "Taxi to Runway", [7] = "Before Takeoff", [8] = "Takeoff",
+					 [9] = "Climb", 		[10] = "Enroute", 		[11] = "Descent", 		[12] = "Arrival", 
+					 [13] = "Approach", 	[14] = "Landing", 		[15] = "Turnoff", 		[16] = "Taxi to Stand", 
+					 [17] = "Shutdown", 	[18] = "Turnaround",	[19] = "Flightplanning", [0] = "" }
 
 -- Set up SOP =========================================================================
 
 activeSOP = kcSOP:new("Sparky B744 SOP")
-
-
 
 -- PREFLIGHT
 -- First Officer Captain

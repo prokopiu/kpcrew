@@ -1,3 +1,7 @@
+-- backgrond variables for use by KPCrew internally
+--
+-- @author Kosta Prokopiu
+-- @copyright 2022 Kosta Prokopiu
 activeBckVars = kcPreferenceSet:new("BackgroundVars")
 
 local group1 = kcPreferenceGroup:new("general","General Variables")

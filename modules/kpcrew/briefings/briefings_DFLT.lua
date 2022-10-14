@@ -1,41 +1,45 @@
-kc_acf_name = "X-Plane Default Aircraft"
+-- Aircraft specific briefing values and functions - Default aircraft
+--
+-- @author Kosta Prokopiu
+-- @copyright 2022 Kosta Prokopiu
+kc_acf_name 		= "X-Plane Default Aircraft"
 
-kc_TakeoffThrust = "RATED|DE-RATED|ASSUMED TEMPERATURE|RATED AND ASSUMED|DE-RATED AND ASSUMED"
-kc_TakeoffFlaps = "1|2|3|4|5"
-kc_TakeoffAntiice = "NOT REQUIRED|ENGINE ONLY|ENGINE AND WING"
-kc_TakeoffPacks = "ON|AUTO|OFF"
-kc_TakeoffBleeds = "OFF|ON|UNDER PRESSURIZED"
-kc_TakeoffApModes = "LNAV/VNAV|HDG/FLCH"
-kc_apptypes = "ILS CAT 1|ILS CAT 2 OR 3|VOR|NDB|RNAV|VISUAL|TOUCH AND GO|CIRCLING"
-kc_LandingFlaps = "3|4|5"
+kc_TakeoffThrust 	= "RATED|DE-RATED|ASSUMED TEMPERATURE|RATED AND ASSUMED|DE-RATED AND ASSUMED"
+kc_TakeoffFlaps 	= "1|2|3|4|5"
+kc_TakeoffAntiice 	= "NOT REQUIRED|ENGINE ONLY|ENGINE AND WING"
+kc_TakeoffPacks 	= "ON|AUTO|OFF"
+kc_TakeoffBleeds 	= "OFF|ON|UNDER PRESSURIZED"
+kc_TakeoffApModes 	= "LNAV/VNAV|HDG/FLCH"
+kc_apptypes 		= "ILS CAT 1|ILS CAT 2 OR 3|VOR|NDB|RNAV|VISUAL|TOUCH AND GO|CIRCLING"
+kc_LandingFlaps 	= "3|4|5"
 kc_LandingAutoBrake = "OFF|1|2|3|MAX"
-kc_LandingPacks = "OFF|ON|UNDER PRESSURIZED"
-kc_LandingAntiice = "NOT REQUIRED|ENGINE ONLY|ENGINE AND WING"
-kc_StartSequence = "2 THEN 1|1 THEN 2"
-kc_MELIssues = "no M E L issues|some M E L issues"
+kc_LandingPacks 	= "OFF|ON|UNDER PRESSURIZED"
+kc_LandingAntiice 	= "NOT REQUIRED|ENGINE ONLY|ENGINE AND WING"
+kc_StartSequence 	= "2 THEN 1|1 THEN 2"
+kc_MELIssues 		= "no M E L issues|some M E L issues"
 
 -- full list of approach types can be overwritten by aircraft
-APP_apptype_list = "ILS CAT 1|ILS CAT 2 OR 3|VOR|NDB|RNAV|VISUAL|TOUCH AND GO|CIRCLING"
+APP_apptype_list 	= "ILS CAT 1|ILS CAT 2 OR 3|VOR|NDB|RNAV|VISUAL|TOUCH AND GO|CIRCLING"
 
 -- APU/GPU startup after landing
-APP_apu_list = "APU delayed start|APU|GPU"
+APP_apu_list 		= "APU delayed start|APU|GPU"
 
 -- Reverse Thrust
 APP_rev_thrust_list = "NONE|MINIMUM|FULL"
 
 -- aircraft specs, weights in KG
-kc_DOW 		= 0  -- Dry Operating Weight (aka OEW)
-kc_MZFW  	= 0  -- Maximum Zero Fuel Weight
-kc_MaxFuel 	= 0  -- Maximum Fuel Capacity
-kc_MTOW 	= 0  -- Maximum Takeoff Weight
-kc_MLW  	= 0  -- Maximum Landing Weight
-kc_FFPH 	= 0  -- Fuel Flow per hour
-kc_MFL1		=  4204  -- max fuel in tank left
-kc_MFL2		=  9331  -- max fuel in tank center
-kc_MFL3		=  4204  -- max fuel in tank right
+kc_DOW 				= 0  -- Dry Operating Weight (aka OEW)
+kc_MZFW  			= 0  -- Maximum Zero Fuel Weight
+kc_MaxFuel 			= 0  -- Maximum Fuel Capacity
+kc_MTOW 			= 0  -- Maximum Takeoff Weight
+kc_MLW  			= 0  -- Maximum Landing Weight
+kc_FFPH 			= 0  -- Fuel Flow per hour
+kc_MFL1				=  4204  -- max fuel in tank left
+kc_MFL2				=  9331  -- max fuel in tank center
+kc_MFL3				=  4204  -- max fuel in tank right
 
 kc_show_load_button = true
-kc_show_cost_index = false
+kc_show_cost_index 	= false
 
 function kc_get_DOW()
 	if activePrefSet:get("general:weight_kgs") then

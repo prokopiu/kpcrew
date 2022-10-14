@@ -1,49 +1,56 @@
+-- Definitions, functions and UI for the KPCrew Briefing window.
+--
+-- @author Kosta Prokopiu
+-- @copyright 2022 Kosta Prokopiu
 activeBriefings = kcPreferenceSet:new("BRIEFINGS")
 activeBriefings:setFilename("briefings")
 
 -- departure procedure types
-kc_DEP_proctype_list = "SID|VECTORS|TRACKING"
+kc_DEP_proctype_list 	= "SID|VECTORS|TRACKING"
 -- Noise Abatement departure Procedure
-kc_DEP_nadp_list = "NOT REQUIRED|SEE SID"
+kc_DEP_nadp_list 		= "NOT REQUIRED|SEE SID"
 -- runway states
-kc_DEP_rwystate_list = "DRY|WET|CONTAMINATED"
+kc_DEP_rwystate_list 	= "DRY|WET|CONTAMINATED"
 -- parking positin options
-kc_DEP_gatestand_list = "GATE (PUSH)|STAND (PUSH)|STAND (NO PUSH)"
+kc_DEP_gatestand_list	= "GATE (PUSH)|STAND (PUSH)|STAND (NO PUSH)"
 -- push direction
-kc_DEP_push_direction = "NO PUSH|NOSE LEFT|NOSE RIGHT|NOSE STRAIGHT|FACING NORTH|FACING SOUTH|FACING EAST|FACING WEST"
+kc_DEP_push_direction 	= "NO PUSH|NOSE LEFT|NOSE RIGHT|NOSE STRAIGHT|FACING NORTH|FACING SOUTH|FACING EAST|FACING WEST"
 -- forced return overweight or underweight
-kc_DEP_forced_return = "UNDERWEIGHT|OVERWEIGHT"
+kc_DEP_forced_return 	= "UNDERWEIGHT|OVERWEIGHT"
 
 -- runway state arrival
-kc_APP_rwystate_list = "DRY|WET|CONTAMINATED"
+kc_APP_rwystate_list 	= "DRY|WET|CONTAMINATED"
 -- arrival procedure type list 
-kc_APP_proctype_list = "STAR|VECTORS"
+kc_APP_proctype_list 	= "STAR|VECTORS"
 -- Noise Abatement on arrival
-kc_APP_na_list = "NOT REQUIRED|SEE STAR"
+kc_APP_na_list 			= "NOT REQUIRED|SEE STAR"
 -- parking position options
-kc_APP_gatestand_list = "GATE|STAND|STAND PUSH-IN REQUIRED"
+kc_APP_gatestand_list 	= "GATE|STAND|STAND PUSH-IN REQUIRED"
 -- power at gate
-kc_APP_power_at_stand = "EXTERNAL POWER|NO POWER"
+kc_APP_power_at_stand 	= "EXTERNAL POWER|NO POWER"
 
 kc_WX_Precipitation_list = "NONE|DRIZZLE|LIGHT RAIN|RAIN|HEAVY RAIN|SNOW"
-kc_WX_Cloud_list = "NO|FEW|SCATTERED|BROKEN|OVERCAST"
+kc_WX_Cloud_list 		= "NO|FEW|SCATTERED|BROKEN|OVERCAST"
 
--- load aircraft specific briefing values
+-- load aircraft specific briefing values and functions
 require("kpcrew.briefings.briefings_" .. kc_acf_icao)
-local http 		= require("socket.http")
-local metar 	= require("kpcrew.metar")
-local xml2lua 	= require("kpcrew.xml2lua")
-local handler 	= require("kpcrew.xmlhandler.tree")
+local http 				= require("socket.http")
+local metar 			= require("kpcrew.metar")
+local xml2lua 			= require("kpcrew.xml2lua")
+local handler 			= require("kpcrew.xmlhandler.tree")
+
 local DataOfp = {}
 
-kc_metar_read = 0
-kc_metar_local = ""
-kc_metar_dest = ""
-kc_metar_altn = ""
-kc_metardata_local = nil
-kc_metardata_dest = nil
+kc_metar_read 			= 0
+kc_metar_local 			= ""
+kc_metar_dest 			= ""
+kc_metar_altn			= ""
+kc_metardata_local 		= nil
+kc_metardata_dest 		= nil
 
+-- Send request via HTTP to Simbrief server and fill in briefing values
 function kc_download_simbrief()
+	-- user must have set his simbrief userid/name in preferences
 	if activePrefSet:get("general:simbriefuser") ~= nil and activePrefSet:get("general:simbriefuser") ~= " " then
 		local webResponse, webStatus = http.request("http://www.simbrief.com/api/xml.fetcher.php?username=" .. activePrefSet:get("general:simbriefuser"))
 		logMsg(webResponse)
@@ -52,10 +59,12 @@ function kc_download_simbrief()
 			f:write(webResponse)
 			f:close()
 		end
+		-- latest OFP gets stored in kpcrew_prefs folder as simbrief.xml
 		local xmlfile = xml2lua.loadFile(SCRIPT_DIRECTORY .. "..\\Modules\\kpcrew_prefs\\simbrief.xml")
 		local parser = xml2lua.parser(handler)
 		parser:parse(xmlfile)
 
+		-- initialize OFP record and scan the downloaded XML file
 		DataOfp["Status"] = handler.root.OFP.fetch.status
 
 		if DataOfp["Status"] == "Success" then
@@ -86,6 +95,8 @@ function kc_download_simbrief()
 		kc_speakNoText(1,"no simbrief user set")
 	end
 end
+
+-- ------------------------ Briefing Preference Set & UI -----------------------------------
 -- ============== Information =============
 
 local information = kcPreferenceGroup:new("information","INFORMATION")
@@ -240,7 +251,6 @@ function ()
 end,
 kcPreference.typeInfo,"Usable Fuel|0xFF00FFFF"))
 
-
 flight2:add(kcPreference:new("toweight",0,kcPreference.typeInt,
 function ()
 	return "Payload " .. (activePrefSet:get("general:weight_kgs") == true and "KGS" or "LBS") .. "|100"
@@ -308,9 +318,8 @@ taxi:add(kcPreference:new("startSequence",1,kcPreference.typeList,"Start Sequenc
 taxi:add(kcPreference:new("taxiRoute","",kcPreference.typeText,"Taxi Route|"))
 
 -- TRIBETS?
--- Threats, Rain, Weatjer, Traffic, Languag difficult, MEL issues? Minimum Equipment List
--- Route checke
-
+-- Threats, Rain, Weather, Traffic, Language difficulties, MEL issues? Minimum Equipment List
+-- Route checked
 
 -- =================== DEPARTURE BRIEFING ==================
 -- W eather highlites
@@ -322,6 +331,7 @@ taxi:add(kcPreference:new("taxiRoute","",kcPreference.typeText,"Taxi Route|"))
 -- A utomation AFDS LNAV/VNAV or other
 -- M iscellaneous - any specialities and other non mentioned items of intereset	
 
+-- take departure briefing text and speak (crashes in XP12)
 function kc_speakDepBrief()
 	kc_speakNoText(0,kc_dep_brief_flight() .. ". For the taxi briefing: " .. kc_dep_brief_taxi() .. kc_dep_brief_departure() .. ".the safety brief" .. kc_dep_brief_safety())
 end

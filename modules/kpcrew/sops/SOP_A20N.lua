@@ -1,6 +1,6 @@
 -- Standard Operating Procedure for JarDesign A20N
 
--- @classmod SOP_B738
+-- @classmod SOP_A20N
 -- @author Kosta Prokopiu
 -- @copyright 2022 Kosta Prokopiu
 local SOP_A20N = {

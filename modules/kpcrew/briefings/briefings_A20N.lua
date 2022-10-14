@@ -1,3 +1,7 @@
+-- Aircraft specific briefing values and functions - JarDesign A20N
+--
+-- @author Kosta Prokopiu
+-- @copyright 2022 Kosta Prokopiu
 kc_acf_name = "JarDesign A320neo"
 
 kc_TakeoffThrust 	= "RATED|DE-RATED|ASSUMED TEMPERATURE|RATED AND ASSUMED|DE-RATED AND ASSUMED"
@@ -22,27 +26,27 @@ kc_MELIssues 		= "no M E L issues|some M E L issues"
 -- MAX FUEL CAPACITY:		18740 KG -  41315 LBS
 -- FUEL FLOW PER HOUR:		 1352 KG -   2980 LBS
 
-kc_DOW 		= 41000  -- Dry Operating Weight (aka OEW)
-kc_MZFW  	= 63000  -- Maximum Zero Fuel Weight
-kc_MaxFuel 	= 18740  -- Maximum Fuel Capacity
-kc_MaxPayld = 22000  -- Maximum Payload to be set
-kc_MTOW 	= 78000  -- Maximum Takeoff Weight
-kc_MLW  	= 66000  -- Maximum Landing Weight
-kc_FFPH 	=  1352  -- Fuel Flow per hour
-kc_MFL1		=   850  -- max fuel in tank left aux
-kc_MFL2		=  5530  -- max fuel in tank left
-kc_MFL3		=  5960  -- max fuel in tank center
-kc_MFL4		=  5530  -- max fuel in tank right
-kc_MFL5		=   850  -- max fuel in tank right aux
+kc_DOW 				= 41000  -- Dry Operating Weight (aka OEW)
+kc_MZFW  			= 63000  -- Maximum Zero Fuel Weight
+kc_MaxFuel 			= 18740  -- Maximum Fuel Capacity
+kc_MaxPayld 		= 22000  -- Maximum Payload to be set
+kc_MTOW 			= 78000  -- Maximum Takeoff Weight
+kc_MLW  			= 66000  -- Maximum Landing Weight
+kc_FFPH 			=  1352  -- Fuel Flow per hour
+kc_MFL1				=   850  -- max fuel in tank left aux
+kc_MFL2				=  5530  -- max fuel in tank left
+kc_MFL3				=  5960  -- max fuel in tank center
+kc_MFL4				=  5530  -- max fuel in tank right
+kc_MFL5				=   850  -- max fuel in tank right aux
 
 kc_show_load_button = true
-kc_show_cost_index = true
+kc_show_cost_index 	= true
 
 -- full list of approach types can be overwritten by aircraft
-APP_apptype_list = "ILS CAT 1|ILS CAT 2 OR 3|VOR|NDB|RNAV|VISUAL|TOUCH AND GO|CIRCLING"
+APP_apptype_list 	= "ILS CAT 1|ILS CAT 2 OR 3|VOR|NDB|RNAV|VISUAL|TOUCH AND GO|CIRCLING"
 
 -- APU/GPU startup after landing
-APP_apu_list = "APU delayed start|APU|GPU"
+APP_apu_list 		= "APU delayed start|APU|GPU"
 
 -- Reverse Thrust
 APP_rev_thrust_list = "NONE|MINIMUM|FULL"
@@ -141,6 +145,7 @@ function kc_set_payload()
 	end
 	set("sim/aircraft/weight/acf_m_fuel_tot",fgoal)
 end
+
 -- briefings to be more aircraft specific
 function kc_dep_brief_flight() 
 	local briefing = "OK, I will be the pilot flying\n"
