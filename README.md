@@ -22,4 +22,4 @@ Will there be other aircraft? Yes, it will also contain the FJS B737-200 and man
 ### History of KPCrew
 KPCrew went through several iterations, initially I called it Zibocrew. The initial concept was clunky and inflexible. I think I now have a good enough concept to easily extend the scripts. I even have now background events. As it is with Lua, you can see all that I did but when you change code you are on your own – I will not have the time to support this or hold hands with the installation. This is one of the reasons why I hesitated to release this publicly.
 
-**[Go to the manual](documentation/manual.md)**
+**[Go to the manual](https://github.com/prokopiu/kpcrew/wiki)**
