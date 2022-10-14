@@ -26,8 +26,8 @@ if PLANE_ICAO == "B738" then
 	else
 		kc_acf_icao = "B738" -- Zibo Mod
 	end
-elseif PLANE_ICAO == "A306" then
-	kc_acf_icao = "A306"
+-- elseif PLANE_ICAO == "A306" then
+	-- kc_acf_icao = "A306"
 -- elseif PLANE_ICAO == "MD11" then
 	-- kc_acf_icao = "MD11"
 -- elseif PLANE_ICAO == "B732" then

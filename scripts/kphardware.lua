@@ -141,20 +141,20 @@ create_command("kp/xsp/electric/avionics_off",		"Avionics Off","sysElectric.avio
 create_command("kp/xsp/controls/flaps_up",			"Flaps 1 Up","sysControls.flapsSwitch:actuate(sysControls.flapsUp)","","")
 create_command("kp/xsp/controls/flaps_down",		"Flaps 1 Down","sysControls.flapsSwitch:actuate(sysControls.flapsDown)","","")
 
-create_command("kp/xsp/controls/pitch_trim_up",		"Pitch Trim Up","sysControls.pitchTrimSwitch:actuate(sysControls.trimUp)", "", "")
-create_command("kp/xsp/controls/pitch_trim_down",	"Pitch Trim Down","sysControls.pitchTrimSwitch:actuate(sysControls.trimDown)", "", "")
+create_command("kp/xsp/controls/pitch_trim_up",		"Pitch Trim Up","sysControls.pitchTrimSwitch:actuate(sysControls.trimUp)", "sysControls.pitchTrimSwitch:actuate(sysControls.trimUp)", "")
+create_command("kp/xsp/controls/pitch_trim_down",	"Pitch Trim Down","sysControls.pitchTrimSwitch:actuate(sysControls.trimDown)", "sysControls.pitchTrimSwitch:actuate(sysControls.trimDown)", "")
 
-create_command("kp/xsp/controls/rudder_trim_left",	"Rudder Trim Left","sysControls.rudderTrimSwitch:actuate(sysControls.trimLeft)", "", "")
-create_command("kp/xsp/controls/rudder_trim_right",	"Rudder Trim Right","sysControls.rudderTrimSwitch:actuate(sysControls.trimRight)", "", "")
+create_command("kp/xsp/controls/rudder_trim_left",	"Rudder Trim Left","sysControls.rudderTrimSwitch:actuate(sysControls.trimLeft)", "sysControls.rudderTrimSwitch:actuate(sysControls.trimLeft)", "")
+create_command("kp/xsp/controls/rudder_trim_right",	"Rudder Trim Right","sysControls.rudderTrimSwitch:actuate(sysControls.trimRight)", "sysControls.rudderTrimSwitch:actuate(sysControls.trimRight)", "")
 create_command("kp/xsp/controls/rudder_trim_center","Rudder Trim Center","sysControls.rudderReset:actuate(sysControls.trimCenter)", "", "")
 
-create_command("kp/xsp/controls/aileron_trim_left",	"Aileron Trim Left","sysControls.aileronTrimSwitch:actuate(sysControls.trimLeft)", "", "")
-create_command("kp/xsp/controls/aileron_trim_right","Aileron Trim Right","sysControls.aileronTrimSwitch:actuate(sysControls.trimRight)", "", "")
+create_command("kp/xsp/controls/aileron_trim_left",	"Aileron Trim Left","sysControls.aileronTrimSwitch:actuate(sysControls.trimLeft)", "sysControls.rudderTrimSwitch:actuate(sysControls.trimRight)", "")
+create_command("kp/xsp/controls/aileron_trim_right","Aileron Trim Right","sysControls.aileronTrimSwitch:actuate(sysControls.trimRight)", "sysControls.aileronTrimSwitch:actuate(sysControls.trimRight)", "")
 create_command("kp/xsp/controls/aileron_trim_center","Aileron Trim Center","sysControls.aileronReset:actuate(sysControls.trimCenter)", "", "")
 
 -- --------------- Engines
-create_command("kp/xsp/engines/reverse_on",			"Reverse Thrust Toggle", "sysEngines.reverseToggle:actuate(modeOn)", "", "")
-create_command("kp/xsp/engines/reverse_off",		"Reverse Thrust Toggle", "sysEngines.reverseToggle:actuate(modeOff)", "", "")
+create_command("kp/xsp/engines/reverse_on",			"Reverse Thrust On", "sysEngines.reverseToggle:actuate(modeOn)", "", "")
+create_command("kp/xsp/engines/reverse_off",		"Reverse Thrust Off", "sysEngines.reverseToggle:actuate(modeOff)", "", "")
 create_command("kp/xsp/engines/reverse_tgl",		"Reverse Thrust Toggle", "sysEngines.reverseToggle:actuate(modeToggle)", "", "")
 
 -- ------------ A/P MCP functions
