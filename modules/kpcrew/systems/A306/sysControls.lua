@@ -1,4 +1,4 @@
--- DFLT airplane 
+-- A306 airplane 
 -- Flight Controls functionality
 
 -- @classmod sysControls
@@ -15,7 +15,7 @@ local sysControls = {
 	trimUp 		= 0,
 	trimDown 	= 1,
 
-	flaps_pos = {[1] = 0.125, [2] = 0.25, [3] = 0.375, [4] = 0.5, [5] = 0.625, [6] = 0.75, [7] = 0.875, [8] = 1}
+	flaps_pos = {[1] = 0.25, [2] = 0.5, [3] = 0.75, [4] = 1}
 }
 
 local TwoStateDrefSwitch 	= require "kpcrew.systems.TwoStateDrefSwitch"
@@ -31,25 +31,34 @@ local InopSwitch 			= require "kpcrew.systems.InopSwitch"
 --------- Switches
 
 -- ** Flaps 
-sysControls.flapsSwitch 	= TwoStateCustomSwitch:new("flaps","sim/cockpit2/controls/flap_ratio",0,
+sysControls.flapsSwitch 	= TwoStateCustomSwitch:new("flaps","A300/fctl/flap_request",0,
 	function () 
 		command_once("sim/flight_controls/flaps_down")
+		local flp = get("A300/fctl/flap_request")
+		set("sim/cockpit2/controls/flap_system_deploy_ratio",flp)
 	end,
 	function () 
 		command_once("sim/flight_controls/flaps_up")
+		local flp = get("A300/fctl/flap_request")
+		set("sim/cockpit2/controls/flap_system_deploy_ratio",flp)
 	end,
 	function () 
 		return
 	end
 )
 
-MultiStateCmdSwitch:new("flaps","sim/cockpit2/controls/flap_ratio",0,
-"sim/flight_controls/flaps_up","sim/flight_controls/flaps_down",0,1,true)
-
 -- ** Pitch Trim
-sysControls.pitchTrimSwitch = MultiStateCmdSwitch:new("pitchtrim","sim/cockpit2/controls/elevator_trim",0,
-	"sim/flight_controls/pitch_trim_up","sim/flight_controls/pitch_trim_down",-1,1,false)
-
+sysControls.pitchTrimSwitch = TwoStateCustomSwitch:new("pitchtrim","sim/cockpit2/controls/elevator_trim",0,
+	function () 
+		command_once("sim/flight_controls/pitch_trim_down")
+	end,
+	function () 
+		command_once("sim/flight_controls/pitch_trim_up")
+	end,
+	function () 
+		return
+	end
+)
 -- ** Aileron Trim
 sysControls.aileronTrimSwitch = MultiStateCmdSwitch:new("ailerontrim","sim/cockpit2/controls/aileron_trim",0,
 	"sim/flight_controls/aileron_trim_right","sim/flight_controls/aileron_trim_left",-1,1,false)
