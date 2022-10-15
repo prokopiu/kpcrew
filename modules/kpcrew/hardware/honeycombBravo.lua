@@ -31,13 +31,13 @@ function xsp_bravo_knob_up()
 	-- normal A/P mode
 	if xsp_bravo_layer == 0 then
 		if xsp_bravo_mode == 1 then
-			sysMCP.altSelector:step(cmdUp)
+			sysMCP.altSelector:step(1)
 		end
 		if xsp_bravo_mode == 2 then
 			sysMCP.vspSelector:step(cmdUp)
 		end
 		if xsp_bravo_mode == 3 then
-			sysMCP.hdgSelector:step(cmdUp)
+			sysMCP.hdgSelector:step(1)
 		end
 		if xsp_bravo_mode == 4 then
 			sysMCP.crs1Selector:step(cmdUp)
@@ -55,13 +55,13 @@ function xsp_bravo_knob_dn()
 	-- normal A/P mode
 	if xsp_bravo_layer == 0 then
 		if xsp_bravo_mode == 1 then
-			sysMCP.altSelector:step(cmdDown)
+			sysMCP.altSelector:step(0)
 		end
 		if xsp_bravo_mode == 2 then
 			sysMCP.vspSelector:step(cmdDown)
 		end
 		if xsp_bravo_mode == 3 then
-			sysMCP.hdgSelector:step(cmdDown)
+			sysMCP.hdgSelector:step(0)
 		end
 		if xsp_bravo_mode == 4 then
 			sysMCP.crs1Selector:step(cmdDown)

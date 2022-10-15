@@ -115,21 +115,44 @@ sysMCP.lvlchgSwitch 		= TwoStateToggleSwitch:new("lvlchg",drefLVLCHGLight,0,
 	"laminar/B738/autopilot/lvl_chg_press")
 
 -- HDG
-sysMCP.hdgSelector 			= MultiStateCmdSwitch:new("hdg","laminar/B738/autopilot/mcp_hdg_dial",0,
-	"laminar/B738/autopilot/heading_dn","laminar/B738/autopilot/heading_up",0,359,false)
+sysMCP.hdgSelector 			= TwoStateCustomSwitch:new("hdg","laminar/B738/autopilot/mcp_hdg_dial",0,
+	function () 
+		local lalt = get("laminar/B738/autopilot/mcp_hdg_dial")
+		set("laminar/B738/autopilot/mcp_hdg_dial",lalt+1)
+		-- command_once("laminar/B738/autopilot/heading_up")
+	end,
+	function () 
+		local lalt = get("laminar/B738/autopilot/mcp_hdg_dial")
+		set("laminar/B738/autopilot/mcp_hdg_dial",lalt-1)
+		-- command_once("laminar/B738/autopilot/heading_dn")
+	end,
+	function () 
+		return
+	end
+)
 
 -- TURNRATE
 sysMCP.turnRateSelector 	= MultiStateCmdSwitch:new("turnrate","laminar/B738/autopilot/bank_angle_pos",0,
-	"laminar/B738/autopilot/bank_angle_dn","laminar/B738/autopilot/bank_angle_up",0,4,true)
+	"laminar/B738/autopilot/bank_angle_dn","laminar/B738/autopilot/bank_angle_up",0,4,false)
 
 -- LNAV
 sysMCP.lnavSwitch 			= TwoStateToggleSwitch:new("lnav",drefLNAVLight,0,
 	"laminar/B738/autopilot/lnav_press")
 
 -- ALT
-sysMCP.altSelector 			= MultiStateCmdSwitch:new("alt","laminar/B738/autopilot/mcp_alt_dial",0,
-	"laminar/B738/autopilot/altitude_dn","laminar/B738/autopilot/altitude_up",0,50000,false)
-
+sysMCP.altSelector 			= TwoStateCustomSwitch:new("alt","laminar/B738/autopilot/mcp_alt_dial",0,
+	function () 
+		local lalt = get("laminar/B738/autopilot/mcp_alt_dial")
+		set("laminar/B738/autopilot/mcp_alt_dial",lalt+50)
+	end,
+	function () 
+		local lalt = get("laminar/B738/autopilot/mcp_alt_dial")
+		set("laminar/B738/autopilot/mcp_alt_dial",lalt-50)
+	end,
+	function () 
+		return
+	end
+)
 -- ALT INTV
 sysMCP.altintvSwitch 		= TwoStateToggleSwitch:new("altintv","laminar/B738/autopilot/alt_interv_pos",0,
 	"laminar/B738/autopilot/alt_interv")
