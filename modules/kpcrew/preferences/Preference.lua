@@ -169,10 +169,10 @@ function kcPreference:render()
 
 	if self.datatype == self.typeCOMFreq then
 		imgui.PushID(splitTitle[1])
-			local changed, textin = imgui.InputInt("", self:getValue(), 5, 100)
+			local changed, textin = imgui.InputFloat("", self:getValue(), 0.005, 2, "%6.3f",0)
 			imgui.SameLine()
 			if imgui.Button("<->") then
-				set("sim/cockpit2/radios/actuators/com1_frequency_hz_833",self:getValue()) 
+				set("sim/cockpit2/radios/actuators/com1_frequency_hz_833",self:getValue()*1000) 
 			end
 			if changed then
 				self:setValue(textin)
@@ -182,13 +182,13 @@ function kcPreference:render()
 
 	if self.datatype == self.typeNAVFreq then
 		imgui.PushID(splitTitle[1])
-			local changed, textin = imgui.InputInt("", self:getValue(), 5, 100)
+			local changed, textin = imgui.InputFloat("", self:getValue(), 0.05, 2, "%5.2f",0)
 			imgui.SameLine()
 			if imgui.Button("<->") then
 				if splitTitle[2] ~= "2" then 
-					set("sim/cockpit2/radios/actuators/nav1_frequency_hz",self:getValue()) 
+					set("sim/cockpit2/radios/actuators/nav1_frequency_hz",self:getValue()*100) 
 				else
-					set("sim/cockpit2/radios/actuators/nav2_frequency_hz",self:getValue()) 
+					set("sim/cockpit2/radios/actuators/nav2_frequency_hz",self:getValue()*100) 
 				end
 			end
 			if changed then
