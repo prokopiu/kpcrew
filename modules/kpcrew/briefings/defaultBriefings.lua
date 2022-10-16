@@ -163,20 +163,42 @@ function ()
 		kc_metar_read = kc_metar_read - 1
 		return kc_metar_local
 	else
-		local response, status = http.request(activeBckVars:get("general:vatsimUrl") .. activeBriefings:get("flight:originIcao"))
-		kc_metar_read = 1800 * 5
-		kc_metar_local = response
-		local m = metar.new(activeBriefings:get("flight:originIcao"))
-		kc_metardata_local = m:get_metar_data(kc_metar_local)
-		local response, status = http.request(activeBckVars:get("general:vatsimUrl") .. activeBriefings:get("flight:destinationIcao"))
-		kc_metar_dest = response
-		local m = metar.new(activeBriefings:get("flight:destinationIcao"))
-		kc_metardata_dest = m:get_metar_data(kc_metar_dest)
-		local response, status = http.request(activeBckVars:get("general:vatsimUrl") .. activeBriefings:get("flight:alternateIcao"))
-		kc_metar_altn = response
-		return kc_metar_local
+		if activePrefSet:get("general:vatsimMetar") == true then
+			local response, status = http.request(activeBckVars:get("general:vatsimUrl") .. activeBriefings:get("flight:originIcao"))
+			kc_metar_read = 1800 * 5
+			kc_metar_local = response
+			local m = metar.new(activeBriefings:get("flight:originIcao"))
+			kc_metardata_local = m:get_metar_data(kc_metar_local)
+			local response, status = http.request(activeBckVars:get("general:vatsimUrl") .. activeBriefings:get("flight:destinationIcao"))
+			kc_metar_dest = response
+			local m = metar.new(activeBriefings:get("flight:destinationIcao"))
+			kc_metardata_dest = m:get_metar_data(kc_metar_dest)
+			local response, status = http.request(activeBckVars:get("general:vatsimUrl") .. activeBriefings:get("flight:alternateIcao"))
+			kc_metar_altn = response
+			return kc_metar_local
+		else
+			kc_metar_local = kc_buildAtisString(activeBriefings:get("flight:originIcao"))
+			-- local m = metar.new(activeBriefings:get("flight:originIcao"))
+			-- kc_metardata_local = m:get_metar_data(kc_metar_local)
+			-- kc_metar_local = "EDDM 990520Z AUTO 32001KT CAVOK 12/11 Q1018 NOSIG"
+			-- local m = metar.new(activeBriefings:get("flight:originIcao"))
+			local m = metar.new(activeBriefings:get("flight:originIcao"))
+			kc_metardata_local = m:get_metar_data(kc_metar_local)
+			if get("sim/weather/has_real_weather_bool") == 1 then 
+				kc_metar_dest = "--NO METAR--"
+			else
+				kc_metar_dest = kc_buildAtisString(activeBriefings:get("flight:destinationIcao"))
+			end
+			local m = metar.new(activeBriefings:get("flight:destinationIcao"))
+			kc_metardata_dest = m:get_metar_data(kc_metar_dest)
+			if get("sim/weather/has_real_weather_bool") == 1 then 
+				kc_metar_altn = "--NO METAR--"
+			else
+				kc_metar_altn = kc_buildAtisString(activeBriefings:get("flight:alternateIcao"))
+			end
+			return kc_metar_local
+		end
 	end
-	-- return kc_buildAtisString()
 end,
 kcPreference.typeInfo,"Local METAR|"))
 information:add(kcPreference:new("destMetar",
@@ -266,11 +288,11 @@ departure:add(kcPreference:new("AtisFrequency1",122800,kcPreference.typeCOMFreq,
 departure:add(kcPreference:new("atisInfo","",kcPreference.typeText,"ATIS Information|"))
 departure:add(kcPreference:new("atisWind","",kcPreference.typeText,"ATIS Wind HDG/SPD|"))
 departure:add(kcPreference:new("atisVisibility","",kcPreference.typeText,"ATIS Visibility m|"))
-departure:add(kcPreference:new("atisPrecipit",1,kcPreference.typeText,"ATIS Precipitation|"))
+departure:add(kcPreference:new("atisPrecipit",1,kcPreference.typeText,"ATIS Weather Phenomena|"))
 departure:add(kcPreference:new("atisClouds",1,kcPreference.typeText,"ATIS Clouds|"))
 departure:add(kcPreference:new("atisTemps","",kcPreference.typeText,"ATIS Temp/Dewpoint|"))
 departure:add(kcPreference:new("atisQNH","",kcPreference.typeText,"ATIS QNH|"))
-departure:add(kcPreference:new("atisVcond","",kcPreference.typeText,"ATIS Conditions|"))
+departure:add(kcPreference:new("atisVcond","",kcPreference.typeText,"ATIS Trends|"))
 departure:add(kcPreference:new("metarto",0,kcPreference.typeExecButton,"METAR|Reload METAR|kc_fill_to_metar()"))
 
 local departure1 = kcPreferenceGroup:new("departure","DEPARTURE CLEARANCE")
@@ -389,11 +411,11 @@ arrival:add(kcPreference:new("atisFrequency2",122800,kcPreference.typeCOMFreq,"A
 arrival:add(kcPreference:new("atisInfo","",kcPreference.typeText,"ATIS Information|"))
 arrival:add(kcPreference:new("atisWind","",kcPreference.typeText,"ATIS Wind HDG/SPD|"))
 arrival:add(kcPreference:new("atisVisibility","",kcPreference.typeText,"ATIS Visibility m|"))
-arrival:add(kcPreference:new("atisPrecipit",1,kcPreference.typeText,"ATIS Precipitation|"))
+arrival:add(kcPreference:new("atisPrecipit",1,kcPreference.typeText,"ATIS Weather Phenomena|"))
 arrival:add(kcPreference:new("atisClouds",1,kcPreference.typeText,"ATIS Clouds|"))
 arrival:add(kcPreference:new("atisTemps","",kcPreference.typeText,"ATIS Temp/Dewpoint|"))
 arrival:add(kcPreference:new("atisQNH","",kcPreference.typeText,"ATIS QNH|"))
-arrival:add(kcPreference:new("atisVcond","",kcPreference.typeText,"ATIS Conditions|"))
+arrival:add(kcPreference:new("atisVcond","",kcPreference.typeText,"ATIS Trends|"))
 arrival:add(kcPreference:new("metarldg",0,kcPreference.typeExecButton,"METAR|Load Arrival METAR|kc_fill_ldg_metar()"))
 
 local arrival1 = kcPreferenceGroup:new("arrival","ARRIVAL DATA")

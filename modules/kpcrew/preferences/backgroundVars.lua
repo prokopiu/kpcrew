@@ -29,7 +29,7 @@ group3:add(kcPreference:new("win_pos_y",		 70,		kcPreference.typeInt,	"Briefing 
 
 local group4 = kcPreferenceGroup:new("PREFERENCES","PREFERENCES Settings")
 group4:add(kcPreference:new("win_width",		350,		kcPreference.typeInt,	"Preferences win width|"))
-group4:add(kcPreference:new("win_height",		550,		kcPreference.typeInt,	"Preferences win height|"))
+group4:add(kcPreference:new("win_height",		600,		kcPreference.typeInt,	"Preferences win height|"))
 group4:add(kcPreference:new("win_pos_x",		330,		kcPreference.typeInt,	"Preferences win xoffset|"))
 group4:add(kcPreference:new("win_pos_y",		 70,		kcPreference.typeInt,	"Preferences win yoffset|"))
 

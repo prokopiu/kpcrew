@@ -80,6 +80,7 @@ local token_data = {
             { token = '-',                    key = 'LIGHT'                 },
             { token = '+',                    key = 'HEAVY'                 },
             { token = 'VC',                   key = 'VICINITY'              },
+            { token = 'RC',                   key = 'RECENT'                },
         },
         offset = 1,
     },
@@ -119,6 +120,13 @@ local token_data = {
             { token = 'FC',                   key = 'FUNNEL_CLOUD'          },
             { token = 'SS',                   key = 'SAND_STORM'            },
             { token = 'DS',                   key = 'DUST_STORM'            },
+        },
+    },
+    weather_trends = {
+        types = {
+            { token = 'NOSIG',                key = 'NOSIG'               },
+            { token = 'TEMPO',                key = 'TEMPO'               },
+            { token = 'BECMG',                key = 'BECMG'               },
         },
     }
 }
@@ -342,6 +350,10 @@ local function parse_metar_vrb_wind(dir, speed)
     return { wind = data }
 end
 
+local function parse_metar_trend(intrend)
+    return { trend = intrend }
+end
+
 local function parse_metar_visibility(visibility, direction)
     if visibility == 'CAVOK' then
         visibility = 9999
@@ -439,6 +451,18 @@ local function parse_metar_weather(intensity, descriptor, phenomena)
         descriptor = nil
     end
     local intensity_key, descriptor_key, phenomena_key
+    if descriptor and descriptor:len() > 0 then
+        for _, descriptor_data in pairs(token_data.weather_descriptor.types) do
+            if descriptor == descriptor_data.token then
+                descriptor_key = descriptor_data.key
+                break
+            end
+        end
+        if not descriptor_key or not WEATHER_DESCRIPTOR[descriptor_key] then
+            return
+        end
+        descriptor = WEATHER_DESCRIPTOR[descriptor_key]
+    end
     if not intensity or intensity:len() == 0 then
         intensity = WEATHER_INTENSITY.MODERATE
     else
@@ -452,18 +476,6 @@ local function parse_metar_weather(intensity, descriptor, phenomena)
             return
         end
         intensity = WEATHER_INTENSITY[intensity_key]
-    end
-    if descriptor and descriptor:len() > 0 then
-        for _, descriptor_data in pairs(token_data.weather_descriptor.types) do
-            if descriptor == descriptor_data.token then
-                descriptor_key = descriptor_data.key
-                break
-            end
-        end
-        if not descriptor_key or not WEATHER_DESCRIPTOR[descriptor_key] then
-            return
-        end
-        descriptor = WEATHER_DESCRIPTOR[descriptor_key]
     end
     if not phenomena or phenomena:len() == 0 then
         return
@@ -535,6 +547,18 @@ local metar_token_handlers = {
     {
         pattern = '^(CAVOK)$',
         handler = parse_metar_visibility,
+    },
+    {
+        pattern = '^(NOSIG)$',
+        handler = parse_metar_trend,
+    },
+    {
+        pattern = '^(TEMPO)$',
+        handler = parse_metar_trend,
+    },
+    {
+        pattern = '^(BECMG)$',
+        handler = parse_metar_trend,
     },
     {
         pattern = '^R(%d+)/(%d+)$',
@@ -687,7 +711,7 @@ function metatable.__index:get_metar_data(metar_string)
 end
 
 function metatable.__index:_parse_metar_string(metar_string)
-    local multi_entry = { visibility = 1, runway_visual_range = 1, clouds = 1 }
+    local multi_entry = { visibility = 1, runway_visual_range = 1, clouds = 1, weather = 1 }
     local metar_data  = {}
     local token_data
     -- tokenize METAR data

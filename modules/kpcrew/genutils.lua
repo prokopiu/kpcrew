@@ -153,7 +153,11 @@ end
 function kc_getQNHString(metar_data)
 	local QNHstring = ""
 	if metar_data.pressure ~= nil then
-		QNHstring = QNHstring .. metar_data.pressure
+		if metar_data.pressure < 200 then 
+			QNHstring = QNHstring .. string.format("%4.2f",metar_data.pressure)
+		else
+			QNHstring = QNHstring .. string.format("%4.4i",metar_data.pressure)
+		end
 	end
 	return QNHstring
 end
@@ -189,11 +193,21 @@ end
 function kc_METAR_precip(metar_data)
 	local precipitation = ""
     local PHENOMENA = { 'DZ', 'RA', 'SN', 'SG', 'IC', 'PL', 'GR', 'GS', 'UP', 'BR', 'FG', 'FU', 'VA', 'DU', 'SA', 'HZ', 'PY', 'PO', 'SQ', 'FC', 'SS', 'DS'}
-
-	if metar_data.weather ~= nil and metar_data.weather.phenomena ~= nil then 
-		precipitation = precipitation .. PHENOMENA[metar_data.weather.phenomena]  .. " "
+	local INTENSITY = { '', '-', '+', 'VC' }
+	local DESCRIPTOR = { 'MI', 'PR', 'BC', 'DR', 'BL', 'SH', 'TS', 'FZ' }
+	
+	print(tprint(metar_data))
+	if metar_data.weather ~= nil and table.getn(metar_data.weather) > 0 then 
+		for i = 1, table.getn(metar_data.weather),1 do
+			local descr = ""
+			if metar_data.weather[i].descriptor ~= nil then
+				descr=DESCRIPTOR[metar_data.weather[i].descriptor]
+			end
+			precipitation = precipitation .. INTENSITY[metar_data.weather[i].intensity] .. descr .. PHENOMENA[metar_data.weather[i].phenomena] .. " "
+		end
 	end
 	return precipitation
+	
 end
 
 function kc_METAR_clouds(metar_data)
@@ -215,17 +229,13 @@ function kc_METAR_temps(metar_data)
 	return tempstring
 end
 
--- function kc_METAR_VCond(metar_data)
-	-- local visibility = get("sim/weather/visibility_reported_m")
-	-- local cavokcld1 = get("sim/weather/cloud_base_msl_m[0]") > 5000 or get("sim/weather/cloud_coverage[0]") == 0
-	-- local cavokcld2 = get("sim/weather/cloud_base_msl_m[1]") > 5000 or get("sim/weather/cloud_coverage[1]") == 0
-	-- local cavokcld3 = get("sim/weather/cloud_base_msl_m[2]") > 5000 or get("sim/weather/cloud_coverage[2]") == 0
-	-- local vcond = ""
-	-- if visibility > 10000 and cavokcld1 and cavokcld2 and cavokcld3 then
-		-- vcond = "CAVOK"
-	-- end
-	-- return vcond
--- end
+function kc_METAR_trend(metar_data)
+	local trendstring = ""
+	if metar_data.trend ~= nil then
+		trendstring = metar_data.trend
+	end
+	return trendstring
+end
 
 function kc_fill_to_metar()
 	activeBriefings:set("departure:atisWind",kc_METAR_wind(kc_metardata_local))
@@ -234,7 +244,7 @@ function kc_fill_to_metar()
 	activeBriefings:set("departure:atisPrecipit",kc_METAR_precip(kc_metardata_local))
 	activeBriefings:set("departure:atisTemps",kc_METAR_temps(kc_metardata_local))
 	activeBriefings:set("departure:atisQNH",kc_getQNHString(kc_metardata_local))
-	-- activeBriefings:set("departure:atisVcond",kc_METAR_VCond(kc_metardata_local))
+	activeBriefings:set("departure:atisVcond",kc_METAR_trend(kc_metardata_local))
 end
 
 function kc_fill_ldg_metar()
@@ -244,30 +254,169 @@ function kc_fill_ldg_metar()
 	activeBriefings:set("arrival:atisPrecipit",kc_METAR_precip(kc_metardata_dest))
 	activeBriefings:set("arrival:atisTemps",kc_METAR_temps(kc_metardata_dest))
 	activeBriefings:set("arrival:atisQNH",kc_getQNHString(kc_metardata_dest))
-	-- activeBriefings:set("arrival:atisVcond",kc_METAR_VCond(kc_metardata_dest))
+	activeBriefings:set("arrival:atisVcond",kc_METAR_trend(kc_metardata_dest))
 end
 
 -- build a makeshift ATIS string from XP11 weather - very simplistic
-function kc_buildAtisString()
+function kc_buildAtisString(station)
+	ATISstring = station .. " " .. string.format("%2.2i%2.2i%2.2iZ ", get("sim/cockpit2/clock_timer/current_day"),get("sim/cockpit2/clock_timer/zulu_time_hours"),get("sim/cockpit2/clock_timer/zulu_time_minutes"))
+
+-- ==== WIND
+	local windstring = ""
+
+	if get("sim/weather/shear_direction_degt[0]") > 10 and get("sim/weather/wind_speed_kt[0]") < 6 then
+		windstring = string.format("VRB%2.2iKT", get("sim/weather/wind_speed_kt[0]")) 
+	else
+		windstring = string.format("%3.3i%2.2i", get("sim/weather/wind_direction_degt[0]"),get("sim/weather/wind_speed_kt[0]"))
+	end
+
+	if get("sim/weather/shear_speed_kt[0]") > get("sim/weather/wind_speed_kt[0]")+10 then
+		windstring = windstring .. "G" .. string.format("%2.2i", get("sim/weather/shear_speed_kt[0]")) .. "KT"
+	else
+		windstring = windstring .. "KT"
+	end
 	
-	local ATISstring = string.format("%2.2i%2.2i%2.2iZ ", get("sim/cockpit2/clock_timer/current_day"),get("sim/cockpit2/clock_timer/zulu_time_hours"),get("sim/cockpit2/clock_timer/zulu_time_minutes"))
+	if get("sim/weather/shear_direction_degt[0]") > 30 and get("sim/weather/wind_speed_kt[0]") > 6 then
+		windstring = windstring .. " " .. string.format("%2.2iV%2.2i", (get("sim/weather/wind_direction_degt[0]")-get("sim/weather/shear_direction_degt[0]")),(get("sim/weather/wind_direction_degt[0]")+get("sim/weather/shear_direction_degt[0]"))) 
+	end
+	if windstring ~= "" then
+		windstring = windstring .. " "
+	end
+
+-- ==== Visibility
+	local visiblestring = ""
+	local visibility = get("sim/weather/visibility_reported_m")
+	if (visibility >= 10000) then
+		visiblestring = "9999"
+	end
+	if (visibility < 9999 and visibility >= 5000) then
+		local fullhundred = math.floor(visibility/1000)*1000
+		visiblestring = string.format("%4.4i",fullhundred)
+	end
+	if (visibility < 5000) then
+		visiblestring = string.format("%4.4i",visibility)
+	end
+	if visiblestring ~= "" then
+		visiblestring = visiblestring .. " "
+	end
+
+-- ==== PRECIPITATION
+	local precipitation = ""
+	local descr = ""
+	if get("sim/weather/thunderstorm_percent") > 0 then
+		descr = "TS"
+	end
+
+	if get("sim/weather/precipitation_on_aircraft_ratio") > 0 then
+		if get("sim/weather/precipitation_on_aircraft_ratio") < 0.01 then
+			precipitation = descr .. "DZ"
+		end
+		if get("sim/weather/precipitation_on_aircraft_ratio") > 0.01 then
+			precipitation = "-" .. descr ..  "RA"
+		end
+		if get("sim/weather/precipitation_on_aircraft_ratio") > 0.05 then
+			precipitation = descr .. "RA"
+		end
+		if get("sim/weather/precipitation_on_aircraft_ratio") > 0.1 then
+			precipitation = "+" .. descr .. "RA"
+		end
+		if get("sim/weather/temperature_ambient_c") < 0 then
+			if get("sim/weather/precipitation_on_aircraft_ratio") > 0.01 then
+				precipitation = "-" .. descr .. "SN"
+			end
+			if get("sim/weather/precipitation_on_aircraft_ratio") > 0.05 then
+				precipitation = descr .. "SN"
+			end
+			if get("sim/weather/precipitation_on_aircraft_ratio") > 0.1 then
+				precipitation = "+" .. descr .. "SN"
+			end
+		end
+	end
+	if precipitation ~= "" then
+		precipitation = precipitation .. " "
+	end
 	
-	local windstring = kc_METAR_wind()
+-- ==== other phenomena
+	local phenomena = ""
+	local vis = ""
+	if visibility < 800 then
+		vis = "FG"
+	elseif visibility < 1500 then
+		vis = "BR"
+	elseif visibility < 4500 then
+		vis = "HZ"
+	end
+	if vis ~= "" then
+		phenomena = phenomena .. vis
+	end 
+	if phenomena ~= "" then
+		phenomena = phenomena .. " "
+	end
+
+-- ==== CLOUD
+	local APTAltitude = get("sim/cockpit2/autopilot/altitude_readout_preselector")
+	local CLDcoverage = get("sim/weather/cloud_coverage[0]")
+	local CLDstring = ""
+	if (CLDcoverage > 1 and CLDcoverage < 6) then
+		CLDstring = CLDstring .. string.format("%s%3.3i",WX_Cloudcover_list[CLDcoverage],(get("sim/weather/cloud_base_msl_m[0]")*3.28-APTAltitude)/100)
+	end
+	local CLDcoverage = get("sim/weather/cloud_coverage[1]")
+	if (CLDcoverage > 1 and CLDcoverage < 6) then
+		CLDstring = CLDstring .. string.format(" %s%3.3i",WX_Cloudcover_list[CLDcoverage],(get("sim/weather/cloud_base_msl_m[1]")*3.28-APTAltitude)/100)
+	end
+	local CLDcoverage = get("sim/weather/cloud_coverage[2]")
+	if (CLDcoverage > 1 and CLDcoverage < 6) then
+		CLDstring = CLDstring .. string.format(" %s%3.3i",WX_Cloudcover_list[CLDcoverage],(get("sim/weather/cloud_base_msl_m[2]")*3.28-APTAltitude)/100)
+	end
+	if CLDstring ~= "" then
+		CLDstring = CLDstring .. " "
+	end
 	
-	local CLDstring = kc_METAR_clouds()
+-- ==== CAVOK
+	local CAVOKstring = ""
+	local cavokcld1 = get("sim/weather/cloud_base_msl_m[0]") > 5000 or get("sim/weather/cloud_coverage[0]") == 0
+	local cavokcld2 = get("sim/weather/cloud_base_msl_m[1]") > 5000 or get("sim/weather/cloud_coverage[1]") == 0
+	local cavokcld3 = get("sim/weather/cloud_base_msl_m[2]") > 5000 or get("sim/weather/cloud_coverage[2]") == 0
+	if visibility > 10000 and cavokcld1 and cavokcld2 and cavokcld3 and precipitation == "" then
+		CAVOKstring = "CAVOK "
+		visiblestring = ""
+		precipitation = ""
+		CLDstring = ""
+	end
+
+-- ==== Temperature
+	local tempstring = ""
+	local ambtemp = get("sim/weather/temperature_ambient_c")
+	local duepoint = get("sim/weather/dewpoi_sealevel_c")
+	if (ambtemp<0) then
+		tempstring=string.format("M%2.2i/", ambtemp*-1)
+	else
+		tempstring=string.format("%2.2i/", ambtemp)
+	end
+	if (duepoint<0) then
+		tempstring=tempstring .. string.format("M%2.2i", duepoint*-1)
+	else
+		tempstring=tempstring .. string.format("%2.2i", duepoint)
+	end
+
+-- ==== Other conditions
+	local trend = ""
+	if get("sim/weather/has_real_weather_bool") == 0 then 
+		trend = "NOSIG"
+	end
+
+-- === QNH
+	local qnhstring = ""
+	if activePrefSet:get("general:baro_mode_hpa") then
+		qnhstring = string.format("Q%4.4i",get("sim/weather/barometer_sealevel_inhg") / 0.02952999)
+	else
+		qnhstring = string.format("A%4.4i",((get("sim/weather/barometer_sealevel_inhg") * 10^2)*10^-2)*100)
+	end
 	
-	local precipitation = kc_METAR_precip()	
+	ATISstring = ATISstring .. windstring .. visiblestring .. precipitation .. phenomena .. CLDstring .. CAVOKstring .. tempstring .. " " .. qnhstring .. " " .. trend
 	
-	local visiblestring = kc_METAR_visibility()
-	
-	local tempstring = kc_METAR_temps()
-	
-	ATISstring = ATISstring .. windstring .. " " .. visiblestring .. precipitation .. "" .. CLDstring .. tempstring
-	
-	local vcond = kc_METAR_VCond()
-	
-	ATISstring = ATISstring .. " " .. kc_getQNHString() .. " " .. vcond
 	return ATISstring
+	-- "KOKC 161452Z 01014KT 10SM BKN120 OVC200 +TSRA 17/10 Q999 TEMPO RMK AO2 SLP182 VIRGA E T01670100 51005"
 end
 
 ------------- file related functions ---------------
@@ -677,4 +826,29 @@ function kc_format_thousand(value)
     if pos == 0 then pos = 3 end
     return string.sub(s, 1, pos)
     .. string.gsub(string.sub(s, pos+1), "(...)", ".%1")
+end
+
+function tprint (tbl, indent)
+  if not indent then indent = 0 end
+  local toprint = string.rep(" ", indent) .. "{\r\n"
+  indent = indent + 2 
+  for k, v in pairs(tbl) do
+    toprint = toprint .. string.rep(" ", indent)
+    if (type(k) == "number") then
+      toprint = toprint .. "[" .. k .. "] = "
+    elseif (type(k) == "string") then
+      toprint = toprint  .. k ..  "= "   
+    end
+    if (type(v) == "number") then
+      toprint = toprint .. v .. ",\r\n"
+    elseif (type(v) == "string") then
+      toprint = toprint .. "\"" .. v .. "\",\r\n"
+    elseif (type(v) == "table") then
+      toprint = toprint .. tprint(v, indent + 2) .. ",\r\n"
+    else
+      toprint = toprint .. "\"" .. tostring(v) .. "\",\r\n"
+    end
+  end
+  toprint = toprint .. string.rep(" ", indent-2) .. "}"
+  return toprint
 end
