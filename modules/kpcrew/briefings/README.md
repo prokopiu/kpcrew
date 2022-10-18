@@ -1,0 +1,3 @@
+# briefings folder
+
+Contains all logic for general or aircraft type specific briefing items. This includes logic to load an aircraft, flap settings or calculate weights etc...
