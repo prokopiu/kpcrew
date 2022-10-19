@@ -181,6 +181,7 @@ For this you can open the PREFERENCES window:
 The **v GENERAL PREFERENCES** section applies to the application in general, Below you will see a **v [ICAO] PREFERENCES** which covers the selected aircraft.
 
 #### GENERAL PREFERENCES
+
  - **Assistance Level**:  [No assistance][Guided][Some automation][Fully automatic]
    - **_No assistance_**: To execute on a flow will only open the flow window and show the procedure/checklist with all open items in red, otherwise in grey.
    - **_Guided_**: When starting the flow with the Master button, it will go through all items and stop at red ones waiting for you to fix the item. You can skip it with the Next button [->].
@@ -197,3 +198,53 @@ The **v GENERAL PREFERENCES** section applies to the application in general, Bel
  - **Transponder**: In USA mode it will turn on the transponder at beginning of taxi and at the end with shutdown mode. In EUR mode it will turn on XDPR when entering runway and when exiting the runway in cleanup mode.
  - **SIMBRIEF Username**: enter your username so that KPCrew can pull your latest filed OFP
  - **VATSIM METAR**: When you turn Load ON then KPCrew will load the VATSIM METARs from airports in your flight briefing every couple of minutes. If you turn this option off KPCrew will generate some METAR based on the local weather. When you have Real Weather Download on in X-Plane, it wil lonly display the local METAR for your origin. Otherwise the same METAR applies to destination and alternate airport.
+
+#### AIRCRAFT SPECIFIC PREFERENCES
+
+Every supported aircraft will have a set of settings which are unique to it. Here you can see samples for the DFLT module (default aircraft from Laminar) or the Zibo Mod preferences.
+
+![PREFERENCES window](https://raw.githubusercontent.com/prokopiu/kpcrew/kpcrew23/documentation/images/DFLTprefs.PNG)
+
+![PREFERENCES window](https://raw.githubusercontent.com/prokopiu/kpcrew/kpcrew23/documentation/images/B738prefs.PNG)
+
+### LOAD/SAVE Preferences
+
+Your preferences can be saved and then reloaded with the next start of the simulator or the FlyWithLua plugin. KPCrew will initialize the name field with the ICAO code of the loaded aircraft (or DFLT if not supported).
+Preferences are currently saved individually with every aircraft. You may have to set them again when loading a new aircraft. 
+You can use any name in the name field and save current preferences.
+
+![PREFERENCES window](https://raw.githubusercontent.com/prokopiu/kpcrew/kpcrew23/documentation/images/loadsaveprefs.PNG)
+
+## Briefings
+
+One important component of KPCrew is to provide as much as possible information about the flight you are planning. This not only helps you but also helps KPCrew to improve the automation of procedures and checklists.
+
+### BRIEFINGS Window
+
+![PREFERENCES window](https://raw.githubusercontent.com/prokopiu/kpcrew/kpcrew23/documentation/images/briefings.PNG)
+
+There are many sections you can open and provide information. You can open and close them as needed. AT the bottom of the window you can save the current state of you briefings under any name. The file will be written to your kpcrew_prefs folder in FlyWithLua.
+
+![PREFERENCES window](https://raw.githubusercontent.com/prokopiu/kpcrew/kpcrew23/documentation/images/loadsavebrief.PNG)
+
+#### INFORMATION section
+
+This section is always open and provides many information about the current session. The loaded aircraft, weights, current position in coordinates that can also be used in CIVA INS, METARs for all selected airports and a flight time recorder.
+Flight times are: 
+ - OFF: off block time (triggered by pushback/startup procedure). 
+ - OUT: takeoff time triggered by takeoff procedure
+ - IN: landing time (triggered by after landing / cleanup)
+ - ON: on blocks time (triggered by shutdown procedure)
+ 
+#### FLIGHT section
+
+![PREFERENCES window](https://raw.githubusercontent.com/prokopiu/kpcrew/kpcrew23/documentation/images/briefflight.PNG)
+
+ - **Simbrief Data Load**: If you have filed a flight with Simbrief.com and provided a username in preferences then many fields in the following sections will be filled by what you have in your OFP. Italis fields can be filled from Simbrief.
+ - **_ATC Callsign:_** Callsign that you filed with ATC (VATSIM/ICAO...)
+ - **_Origin ICAO:_** ICAO code of origin airport
+ - **_Destinaton ICAO:_** ICAO code of destination airport
+ - **_Alternate ICAO:_** ICAO code of alternate airport
+ - **_Route:_** optional route from Simbrief
+ 
+ 
