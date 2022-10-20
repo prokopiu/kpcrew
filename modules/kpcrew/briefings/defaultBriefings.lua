@@ -383,7 +383,7 @@ function ()
 	return kc_dep_brief_safety()
 end,
 kcPreference.typeInfo,"Safety Briefing|"))
-depBriefing:add(kcPreference:new("depbriefspeak",0,kcPreference.typeExecButton,"Departure Briefing|Speak |kc_speakDepBrief()"))
+-- depBriefing:add(kcPreference:new("depbriefspeak",0,kcPreference.typeExecButton,"Departure Briefing|Speak |kc_speakDepBrief()"))
 
 -- =================== TAKEOFF ==================
 local takeoff = kcPreferenceGroup:new("takeoff","TAKEOFF")

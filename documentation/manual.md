@@ -27,6 +27,8 @@ KPCrew went through several iterations, initially I called it Zibocrew. The init
  - metar (https://github.com/tjormola/metar) from tjormola which I have changed slightly to embedd it and improve the parsing
  - weatherlib (https://github.com/tjormola/weatherlib) needed by metar.lua
 
+<div style="page-break-after: always;"></div>
+
 ## Installation
 
 ### Video Manuals
@@ -132,6 +134,7 @@ These are the elements of the Control Window:
  - **[PREF]**: Shows the preferences to set for KPCrew
  - **[>]**: Minimize the control window (master window)
 	
+<div style="page-break-after: always;"></div>
 
 ### Listing and Selecting Flows
 
@@ -140,6 +143,8 @@ Each supported aircraft has an SOP defined which can be looked at by opening the
 ![SOP Window](https://raw.githubusercontent.com/prokopiu/kpcrew/kpcrew23/documentation/images/sopwindow.PNG)
 
 By double-clicking on a line, you select the respective flow. It should show in the control window. You can also use the [<-] and [->] button in the control window to move through flows. Red means the flow selected or the cursor over it, green means the flow was executed in an automatic mode and is finished. Dark green background mark procedures, black background are checklists. There are slightly different rules with checklists and procedures.
+
+<div style="page-break-after: always;"></div>
 
 ### The Flow Window
 
@@ -154,6 +159,8 @@ In this example DC POWER SWITCH is the next item to attend to and it is not corr
 You can reset the displayed flow by pressing on the RESET button. The flow can then be restarted again.
 
 ![Running flow](https://raw.githubusercontent.com/prokopiu/kpcrew/kpcrew23/documentation/images/runningflow.PNG)
+
+<div style="page-break-after: always;"></div>
 
 ### Preferences Window
 
@@ -214,6 +221,8 @@ Preferences are currently saved individually with every aircraft. You may have t
 You can use any name in the name field and save current preferences.
 
 ![PREFERENCES window](https://raw.githubusercontent.com/prokopiu/kpcrew/kpcrew23/documentation/images/loadsaveprefs.PNG)
+
+<div style="page-break-after: always;"></div>
 
 ## Briefings
 

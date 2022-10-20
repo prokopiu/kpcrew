@@ -2,6 +2,9 @@
 FlyWithLua scripts to simulate a virtual first officer in X-Plane 11. 
 THIS IS A COMPLETE REWRITE AND STILL IN ALPHA. PLEASE REMOVE ANY OLDER KPCREW FILES FROM SCRIPTS AND MODULES FOLDER!
 
+** do not use the DEPARTURE BRIEFING section and do not press the SPEAK button or X-Plane will crash!!** 
+I will fix it in the next release.
+
 ## Introduction
 Coming from the FSX/P3D world I know the FS2Crew products which I had for all payware aircraft if available. I always wished that I could get something like that for X-Plane. FlyWithLua turned out to be a great programming environment for X-Plane and I decided to try replicating something like FS2Crew for the Zibo B738. 
 
