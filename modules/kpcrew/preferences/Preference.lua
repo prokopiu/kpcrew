@@ -223,7 +223,7 @@ function kcPreference:getSaveLine()
 	if self.datatype == self.typeText then
 		return self.key .. "=\"" .. self.value .. "\"\n"
 	end
-	return self.key .. "=\"\"\n"
+	return "" --self.key .. "=\"\"\n"
 end
 
 return kcPreference

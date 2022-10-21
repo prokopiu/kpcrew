@@ -10,7 +10,6 @@
 --  Licensed under the terms of
 -- the <a href="http://www.gnu.org/licenses/gpl-2.0.html">GNU General Public License Version 2.0</a>.
 --
--- Extended/embedded version for KPCrew by Kosta Prokopiu, 2022
 -------------------------------------------------------------------------------
 
 local socket_http  = require('socket.http')
@@ -566,7 +565,7 @@ local metar_token_handlers = {
         handler = parse_metar_runway_visual_range,
     },
     {
-        pattern = '^([A-Z][A-Z][A-Z])(%d%d%d)([A-Z]*)$',
+        pattern = '^([A-Z][A-Z][A-Z])(%d%d%d)([A-Z]*)([/]*)$',
         handler = parse_metar_clouds,
     },
     {

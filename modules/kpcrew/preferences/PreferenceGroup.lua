@@ -150,7 +150,10 @@ end
 -- Save all preferences of group prefix to .preferences file
 function kcPreferenceGroup:save(filePref)
 	for _, pref in ipairs(self.preferences) do
-		filePref:write(self.name .. ":" .. pref:getSaveLine())
+		local saveLine = pref:getSaveLine()
+		if saveLine ~= "" then 
+			filePref:write(self.name .. ":" .. pref:getSaveLine())
+		end
 	end
 end	
 
