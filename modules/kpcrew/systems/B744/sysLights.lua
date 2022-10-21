@@ -1,24 +1,28 @@
--- DFLT airplane (X-Plane 11 default)
+-- B744 Sparky Boeing 747 Mod
 -- aircraft lights specific functionality
+-- ** default element for kphardware - must be in all classes of this system
 
+-- @classmod sysLights
+-- @author Kosta Prokopiu
+-- @copyright 2022 Kosta Prokopiu
 local sysLights = {
 }
 
-local TwoStateDrefSwitch = require "kpcrew.systems.TwoStateDrefSwitch"
-local TwoStateCmdSwitch = require "kpcrew.systems.TwoStateCmdSwitch"
-local TwoStateCustomSwitch = require "kpcrew.systems.TwoStateCustomSwitch"
-local SwitchGroup  = require "kpcrew.systems.SwitchGroup"
-local SimpleAnnunciator = require "kpcrew.systems.SimpleAnnunciator"
-local CustomAnnunciator = require "kpcrew.systems.CustomAnnunciator"
-local TwoStateToggleSwitch = require "kpcrew.systems.TwoStateToggleSwitch"
-local MultiStateCmdSwitch = require "kpcrew.systems.MultiStateCmdSwitch"
-local InopSwitch = require "kpcrew.systems.InopSwitch"
+local TwoStateDrefSwitch 	= require "kpcrew.systems.TwoStateDrefSwitch"
+local TwoStateCmdSwitch	 	= require "kpcrew.systems.TwoStateCmdSwitch"
+local TwoStateCustomSwitch 	= require "kpcrew.systems.TwoStateCustomSwitch"
+local SwitchGroup  			= require "kpcrew.systems.SwitchGroup"
+local SimpleAnnunciator 	= require "kpcrew.systems.SimpleAnnunciator"
+local CustomAnnunciator 	= require "kpcrew.systems.CustomAnnunciator"
+local TwoStateToggleSwitch	= require "kpcrew.systems.TwoStateToggleSwitch"
+local MultiStateCmdSwitch 	= require "kpcrew.systems.MultiStateCmdSwitch"
+local InopSwitch 			= require "kpcrew.systems.InopSwitch"
 
-local drefLandingLights = "sim/cockpit2/switches/landing_lights_switch"	
-local drefGenericLights = "sim/cockpit2/switches/generic_lights_switch"
-local drefInstrLights = "sim/cockpit2/switches/instrument_brightness_ratio"
-local drefPanelLights = "sim/cockpit2/switches/panel_brightness_ratio"
-local drefToggleSwitch = "laminar/B747/toggle_switch/position"
+local drefLandingLights 	= "sim/cockpit2/switches/landing_lights_switch"	
+local drefGenericLights 	= "sim/cockpit2/switches/generic_lights_switch"
+local drefInstrLights 		= "sim/cockpit2/switches/instrument_brightness_ratio"
+local drefPanelLights 		= "sim/cockpit2/switches/panel_brightness_ratio"
+local drefToggleSwitch 		= "laminar/B747/toggle_switch/position"
 
 ----------- Switches
 

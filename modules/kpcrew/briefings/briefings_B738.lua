@@ -170,7 +170,7 @@ function kc_dep_brief_flight()
 	local briefing = "OK, I will be the pilot flying\n"
 -- [W] eather highlites
 	briefing = briefing .. "We are located at " .. activeBriefings:get("flight:originIcao") .. " parking stand " .. activeBriefings:get("taxi:parkingStand") .. "\n"
-    -- briefing = briefing .. "We have ATIS information " .. activeBriefings:get("departure:atisInfo") .. ". <The weather is " .. activeBriefings:get("information:localMetar") .. ">.\n\n"
+    briefing = briefing .. "We have ATIS information " .. activeBriefings:get("departure:atisInfo") .. ". <The weather is " .. activeBriefings:get("information:localMetar") .. ">.\n\n"
 
 -- [A] ircraft
     briefing = briefing .. "Today we are flying in a " .. kc_acf_name .. ". <Engine and aircraft details from CDU>. We have " .. kc_split(kc_MELIssues,"|")[activeBriefings:get("information:melIssues")] .. " today." .. "\n\n"
