@@ -261,8 +261,8 @@ prelPreflightProc:addItem(ProcedureItem:new("ELECTRIC HYDRAULIC PUMPS SWITCHES",
 -- add the checklists and procedures to the active sop
 local nopeProc = Procedure:new("NO PROCEDURES AVAILABLE")
 
-activeSOP:addProcedure(prelPreflightProc)
 activeSOP:addProcedure(electricalPowerUpProc)
+activeSOP:addProcedure(prelPreflightProc)
 
 function getActiveSOP()
 	return activeSOP

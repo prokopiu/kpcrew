@@ -149,7 +149,13 @@ end
 function kcPreferenceSet:save()
 	filePrefs = io.open(SCRIPT_DIRECTORY .. "..\\Modules\\kpcrew_prefs\\" .. self.filename .. ".preferences", "w+")
 	for _, group in ipairs(self.preferenceGroups) do
-		group:save(filePrefs)
+		if group:getName() == "general" then 
+			fileGenPrefs = io.open(SCRIPT_DIRECTORY .. "..\\Modules\\kpcrew_prefs\\General.preferences", "w+")
+			group:save(fileGenPrefs)
+			fileGenPrefs:close()
+		else
+			group:save(filePrefs)
+		end
 	end
 	filePrefs:close()
 end
@@ -157,10 +163,18 @@ end
 -- Read all preferences from file
 function kcPreferenceSet:load()
 	for _, group in ipairs(self.preferenceGroups) do
-		local filePrefs = io.open(SCRIPT_DIRECTORY .. "..\\Modules\\kpcrew_prefs\\" .. self.filename .. ".preferences", "r")
-		if filePrefs then
-			group:load(filePrefs)
-			filePrefs:close()
+		if group:getName() == "general" then 
+			local fileGenPrefs = io.open(SCRIPT_DIRECTORY .. "..\\Modules\\kpcrew_prefs\\General.preferences", "r")
+			if fileGenPrefs then
+				group:load(fileGenPrefs)
+				fileGenPrefs:close()
+			end
+		else
+			local filePrefs = io.open(SCRIPT_DIRECTORY .. "..\\Modules\\kpcrew_prefs\\" .. self.filename .. ".preferences", "r")
+			if filePrefs then
+				group:load(filePrefs)
+				filePrefs:close()
+			end
 		end
 	end
 end	
