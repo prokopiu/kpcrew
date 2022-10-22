@@ -35,7 +35,7 @@ sysControls.flapsSwitch 	= MultiStateCmdSwitch:new("flaps","laminar/B738/flt_ctr
 	"sim/flight_controls/flaps_down","sim/flight_controls/flaps_up",0,1,false)
 
 -- Pitch Trim
-sysControls.pitchTrimSwitch 	= TwoStateCustomSwitch:new("pitchtrim","sim/cockpit2/controls/elevator_trim",0,
+sysControls.pitchTrimSwitch = TwoStateCustomSwitch:new("pitchtrim","sim/cockpit2/controls/elevator_trim",0,
 	function () 
 		command_once("laminar/B738/flight_controls/pitch_trim_down")
 	end,

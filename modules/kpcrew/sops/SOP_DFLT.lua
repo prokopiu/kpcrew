@@ -86,12 +86,12 @@ electricalPowerUpProc:addItem(SimpleProcedureItem:new("M E L and Technical Logbo
 
 electricalPowerUpProc:addItem(SimpleProcedureItem:new("== Initial Checks"))
 electricalPowerUpProc:addItem(SimpleProcedureItem:new("==== DC Electric Power"))
-electricalPowerUpProc:addItem(IndirectProcedureItem:new("BATTERY VOLTAGE","CHECK MIN 24V",FlowItem.actorFO,2,"bat24v",
+electricalPowerUpProc:addItem(IndirectProcedureItem:new("BATTERY VOLTAGE","CHECK MIN 24V",FlowItem.actorFO,0,"bat24v",
 	function () return get("sim/flightmodel/engine/ENGN_bat_volt",0) > 23 end))
-electricalPowerUpProc:addItem(ProcedureItem:new("BATTERY SWITCH","ON",FlowItem.actorFO,2,
+electricalPowerUpProc:addItem(ProcedureItem:new("BATTERY SWITCH","ON",FlowItem.actorFO,0,
 	function () return sysElectric.batterySwitch:getStatus() == modeOn end,
 	function () 
-		sysElectric.batterySwitch:actuate(modeOn) 
+		sysElectric.batterySwitch:actuate(modeOff) 
 		if kc_is_daylight() then		
 			sysLights.domeLightSwitch:actuate(0)
 			sysLights.instrLightGroup:actuate(0)
@@ -103,25 +103,25 @@ electricalPowerUpProc:addItem(ProcedureItem:new("BATTERY SWITCH","ON",FlowItem.a
 	end))
 
 electricalPowerUpProc:addItem(SimpleProcedureItem:new("==== Hydraulic System"))
-electricalPowerUpProc:addItem(ProcedureItem:new("ELECTRIC HYDRAULIC PUMPS","OFF",FlowItem.actorFO,3,
+electricalPowerUpProc:addItem(ProcedureItem:new("ELECTRIC HYDRAULIC PUMPS","OFF",FlowItem.actorFO,0,
 	function () return sysHydraulic.elecHydPumpGroup:getStatus() == 0 end,
 	function () sysHydraulic.elecHydPumpGroup:actuate(modeOff) end))
-electricalPowerUpProc:addItem(IndirectProcedureItem:new("FLAP LEVER","UP",FlowItem.actorFO,1,"initial_flap_lever",
+electricalPowerUpProc:addItem(IndirectProcedureItem:new("FLAP LEVER","UP",FlowItem.actorFO,0,"initial_flap_lever",
 	function () return sysControls.flapsSwitch:getStatus() == 0 end))
 
 electricalPowerUpProc:addItem(SimpleProcedureItem:new("==== Other"))
-electricalPowerUpProc:addItem(ProcedureItem:new("WINDSHIELD WIPER SELECTORS","PARK/OFF",FlowItem.actorFO,2,
+electricalPowerUpProc:addItem(ProcedureItem:new("WINDSHIELD WIPER SELECTORS","PARK/OFF",FlowItem.actorFO,0,
 	function () return sysGeneral.wiperSwitch:getStatus() == 0 end,
 	function () sysGeneral.wiperSwitch:actuate(0) end))
-electricalPowerUpProc:addItem(ProcedureItem:new("LANDING GEAR LEVER","DOWN",FlowItem.actorFO,2,
+electricalPowerUpProc:addItem(ProcedureItem:new("LANDING GEAR LEVER","DOWN",FlowItem.actorFO,0,
 	function () return sysGeneral.GearSwitch:getStatus() == modeOn end,
 	function () sysGeneral.GearSwitch:actuate(modeOn) end))
-electricalPowerUpProc:addItem(ProcedureItem:new("  GREEN LANDING GEAR LIGHT","CHECK ILLUMINATED",FlowItem.actorFO,2,
+electricalPowerUpProc:addItem(ProcedureItem:new("  GREEN LANDING GEAR LIGHT","CHECK ILLUMINATED",FlowItem.actorFO,0,
 	function () return sysGeneral.gearLightsAnc:getStatus() == modeOn end))
 
 electricalPowerUpProc:addItem(SimpleProcedureItem:new("==== Activate External Power",
 	function () return activePrefSet:get("aircraft:powerup_apu") == true end))
-electricalPowerUpProc:addItem(ProcedureItem:new("  GROUND POWER","CONNECTED",FlowItem.actorFO,2,
+electricalPowerUpProc:addItem(ProcedureItem:new("  GROUND POWER","CONNECTED",FlowItem.actorFO,0,
 	function () return sysElectric.gpuSwitch:getStatus() == 1 end,
 	function () sysElectric.gpuSwitch:actuate(1) end,
 	function () return activePrefSet:get("aircraft:powerup_apu") == true end))
@@ -130,13 +130,13 @@ electricalPowerUpProc:addItem(SimpleProcedureItem:new("  Ensure that GPU is on B
 
 electricalPowerUpProc:addItem(SimpleProcedureItem:new("==== Activate APU",
 	function () return activePrefSet:get("aircraft:powerup_apu") == false end))
-electricalPowerUpProc:addItem(ProcedureItem:new("  #spell|APU#","START",FlowItem.actorFO,2,
+electricalPowerUpProc:addItem(ProcedureItem:new("  #spell|APU#","START",FlowItem.actorFO,0,
 	function () return sysElectric.apuRunningAnc:getStatus() == modeOn end,
 	function () sysElectric.apuStartSwitch:repeatOn() end,
 	function () return activePrefSet:get("aircraft:powerup_apu") == false end))
 electricalPowerUpProc:addItem(SimpleProcedureItem:new("  Start the APU if available and specific to the aircraft.",
 	function () return activePrefSet:get("aircraft:powerup_apu") == false end))
-electricalPowerUpProc:addItem(IndirectProcedureItem:new("  #spell|APU#","RUNNING",FlowItem.actorFO,1,"apu_gen_bus_off",
+electricalPowerUpProc:addItem(IndirectProcedureItem:new("  #spell|APU#","RUNNING",FlowItem.actorFO,0,"apu_gen_bus_off",
 	function () return sysElectric.apuRunningAnc:getStatus() == modeOn end,
 	function () sysElectric.apuStartSwitch:repeatOff() end,
 	function () return activePrefSet:get("aircraft:powerup_apu") == false end))
@@ -161,36 +161,36 @@ electricalPowerUpProc:addItem(SimpleProcedureItem:new("Bring #spell|APU# power o
 
 local prelPreflightProc = Procedure:new("PREL PREFLIGHT PROCEDURE","preliminary pre flight","I finished the preliminary preflight")
 prelPreflightProc:setFlightPhase(2)
-prelPreflightProc:addItem(ProcedureItem:new("ELECTRICAL POWER UP","COMPLETE",FlowItem.actorFO,1,
+prelPreflightProc:addItem(ProcedureItem:new("ELECTRICAL POWER UP","COMPLETE",FlowItem.actorFO,0,
 	function () return 
 		sysElectric.apuGenBusOff:getStatus() == 1 or
 		sysElectric.gpuOnBus:getStatus() == 1
 	end))
-prelPreflightProc:addItem(IndirectProcedureItem:new("STALL WARNING TEST 1","PERFORM",FlowItem.actorFO,2,"stall_warning_test1",
+prelPreflightProc:addItem(IndirectProcedureItem:new("STALL WARNING TEST 1","PERFORM",FlowItem.actorFO,0,"stall_warning_test1",
 	function () return get("sim/cockpit2/annunciators/stall_warning") == 1 end,
 	function () command_begin("sim/annunciator/test_stall") end))
 prelPreflightProc:addItem(SimpleProcedureItem:new("  AC power must be available"))
-prelPreflightProc:addItem(ProcedureItem:new("#exchange|XPDR|transponder#","SET 2000",FlowItem.actorFO,2,
+prelPreflightProc:addItem(ProcedureItem:new("#exchange|XPDR|transponder#","SET 2000",FlowItem.actorFO,0,
 	function () return sysRadios.xpdrCode:getStatus() == 2000 end,
 	function () command_end("sim/annunciator/test_stall") sysRadios.xpdrCode:actuate(2000) end))
-prelPreflightProc:addItem(ProcedureItem:new("COCKPIT LIGHTS","%s|(kc_is_daylight()) and \"OFF\" or \"ON\"",FlowItem.actorFO,2,
+prelPreflightProc:addItem(ProcedureItem:new("COCKPIT LIGHTS","%s|(kc_is_daylight()) and \"OFF\" or \"ON\"",FlowItem.actorFO,0,
 	function () return sysLights.domeAnc:getStatus() == (kc_is_daylight() and 0 or 1) end,
 	function () sysLights.domeLightSwitch:actuate(kc_is_daylight() and 0 or 1) end))
-prelPreflightProc:addItem(ProcedureItem:new("WING #exchange|&|and# WHEEL WELL LIGHTS","%s|(kc_is_daylight()) and \"OFF\" or \"ON\"",FlowItem.actorFO,2,
+prelPreflightProc:addItem(ProcedureItem:new("WING #exchange|&|and# WHEEL WELL LIGHTS","%s|(kc_is_daylight()) and \"OFF\" or \"ON\"",FlowItem.actorFO,0,
 	function () return sysLights.wingSwitch:getStatus() == (kc_is_daylight() and 0 or 1) and sysLights.wheelSwitch:getStatus() == (kc_is_daylight() and 0 or 1) end,
 	function () sysLights.wingSwitch:actuate(kc_is_daylight() and 0 or 1) sysLights.wheelSwitch:actuate(kc_is_daylight() and 0 or 1) end))
-prelPreflightProc:addItem(ProcedureItem:new("FUEL PUMPS","APU 1 PUMP ON, REST OFF",FlowItem.actorFO,2,
+prelPreflightProc:addItem(ProcedureItem:new("FUEL PUMPS","APU 1 PUMP ON, REST OFF",FlowItem.actorFO,0,
 	function () return sysFuel.fuelPumpGroup:getStatus() == 1 end,
 	function () sysFuel.fuelPumpGroup:actuate(modeOff) sysFuel.fuelPumpLeftAft:actuate(modeOn) end,
 	function () return not activePrefSet:get("aircraft:powerup_apu") end))
-prelPreflightProc:addItem(ProcedureItem:new("FUEL PUMPS","ALL OFF",FlowItem.actorFO,2,
+prelPreflightProc:addItem(ProcedureItem:new("FUEL PUMPS","ALL OFF",FlowItem.actorFO,0,
 	function () return sysFuel.fuelPumpGroup:getStatus() == 0 end,
 	function () sysFuel.fuelPumpGroup:actuate(modeOff) end,
 	function () return activePrefSet:get("aircraft:powerup_apu") end))
-prelPreflightProc:addItem(ProcedureItem:new("POSITION LIGHTS","ON",FlowItem.actorFO,2,
+prelPreflightProc:addItem(ProcedureItem:new("POSITION LIGHTS","ON",FlowItem.actorFO,0,
 	function () return sysLights.positionSwitch:getStatus() ~= 0 end,
 	function () sysLights.positionSwitch:actuate(modeOn) end))
-prelPreflightProc:addItem(ProcedureItem:new("#spell|MCP#","INITIALIZE",FlowItem.actorFO,2,
+prelPreflightProc:addItem(ProcedureItem:new("#spell|MCP#","INITIALIZE",FlowItem.actorFO,0,
 	function () return sysMCP.altSelector:getStatus() == activePrefSet:get("aircraft:mcp_def_alt") end,
 	function () 
 		sysMCP.fdirGroup:actuate(modeOff)
@@ -203,11 +203,11 @@ prelPreflightProc:addItem(ProcedureItem:new("#spell|MCP#","INITIALIZE",FlowItem.
 		sysMCP.vspSelector:actuate(modeOff)
 		sysMCP.discAPSwitch:actuate(modeOff)
 	end))
-prelPreflightProc:addItem(ProcedureItem:new("PARKING BRAKE","SET",FlowItem.actorFO,2,
+prelPreflightProc:addItem(ProcedureItem:new("PARKING BRAKE","SET",FlowItem.actorFO,0,
 	function () return sysGeneral.parkBrakeSwitch:getStatus() == modeOn end,
 	function () sysGeneral.parkBrakeSwitch:actuate(modeOn) end))
 prelPreflightProc:addItem(SimpleProcedureItem:new("Electric hydraulic pumps on for F/O walk-around"))
-prelPreflightProc:addItem(ProcedureItem:new("ELECTRIC HYDRAULIC PUMPS SWITCHES","ON",FlowItem.actorFO,3,
+prelPreflightProc:addItem(ProcedureItem:new("ELECTRIC HYDRAULIC PUMPS SWITCHES","ON",FlowItem.actorFO,0,
 	function () return sysHydraulic.elecHydPumpGroup:getStatus() == 1 end,
 	function () sysHydraulic.elecHydPumpGroup:actuate(modeOn) end))
 

@@ -107,7 +107,7 @@ function kcFlowExecutor:execute()
 			end
 		elseif stepState == FlowItem.RUN then
 			if step:isValid() then
-				step:speakResponseText()
+				-- step:speakResponseText()
 				if step:getWaitTime() > 0 then
 					self.flow:setState(Flow.WAIT)
 				else

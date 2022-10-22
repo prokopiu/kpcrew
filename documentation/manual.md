@@ -247,13 +247,242 @@ Flight times are:
  
 #### FLIGHT section
 
+Fields with an asterix(*) in the name are mandatory for your automatic procedures to work correctly.
+
 ![PREFERENCES window](https://raw.githubusercontent.com/prokopiu/kpcrew/kpcrew23/documentation/images/briefflight.PNG)
 
- - **Simbrief Data Load**: If you have filed a flight with Simbrief.com and provided a username in preferences then many fields in the following sections will be filled by what you have in your OFP. Italis fields can be filled from Simbrief.
+ - **Simbrief Data Load:** If you have filed a flight with Simbrief.com and provided a username in preferences then many fields in the following sections will be filled by what you have in your OFP. Italis fields can be filled from Simbrief.
  - **_ATC Callsign:_** Callsign that you filed with ATC (VATSIM/ICAO...)
- - **_Origin ICAO:_** ICAO code of origin airport
- - **_Destinaton ICAO:_** ICAO code of destination airport
+ - **_*Origin ICAO:_** ICAO code of origin airport
+ - **_*Destinaton ICAO:_** ICAO code of destination airport
  - **_Alternate ICAO:_** ICAO code of alternate airport
  - **_Route:_** optional route from Simbrief
  
+#### FLIGHT CRUISE section
+
+![PREFERENCES window](https://raw.githubusercontent.com/prokopiu/kpcrew/kpcrew23/documentation/images/flightclimb.PNG)
+
+The CRUISE section is mostly informational. You must fill out the Cruise Flight Level.
+
+ - **_Air Distance from OFP (nm):_** Air distance (considering the route waypoints) 
+ - **_*Cruise Level (FL):_** Final cruise flight level.
+ - **_Average Wind (999/99)_:** Average wind along the whole enroute part. Gives an indication of how adverse the wind will be on your flight. 
+ - **_Average Wind Component:_** Average wind component along the enroute part shows you if you have more of a tailwind, crosswind or more of a headwind and how strong it is.
+ - **_Average ISA_:** Shows the deviation from the International Standard Atmosphere temperature for your enroute altitude.
+ - **_Critical MORA (FT)_:** Critical MInimum Off-Route Altitude. MORAs give at least 1,000 feet altitude clearance above terrain along the route. The minimum MORA tells you that in an emergency you should not descend below this altitude unless you have verified that you can do so safely.
+
+#### FLIGHT FUEL & LOAD section
+
+![PREFERENCES window](https://raw.githubusercontent.com/prokopiu/kpcrew/kpcrew23/documentation/images/flightload.PNG)
+
+The FUEL & LOAD allows you to set payload and fuel and send it to the aircraft. At the moment not all aircraft and all XP versions support all of that but I am working on improving this if possible.
+
+ - **_*Takeoff Fuel KGS/LB:_** This is the calculated fuel you should have on board as a minimum. Will be loaded to XP aircraft if supported
+ - **_Final Reserve + Alternate KGS/LB:_** Final reserve and fuel needed to reach the alternate airport at destination. You should not go below this without good reasons.
+ - **Usable fuel:**  Usable fuel calculates for you how much fuel can be used for the flight without exceeding the fuel limits
+ - **_*Payload KGS/LB:_** Payload to be added. Payload is PAX and Cargo. Can be loaded in some aircraft. If it does not work you have to set it yourself.
+ - **Payload & Fuel [Load Airplane]:** Press the button to load at least the fuel and sometimes also the payload in X-Plane.
+
+#### TAXI DETAILS section
+
+![PREFERENCES window](https://raw.githubusercontent.com/prokopiu/kpcrew/kpcrew23/documentation/images/flighttaxi.PNG)
+
+If available, provide information about the parking position, the pushback, start sequence and optionally the taxi route.
+Frequencies are for use with online flying and can be directly sent to COM1 active frequency by pressing the **[<->]** button.
+
+ - **Ground Frequency:** Frequency of active Ground controller
+ - **Tower Frequency:** Frequency of the active Tower 
+ - **Parking Stand:** Parking stand number or designation
+ - **Gate/Stand:** Select if it is a gate, a stand with push or a stand you do not require push
+ - **Push Direction:** A little reminder for yourself where you should push (use Betterpushback - no integration yet)
+ - **Start Sequence:** Select which engine(s) you want to start in which sequence (aircraft specifc)
+ - **Taxi Route:** If available and for our information only provide the taxi route (e.g. from the charts or online instructions)
+
+<div style="page-break-after: always;"></div>
+
+#### DEPARTURE ATIS section
+
+Use this to note down the ATIS from online stations or copy a generated METAR.
+
+![PREFERENCES window](https://raw.githubusercontent.com/prokopiu/kpcrew/kpcrew23/documentation/images/depatis.PNG)
+
+ - **ATIS Frequency:** Frequency of ATIS service
+ - **ATIS Information:** Letter of the current ATIS information
+ - **ATIS Wind HDG/SPD:** Wind hhh/vv
+ - **ATIS Visibility m:** Visibility in meters
+ - **ATIS Weather Phenomena:** General phenomena such as rain, fog etc
+ - **ATIS Clouds:** Cloud coverage
+ - **ATIS Temp/Dewpoint:** Temperature/Dewpoint 
+ - **\*ATIS QNH:** QNH in inchHG or mb (HPA)
+ - **ATIS Trends:** Trends such as NOSIG, TEMPO
+ - **METAR [Reload METAR]:** Load the fields from a METAR in FLIGHT INFORMATION field
+
+<div style="page-break-after: always;"></div>
+
+#### DEPARTURE CLEARANCE section
+
+Use this to note down the clearance from ATC
+
+![PREFERENCES window](https://raw.githubusercontent.com/prokopiu/kpcrew/kpcrew23/documentation/images/depclrnc.PNG)
+
+ - **Clearance Frequency:** Frequency of Clearance Delivery
+ - **_*XPDR SQUAWK_:** Transponder Code
+ - **_*Transition Altitude (ft)_:** Transition Altitude in ft
+ - **_*Departure Runway_:** Departure runway designation
+ - **Runway Condition:** Runway Condition {DRY|WET|CONTAMINATED}
+ - **\*Initial Heading:** Initial heading after departure
+ - **_*Initial Altitude (ft)_:** Initial altitude
+ - **\*Initial CRS 1:** Course NAV 1
+ - **\*Initial CRS 2:** Course NAV 2
  
+<div style="page-break-after: always;"></div>
+
+#### DEPARTURE ROUTING section
+
+(may need to be revised - makes not sense in the briefing flow)
+
+![PREFERENCES window](https://raw.githubusercontent.com/prokopiu/kpcrew/kpcrew23/documentation/images/deprouting.PNG)
+
+ - **Departure Type:** {SID|VECTORS|TRACKING}
+ - **Departure Route:** Name of Standard Instrument Departure route
+ - **Departure Transition:** Transition waypoint out of the SID
+ - **NADP:** {NOT REQUIRED|SEE SID}
+ - **Departure Frequency:** Frequency of Departure controller
+
+<div style="page-break-after: always;"></div>
+
+#### DEPARTURE RETURN TO AIRPORT section
+
+Only use this if you want to be fully prepared - otherwise it is optional and not needed.
+The idea is to prepare the return to the same airport and if you need to then use the COPY button to put this in the approach flows further down.
+
+![PREFERENCES window](https://raw.githubusercontent.com/prokopiu/kpcrew/kpcrew23/documentation/images/depreturn.PNG)
+
+ - **Expect Approach:** Aircraft specific list of approach types
+ - **NAV1/ILS Frequency:** ILS (NAV1) frequency for the approach if applicable
+ - **NAV1 CRS:** Course of ILS if applicable
+ - **NAV2 Frequency:** NAV2 frequency for the approach if applicable
+ - **NAV2 CRS:** Course of NAV2 if applicable
+ - **FAF Altitude (ft):** Final approach fix altitude if applicable
+ - **Decision Height/Altitude:** Decision Height or altitude depending on your settings
+ - **Go-Around Heading:** Initial heading in case of go-around
+ - **Go-Around Altitude:** Go-around altitude
+ - **Set approach section [Copy Data]:** Use the button to copy all this into the approach section which will be used by the procedures
+ 
+<div style="page-break-after: always;"></div>
+
+#### DEPARTURE TAKEOFF section
+
+This determines all the activities and automations during the takeoff run.
+
+![PREFERENCES window](https://raw.githubusercontent.com/prokopiu/kpcrew/kpcrew23/documentation/images/takeoff.PNG)
+
+ - **T/O Thrust:** List of aircraft specific takeoff power rating modes
+ - **\*T/O Anti Ice:** Aircraft specific Anti-ice options like {NOT REQUIRED|ENGINES ONLY|ENGINES & WING}
+ - **\*T/O Packs:** Aircraft specific Packs settings like {ON|OFF|AUTO}
+ - **\*T/O Bleed Settings:** Aircraft specific Bleed air settings like {OFF|ON|UNDER PRESSURIZED}
+ - **\*Elevator Trim:** Elevator trim setting for takeoff
+ - **\*Rudder Trim:** Rudder trim setting for takeoff (usually 0 in sim)
+ - **\*Aileron Trim:** Aileron trim setting for takeoff (usually 0 in sim)
+ - **\*T/O Flaps:** Aircraft specific flap setting for takeoff
+ - **Forced Return:** On forced return you are above or below MLW {UNDERWEIGHT|OVERWEIGHT}
+ - **Departure MSA (ft):** Minimum save altitude in departure sector (might move to other section)
+ - **\*V1:** Aircraft and circumstances specific V1 speed
+ - **\*VR:** Aircraft and circumstances specific rotation speed
+ - **\*V2:** Aircraft and circumstances specific V2 speed
+ - **\*Autopilot Modes:** Aircraft specific setting of initial A/P modes e.g. {LNAV/VNAV|HDG/FLCH} for B738
+ - **Load FMS Takeoff Data [Load FMC Data]:** Copy FMS information into some fields above (does not work with all aircraft)
+
+#### DEPARTURE BRIEFING section
+
+A text you can read aloud which contains a makeshift departure briefing by the pilot flying (yourself)
+
+![PREFERENCES window](https://raw.githubusercontent.com/prokopiu/kpcrew/kpcrew23/documentation/images/depbrief.PNG)
+
+<div style="page-break-after: always;"></div>
+
+#### ARRIVAL ATIS section
+
+Use this to note down the ATIS from online stations or copy a generated METAR.
+
+![PREFERENCES window](https://raw.githubusercontent.com/prokopiu/kpcrew/kpcrew23/documentation/images/arrmetar.PNG)
+
+ - **ATIS Frequency:** Frequency of ATIS service
+ - **ATIS Information:** Letter of the current ATIS information
+ - **ATIS Wind HDG/SPD:** Wind hhh/vv
+ - **ATIS Visibility m:** Visibility in meters
+ - **ATIS Weather Phenomena:** General phenomena such as rain, fog etc
+ - **ATIS Clouds:** Cloud coverage
+ - **ATIS Temp/Dewpoint:** Temperature/Dewpoint 
+ - **\*ATIS QNH:** QNH in inchHG or mb (HPA)
+ - **ATIS Trends:** Trends such as NOSIG, TEMPO
+ - **METAR [Load Arrival METAR]:** Load the fields from a METAR in FLIGHT INFORMATION fields
+
+<div style="page-break-after: always;"></div>
+
+#### ARRIVAL DATA section
+
+![PREFERENCES window](https://raw.githubusercontent.com/prokopiu/kpcrew/kpcrew23/documentation/images/arrdata.PNG)
+
+ - **Approach Frequency:** Frequency of approach controller service
+ - **_\*Transition Level (FL):_** Active transition level at destination as Flight Level
+ - **Arrival Type:** Type of arrival as {STAR|VECTORS}
+ - **Arrival Route:** Name of Standard Arrival Route (STAR)
+ - **Arrival Transition:** Name of transition waypoint into the arrival route
+ - **Arrival MSA (ft):** Minimum Safe Altitude in arrival sector
+ - **_\*Airport Elevation (ft):_** Official airport elevation in ft (get from chart or Simbrief)
+ - **NADP:** {NOT REQUIRED|SEE SID}
+
+<div style="page-break-after: always;"></div>
+
+#### APPROACH DATA section
+
+![PREFERENCES window](https://raw.githubusercontent.com/prokopiu/kpcrew/kpcrew23/documentation/images/approach.PNG)
+
+ - **Tower Frequency:** Frequency of tower controller service
+ - **Expect Approach:** Aircraft specific list of approach types
+ - **_*Arrival Runway_:** Arrival runway designation
+ - **Runway Condition:** Runway Condition {DRY|WET|CONTAMINATED}
+ - **NAV1/ILS Frequency:** ILS (NAV1) frequency for the approach if applicable
+ - **NAV1 CRS:** Course of ILS if applicable
+ - **NAV2 Frequency:** NAV2 frequency for the approach if applicable
+ - **NAV2 CRS:** Course of NAV2 if applicable
+ - **FAF Altitude (ft):** Final approach fix altitude if applicable
+ - **Decision Height/Altitude:** Decision Height or altitude depending on your settings
+ - **Go-Around Heading:** Initial heading in case of go-around
+ - **Go-Around Altitude:** Go-around altitude
+
+<div style="page-break-after: always;"></div>
+
+#### APPROACH AIRCRAFT section
+
+![PREFERENCES window](https://raw.githubusercontent.com/prokopiu/kpcrew/kpcrew23/documentation/images/appaircraft.PNG)
+
+ - **\*Landing Flaps:** Aircraft and circumstances specific landing flap setting
+ - **\*Vref:** Aircraft and circumstances specific reference speed
+ - **\*Vapp:** Aircraft and circumstances specific approach speed (usually take Vref+5)
+ - **\*Autobrake:** Aircraft specific auto-brake setting
+ - **\*Packs:** Aircraft specific setting of the PACKS during landing
+ - **\*Anti Ice:** Aircraft and circumstances specific setting of the anti-ice systems
+ - **Reverse Thrust:** Aircraft specific reerse thrust application e.g. {NONE|MINIMUM|FULL}
+ - **Load FMS Landing Data [Load FMC Landing Data]:** Copy FMS data to fields (e.g. Vref) if available with your aircraft
+
+<div style="page-break-after: always;"></div>
+
+#### APPROACH GROUND section
+
+![PREFERENCES window](https://raw.githubusercontent.com/prokopiu/kpcrew/kpcrew23/documentation/images/appground.PNG)
+
+ - **Ground Frequency:** Ground controller frequency
+ - **Gate/Stand:** We will park at {GATE|STAND|STAND PUSH-IN REQUIRED}
+ - **Parking Position:** If available the parking position designation
+ - **\*Power at Stand:** Which type of power is availabel at stand: {EXTERNAL POWER|NO POWER}
+ - **Taxi to Position via:** If available the route from the runway exit point to your parking position.
+
+
+#### APPROACH BRIEFING section
+
+A text you can read aloud which contains a makeshift approach briefing by the pilot flying (yourself)
+
+![PREFERENCES window](https://raw.githubusercontent.com/prokopiu/kpcrew/kpcrew23/documentation/images/appbriefing.PNG)
+

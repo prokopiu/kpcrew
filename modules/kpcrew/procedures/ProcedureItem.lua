@@ -42,7 +42,7 @@ function kcProcedureItem:getWaitTime()
 			-- return 0
 		-- end
 	-- end
-	return 0
+	return self.waittime
 end
 
 -- speak the challenge text which is a combination of both

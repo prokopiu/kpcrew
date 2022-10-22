@@ -48,20 +48,20 @@ function kcChecklistItem:getWaitTime()
 	if getActivePrefs():get("general:assistance") < 2 then
 		return 0
 	else
-		if getActivePrefs():get("general:speakChecklist") == true then
+		-- if getActivePrefs():get("general:speakChecklist") == true then
 			return self.waittime
-		else
-			return 0
-		end
+		-- else
+			-- return 0
+		-- end
 	end
 end
 
 -- speak the challenge text
 function kcChecklistItem:speakResponseText()
 	if getActivePrefs():get("general:assistance") > 1 then
-		if getActivePrefs():get("general:speakChecklist") == true then
-			kc_speakNoText(0,kc_parse_string(self:getResponseText()))
-		end
+		-- if getActivePrefs():get("general:speakChecklist") == true then
+			-- kc_speakNoText(0,kc_parse_string(self:getResponseText()))
+		-- end
 	end	
 end
 
