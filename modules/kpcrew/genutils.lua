@@ -303,10 +303,12 @@ function kc_buildAtisString(station)
 -- ==== PRECIPITATION
 	local precipitation = ""
 	local descr = ""
-	if get("sim/weather/thunderstorm_percent") > 0 then
-		descr = "TS"
+	if activeBckVars:get("general:simversion") < 12000 then
+		if get("sim/weather/thunderstorm_percent") > 0 then
+			descr = "TS"
+		end
 	end
-
+	
 	if get("sim/weather/precipitation_on_aircraft_ratio") > 0 then
 		if get("sim/weather/precipitation_on_aircraft_ratio") < 0.01 then
 			precipitation = descr .. "DZ"
