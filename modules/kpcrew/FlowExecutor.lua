@@ -3,6 +3,7 @@
 -- @classmod FlowExecutor
 -- @author Kosta Prokopiu
 -- @copyright 2022 Kosta Prokopiu
+-- New branch for flow executor refactoring
 local kcFlowExecutor = {
 	type_procedure = 0,
 	type_checklist = 1,
