@@ -5,12 +5,15 @@
 -- @author Kosta Prokopiu
 -- @copyright 2022 Kosta Prokopiu
 local kcFlow = {
-    START 			= 0,
-    RUN 			= 1,
-    PAUSE  			= 2,
-	WAIT			= 3,
-	FINISH			= 4,
-	HALT			= 5,
+    NEW 			= 0, -- Ready to start flow
+    START 			= 1, -- Flow starting
+    RUN 			= 2, -- Flow running
+    PAUSE  			= 3, -- Flow paused
+	WAIT			= 4, -- Flow waiting
+	FINISH			= 5, -- Flow finished
+	HALT			= 6, -- Flow halted
+
+	states		= { "NEW", "START", "RUN", "PAUSE", "WAIT", "FINISH", "HALT" }, 
 	
 	colorNotStarted	= color_white,
 	colorInProgress = color_left_display,
@@ -31,7 +34,7 @@ function kcFlow:new(name, speakname, finalstatement)
     setmetatable(obj, kcFlow)
 
     obj.name = name
-    obj.state = self.START
+    obj.state = self.NEW
 	obj.finalStatement = finalstatement
 
     obj.items = {}
@@ -101,7 +104,7 @@ end
 -- speak the final statement of flow
 function kcFlow:speakFinal() 
 	if self.finalStatement ~= nil and self.finalSpoken == false then
-		kc_speakNoText(0,self.finalStatement)
+		kc_speakNoText(0,self:getFinalStatement())
 	end
 	self.finalSpoken = true
 end
@@ -220,7 +223,7 @@ end
 
 -- reset procedure and all below items
 function kcFlow:reset()
-    self:setState(kcFlow.START)
+    self:setState(kcFlow.NEW)
     self.activeItemIndex = 0
 	self.nameSpoken = false
 	self.finalSpoken = false

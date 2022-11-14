@@ -33,15 +33,6 @@ end
 
 -- more refined wait time only when assistance mode and voice output is needed
 function kcProcedureItem:getWaitTime()
-	-- if getActivePrefs():get("general:assistance") < 2 then
-		-- return 0
-	-- else
-		-- if getActivePrefs():get("general:speakProcedure") == true then
-			-- return self.waittime
-		-- else
-			-- return 0
-		-- end
-	-- end
 	return self.waittime
 end
 

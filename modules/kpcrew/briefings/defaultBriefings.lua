@@ -231,7 +231,8 @@ function kc_copy_return_approach()
 	activeBriefings:set("approach:decision",activeBriefings:get("departure:decision"))
 	activeBriefings:set("approach:gaheading",activeBriefings:get("departure:gaheading"))
 	activeBriefings:set("approach:gaaltitude",activeBriefings:get("departure:gaaltitude"))
-	-- activeBriefings:set("approach:rwy",activeBriefings:get("departure:rwy"))
+	activeBriefings:set("approach:rwy",activeBriefings:get("departure:rwy"))
+	activeBriefings:set("approach:rwyCond",activeBriefings:get("departure:rwyCond"))
 end
 
 -- =================== FLIGHT DATA ==================

@@ -40,21 +40,6 @@ function kcIndirectProcedureItem:new(challengeText,responseText,actor,waittime,p
     return obj
 end
 
--- specific wait time
-function kcIndirectProcedureItem:getWaitTime()
-	-- if getActivePrefs():get("general:assistance") < 2 then
-		-- return 0
-	-- end
-	-- if getActivePrefs():get("general:assistance") > 1 then
-		-- if getActivePrefs():get("general:speakProcedure") == true then
-			-- return self.waittime
-		-- else
-			-- return 0
-		-- end
-	-- end
-	return 0
-end
-
 -- reset the item to its initial state
 function kcIndirectProcedureItem:reset()
     self:setState(FlowItem.INIT)

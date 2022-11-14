@@ -10,7 +10,7 @@ require "kpcrew.systems.activities"
 local Flow = require "kpcrew.Flow"
 local FlowItem = require "kpcrew.FlowItem"
 
-kc_VERSION = "2.3-alpha2"
+kc_VERSION = "2.3-alpha5"
 kc_simversion = get("sim/version/xplane_internal_version")
 	
 
@@ -220,12 +220,12 @@ function kc_master_button()
 		end
 		if getActivePrefs():get("general:assistance") > 1 then
 			kc_mstr_button_state = kc_mstr_state_active
-			getActiveSOP():getActiveFlow():setState(Flow.RUN)
+			getActiveSOP():getActiveFlow():setState(Flow.START)
 		end
 	elseif kc_mstr_button_state == kc_mstr_state_flow_open then
 		if getActivePrefs():get("general:assistance") > 1 then
 			kc_mstr_button_state = kc_mstr_state_active
-			getActiveSOP():getActiveFlow():setState(Flow.RUN)
+			getActiveSOP():getActiveFlow():setState(Flow.START)
 		end
 	elseif kc_mstr_button_state == kc_mstr_state_active  then
 		if getActivePrefs():get("general:assistance") > 1 then
@@ -237,8 +237,26 @@ function kc_master_button()
 	elseif kc_mstr_button_state == kc_mstr_state_waiting then
 		if getActivePrefs():get("general:assistance") > 1 then
 			kc_mstr_button_state = kc_mstr_state_active
+			getActiveSOP():getActiveFlow():getActiveItem():setState(FlowItem.DONE)
 			getActiveSOP():getActiveFlow():setState(Flow.RUN)
-			getActiveSOP():getActiveFlow():getActiveItem():setState(FlowItem.RUN)
+		end
+	elseif kc_mstr_button_state == kc_mstr_state_stop then
+		if getActivePrefs():get("general:assistance") > 1 then
+			if getActiveSOP():getActiveFlow():getActiveItem():isValid() then
+				getActiveSOP():getActiveFlow():getActiveItem():setState(FlowItem.DONE)
+				if getActiveSOP():getActiveFlow():hasNextItem() then
+					if getActiveSOP():getActiveFlow():getActiveItem():isValid() then
+						getActiveSOP():getActiveFlow():setNextItemActive()
+						getActiveSOP():getActiveFlow():setState(Flow.RUN)
+						kc_mstr_button_state = kc_mstr_state_active
+					else 
+						kc_mstr_button_state = kc_mstr_state_waiting
+					end
+				else
+					getActiveSOP():getActiveFlow():setState(Flow.FINISH)
+					kc_mstr_button_state = kc_mstr_state_finished
+				end
+			end
 		end
 	elseif kc_mstr_button_state == kc_mstr_state_finished then
 		kc_mstr_button_state = kc_mstr_state_new_flow
@@ -345,13 +363,15 @@ function kc_ctrl_builder()
 	imgui.SameLine()
 	if getActiveSOP():getActiveFlow():getState() == Flow.FINISH then
 		kc_mstr_button_state = kc_mstr_state_finished
+	elseif getActiveSOP():getActiveFlow():getState() == Flow.START then
+		kc_mstr_button_state = kc_mstr_state_active
 	elseif getActiveSOP():getActiveFlow():getState() == Flow.RUN then
 		kc_mstr_button_state = kc_mstr_state_active
 	elseif getActiveSOP():getActiveFlow():getState() == Flow.PAUSE then
 		kc_mstr_button_state = kc_mstr_state_waiting
 	elseif getActiveSOP():getActiveFlow():getState() == Flow.HALT then
 		kc_mstr_button_state = kc_mstr_state_stop
-	elseif getActiveSOP():getActiveFlow():getState() == Flow.START then
+	elseif getActiveSOP():getActiveFlow():getState() == Flow.NEW then
 		kc_mstr_button_state = kc_mstr_state_new_flow
 	end
 
