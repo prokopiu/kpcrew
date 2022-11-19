@@ -105,7 +105,7 @@ function kcFlowExecutor:execute()
 				-- calculate delay for challenge spoken text
 				if self.nextStepTime == 0 then
 					local _,n = string.gsub(step:getChallengeText(),"%S+","")
-					self.nextStepTime = kc_getPcTime() + n
+					self.nextStepTime = kc_getPcTime() + n/3
 					step:setState(FlowItem.PAUSE)
 				end
 			else

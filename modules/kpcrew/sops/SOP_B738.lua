@@ -1372,7 +1372,7 @@ beforeStartProc:addItem(ProcedureItem:new("WING #exchange|&|and# WHEEL WELL LIGH
 -- ANTI COLLISION LIGHT..........................ON  (F/O)
 -- =======================================================
 
-local beforeStartChkl = Checklist:new("BEFORE START CHECKLIST","","before checklist completed")
+local beforeStartChkl = Checklist:new("BEFORE START CHECKLIST","","before start checklist completed")
 beforeStartChkl:setFlightPhase(4)
 beforeStartChkl:addItem(ChecklistItem:new("#exchange|FLIGHT DECK DOOR|before start checklist. FLIGHT DECK DOOR","CLOSED AND LOCKED",FlowItem.actorFO,0,
 	function () return sysGeneral.cockpitDoor:getStatus() == 0 end,
@@ -1526,7 +1526,7 @@ pushstartProc:addItem(ProcedureItem:new("PARKING BRAKE","SET",FlowItem.actorFO,0
 --   Verify annunciators illuminate and then extinguish.
 -- =======================================================
 
-local beforeTaxiProc = Procedure:new("BEFORE TAXI PROCEDURE","before taxi procedure","ready for before taxi checklist")
+local beforeTaxiProc = Procedure:new("BEFORE TAXI PROCEDURE","","ready for before taxi checklist")
 beforeTaxiProc:setFlightPhase(5)
 beforeTaxiProc:addItem(ProcedureItem:new("HYDRAULIC PUMP SWITCHES","ALL ON",FlowItem.actorFO,0,
 	function () return sysHydraulic.hydPumpGroup:getStatus() == 4 end,
@@ -2867,7 +2867,7 @@ turnAroundProc:addItem(IndirectProcedureItem:new("THE REST","SET","SYS",0,"c_d_8
 
 -- ============  =============
 -- add the checklists and procedures to the active sop
-activeSOP:addProcedure(testProc)
+-- activeSOP:addProcedure(testProc)
 activeSOP:addProcedure(electricalPowerUpProc)
 activeSOP:addProcedure(prelPreflightProc)
 activeSOP:addProcedure(turnAroundProc)
