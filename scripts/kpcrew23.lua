@@ -12,7 +12,6 @@ local FlowItem = require "kpcrew.FlowItem"
 
 kc_VERSION = "2.3-alpha5"
 kc_simversion = get("sim/version/xplane_internal_version")
-	
 
 logMsg ( "FWL: ** Starting KPCrew version " .. kc_VERSION .." **" )
 
