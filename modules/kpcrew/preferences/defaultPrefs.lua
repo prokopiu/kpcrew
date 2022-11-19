@@ -4,7 +4,7 @@ kc_assistance_levels = "No assistance|Guided|Some automation|Fully automatic"
 
 local generalGroup = kcPreferenceGroup:new("general","GENERAL PREFERENCES")
 generalGroup:setInitialOpen(true)
-generalGroup:add(kcPreference:new("test",1,kcPreference.typeInfo,"TEST|"))
+-- generalGroup:add(kcPreference:new("test",1,kcPreference.typeInfo,"TEST|"))
 generalGroup:add(kcPreference:new("assistance",1,kcPreference.typeList,"Assistance Level|" .. kc_assistance_levels))
 generalGroup:add(kcPreference:new("weight_kgs",true,kcPreference.typeToggle,"Weight Units|KGS|LBS"))
 generalGroup:add(kcPreference:new("baro_mode_hpa",true,kcPreference.typeToggle,"EFIS Default Baro Mode (Both)|HPA|IN"))

@@ -20,7 +20,9 @@ function kcChecklist:new(name, speakname, finalstatement)
     setmetatable(obj, kcChecklist)
 
 	obj.className = "Checklist"
-
+	obj.finalStatement = finalstatement
+	obj.spokenName = speakname
+	
     return obj
 end
 

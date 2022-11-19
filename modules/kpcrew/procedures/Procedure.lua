@@ -20,6 +20,8 @@ function kcProcedure:new(name, speakname, finalstatement)
     setmetatable(obj, kcProcedure)
 
 	obj.className = "Procedure"
+	obj.finalStatement = finalstatement
+	obj.spokenName = speakname
 
     return obj
 end
