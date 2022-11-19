@@ -19,6 +19,7 @@ local IndirectChecklistItem = require "kpcrew.checklists.IndirectChecklistItem"
 local ManualChecklistItem 	= require "kpcrew.checklists.ManualChecklistItem"
 
 local Procedure 			= require "kpcrew.procedures.Procedure"
+local State		 			= require "kpcrew.procedures.State"
 local ProcedureItem 		= require "kpcrew.procedures.ProcedureItem"
 local SimpleProcedureItem 	= require "kpcrew.procedures.SimpleProcedureItem"
 local IndirectProcedureItem = require "kpcrew.procedures.IndirectProcedureItem"
@@ -2513,8 +2514,32 @@ shutdownChkl:addItem(ChecklistItem:new("WEATHER RADAR","OFF",FlowItem.actorBOTH,
 	function () return sysEFIS.wxrPilot:getStatus() == 0 end,
 	function () sysEFIS.wxrPilot:actuate(0) sysEFIS.wxrCopilot:actuate(0) end))
 
+-- =============== SECURE CHECKLIST (F/O) ===============
+-- IRSs........................................OFF  (F/O)
+-- EMERGENCY EXIT LIGHTS.......................OFF  (F/O)
+-- WINDOW HEAT.................................OFF  (F/O)
+-- PACKS.......................................OFF  (F/O)
+-- ======================================================
+
+local secureChkl = Checklist:new("SECURE CHECKLIST","","secure checklist completed")
+secureChkl:setFlightPhase(1)
+secureChkl:addItem(ChecklistItem:new("#exchange|IRS MODE SELECTORS|SECURE CHECKLIST. I R S MODE SELECTORS","OFF",FlowItem.actorFO,0,
+	function () return sysGeneral.irsUnitGroup:getStatus() == modeOff end,
+	function () sysGeneral.irsUnitGroup:setValue(sysGeneral.irsUnitOFF) end))
+secureChkl:addItem(ChecklistItem:new("EMERGENCY EXIT LIGHTS","OFF",FlowItem.actorFO,0,
+	function () return sysGeneral.emerExitLightsSwitch:getStatus() == 0  end,
+	function () sysGeneral.emerExitLightsCover:actuate(1) sysGeneral.emerExitLightsSwitch:actuate(0) end))
+secureChkl:addItem(ChecklistItem:new("WINDOW HEAT","OFF",FlowItem.actorFO,0,
+	function () return sysAice.windowHeatGroup:getStatus() == 0 end,
+	function () sysAice.windowHeatGroup:actuate(0) end))
+secureChkl:addItem(ChecklistItem:new("PACKS","OFF",FlowItem.actorFO,0,
+	function () return sysAir.packSwitchGroup:getStatus() == sysAir.packModeOff end,
+	function () sysAir.packSwitchGroup:setValue(sysAir.packModeOff) end))
+
+-- ======== STATES =============
+
 -- ================= Cold & Dark State ==================
-local coldAndDarkProc = Procedure:new("SECURE THE AIRCRAFT","securing the aircraft","ready for secure checklist")
+local coldAndDarkProc = State:new("COLD AND DARK","securing the aircraft","ready for secure checklist")
 coldAndDarkProc:setFlightPhase(1)
 coldAndDarkProc:addItem(IndirectProcedureItem:new("OVERHEAD TOP","SET","SYS",0,"c_d_1",
 	function () return true end,
@@ -2533,7 +2558,6 @@ coldAndDarkProc:addItem(IndirectProcedureItem:new("OVERHEAD TOP","SET","SYS",0,"
 		sysGeneral.irsUnitGroup:actuate(sysGeneral.irsUnitOFF)
 		sysLights.domeLightSwitch:actuate(0)
 		sysLights.instrLightGroup:actuate(modeOff)
-		-- sysGeneral.doorGroup:actuate(0)
 	end))
 coldAndDarkProc:addItem(IndirectProcedureItem:new("OVERHEAD COLUMN 1","SET","SYS",0,"c_d_2",
 	function () return true end,
@@ -2645,33 +2669,10 @@ coldAndDarkProc:addItem(IndirectProcedureItem:new("THE REST","SET","SYS",0,"c_d_
 		sysEFIS.minsResetCopilot:actuate(0)
 	end))
 
--- =============== SECURE CHECKLIST (F/O) ===============
--- IRSs........................................OFF  (F/O)
--- EMERGENCY EXIT LIGHTS.......................OFF  (F/O)
--- WINDOW HEAT.................................OFF  (F/O)
--- PACKS.......................................OFF  (F/O)
--- ======================================================
-
-local secureChkl = Checklist:new("SECURE CHECKLIST","","secure checklist completed")
-secureChkl:setFlightPhase(1)
-secureChkl:addItem(ChecklistItem:new("#exchange|IRS MODE SELECTORS|SECURE CHECKLIST. I R S MODE SELECTORS","OFF",FlowItem.actorFO,0,
-	function () return sysGeneral.irsUnitGroup:getStatus() == modeOff end,
-	function () sysGeneral.irsUnitGroup:setValue(sysGeneral.irsUnitOFF) end))
-secureChkl:addItem(ChecklistItem:new("EMERGENCY EXIT LIGHTS","OFF",FlowItem.actorFO,0,
-	function () return sysGeneral.emerExitLightsSwitch:getStatus() == 0  end,
-	function () sysGeneral.emerExitLightsCover:actuate(1) sysGeneral.emerExitLightsSwitch:actuate(0) end))
-secureChkl:addItem(ChecklistItem:new("WINDOW HEAT","OFF",FlowItem.actorFO,0,
-	function () return sysAice.windowHeatGroup:getStatus() == 0 end,
-	function () sysAice.windowHeatGroup:actuate(0) end))
-secureChkl:addItem(ChecklistItem:new("PACKS","OFF",FlowItem.actorFO,0,
-	function () return sysAir.packSwitchGroup:getStatus() == sysAir.packModeOff end,
-	function () sysAir.packSwitchGroup:setValue(sysAir.packModeOff) end))
-
 -- ================= Turn Around State ==================
-local turnAroundProc = Procedure:new("AIRCRAFT TURN AROUND","setting up the aircraft","aircraft configured for turn around")
+local turnAroundProc = State:new("AIRCRAFT TURN AROUND","setting up the aircraft","aircraft configured for turn around")
 turnAroundProc:setFlightPhase(18)
-turnAroundProc:addItem(IndirectProcedureItem:new("OVERHEAD TOP","SET","SYS",0,"c_d_1",
-	function () return true end,
+turnAroundProc:addItem(ProcedureItem:new("OVERHEAD TOP","SET","SYS",0,true,
 	function () 
 		sysGeneral.doorL1:actuate(1)
 		set("sim/private/controls/shadow/cockpit_near_adjust",0.09)
@@ -2684,7 +2685,6 @@ turnAroundProc:addItem(IndirectProcedureItem:new("OVERHEAD TOP","SET","SYS",0,"c
 		sysEngines.eecGuardGroup:actuate(modeOff)
 		sysGeneral.irsUnitGroup:actuate(sysGeneral.irsUnitOFF)
 		command_once("laminar/B738/toggle_switch/gpu_dn")
-		-- sysGeneral.doorGroup:actuate(0)
 	end))
 turnAroundProc:addItem(SimpleProcedureItem:new("==== Activate External Power",
 	function () return activePrefSet:get("aircraft:powerup_apu") == true end))
@@ -2736,8 +2736,7 @@ turnAroundProc:addItem(IndirectProcedureItem:new("IRS MODE SELECTORS","THEN NAV"
 	function () return sysGeneral.irsUnitGroup:getStatus() == sysGeneral.irsUnitNAV*2 end,
 	function () sysGeneral.irsUnitGroup:actuate(sysGeneral.irsUnitNAV) end))
 
-turnAroundProc:addItem(IndirectProcedureItem:new("OVERHEAD COLUMN 1","SET","SYS",0,"c_d_2",
-	function () return true end,
+turnAroundProc:addItem(ProcedureItem:new("OVERHEAD COLUMN 1","SET","SYS",0,true,
 	function () 
 		sysMCP.vhfNavSwitch:actuate(0)
 		sysMCP.irsNavSwitch:setValue(0)
@@ -2748,8 +2747,7 @@ turnAroundProc:addItem(IndirectProcedureItem:new("OVERHEAD COLUMN 1","SET","SYS"
 		sysFuel.allFuelPumpGroup:actuate(modeOff)
 		sysFuel.crossFeed:actuate(modeOff)
 	end))
-turnAroundProc:addItem(IndirectProcedureItem:new("OVERHEAD COLUMN 2","SET","SYS",0,"c_d_3",
-	function () return true end,
+turnAroundProc:addItem(ProcedureItem:new("OVERHEAD COLUMN 2","SET","SYS",0,true,
 	function () 
 		sysElectric.dcPowerSwitch:actuate(sysElectric.dcPwrBAT)
 		sysElectric.stbyPowerCover:actuate(modeOff) 
@@ -2758,8 +2756,7 @@ turnAroundProc:addItem(IndirectProcedureItem:new("OVERHEAD COLUMN 2","SET","SYS"
 		sysElectric.acPowerSwitch:actuate(sysElectric.acPwrGRD)
 		sysGeneral.wiperGroup:actuate(modeOff)
 	end))
-turnAroundProc:addItem(IndirectProcedureItem:new("OVERHEAD COLUMN 3","SET","SYS",0,"c_d_4",
-	function () return true end,
+turnAroundProc:addItem(ProcedureItem:new("OVERHEAD COLUMN 3","SET","SYS",0,true,
 	function () 
 		set("laminar/B738/toggle_switch/eq_cool_exhaust",0)
 		set("laminar/B738/toggle_switch/eq_cool_supply",0)
@@ -2770,8 +2767,7 @@ turnAroundProc:addItem(IndirectProcedureItem:new("OVERHEAD COLUMN 3","SET","SYS"
 		command_once("laminar/B738/toggle_switch/seatbelt_sign_dn") 
 		sysGeneral.noSmokingSwitch:setValue(1)
 	end))
-turnAroundProc:addItem(IndirectProcedureItem:new("OVERHEAD COLUMN 4","SET","SYS",0,"c_d_5",
-	function () return true end,
+turnAroundProc:addItem(ProcedureItem:new("OVERHEAD COLUMN 4","SET","SYS",0,true,
 	function () 
 		sysAice.windowHeatGroup:actuate(0)
 		sysAice.probeHeatGroup:actuate(0)
@@ -2780,8 +2776,7 @@ turnAroundProc:addItem(IndirectProcedureItem:new("OVERHEAD COLUMN 4","SET","SYS"
 		sysHydraulic.elecHydPumpGroup:actuate(modeOff)
 		sysHydraulic.engHydPumpGroup:actuate(modeOn)
 	end))
-turnAroundProc:addItem(IndirectProcedureItem:new("OVERHEAD COLUMN 5","SET","SYS",0,"c_d_6",
-	function () return true end,
+turnAroundProc:addItem(ProcedureItem:new("OVERHEAD COLUMN 5","SET","SYS",0,true,
 	function () 
 		set("laminar/B738/toggle_switch/air_temp_source",3)
 		sysAir.contCabTemp:setValue(0.5) 
@@ -2800,8 +2795,7 @@ turnAroundProc:addItem(IndirectProcedureItem:new("OVERHEAD COLUMN 5","SET","SYS"
 		command_once("laminar/B738/toggle_switch/air_valve_ctrl_left")
 		command_once("laminar/B738/toggle_switch/air_valve_ctrl_left")
 	end))
-turnAroundProc:addItem(IndirectProcedureItem:new("LIGHT PANEL","SET","SYS",0,"c_d_7",
-	function () return true end,
+turnAroundProc:addItem(ProcedureItem:new("LIGHT PANEL","SET","SYS",0,true,
 	function () 
 		sysLights.landLightGroup:actuate(0)
 		sysLights.rwyLightGroup:actuate(0)
@@ -2819,8 +2813,7 @@ turnAroundProc:addItem(IndirectProcedureItem:new("LIGHT PANEL","SET","SYS",0,"c_
 			sysLights.logoSwitch:actuate(1)
 		end
 	end))
-turnAroundProc:addItem(IndirectProcedureItem:new("THE REST","SET","SYS",0,"c_d_8",
-	function () return true end,
+turnAroundProc:addItem(ProcedureItem:new("THE REST","SET","SYS",0,true,
 	function () 
 		if kc_is_daylight() then		
 			sysLights.domeLightSwitch:actuate(0)
@@ -2870,7 +2863,6 @@ turnAroundProc:addItem(IndirectProcedureItem:new("THE REST","SET","SYS",0,"c_d_8
 -- activeSOP:addProcedure(testProc)
 activeSOP:addProcedure(electricalPowerUpProc)
 activeSOP:addProcedure(prelPreflightProc)
-activeSOP:addProcedure(turnAroundProc)
 activeSOP:addProcedure(cduPreflightProc)
 activeSOP:addProcedure(preflightFOProc)
 activeSOP:addProcedure(preflightFO2Proc)
@@ -2895,8 +2887,12 @@ activeSOP:addChecklist(landingChkl)
 activeSOP:addProcedure(afterLandingProc)
 activeSOP:addProcedure(shutdownProc)
 activeSOP:addChecklist(shutdownChkl)
-activeSOP:addProcedure(coldAndDarkProc)
 activeSOP:addChecklist(secureChkl)
+
+-- =========== States ===========
+activeSOP:addState(turnAroundProc)
+activeSOP:addState(coldAndDarkProc)
+
 
 function getActiveSOP()
 	return activeSOP

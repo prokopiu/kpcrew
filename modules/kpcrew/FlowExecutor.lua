@@ -192,14 +192,18 @@ function kcFlowExecutor:execute()
 
 	--. At the end of the flow close window if set and speak final text
 	elseif flowState == Flow.FINISH then
-		if activePrefSet:get("general:flowAutoOpen") == true then
-			if kc_show_flow then
-				kc_toggle_flow_window()
+		if self.flow:getClassName() == "State" then 
+			self.flow:reset()
+		else
+			if activePrefSet:get("general:flowAutoOpen") == true then
+				if kc_show_flow then
+					kc_toggle_flow_window()
+				end
 			end
-		end
-		self.flow:speakFinal()
-		if activePrefSet:get("general:flowAutoJump") == true then
-			getActiveSOP():setNextFlowActive()
+			self.flow:speakFinal()
+			if activePrefSet:get("general:flowAutoJump") == true then
+				getActiveSOP():setNextFlowActive()
+			end
 		end
 	else
 		-- whatever needed when states do not match

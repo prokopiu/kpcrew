@@ -44,6 +44,7 @@ function kcSOP:new(name)
     obj.name = name
     obj.checklists = {} -- separate list of only checklists
     obj.procedures = {} -- Separate list of only procedures
+	obj.states = {} -- states
 	obj.flows = {} -- combined list of flows (chkl & proc) in sequence
 	obj.activeFlowIndex = 1
 	obj.activeChecklistIndex = 1
@@ -81,6 +82,13 @@ function kcSOP:addProcedure(procedure)
     table.insert(self.flows, procedure)
 end
 
+-- Add a state 
+-- @tparam kcState procedure object
+function kcSOP:addState(state)
+    table.insert(self.states, state)
+    table.insert(self.flows, state)
+end
+
 -- Return all registered checklists in sequence
 -- @tparam list of kcChecklist objects
 function kcSOP:getAllChecklists()
@@ -91,6 +99,12 @@ end
 -- @tparam list of kcProcedure objects
 function kcSOP:getAllProcedures()
     return self.procedures
+end
+
+-- Return all registered states
+-- @tparam list of kcProcedure objects
+function kcSOP:getAllStates()
+    return self.states
 end
 
 -- Return all registered flows (chkl & proc) in sequence
@@ -105,6 +119,16 @@ function kcSOP:getFlowNames()
 	local names = {}
 	for _, flow in ipairs(self.flows) do
 		table.insert(names, flow:getName())
+	end
+	return names
+end
+
+-- Return a list of state titles to display
+-- @treturn list of string
+function kcSOP:getStateNames()
+	local names = {}
+	for _, state in ipairs(self.states) do
+		table.insert(names, state:getName())
 	end
 	return names
 end
@@ -168,6 +192,11 @@ function kcSOP:getNumberOfFlows()
 	return table.getn(self.flows)
 end
 
+-- get the number of registered flows
+function kcSOP:getNumberOfStates()
+	return table.getn(self.states)
+end
+
 -- is there another item left or at end?
 function kcSOP:hasNextFlow()
     return self.activeFlowIndex < #self.flows
@@ -197,6 +226,31 @@ end
 
 -- render the SOP button list
 function kcSOP:render()
+	local states = self:getAllStates()
+	local flows = self:getAllFlows()
+	if table.getn(states) > 0 then
+		for _, state in ipairs(states) do
+			imgui.SetCursorPosY(imgui.GetCursorPosY() + 1)
+			local color = color_state
+			if state:getState() == Flow.FINISH then
+				color = color_green
+			end
+			-- if kc_indexOf(states,state) == self.activeFlowIndex then
+				-- color = 0xFF001F9F
+			-- end
+			imgui.PushStyleColor(imgui.constant.Col.Button, color)
+			imgui.PushStyleColor(imgui.constant.Col.ButtonActive, 0xFF001F9F)
+			imgui.PushStyleColor(imgui.constant.Col.ButtonHovered, 0xFF001F9F)
+			if imgui.Button("State: " .. state:getName(), self:getBtnWidth(), 18) then
+				self:setActiveFlowIndex(table.getn(flows) - table.getn(states) + kc_indexOf(states,state))
+			end
+			imgui.PopStyleColor()
+			imgui.PopStyleColor()
+			imgui.PopStyleColor()
+		end
+		imgui.Separator()
+	end
+	
 	imgui.PushStyleColor(imgui.constant.Col.Text, color_white)
 	imgui.SetWindowFontScale(1.05)
 	imgui.PushStyleColor(imgui.constant.Col.Button, 0xFF00007F)
@@ -204,28 +258,29 @@ function kcSOP:render()
 		self:reset()
 	end
 	imgui.PopStyleColor()
-	local flows = self:getAllFlows()
 	for _, flow in ipairs(flows) do
-		imgui.SetCursorPosY(imgui.GetCursorPosY() + 1)
-		local color = color_procedure
-		if flow:getClassName() == "Checklist" then	
-			color = color_checklist
+		if flow:getClassName() ~= "State" then
+			imgui.SetCursorPosY(imgui.GetCursorPosY() + 1)
+			local color = color_procedure
+			if flow:getClassName() == "Checklist" then	
+				color = color_checklist
+			end
+			if flow:getState() == Flow.FINISH then
+				color = color_green
+			end
+			if kc_indexOf(flows,flow) == self.activeFlowIndex then
+				color = 0xFF001F9F
+			end
+			imgui.PushStyleColor(imgui.constant.Col.Button, color)
+			imgui.PushStyleColor(imgui.constant.Col.ButtonActive, 0xFF001F9F)
+			imgui.PushStyleColor(imgui.constant.Col.ButtonHovered, 0xFF001F9F)
+			if imgui.Button(flow:getName() .. " [" .. self:getPhaseString(flow:getFlightPhase()) .. "]", self:getBtnWidth(), 18) then
+				self:setActiveFlowIndex(kc_indexOf(flows,flow))
+			end
+			imgui.PopStyleColor()
+			imgui.PopStyleColor()
+			imgui.PopStyleColor()
 		end
-		if flow:getState() == Flow.FINISH then
-			color = color_green
-		end
-		if kc_indexOf(flows,flow) == self.activeFlowIndex then
-			color = 0xFF001F9F
-		end
-        imgui.PushStyleColor(imgui.constant.Col.Button, color)
-		imgui.PushStyleColor(imgui.constant.Col.ButtonActive, 0xFF001F9F)
-		imgui.PushStyleColor(imgui.constant.Col.ButtonHovered, 0xFF001F9F)
-		if imgui.Button(flow:getName() .. " [" .. self:getPhaseString(flow:getFlightPhase()) .. "]", self:getBtnWidth(), 18) then
-			self:setActiveFlowIndex(kc_indexOf(flows,flow))
-		end
-        imgui.PopStyleColor()
-        imgui.PopStyleColor()
-        imgui.PopStyleColor()
 	end
     imgui.PopStyleColor()
 end
