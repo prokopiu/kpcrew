@@ -20,7 +20,7 @@ color_ocean_blue 	= 0xFFEC652B
 
 color_checklist		= 0xFF0F0F0F
 color_procedure		= 0xFF202000
-color_state			= 0xFF7F0000
+color_state			= 0xFF4F0000
 
 color_mcp_button	= 0xFF303030
 color_mcp_active	= 0xFF606060

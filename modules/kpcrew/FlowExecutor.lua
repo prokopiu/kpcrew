@@ -57,7 +57,7 @@ function kcFlowExecutor:execute()
 		self.nextStepTime = 0
 
 		-- if preferences have the flow windows open automatically
-		if activePrefSet:get("general:flowAutoOpen") == true then
+		if activePrefSet:get("general:flowAutoOpen") == true and self.flow:getClassName() ~= "State" then
 			if kc_show_flow ~= true or kc_flow_wnd == nil then
 				kc_wnd_flow_action = 1 -- open flow window for active flow
 				kc_toggle_flow_window()
