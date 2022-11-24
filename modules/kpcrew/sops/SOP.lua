@@ -49,8 +49,7 @@ function kcSOP:new(name)
 	obj.activeFlowIndex = 1
 	obj.activeChecklistIndex = 1
 	obj.activeProcedureIndex = 1
-    obj.bgrOnDemandProcs = {} -- list of SOP related background tasks
-    obj.bgrMonitoringProcs = {} -- list of SOP related monitoring tasks
+    obj.bgrOnDemandFlow = nil
 	
     return obj
 end
@@ -89,6 +88,12 @@ function kcSOP:addState(state)
     table.insert(self.flows, state)
 end
 
+-- Add the background procedure
+-- @tparam kcBackground procedure object
+function kcSOP:addBackground(bflow)
+    self.bgrOnDemandFlow = bflow
+end
+
 -- Return all registered checklists in sequence
 -- @tparam list of kcChecklist objects
 function kcSOP:getAllChecklists()
@@ -105,6 +110,12 @@ end
 -- @tparam list of kcProcedure objects
 function kcSOP:getAllStates()
     return self.states
+end
+
+-- Return background flow
+-- @tparam Background 
+function kcSOP:getBackgroundFlow()
+    return self.bgrOnDemandFlow
 end
 
 -- Return all registered flows (chkl & proc) in sequence

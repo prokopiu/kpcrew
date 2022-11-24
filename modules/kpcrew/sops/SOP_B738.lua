@@ -20,9 +20,11 @@ local ManualChecklistItem 	= require "kpcrew.checklists.ManualChecklistItem"
 
 local Procedure 			= require "kpcrew.procedures.Procedure"
 local State		 			= require "kpcrew.procedures.State"
+local Background 			= require "kpcrew.procedures.Background"
 local ProcedureItem 		= require "kpcrew.procedures.ProcedureItem"
 local SimpleProcedureItem 	= require "kpcrew.procedures.SimpleProcedureItem"
 local IndirectProcedureItem = require "kpcrew.procedures.IndirectProcedureItem"
+local BackgroundProcedureItem = require "kpcrew.procedures.BackgroundProcedureItem"
 
 sysLights 					= require("kpcrew.systems." .. kc_acf_icao .. ".sysLights")
 sysGeneral 					= require("kpcrew.systems." .. kc_acf_icao .. ".sysGeneral")	
@@ -99,13 +101,14 @@ activeSOP = SOP:new("Zibo Mod SOP")
 -- STANDBY POWER..................................ON (F/O)
 --   STANDBY PWR LIGHT............CHECK EXTINGUISHED (F/O)
 -- =======================================================
--- =======================================================
 
-local testProc = Checklist:new("TEST","TEST TEST","END")
+local testProc = Procedure:new("TEST","TEST","END")
 testProc:setFlightPhase(1)
-testProc:addItem(ChecklistItem:new("ENGINE START LEVERS","CUTOFF",FlowItem.actorCPT,0,
-	function () return sysEngines.startLeverGroup:getStatus() == 0 end,
-	function () sysEngines.startLeverGroup:actuate(0) end))
+testProc:addItem(ProcedureItem:new("ENGINE START LEVERS","CUTOFF",FlowItem.actorCPT,0,true,
+	function () 
+		kc_procvar_set("backgrd1",false)
+		kc_procvar_set("backgrd2",true)
+	end))
 
 
 local electricalPowerUpProc = Procedure:new("ELECTRICAL POWER UP","performing ELECTRICAL POWER UP","Power up finished")
@@ -2530,9 +2533,26 @@ turnAroundProc:addItem(ProcedureItem:new("GPU","ON BUS","SYS",0,true,
 		command_once("laminar/B738/toggle_switch/gpu_dn")
 	end))
 
+-- ============= Background Flow ==============
+local backgroundFlow = Background:new("","","")
+
+kc_procvar_initialize_bool("backgrd1", false)	
+kc_procvar_initialize_bool("backgrd2", false)	
+
+backgroundFlow:addItem(BackgroundProcedureItem:new("TEST","","SYS",0,
+	function () 
+		if kc_procvar_get("backgrd1") == true then 
+			kc_speakNoText(0,"test")
+		end
+		if kc_procvar_get("backgrd2") == true then 
+			kc_speakNoText(0,"test 2")
+		end
+	end))
+	
+
 -- ============  =============
 -- add the checklists and procedures to the active sop
--- activeSOP:addProcedure(testProc)
+activeSOP:addProcedure(testProc)
 activeSOP:addProcedure(electricalPowerUpProc)
 activeSOP:addProcedure(prelPreflightProc)
 activeSOP:addProcedure(cduPreflightProc)
@@ -2565,6 +2585,8 @@ activeSOP:addChecklist(secureChkl)
 activeSOP:addState(turnAroundProc)
 activeSOP:addState(coldAndDarkProc)
 
+-- ==== Background Flow ====
+activeSOP:addBackground(backgroundFlow)
 
 function getActiveSOP()
 	return activeSOP

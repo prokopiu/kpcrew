@@ -481,12 +481,6 @@ end
 -- flaps level during landing bck ??
 -- flaps retract during takeoff bck??
 
--- abrk off
--- abrk for takeoff
-
--- fds off
--- fds for takeoff
-
 -- 10000 feet activities up and down
 
 -- fire tests ?!? as bck
