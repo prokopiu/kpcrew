@@ -859,6 +859,17 @@ function tprint (tbl, indent)
   return toprint
 end
 
+-- ====== =process variable related utilities
+-- does procvar exist?
+function kc_procvar_exists(procvarid)
+	local procvar = getBckVars():find("procvars:" .. procvarid)
+	if procvar == nil then 
+		return false
+	else
+		return true
+	end
+end
+	
 -- toggle a boolean procvar
 function kc_procvar_toggle(procvarid)
 	local procvar = getBckVars():find("procvars:" .. procvarid)
@@ -880,6 +891,14 @@ function kc_procvar_initialize_bool(procvarid, value)
 	local procvar = getBckVars():find("procvars:" .. procvarid)
 	if procvar == nil then 
 		kc_global_procvars:add(kcPreference:new(procvarid,value,kcPreference.typeToggle,procvarid .. "|TRUE|FALSE"))
+	end
+end
+
+-- initialize a counter procvar
+function kc_procvar_initialize_count(procvarid, value)
+	local procvar = getBckVars():find("procvars:" .. procvarid)
+	if procvar == nil then 
+		kc_global_procvars:add(kcPreference:new(procvarid,value,kcPreference.typeInt,procvarid .. "|0"))
 	end
 end
 

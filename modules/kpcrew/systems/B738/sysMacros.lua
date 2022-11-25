@@ -79,14 +79,9 @@ function kc_macro_state_cold_and_dark()
 
 	if activePrefSet:get("aircraft:powerup_apu") == false then
 		sysElectric.gpuSwitch:actuate(cmdUp)
-		if get("laminar/B738/gpu_available") == 1 then
-			command_once("laminar/B738/tab/home")
-			command_once("laminar/B738/tab/menu6")
-			command_once("laminar/B738/tab/menu1")
-		end
+		kc_macro_gpu_disconnect()
 	end
 
-	-- command_once("laminar/B738/toggle_switch/gpu_up")
 	command_once("laminar/B738/push_button/flaps_0")
 	set("laminar/B738/flt_ctrls/speedbrake_lever",0)
 	sysGeneral.parkBrakeSwitch:actuate(modeOn)
@@ -132,11 +127,7 @@ function kc_macro_state_turnaround()
 	sysGeneral.irsUnitGroup:actuate(sysGeneral.irsUnitOFF)
 
 	if activePrefSet:get("aircraft:powerup_apu") == false then
-		if get("laminar/B738/gpu_available") == 0 then
-			command_once("laminar/B738/tab/home")
-			command_once("laminar/B738/tab/menu6")
-			command_once("laminar/B738/tab/menu1")
-		end
+		kc_macro_gpu_connect()
 		sysElectric.gpuSwitch:actuate(cmdDown)
 	end
 
@@ -465,6 +456,24 @@ function kc_macro_hydraulic_on()
 	sysHydraulic.engHydPumpGroup:actuate(1)
 end
 
+-- connect and start gpu
+function kc_macro_gpu_connect()
+	if get("laminar/B738/gpu_available") == 0 then
+		command_once("laminar/B738/tab/home")
+		command_once("laminar/B738/tab/menu6")
+		command_once("laminar/B738/tab/menu1")
+	end
+end
+
+-- diconnect gpu
+function kc_macro_gpu_disconnect()
+	if get("laminar/B738/gpu_available") == 1 then
+		command_once("laminar/B738/tab/home")
+		command_once("laminar/B738/tab/menu6")
+		command_once("laminar/B738/tab/menu1")
+	end
+end
+
 -- prepare engine start
 -- start 1st engine
 -- start nth engine
@@ -489,7 +498,82 @@ end
 
 -- bck callouts when needed
 
--- function kc_bck_()
--- end
+-- B738 takeoff config test
+function kc_bck_b738_toc_test(trigger)
+	if kc_procvar_exists("tocdelay") == false then
+		kc_procvar_initialize_count("tocdelay",-1)
+	end
+	if kc_procvar_get("tocdelay") == -1 then
+		kc_procvar_set("tocdelay",0)
+		set_array("sim/cockpit2/engine/actuators/throttle_ratio",0,1) 
+		set_array("sim/cockpit2/engine/actuators/throttle_ratio",1,1)
+	else
+		if kc_procvar_get("tocdelay") <= 0 then
+			set_array("sim/cockpit2/engine/actuators/throttle_ratio",0,0) 
+			set_array("sim/cockpit2/engine/actuators/throttle_ratio",1,0) 
+			kc_procvar_set(trigger,false)
+			kc_procvar_set("tocdelay",-1)
+		else
+			kc_procvar_set("tocdelay",kc_procvar_get("tocdelay")-1)
+		end
+	end
+end
+
+-- B738 OVHT fire test
+function kc_bck_b738_ovht_test(trigger)
+	if kc_procvar_exists("ovhtdelay") == false then
+		kc_procvar_initialize_count("ovhtdelay",-1)
+	end
+	if kc_procvar_get("ovhtdelay") == -1 then
+		kc_procvar_set("ovhtdelay",0)
+		sysEngines.ovhtFireTestSwitch:repeatOn()
+	else
+		if kc_procvar_get("ovhtdelay") <= 0 then
+			sysEngines.ovhtFireTestSwitch:repeatOff()
+			kc_procvar_set(trigger,false)
+			kc_procvar_set("ovhtdelay",-1)
+		else
+			kc_procvar_set("ovhtdelay",kc_procvar_get("ovhtdelay")-1)
+		end
+	end
+end
+
+-- B738 EXT1 fire test
+function kc_bck_b738_ext1_test(trigger)
+	if kc_procvar_exists("ext1delay") == false then
+		kc_procvar_initialize_count("ext1delay",-1)
+	end
+	if kc_procvar_get("ext1delay") == -1 then
+		kc_procvar_set("ext1delay",0)
+		command_begin("laminar/B738/toggle_switch/exting_test_lft")
+	else
+		if kc_procvar_get("ext1delay") <= 0 then
+			command_end("laminar/B738/toggle_switch/exting_test_lft") 
+			kc_procvar_set(trigger,false)
+			kc_procvar_set("ext1delay",-1)
+		else
+			kc_procvar_set("ext1delay",kc_procvar_get("ext1delay")-1)
+		end
+	end
+end
+
+-- B738 EXT2 fire test
+function kc_bck_b738_ext2_test(trigger)
+	if kc_procvar_exists("ext2delay") == false then
+		kc_procvar_initialize_count("ext2delay",-1)
+	end
+	if kc_procvar_get("ext2delay") == -1 then
+		kc_procvar_set("ext2delay",0)
+		command_begin("laminar/B738/toggle_switch/exting_test_rgt")
+	else
+		if kc_procvar_get("ext2delay") <= 0 then
+			command_end("laminar/B738/toggle_switch/exting_test_rgt") 
+			kc_procvar_set(trigger,false)
+			kc_procvar_set("ext2delay",-1)
+		else
+			kc_procvar_set("ext2delay",kc_procvar_get("ext2delay")-1)
+		end
+	end
+end
 
 return sysMacros
