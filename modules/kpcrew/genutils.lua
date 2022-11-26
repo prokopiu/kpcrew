@@ -20,6 +20,7 @@ color_ocean_blue 	= 0xFFEC652B
 
 color_checklist		= 0xFF0F0F0F
 color_procedure		= 0xFF202000
+color_state			= 0xFF4F0000
 
 color_mcp_button	= 0xFF303030
 color_mcp_active	= 0xFF606060
@@ -818,10 +819,12 @@ function kc_imgui_adf_radio(label,course,fine,standby,active,flip,ypos,id)
 	kc_imgui_radio(3,label,course,fine,standby,active,flip,ypos,id)
 end
 
+-- round number on given step level
 function kc_round_step(num,step)
 	return math.floor(num/step)*step
 end
 
+-- format string to thousand with dot
 function kc_format_thousand(value)
     local s = string.format("%d", math.floor(value))
     local pos = string.len(s) % 3
@@ -830,6 +833,7 @@ function kc_format_thousand(value)
     .. string.gsub(string.sub(s, pos+1), "(...)", ".%1")
 end
 
+-- table print for debugging
 function tprint (tbl, indent)
   if not indent then indent = 0 end
   local toprint = string.rep(" ", indent) .. "{\r\n"
@@ -854,3 +858,53 @@ function tprint (tbl, indent)
   toprint = toprint .. string.rep(" ", indent-2) .. "}"
   return toprint
 end
+
+-- ====== =process variable related utilities
+-- does procvar exist?
+function kc_procvar_exists(procvarid)
+	local procvar = getBckVars():find("procvars:" .. procvarid)
+	if procvar == nil then 
+		return false
+	else
+		return true
+	end
+end
+	
+-- toggle a boolean procvar
+function kc_procvar_toggle(procvarid)
+	local procvar = getBckVars():find("procvars:" .. procvarid)
+	if procvar:getValue() == true then 
+		procvar:setValue(false)
+	else
+		procvar:setValue(true)
+	end
+end
+
+-- set a procvar
+function kc_procvar_set(procvarid, value)
+	local procvar = getBckVars():find("procvars:" .. procvarid)
+	procvar:setValue(value)
+end
+
+-- initialize a boolean procvar
+function kc_procvar_initialize_bool(procvarid, value)
+	local procvar = getBckVars():find("procvars:" .. procvarid)
+	if procvar == nil then 
+		kc_global_procvars:add(kcPreference:new(procvarid,value,kcPreference.typeToggle,procvarid .. "|TRUE|FALSE"))
+	end
+end
+
+-- initialize a counter procvar
+function kc_procvar_initialize_count(procvarid, value)
+	local procvar = getBckVars():find("procvars:" .. procvarid)
+	if procvar == nil then 
+		kc_global_procvars:add(kcPreference:new(procvarid,value,kcPreference.typeInt,procvarid .. "|0"))
+	end
+end
+
+-- get boolean procvar
+function kc_procvar_get(procvarid)
+	local procvar = getBckVars():find("procvars:".. procvarid)
+	return procvar:getValue()
+end
+

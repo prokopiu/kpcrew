@@ -10,12 +10,17 @@ local Flow				= require "kpcrew.Flow"
 local FlowItem 			= require "kpcrew.FlowItem"
 
 -- Instantiate FlowExecutor
-function kcFlowExecutor:new(flow)
+function kcFlowExecutor:new(flow, bgrFlag)
     kcFlowExecutor.__index = kcFlowExecutor
     local obj = {}
     setmetatable(obj, kcFlowExecutor)
 
 	obj.flow = flow
+	if bgrFlag ~= nil then
+		obj.bgr = bgrFlag
+	else
+		obj.bgr = false
+	end
 	obj.current_step = 0
 	obj.nextStepTime = 0
 
@@ -28,9 +33,19 @@ function kcFlowExecutor:setFlow(flow)
 end
 
 -- step forward in flow or stop
-local function jump2NextStep(flow)
+local function jump2NextStep(flow, bgr)
+	local bgrFlag = false
+	if bgr == nil then
+		bgrFlag = false
+	else
+		bgrFlag = bgr
+	end
 	if not flow:hasNextItem() then
-		flow:setState(Flow.FINISH)
+		if bgrFlag == true then
+			flow:reset()
+		else
+			flow:setState(Flow.FINISH)
+		end
 	else
 		flow:setNextItemActive()
 	end
@@ -40,7 +55,12 @@ end
 function kcFlowExecutor:execute()
 
 	-- retrieve current state of flow and to be executed step
-	self.flow = getActiveSOP():getActiveFlow()
+	if self.bgr == true then
+		self.flow = getActiveSOP():getBackgroundFlow()
+		self.flow:setState(Flow.RUN)
+	else
+		self.flow = getActiveSOP():getActiveFlow()
+	end
 	local flowState = self.flow:getState()
 	local step = self.flow:getActiveItem()
 	-- stop if no valid step can be found
@@ -49,7 +69,7 @@ function kcFlowExecutor:execute()
 	end
 	-- local stepState = step:getState()
 	
-	logMsg("Flow: [" .. self.flow:getClassName() .. "] " .. "State: " .. self.flow.states[flowState+1] )
+	-- logMsg("Flow: [" .. self.flow:getClassName() .. "] " .. "State: " .. self.flow.states[flowState+1] )
 	
 	-- initializes the flow by setting it into START mode
 	if flowState == Flow.START then
@@ -57,7 +77,7 @@ function kcFlowExecutor:execute()
 		self.nextStepTime = 0
 
 		-- if preferences have the flow windows open automatically
-		if activePrefSet:get("general:flowAutoOpen") == true then
+		if activePrefSet:get("general:flowAutoOpen") == true and self.flow:getClassName() ~= "State" then
 			if kc_show_flow ~= true or kc_flow_wnd == nil then
 				kc_wnd_flow_action = 1 -- open flow window for active flow
 				kc_toggle_flow_window()
@@ -93,7 +113,7 @@ function kcFlowExecutor:execute()
 	elseif flowState == Flow.RUN then
 	
 		-- execute the flow step by step
-		logMsg("Step: [" .. step:getClassName() .. "] State: " .. step.states[step:getState()+1] .. " \"" .. step:getChallengeText() .. "\"")
+		-- logMsg("Step: [" .. step:getClassName() .. "] State: " .. step.states[step:getState()+1] .. " \"" .. step:getChallengeText() .. "\"")
 
 		-- initial state
 		if step:getState() == FlowItem.INIT then
@@ -151,7 +171,6 @@ function kcFlowExecutor:execute()
 			else
 				step:setState(FlowItem.DONE)
 			end
-
 		end
 
 		-- if in pause mode check the time and finish the item after being done
@@ -173,7 +192,7 @@ function kcFlowExecutor:execute()
 		
 		-- step is done and can be closed - next one to be selected if available
 		if step:getState() == FlowItem.DONE then
-			jump2NextStep(self.flow)
+			jump2NextStep(self.flow, self.bgr)
 		end 
 
 	-- paused
@@ -192,14 +211,18 @@ function kcFlowExecutor:execute()
 
 	--. At the end of the flow close window if set and speak final text
 	elseif flowState == Flow.FINISH then
-		if activePrefSet:get("general:flowAutoOpen") == true then
-			if kc_show_flow then
-				kc_toggle_flow_window()
+		if self.flow:getClassName() == "State" then 
+			self.flow:reset()
+		else
+			if activePrefSet:get("general:flowAutoOpen") == true then
+				if kc_show_flow then
+					kc_toggle_flow_window()
+				end
 			end
-		end
-		self.flow:speakFinal()
-		if activePrefSet:get("general:flowAutoJump") == true then
-			getActiveSOP():setNextFlowActive()
+			self.flow:speakFinal()
+			if activePrefSet:get("general:flowAutoJump") == true then
+				getActiveSOP():setNextFlowActive()
+			end
 		end
 	else
 		-- whatever needed when states do not match
