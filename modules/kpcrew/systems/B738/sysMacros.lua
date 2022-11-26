@@ -740,4 +740,65 @@ function kc_bck_b738_cargofire_test(trigger)
 	end
 end
 
+-- B738 APU START
+function kc_bck_b738_apustart(trigger)
+	local delayvar = trigger .. "delay"
+	if kc_procvar_exists(delayvar) == false then
+		kc_procvar_initialize_count(delayvar,-1)
+	end
+	if kc_procvar_get(delayvar) == -1 then
+		kc_procvar_set(delayvar,1)
+		command_once("laminar/B738/spring_toggle_switch/APU_start_pos_dn")
+		command_begin("laminar/B738/spring_toggle_switch/APU_start_pos_dn")
+	else
+		if kc_procvar_get(delayvar) <= 0 then
+			command_end("laminar/B738/spring_toggle_switch/APU_start_pos_dn")
+			kc_procvar_set(trigger,false)
+			kc_procvar_set(delayvar,-1)
+		else
+			kc_procvar_set(delayvar,kc_procvar_get(delayvar)-1)
+		end
+	end
+end
+
+-- B738 GEN1 Down
+function kc_bck_b738_gen1down(trigger)
+	local delayvar = trigger .. "delay"
+	if kc_procvar_exists(delayvar) == false then
+		kc_procvar_initialize_count(delayvar,-1)
+	end
+	if kc_procvar_get(delayvar) == -1 then
+		kc_procvar_set(delayvar,0)
+			command_begin("laminar/B738/toggle_switch/gen1_dn")
+		else
+		if kc_procvar_get(delayvar) <= 0 then
+			command_end("laminar/B738/toggle_switch/gen1_dn") 
+			kc_procvar_set(trigger,false)
+			kc_procvar_set(delayvar,-1)
+		else
+			kc_procvar_set(delayvar,kc_procvar_get(delayvar)-1)
+		end
+	end
+end
+
+-- B738 GEN2 Down
+function kc_bck_b738_gen2down(trigger)
+	local delayvar = trigger .. "delay"
+	if kc_procvar_exists(delayvar) == false then
+		kc_procvar_initialize_count(delayvar,-1)
+	end
+	if kc_procvar_get(delayvar) == -1 then
+		kc_procvar_set(delayvar,0)
+			command_begin("laminar/B738/toggle_switch/gen2_dn")
+		else
+		if kc_procvar_get(delayvar) <= 0 then
+			command_end("laminar/B738/toggle_switch/gen2_dn") 
+			kc_procvar_set(trigger,false)
+			kc_procvar_set(delayvar,-1)
+		else
+			kc_procvar_set(delayvar,kc_procvar_get(delayvar)-1)
+		end
+	end
+end
+
 return sysMacros

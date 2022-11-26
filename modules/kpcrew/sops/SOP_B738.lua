@@ -208,15 +208,13 @@ electricalPowerUpProc:addItem(IndirectProcedureItem:new("  ENGINES #exchange|EXT
 electricalPowerUpProc:addItem(ProcedureItem:new("  #spell|APU#","START",FlowItem.actorFO,0,
 	function () return sysElectric.apuRunningAnc:getStatus() == modeOn end,
 	function () 
-		command_once("laminar/B738/spring_toggle_switch/APU_start_pos_dn")
-		command_begin("laminar/B738/spring_toggle_switch/APU_start_pos_dn")
+		kc_procvar_set("apustart",true) -- background start
 	end,
 	function () return activePrefSet:get("aircraft:powerup_apu") == false end))
 electricalPowerUpProc:addItem(SimpleProcedureItem:new("    Hold APU switch in START position for 3-4 seconds.",
 	function () return activePrefSet:get("aircraft:powerup_apu") == false end))
 electricalPowerUpProc:addItem(IndirectProcedureItem:new("  #spell|APU# GEN OFF BUS LIGHT","ILLUMINATED",FlowItem.actorFO,0,"apu_gen_bus_off",
-	function () return sysElectric.apuGenBusOff:getStatus() == modeOn end,
-	function () command_end("laminar/B738/spring_toggle_switch/APU_start_pos_dn") end,
+	function () return sysElectric.apuGenBusOff:getStatus() == modeOn end,nil,
 	function () return activePrefSet:get("aircraft:powerup_apu") == false end))
 electricalPowerUpProc:addItem(ProcedureItem:new("  #spell|APU# GENERATOR BUS SWITCHES","ON",FlowItem.actorFO,0,
 	function () return sysElectric.apuGenBusOff:getStatus() == 0 end,
@@ -678,15 +676,13 @@ preflightFOProc:addItem(IndirectProcedureItem:new("ENGINES #exchange|EXT|Extingu
 preflightFOProc:addItem(ProcedureItem:new("#spell|APU#","START",FlowItem.actorFO,0,
 	function () return sysElectric.apuRunningAnc:getStatus() == modeOn end,
 	function () 
-		command_once("laminar/B738/spring_toggle_switch/APU_start_pos_dn")
-		command_begin("laminar/B738/spring_toggle_switch/APU_start_pos_dn")
+		kc_procvar_set("apustart",true) -- background start
 	end,
 	function () return activePrefSet:get("aircraft:powerup_apu") == true end))
 preflightFOProc:addItem(SimpleProcedureItem:new("  Hold APU switch in START position for 3-4 seconds.",
 	function () return activePrefSet:get("aircraft:powerup_apu") == true end))
 preflightFOProc:addItem(IndirectProcedureItem:new("#spell|APU# GEN OFF BUS LIGHT","ILLUMINATED",FlowItem.actorFO,0,"apu_gen_bus_off",
-	function () return sysElectric.apuGenBusOff:getStatus() == modeOn end,
-	function () command_end("laminar/B738/spring_toggle_switch/APU_start_pos_dn") end,
+	function () return sysElectric.apuGenBusOff:getStatus() == modeOn end,nil,
 	function () return activePrefSet:get("aircraft:powerup_apu") == true end))
 preflightFOProc:addItem(ProcedureItem:new("#spell|APU# GENERATOR BUS SWITCHES","ON",FlowItem.actorFO,0,
 	function () return sysElectric.apuGenBusOff:getStatus() == 0 end,
@@ -1442,9 +1438,12 @@ pushstartProc:addItem(IndirectProcedureItem:new("PARKING BRAKE","SET",FlowItem.a
 		activeBckVars:set("general:timesOFF",kc_dispTimeHHMM(get("sim/time/zulu_time_sec"))) 
 		sysLights.domeLightSwitch:actuate(0)
 	end))
-pushstartProc:addItem(ProcedureItem:new("PUSHBACK SERVICE","ENGAGE",FlowItem.actorCPT,2))
-pushstartProc:addItem(SimpleProcedureItem:new("Engine Start may be done during pushback or towing"))
-pushstartProc:addItem(ProcedureItem:new("COMMUNICATION WITH GROUND","ESTABLISH",FlowItem.actorCPT,2))
+pushstartProc:addItem(ProcedureItem:new("PUSHBACK SERVICE","ENGAGE",FlowItem.actorCPT,2,true,nil,
+	function () return activeBriefings:get("taxi:gateStand") > 2 end))
+pushstartProc:addItem(SimpleProcedureItem:new("Engine Start may be done during pushback or towing",
+	function () return activeBriefings:get("taxi:gateStand") > 2 end))
+pushstartProc:addItem(ProcedureItem:new("COMMUNICATION WITH GROUND","ESTABLISH",FlowItem.actorCPT,2,true,nil,
+	function () return activeBriefings:get("taxi:gateStand") > 2 end))
 pushstartProc:addItem(IndirectProcedureItem:new("PARKING BRAKE","RELEASED",FlowItem.actorFO,0,"pb_parkbrk_release",
 	function () return sysGeneral.parkBrakeSwitch:getStatus() == 0 end))
 pushstartProc:addItem(ProcedureItem:new("PACKS","OFF",FlowItem.actorFO,0,
@@ -1452,50 +1451,116 @@ pushstartProc:addItem(ProcedureItem:new("PACKS","OFF",FlowItem.actorFO,0,
 	function () sysAir.packSwitchGroup:setValue(sysAir.packModeOff) end))
 pushstartProc:addItem(ProcedureItem:new("SYSTEM A HYDRAULIC PUMP","ON",FlowItem.actorFO,0,
 	function () return sysHydraulic.engHydPump1:getStatus() == 1 and sysHydraulic.elecHydPump1:getStatus() == 1 end,
-	function () sysHydraulic.engHydPump1:actuate(1) sysHydraulic.elecHydPump1:actuate(1) end))
+	function () 
+		sysHydraulic.engHydPump1:actuate(1) 
+		sysHydraulic.elecHydPump1:actuate(1) 
+	end))
 pushstartProc:addItem(SimpleChecklistItem:new("Wait for start clearance from ground crew"))
-pushstartProc:addItem(ProcedureItem:new("START FIRST ENGINE","START ENGINE %s|activeBriefings:get(\"taxi:startSequence\") == 1 and \"2\" or \"1\"",FlowItem.actorCPT,1))
-pushstartProc:addItem(IndirectProcedureItem:new("  ENGINE START SWITCH","START SWITCH %s TO GRD|activeBriefings:get(\"taxi:startSequence\") == 1 and \"2\" or \"1\"",FlowItem.actorCPT,0,"eng_start_1_grd",
-	function () if activeBriefings:get("taxi:startSequence") == 1 then
-		return sysEngines.engStart2Switch:getStatus() == 0 else 
-		return sysEngines.engStart1Switch:getStatus() == 0 end end,
-	function () kc_speakNoText(0,"please start first engine") end))
+pushstartProc:addItem(ProcedureItem:new("START SEQUENCE","%s then %s|activeBriefings:get(\"taxi:startSequence\") == 1 and \"2\" or \"1\"|activeBriefings:get(\"taxi:startSequence\") == 1 and \"1\" or \"2\"",FlowItem.actorCPT,6,true,
+	function () 
+		local stext = string.format("Start sequence is %s then %s",activeBriefings:get("taxi:startSequence") == 1 and "2" or "1",activeBriefings:get("taxi:startSequence") == 1 and "1" or "2")
+		kc_speakNoText(0,stext)
+	end))
+pushstartProc:addItem(ProcedureItem:new("START FIRST ENGINE","START ENGINE %s|activeBriefings:get(\"taxi:startSequence\") == 1 and \"2\" or \"1\"",FlowItem.actorCPT,3))
+pushstartProc:addItem(IndirectProcedureItem:new("  ENGINE START SWITCH","START SWITCH %s TO GRD|activeBriefings:get(\"taxi:startSequence\") == 1 and \"2\" or \"1\"",FlowItem.actorFO,0,"eng_start_1_grd",
+	function () 
+		if activeBriefings:get("taxi:startSequence") == 1 then
+			return sysEngines.engStart2Switch:getStatus() == 0 
+		else 
+			return sysEngines.engStart1Switch:getStatus() == 0 
+		end 
+	end,
+	function () 
+		if activeBriefings:get("taxi:startSequence") == 1 then
+			sysEngines.engStart2Switch:actuate(0) 
+			kc_speakNoText(0,"starting engine 2")
+		else 
+			sysEngines.engStart1Switch:actuate(0) 
+			kc_speakNoText(0,"starting engine 1")
+		end 
+	end))
 pushstartProc:addItem(SimpleProcedureItem:new("  Verify that the N2 RPM increases."))
 pushstartProc:addItem(ProcedureItem:new("  N2 ROTATION","AT 25%",FlowItem.actorCPT,0,
 	function () if activeBriefings:get("taxi:startSequence") == 1 then
 		return get("laminar/B738/engine/indicators/N2_percent_2") > 24.9 else 
 		return get("laminar/B738/engine/indicators/N2_percent_1") > 24.9 end end))
 pushstartProc:addItem(IndirectProcedureItem:new("  ENGINE START LEVER","LEVER %s IDLE|activeBriefings:get(\"taxi:startSequence\") == 1 and \"2\" or \"1\"",FlowItem.actorCPT,3,"eng_start_1_lever",
-	function () if activeBriefings:get("taxi:startSequence") == 1 then
-		return sysEngines.startLever2:getStatus() == 1 else 
-		return sysEngines.startLever1:getStatus() == 1 end end,
-	function () kc_speakNoText(0,"N1 at 25 percent, start lever idle") end))
+	function () 
+		if activeBriefings:get("taxi:startSequence") == 1 then
+			return sysEngines.startLever2:getStatus() == 1 
+		else 
+			return sysEngines.startLever1:getStatus() == 1 
+		end
+	end,
+	function () 
+		kc_speakNoText(0,"N1 at 25 percent") 
+		if activeBriefings:get("taxi:startSequence") == 1 then
+			sysEngines.startLever2:actuate(1) 
+		else 
+			sysEngines.startLever1:actuate(1) 
+		end 
+	end))
 pushstartProc:addItem(SimpleProcedureItem:new("  When starter switch jumps back call STARTER CUTOUT"))
 pushstartProc:addItem(ProcedureItem:new("STARTER CUTOUT","ANNOUNCE",FlowItem.actorFO,0,
-	function () if activeBriefings:get("taxi:startSequence") == 1 then
-		return sysEngines.engStart2Switch:getStatus() == 1 else 
-		return sysEngines.engStart1Switch:getStatus() == 1 end end))
-pushstartProc:addItem(ProcedureItem:new("START SECOND ENGINE","START ENGINE %s|activeBriefings:get(\"taxi:startSequence\") == 1 and \"1\" or \"2\"",FlowItem.actorCPT,3, true,
+	function () 
+		if activeBriefings:get("taxi:startSequence") == 1 then
+			return sysEngines.engStart2Switch:getStatus() == 1 
+		else 
+			return sysEngines.engStart1Switch:getStatus() == 1 
+		end 
+	end))
+pushstartProc:addItem(ProcedureItem:new("START SECOND ENGINE","START ENGINE %s|activeBriefings:get(\"taxi:startSequence\") == 1 and \"1\" or \"2\"",FlowItem.actorCPT,5, true,
 	function () kc_speakNoText(0,"starter cutout") end))
-pushstartProc:addItem(IndirectProcedureItem:new("  ENGINE START SWITCH","START SWITCH %s TO GRD|activeBriefings:get(\"taxi:startSequence\") == 1 and \"1\" or \"2\"",FlowItem.actorCPT,3,"eng_start_2_grd",
-	function () if activeBriefings:get("taxi:startSequence") == 1 then
-		return sysEngines.engStart1Switch:getStatus() == 0 else 
-		return sysEngines.engStart2Switch:getStatus() == 0 end end,
-	function () kc_speakNoText(0,"please start second engine") end))
+pushstartProc:addItem(IndirectProcedureItem:new("  ENGINE START SWITCH","START SWITCH %s TO GRD|activeBriefings:get(\"taxi:startSequence\") == 1 and \"1\" or \"2\"",FlowItem.actorFO,3,"eng_start_2_grd",
+	function () 
+		if activeBriefings:get("taxi:startSequence") == 1 then
+			return sysEngines.engStart1Switch:getStatus() == 0 
+		else 
+			return sysEngines.engStart2Switch:getStatus() == 0 
+		end 
+	end,
+	function () 
+		if activeBriefings:get("taxi:startSequence") == 1 then
+			sysEngines.engStart1Switch:actuate(0) 
+			kc_speakNoText(0,"starting engine 1")
+		else 
+			sysEngines.engStart2Switch:actuate(0) 
+			kc_speakNoText(0,"starting engine 2")
+		end 
+	end))
 pushstartProc:addItem(ProcedureItem:new("N2 ROTATION","AT 25%",FlowItem.actorCPT,0,
-	function () if activeBriefings:get("taxi:startSequence") == 1 then
-		return get("laminar/B738/engine/indicators/N2_percent_1") > 24.9 else 
-		return get("laminar/B738/engine/indicators/N2_percent_2") > 24.9 end end))
+	function () 
+		if activeBriefings:get("taxi:startSequence") == 1 then
+			return get("laminar/B738/engine/indicators/N2_percent_1") > 24.9 
+		else 
+			return get("laminar/B738/engine/indicators/N2_percent_2") > 24.9 
+		end 
+	end))
 pushstartProc:addItem(IndirectProcedureItem:new("  ENGINE START LEVER","LEVER %s IDLE|activeBriefings:get(\"taxi:startSequence\") == 1 and \"1\" or \"2\"",FlowItem.actorCPT,3,"eng_start_2_lever",
-	function () if activeBriefings:get("taxi:startSequence") == 1 then
-		return sysEngines.startLever1:getStatus() == 1 else 
-		return sysEngines.startLever2:getStatus() == 1 end end,
-	function () kc_speakNoText(0,"N1 at 25 percent, start lever idle") end))
+	function () 
+		if activeBriefings:get("taxi:startSequence") == 1 then
+			return sysEngines.startLever1:getStatus() == 1 
+		else 
+			return sysEngines.startLever2:getStatus() == 1 
+		end 
+	end,
+	function () 
+		kc_speakNoText(0,"N1 at 25 percent") 
+		if activeBriefings:get("taxi:startSequence") == 1 then
+			sysEngines.startLever1:actuate(1) 
+		else 
+			sysEngines.startLever2:actuate(1) 
+		end 
+	end))
 pushstartProc:addItem(SimpleProcedureItem:new("  When starter switch jumps back call STARTER CUTOUT"))
 pushstartProc:addItem(ProcedureItem:new("STARTER CUTOUT","ANNOUNCE",FlowItem.actorFO,0,
-	function () if activeBriefings:get("taxi:startSequence") == 1 then
-		return sysEngines.engStart1Switch:getStatus() == 1 else 
-		return sysEngines.engStart2Switch:getStatus() == 1 end end))
+	function () 
+		if activeBriefings:get("taxi:startSequence") == 1 then
+			return sysEngines.engStart1Switch:getStatus() == 1 
+		else 
+			return sysEngines.engStart2Switch:getStatus() == 1 
+		end 
+	end))
 pushstartProc:addItem(SimpleProcedureItem:new("When pushback/towing complete"))
 pushstartProc:addItem(ProcedureItem:new("  TOW BAR DISCONNECTED","VERIFY",FlowItem.actorCPT,3,true,
 	function () kc_speakNoText(0,"starter cutout") end))
@@ -1533,10 +1598,13 @@ beforeTaxiProc:addItem(ProcedureItem:new("HYDRAULIC PUMP SWITCHES","ALL ON",Flow
 	function () kc_macro_hydraulic_on() end))
 beforeTaxiProc:addItem(ProcedureItem:new("GENERATOR 1 AND 2 SWITCHES","ON",FlowItem.actorFO,0,
 	function () return sysElectric.gen1off:getStatus() == 0 and sysElectric.gen2off:getStatus() == 0 end,
-	function () command_begin("laminar/B738/toggle_switch/gen1_dn") command_begin("laminar/B738/toggle_switch/gen2_dn") end))
+	function () 
+		kc_procvar_set("gen1down")
+		kc_procvar_set("gen2down")
+	end))
 beforeTaxiProc:addItem(ProcedureItem:new("PROBE HEAT SWITCHES","ON",FlowItem.actorFO,0,
 	function () return sysAice.probeHeatGroup:getStatus() == 2 end,
-	function () sysAice.probeHeatGroup:actuate(1) command_end("laminar/B738/toggle_switch/gen1_dn") command_end("laminar/B738/toggle_switch/gen2_dn") end))
+	function () sysAice.probeHeatGroup:actuate(1) end))
 beforeTaxiProc:addItem(ProcedureItem:new("WING ANTI-ICE SWITCH","OFF",FlowItem.actorFO,0,
 	function () return sysAice.wingAntiIce:getStatus() == 0 end,
 	function () sysAice.wingAntiIce:actuate(0) end,
@@ -2340,14 +2408,14 @@ afterLandingProc:addItem(ProcedureItem:new("FLAPS","UP",FlowItem.actorFO,0,
 	function () sysControls.flapsSwitch:setValue(0) end))
 afterLandingProc:addItem(ProcedureItem:new("#spell|APU#","START",FlowItem.actorFO,0,
 	function () return sysElectric.apuRunningAnc:getStatus() == modeOn end,
-	function () command_once("laminar/B738/spring_toggle_switch/APU_start_pos_dn")
-				command_begin("laminar/B738/spring_toggle_switch/APU_start_pos_dn") end,
+	function () 
+		kc_procvar_set("apustart")
+	end,
 	function () return activeBriefings:get("approach:powerAtGate") == 1 end))
 afterLandingProc:addItem(SimpleProcedureItem:new("  Hold APU switch in START position for 3-4 seconds.",
 	function () return activeBriefings:get("approach:powerAtGate") == 1 end))
 afterLandingProc:addItem(IndirectProcedureItem:new("  #spell|APU# GEN OFF BUS LIGHT","ILLUMINATED",FlowItem.actorFO,0,"apu_gen_bus_end",
-	function () return sysElectric.apuGenBusOff:getStatus() == modeOn end,
-	function () command_end("laminar/B738/spring_toggle_switch/APU_start_pos_dn") end,
+	function () return sysElectric.apuGenBusOff:getStatus() == modeOn end,nil,
 	function () return activeBriefings:get("approach:powerAtGate") == 1 end))
 
 -- ============= SHUTDOWN PROCEDURE (BOTH) ==============
@@ -2571,6 +2639,9 @@ kc_procvar_initialize_bool("gpwstest", false) -- B738 GPWS test
 kc_procvar_initialize_bool("oxyfotest", false) -- B738 OXY FO test
 kc_procvar_initialize_bool("oxycpttest", false) -- B738 OXY CPT test
 kc_procvar_initialize_bool("cargofiretest", false) -- B738 CARGO FIRE test
+kc_procvar_initialize_bool("apustart", false) -- B738 start apu
+kc_procvar_initialize_bool("gen1down", false) -- B738 hold GEN1 switch down
+kc_procvar_initialize_bool("gen2down", false) -- B738 hold GEN2 switch down
 
 backgroundFlow:addItem(BackgroundProcedureItem:new("","","SYS",0,
 	function () 
@@ -2609,6 +2680,15 @@ backgroundFlow:addItem(BackgroundProcedureItem:new("","","SYS",0,
 		end
 		if kc_procvar_get("cargofiretest") == true then 
 			kc_bck_b738_cargofire_test("cargofiretest")
+		end
+		if kc_procvar_get("apustart") == true then 
+			kc_bck_b738_apustart("apustart")
+		end
+		if kc_procvar_get("gen1down") == true then 
+			kc_bck_b738_gen1down("gen1down")
+		end
+		if kc_procvar_get("gen2down") == true then 
+			kc_bck_b738_gen2down("gen2down")
 		end
 	end))
 	
