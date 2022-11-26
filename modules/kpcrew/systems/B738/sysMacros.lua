@@ -500,78 +500,242 @@ end
 
 -- B738 takeoff config test
 function kc_bck_b738_toc_test(trigger)
-	if kc_procvar_exists("tocdelay") == false then
-		kc_procvar_initialize_count("tocdelay",-1)
+	local delayvar = trigger .. "delay"
+	if kc_procvar_exists(delayvar) == false then
+		kc_procvar_initialize_count(delayvar,-1)
 	end
-	if kc_procvar_get("tocdelay") == -1 then
-		kc_procvar_set("tocdelay",0)
+	if kc_procvar_get(delayvar) == -1 then
+		kc_procvar_set(delayvar,0)
 		set_array("sim/cockpit2/engine/actuators/throttle_ratio",0,1) 
 		set_array("sim/cockpit2/engine/actuators/throttle_ratio",1,1)
 	else
-		if kc_procvar_get("tocdelay") <= 0 then
+		if kc_procvar_get(delayvar) <= 0 then
 			set_array("sim/cockpit2/engine/actuators/throttle_ratio",0,0) 
 			set_array("sim/cockpit2/engine/actuators/throttle_ratio",1,0) 
 			kc_procvar_set(trigger,false)
-			kc_procvar_set("tocdelay",-1)
+			kc_procvar_set(delayvar,-1)
 		else
-			kc_procvar_set("tocdelay",kc_procvar_get("tocdelay")-1)
+			kc_procvar_set(delayvar,kc_procvar_get(delayvar)-1)
 		end
 	end
 end
 
 -- B738 OVHT fire test
 function kc_bck_b738_ovht_test(trigger)
-	if kc_procvar_exists("ovhtdelay") == false then
-		kc_procvar_initialize_count("ovhtdelay",-1)
+	local delayvar = trigger .. "delay"
+	if kc_procvar_exists(delayvar) == false then
+		kc_procvar_initialize_count(delayvar,-1)
 	end
-	if kc_procvar_get("ovhtdelay") == -1 then
-		kc_procvar_set("ovhtdelay",0)
+	if kc_procvar_get(delayvar) == -1 then
+		kc_procvar_set(delayvar,0)
 		sysEngines.ovhtFireTestSwitch:repeatOn()
 	else
-		if kc_procvar_get("ovhtdelay") <= 0 then
+		if kc_procvar_get(delayvar) <= 0 then
 			sysEngines.ovhtFireTestSwitch:repeatOff()
 			kc_procvar_set(trigger,false)
-			kc_procvar_set("ovhtdelay",-1)
+			kc_procvar_set(delayvar,-1)
 		else
-			kc_procvar_set("ovhtdelay",kc_procvar_get("ovhtdelay")-1)
+			kc_procvar_set(delayvar,kc_procvar_get(delayvar)-1)
 		end
 	end
 end
 
 -- B738 EXT1 fire test
 function kc_bck_b738_ext1_test(trigger)
-	if kc_procvar_exists("ext1delay") == false then
-		kc_procvar_initialize_count("ext1delay",-1)
+	local delayvar = trigger .. "delay"
+	if kc_procvar_exists(delayvar) == false then
+		kc_procvar_initialize_count(delayvar,-1)
 	end
-	if kc_procvar_get("ext1delay") == -1 then
-		kc_procvar_set("ext1delay",0)
+	if kc_procvar_get(delayvar) == -1 then
+		kc_procvar_set(delayvar,0)
 		command_begin("laminar/B738/toggle_switch/exting_test_lft")
 	else
-		if kc_procvar_get("ext1delay") <= 0 then
+		if kc_procvar_get(delayvar) <= 0 then
 			command_end("laminar/B738/toggle_switch/exting_test_lft") 
 			kc_procvar_set(trigger,false)
-			kc_procvar_set("ext1delay",-1)
+			kc_procvar_set(delayvar,-1)
 		else
-			kc_procvar_set("ext1delay",kc_procvar_get("ext1delay")-1)
+			kc_procvar_set(delayvar,kc_procvar_get(delayvar)-1)
 		end
 	end
 end
 
 -- B738 EXT2 fire test
 function kc_bck_b738_ext2_test(trigger)
-	if kc_procvar_exists("ext2delay") == false then
-		kc_procvar_initialize_count("ext2delay",-1)
+	local delayvar = trigger .. "delay"
+	if kc_procvar_exists(delayvar) == false then
+		kc_procvar_initialize_count(delayvar,-1)
 	end
-	if kc_procvar_get("ext2delay") == -1 then
-		kc_procvar_set("ext2delay",0)
+	if kc_procvar_get(delayvar) == -1 then
+		kc_procvar_set(delayvar,0)
 		command_begin("laminar/B738/toggle_switch/exting_test_rgt")
 	else
-		if kc_procvar_get("ext2delay") <= 0 then
+		if kc_procvar_get(delayvar) <= 0 then
 			command_end("laminar/B738/toggle_switch/exting_test_rgt") 
 			kc_procvar_set(trigger,false)
-			kc_procvar_set("ext2delay",-1)
+			kc_procvar_set(delayvar,-1)
 		else
-			kc_procvar_set("ext2delay",kc_procvar_get("ext2delay")-1)
+			kc_procvar_set(delayvar,kc_procvar_get(delayvar)-1)
+		end
+	end
+end
+
+-- B738 MACH1 OVSPD TEST
+function kc_bck_b738_mach1_test(trigger)
+	local delayvar = trigger .. "delay"
+	if kc_procvar_exists(delayvar) == false then
+		kc_procvar_initialize_count(delayvar,-1)
+	end
+	if kc_procvar_get(delayvar) == -1 then
+		kc_procvar_set(delayvar,0)
+		command_begin("laminar/B738/push_button/mach_warn1_test") 
+	else
+		if kc_procvar_get(delayvar) <= 0 then
+			command_end("laminar/B738/push_button/mach_warn1_test") 
+			kc_procvar_set(trigger,false)
+			kc_procvar_set(delayvar,-1)
+		else
+			kc_procvar_set(delayvar,kc_procvar_get(delayvar)-1)
+		end
+	end
+end
+
+-- B738 MACH2 OVSPD TEST
+function kc_bck_b738_mach2_test(trigger)
+	local delayvar = trigger .. "delay"
+	if kc_procvar_exists(delayvar) == false then
+		kc_procvar_initialize_count(delayvar,-1)
+	end
+	if kc_procvar_get(delayvar) == -1 then
+		kc_procvar_set(delayvar,0)
+		command_begin("laminar/B738/push_button/mach_warn2_test") 
+	else
+		if kc_procvar_get(delayvar) <= 0 then
+			command_end("laminar/B738/push_button/mach_warn2_test") 
+			kc_procvar_set(trigger,false)
+			kc_procvar_set(delayvar,-1)
+		else
+			kc_procvar_set(delayvar,kc_procvar_get(delayvar)-1)
+		end
+	end
+end
+
+-- B738 STALL1 TEST
+function kc_bck_b738_stall1_test(trigger)
+	local delayvar = trigger .. "delay"
+	if kc_procvar_exists(delayvar) == false then
+		kc_procvar_initialize_count(delayvar,-1)
+	end
+	if kc_procvar_get(delayvar) == -1 then
+		kc_procvar_set(delayvar,0)
+		command_begin("laminar/B738/push_button/stall_test1_press")
+	else
+		if kc_procvar_get(delayvar) <= 0 then
+			command_end("laminar/B738/push_button/stall_test1_press") 
+			kc_procvar_set(trigger,false)
+			kc_procvar_set(delayvar,-1)
+		else
+			kc_procvar_set(delayvar,kc_procvar_get(delayvar)-1)
+		end
+	end
+end
+
+-- B738 STALL2 TEST
+function kc_bck_b738_stall2_test(trigger)
+	local delayvar = trigger .. "delay"
+	if kc_procvar_exists(delayvar) == false then
+		kc_procvar_initialize_count(delayvar,-1)
+	end
+	if kc_procvar_get(delayvar) == -1 then
+		kc_procvar_set(delayvar,0)
+		command_begin("laminar/B738/push_button/stall_test2_press")
+	else
+		if kc_procvar_get(delayvar) <= 0 then
+			command_end("laminar/B738/push_button/stall_test2_press")
+			kc_procvar_set(trigger,false)
+			kc_procvar_set(delayvar,-1)
+		else
+			kc_procvar_set(delayvar,kc_procvar_get(delayvar)-1)
+		end
+	end
+end
+
+-- B738 GPWS TEST
+function kc_bck_b738_gpws_test(trigger)
+	local delayvar = trigger .. "delay"
+	if kc_procvar_exists(delayvar) == false then
+		kc_procvar_initialize_count(delayvar,-1)
+	end
+	if kc_procvar_get(delayvar) == -1 then
+		kc_procvar_set(delayvar,0)
+		command_begin("laminar/B738/push_button/gpws_test") 
+	else
+		if kc_procvar_get(delayvar) <= 0 then
+			command_end("laminar/B738/push_button/gpws_test") 
+			kc_procvar_set(trigger,false)
+			kc_procvar_set(delayvar,-1)
+		else
+			kc_procvar_set(delayvar,kc_procvar_get(delayvar)-1)
+		end
+	end
+end
+
+-- B738 OXYGEN FO TEST
+function kc_bck_b738_oxyfo_test(trigger)
+	local delayvar = trigger .. "delay"
+	if kc_procvar_exists(delayvar) == false then
+		kc_procvar_initialize_count(delayvar,-1)
+	end
+	if kc_procvar_get(delayvar) == -1 then
+		kc_procvar_set(delayvar,0)
+		command_begin("laminar/B738/push_button/oxy_test_fo")
+	else
+		if kc_procvar_get(delayvar) <= 0 then
+			command_end("laminar/B738/push_button/oxy_test_fo")  
+			kc_procvar_set(trigger,false)
+			kc_procvar_set(delayvar,-1)
+		else
+			kc_procvar_set(delayvar,kc_procvar_get(delayvar)-1)
+		end
+	end
+end
+
+-- B738 OXYGEN CPT TEST
+function kc_bck_b738_oxycpt_test(trigger)
+	local delayvar = trigger .. "delay"
+	if kc_procvar_exists(delayvar) == false then
+		kc_procvar_initialize_count(delayvar,-1)
+	end
+	if kc_procvar_get(delayvar) == -1 then
+		kc_procvar_set(delayvar,0)
+		command_begin("laminar/B738/push_button/oxy_test_cpt")
+	else
+		if kc_procvar_get(delayvar) <= 0 then
+			command_end("laminar/B738/push_button/oxy_test_cpt")  
+			kc_procvar_set(trigger,false)
+			kc_procvar_set(delayvar,-1)
+		else
+			kc_procvar_set(delayvar,kc_procvar_get(delayvar)-1)
+		end
+	end
+end
+
+-- B738 OXYGEN CPT TEST
+function kc_bck_b738_cargofire_test(trigger)
+	local delayvar = trigger .. "delay"
+	if kc_procvar_exists(delayvar) == false then
+		kc_procvar_initialize_count(delayvar,-1)
+	end
+	if kc_procvar_get(delayvar) == -1 then
+		kc_procvar_set(delayvar,0)
+		command_begin("laminar/B738/push_button/cargo_fire_test_push")
+	else
+		if kc_procvar_get(delayvar) <= 0 then
+			command_end("laminar/B738/push_button/cargo_fire_test_push")  
+			kc_procvar_set(trigger,false)
+			kc_procvar_set(delayvar,-1)
+		else
+			kc_procvar_set(delayvar,kc_procvar_get(delayvar)-1)
 		end
 	end
 end

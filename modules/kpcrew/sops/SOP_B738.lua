@@ -295,16 +295,24 @@ prelPreflightProc:addItem(ProcedureItem:new("FLIGHT DATA RECORDER SWITCH","GUARD
 	function () sysGeneral.fdrSwitch:actuate(modeOn) sysGeneral.fdrCover:actuate(modeOff) end))
 prelPreflightProc:addItem(IndirectProcedureItem:new("MACH OVERSPEED TEST 1","PERFORM",FlowItem.actorFO,0,"mach_ovspd_test1",
 	function () return get("laminar/B738/push_button/mach_warn1_pos") == 1 end,
-	function () command_begin("laminar/B738/push_button/mach_warn1_test") end))
+	function () 
+		kc_procvar_set("mach1test",true) -- background test
+	end))
 prelPreflightProc:addItem(IndirectProcedureItem:new("MACH OVERSPEED TEST 2","PERFORM",FlowItem.actorFO,0,"mach_ovspd_test2",
 	function () return get("laminar/B738/push_button/mach_warn2_pos") == 1 end,
-	function () command_end("laminar/B738/push_button/mach_warn1_test") command_begin("laminar/B738/push_button/mach_warn2_test") end))
+	function () 
+		kc_procvar_set("mach2test",true) -- background test
+	end))
 prelPreflightProc:addItem(IndirectProcedureItem:new("STALL WARNING TEST 1","PERFORM",FlowItem.actorFO,0,"stall_warning_test1",
 	function () return get("laminar/B738/push_button/stall_test1") == 1 end,
-	function () command_end("laminar/B738/push_button/mach_warn2_test") command_begin("laminar/B738/push_button/stall_test1_press") end))
+	function () 
+		kc_procvar_set("stall1test",true) -- background test
+	end))
 prelPreflightProc:addItem(IndirectProcedureItem:new("STALL WARNING TEST 2","PERFORM",FlowItem.actorFO,0,"stall_warning_test",
 	function () return get("laminar/B738/push_button/stall_test2") == 1 end,
-	function () command_end("laminar/B738/push_button/stall_test1_press") command_begin("laminar/B738/push_button/stall_test2_press") end))
+	function () 
+		kc_procvar_set("stall2test",true) -- background test
+	end))
 prelPreflightProc:addItem(SimpleProcedureItem:new("  Wait for 4 minutes AC power if not functioning"))
 prelPreflightProc:addItem(ProcedureItem:new("VOICE RECORDER SWITCH","AUTO",FlowItem.actorFO,0,
 	function () return  sysGeneral.vcrSwitch:getStatus() == 0 end,
@@ -313,7 +321,7 @@ prelPreflightProc:addItem(ProcedureItem:new("VOICE RECORDER SWITCH","AUTO",FlowI
 prelPreflightProc:addItem(SimpleProcedureItem:new("==== Engine Panel"))
 prelPreflightProc:addItem(ProcedureItem:new("EEC SWITCHES","ON",FlowItem.actorFO,0,
 	function () return sysEngines.eecSwitchGroup:getStatus() == 0 end,
-	function () command_end("laminar/B738/push_button/stall_test2_press") sysEngines.eecSwitchGroup:actuate(1) end))
+	function () sysEngines.eecSwitchGroup:actuate(1) end))
 prelPreflightProc:addItem(ProcedureItem:new("EEC GUARDS","CLOSED",FlowItem.actorFO,0,
 	function () return sysEngines.eecGuardGroup:getStatus() == 0 end,
 	function () sysEngines.eecGuardGroup:actuate(0) end))
@@ -325,7 +333,7 @@ prelPreflightProc:addItem(ProcedureItem:new("REVERSER FAIL LIGHTS","EXTINGUISHED
 prelPreflightProc:addItem(SimpleProcedureItem:new("==== IRS Alignment"))
 prelPreflightProc:addItem(IndirectProcedureItem:new("IRS MODE SELECTORS","OFF",FlowItem.actorFO,0,"irs_mode_initial_off",
 	function () return sysGeneral.irsUnitGroup:getStatus() == modeOff end,
-	function () command_end("laminar/B738/push_button/stall_test2_press") sysGeneral.irsUnitGroup:actuate(sysGeneral.irsUnitOFF) end))
+	function () sysGeneral.irsUnitGroup:actuate(sysGeneral.irsUnitOFF) end))
 prelPreflightProc:addItem(IndirectProcedureItem:new("IRS MODE SELECTORS","ALIGN",FlowItem.actorFO,0,"irs_mode_align",
 	function () return sysGeneral.irsUnitGroup:getStatus() == sysGeneral.irsUnitALIGN*2 end,
 	function () sysGeneral.irsUnitGroup:actuate(sysGeneral.irsUnitALIGN) end))
@@ -348,7 +356,10 @@ prelPreflightProc:addItem(ProcedureItem:new("COCKPIT LIGHTS","%s|(kc_is_daylight
 	function () sysLights.domeLightSwitch:actuate(kc_is_daylight() and 0 or -1) end))
 prelPreflightProc:addItem(ProcedureItem:new("WING #exchange|&|and# WHEEL WELL LIGHTS","%s|(kc_is_daylight()) and \"OFF\" or \"ON\"",FlowItem.actorFO,0,
 	function () return sysLights.wingSwitch:getStatus() == (kc_is_daylight() and 0 or 1) and sysLights.wheelSwitch:getStatus() == (kc_is_daylight() and 0 or 1) end,
-	function () sysLights.wingSwitch:actuate(kc_is_daylight() and 0 or 1) sysLights.wheelSwitch:actuate(kc_is_daylight() and 0 or 1) end))
+	function () 
+		sysLights.wingSwitch:actuate(kc_is_daylight() and 0 or 1) 
+		sysLights.wheelSwitch:actuate(kc_is_daylight() and 0 or 1) 
+	end))
 prelPreflightProc:addItem(ProcedureItem:new("FUEL PUMPS","APU 1 PUMP ON, REST OFF",FlowItem.actorFO,0,
 	function () return sysFuel.allFuelPumpGroup:getStatus() == 1 end,
 	function () kc_macro_fuelpumps_stand() end,
@@ -373,17 +384,23 @@ prelPreflightProc:addItem(ProcedureItem:new("#spell|MCP#","INITIALIZE",FlowItem.
 prelPreflightProc:addItem(ProcedureItem:new("PARKING BRAKE","SET",FlowItem.actorFO,0,
 	function () return sysGeneral.parkBrakeSwitch:getStatus() == modeOn end,
 	function () sysGeneral.parkBrakeSwitch:actuate(modeOn) end))
-prelPreflightProc:addItem(IndirectProcedureItem:new("GPWS SYSTEM TEST","PERFORM",FlowItem.actorFO,0,"gpwstest",
+prelPreflightProc:addItem(IndirectProcedureItem:new("GPWS SYSTEM TEST","PERFORM",FlowItem.actorFO,0,"gpws_test",
 	function () return get("laminar/B738/system/gpws_test_running") > 0 end,
-	function () command_begin("laminar/B738/push_button/gpws_test") end))
+	function () 
+		kc_procvar_set("gpwstest",true) -- background test
+	end))
 prelPreflightProc:addItem(ProcedureItem:new("#spell|IFE# & GALLEY POWER","ON",FlowItem.actorFO,0,
 	function () return sysElectric.ifePwr:getStatus() == modeOn and sysElectric.cabUtilPwr:getStatus() == modeOn end,
-	function () command_end("laminar/B738/push_button/gpws_test") sysElectric.ifePwr:actuate(modeOn) sysElectric.cabUtilPwr:actuate(modeOn) end))
+	function () 
+		sysElectric.ifePwr:actuate(modeOn) 
+		sysElectric.cabUtilPwr:actuate(modeOn) 
+	end))
 prelPreflightProc:addItem(SimpleProcedureItem:new("Electric hydraulic pumps on for F/O walk-around"))
 prelPreflightProc:addItem(ProcedureItem:new("ELECTRIC HYDRAULIC PUMPS SWITCHES","ON",FlowItem.actorFO,0,
 	function () return sysHydraulic.elecHydPumpGroup:getStatus() == 2 end,
-	function () sysHydraulic.elecHydPumpGroup:actuate(modeOn) 
-				kc_wnd_brief_action=1
+	function () 
+		sysHydraulic.elecHydPumpGroup:actuate(modeOn) 
+		kc_wnd_brief_action=1
 	end))
 
 -- ==================== CDU Preflight ====================
@@ -955,12 +972,14 @@ preflightFOProc:addItem(ProcedureItem:new("LOWER DISPLAY UNIT SELECTOR","NORM",F
 	function () sysGeneral.lowerDuFO:setValue(0) end))
 preflightFOProc:addItem(IndirectProcedureItem:new("OXYGEN","TEST AND SET",FlowItem.actorFO,0,"oxygentestedfo",
 	function () return get("laminar/B738/push_button/oxy_test_fo_pos") == 1 end,
-	function () command_begin("laminar/B738/push_button/oxy_test_fo")  end))
+	function () 
+		kc_procvar_set("oxyfotest",true) -- background test
+	end))
 	
 preflightFOProc:addItem(SimpleProcedureItem:new("==== GROUND PROXIMITY panel"))
 preflightFOProc:addItem(ProcedureItem:new("FLAP INHIBIT SWITCH","GUARD CLOSED",FlowItem.actorFO,0,
 	function () return sysGeneral.flapInhibitCover:getStatus() == 0 end,
-	function () command_end("laminar/B738/push_button/oxy_test_fo") sysGeneral.flapInhibitCover:actuate(0) end))
+	function () sysGeneral.flapInhibitCover:actuate(0) end))
 preflightFOProc:addItem(ProcedureItem:new("GEAR INHIBIT SWITCH","GUARD CLOSED",FlowItem.actorFO,0,
 	function () return sysGeneral.gearInhibitCover:getStatus() == 0 end,
 	function () sysGeneral.gearInhibitCover:actuate(0) end))
@@ -1044,13 +1063,14 @@ preflightCPTProc:addItem(ProcedureItem:new("LIGHTS TEST","OFF",FlowItem.actorCPT
 	function () kc_speakNoText(0,"test all lights then turn test off") end))
 preflightCPTProc:addItem(IndirectProcedureItem:new("OXYGEN","TEST AND SET",FlowItem.actorCPT,0,"oxygentestedcpt",
 	function () return get("laminar/B738/push_button/oxy_test_cpt_pos") == 1 end,
-	function () command_begin("laminar/B738/push_button/oxy_test_cpt") end))
+	function () 
+		kc_procvar_set("oxycpttest",true) -- background test
+	end))
 
 preflightCPTProc:addItem(SimpleProcedureItem:new("==== EFIS control panel"))
 preflightCPTProc:addItem(ProcedureItem:new("MINIMUMS REFERENCE SELECTOR","%s|(activePrefSet:get(\"aircraft:efis_mins_dh\")) and \"RADIO\" or \"BARO\"",FlowItem.actorCPT,0,
 	function () return ((sysEFIS.minsTypePilot:getStatus() == 0) == activePrefSet:get("aircraft:efis_mins_dh")) end,
 	function () 
-		command_end("laminar/B738/push_button/oxy_test_cpt") 
 		local flag = 0 
 		if activePrefSet:get("aircraft:efis_mins_dh") then flag=0 else flag=1 end
 		sysEFIS.minsTypePilot:actuate(flag) 
@@ -1158,16 +1178,19 @@ preflightCPTProc:addItem(ProcedureItem:new("STABILIZER TRIM CUTOUT SWITCHES","NO
 	function () return get("laminar/B738/toggle_switch/ap_trim_lock_pos") == 0 and
 		get("laminar/B738/toggle_switch/el_trim_lock_pos") == 0 and
 		get("laminar/B738/toggle_switch/ap_trim_pos") == 0 and
-		get("laminar/B738/toggle_switch/el_trim_pos") == 0 end,
+		get("laminar/B738/toggle_switch/el_trim_pos") == 0 
+	end,
 	function () set("laminar/B738/toggle_switch/ap_trim_lock_pos",0)
 		set("laminar/B738/toggle_switch/el_trim_lock_pos",0)
 		set("laminar/B738/toggle_switch/ap_trim_pos",0)
-		set("laminar/B738/toggle_switch/el_trim_pos",0) end))
-preflightCPTProc:addItem(IndirectProcedureItem:new("CARGO FIRE TEST","PERFORM",FlowItem.actorCPT,3,"cargofiretest",
+		set("laminar/B738/toggle_switch/el_trim_pos",0) 
+	end))
+preflightCPTProc:addItem(IndirectProcedureItem:new("CARGO FIRE TEST","PERFORM",FlowItem.actorCPT,3,"cargo_fire_test",
 	function () return get("laminar/B738/push_botton/cargo_fire_test") == 1 end,
-	function () command_begin("laminar/B738/push_button/cargo_fire_test_push") end))
-preflightCPTProc:addItem(ProcedureItem:new("WEATHER RADAR PANEL","SET",FlowItem.actorCPT,0,true,
-	function () command_end("laminar/B738/push_button/cargo_fire_test_push") end))
+	function () 
+		kc_procvar_set("cargofiretest",true) -- background test
+	end))
+preflightCPTProc:addItem(ProcedureItem:new("WEATHER RADAR PANEL","SET",FlowItem.actorCPT,0,true,nil))
 preflightCPTProc:addItem(ProcedureItem:new("TRANSPONDER PANEL","SET",FlowItem.actorCPT,0,true,
 	function ()
 		sysRadios.xpdrCode:actuate(2000)
@@ -2537,9 +2560,17 @@ turnAroundProc:addItem(ProcedureItem:new("GPU","ON BUS","SYS",0,true,
 local backgroundFlow = Background:new("","","")
 
 kc_procvar_initialize_bool("toctest", false) -- B738 takeoff config test
-kc_procvar_initialize_bool("ovhttest", false) -- B738 takeoff OVHT fire test
-kc_procvar_initialize_bool("ext1test", false) -- B738 takeoff EXT1 fire test
-kc_procvar_initialize_bool("ext2test", false) -- B738 takeoff EXT2 fire test
+kc_procvar_initialize_bool("ovhttest", false) -- B738  OVHT fire test
+kc_procvar_initialize_bool("ext1test", false) -- B738  EXT1 fire test
+kc_procvar_initialize_bool("ext2test", false) -- B738  EXT2 fire test
+kc_procvar_initialize_bool("mach1test", false) -- B738 MACH OVSPD L test
+kc_procvar_initialize_bool("mach2test", false) -- B738 MACH OVSPD R test
+kc_procvar_initialize_bool("stall1test", false) -- B738 STALL L test
+kc_procvar_initialize_bool("stall2test", false) -- B738 STALL R test
+kc_procvar_initialize_bool("gpwstest", false) -- B738 GPWS test
+kc_procvar_initialize_bool("oxyfotest", false) -- B738 OXY FO test
+kc_procvar_initialize_bool("oxycpttest", false) -- B738 OXY CPT test
+kc_procvar_initialize_bool("cargofiretest", false) -- B738 CARGO FIRE test
 
 backgroundFlow:addItem(BackgroundProcedureItem:new("","","SYS",0,
 	function () 
@@ -2554,6 +2585,30 @@ backgroundFlow:addItem(BackgroundProcedureItem:new("","","SYS",0,
 		end
 		if kc_procvar_get("ext2test") == true then 
 			kc_bck_b738_ext2_test("ext2test")
+		end
+		if kc_procvar_get("mach1test") == true then 
+			kc_bck_b738_mach1_test("mach1test")
+		end
+		if kc_procvar_get("mach2test") == true then 
+			kc_bck_b738_mach2_test("mach2test")
+		end
+		if kc_procvar_get("stall1test") == true then 
+			kc_bck_b738_stall1_test("stall1test")
+		end
+		if kc_procvar_get("stall2test") == true then 
+			kc_bck_b738_stall2_test("stall2test")
+		end
+		if kc_procvar_get("gpwstest") == true then 
+			kc_bck_b738_gpws_test("gpwstest")
+		end
+		if kc_procvar_get("oxyfotest") == true then 
+			kc_bck_b738_oxyfo_test("oxyfotest")
+		end
+		if kc_procvar_get("oxycpttest") == true then 
+			kc_bck_b738_oxycpt_test("oxycpttest")
+		end
+		if kc_procvar_get("cargofiretest") == true then 
+			kc_bck_b738_cargofire_test("cargofiretest")
 		end
 	end))
 	
