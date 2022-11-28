@@ -19,9 +19,12 @@ local IndirectChecklistItem = require "kpcrew.checklists.IndirectChecklistItem"
 local ManualChecklistItem 	= require "kpcrew.checklists.ManualChecklistItem"
 
 local Procedure 			= require "kpcrew.procedures.Procedure"
+local State		 			= require "kpcrew.procedures.State"
+local Background 			= require "kpcrew.procedures.Background"
 local ProcedureItem 		= require "kpcrew.procedures.ProcedureItem"
 local SimpleProcedureItem 	= require "kpcrew.procedures.SimpleProcedureItem"
 local IndirectProcedureItem = require "kpcrew.procedures.IndirectProcedureItem"
+local BackgroundProcedureItem = require "kpcrew.procedures.BackgroundProcedureItem"
 
 sysLights 					= require("kpcrew.systems." .. kc_acf_icao .. ".sysLights")
 sysGeneral 					= require("kpcrew.systems." .. kc_acf_icao .. ".sysGeneral")	
@@ -36,6 +39,7 @@ sysMCP 						= require("kpcrew.systems." .. kc_acf_icao .. ".sysMCP")
 sysEFIS 					= require("kpcrew.systems." .. kc_acf_icao .. ".sysEFIS")	
 sysFMC 						= require("kpcrew.systems." .. kc_acf_icao .. ".sysFMC")	
 sysRadios					= require("kpcrew.systems." .. kc_acf_icao .. ".sysRadios")	
+sysMacros					= require("kpcrew.systems." .. kc_acf_icao .. ".sysMacros")	
 
 require("kpcrew.briefings.briefings_" .. kc_acf_icao)
 
@@ -264,8 +268,21 @@ local nopeProc = Procedure:new("NO PROCEDURES AVAILABLE")
 activeSOP:addProcedure(electricalPowerUpProc)
 activeSOP:addProcedure(prelPreflightProc)
 
+-- ============= Background Flow ==============
+local backgroundFlow = Background:new("","","")
+
+backgroundFlow:addItem(BackgroundProcedureItem:new("","","SYS",0,
+	function () 
+		return
+	end))
+
+-- ==== Background Flow ====
+activeSOP:addBackground(backgroundFlow)
+
+
 function getActiveSOP()
 	return activeSOP
 end
+
 
 return SOP_DFLT
