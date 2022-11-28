@@ -1664,7 +1664,12 @@ beforeTaxiProc:addItem(ProcedureItem:new("TRANSPONDER","STBY",FlowItem.actorFO,0
 	function () return sysRadios.xpdrSwitch:getStatus() == sysRadios.xpdrStby end,
 	function () 
 		sysRadios.xpdrSwitch:actuate(sysRadios.xpdrStby) 
-		sysRadios.xpdrCode:actuate(activeBriefings:get("departure:squawk"))
+		local xpdrcode = activeBriefings:get("departure:squawk")
+		if xpdrCode == nil or xpdrCode == "" then
+			sysRadios.xpdrCode:actuate("2000")
+		else
+			sysRadios.xpdrCode:actuate(xpdrCode)
+		end
 		if get("laminar/B738/systems/lowerDU_page2") == 0 then
 			command_once("laminar/B738/LDU_control/push_button/MFD_SYS")
 		end
