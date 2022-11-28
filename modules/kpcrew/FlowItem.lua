@@ -11,6 +11,8 @@ local kcFlowItem = {
     DONE		 		= 4,
 	SKIP				= 5,
 	RESUME				= 6,
+	
+	states = { "INIT", "RUN", "PAUSE", "FAIL", "DONE", "SKIP", "RESUME" }, 
 
 	actorPF 			= "PF",		-- pilot flying (you)
 	actorPNF 			= "PNF",	-- pilot not flying (virtual)
@@ -73,7 +75,7 @@ end
 -- return true if the actor for the item is the sim pilot
 -- @treturn boolean true = is the user's role as CPT,PF,LHS
 function kcFlowItem:isUserRole()
-	local userroles = {	self.actorPF, self.actorCPT, self.actorLHS }
+	local userroles = {	self.actorPF, self.actorCPT, self.actorLHS, self.actorBOTH }
 	return kc_hasValue(userroles, self.actor)
 end	
 	
@@ -86,7 +88,11 @@ end
 -- get the left hand action text for the item
 -- @treturn string challenge text
 function kcFlowItem:getChallengeText()
-    return self.challengeText
+	if self.challengeText == nil then
+		return ""
+	else
+		return self.challengeText
+	end
 end
 
 -- set left hand action text

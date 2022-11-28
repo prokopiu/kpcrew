@@ -10,9 +10,8 @@ require "kpcrew.systems.activities"
 local Flow = require "kpcrew.Flow"
 local FlowItem = require "kpcrew.FlowItem"
 
-kc_VERSION = "2.3-alpha4"
+kc_VERSION = "2.3-alpha5"
 kc_simversion = get("sim/version/xplane_internal_version")
-	
 
 logMsg ( "FWL: ** Starting KPCrew version " .. kc_VERSION .." **" )
 
@@ -220,12 +219,12 @@ function kc_master_button()
 		end
 		if getActivePrefs():get("general:assistance") > 1 then
 			kc_mstr_button_state = kc_mstr_state_active
-			getActiveSOP():getActiveFlow():setState(Flow.RUN)
+			getActiveSOP():getActiveFlow():setState(Flow.START)
 		end
 	elseif kc_mstr_button_state == kc_mstr_state_flow_open then
 		if getActivePrefs():get("general:assistance") > 1 then
 			kc_mstr_button_state = kc_mstr_state_active
-			getActiveSOP():getActiveFlow():setState(Flow.RUN)
+			getActiveSOP():getActiveFlow():setState(Flow.START)
 		end
 	elseif kc_mstr_button_state == kc_mstr_state_active  then
 		if getActivePrefs():get("general:assistance") > 1 then
@@ -237,8 +236,26 @@ function kc_master_button()
 	elseif kc_mstr_button_state == kc_mstr_state_waiting then
 		if getActivePrefs():get("general:assistance") > 1 then
 			kc_mstr_button_state = kc_mstr_state_active
+			getActiveSOP():getActiveFlow():getActiveItem():setState(FlowItem.DONE)
 			getActiveSOP():getActiveFlow():setState(Flow.RUN)
-			getActiveSOP():getActiveFlow():getActiveItem():setState(FlowItem.RUN)
+		end
+	elseif kc_mstr_button_state == kc_mstr_state_stop then
+		if getActivePrefs():get("general:assistance") > 1 then
+			if getActiveSOP():getActiveFlow():getActiveItem():isValid() then
+				getActiveSOP():getActiveFlow():getActiveItem():setState(FlowItem.DONE)
+				if getActiveSOP():getActiveFlow():hasNextItem() then
+					if getActiveSOP():getActiveFlow():getActiveItem():isValid() then
+						getActiveSOP():getActiveFlow():setNextItemActive()
+						getActiveSOP():getActiveFlow():setState(Flow.RUN)
+						kc_mstr_button_state = kc_mstr_state_active
+					else 
+						kc_mstr_button_state = kc_mstr_state_waiting
+					end
+				else
+					getActiveSOP():getActiveFlow():setState(Flow.FINISH)
+					kc_mstr_button_state = kc_mstr_state_finished
+				end
+			end
 		end
 	elseif kc_mstr_button_state == kc_mstr_state_finished then
 		kc_mstr_button_state = kc_mstr_state_new_flow
@@ -266,13 +283,13 @@ function kc_prev_button()
 	if getActivePrefs():get("general:assistance") == 1 then
 		if getActiveSOP():getActiveFlowIndex() > 1 then
 			getActiveSOP():setActiveFlowIndex(getActiveSOP():getActiveFlowIndex() -1)
-			kc_flow_executor = kcFlowExecutor:new(getActiveSOP():getActiveFlow())
+			kc_flow_executor = kcFlowExecutor:new(getActiveSOP():getActiveFlow(),false)
 		end
 	elseif getActivePrefs():get("general:assistance") > 1 then
 		if kc_mstr_button_state <= kc_mstr_state_flow_open or kc_mstr_button_state == kc_mstr_state_finished then
 			if getActiveSOP():getActiveFlowIndex() > 1 then
 				getActiveSOP():setActiveFlowIndex(getActiveSOP():getActiveFlowIndex() -1)
-				kc_flow_executor = kcFlowExecutor:new(getActiveSOP():getActiveFlow())
+				kc_flow_executor = kcFlowExecutor:new(getActiveSOP():getActiveFlow(),false)
 			end
 		end
 	else
@@ -283,11 +300,11 @@ function kc_next_button()
 	-- unassisted always navigate flows
 	if getActivePrefs():get("general:assistance") == 1 then
 		getActiveSOP():setNextFlowActive()
-		kc_flow_executor = kcFlowExecutor:new(getActiveSOP():getActiveFlow())
+		kc_flow_executor = kcFlowExecutor:new(getActiveSOP():getActiveFlow(),false)
 	elseif getActivePrefs():get("general:assistance") > 1 then
 		if kc_mstr_button_state <= kc_mstr_state_flow_open or kc_mstr_button_state == kc_mstr_state_finished then
 			getActiveSOP():setNextFlowActive()
-			kc_flow_executor = kcFlowExecutor:new(getActiveSOP():getActiveFlow())
+			kc_flow_executor = kcFlowExecutor:new(getActiveSOP():getActiveFlow(),false)
 		end
 		if kc_mstr_button_state == kc_mstr_state_waiting or kc_mstr_button_state == kc_mstr_state_stop then
 			local flow = getActiveSOP():getActiveFlow()
@@ -345,13 +362,15 @@ function kc_ctrl_builder()
 	imgui.SameLine()
 	if getActiveSOP():getActiveFlow():getState() == Flow.FINISH then
 		kc_mstr_button_state = kc_mstr_state_finished
+	elseif getActiveSOP():getActiveFlow():getState() == Flow.START then
+		kc_mstr_button_state = kc_mstr_state_active
 	elseif getActiveSOP():getActiveFlow():getState() == Flow.RUN then
 		kc_mstr_button_state = kc_mstr_state_active
 	elseif getActiveSOP():getActiveFlow():getState() == Flow.PAUSE then
 		kc_mstr_button_state = kc_mstr_state_waiting
 	elseif getActiveSOP():getActiveFlow():getState() == Flow.HALT then
 		kc_mstr_button_state = kc_mstr_state_stop
-	elseif getActiveSOP():getActiveFlow():getState() == Flow.START then
+	elseif getActiveSOP():getActiveFlow():getState() == Flow.NEW then
 		kc_mstr_button_state = kc_mstr_state_new_flow
 	end
 
@@ -431,17 +450,14 @@ kc_bck_wnd = nil
 function kc_init_pref_window(prefset)
 	local height = prefset:getWndHeight()
 	local width = prefset:getWndWidth()
+	kc_pref_wnd = float_wnd_create(width, height, 1, true)
+	float_wnd_set_title(kc_pref_wnd, prefset:getName())
 	if prefset:getName() == "BackgroundVars" then
-		kc_bck_wnd = float_wnd_create(width, height, 1, true)
-		float_wnd_set_title(kc_bck_wnd, prefset:getName())
-		float_wnd_set_imgui_builder(kc_bck_wnd, "kc_bck_builder")
-		float_wnd_set_position(kc_bck_wnd, prefset:getWndXPos(), prefset:getWndYPos())
+		float_wnd_set_imgui_builder(kc_pref_wnd, "kc_bck_builder")
 	else
-		kc_pref_wnd = float_wnd_create(width, height, 1, true)
-		float_wnd_set_title(kc_pref_wnd, prefset:getName())
 		float_wnd_set_imgui_builder(kc_pref_wnd, "kc_pref_builder")
-		float_wnd_set_position(kc_pref_wnd, prefset:getWndXPos(), prefset:getWndYPos())
 	end
+	float_wnd_set_position(kc_pref_wnd, prefset:getWndXPos(), prefset:getWndYPos())
 end
 
 function kc_pref_builder()
@@ -458,11 +474,18 @@ function kc_hide_pref_wnd()
 	end
 end
 
+function kc_hide_bck_wnd()
+	if kc_bck_wnd then 
+		float_wnd_destroy(kc_bck_wnd)
+	end
+end
+
 function kc_toggle_pref_window()
 	kc_show_pref = not kc_show_pref
 	if kc_show_pref then
 		if kc_show_pref_once == 0 then
 			kc_init_pref_window(getActivePrefs())
+			-- kc_init_pref_window(getBckVars())
 			kc_show_pref_once = 1
 			kc_hide_pref_once = 0
 		end
@@ -556,9 +579,11 @@ end
 -- needed for window control
 do_every_frame("bckWindowOpen()")
 
-kc_flow_executor = kcFlowExecutor:new(getActiveSOP():getActiveFlow())
+kc_flow_executor = kcFlowExecutor:new(getActiveSOP():getActiveFlow(),false)
+kc_bgr_executor = kcFlowExecutor:new(getActiveSOP():getBackgroundFlow(),true)
 
 do_often("kc_flow_executor:execute()")
+do_often("kc_bgr_executor:execute()")
 
 add_macro("KPCrew Debug Procvars", "kc_init_pref_window(getBckVars())")
 create_command("kp/crew/master", "KPCrew Masterbutton","kc_master_button()","","")
