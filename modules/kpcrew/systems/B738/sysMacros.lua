@@ -25,11 +25,8 @@ function kc_macro_state_cold_and_dark()
 
 	kc_macro_int_lights_off()	
 
-	sysMCP.vhfNavSwitch:actuate(0)
-	sysMCP.irsNavSwitch:setValue(0)
-	sysMCP.fmcNavSwitch:setValue(0)
-	sysMCP.displaySourceSwitch:setValue(0)
-	sysMCP.displayControlSwitch:setValue(0)
+	kc_macro_b738_navswitches_init()
+	
 	sysControls.yawDamper:actuate(modeOff)
 	
 	kc_macro_fuelpumps_off()
@@ -131,11 +128,8 @@ function kc_macro_state_turnaround()
 		sysElectric.gpuSwitch:actuate(cmdDown)
 	end
 
-	sysMCP.vhfNavSwitch:actuate(0)
-	sysMCP.irsNavSwitch:setValue(0)
-	sysMCP.fmcNavSwitch:setValue(0)
-	sysMCP.displaySourceSwitch:setValue(0)
-	sysMCP.displayControlSwitch:setValue(0)
+	kc_macro_b738_navswitches_init()
+	
 	sysControls.yawDamper:actuate(modeOff)
 
 	kc_macro_fuelpumps_off()
@@ -394,7 +388,18 @@ function kc_macro_glareshield_initial()
 	sysMCP.turnRateSelector:actuate(3)
 end
 
--- initialise IRS
+-- glareshield takeoff setup
+function kc_macro_glareshield_takeoff()
+	sysMCP.fdirGroup:actuate(1)
+	sysMCP.athrSwitch:actuate(1)
+	sysMCP.iasSelector:setValue(activeBriefings:get("takeoff:v2"))
+	sysMCP.hdgSelector:setValue(activeBriefings:get("departure:initHeading"))
+	sysMCP.altSelector:setValue(activeBriefings:get("departure:initAlt"))
+	if activeBriefings:get("takeoff:apMode") == 1 then
+		sysMCP.lnavSwitch:actuate(1)
+		sysMCP.vnavSwitch:actuate(1)
+	end
+end
 
 -- efis initial setup
 function kc_macro_efis_initial()
@@ -413,8 +418,9 @@ function kc_macro_efis_initial()
 		sysEFIS.minsTypePilot:actuate(flag) 
 end
 
--- glareshield takeoff setup
 -- glareshield landing setup
+-- initialise IRS
+
 
 -- fuel pumps all off
 function kc_macro_fuelpumps_off()
@@ -495,6 +501,17 @@ end
 -- fire tests ?!? as bck
 -- apu start bck
 -- gpu start bck
+
+-- B738 NAV switches initial
+function kc_macro_b738_navswitches_init()
+	sysMCP.vhfNavSwitch:actuate(0) 
+	sysMCP.irsNavSwitch:setValue(0)
+	sysMCP.fmcNavSwitch:setValue(0)
+	sysMCP.displaySourceSwitch:setValue(0)
+	sysMCP.displayControlSwitch:setValue(0) 
+end
+
+
 
 -- bck callouts when needed
 
@@ -769,8 +786,8 @@ function kc_bck_b738_gen1down(trigger)
 	end
 	if kc_procvar_get(delayvar) == -1 then
 		kc_procvar_set(delayvar,0)
-			command_begin("laminar/B738/toggle_switch/gen1_dn")
-		else
+		command_begin("laminar/B738/toggle_switch/gen1_dn")
+	else
 		if kc_procvar_get(delayvar) <= 0 then
 			command_end("laminar/B738/toggle_switch/gen1_dn") 
 			kc_procvar_set(trigger,false)
@@ -789,8 +806,9 @@ function kc_bck_b738_gen2down(trigger)
 	end
 	if kc_procvar_get(delayvar) == -1 then
 		kc_procvar_set(delayvar,0)
-			command_begin("laminar/B738/toggle_switch/gen2_dn")
-		else
+		logMsg("now")
+		command_begin("laminar/B738/toggle_switch/gen2_dn")
+	else
 		if kc_procvar_get(delayvar) <= 0 then
 			command_end("laminar/B738/toggle_switch/gen2_dn") 
 			kc_procvar_set(trigger,false)
