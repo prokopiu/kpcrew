@@ -59,11 +59,10 @@ function kc_macro_state_cold_and_dark()
 	set("laminar/B738/air/trim_air_pos",1)
 	sysAir.recircFanLeft:actuate(modeOff) 
 	sysAir.recircFanRight:actuate(modeOff)
-	sysAir.packSwitchGroup:setValue(sysAir.packModeOff)
-	sysAir.bleedEng1Switch:actuate(0) 
-	sysAir.bleedEng2Switch:actuate(0)
-	sysAir.apuBleedSwitch:actuate(modeOff)
-	sysAir.isoValveSwitch:setValue(sysAir.isoVlvClosed)
+	
+	kc_macro_packs_off()
+	kc_macro_bleeds_off()
+
 	sysAir.maxCruiseAltitude:setValue(0)
 	sysAir.landingAltitude:setValue(0)
 	command_once("laminar/B738/toggle_switch/air_valve_ctrl_left")
@@ -91,6 +90,7 @@ function kc_macro_state_cold_and_dark()
 
 	kc_macro_glareshield_initial()
 	kc_macro_efis_initial()
+	kc_macro_b738_lowerdu_off()
 	
 	sysElectric.batteryCover:actuate(modeOn)
 	sysElectric.batterySwitch:actuate(modeOff)
@@ -154,7 +154,8 @@ function kc_macro_state_turnaround()
 	sysAice.engAntiIceGroup:actuate(0)
 	
 	kc_macro_hydraulic_initial()
-
+	kc_macro_b738_lowerdu_off()
+	
 	set("laminar/B738/toggle_switch/air_temp_source",3)
 	sysAir.contCabTemp:setValue(0.5) 
 	sysAir.fwdCabTemp:setValue(0.5) 
@@ -162,11 +163,10 @@ function kc_macro_state_turnaround()
 	set("laminar/B738/air/trim_air_pos",1)
 	sysAir.recircFanLeft:actuate(modeOn) 
 	sysAir.recircFanRight:actuate(modeOn)
-	sysAir.packSwitchGroup:setValue(sysAir.packModeAuto)
-	sysAir.bleedEng1Switch:actuate(1) 
-	sysAir.bleedEng2Switch:actuate(1)
-	sysAir.apuBleedSwitch:actuate(modeOff)
-	sysAir.isoValveSwitch:setValue(sysAir.isoVlvOpen)
+
+	kc_macro_packs_on()
+	kc_macro_bleeds_on()
+
 	sysAir.maxCruiseAltitude:setValue(0)
 	sysAir.landingAltitude:setValue(0)
 	command_once("laminar/B738/toggle_switch/air_valve_ctrl_left")
@@ -484,8 +484,63 @@ end
 -- start 1st engine
 -- start nth engine
 
--- air switches for takeoff
--- air switches all on
+-- packs all off
+function kc_macro_packs_off()
+	sysAir.packSwitchGroup:setValue(sysAir.packModeOff)
+	sysAir.isoValveSwitch:setValue(sysAir.isoVlvClosed)
+end
+
+-- packs for engine start
+function kc_macro_packs_start()
+	sysAir.packSwitchGroup:setValue(sysAir.packModeOff)
+	sysAir.isoValveSwitch:setValue(sysAir.isoVlvOpen)
+end
+
+-- packs for takeoff
+function kc_macro_packs_takeoff()
+	if activeBriefings:get("takeoff:packs") < 3 then 
+		sysAir.packSwitchGroup:setValue(sysAir.packModeAuto)
+	else
+		sysAir.packSwitchGroup:setValue(sysAir.packModeOff)
+	end
+	sysAir.isoValveSwitch:setValue(sysAir.isoVlvAuto)
+end
+
+-- packs all on
+function kc_macro_packs_on()
+	sysAir.packSwitchGroup:setValue(sysAir.packModeAuto)
+	sysAir.isoValveSwitch:setValue(sysAir.isoVlvAuto)
+end
+
+-- bleeds all off
+function kc_macro_bleeds_off()
+	sysAir.bleedEng1Switch:actuate(0) 
+	sysAir.bleedEng2Switch:actuate(0) 
+	sysAir.apuBleedSwitch:actuate(0)
+end
+
+-- bleeds on
+function kc_macro_bleeds_on()
+	sysAir.bleedEng1Switch:actuate(1) 
+	sysAir.bleedEng2Switch:actuate(1)
+	if get("sim/cockpit/engine/APU_running") == 1 and 
+		get("laminar/B738/engine/eng1_egt") < 50 and 
+		get("laminar/B738/engine/eng2_egt") < 50 then
+		sysAir.apuBleedSwitch:actuate(1)
+	end
+end
+
+-- bleeds takeoff 
+function kc_macro_bleeds_takeoff()
+	if activeBriefings:get("takeoff:bleeds") > 1 then 
+		sysAir.bleedEng1Switch:actuate(1) 
+		sysAir.bleedEng2Switch:actuate(1) 
+	else
+		sysAir.bleedEng1Switch:actuate(0) 
+		sysAir.bleedEng2Switch:actuate(0) 
+	end
+	sysAir.apuBleedSwitch:actuate(0)
+end
 
 -- xpdr standby
 -- xpdr mode c
@@ -502,6 +557,8 @@ end
 -- apu start bck
 -- gpu start bck
 
+-- B738 specific macros
+
 -- B738 NAV switches initial
 function kc_macro_b738_navswitches_init()
 	sysMCP.vhfNavSwitch:actuate(0) 
@@ -511,7 +568,21 @@ function kc_macro_b738_navswitches_init()
 	sysMCP.displayControlSwitch:setValue(0) 
 end
 
+-- B738 Lower DU modes
+function kc_macro_b738_lowerdu_off()
+	set("laminar/B738/systems/lowerDU_page",0)
+	set("laminar/B738/systems/lowerDU_page2",0)
+end
 
+function kc_macro_b738_lowerdu_sys()
+	set("laminar/B738/systems/lowerDU_page",0)
+	set("laminar/B738/systems/lowerDU_page2",1)
+end
+
+function kc_macro_b738_lowerdu_eng()
+	set("laminar/B738/systems/lowerDU_page",1)
+	set("laminar/B738/systems/lowerDU_page2",0)
+end
 
 -- bck callouts when needed
 

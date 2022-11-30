@@ -53,6 +53,15 @@ kcSopFlightPhase = { [1] = "Cold & Dark", 	[2] = "Prel Preflight", [3] = "Prefli
 
 activeSOP = SOP:new("Zibo Mod SOP")
 
+local testProc = Procedure:new("TEST","","")
+testProc:setFlightPhase(1)
+testProc:addItem(ProcedureItem:new("ENGINE START LEVERS","CUTOFF",FlowItem.actorCPT,0,true,
+	function () 
+		kc_macro_bleeds_takeoff()
+	end))
+
+
+
 -- ============ Electrical Power Up Procedure ============
 -- All paper work on board and checked
 -- M E L and Technical Logbook checked
@@ -101,14 +110,6 @@ activeSOP = SOP:new("Zibo Mod SOP")
 -- STANDBY POWER..................................ON (F/O)
 --   STANDBY PWR LIGHT............CHECK EXTINGUISHED (F/O)
 -- =======================================================
-
-local testProc = Procedure:new("TEST","","")
-testProc:setFlightPhase(1)
-testProc:addItem(ProcedureItem:new("ENGINE START LEVERS","CUTOFF",FlowItem.actorCPT,0,true,
-	function () 
-kc_macro_glareshield_takeoff()
-	end))
-
 
 local electricalPowerUpProc = Procedure:new("ELECTRICAL POWER UP","performing ELECTRICAL POWER UP","Power up finished")
 electricalPowerUpProc:setFlightPhase(1)
@@ -789,20 +790,21 @@ preflightFOProc:addItem(ProcedureItem:new("RECIRCULATION FAN SWITCHES","AUTO",Fl
 	function () sysAir.recircFanLeft:actuate(modeOn) sysAir.recircFanRight:actuate(modeOn) end))
 preflightFOProc:addItem(ProcedureItem:new("AIR CONDITIONING PACK SWITCHES","AUTO OR HIGH",FlowItem.actorFO,0,
 	function () return sysAir.packSwitchGroup:getStatus() > 0 end,
-	function () sysAir.packSwitchGroup:setValue(sysAir.packModeAuto) end))
+	function () 
+		kc_macro_packs_on() 
+	end))
 preflightFOProc:addItem(ProcedureItem:new("ISOLATION VALVE SWITCH","AUTO OR OPEN",FlowItem.actorFO,0,
-	function () return sysAir.isoValveSwitch:getStatus() > sysAir.isoVlvClosed end,
-	function () sysAir.isoValveSwitch:setValue(sysAir.isoVlvOpen) end))
+	function () return sysAir.isoValveSwitch:getStatus() > sysAir.isoVlvClosed end))
 preflightFOProc:addItem(ProcedureItem:new("ENGINE BLEED AIR SWITCHES","ON",FlowItem.actorFO,0,
 	function () return sysAir.bleedEng1Switch:getStatus() == 1 and sysAir.bleedEng2Switch:getStatus() == 1 end,
-	function () sysAir.bleedEng1Switch:actuate(1) sysAir.bleedEng2Switch:actuate(1) end))
+	function () 
+		kc_macro_bleeds_on()
+	end))
 preflightFOProc:addItem(ProcedureItem:new("APU BLEED AIR SWITCH","ON",FlowItem.actorFO,0,
-	function () return sysAir.apuBleedSwitch:getStatus() == modeOn end,
-	function () sysAir.apuBleedSwitch:actuate(modeOn) end,
+	function () return sysAir.apuBleedSwitch:getStatus() == modeOn end, nil, 
 	function () return activePrefSet:get("aircraft:powerup_apu") == true end))
 preflightFOProc:addItem(ProcedureItem:new("APU BLEED AIR SWITCH","OFF",FlowItem.actorFO,0,
-	function () return sysAir.apuBleedSwitch:getStatus() == modeOff end,
-	function () sysAir.apuBleedSwitch:actuate(modeOff) end,
+	function () return sysAir.apuBleedSwitch:getStatus() == modeOff end, nil,
 	function () return activePrefSet:get("aircraft:powerup_apu") == false end))
 
 preflightFOProc:addItem(SimpleProcedureItem:new("==== Cabin pressurization panel"))
@@ -1429,6 +1431,7 @@ pushstartProc:addItem(IndirectProcedureItem:new("PARKING BRAKE","SET",FlowItem.a
 		-- also trigger timers and turn dome light off
 		activeBckVars:set("general:timesOFF",kc_dispTimeHHMM(get("sim/time/zulu_time_sec"))) 
 		sysLights.domeLightSwitch:actuate(0)
+		kc_macro_b738_lowerdu_eng()
 	end))
 pushstartProc:addItem(ProcedureItem:new("PUSHBACK SERVICE","ENGAGE",FlowItem.actorCPT,2,true,nil,
 	function () return activeBriefings:get("taxi:gateStand") > 2 end))
@@ -1440,7 +1443,9 @@ pushstartProc:addItem(IndirectProcedureItem:new("PARKING BRAKE","RELEASED",FlowI
 	function () return sysGeneral.parkBrakeSwitch:getStatus() == 0 end))
 pushstartProc:addItem(ProcedureItem:new("PACKS","OFF",FlowItem.actorFO,0,
 	function () return sysAir.packSwitchGroup:getStatus() == sysAir.packModeOff end,
-	function () sysAir.packSwitchGroup:setValue(sysAir.packModeOff) end))
+	function () 
+		kc_macro_packs_start()
+	end))
 pushstartProc:addItem(ProcedureItem:new("SYSTEM A HYDRAULIC PUMP","ON",FlowItem.actorFO,0,
 	function () 
 		return sysHydraulic.engHydPump1:getStatus() == 1 and 
@@ -1589,7 +1594,9 @@ local beforeTaxiProc = Procedure:new("BEFORE TAXI PROCEDURE","","ready for befor
 beforeTaxiProc:setFlightPhase(5)
 beforeTaxiProc:addItem(ProcedureItem:new("HYDRAULIC PUMP SWITCHES","ALL ON",FlowItem.actorFO,0,
 	function () return sysHydraulic.hydPumpGroup:getStatus() == 4 end,
-	function () kc_macro_hydraulic_on() end))
+	function () 
+		kc_macro_hydraulic_on() 
+	end))
 beforeTaxiProc:addItem(ProcedureItem:new("GENERATOR 1 AND 2 SWITCHES","ON",FlowItem.actorFO,0,
 	function () return sysElectric.gen1off:getStatus() == 0 and sysElectric.gen2off:getStatus() == 0 end,
 	function () 
@@ -1618,13 +1625,14 @@ beforeTaxiProc:addItem(ProcedureItem:new("ENGINE ANTI-ICE SWITCHES","ON",FlowIte
 beforeTaxiProc:addItem(SimpleProcedureItem:new("  When temperature <10 C & visible moisture"))
 beforeTaxiProc:addItem(ProcedureItem:new("PACK SWITCHES","AUTO",FlowItem.actorFO,0,
 	function () return sysAir.packSwitchGroup:getStatus() == 2 end,
-	function () sysAir.packSwitchGroup:setValue(sysAir.packModeAuto) end))
+	function () 
+		kc_macro_packs_on()
+	end))
 beforeTaxiProc:addItem(ProcedureItem:new("ISOLATION VALVE SWITCH","AUTO",FlowItem.actorFO,0,
-	function () return sysAir.isoValveSwitch:getStatus() == sysAir.isoVlvAuto end,
-	function () sysAir.isoValveSwitch:setValue(sysAir.isoVlvAuto) end))
+	function () return sysAir.isoValveSwitch:getStatus() == sysAir.isoVlvAuto end))
 beforeTaxiProc:addItem(ProcedureItem:new("APU BLEED AIR SWITCH","OFF",FlowItem.actorFO,0,
 	function () return sysAir.apuBleedSwitch:getStatus() == 0 end,
-	function () sysAir.apuBleedSwitch:actuate(modeOff) end))
+	function () kc_macro_bleeds_on() end))
 beforeTaxiProc:addItem(ProcedureItem:new("APU SWITCH","OFF",FlowItem.actorFO,0,
 	function () return sysElectric.apuStartSwitch:getStatus() == 0 end,
 	function () command_once("laminar/B738/spring_toggle_switch/APU_start_pos_up") end))
@@ -1640,9 +1648,12 @@ beforeTaxiProc:addItem(ProcedureItem:new("FLAP LEVER","SET TAKEOFF FLAPS %s|kc_p
 	function () sysControls.flapsSwitch:setValue(sysControls.flaps_pos[activeBriefings:get("takeoff:flaps")]) end)) 
 beforeTaxiProc:addItem(ProcedureItem:new("LE FLAPS EXT GREEN LIGHT","ILLUMINATED",FlowItem.actorFO,0,
 	function () return get("laminar/B738/annunciator/slats_extend") == 1 end))
+
 beforeTaxiProc:addItem(IndirectProcedureItem:new("FLIGHT CONTROLS","CHECK",FlowItem.actorBOTH,0,"fccheck",
 	function () return get("sim/flightmodel2/wing/rudder1_deg") > 18 end,
-	function () command_once("laminar/B738/LDU_control/push_button/MFD_SYS") end))
+	function () 
+		kc_macro_b738_lowerdu_sys()
+	end))
 beforeTaxiProc:addItem(ProcedureItem:new("RECALL","CHECK",FlowItem.actorBOTH,0,
 	function() return sysGeneral.annunciators:getStatus() == 0 end,
 	function() command_once("laminar/B738/push_button/capt_six_pack") end))
@@ -1651,7 +1662,6 @@ beforeTaxiProc:addItem(ProcedureItem:new("TRANSPONDER","TARA",FlowItem.actorFO,0
 	function () 
 		sysRadios.xpdrSwitch:actuate(sysRadios.xpdrTARA) 
 		sysRadios.xpdrCode:actuate(activeBriefings:get("departure:squawk"))
-		command_once("laminar/B738/LDU_control/push_button/MFD_SYS")
 	end,
 	function () return activePrefSet:get("general:xpdrusa") == false end))
 beforeTaxiProc:addItem(ProcedureItem:new("TRANSPONDER","STBY",FlowItem.actorFO,0,
@@ -1664,11 +1674,13 @@ beforeTaxiProc:addItem(ProcedureItem:new("TRANSPONDER","STBY",FlowItem.actorFO,0
 		else
 			sysRadios.xpdrCode:actuate(xpdrCode)
 		end
-		if get("laminar/B738/systems/lowerDU_page2") == 0 then
-			command_once("laminar/B738/LDU_control/push_button/MFD_SYS")
-		end
 	end,
 	function () return activePrefSet:get("general:xpdrusa") == true end))
+beforeTaxiProc:addItem(ProcedureItem:new("LOWER DU","OFF",FlowItem.actorFO,0,
+	function () return get("laminar/B738/systems/lowerDU_page2") == 0 end,
+	function () 
+		kc_macro_b738_lowerdu_off()
+	end))
 
 -- chrono
 	
@@ -1719,9 +1731,15 @@ beforeTaxiChkl:addItem(ChecklistItem:new("AUTOBRAKE","RTO",FlowItem.actorCPT,0,
 beforeTaxiChkl:addItem(ChecklistItem:new("ENGINE START LEVERS","IDLE DETENT",FlowItem.actorCPT,0,
 	function () return sysEngines.startLeverGroup:getStatus() == 2 end))
 beforeTaxiChkl:addItem(IndirectChecklistItem:new("FLIGHT CONTROLS","CHECK",FlowItem.actorCPT,0,"fccheck",
-function () return get("sim/flightmodel2/wing/rudder1_deg") > 18 end))
+	function () return get("sim/flightmodel2/wing/rudder1_deg") > 18 end,
+	function () 
+		kc_macro_b738_lowerdu_sys() 
+	end))
 beforeTaxiChkl:addItem(ChecklistItem:new("GROUND EQUIPMENT","CLEAR",FlowItem.actorBOTH,0,true,
-	function () sysLights.taxiSwitch:actuate(1) end))
+	function () 
+		kc_macro_b738_lowerdu_off()
+		sysLights.taxiSwitch:actuate(1) 
+	end))
 
 -- =========== BEFORE TAKEOFF CHECKLIST (F/O) ============
 -- FLAPS............................__, GREEN LIGHT  (CPT)
@@ -1731,8 +1749,12 @@ beforeTaxiChkl:addItem(ChecklistItem:new("GROUND EQUIPMENT","CLEAR",FlowItem.act
 local beforeTakeoffChkl = Checklist:new("BEFORE TAKEOFF CHECKLIST","","before takeoff checklist completed")
 beforeTakeoffChkl:setFlightPhase(7)
 beforeTakeoffChkl:addItem(ChecklistItem:new("#exchange|FLAPS|before takeoff checklist. Flaps","%s, GREEN LIGHT|kc_pref_split(kc_TakeoffFlaps)[activeBriefings:get(\"takeoff:flaps\")]",FlowItem.actorCPT,0,
-	function () return sysControls.flapsSwitch:getStatus() == sysControls.flaps_pos[activeBriefings:get("takeoff:flaps")] and get("laminar/B738/annunciator/slats_extend") == 1 end,
-	function () sysControls.flapsSwitch:setValue(sysControls.flaps_pos[activeBriefings:get("takeoff:flaps")]) end)) 
+	function () 
+		return sysControls.flapsSwitch:getStatus() == sysControls.flaps_pos[activeBriefings:get("takeoff:flaps")] and 
+			get("laminar/B738/annunciator/slats_extend") == 1 end,
+	function () 
+		sysControls.flapsSwitch:setValue(sysControls.flaps_pos[activeBriefings:get("takeoff:flaps")]) 
+	end)) 
 beforeTakeoffChkl:addItem(ChecklistItem:new("STABILIZER TRIM","%3.2f UNITS (%3.2f)|kc_round_step((8.2-(get(\"sim/flightmodel2/controls/elevator_trim\")/-0.119)+0.4)*1000,10)/1000|activeBriefings:get(\"takeoff:elevatorTrim\")",FlowItem.actorCPT,0,
 	function () return (kc_round_step((8.2-(get("sim/flightmodel2/controls/elevator_trim")/-0.119)+0.4)*1000,10)/1000 == activeBriefings:get("takeoff:elevatorTrim")*100/100) end))
 beforeTakeoffChkl:addItem(SimpleChecklistItem:new("All ready"))
@@ -1748,23 +1770,22 @@ beforeTakeoffChkl:addItem(SimpleChecklistItem:new("All ready"))
 local runwayEntryProc = Procedure:new("RUNWAY ENTRY PROCEDURE","runway entry","aircraft ready for takeoff")
 runwayEntryProc:setFlightPhase(7)
 runwayEntryProc:addItem(ProcedureItem:new("EXTERNAL LIGHTS","SET",FlowItem.actorFO,0,true,
-	function () kc_macro_ext_lights_rwyentry() end))
+	function () 
+		kc_macro_ext_lights_rwyentry() 
+		kc_macro_b738_lowerdu_off()
+	end))
 runwayEntryProc:addItem(ProcedureItem:new("TRANSPONDER","ON",FlowItem.actorFO,0,
 	function () return sysRadios.xpdrSwitch:getStatus() == sysRadios.xpdrTARA end,
 	function () 
 		sysRadios.xpdrSwitch:actuate(sysRadios.xpdrTARA)
 		sysRadios.xpdrCode:actuate(activeBriefings:get("departure:squawk"))
 	end))		
--- runwayEntryProc:addItem(ProcedureItem:new("LANDING LIGHTS","ON",FlowItem.actorCPT,0,
-	-- function () return sysLights.landLightGroup:getStatus() > 1 end,
-	-- function () sysLights.landLightGroup:actuate(1) end))
--- runwayEntryProc:addItem(ProcedureItem:new("RWY TURNOFF LIGHTS","ON",FlowItem.actorCPT,0,
-	-- function () return sysLights.rwyLightGroup:getStatus() > 0 end,
-	-- function () sysLights.rwyLightGroup:actuate(1) end))
--- runwayEntryProc:addItem(ProcedureItem:new("TAXI LIGHTS","OFF",FlowItem.actorCPT,0,
-	-- function () return sysLights.taxiSwitch:getStatus() == 0 end,
-	-- function () sysLights.taxiSwitch:actuate(0) end))
-	
+runwayEntryProc:addItem(ProcedureItem:new("PACKS & BLEEDS","SET",FlowItem.actorFO,0,true,
+	function ()
+		kc_macro_packs_takeoff() 
+		kc_macro_bleeds_takeoff()
+	end))
+
 --	center pumps off
 
 -- =========== TAKEOFF & INITIAL CLIMB (BOTH) ===========
@@ -1897,14 +1918,6 @@ takeoffClimbProc:addItem(ProcedureItem:new("EXTERNAL LIGHTS","SET",FlowItem.acto
 	function () kc_macro_ext_lights_above10()  kc_speakNoText(0,"ten thousand") end,
 	function () return activeBriefings:get("departure:transalt") <= 10000 end))
 
--- takeoffClimbProc:addItem(ProcedureItem:new("LANDING LIGHTS","OFF",FlowItem.actorPM,0,
-	-- function () return sysLights.landLightGroup:getStatus() == 0 end,
-	-- function () sysLights.landLightGroup:actuate(0)  kc_speakNoText(0,"ten thousand") end,
-	-- function () return activeBriefings:get("departure:transalt") <= 10000 end))
--- takeoffClimbProc:addItem(ProcedureItem:new("RUNWAY TURNOFF LIGHT SWITCHES","OFF",FlowItem.actorFO,0,
-	-- function () return sysLights.rwyLightGroup:getStatus() == 0 end,
-	-- function () sysLights.rwyLightGroup:actuate(0) end,
-	-- function () return activeBriefings:get("departure:transalt") <= 10000 end))
 takeoffClimbProc:addItem(ProcedureItem:new("FASTEN BELTS SWITCH","OFF",FlowItem.actorPM,0,
 	function () return sysGeneral.seatBeltSwitch:getStatus() == 0 end,
 	function () 
@@ -1919,15 +1932,6 @@ takeoffClimbProc:addItem(IndirectProcedureItem:new("10.000 FT","REACHED",FlowIte
 takeoffClimbProc:addItem(ProcedureItem:new("EXTERNAL LIGHTS","SET",FlowItem.actorPM,0,true,
 	function () kc_macro_ext_lights_above10()  kc_speakNoText(0,"ten thousand") end,
 	function () return activeBriefings:get("departure:transalt") <= 10000 end))
-
--- takeoffClimbProc:addItem(ProcedureItem:new("LANDING LIGHTS","OFF",FlowItem.actorPM,0,
-	-- function () return sysLights.landLightGroup:getStatus() == 0 end,
-	-- function () sysLights.landLightGroup:actuate(0) kc_speakNoText(0,"ten thousand") end,
-	-- function () return activeBriefings:get("departure:transalt") > 10000 end))
--- takeoffClimbProc:addItem(ProcedureItem:new("RUNWAY TURNOFF LIGHT SWITCHES","OFF",FlowItem.actorFO,0,
-	-- function () return sysLights.rwyLightGroup:getStatus() == 0 end,
-	-- function () sysLights.rwyLightGroup:actuate(0) end,
-	-- function () return activeBriefings:get("departure:transalt") > 10000 end))
 takeoffClimbProc:addItem(ProcedureItem:new("FASTEN BELTS SWITCH","OFF",FlowItem.actorPM,0,
 	function () return sysGeneral.seatBeltSwitch:getStatus() == 0 end,
 	function () 
@@ -1968,10 +1972,10 @@ local afterTakeoffChkl = Checklist:new("AFTER TAKEOFF CHECKLIST","","after takeo
 afterTakeoffChkl:setFlightPhase(9)
 afterTakeoffChkl:addItem(ChecklistItem:new("#exchange|ENGINE BLEEDS|after takeoff checklist. engine bleeds","ON",FlowItem.actorPM,0,
 	function () return sysAir.engBleedGroup:getStatus() == 2 end,
-	function () sysAir.engBleedGroup:actuate(1) end))
+	function () kc_macro_bleeds_on() end))
 afterTakeoffChkl:addItem(ChecklistItem:new("PACKS","AUTO",FlowItem.actorPM,0,
 	function () return sysAir.packSwitchGroup:getStatus() == 2 end,
-	function () sysAir.packSwitchGroup:setValue(sysAir.packModeAuto) end))
+	function () kc_macro_packs_on() end))
 afterTakeoffChkl:addItem(ChecklistItem:new("LANDING GEAR","UP AND OFF",FlowItem.actorPM,0,
 	function () return sysGeneral.GearSwitch:getStatus() == 0.5 end,
 	function () sysGeneral.GearSwitch:actuate(2) end))
@@ -2373,18 +2377,6 @@ afterLandingProc:addItem(ProcedureItem:new("PROBE HEAT","OFF",FlowItem.actorFO,0
 	function () sysAice.probeHeatGroup:actuate(0) end))
 afterLandingProc:addItem(ProcedureItem:new("EXTERNAL LIGHTS","SET",FlowItem.actorFO,0,true,
 	function () kc_macro_ext_lights_rwyvacate() end))
--- afterLandingProc:addItem(ProcedureItem:new("STROBES","OFF",FlowItem.actorFO,0,
-	-- function () return sysLights.strobesSwitch:getStatus() == 0 end,
-	-- function () sysLights.strobesSwitch:actuate(0) end))
--- afterLandingProc:addItem(ProcedureItem:new("LANDING LIGHTS","OFF",FlowItem.actorCPT,0,
-	-- function () return sysLights.landLightGroup:getStatus() == 0 end,
-	-- function () sysLights.landLightGroup:actuate(0) end))
--- afterLandingProc:addItem(ProcedureItem:new("RWY TURNOFF LIGHTS","OFF",FlowItem.actorCPT,0,
-	-- function () return sysLights.rwyLightGroup:getStatus() == 0 end,
-	-- function () sysLights.rwyLightGroup:actuate(0) end))
--- afterLandingProc:addItem(ProcedureItem:new("TAXI LIGHTS","ON",FlowItem.actorCPT,0,
-	-- function () return sysLights.taxiSwitch:getStatus() > 0 end,
-	-- function () sysLights.taxiSwitch:actuate(1) end))
 afterLandingProc:addItem(ProcedureItem:new("ENGINE START SWITCHES","OFF",FlowItem.actorFO,0,
 	function () return sysEngines.engStarterGroup:getStatus() == 2 end,
 	function () sysEngines.engStarterGroup:actuate(1) end))
@@ -2408,6 +2400,7 @@ afterLandingProc:addItem(ProcedureItem:new("FLAPS","UP",FlowItem.actorFO,0,
 afterLandingProc:addItem(ProcedureItem:new("#spell|APU#","START",FlowItem.actorFO,0,
 	function () return sysElectric.apuRunningAnc:getStatus() == modeOn end,
 	function () 
+		kc_macro_b738_lowerdu_sys()
 		kc_procvar_set("apustart")
 	end,
 	function () return activeBriefings:get("approach:powerAtGate") == 1 end))
@@ -2517,10 +2510,9 @@ shutdownProc:addItem(ProcedureItem:new("ISOLATION VALVE SWITCH","OPEN",FlowItem.
 	function () sysAir.isoValveSwitch:setValue(sysAir.isoVlvOpen) end))
 shutdownProc:addItem(ProcedureItem:new("ENGINE BLEED AIR SWITCHES","ON",FlowItem.actorFO,0,
 	function () return sysAir.bleedEng1Switch:getStatus() == 1 and sysAir.bleedEng2Switch:getStatus() == 1 end,
-	function () sysAir.bleedEng1Switch:actuate(1) sysAir.bleedEng2Switch:actuate(1) end))
+	function () kc_macro_bleeds_on() end))
 shutdownProc:addItem(ProcedureItem:new("APU BLEED AIR SWITCH","ON",FlowItem.actorFO,0,
-	function () return sysAir.apuBleedSwitch:getStatus() == modeOn end,
-	function () sysAir.apuBleedSwitch:actuate(modeOn) end,
+	function () return sysAir.apuBleedSwitch:getStatus() == modeOn end,nil,
 	function () return not activeBriefings:get("approach:powerAtGate") == 1 end))
 shutdownProc:addItem(ProcedureItem:new("FLIGHT DIRECTOR SWITCHES","OFF",FlowItem.actorFO,0,
 	function () return sysMCP.fdirGroup:getStatus() == 0 end,
@@ -2533,6 +2525,7 @@ shutdownProc:addItem(ProcedureItem:new("DOORS","OPEN",FlowItem.actorFO,0,true,
 shutdownProc:addItem(ProcedureItem:new("MCP","RESET",FlowItem.actorFO,0,
 	function () return sysMCP.altSelector:getStatus() == activePrefSet:get("aircraft:mcp_def_alt") end,
 	function () 
+		kc_macro_b738_lowerdu_off()
 		kc_macro_glareshield_initial()
 		-- stairs need a delay to be extended
 		if activeBriefings:get("taxi:gateStand") > 1 then
