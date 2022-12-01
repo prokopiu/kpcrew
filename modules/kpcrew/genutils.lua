@@ -912,3 +912,21 @@ function kc_procvar_get(procvarid)
 	return procvar:getValue()
 end
 
+-- BetterPushback integration
+function kc_pushback_plan()
+	if activePrefSet:get("general:betterPushback") == true then
+		command_once("BetterPushback/start_planner")
+	end
+end
+
+function kc_pushback_call()
+	if activePrefSet:get("general:betterPushback") == true then
+		command_once("BetterPushback/connect_first")
+	end
+end
+
+function kc_pushback_end()
+	if activePrefSet:get("general:betterPushback") == true then
+		command_once("BetterPushback/disconnect")
+	end
+end

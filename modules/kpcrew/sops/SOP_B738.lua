@@ -1432,12 +1432,14 @@ pushstartProc:addItem(IndirectProcedureItem:new("PARKING BRAKE","SET",FlowItem.a
 		activeBckVars:set("general:timesOFF",kc_dispTimeHHMM(get("sim/time/zulu_time_sec"))) 
 		sysLights.domeLightSwitch:actuate(0)
 		kc_macro_b738_lowerdu_eng()
+		kc_pushback_plan()
 	end))
 pushstartProc:addItem(HoldProcedureItem:new("PUSHBACK SERVICE","ENGAGE",FlowItem.actorCPT,
 	function () return activeBriefings:get("taxi:gateStand") > 2 end))
 pushstartProc:addItem(SimpleProcedureItem:new("Engine Start may be done during pushback or towing",
 	function () return activeBriefings:get("taxi:gateStand") > 2 end))
-pushstartProc:addItem(ProcedureItem:new("COMMUNICATION WITH GROUND","ESTABLISH",FlowItem.actorCPT,2,true,nil,
+pushstartProc:addItem(ProcedureItem:new("COMMUNICATION WITH GROUND","ESTABLISH",FlowItem.actorCPT,2,true,
+	function () kc_pushback_call() end,
 	function () return activeBriefings:get("taxi:gateStand") > 2 end))
 pushstartProc:addItem(IndirectProcedureItem:new("PARKING BRAKE","RELEASED",FlowItem.actorFO,0,"pb_parkbrk_release",
 	function () return sysGeneral.parkBrakeSwitch:getStatus() == 0 end))
@@ -1562,8 +1564,14 @@ pushstartProc:addItem(ProcedureItem:new("STARTER CUTOUT","ANNOUNCE",FlowItem.act
 	end))
 pushstartProc:addItem(SimpleProcedureItem:new("When pushback/towing complete"))
 pushstartProc:addItem(HoldProcedureItem:new("  TOW BAR DISCONNECTED","VERIFY",FlowItem.actorCPT,
-	function () kc_speakNoText(0,"starter cutout") end))
-pushstartProc:addItem(ProcedureItem:new("  LOCKOUT PIN REMOVED","VERIFY",FlowItem.actorCPT,1))
+	function () 
+		kc_speakNoText(0,"starter cutout") 
+	end))
+pushstartProc:addItem(ProcedureItem:new("  LOCKOUT PIN REMOVED","VERIFY",FlowItem.actorCPT,0,true,
+	function () 
+		kc_pushback_end()
+	end))
+
 pushstartProc:addItem(ProcedureItem:new("PARKING BRAKE","SET",FlowItem.actorFO,0,
 	function () return sysGeneral.parkBrakeSwitch:getStatus() == 1 end,
 	function () 
