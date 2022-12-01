@@ -25,6 +25,7 @@ local ProcedureItem 		= require "kpcrew.procedures.ProcedureItem"
 local SimpleProcedureItem 	= require "kpcrew.procedures.SimpleProcedureItem"
 local IndirectProcedureItem = require "kpcrew.procedures.IndirectProcedureItem"
 local BackgroundProcedureItem = require "kpcrew.procedures.BackgroundProcedureItem"
+local HoldProcedureItem 	= require "kpcrew.procedures.HoldProcedureItem"
 
 sysLights 					= require("kpcrew.systems." .. kc_acf_icao .. ".sysLights")
 sysGeneral 					= require("kpcrew.systems." .. kc_acf_icao .. ".sysGeneral")	
@@ -55,10 +56,9 @@ activeSOP = SOP:new("Zibo Mod SOP")
 
 local testProc = Procedure:new("TEST","","")
 testProc:setFlightPhase(1)
-testProc:addItem(ProcedureItem:new("ENGINE START LEVERS","CUTOFF",FlowItem.actorCPT,0,true,
-	function () 
-		kc_macro_bleeds_takeoff()
-	end))
+testProc:addItem(HoldProcedureItem:new("ENGINE START LEVERS","CUTOFF",FlowItem.actorCPT))
+testProc:addItem(ProcedureItem:new("ENGINE START LEVERS2","CUTOFF",FlowItem.actorCPT,0,
+	function () return true end))
 
 
 
@@ -1433,7 +1433,7 @@ pushstartProc:addItem(IndirectProcedureItem:new("PARKING BRAKE","SET",FlowItem.a
 		sysLights.domeLightSwitch:actuate(0)
 		kc_macro_b738_lowerdu_eng()
 	end))
-pushstartProc:addItem(ProcedureItem:new("PUSHBACK SERVICE","ENGAGE",FlowItem.actorCPT,2,true,nil,
+pushstartProc:addItem(HoldProcedureItem:new("PUSHBACK SERVICE","ENGAGE",FlowItem.actorCPT,
 	function () return activeBriefings:get("taxi:gateStand") > 2 end))
 pushstartProc:addItem(SimpleProcedureItem:new("Engine Start may be done during pushback or towing",
 	function () return activeBriefings:get("taxi:gateStand") > 2 end))
@@ -1455,12 +1455,12 @@ pushstartProc:addItem(ProcedureItem:new("SYSTEM A HYDRAULIC PUMP","ON",FlowItem.
 		kc_macro_hydraulic_on()
 	end))
 pushstartProc:addItem(SimpleChecklistItem:new("Wait for start clearance from ground crew"))
-pushstartProc:addItem(ProcedureItem:new("START SEQUENCE","%s then %s|activeBriefings:get(\"taxi:startSequence\") == 1 and \"2\" or \"1\"|activeBriefings:get(\"taxi:startSequence\") == 1 and \"1\" or \"2\"",FlowItem.actorCPT,6,true,
+pushstartProc:addItem(ProcedureItem:new("START SEQUENCE","%s then %s|activeBriefings:get(\"taxi:startSequence\") == 1 and \"2\" or \"1\"|activeBriefings:get(\"taxi:startSequence\") == 1 and \"1\" or \"2\"",FlowItem.actorCPT,1,true,
 	function () 
 		local stext = string.format("Start sequence is %s then %s",activeBriefings:get("taxi:startSequence") == 1 and "2" or "1",activeBriefings:get("taxi:startSequence") == 1 and "1" or "2")
 		kc_speakNoText(0,stext)
 	end))
-pushstartProc:addItem(ProcedureItem:new("START FIRST ENGINE","START ENGINE %s|activeBriefings:get(\"taxi:startSequence\") == 1 and \"2\" or \"1\"",FlowItem.actorCPT,3))
+pushstartProc:addItem(HoldProcedureItem:new("START FIRST ENGINE","START ENGINE %s|activeBriefings:get(\"taxi:startSequence\") == 1 and \"2\" or \"1\"",FlowItem.actorCPT))
 pushstartProc:addItem(IndirectProcedureItem:new("  ENGINE START SWITCH","START SWITCH %s TO GRD|activeBriefings:get(\"taxi:startSequence\") == 1 and \"2\" or \"1\"",FlowItem.actorFO,0,"eng_start_1_grd",
 	function () 
 		if activeBriefings:get("taxi:startSequence") == 1 then
@@ -1508,7 +1508,7 @@ pushstartProc:addItem(ProcedureItem:new("STARTER CUTOUT","ANNOUNCE",FlowItem.act
 			return sysEngines.engStart1Switch:getStatus() == 1 
 		end 
 	end))
-pushstartProc:addItem(ProcedureItem:new("START SECOND ENGINE","START ENGINE %s|activeBriefings:get(\"taxi:startSequence\") == 1 and \"1\" or \"2\"",FlowItem.actorCPT,5, true,
+pushstartProc:addItem(HoldProcedureItem:new("START SECOND ENGINE","START ENGINE %s|activeBriefings:get(\"taxi:startSequence\") == 1 and \"1\" or \"2\"",FlowItem.actorCPT,
 	function () kc_speakNoText(0,"starter cutout") end))
 pushstartProc:addItem(IndirectProcedureItem:new("  ENGINE START SWITCH","START SWITCH %s TO GRD|activeBriefings:get(\"taxi:startSequence\") == 1 and \"1\" or \"2\"",FlowItem.actorFO,3,"eng_start_2_grd",
 	function () 
@@ -1561,12 +1561,16 @@ pushstartProc:addItem(ProcedureItem:new("STARTER CUTOUT","ANNOUNCE",FlowItem.act
 		end 
 	end))
 pushstartProc:addItem(SimpleProcedureItem:new("When pushback/towing complete"))
-pushstartProc:addItem(ProcedureItem:new("  TOW BAR DISCONNECTED","VERIFY",FlowItem.actorCPT,3,true,
+pushstartProc:addItem(HoldProcedureItem:new("  TOW BAR DISCONNECTED","VERIFY",FlowItem.actorCPT,
 	function () kc_speakNoText(0,"starter cutout") end))
 pushstartProc:addItem(ProcedureItem:new("  LOCKOUT PIN REMOVED","VERIFY",FlowItem.actorCPT,1))
 pushstartProc:addItem(ProcedureItem:new("PARKING BRAKE","SET",FlowItem.actorFO,0,
 	function () return sysGeneral.parkBrakeSwitch:getStatus() == 1 end,
-	function () kc_speakNoText(0,"Set parking brake when push finished") end))
+	function () 
+		if sysGeneral.parkBrakeSwitch:getStatus() ~= 1 then
+			kc_speakNoText(0,"Set parking brake when push finished")
+		end
+	end))
 
 -- ============= BEFORE TAXI PROCEDURE (F/O) =============
 -- HYDRAULIC PUMP SWITCHES...................ALL ON  (F/O)
@@ -1641,7 +1645,7 @@ beforeTaxiProc:addItem(ProcedureItem:new("ENGINE START SWITCHES","CONT",FlowItem
 	function () sysEngines.engStarterGroup:step(cmdUp) end))
 beforeTaxiProc:addItem(ProcedureItem:new("ENGINE START LEVERS","IDLE DETENT",FlowItem.actorCPT,0,
 	function () return sysEngines.startLeverGroup:getStatus() == 2 end))
-beforeTaxiProc:addItem(SimpleProcedureItem:new("Verify that the ground equipment is clear."))
+beforeTaxiProc:addItem(HoldProcedureItem:new("GROUND EQUIPMENT","CLEAR",FlowItem.actorCPT))
 beforeTaxiProc:addItem(SimpleProcedureItem:new("Call FLAPS as needed for takeoff."))
 beforeTaxiProc:addItem(ProcedureItem:new("FLAP LEVER","SET TAKEOFF FLAPS %s|kc_pref_split(kc_TakeoffFlaps)[activeBriefings:get(\"takeoff:flaps\")]",FlowItem.actorFO,0,
 	function () return sysControls.flapsSwitch:getStatus() == sysControls.flaps_pos[activeBriefings:get("takeoff:flaps")] end,
@@ -1847,6 +1851,7 @@ takeoffClimbProc:addItem(ProcedureItem:new("A/P MODES","%s|kc_pref_split(kc_Take
 		end
 		kc_macro_ext_doors_closed()
 	end))
+takeoffClimbProc:addItem(HoldProcedureItem:new("TAKEOFF","ANNOUNCE",FlowItem.actorPF))
 takeoffClimbProc:addItem(IndirectProcedureItem:new("THRUST SETTING","40% N1",FlowItem.actorPNF,0,"to40percent",
 	function () return get("laminar/B738/engine/indicators/N1_percent_1") > 40 end))
 takeoffClimbProc:addItem(ProcedureItem:new("SET TAKEOFF THRUST","T/O MODE",FlowItem.actorPF,0,
@@ -1854,32 +1859,41 @@ takeoffClimbProc:addItem(ProcedureItem:new("SET TAKEOFF THRUST","T/O MODE",FlowI
 	function () command_once("laminar/B738/autopilot/left_toga_press") kc_speakNoText(0,"takeoff thrust set") end))
 takeoffClimbProc:addItem(IndirectProcedureItem:new("POSITIVE RATE","GT 40 FT AGL",FlowItem.actorPNF,0,"toposrate",
 	function () return get("sim/cockpit2/tcas/targets/position/vertical_speed",0) > 100 and get("sim/flightmodel/position/y_agl") > 40 end))
+takeoffClimbProc:addItem(HoldProcedureItem:new("GEAR","COMMAND UP",FlowItem.actorPF))
 takeoffClimbProc:addItem(IndirectProcedureItem:new("GEAR","UP",FlowItem.actorPF,0,"gear_up_to",
 	function () return sysGeneral.GearSwitch:getStatus() == 0 end,
 	function () sysGeneral.GearSwitch:actuate(0) kc_speakNoText(0,"gear up") end))
-takeoffClimbProc:addItem(IndirectProcedureItem:new("FLAPS 15 SPEED","REACHED",FlowItem.actorPNF,0,"toflap15spd",
-	function () return get("sim/cockpit2/gauges/indicators/airspeed_kts_pilot") > get("laminar/B738/pfd/flaps_15") end,nil,
+-- takeoffClimbProc:addItem(IndirectProcedureItem:new("FLAPS 15 SPEED","REACHED",FlowItem.actorPNF,0,"toflap15spd",
+	-- function () return get("sim/cockpit2/gauges/indicators/airspeed_kts_pilot") > get("laminar/B738/pfd/flaps_15")-5 end,nil,
+	-- function () return sysControls.flapsSwitch:getStatus() < 0.625 end))
+takeoffClimbProc:addItem(HoldProcedureItem:new("FLAPS 10","COMMAND",FlowItem.actorPF,nil,
 	function () return sysControls.flapsSwitch:getStatus() < 0.625 end))
 takeoffClimbProc:addItem(ProcedureItem:new("FLAPS 10","SET",FlowItem.actorPNF,0,
 	function () return sysControls.flapsSwitch:getStatus() == 0.5 end,
 	function () command_once("laminar/B738/push_button/flaps_10") kc_speakNoText(0,"speed check flaps 10") end,
 	function () return sysControls.flapsSwitch:getStatus() < 0.5 end))
-takeoffClimbProc:addItem(IndirectProcedureItem:new("FLAPS 10 SPEED","REACHED",FlowItem.actorPNF,0,"toflap10spd",
-	function () return get("sim/cockpit2/gauges/indicators/airspeed_kts_pilot") > get("laminar/B738/pfd/flaps_10") end,nil,
+-- takeoffClimbProc:addItem(IndirectProcedureItem:new("FLAPS 10 SPEED","REACHED",FlowItem.actorPNF,0,"toflap10spd",
+	-- function () return get("sim/cockpit2/gauges/indicators/airspeed_kts_pilot") > get("laminar/B738/pfd/flaps_10")-5 end,nil,
+	-- function () return sysControls.flapsSwitch:getStatus() < 0.5 end))
+takeoffClimbProc:addItem(HoldProcedureItem:new("FLAPS 5","COMMAND",FlowItem.actorPF,nil,
 	function () return sysControls.flapsSwitch:getStatus() < 0.5 end))
 takeoffClimbProc:addItem(ProcedureItem:new("FLAPS 5","SET",FlowItem.actorPNF,0,
 	function () return sysControls.flapsSwitch:getStatus() == 0.375 end,
 	function () command_once("laminar/B738/push_button/flaps_5") kc_speakNoText(0,"speed check flaps 5") end,
 	function () return sysControls.flapsSwitch:getStatus() < 0.375 end))
-takeoffClimbProc:addItem(IndirectProcedureItem:new("FLAPS 5 SPEED","REACHED",FlowItem.actorPNF,0,"toflap5spd",
-	function () return get("sim/cockpit2/gauges/indicators/airspeed_kts_pilot") > get("laminar/B738/pfd/flaps_5") end,nil,
+-- takeoffClimbProc:addItem(IndirectProcedureItem:new("FLAPS 5 SPEED","REACHED",FlowItem.actorPNF,0,"toflap5spd",
+	-- function () return get("sim/cockpit2/gauges/indicators/airspeed_kts_pilot") > get("laminar/B738/pfd/flaps_5")-5 end,nil,
+	-- function () return sysControls.flapsSwitch:getStatus() < 0.375 end))
+takeoffClimbProc:addItem(HoldProcedureItem:new("FLAPS 1","COMMAND",FlowItem.actorPF,nil,
 	function () return sysControls.flapsSwitch:getStatus() < 0.375 end))
 takeoffClimbProc:addItem(ProcedureItem:new("FLAPS 1","SET",FlowItem.actorPNF,0,
 	function () return sysControls.flapsSwitch:getStatus() == 0.125 end,
 	function () command_once("laminar/B738/push_button/flaps_1") kc_speakNoText(0,"speed check flaps 1") end,
 	function () return sysControls.flapsSwitch:getStatus() < 0.125 end))
-takeoffClimbProc:addItem(IndirectProcedureItem:new("FLAPS 1 SPEED","REACHED",FlowItem.actorPNF,0,"toflap1spd",
-	function () return get("sim/cockpit2/gauges/indicators/airspeed_kts_pilot") > get("laminar/B738/pfd/flaps_1") end))
+-- takeoffClimbProc:addItem(IndirectProcedureItem:new("FLAPS 1 SPEED","REACHED",FlowItem.actorPNF,0,"toflap1spd",
+	-- function () return get("sim/cockpit2/gauges/indicators/airspeed_kts_pilot") > get("laminar/B738/pfd/flaps_1")-5 end))
+takeoffClimbProc:addItem(HoldProcedureItem:new("FLAPS UP","COMMAND",FlowItem.actorPF,nil,
+	function () return sysControls.flapsSwitch:getStatus() < 0.125 end))
 takeoffClimbProc:addItem(ProcedureItem:new("FLAPS UP","SET",FlowItem.actorPNF,0,
 	function () return sysControls.flapsSwitch:getStatus() == 0 end,
 	function () command_once("laminar/B738/push_button/flaps_0") kc_speakNoText(0,"speed check flaps up") end))

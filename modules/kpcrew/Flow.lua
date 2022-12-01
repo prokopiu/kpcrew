@@ -305,7 +305,11 @@ function kcFlow:render()
 	local items = self:getAllItems()
 	for _, item in ipairs(items) do
 		if item:isValid() ~= true then
-			item:setColor(FlowItem.colorFailed)
+			if item:getClassName() == "HoldProcedureItem" then
+				item:setColor(FlowItem.colorActive)
+			else
+				item:setColor(FlowItem.colorFailed)
+			end
 		else
 			item:setColor(item:getStateColor())
 		end
