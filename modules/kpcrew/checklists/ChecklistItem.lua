@@ -55,8 +55,12 @@ end
 -- speak the challenge text
 function kcChecklistItem:speakChallengeText()
 	if getActivePrefs():get("general:assistance") > 1 then
-		if not self:isUserRole() then
-			kc_speakNoText(0,kc_parse_string(self:getChallengeText() .. "           " .. self:getResponseText()))
+		if not self:isUserRole() or self:getActor()	== FlowItem.actorBOTH then
+			if self:isValid() then
+				kc_speakNoText(0,kc_parse_string(self:getChallengeText() .. ".    " .. self:getResponseText()))
+			else
+				kc_speakNoText(0,kc_parse_string(self:getChallengeText() .. ". Please check! Should be ".. self:getResponseText()))
+			end
 		else
 			kc_speakNoText(0,kc_parse_string(self:getChallengeText()))
 		end

@@ -240,6 +240,7 @@ function kc_master_button()
 			getActiveSOP():getActiveFlow():setState(Flow.RUN)
 		end
 	elseif kc_mstr_button_state == kc_mstr_state_stop then
+		kc_procvar_set("waitformaster",true)
 		if getActivePrefs():get("general:assistance") > 1 then
 			if getActiveSOP():getActiveFlow():getActiveItem():isValid() then
 				getActiveSOP():getActiveFlow():getActiveItem():setState(FlowItem.DONE)
@@ -312,6 +313,9 @@ function kc_next_button()
 			if flow:hasNextItem() then
 				flow:setNextItemActive()
 				flow:setState(Flow.RUN)
+				kc_mstr_button_state = kc_mstr_state_active
+			else
+				flow:setState(Flow.FINISH)
 				kc_mstr_button_state = kc_mstr_state_active
 			end
 		end

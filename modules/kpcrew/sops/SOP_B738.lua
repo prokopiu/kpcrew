@@ -54,11 +54,17 @@ kcSopFlightPhase = { [1] = "Cold & Dark", 	[2] = "Prel Preflight", [3] = "Prefli
 
 activeSOP = SOP:new("Zibo Mod SOP")
 
-local testProc = Procedure:new("TEST","","")
-testProc:setFlightPhase(1)
-testProc:addItem(HoldProcedureItem:new("ENGINE START LEVERS","CUTOFF",FlowItem.actorCPT))
-testProc:addItem(ProcedureItem:new("ENGINE START LEVERS2","CUTOFF",FlowItem.actorCPT,0,
-	function () return true end))
+local testProc = Checklist:new("TEST","","")
+testProc:addItem(IndirectChecklistItem:new("FUEL","TESTED 100 #exchange|PERC|percent",FlowItem.actorFO,0,"oxygentestedcpt",
+	function () return get("laminar/B738/push_button/oxy_test_cpt_pos") == 1 end))
+testProc:addItem(ChecklistItem:new("WINDOW HEAT","ON",FlowItem.actorFO,0,
+	function () 
+			return sysMCP.vhfNavSwitch:getStatus() == 0 and 
+			sysMCP.irsNavSwitch:getStatus() == 0 and 
+			sysMCP.fmcNavSwitch:getStatus() == 0 and 
+			sysMCP.displaySourceSwitch:getStatus() == 0 and 
+			sysMCP.displayControlSwitch:getStatus() == 0 
+	end))
 
 
 
@@ -238,8 +244,6 @@ electricalPowerUpProc:addItem(ProcedureItem:new("   STANDBY #exchange|PWR|POWER#
 -- ELECTRICAL POWER UP......................COMPLETE (F/O)
 -- FLIGHT DATA RECORDER SWITCH..................AUTO (F/O)
 -- MACH OVERSPEED TEST.......................PERFORM (F/O)
--- STALL WARNING TEST........................PERFORM (F/O)
---   Wait for 4 minutes AC power if not functioning
 -- VOICE RECORDER SWITCH........................AUTO (F/O)
 
 -- ==== Engine Panel
@@ -302,17 +306,6 @@ prelPreflightProc:addItem(IndirectProcedureItem:new("MACH OVERSPEED TEST 2","PER
 	function () 
 		kc_procvar_set("mach2test",true) -- background test
 	end))
-prelPreflightProc:addItem(IndirectProcedureItem:new("STALL WARNING TEST 1","PERFORM",FlowItem.actorFO,0,"stall_warning_test1",
-	function () return get("laminar/B738/push_button/stall_test1") == 1 end,
-	function () 
-		kc_procvar_set("stall1test",true) -- background test
-	end))
-prelPreflightProc:addItem(IndirectProcedureItem:new("STALL WARNING TEST 2","PERFORM",FlowItem.actorFO,0,"stall_warning_test",
-	function () return get("laminar/B738/push_button/stall_test2") == 1 end,
-	function () 
-		kc_procvar_set("stall2test",true) -- background test
-	end))
-prelPreflightProc:addItem(SimpleProcedureItem:new("  Wait for 4 minutes AC power if not functioning"))
 prelPreflightProc:addItem(ProcedureItem:new("VOICE RECORDER SWITCH","AUTO",FlowItem.actorFO,0,
 	function () return  sysGeneral.vcrSwitch:getStatus() == 0 end,
 	function () sysGeneral.vcrSwitch:actuate(modeOn) end))
@@ -507,6 +500,9 @@ cduPreflightProc:addItem(IndirectProcedureItem:new("    V SPEEDS","ENTER",FlowIt
 cduPreflightProc:addItem(SimpleProcedureItem:new("FILL OUT KPCREW DEPARTURE BRIEFING!!"))
 
 -- ================ Preflight Procedure ==================
+-- STALL WARNING TEST........................PERFORM (F/O)
+--   Wait for 4 minutes AC power if not functioning
+-- ELECTRIC HYDRAULIC PUMP SWITCHES..............OFF (F/O)
 -- ==== Flight control panel                            
 -- FLIGHT CONTROL SWITCHES.............GUARDS CLOSED (F/O)
 -- FLIGHT SPOILER SWITCHES.............GUARDS CLOSED (F/O)
@@ -569,6 +565,17 @@ cduPreflightProc:addItem(SimpleProcedureItem:new("FILL OUT KPCREW DEPARTURE BRIE
 local preflightFOProc = Procedure:new("PREFLIGHT PROCEDURE","running preflight procedure","preflight setup finished")
 preflightFOProc:setResize(false)
 preflightFOProc:setFlightPhase(3)
+preflightFOProc:addItem(IndirectProcedureItem:new("STALL WARNING TEST 1","PERFORM",FlowItem.actorFO,0,"stall_warning_test1",
+	function () return get("laminar/B738/push_button/stall_test1") == 1 end,
+	function () 
+		kc_procvar_set("stall1test",true) -- background test
+	end))
+preflightFOProc:addItem(IndirectProcedureItem:new("STALL WARNING TEST 2","PERFORM",FlowItem.actorFO,0,"stall_warning_test",
+	function () return get("laminar/B738/push_button/stall_test2") == 1 end,
+	function () 
+		kc_procvar_set("stall2test",true) -- background test
+	end))
+preflightFOProc:addItem(SimpleProcedureItem:new("  Wait for 4 minutes AC power if not functioning"))
 preflightFOProc:addItem(ProcedureItem:new("ELECTRIC HYDRAULIC PUMP SWITCHES","OFF",FlowItem.actorFO,0,
 	function () return sysHydraulic.elecHydPumpGroup:getStatus() == 0 end,
 	function () sysHydraulic.elecHydPumpGroup:actuate(modeOff) end))
@@ -1194,7 +1201,7 @@ preflightCPTProc:addItem(ProcedureItem:new("DEPARTURE BRIEFING","PERFORM",FlowIt
 
 local preflightChkl = Checklist:new("PREFLIGHT CHECKLIST","","preflight checklist completed")
 preflightChkl:setFlightPhase(3)
-preflightChkl:addItem(IndirectChecklistItem:new("#exchange|OXYGEN|pre flight checklist. oxygen","TESTED 100 PERC",FlowItem.actorBOTH,0,"oxygentestedcpt",
+preflightChkl:addItem(IndirectChecklistItem:new("#exchange|OXYGEN|pre flight checklist. oxygen","TESTED 100 #exchange|PERC|percent",FlowItem.actorBOTH,0,"oxygentestedcpt",
 	function () return get("laminar/B738/push_button/oxy_test_cpt_pos") == 1 end))
 preflightChkl:addItem(ChecklistItem:new("NAVIGATION & DISPLAY SWITCHES","NORMAL,AUTO",FlowItem.actorFO,0,
 	function () 
@@ -1353,11 +1360,11 @@ beforeStartChkl:setFlightPhase(4)
 beforeStartChkl:addItem(ChecklistItem:new("#exchange|FLIGHT DECK DOOR|before start checklist. FLIGHT DECK DOOR","CLOSED AND LOCKED",FlowItem.actorFO,0,
 	function () return sysGeneral.cockpitDoor:getStatus() == 0 end,
 	function () sysGeneral.cockpitDoor:actuate(0) end))
-beforeStartChkl:addItem(ChecklistItem:new("FUEL","%i %s, PUMPS ON|activePrefSet:get(\"general:weight_kgs\") and sysFuel.allTanksKgs:getStatus() or sysFuel.allTanksLbs:getStatus()|activePrefSet:get(\"general:weight_kgs\") and \"KGS\" or \"LBS\"",FlowItem.actorFO,0,
+beforeStartChkl:addItem(ChecklistItem:new("FUEL","%i %s , PUMPS ON|activePrefSet:get(\"general:weight_kgs\") and sysFuel.allTanksKgs:getStatus() or sysFuel.allTanksLbs:getStatus()|activePrefSet:get(\"general:weight_kgs\") and \"KG\" or \"LB\"",FlowItem.actorFO,0,
 	function () return sysFuel.wingFuelPumpGroup:getStatus() == 4 end,
 	function () kc_macro_fuelpumps_on() end,
 	function () return sysFuel.centerTankLbs:getStatus() > 999 end))
-beforeStartChkl:addItem(ChecklistItem:new("FUEL","%i %s, PUMPS ON|activePrefSet:get(\"general:weight_kgs\") and sysFuel.allTanksKgs:getStatus() or sysFuel.allTanksLbs:getStatus()|activePrefSet:get(\"general:weight_kgs\") and \"KGS\" or \"LBS\"",FlowItem.actorFO,0,
+beforeStartChkl:addItem(ChecklistItem:new("FUEL","%i %s , PUMPS ON|activePrefSet:get(\"general:weight_kgs\") and sysFuel.allTanksKgs:getStatus() or sysFuel.allTanksLbs:getStatus()|activePrefSet:get(\"general:weight_kgs\") and \"KG\" or \"LB\"",FlowItem.actorFO,0,
 	function () return sysFuel.allFuelPumpGroup:getStatus() == 6 end,
 	function () kc_macro_fuelpumps_on() end,
 	function () return sysFuel.centerTankLbs:getStatus() < 1000 end))
@@ -1769,7 +1776,6 @@ beforeTakeoffChkl:addItem(ChecklistItem:new("#exchange|FLAPS|before takeoff chec
 	end)) 
 beforeTakeoffChkl:addItem(ChecklistItem:new("STABILIZER TRIM","%3.2f UNITS (%3.2f)|kc_round_step((8.2-(get(\"sim/flightmodel2/controls/elevator_trim\")/-0.119)+0.4)*1000,10)/1000|activeBriefings:get(\"takeoff:elevatorTrim\")",FlowItem.actorCPT,0,
 	function () return (kc_round_step((8.2-(get("sim/flightmodel2/controls/elevator_trim")/-0.119)+0.4)*1000,10)/1000 == activeBriefings:get("takeoff:elevatorTrim")*100/100) end))
-beforeTakeoffChkl:addItem(SimpleChecklistItem:new("All ready"))
 
 -- ============ RUNWAY ENTRY PROCEDURE (F/O) ============
 -- STROBES.......................................ON (F/O)

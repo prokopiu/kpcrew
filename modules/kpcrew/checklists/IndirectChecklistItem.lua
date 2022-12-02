@@ -88,21 +88,28 @@ function kcIndirectChecklistItem:getWaitTime()
 	if getActivePrefs():get("general:assistance") < 2 then
 		return 0
 	else
-		if getActivePrefs():get("general:speakChecklist") == true then
-			return self.waittime
-		else
-			return 0
-		end
+		return self.waittime
 	end
 end
 
 -- speak the challenge text
-function kcIndirectChecklistItem:speakResponseText()
+function kcIndirectChecklistItem:speakChallengeText()
 	if getActivePrefs():get("general:assistance") > 1 then
-		if getActivePrefs():get("general:speakChecklist") == true then
-			kc_speakNoText(0,kc_parse_string(self:getResponseText()))
+		if not self:isUserRole() or self:getActor()	== FlowItem.actorBOTH then
+			if self:isValid() then
+				kc_speakNoText(0,kc_parse_string(self:getChallengeText() .. "    " .. self:getResponseText()))
+			else
+				kc_speakNoText(0,kc_parse_string(self:getChallengeText() .. ". Please check! Should be ".. self:getResponseText()))
+			end
+		else
+			kc_speakNoText(0,kc_parse_string(self:getChallengeText()))
 		end
 	end	
+end
+
+-- speak the challenge text
+function kcIndirectChecklistItem:speakResponseText()
+-- do nothing
 end
 
 return kcIndirectChecklistItem
