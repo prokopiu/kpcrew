@@ -17,16 +17,25 @@ local TwoStateToggleSwitch	= require "kpcrew.systems.TwoStateToggleSwitch"
 local MultiStateCmdSwitch 	= require "kpcrew.systems.MultiStateCmdSwitch"
 local InopSwitch 			= require "kpcrew.systems.InopSwitch"
 
-local drefHydPressure1 		= "sim/cockpit2/hydraulics/indicators/hydraulic_pressure_1"
-local drefHydPressure2 		= "sim/cockpit2/hydraulics/indicators/hydraulic_pressure_2"
-
 -- HYD Electric Pump
-sysHydraulic.elecHydPumpGroup = TwoStateDrefSwitch:new("hydpump","sim/cockpit2/switches/electric_hydraulic_pump_on",0)
+sysHydraulic.pump1			= TwoStateDrefSwitch("hydpump1","1-sim/65/button",0)
+sysHydraulic.pump2			= TwoStateDrefSwitch("hydpump1","1-sim/67/button",0)
+sysHydraulic.pump3			= TwoStateDrefSwitch("hydpump1","1-sim/75/button",0)
+sysHydraulic.pump4			= TwoStateDrefSwitch("hydpump1","1-sim/77/button",0)
+sysHydraulic.elecHydPumpGroup = SwitchGroup:new("hydraulicpumps")
+sysHydraulic.elecHydPumpGroup:addSwitch(sysHydraulic.pump1)
+sysHydraulic.elecHydPumpGroup:addSwitch(sysHydraulic.pump2)
+sysHydraulic.elecHydPumpGroup:addSwitch(sysHydraulic.pump3)
+sysHydraulic.elecHydPumpGroup:addSwitch(sysHydraulic.pump4)
+
+-- Elec hyd pump1
+sysHydraulic.elecpump1		= TwoStateDrefSwitch:new("elechyd1","1-sim/47/button",0)
+sysHydraulic.elecpump2		= TwoStateDrefSwitch:new("elechyd1","1-sim/49/button",0)
 
 -- LOW HYDRAULIC annunciator
 sysHydraulic.hydraulicLowAnc = CustomAnnunciator:new("hydrauliclow",
 function ()
-	if get(drefHydPressure1,0) == 1 or get(drefHydPressure2,0) == 1 then
+	if get("1-sim/hyd/systemG",0) == 0 or get("1-sim/hyd/systemY",0) == 0 then
 		return 1
 	else
 		return 0

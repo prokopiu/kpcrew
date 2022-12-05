@@ -10,7 +10,7 @@ require "kpcrew.systems.activities"
 local Flow = require "kpcrew.Flow"
 local FlowItem = require "kpcrew.FlowItem"
 
-kc_VERSION = "2.3-alpha5"
+kc_VERSION = "2.3-alpha6"
 kc_simversion = get("sim/version/xplane_internal_version")
 
 logMsg ( "FWL: ** Starting KPCrew version " .. kc_VERSION .." **" )
@@ -25,6 +25,8 @@ if PLANE_ICAO == "B738" then
 	else
 		kc_acf_icao = "B738" -- Zibo Mod
 	end
+elseif PLANE_ICAO == "A359" then
+	kc_acf_icao = "A359"
 -- elseif PLANE_ICAO == "A306" then
 	-- kc_acf_icao = "A306"
 -- elseif PLANE_ICAO == "MD11" then

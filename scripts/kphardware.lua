@@ -6,13 +6,16 @@
 require "kpcrew.genutils"
 require "kpcrew.systems.activities"
 
-local KPH_VERSION = "2.3-alpha5"
+local KPH_VERSION = "2.3-alpha6"
 
 -- disable windows by changing from true to false
 local show_mcp_panel = false
 local show_light_panel = false
 local show_radio_panel = false
 local show_efis_panel = false
+
+
+-- auto reverse certain axes
 
 logMsg ("FWL: ** Starting KPHARDWARE version " .. KPH_VERSION .." **")
 
@@ -30,6 +33,9 @@ if PLANE_ICAO == "B738" then
 	end
 -- elseif PLANE_ICAO == "A320" and PLANE_TAILNUMBER == "A320" then
 	-- kc_acf_icao = "A20N"
+end
+if PLANE_ICAO == "A359" then
+	kh_acf_icao = "A359"
 end
 -- if PLANE_ICAO == "MD11" then
 	-- kh_acf_icao = "MD11"

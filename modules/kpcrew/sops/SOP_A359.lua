@@ -58,6 +58,11 @@ local testProc = Checklist:new("TEST","","")
 testProc:addItem(IndirectChecklistItem:new("FUEL","TESTED 100 #exchange|PERC|percent",FlowItem.actorFO,0,"oxygentestedcpt",
 	function () return 1 == 1 end))
 
+local testProc = Procedure:new("TEST","","")
+testProc:addItem(ProcedureItem:new("STEP1","DO",FlowItem.actorFO,0,true,
+	function () 
+		kc_macro_state_turnaround()
+	end))
 
 -- ================= ELECTRICAL POWER-UP =================
 -- All paper work on board and checked
@@ -502,56 +507,54 @@ testProc:addItem(IndirectChecklistItem:new("FUEL","TESTED 100 #exchange|PERC|per
 -- GROUND SPOILERS.ARM.sim/cockpit2/controls/speedbrake_ratio.<.0
 -- LANDING LIGHTS.ON.1-sim/10/switch.=.1
 
----LANDING
---LANDING
--- !.MANUAL
--- AP.OFF.1-sim/misc/AP1status.=.1.or.1-sim/misc/AP2status.=.0
--- FLARE INITIATE.CHECK
--- ATTITUDE.MONITOR
--- THRUST LEVERS.IDLE.1-sim/R/throttle.=.0.and.1-sim/L/throttle.=.0
--- !.AUTOMATIC
--- FMA.CHECK
--- FLARE.MONITOR
--- THRUST LEVERS.IDLE.1-sim/R/throttle.=.0.and.1-sim/L/throttle.=.0
--- LATERAL GUIDANCE.MONITOR
--- !.FOLLOW IN BOTH CASES
--- DEROTATION INITIATE.CHECK
--- REV.PULL.?.sim/flightmodel/failures/onground_all.=.1.1-sim/R/reverser.>.0.zero/zero.=.1
--- GROUND SPOILERS.DEPLOY.sim/cockpit2/controls/speedbrake_ratio.>.0
--- REVERSERS.CHECK
--- AUTOBRAKE.MONITOR
--- DECELERATION.CHECK
--- REV.IDLE.sim/flightmodel/position/groundspeed.<.40.and.1-sim/ind/eng/curTHR/L.<.5
--- REV.STOW.sim/flightmodel/position/groundspeed.<.10.and.1-sim/R/reverser.=.0
--- AUTOBRAKE DISARMED.CHECK
--- AP.DISCONNECT.1-sim/misc/AP1status.=.0.or.1-sim/misc/AP2status.=.0
+-- ======================= LANDING =======================
+-- === MANUAL
+-- AP............................................OFF		.1-sim/misc/AP1status.=.1.or.1-sim/misc/AP2status.=.0
+-- FLARE INITIATE..............................CHECK
+-- ATTITUDE..................................MONITOR
+-- THRUST LEVERS................................IDLE		.1-sim/R/throttle.=.0.and.1-sim/L/throttle.=.0
+-- === AUTOMATIC
+-- FMA.........................................CHECK
+-- FLARE.....................................MONITOR
+-- THRUST LEVERS................................IDLE		.1-sim/R/throttle.=.0.and.1-sim/L/throttle.=.0
+-- LATERAL GUIDANCE..........................MONITOR
+--   FOLLOW IN BOTH CASES
+-- DEROTATION INITIATE.........................CHECK
+-- REV..........................................PULL		.?.sim/flightmodel/failures/onground_all.=.1.1-sim/R/reverser.>.0.zero/zero.=.1
+-- GROUND SPOILERS............................DEPLOY		.sim/cockpit2/controls/speedbrake_ratio.>.0
+-- REVERSERS...................................CHECK
+-- AUTOBRAKE.................................MONITOR
+-- DECELERATION................................CHECK
+-- REV..........................................IDLE		.sim/flightmodel/position/groundspeed.<.40.and.1-sim/ind/eng/curTHR/L.<.5
+-- REV..........................................STOW		.sim/flightmodel/position/groundspeed.<.10.and.1-sim/R/reverser.=.0
+-- AUTOBRAKE DISARMED..........................CHECK
+-- AP.....................................DISCONNECT		.1-sim/misc/AP1status.=.0.or.1-sim/misc/AP2status.=.0
 
 -- ====================== GO AROUND ======================
--- THRUST LEVER TOGA.SET.1-sim/R/throttle.=.1.and.1-sim/L/throttle.=.1
--- ROTATION.CHECK
--- FMA MAN TOGO, SRS, GA, TRK.CHECK
--- GEAR LEVER.UP.sim/cockpit/switches/gear_handle_status.=.0
--- NAV MODE.SELECT.AirbusFBW/NDmodeCapt.=.2.or.AirbusFBW/NDmodeFO.=.2
--- THRUST LEVERS CL.CHECK
--- FLAPS ON SCHEDULE.CHECK
-
---FROM AN INTERMEDIATE APPROACH ALTITUDE
--- !.apply the following steps in order to interrupt the
--- !.approach, or perform a go-around, when the aircraft
--- !.is at an intermediate altitude and if TOGA is not 
--- !.required
--- THRUST LEVERS TOGA, THEN RETARD.CHECK
--- APPLICABLE AP/FD.SELECT
--- !.apply the following steps in order to interrupt an
--- !.ILS, GLS approach, or an approach using FLS, and 
--- !.perform a go-around when the aircraft is above the
--- !.missed approach altitude and TOGA is not required
--- LOC.PRESS.1-sim/146/button.=.1
--- ALT.MONITOR
--- SPEED.PULL.1-sim/fcu/spdPull.>.0
--- FLAPS RETRACT ONE STEP.CHECK
--- HDG.PULL.1-sim/fcu/hdgPull.>.0
--- NAV MODE.SELECT.AirbusFBW/NDmodeCapt.=.2.or.AirbusFBW/NDmodeFO.=.2
+-- THRUST LEVER TOGA.............................SET		.1-sim/R/throttle.=.1.and.1-sim/L/throttle.=.1
+-- ROTATION....................................CHECK
+-- FMA MAN TOGO, SRS, GA, TRK..................CHECK
+-- GEAR LEVER.....................................UP		.sim/cockpit/switches/gear_handle_status.=.0
+-- NAV MODE...................................SELECT		.AirbusFBW/NDmodeCapt.=.2.or.AirbusFBW/NDmodeFO.=.2
+-- THRUST LEVERS CL............................CHECK
+-- FLAPS ON SCHEDULE...........................CHECK
+-- == FROM AN INTERMEDIATE APPROACH ALTITUDE
+--   apply the following steps in order to interrupt the
+--   approach, or perform a go-around, when the aircraft
+--   is at an intermediate altitude and if TOGA is not 
+--   required
+-- THRUST LEVERS TOGA, THEN RETARD.............CHECK
+-- APPLICABLE AP/FD...........................SELECT
+--   apply the following steps in order to interrupt an
+--   ILS, GLS approach, or an approach using FLS, and 
+--   perform a go-around when the aircraft is above the
+--   missed approach altitude and TOGA is not required
+-- LOC.........................................PRESS		.1-sim/146/button.=.1
+-- ALT.......................................MONITOR
+-- SPEED........................................PULL		.1-sim/fcu/spdPull.>.0
+-- FLAPS RETRACT ONE STEP......................CHECK
+-- HDG..........................................PULL		.1-sim/fcu/hdgPull.>.0
+-- NAV MODE...................................SELECT		.AirbusFBW/NDmodeCapt.=.2.or.AirbusFBW/NDmodeFO.=.2
 -- =======================================================
 
 -- ==================== AFTER LANDING ====================
