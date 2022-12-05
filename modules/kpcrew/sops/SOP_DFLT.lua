@@ -279,6 +279,7 @@ backgroundFlow:addItem(BackgroundProcedureItem:new("","","SYS",0,
 -- ==== Background Flow ====
 activeSOP:addBackground(backgroundFlow)
 
+kc_procvar_initialize_bool("waitformaster", false) 
 
 function getActiveSOP()
 	return activeSOP

@@ -110,6 +110,9 @@ sysElectric.genSwitchGroup:addSwitch(sysElectric.gen2Switch)
 sysElectric.apuStartSwitch 	= MultiStateCmdSwitch:new("apu","laminar/B738/spring_toggle_switch/APU_start_pos",0,
 	"laminar/B738/spring_toggle_switch/APU_start_pos_dn","laminar/B738/spring_toggle_switch/APU_start_pos_up",-1,1,true)
 
+-- Avionics Bus
+sysElectric.avionicsBus		= InopSwitch:new("aviobus")
+
 -- ======== Annunciators
 
 -- LOW VOLTAGE annunciator

@@ -1,4 +1,4 @@
--- DFLT  airplane 
+-- A350  airplane 
 -- Electric system functionality
 
 -- @classmod sysElectric
@@ -36,9 +36,6 @@ sysElectric.gen2Switch 		= InopSwitch:new("gen2")
 sysElectric.genSwitchGroup 	= SwitchGroup:new("genswitches")
 sysElectric.genSwitchGroup:addSwitch(sysElectric.gen1Switch)
 sysElectric.genSwitchGroup:addSwitch(sysElectric.gen2Switch)
-
--- Avionics Bus
-sysElectric.avionicsBus		= InopSwitch:new("aviobus")
 
 -- APU Starter
 sysElectric.apuStartSwitch 	= KeepPressedSwitchCmd:new("apu","sim/cockpit2/electrical/APU_running",0,"sim/electrical/APU_start")
