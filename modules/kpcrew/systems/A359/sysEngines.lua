@@ -30,6 +30,15 @@ local drefEngine2Fire 		= "sim/cockpit2/annunciators/engine_fires"
 sysEngines.reverseToggle 	= TwoStateToggleSwitch:new("reverse","sim/cockpit/warnings/annunciators/reverse",0,
 	"sim/engines/thrust_reverse_toggle") 
 
+-- engine start switches
+-- sysEngines.startLever1 		= MultiStateCmdSwitch:new("","1-sim/eng/cutoff/L/switch",0,
+	-- "laminar/B738/engine/mixture1_idle","laminar/B738/engine/mixture1_cutoff","laminar/B738/engine/mixture1_toggle")
+-- sysEngines.startLever2 		= MultiStateCmdSwitch:new("","1-sim/eng/cutoff/L/switch",0,
+	-- "laminar/B738/engine/mixture2_idle","laminar/B738/engine/mixture2_cutoff","laminar/B738/engine/mixture2_toggle")
+-- sysEngines.startLeverGroup 	= SwitchGroup:new("startLevers")
+-- sysEngines.startLeverGroup:addSwitch(sysEngines.startLever1)
+-- sysEngines.startLeverGroup:addSwitch(sysEngines.startLever2)
+
 ----------- Annunciators
 
 -- ** ENGINE FIRE annunciator

@@ -1837,7 +1837,7 @@ runwayEntryProc:addItem(ProcedureItem:new("PACKS & BLEEDS","SET",FlowItem.actorF
 -- ======================================================
 
 --chrono
-local takeoffClimbProc = Procedure:new("TAKEOFF & INITIAL CLIMB","takeoff")
+local takeoffClimbProc = Procedure:new("TAKEOFF & INITIAL CLIMB","")
 takeoffClimbProc:setFlightPhase(8)
 takeoffClimbProc:addItem(ProcedureItem:new("EXTERNAL LIGHTS","SET",FlowItem.actorFO,0,true,
 	function () kc_macro_ext_lights_takeoff() end))
@@ -1876,113 +1876,45 @@ takeoffClimbProc:addItem(IndirectProcedureItem:new("POSITIVE RATE","GT 40 FT AGL
 takeoffClimbProc:addItem(HoldProcedureItem:new("GEAR","COMMAND UP",FlowItem.actorPF))
 takeoffClimbProc:addItem(IndirectProcedureItem:new("GEAR","UP",FlowItem.actorPF,0,"gear_up_to",
 	function () return sysGeneral.GearSwitch:getStatus() == 0 end,
-	function () sysGeneral.GearSwitch:actuate(0) kc_speakNoText(0,"gear up") end))
--- takeoffClimbProc:addItem(IndirectProcedureItem:new("FLAPS 15 SPEED","REACHED",FlowItem.actorPNF,0,"toflap15spd",
-	-- function () return get("sim/cockpit2/gauges/indicators/airspeed_kts_pilot") > get("laminar/B738/pfd/flaps_15")-5 end,nil,
-	-- function () return sysControls.flapsSwitch:getStatus() < 0.625 end))
-takeoffClimbProc:addItem(HoldProcedureItem:new("FLAPS 10","COMMAND",FlowItem.actorPF,nil,
+	function () 
+		sysGeneral.GearSwitch:actuate(0) 
+		kc_speakNoText(0,"gear coming up") 
+		kc_procvar_set("above10k",true) -- background 10.000 ft activities
+		kc_procvar_set("attransalt",true) -- background transition altitude activities
+	end))
+-- flaps schedule
+takeoffClimbProc:addItem(HoldProcedureItem:new("FLAPS 10","COMMAND",FlowItem.actorPF,
 	function () return sysControls.flapsSwitch:getStatus() < 0.625 end))
-takeoffClimbProc:addItem(ProcedureItem:new("FLAPS 10","SET",FlowItem.actorPNF,0,
-	function () return sysControls.flapsSwitch:getStatus() == 0.5 end,
+takeoffClimbProc:addItem(ProcedureItem:new("FLAPS 10","SET",FlowItem.actorPNF,0,true,
 	function () command_once("laminar/B738/push_button/flaps_10") kc_speakNoText(0,"speed check flaps 10") end,
+	function () return sysControls.flapsSwitch:getStatus() < 0.625 end))
+takeoffClimbProc:addItem(HoldProcedureItem:new("FLAPS 5","COMMAND",FlowItem.actorPF,
 	function () return sysControls.flapsSwitch:getStatus() < 0.5 end))
--- takeoffClimbProc:addItem(IndirectProcedureItem:new("FLAPS 10 SPEED","REACHED",FlowItem.actorPNF,0,"toflap10spd",
-	-- function () return get("sim/cockpit2/gauges/indicators/airspeed_kts_pilot") > get("laminar/B738/pfd/flaps_10")-5 end,nil,
-	-- function () return sysControls.flapsSwitch:getStatus() < 0.5 end))
-takeoffClimbProc:addItem(HoldProcedureItem:new("FLAPS 5","COMMAND",FlowItem.actorPF,nil,
-	function () return sysControls.flapsSwitch:getStatus() < 0.5 end))
-takeoffClimbProc:addItem(ProcedureItem:new("FLAPS 5","SET",FlowItem.actorPNF,0,
-	function () return sysControls.flapsSwitch:getStatus() == 0.375 end,
+takeoffClimbProc:addItem(ProcedureItem:new("FLAPS 5","SET",FlowItem.actorPNF,0,true,
 	function () command_once("laminar/B738/push_button/flaps_5") kc_speakNoText(0,"speed check flaps 5") end,
-	function () return sysControls.flapsSwitch:getStatus() < 0.375 end))
--- takeoffClimbProc:addItem(IndirectProcedureItem:new("FLAPS 5 SPEED","REACHED",FlowItem.actorPNF,0,"toflap5spd",
-	-- function () return get("sim/cockpit2/gauges/indicators/airspeed_kts_pilot") > get("laminar/B738/pfd/flaps_5")-5 end,nil,
-	-- function () return sysControls.flapsSwitch:getStatus() < 0.375 end))
-takeoffClimbProc:addItem(HoldProcedureItem:new("FLAPS 1","COMMAND",FlowItem.actorPF,nil,
-	function () return sysControls.flapsSwitch:getStatus() < 0.375 end))
-takeoffClimbProc:addItem(ProcedureItem:new("FLAPS 1","SET",FlowItem.actorPNF,0,
-	function () return sysControls.flapsSwitch:getStatus() == 0.125 end,
-	function () command_once("laminar/B738/push_button/flaps_1") kc_speakNoText(0,"speed check flaps 1") end,
-	function () return sysControls.flapsSwitch:getStatus() < 0.125 end))
--- takeoffClimbProc:addItem(IndirectProcedureItem:new("FLAPS 1 SPEED","REACHED",FlowItem.actorPNF,0,"toflap1spd",
-	-- function () return get("sim/cockpit2/gauges/indicators/airspeed_kts_pilot") > get("laminar/B738/pfd/flaps_1")-5 end))
-takeoffClimbProc:addItem(HoldProcedureItem:new("FLAPS UP","COMMAND",FlowItem.actorPF,nil,
-	function () return sysControls.flapsSwitch:getStatus() < 0.125 end))
-takeoffClimbProc:addItem(ProcedureItem:new("FLAPS UP","SET",FlowItem.actorPNF,0,
-	function () return sysControls.flapsSwitch:getStatus() == 0 end,
+	function () return sysControls.flapsSwitch:getStatus() < 0.5 end))
+takeoffClimbProc:addItem(HoldProcedureItem:new("FLAPS 1","COMMAND",FlowItem.actorPF))
+takeoffClimbProc:addItem(ProcedureItem:new("FLAPS 1","SET",FlowItem.actorPNF,0,true,
+	function () command_once("laminar/B738/push_button/flaps_1") kc_speakNoText(0,"speed check flaps 1") end))
+takeoffClimbProc:addItem(HoldProcedureItem:new("FLAPS UP","COMMAND",FlowItem.actorPF))
+takeoffClimbProc:addItem(ProcedureItem:new("FLAPS UP","SET",FlowItem.actorPNF,0,true,
 	function () command_once("laminar/B738/push_button/flaps_0") kc_speakNoText(0,"speed check flaps up") end))
-takeoffClimbProc:addItem(IndirectProcedureItem:new("ACCELERATION ALTITUDE","GT 300 FT AGL",FlowItem.actorPNF,0,"toaccalt",
-	function () return get("sim/flightmodel/position/y_agl") > 300 end))
-takeoffClimbProc:addItem(ProcedureItem:new("CMD-A","ON",FlowItem.actorPF,0,
+--
+takeoffClimbProc:addItem(HoldProcedureItem:new("CMD-A","COMMAND ON",FlowItem.actorPF)
 	function () return sysMCP.ap1Switch:getStatus() == 1 end,
 	function () if activePrefSet:get("takeoff_cmda") == true then sysMCP.ap1Switch:actuate(1) end kc_speakNoText(0,"command a") end))
+takeoffClimbProc:addItem(ProcedureItem:new("CMD-A","ON",FlowItem.actorPNF,0,
+	function () return sysMCP.ap1Switch:getStatus() == 1 end,
+	function () 
+		sysMCP.ap1Switch:actuate(1) 
+		kc_speakNoText(0,"command a") 
+	end))
 takeoffClimbProc:addItem(ProcedureItem:new("AUTO BRAKE SELECT SWITCH","OFF",FlowItem.actorFO,0,
 	function () return sysGeneral.autobrake:getStatus() == 1 end,
 	function () command_once("laminar/B738/knob/autobrake_off") end))
 takeoffClimbProc:addItem(ProcedureItem:new("GEAR","OFF",FlowItem.actorPF,0,
 	function () return sysGeneral.GearSwitch:getStatus() == 0.5 end,
 	function () command_once("laminar/B738/push_button/gear_off") end))
-	
-takeoffClimbProc:addItem(IndirectProcedureItem:new("TRANSITION ALTITUDE","REACHED",FlowItem.actorPF,0,"to_trans_alt",
-	function () return get("sim/cockpit2/gauges/indicators/altitude_ft_pilot") > activeBriefings:get("departure:transalt") end,nil,
-	function () return activeBriefings:get("departure:transalt") > 10000 end))
-takeoffClimbProc:addItem(IndirectProcedureItem:new("ALTIMETERS","STD",FlowItem.actorPF,0,"to_altimeters",
-	function () return get("laminar/B738/EFIS/baro_set_std_pilot") == 1 and get("laminar/B738/EFIS/baro_set_std_copilot") == 1 end,
-	function () 
-	    kc_speakNoText(0,"transition altitude")
-		if get("laminar/B738/EFIS/baro_set_std_pilot") == 0 then 
-			command_once("laminar/B738/EFIS_control/capt/push_button/std_press")
-		end
-		if get("laminar/B738/EFIS/baro_set_std_copilot") == 0 then 
-			command_once("laminar/B738/EFIS_control/fo/push_button/std_press")
-		end
-	end,
-	function () return activeBriefings:get("departure:transalt") > 10000 end))
-
-takeoffClimbProc:addItem(IndirectProcedureItem:new("10.000 FT","REACHED",FlowItem.actorPF,0,"to_10000",
-	function () return get("sim/cockpit2/gauges/indicators/altitude_ft_pilot") > 10000 end,nil,
-	function () return activeBriefings:get("departure:transalt") <= 10000 end))
-takeoffClimbProc:addItem(ProcedureItem:new("EXTERNAL LIGHTS","SET",FlowItem.actorPM,0,true,
-	function () kc_macro_ext_lights_above10()  kc_speakNoText(0,"ten thousand") end,
-	function () return activeBriefings:get("departure:transalt") <= 10000 end))
-
-takeoffClimbProc:addItem(ProcedureItem:new("FASTEN BELTS SWITCH","OFF",FlowItem.actorPM,0,
-	function () return sysGeneral.seatBeltSwitch:getStatus() == 0 end,
-	function () 
-		command_once("laminar/B738/toggle_switch/seatbelt_sign_up") 
-		command_once("laminar/B738/toggle_switch/seatbelt_sign_up") 
-	end,
-	function () return activeBriefings:get("departure:transalt") <= 10000 end))
-
-takeoffClimbProc:addItem(IndirectProcedureItem:new("10.000 FT","REACHED",FlowItem.actorPF,0,"to_10000",
-	function () return get("sim/cockpit2/gauges/indicators/altitude_ft_pilot") > 10000 end,nil,
-	function () return activeBriefings:get("departure:transalt") > 10000 end))
-takeoffClimbProc:addItem(ProcedureItem:new("EXTERNAL LIGHTS","SET",FlowItem.actorPM,0,true,
-	function () kc_macro_ext_lights_above10()  kc_speakNoText(0,"ten thousand") end,
-	function () return activeBriefings:get("departure:transalt") <= 10000 end))
-takeoffClimbProc:addItem(ProcedureItem:new("FASTEN BELTS SWITCH","OFF",FlowItem.actorPM,0,
-	function () return sysGeneral.seatBeltSwitch:getStatus() == 0 end,
-	function () 
-		command_once("laminar/B738/toggle_switch/seatbelt_sign_up") 
-		command_once("laminar/B738/toggle_switch/seatbelt_sign_up") 
-	end,
-	function () return activeBriefings:get("departure:transalt") > 10000 end))
-
-takeoffClimbProc:addItem(IndirectProcedureItem:new("TRANSITION ALTITUDE","REACHED",FlowItem.actorPF,0,"to_trans_alt",
-	function () return get("sim/cockpit2/gauges/indicators/altitude_ft_pilot") > activeBriefings:get("departure:transalt") end,nil,
-	function () return activeBriefings:get("departure:transalt") <= 10000 end))
-takeoffClimbProc:addItem(IndirectProcedureItem:new("ALTIMETERS","STD",FlowItem.actorPF,0,"to_altimeters",
-	function () return get("laminar/B738/EFIS/baro_set_std_pilot") == 1 and get("laminar/B738/EFIS/baro_set_std_copilot") == 1 end,
-	function () 
-	    kc_speakNoText(0,"transition altitude")
-		if get("laminar/B738/EFIS/baro_set_std_pilot") == 0 then 
-			command_once("laminar/B738/EFIS_control/capt/push_button/std_press")
-		end
-		if get("laminar/B738/EFIS/baro_set_std_copilot") == 0 then 
-			command_once("laminar/B738/EFIS_control/fo/push_button/std_press")
-		end
-	end,
-	function () return activeBriefings:get("departure:transalt") <= 10000 end))
 takeoffClimbProc:addItem(ProcedureItem:new("ENGINE START SWITCHES","OFF",FlowItem.actorPM,0,
 	function () return sysEngines.engStarterGroup:getStatus() == 2 end,
 	function () sysEngines.engStarterGroup:actuate(1) end))
@@ -2053,15 +1985,7 @@ descentProc:addItem(SimpleProcedureItem:new("Set or verify the navigation radios
 descentProc:addItem(ProcedureItem:new("AUTO BRAKE SELECT SWITCH","%s|kc_pref_split(kc_LandingAutoBrake)[activeBriefings:get(\"approach:autobrake\")]",FlowItem.actorPM,0,
 	function () return sysGeneral.autobrake:getStatus() == activeBriefings:get("approach:autobrake") end,
 	function () 
-		if activeBriefings:get("approach:autobrake") == 2 then
-			command_once("laminar/B738/knob/autobrake_1")
-		elseif activeBriefings:get("approach:autobrake") == 3 then
-			command_once("laminar/B738/knob/autobrake_2")
-		elseif activeBriefings:get("approach:autobrake") == 4 then
-			command_once("laminar/B738/knob/autobrake_3")
-		elseif activeBriefings:get("approach:autobrake") == 5 then
-			command_once("laminar/B738/knob/autobrake_max")
-		end
+		kc_macro_b738_set_autobrake()
 	end))
 
 -- =============== DESCENT CHECKLIST (PM) ===============
@@ -2105,119 +2029,15 @@ descentChkl:addItem(ChecklistItem:new("APPROACH BRIEFING","COMPLETED",FlowItem.a
 
 local arrivalProc = Procedure:new("ARRIVAL PROCEDURE","","ready for approach checklist")
 arrivalProc:setFlightPhase(12)
-
-arrivalProc:addItem(IndirectProcedureItem:new("10.000 FT","ANNOUNCE REACHED",FlowItem.actorPM,0,"ldg_10000",
-	function () return get("sim/cockpit2/gauges/indicators/altitude_ft_pilot") <= 10000 end,nil,
-	function () return activeBriefings:get("arrival:translvl") > 100 end))
-arrivalProc:addItem(ProcedureItem:new("EXTERNAL LIGHTS","SET",FlowItem.actorPM,0,true,
-	function () kc_macro_ext_lights_below10() kc_speakNoText(0,"ten thousand") end,
-	function () return activeBriefings:get("arrival:translvl") > 100 end))
-arrivalProc:addItem(ProcedureItem:new("FASTEN BELTS SWITCH","ON",FlowItem.actorPM,0,
-	function () return sysGeneral.seatBeltSwitch:getStatus() > 0 end,
+arrivalProc:addItem(ProcedureItem:new("F/O MONITORS TRANS LVL AND 10000 FT","CHECK",FlowItem.actorPM,0,true,
 	function () 
-		command_once("laminar/B738/toggle_switch/seatbelt_sign_up") 
-		command_once("laminar/B738/toggle_switch/seatbelt_sign_up") 
-		command_once("laminar/B738/toggle_switch/seatbelt_sign_dn") 
-	end,
-	function () return activeBriefings:get("arrival:translvl") > 100 end))
-
-arrivalProc:addItem(IndirectProcedureItem:new("TRANSITION LEVEL","ANNOUNCE REACHED",FlowItem.actorPM,0,"ldg_trans_lvl",
-	function () return get("sim/cockpit2/gauges/indicators/altitude_ft_pilot") < activeBriefings:get("arrival:translvl")*100 end,nil,
-	function () return activeBriefings:get("arrival:translvl") <= 100 end))
-arrivalProc:addItem(IndirectProcedureItem:new("ALTIMETERS","QNH %s |activeBriefings:get(\"arrival:atisQNH\")",FlowItem.actorBOTH,0,"ldg_altimeters",
-	function () 
-		if activeBriefings:get("arrival:atisQNH") ~= "" then
-			if activePrefSet:get("general:baro_mode_hpa") then
-				return 	get("laminar/B738/EFIS/baro_sel_in_hg_pilot") == tonumber(activeBriefings:get("arrival:atisQNH")) * 0.02952999 and 
-						get("laminar/B738/EFIS/baro_sel_in_hg_copilot") == tonumber(activeBriefings:get("arrival:atisQNH")) * 0.02952999
-			else
-				return 	get("laminar/B738/EFIS/baro_sel_in_hg_pilot") == tonumber(activeBriefings:get("arrival:atisQNH")) and 
-						get("laminar/B738/EFIS/baro_sel_in_hg_copilot") == tonumber(activeBriefings:get("arrival:atisQNH"))
-			end
-		end
-	end,
-	function () 
-	    kc_speakNoText(0,"transition level")
-		if get("laminar/B738/EFIS/baro_set_std_pilot") == 1 then 
-			command_once("laminar/B738/EFIS_control/capt/push_button/std_press")
-		end
-		if get("laminar/B738/EFIS/baro_set_std_copilot") == 1 then 
-			command_once("laminar/B738/EFIS_control/fo/push_button/std_press")
-		end
-		if activeBriefings:get("arrival:atisQNH") ~= "" then
-			if activePrefSet:get("general:baro_mode_hpa") then
-				set("laminar/B738/EFIS/baro_sel_in_hg_pilot", tonumber(activeBriefings:get("arrival:atisQNH")) * 0.02952999)
-				set("laminar/B738/EFIS/baro_sel_in_hg_copilot", tonumber(activeBriefings:get("arrival:atisQNH")) * 0.02952999) 
-			else
-				set("laminar/B738/EFIS/baro_sel_in_hg_pilot", tonumber(activeBriefings:get("arrival:atisQNH")))
-				set("laminar/B738/EFIS/baro_sel_in_hg_copilot", tonumber(activeBriefings:get("arrival:atisQNH")))
-			end
-		end
-	end,
-	function () return activeBriefings:get("arrival:translvl") <= 100 end))
-
-arrivalProc:addItem(IndirectProcedureItem:new("TRANSITION LEVEL","ANNOUNCE REACHED",FlowItem.actorPM,0,"ldg_trans_lvl",
-	function () return get("sim/cockpit2/gauges/indicators/altitude_ft_pilot") < activeBriefings:get("arrival:translvl")*100 end,nil,
-	function () return activeBriefings:get("arrival:translvl") > 100 end))
-arrivalProc:addItem(IndirectProcedureItem:new("ALTIMETERS","QNH %s |activeBriefings:get(\"arrival:atisQNH\")",FlowItem.actorBOTH,0,"ldg_altimeters",
-	function () 
-		if activeBriefings:get("arrival:atisQNH") ~= "" then
-			if activePrefSet:get("general:baro_mode_hpa") then
-				return 	get("laminar/B738/EFIS/baro_sel_in_hg_pilot") == tonumber(activeBriefings:get("arrival:atisQNH")) * 0.02952999 and 
-						get("laminar/B738/EFIS/baro_sel_in_hg_copilot") == tonumber(activeBriefings:get("arrival:atisQNH")) * 0.02952999
-			else
-				return 	get("laminar/B738/EFIS/baro_sel_in_hg_pilot") == tonumber(activeBriefings:get("arrival:atisQNH")) and 
-						get("laminar/B738/EFIS/baro_sel_in_hg_copilot") == tonumber(activeBriefings:get("arrival:atisQNH"))
-			end
-		end
-	end,
-	function () 
-	    kc_speakNoText(0,"transition level")
-		if get("laminar/B738/EFIS/baro_set_std_pilot") == 1 then 
-			command_once("laminar/B738/EFIS_control/capt/push_button/std_press")
-		end
-		if get("laminar/B738/EFIS/baro_set_std_copilot") == 1 then 
-			command_once("laminar/B738/EFIS_control/fo/push_button/std_press")
-		end
-		if activeBriefings:get("arrival:atisQNH") ~= "" then
-			if activePrefSet:get("general:baro_mode_hpa") then
-				set("laminar/B738/EFIS/baro_sel_in_hg_pilot", tonumber(activeBriefings:get("arrival:atisQNH")) * 0.02952999)
-				set("laminar/B738/EFIS/baro_sel_in_hg_copilot", tonumber(activeBriefings:get("arrival:atisQNH")) * 0.02952999) 
-			else
-				set("laminar/B738/EFIS/baro_sel_in_hg_pilot", tonumber(activeBriefings:get("arrival:atisQNH")))
-				set("laminar/B738/EFIS/baro_sel_in_hg_copilot", tonumber(activeBriefings:get("arrival:atisQNH")))
-			end
-		end
-	end,
-	function () return activeBriefings:get("arrival:translvl") > 100 end))
-
-arrivalProc:addItem(IndirectProcedureItem:new("10.000 FT","ANNOUNCE REACHED",FlowItem.actorPM,0,"ldg_10000",
-	function () return get("sim/cockpit2/gauges/indicators/altitude_ft_pilot") <= 10000 end,nil,
-	function () return activeBriefings:get("arrival:translvl") <= 100 end))
-arrivalProc:addItem(ProcedureItem:new("EXTERNAL LIGHTS","SET",FlowItem.actorPM,0,true,
-	function () kc_macro_ext_lights_below10() kc_speakNoText(0,"ten thousand") end,
-	function () return activeBriefings:get("arrival:translvl") > 100 end))
-arrivalProc:addItem(ProcedureItem:new("FASTEN BELTS SWITCH","ON",FlowItem.actorPM,0,
-	function () return sysGeneral.seatBeltSwitch:getStatus() > 0 end,
-	function () 
-		command_once("laminar/B738/toggle_switch/seatbelt_sign_up") 
-		command_once("laminar/B738/toggle_switch/seatbelt_sign_up") 
-		command_once("laminar/B738/toggle_switch/seatbelt_sign_dn") 
-	end,
-	function () return activeBriefings:get("arrival:translvl") <= 100 end))
-
+		kc_procvar_set("below10k",true) -- background 10.000 ft activities
+		kc_procvar_set("attranslvl",true) -- background transition level activities
+	end))
 arrivalProc:addItem(ProcedureItem:new("AUTO BRAKE SELECT SWITCH","%s|kc_pref_split(kc_LandingAutoBrake)[activeBriefings:get(\"approach:autobrake\")]",FlowItem.actorFO,0,
 	function () return sysGeneral.autobrake:getStatus() == activeBriefings:get("approach:autobrake") end,
 	function () 
-		if activeBriefings:get("approach:autobrake") == 2 then
-			command_once("laminar/B738/knob/autobrake_1")
-		elseif activeBriefings:get("approach:autobrake") == 3 then
-			command_once("laminar/B738/knob/autobrake_2")
-		elseif activeBriefings:get("approach:autobrake") == 4 then
-			command_once("laminar/B738/knob/autobrake_3")
-		elseif activeBriefings:get("approach:autobrake") == 5 then
-			command_once("laminar/B738/knob/autobrake_max")
-		end
+		kc_macro_b738_set_autobrake()
 	end))
 arrivalProc:addItem(ProcedureItem:new("LOGO LIGHT SWITCH","%s|(kc_is_daylight()) and \"OFF\" or \"ON\"",FlowItem.actorFO,0,
 	function () return sysLights.logoSwitch:getStatus() == (kc_is_daylight() and 0 or 1) end,
@@ -2256,7 +2076,7 @@ approachChkl:addItem(ChecklistItem:new("#exchange|ALTIMETERS|approach checklist.
 approachChkl:addItem(ChecklistItem:new("NAVIGATION AIDS","SET AND CHECKED",FlowItem.actorBOTH,0,true,nil,nil))
 
 -- =============== LANDING PROCEDURE (PM) ===============
--- LANDING LIGHTS,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,ON  (CPT)
+-- LANDING LIGHTS...............................ON  (CPT)
 -- RWY TURNOFF LIGHTS...........................ON  (CPT)
 -- ENGINE START SWITCHES......................CONT   (PM)
 -- SPEED BRAKE...............................ARMED   (PF)
@@ -2285,9 +2105,6 @@ local landingProc = Procedure:new("LANDING PROCEDURE","","ready for landing chec
 landingProc:setFlightPhase(13)
 landingProc:addItem(ProcedureItem:new("EXTERNAL LIGHTS","SET",FlowItem.actorCPT,0,true,
 	function () kc_macro_ext_lights_land() end))
--- landingProc:addItem(ProcedureItem:new("RWY TURNOFF LIGHTS","ON",FlowItem.actorCPT,0,
-	-- function () return sysLights.rwyLightGroup:getStatus() > 0 end,
-	-- function () sysLights.rwyLightGroup:actuate(1) end))
 landingProc:addItem(ProcedureItem:new("ENGINE START SWITCHES","CONT",FlowItem.actorPM,0,
 	function () return sysEngines.engStarterGroup:getStatus() == 4 end,
 	function () sysEngines.engStarterGroup:actuate(2) end)) 
@@ -2297,42 +2114,32 @@ landingProc:addItem(ProcedureItem:new("COURSE NAV 1","SET %s|activeBriefings:get
 landingProc:addItem(ProcedureItem:new("COURSE NAV2","SET %s|activeBriefings:get(\"approach:nav2Course\")",FlowItem.actorFO,0,
 	function() return math.ceil(sysMCP.crs2Selector:getStatus()) == activeBriefings:get("approach:nav2Course") end,
 	function() sysMCP.crs2Selector:setValue(activeBriefings:get("approach:nav2Course")) end))
-
+--
 landingProc:addItem(SimpleProcedureItem:new("==== Flaps & Gear Schedule"))	
-landingProc:addItem(IndirectProcedureItem:new("FLAPS 1 SPEED","REACHED",FlowItem.actorPNF,0,"ldgflap1spd",
-	function () return get("sim/cockpit2/gauges/indicators/airspeed_kts_pilot") < get("laminar/B738/pfd/flaps_1") end))
-landingProc:addItem(ProcedureItem:new("FLAPS 1","SET",FlowItem.actorPNF,0,"ldgflap1set",
-	function () return sysControls.flapsSwitch:getStatus() == 0.125 end))
-landingProc:addItem(IndirectProcedureItem:new("FLAPS 5 SPEED","REACHED",FlowItem.actorPNF,0,"ldgflap5spd",
-	function () return get("sim/cockpit2/gauges/indicators/airspeed_kts_pilot") < get("laminar/B738/pfd/flaps_5") end,
-	function () kc_speakNoText("speed check flaps 1") end))
-landingProc:addItem(ProcedureItem:new("FLAPS 5","SET",FlowItem.actorPNF,0,"ldgflap5set",
-	function () return sysControls.flapsSwitch:getStatus() == 0.375 end))
-landingProc:addItem(IndirectProcedureItem:new("FLAPS 10 SPEED","REACHED",FlowItem.actorPNF,0,"ldgflap10spd",
-	function () return get("sim/cockpit2/gauges/indicators/airspeed_kts_pilot") < get("laminar/B738/pfd/flaps_10") end,
-	function () kc_speakNoText("speed check flaps 5") end))
-landingProc:addItem(IndirectProcedureItem:new("FLAPS 10","SET",FlowItem.actorPNF,0,"ldgflap10set",
-	function () return sysControls.flapsSwitch:getStatus() == 0.500 end))
-landingProc:addItem(IndirectProcedureItem:new("LANDING GEAR","DOWN",FlowItem.actorPNF,0,"ldggeardown",
-	function () return sysGeneral.GearSwitch:getStatus() == modeOn end,
-	function () kc_speakNoText("speed check flaps 10") end))
-landingProc:addItem(IndirectProcedureItem:new("FLAPS 15 SPEED","REACHED",FlowItem.actorPNF,0,"ldgflap15spd",
-	function () return get("sim/cockpit2/gauges/indicators/airspeed_kts_pilot") < get("laminar/B738/pfd/flaps_15") end))
-landingProc:addItem(IndirectProcedureItem:new("FLAPS 15","SET",FlowItem.actorPNF,0,"ldgflap15set",
-	function () return sysControls.flapsSwitch:getStatus() == 0.625 end))
-landingProc:addItem(IndirectProcedureItem:new("FLAPS 25 SPEED","REACHED",FlowItem.actorPNF,0,"ldgflap25spd",
-	function () return get("sim/cockpit2/gauges/indicators/airspeed_kts_pilot") < get("laminar/B738/pfd/flaps_25") end,
-	function () kc_speakNoText("speed check flaps 15") end))
-landingProc:addItem(IndirectProcedureItem:new("FLAPS 25","SET",FlowItem.actorPNF,0,"ldgflap25set",
-	function () return sysControls.flapsSwitch:getStatus() == 0.75 end))
-landingProc:addItem(IndirectProcedureItem:new("FLAPS 30","SET",FlowItem.actorPNF,0,"ldgflap30set",
-	function () return sysControls.flapsSwitch:getStatus() == 0.875 end,
-	function () kc_speakNoText("speed check flaps 25") end,
-	function () return activeBriefings:get("approach:flaps") < 2 end))
-landingProc:addItem(IndirectProcedureItem:new("FLAPS 40","SET",FlowItem.actorPNF,0,"ldgflap40set",
-	function () return sysControls.flapsSwitch:getStatus() == 0.875 end,
-	function () kc_speakNoText("speed check flaps 30") end,
-	function () return activeBriefings:get("approach:flaps") < 3 end))
+landingProc:addItem(HoldProcedureItem:new("FLAPS 1","COMMAND",FlowItem.actorPF))
+landingProc:addItem(ProcedureItem:new("FLAPS 1","SET",FlowItem.actorPNF,0,true,
+	function () command_once("laminar/B738/push_button/flaps_1") kc_speakNoText(0,"speed check flaps 1") end))
+landingProc:addItem(HoldProcedureItem:new("FLAPS 5","COMMAND",FlowItem.actorPF))
+landingProc:addItem(ProcedureItem:new("FLAPS 5","SET",FlowItem.actorPNF,0,true,
+	function () command_once("laminar/B738/push_button/flaps_5") kc_speakNoText(0,"speed check flaps 5") end))
+landingProc:addItem(HoldProcedureItem:new("FLAPS 15","COMMAND",FlowItem.actorPF))
+landingProc:addItem(ProcedureItem:new("FLAPS 15","SET",FlowItem.actorPNF,0,true,
+	function () command_once("laminar/B738/push_button/flaps_15") kc_speakNoText(0,"speed check flaps 15") end))
+landingProc:addItem(HoldProcedureItem:new("GEAR","COMMAND DOWN",FlowItem.actorPF))
+landingProc:addItem(ProcedureItem:new("GEAR","DOWN",FlowItem.actorPNF,0,true,
+	function () sysGeneral.GearSwitch:actuate(modeOn) kc_speakNoText(0,"gear coming down") end))
+landingProc:addItem(HoldProcedureItem:new("FLAPS 25","COMMAND",FlowItem.actorPF))
+landingProc:addItem(ProcedureItem:new("FLAPS 25","SET",FlowItem.actorPNF,0,true,
+	function () command_once("laminar/B738/push_button/flaps_25") kc_speakNoText(0,"speed check flaps 25") end))
+landingProc:addItem(HoldProcedureItem:new("FLAPS 30","COMMAND",FlowItem.actorPF))
+landingProc:addItem(ProcedureItem:new("FLAPS 30","SET",FlowItem.actorPNF,0,true,
+	function () command_once("laminar/B738/push_button/flaps_30") kc_speakNoText(0,"speed check flaps 30") end))
+landingProc:addItem(HoldProcedureItem:new("FLAPS 40","COMMAND",FlowItem.actorPF,
+	function return activeBriefings:get("approach:flaps") < 2 end))
+landingProc:addItem(ProcedureItem:new("FLAPS 40","SET",FlowItem.actorPNF,0,true,
+	function () command_once("laminar/B738/push_button/flaps_40") kc_speakNoText(0,"speed check flaps 40") end,
+	function return activeBriefings:get("approach:flaps") < 2 end))
+--
 landingProc:addItem(ProcedureItem:new("SPEED BRAKE","ARMED",FlowItem.actorPF,0,
 	function () return get("laminar/B738/annunciator/speedbrake_armed") == 1 end,
 	function () kc_speakNoText(0,"Speed brake armed?") end))
@@ -2469,9 +2276,6 @@ afterLandingProc:addItem(IndirectProcedureItem:new("  #spell|APU# GEN OFF BUS LI
 
 local shutdownProc = Procedure:new("SHUTDOWN PROCEDURE","shutting down","ready for shutdown checklist")
 shutdownProc:setFlightPhase(17)
--- shutdownProc:addItem(ProcedureItem:new("TAXI LIGHT SWITCH","OFF",FlowItem.actorCPT,0,
-	-- function () return sysLights.taxiSwitch:getStatus() == 0 end,
-	-- function () sysLights.taxiSwitch:actuate(0) activeBckVars:set("general:timesON",kc_dispTimeHHMM(get("sim/time/zulu_time_sec"))) end))
 shutdownProc:addItem(ProcedureItem:new("PARKING BRAKE","SET",FlowItem.actorCPT,0,
 	function () return sysGeneral.parkBrakeSwitch:getStatus() == modeOn end,
 	function () sysGeneral.parkBrakeSwitch:actuate(modeOn) end))
@@ -2662,6 +2466,10 @@ kc_procvar_initialize_bool("cargofiretest", false) -- B738 CARGO FIRE test
 kc_procvar_initialize_bool("apustart", false) -- B738 start apu
 kc_procvar_initialize_bool("gen1down", false) -- B738 hold GEN1 switch down
 kc_procvar_initialize_bool("gen2down", false) -- B738 hold GEN2 switch down
+kc_procvar_initialize_bool("above10k", false) -- aircraft climbs through 10.000 ft
+kc_procvar_initialize_bool("below10k", false) -- aircraft descends through 10.000 ft
+kc_procvar_initialize_bool("attransalt", false) -- aircraft climbs through transition altitude
+kc_procvar_initialize_bool("attranslvl", false) -- aircraft descends through transition level
 
 backgroundFlow:addItem(BackgroundProcedureItem:new("","","SYS",0,
 	function () 
@@ -2709,6 +2517,18 @@ backgroundFlow:addItem(BackgroundProcedureItem:new("","","SYS",0,
 		end
 		if kc_procvar_get("gen2down") == true then 
 			kc_bck_b738_gen2down("gen2down")
+		end
+		if kc_procvar_get("above10k") == true then 
+			kc_bck_climb_through_10k("above10k")
+		end
+		if kc_procvar_get("below10k") == true then 
+			kc_bck_descend_through_10k("below10k")
+		end
+		if kc_procvar_get("attransalt") == true then 
+			kc_bck_transition_altitude("attransalt")
+		end
+		if kc_procvar_get("attranslvl") == true then 
+			kc_bck_transition_level("attranslvl")
 		end
 	end))
 	

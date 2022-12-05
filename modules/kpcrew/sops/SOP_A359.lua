@@ -1,9 +1,9 @@
 -- Standard Operating Procedure for FlightFactor A350
 
--- @classmod SOP_A350
+-- @classmod SOP_A359
 -- @author Kosta Prokopiu
 -- @copyright 2022 Kosta Prokopiu
-local SOP_A350 = {
+local SOP_A359 = {
 }
 
 -- SOP related imports
@@ -99,272 +99,289 @@ testProc:addItem(IndirectChecklistItem:new("FUEL","TESTED 100 #exchange|PERC|per
 -- ELECTRICAL POWER UP.......................CONFIRM
 -- =======================================================
 
+-- =============== ECAM & CKPT PREPARATION ===============
+-- === ECAM
+-- ECAM...........................................ON		.1-sim/ind/ecamMode.>.0
+--   Recommended to use ecam auto mode
+-- ECAM AUTO MODE..............................CHECK
+-- NSS DATA TO AVCS...............................ON		.1-sim/53/button.=.1
+-- CAB DATA TO NSS................................ON		.1-sim/54/button.=.1
+-- GATELINK.......................................ON		.1-sim/230/button.=.1
+-- COOLING........................................ON		.1-sim/42/button.=.1
+-- CABIN FANS.....................................ON		.1-sim/44/button.=.1.and.1-sim/45/button.=.1
+-- === Radio Management Panel
+-- RMP 1 & 2.................................CONFIRM
+-- FREQUENCIES..................................TUNE
+-- RAD NAV STBY OFF............................CHECK
+-- COM1.......................................SELECT		.sim/cockpit2/radios/actuators/audio_com_selection.=.6
+-- SOUND......................................SELECT		.1-sim/radio/lamp/1/1.>.0.or.1-sim/radio/lamp/2/1.>.0
+-- VOLUME.......................................TUNE		.1-sim/radio/1/1/rotary.>.0.or.1-sim/radio/2/1/rotary.>.0
+-- SQWK PAGE..................................SELECT		.1-sim/xxx/sqwkPageSelect.=.1
+-- SQWK MASTER...................................SET		.1-sim/surv/MFDinControl.=.0
+-- SQWK.......................................SELECT
+-- === COCKPIT PREPARATION
+-- ===== OVERHEAD PANEL
+-- All white lights off
+-- As a general rule all white lights should be off OH
+-- scanning sequence is from left to right and from 
+-- bottom to top
+-- EMER CALLS....................................OFF		.1-sim/37/button.=.0
+-- EVAC COMMAND..............................GUARDED		.1-sim/30/cover.=.0
+-- CAPT & PURS.............................CAPT&PURS		.1-sim/1/switch.=.1
+-- OXYGEN CREW....................................ON		.1-sim/38/button.=.1
+-- PRIM & SEC 1 FLT COMPs.........................ON		.1-sim/29/button.=.0.and.1-sim/30/button.=.0
+-- PRIM & SEC 3 FLT COMPs.........................ON		.1-sim/31/button.=.0.and.1-sim/32/button.=.0
+-- ADIRS SELECTOR 1..............................NAV		.1-sim/adirs/1/switch.=.1
+-- ADIRS SELECTOR 2..............................NAV		.1-sim/adirs/2/switch.=.1
+-- ADIRS SELECTOR 3..............................NAV		.1-sim/adirs/3/switch.=.1
+-- ADR 1..........................................ON		.1-sim/26/button.=.1
+-- ADR 2..........................................ON		.1-sim/28/button.=.1
+-- ADR 3..........................................ON		.1-sim/27/button.=.1
+-- IR 1...........................................ON		.1-sim/23/button.=.1
+-- IR 2...........................................ON		.1-sim/25/button.=.1
+-- IR 3...........................................ON		.1-sim/24/button.=.1
+-- STROBE LT SW..................................OFF		.1-sim/2/switch.=.0
+-- BEACON LT SW..................................OFF		.1-sim/3/switch.=.0
+-- NAV LT SW......................................ON		.1-sim/4/switch.=.1
+-- REMAINING LIGHTS AS REQUIRED................CHECK
+-- SEATBELTS......................................ON		.1-sim/12/switch.=.1
+-- NO SMOKING.....................................ON		.1-sim/13/switch.=.1
+-- XBLEED SELECTOR..............................AUTO		.1-sim/air/crossBeedSwitch.=.1
+-- AIR FLOW SELECTOR............................NORM		.1-sim/air/airFlowSwitch.=.1
+-- TEMP SELECTORS AS REQUIRED.................SELECT
+--   Select comfortable temperature
+-- ECAM ELEC DC PAGE............................CALL		.1-sim/ind/ecamMode.=.7
+-- ALL BATTERIES CURRENT BELOW 60A.............CHECK
+-- APU GEN PB.....................................ON		.1-sim/101/button.=.1
+-- APU GEN FAULT LT OFF........................CHECK
+-- GENs 1.........................................ON		.1-sim/96/button.=.1.and.1-sim/99/button.=.1
+--   FAULT lights visible
+-- GENs 2.........................................ON		.1-sim/103/button.=.1.and.1-sim/106/button.=.1
+--   FAULT lights visible
+-- BUS TIE......................................AUTO		.1-sim/100/button.=.1
+-- MAIN FUEL PUMPS................................ON		.1-sim/68/button.=.1.and.1-sim/81/button.=.1
+-- MAIN FUEL PUMPS................................ON		.1-sim/68/button.=.1.and.1-sim/81/button.=.1
+-- STBY FUEL PUMPS..............................AUTO		.1-sim/69/button.=.1.and.1-sim/82/button.=.1
+-- 1 & 2 FUEL PUMPS...............................ON		.1-sim/70/button.=.1.and.1-sim/80/button.=.1
+-- CTR TK FEED PB...............................AUTO		.1-sim/84/button.=.1
+-- MAINTENANCE PANEL ALL WHITE LTS OFF.........CHECK
+-- CARGO AIR SEL AS REQUIRED..................SELECT
+-- PRIM & SEC 2 FLT COMPs.........................ON		.1-sim/50/button.=.0.and.1-sim/51/button.=.0
+-- HYD ELEC PMP GREEN.............................ON		.1-sim/47/button.=.0
+-- HYD ELEC PMP YELLOW............................ON		.1-sim/49/button.=.0
+-- ===== CENTRE INSTRUMENT PANEL
+-- AIR DATA SELECTORS..........................CHECK
+-- GEAR LEVER...................................DOWN		.sim/cockpit/switches/gear_handle_status.=.1
+-- A-SKID.........................................ON		.1-sim/37/switch.=.1
+-- STBY INSTRUMENTS ON.........................CHECK
+-- ===== PEDESTAL
+-- PARK BRK.......................................ON		.1-sim/parckBrake.=.0
+-- L/G/GRAVITY EXTN..............................OFF		.1-sim/brg/emer.=.1
+-- L/G/GRAVITY EXTN..........................GUARDED		.1-sim/36/cover.=.0
+-- THRUST LEVERS................................IDLE		.1-sim/R/throttle.=.0.and.1-sim/L/throttle.=.0
+-- REVERSE LEVERS.............................STOWED		.1-sim/L/reverser.=.0.and.1-sim/R/reverser.=.0
+-- ENG MASTER SWITCHES...........................OFF		.1-sim/eng/cutoff/L/switch.=.1.and.1-sim/eng/cutoff/R/switch.=.1
+-- CKPT DOOR PB..................................OFF		.1-sim/221/button.=.0
+-- SURV SYS 1 PBs.................................ON		.1-sim/216/button.=.1.and.1-sim/217/button.=.1
+-- SURV SYS 2 PBs.................................ON		.1-sim/218/button.=.1.and.1-sim/220/button.=.1
+-- ===== MFD SURV
+-- SURV PAGE..................................SELECT		.1-sim/mfd/guage.=.3
+-- CONTROLS PAGE..............................SELECT		.1-sim/mfd/page.=.1
+--   Press DEFAULT SETTINGS for quick setup
+-- XPDR.........................................AUTO		.1-sim/surv/XPDRmode.=.3
+-- TCAS MODE TA/RA & NORM.....................SELECT		.1-sim/surv/TCASmode.=.1.and.1-sim/surv/TCASdisplay.=.1
+-- WXR AUTO...................................SELECT		.1-sim/surv/WXRelev.=.1
+-- WXR WX AUTO................................SELECT		.1-sim/surv/WXRon.=.1
+-- WXR PRED AUTO..............................SELECT		.1-sim/surv/WXRpred.=.1
+-- WXR TURB AUTO..............................SELECT		.1-sim/surv/WXRturb.=.1
+-- WXR GAIN AUTO..............................SELECT		.1-sim/surv/WXRgain.=.1
+-- WXR MODE AUTO..............................SELECT		.1-sim/surv/WXRmode.=.1
+-- WXR ON VD AUTO.............................SELECT		.1-sim/surv/WXRonvd.=.1
+-- TAWS TERRAIN MODE..............................ON		.1-sim/surv/TAWSterr.=.1
+-- TAWS GPWS......................................ON		.1-sim/surv/TAWSgpws.=.1
+-- TAWS GS MODE...................................ON		.1-sim/surv/TAWSgs.=.1
+-- TAWS FLAP MODE.................................ON		.1-sim/surv/TAWSflap.=.1
+-- ===== MFD FMS INITIALIZATION
+-- INIT PAGE....................................OPEN		.1-sim/mfd/page.=.24
+-- FLIGHT NUMBER...............................ENTER		.1-sim/checklist/flightNumber.~.0
+-- FROM FIELD...................................FILL		.1-sim/checklist/from.~.0
+-- TO FIELD.....................................FILL		.1-sim/checklist/to.~.0
+-- === GLARESHIELD BARO REF
+-- BARO REF BOTH SET...........................CHECK
+--   Set the QNH/QFE on the EFIS and on the ISIS
+--   check barometer settings and altitude indications on 
+--   PFD and ISIS
+--   the maximum difference is: 20ft
+--   check stby AH barometer setting and altitude
+-- ===== GLARESHIELD
+-- ND MODE & RANGE AS REQUIRED.................CHECK
+--   set the minimum range to display the first waypoint
+-- PFD ON......................................CHECK
+-- NORTH REF...................................CHECK
+-- SPD/MACH WINDOW DASHED......................CHECK
+-- HDG/TRK WINDOW DASHED.......................CHECK
+-- HDG V/S - TRK FPA HDG V/S...................CHECK
+-- ALT WINDOW INITIAL CLEARANCE................CHECK
+-- =======================================================
 
---ECAM&CKPT PREPARATION
--- ECAM.ON.1-sim/ind/ecamMode.>.0
--- !!.recommended to use ecam auto mode
--- ECAM AUTO MODE.CHECK
--- NSS DATA TO AVCS.ON.1-sim/53/button.=.1
--- CAB DATA TO NSS.ON.1-sim/54/button.=.1
--- GATELINK.ON.1-sim/230/button.=.1
--- COOLING.ON.1-sim/42/button.=.1
--- CABIN FANS.ON.1-sim/44/button.=.1.and.1-sim/45/button.=.1
---RMP
--- RMP 1&2.CONFIRM
--- FREQUENCIES.TUNE
--- RAD NAV STBY OFF.CHECK
--- COM1.SELECT.sim/cockpit2/radios/actuators/audio_com_selection.=.6
--- SOUND.SELECT.1-sim/radio/lamp/1/1.>.0.or.1-sim/radio/lamp/2/1.>.0
--- VOLUME.TUNE.1-sim/radio/1/1/rotary.>.0.or.1-sim/radio/2/1/rotary.>.0
--- SQWK PAGE.SELECT.1-sim/xxx/sqwkPageSelect.=.1
--- SQWK MASTER.SET.1-sim/surv/MFDinControl.=.0
--- SQWK.SELECT
----COCKPIT PREPARATION
---OVERHEAD PANEL
--- ?.All white lights off
--- !!.As a general rule all white lights should be off OH
--- !!.scanning sequence is from left to right and from 
--- !!.bottom to top
--- EMER CALLS.OFF.1-sim/37/button.=.0
--- EVAC COMMAND.GUARDED.1-sim/30/cover.=.0
--- CAPT&PURS.CAPT&PURS.1-sim/1/switch.=.1
--- OXYGEN CREW.ON.1-sim/38/button.=.1
--- PRIM & SEC 1 FLT COMPs.ON.1-sim/29/button.=.0.and.1-sim/30/button.=.0
--- PRIM & SEC 3 FLT COMPs.ON.1-sim/31/button.=.0.and.1-sim/32/button.=.0
--- ADIRS SELECTOR 1.NAV.1-sim/adirs/1/switch.=.1
--- ADIRS SELECTOR 2.NAV.1-sim/adirs/2/switch.=.1
--- ADIRS SELECTOR 3.NAV.1-sim/adirs/3/switch.=.1
--- ADR 1.ON.1-sim/26/button.=.1
--- ADR 2.ON.1-sim/28/button.=.1
--- ADR 3.ON.1-sim/27/button.=.1
--- IR 1.ON.1-sim/23/button.=.1
--- IR 2.ON.1-sim/25/button.=.1
--- IR 3.ON.1-sim/24/button.=.1
--- STROBE LT SW.OFF.1-sim/2/switch.=.0
--- BEACON LT SW.OFF.1-sim/3/switch.=.0
--- NAV LT SW.ON.1-sim/4/switch.=.1
--- REMAINING LIGHTS AS REQUIRED.CHECK
--- SEATBELTS.ON.1-sim/12/switch.=.1
--- NO SMOKING.ON.1-sim/13/switch.=.1
--- XBLEED SELECTOR.AUTO.1-sim/air/crossBeedSwitch.=.1
--- AIR FLOW SELECTOR.NORM.1-sim/air/airFlowSwitch.=.1
--- TEMP SELECTORS AS REQUIRED.SELECT
--- !!. select comfortable temperature
--- ECAM ELEC DC PAGE.CALL.1-sim/ind/ecamMode.=.7
--- ALL BATTERIES CURRENT BELOW 60A.CHECK
--- APU GEN PB.ON.1-sim/101/button.=.1
--- APU GEN FAULT LT OFF.CHECK
--- GENs 1.ON.1-sim/96/button.=.1.and.1-sim/99/button.=.1
--- !!.FAULT lights visible
--- GENs 2.ON.1-sim/103/button.=.1.and.1-sim/106/button.=.1
--- !!.FAULT lights visible
--- BUS TIE.AUTO.1-sim/100/button.=.1
--- MAIN FUEL PUMPS.ON.1-sim/68/button.=.1.and.1-sim/81/button.=.1
--- MAIN FUEL PUMPS.ON.1-sim/68/button.=.1.and.1-sim/81/button.=.1
--- STBY FUEL PUMPS.AUTO.1-sim/69/button.=.1.and.1-sim/82/button.=.1
--- 1 & 2 FUEL PUMPS.ON.1-sim/70/button.=.1.and.1-sim/80/button.=.1
--- CTR TK FEED PB.AUTO.1-sim/84/button.=.1
--- MAINTENANCE PANEL ALL WHITE LTS OFF.CHECK
--- CARGO AIR SEL AS REQUIRED.SELECT
--- PRIM&SEC 2 FLT COMPs.ON.1-sim/50/button.=.0.and.1-sim/51/button.=.0
--- HYD ELEC PMP GREEN.ON.1-sim/47/button.=.0
--- HYD ELEC PMP YELLOW.ON.1-sim/49/button.=.0
---CENTRE INSTRUMENT PANEL
--- AIR DATA SELECTORS.CHECK
--- GEAR LEVER.DOWN.sim/cockpit/switches/gear_handle_status.=.1
--- A-SKID.ON.1-sim/37/switch.=.1
--- STBY INSTRUMENTS ON.CHECK
---PEDESTAL
--- PARK BRK.ON.1-sim/parckBrake.=.0
--- L/G/GRAVITY EXTN.OFF.1-sim/brg/emer.=.1
--- L/G/GRAVITY EXTN.GUARDED.1-sim/36/cover.=.0
--- THRUST LEVERS.IDLE.1-sim/R/throttle.=.0.and.1-sim/L/throttle.=.0
--- REVERSE LEVERS.STOWED.1-sim/L/reverser.=.0.and.1-sim/R/reverser.=.0
--- ENG MASTER SWITCHES.OFF.1-sim/eng/cutoff/L/switch.=.1.and.1-sim/eng/cutoff/R/switch.=.1
--- CKPT DOOR PB.OFF.1-sim/221/button.=.0
--- SURV SYS 1 PBs.ON.1-sim/216/button.=.1.and.1-sim/217/button.=.1
--- SURV SYS 2 PBs.ON.1-sim/218/button.=.1.and.1-sim/220/button.=.1
---MFD SURV
--- SURV PAGE.SELECT.1-sim/mfd/guage.=.3
--- CONTROLS PAGE.SELECT.1-sim/mfd/page.=.1
--- !!.press DEFAULT SETTINGS for quick setup
--- XPDR.AUTO.1-sim/surv/XPDRmode.=.3
--- TCAS MODE TA/RA&NORM.SELECT.1-sim/surv/TCASmode.=.1.and.1-sim/surv/TCASdisplay.=.1
--- WXR AUTO.SELECT.1-sim/surv/WXRelev.=.1
--- WXR WX AUTO.SELECT.1-sim/surv/WXRon.=.1
--- WXR PRED AUTO.SELECT.1-sim/surv/WXRpred.=.1
--- WXR TURB AUTO.SELECT.1-sim/surv/WXRturb.=.1
--- WXR GAIN AUTO.SELECT.1-sim/surv/WXRgain.=.1
--- WXR MODE AUTO.SELECT.1-sim/surv/WXRmode.=.1
--- WXR ON VD AUTO.SELECT.1-sim/surv/WXRonvd.=.1
--- TAWS TERRAIN MODE.ON.1-sim/surv/TAWSterr.=.1
--- TAWS GPWS.ON.1-sim/surv/TAWSgpws.=.1
--- TAWS GS MODE.ON.1-sim/surv/TAWSgs.=.1
--- TAWS FLAP MODE.ON.1-sim/surv/TAWSflap.=.1
---MFD FMS INITIALIZATION
--- INIT PAGE.OPEN.1-sim/mfd/page.=.24
--- FLIGHT NUMBER.ENTER.1-sim/checklist/flightNumber.~.0
--- FROM FIELD.FILL.1-sim/checklist/from.~.0
--- TO FIELD.FILL.1-sim/checklist/to.~.0
---GLARESHIELD BARO REF
--- BARO REF BOTH SET.CHECK
--- !!.set the QNH/QFE on the EFIS and on the ISIS
--- !!.check barometer settings and altitude indications on 
--- !!.PFD and ISIS
--- !!.the maximum difference is: 20ft
--- !!.check stby AH barometer setting and altitude
---GLARESHIELD
--- ND MODE&RANGE AS REQUIRED.CHECK
--- !!.set the minimum range to display the first waypoint
--- PFD ON.CHECK
--- NORTH REF.CHECK
--- SPD/MACH WINDOW DASHED.CHECK
--- HDG/TRK WINDOW DASHED.CHECK
--- HDG V/S - TRK FPA HDG V/S.CHECK
--- ALT WINDOW INITIAL CLEARANCE.CHECK
----BEFORE PUSHBACK&START
---BEFORE PUSHBACK CLEARANCE
--- FUEL QUANTITY.CHECK
--- !!.on the ECAM permanent data, check FOB corresponds
--- !!.with the F-PLAN
--- FINAL LOADSHEET.CHECK
--- ZFW/ZFCG IN FMS.CHECK
--- !!.compare the ZFW/ZFCG of the final loadsheet
--- !!.with data entered into FMS
--- ECAM CWCG.CHECK
--- !!.check within operating limits
--- SEATS, SEAT BELT, PEDALS.ADJUST
--- EXT PWR.OFF.1-sim/97/button.=.0.and.1-sim/104/button.=.0
---AT START CLEARANCE
--- THRUST LEVERS.IDLE.1-sim/R/throttle.=.0.and.1-sim/L/throttle.=.0
--- PARK BRK.OFF.1-sim/parckBrake.=.1
--- PUSHBACK TRUCK.CALL
--- !!.use the menu to call for pushback truck
--- !!.use the pedals and thrust levers to control the truck
----ENGINE START
---ENGINE START
--- HYD ENG 1 PUMPS.ON.1-sim/65/button.=.1.and.1-sim/67/button.=.1
--- HYD ENG 2 PUMPS.ON.1-sim/75/button.=.1.and.1-sim/77/button.=.1
--- BEACON LT.ON.1-sim/3/switch.=.1
--- APU AVAIL.CONFIRM.sim/cockpit/engine/APU_N1.>.97
--- APU BLEED.ON.1-sim/111/button.=.1
--- ECAM AUTO MODE.CHECK
--- ENG START SELECTOR.START.1-sim/eng/startSwitch.=.2
--- ENG MASTER 1.ON.1-sim/eng/cutoff/L/switch.=.0
--- !!. monitor engine parameters: EGT, N3, N1
--- ECAM ENG PAGE.ON.1-sim/ind/ecamMode.=.1
--- ENG 1 AVAIL.CONFIRM.sim/flightmodel/engine/ENGN_N1_[0].>.20
--- ENG MASTER 2.ON.1-sim/eng/cutoff/R/switch.=.0
--- !!. monitor engine parameters: EGT, N3, N1
--- ENG 2 AVAIL.CONFIRM.sim/flightmodel/engine/ENGN_N1_[1].>.20
----AFTER START
---ENGINE&CONTROLS
--- PARK BRK.ON.1-sim/parckBrake.=.0
--- ENG START SELECTOR.NORM.1-sim/eng/startSwitch.=.1
--- ENG 1 BLEED.ON.1-sim/109/button.=.1
--- ENG 2 BLEED.ON.1-sim/115/button.=.1
--- APU BLEED.OFF.1-sim/111/button.=.0
--- PACK 1 PB.ON.1-sim/107/button.=.1
--- PACK 2 PB.ON.1-sim/112/button.=.1
--- HOT AIR 1 PB.ON.1-sim/110/button.=.1
--- HOT AIR 2 PB.ON.1-sim/114/button.=.1
--- ANTI-ICE AS REQUIRED.SELECT
--- APU MASTER SW.OFF.1-sim/125/button.=.0
--- APU GEN PB.OFF.1-sim/101/button.=.0
--- GROUND SPOILERS.ARM.sim/cockpit2/controls/speedbrake_ratio.<.0
--- RUDDER TRIM ZERO.SELECT.sim/cockpit2/controls/rudder_trim.=.0
--- FLAP LEVER.SET
--- !!.set flaps for takeoff and check
--- PITCH TRIM.CHECK
--- ECAM STATUS.CHECK
---ELECTRICAL SYSTEMS
--- ELMU.ON.1-sim/90/button.=.1
--- PAX SYS.ON.1-sim/91/button.=.1
--- GALLEY.ON.1-sim/92/button.=.1
--- COMMERCIAL.ON.1-sim/93/button.=.1.and.1-sim/94/button.=.1
--- WIRELESS.ON.1-sim/15/button.=.1
--- PASSENGER DATA.OFF.1-sim/16/button.=.1
--- CABIN SATCOM.ON.1-sim/17/button.=.1
--- LANDING CAMERA.ON.1-sim/18/button.=.1
--- FAR 4.ON.1-sim/19/button.=.1.and.1-sim/20/button.=.1
--- AFEX.ON.1-sim/21/button.=.1
--- DER.ON.1-sim/22/button.=.1
---PRESSURIZATION
--- CABIN ALT MODE.AUTO.1-sim/122/button.=.1
--- CABIN V/S MODE.AUTO.1-sim/123/button.=.1
----TAXI
---TAXI
--- NOSE LIGHTS.TAXI.1-sim/11/switch.=.1
--- RWY TURN OFF LTS.ON.1-sim/8/switch.=.1
--- PARK BRK.OFF.1-sim/parckBrake.=.1
--- THRUST LEVERS AS REQUIRED.CHECK
--- AUTOBRAKE RTO.SET.1-sim/225/button.=.1
----BEFORE TAKEOFF
---BEFORE TAKEOFF
--- PACKS PB.ON.1-sim/107/button.=.1.and.1-sim/112/button.=.1
--- TAXI PB.OFF.1-sim/132/button.=.0
--- ND RANGE AS REQUIRED.CHECK
--- EFIS OPTIONS.CHECK
--- STROBE LIGHTS SW.ON.1-sim/2/switch.>.0
--- TABLE.STOWED.1-sim/computer.=.0
--- TCAS MODE TA/RA.SET.1-sim/surv/TCASmode.=.1
----TAKEOFF
---TAKEOFF
--- CHRONO.START.AirbusFBW/ChronoTimeND1.>.0.or.AirbusFBW/ChronoTimeND2.>.0
--- THRUST LEVER FLEX/TOGA.SET.1-sim/R/throttle.>.0.and.1-sim/L/throttle.>.0
--- TAKEOFF THRUST.CHECK
--- V1 MONITOR.CHECK
--- AT VR ROTATE.PERFORM
--- LANDING GEAR.UP.sim/cockpit/switches/gear_handle_status.=.0
--- AP AS REQUIRED.CHECK
--- THRUST LEVER CL.CHECK
--- PACKS PB.ON.1-sim/107/button.=.1.and.1-sim/112/button.=.1
--- FLAPS ZERO.SELECT.1-sim/flaphandle.=.1
--- RWY TURN OFF LTS.OFF.1-sim/8/switch.=.0
--- GROUND SPOILERS.DISARM.sim/cockpit2/controls/speedbrake_ratio.=.0
----AFTER TAKEOFF
---AFTER TAKEOFF
--- APU BLEED.OFF.1-sim/111/button.=.0
--- APU MASTER SW.OFF.1-sim/125/button.=.0
--- ANTI-ICE AS REQUIRED.CHECK
----CLIMB
---CLIMB
--- BARO REF STD AS REQUIRED.CHECK
--- CRZ FL SET AS REQUIRED.CHECK
--- ANTI-ICE AS REQUIRED.CHECK
--- SEATBELTS AS REQUIRED.CHECK
--- ECAM MEMO REVIEW.CHECK
--- NAVAIDS.CHECK
--- OPT/MAX ALT.CHECK
----CRUISE
---CRUISE
--- ALT CRZ ON FMS.CHECK
--- ECAM MEMO.CHECK
--- ECAM SYS PAGES REVIEW.CHECK
----DESCENT PREPARATION
---DESCENT PREPARATION
--- WEATHER OBTAINED.CHECK
--- LDG ELEC.CHECK
--- BARO REF PRESET.CHECK
--- ECAM STATUS&MEMO.CHECK
--- APPROACH DATA INSERT.CHECK
--- POSITION/NAVAIDS PAGE.CHECK
--- SEC PAGES AS REQUIRED.CHECK
--- AUTOBRAKE AS REQUIRED.CHECK
--- !!. on short runways use 3 or higher
--- ANTI-ICE AS REQUIRED.CHECK
----DESCENT
---AT 10 000 FT
--- EXTERIOR LIGHTS SET.CHECK
--- SEATBELTS.ON.1-sim/12/switch.=.1
--- FLS DATA.CHECK
--- BARO REF.CHECK
---DESCENT
--- DESCENT MONITOR.CHECK
--- RATE OF DESCENT AS REQUIRED.CHECK
--- SPEED BRAKES AS REQUIRED.CHECK
--- WXR ON EFIS AS REQUIRED.CHECK
--- HOLDING PATTERN AS REQUIRED.CHECK
+-- =============== BEFORE PUSHBACK & START ===============
+-- === BEFORE PUSHBACK CLEARANCE
+-- FUEL QUANTITY...............................CHECK
+--   on the ECAM permanent data, check FOB corresponds
+--   with the F-PLAN
+-- FINAL LOADSHEET.............................CHECK
+-- ZFW/ZFCG IN FMS.............................CHECK
+--   compare the ZFW/ZFCG of the final loadsheet
+--   with data entered into FMS
+-- ECAM CWCG...................................CHECK
+--   check within operating limits
+-- SEATS, SEAT BELT, PEDALS...................ADJUST
+-- EXT PWR.......................................OFF		.1-sim/97/button.=.0.and.1-sim/104/button.=.0
+-- === AT START CLEARANCE
+-- THRUST LEVERS................................IDLE		.1-sim/R/throttle.=.0.and.1-sim/L/throttle.=.0
+-- PARK BRK......................................OFF		.1-sim/parckBrake.=.1
+-- PUSHBACK TRUCK...............................CALL
+--   use the menu to call for pushback truck
+--   use the pedals and thrust levers to control the truck
+-- =======================================================
+
+-- ==================== ENGINE START =====================
+-- === ENGINE START
+-- HYD ENG 1 PUMPS................................ON		.1-sim/65/button.=.1.and.1-sim/67/button.=.1
+-- HYD ENG 2 PUMPS................................ON		.1-sim/75/button.=.1.and.1-sim/77/button.=.1
+-- BEACON LT......................................ON		.1-sim/3/switch.=.1
+-- APU AVAIL.................................CONFIRM		.sim/cockpit/engine/APU_N1.>.97
+-- APU BLEED......................................ON		.1-sim/111/button.=.1
+-- ECAM AUTO MODE..............................CHECK
+-- ENG START SELECTOR..........................START		.1-sim/eng/startSwitch.=.2
+-- ENG MASTER 1...................................ON		.1-sim/eng/cutoff/L/switch.=.0
+--   monitor engine parameters: EGT, N3, N1
+-- ECAM ENG PAGE..................................ON		.1-sim/ind/ecamMode.=.1
+-- ENG 1 AVAIL...............................CONFIRM		.sim/flightmodel/engine/ENGN_N1_[0].>.20
+-- ENG MASTER 2...................................ON		.1-sim/eng/cutoff/R/switch.=.0
+--   monitor engine parameters: EGT, N3, N1
+-- ENG 2 AVAIL...............................CONFIRM		.sim/flightmodel/engine/ENGN_N1_[1].>.20
+-- =======================================================
+
+-- ===================== AFTER START =====================
+-- === ENGINE & CONTROLS
+-- PARK BRK.......................................ON		.1-sim/parckBrake.=.0
+-- ENG START SELECTOR...........................NORM		.1-sim/eng/startSwitch.=.1
+-- ENG 1 BLEED....................................ON		.1-sim/109/button.=.1
+-- ENG 2 BLEED....................................ON		.1-sim/115/button.=.1
+-- APU BLEED.....................................OFF		.1-sim/111/button.=.0
+-- PACK 1 PB......................................ON		.1-sim/107/button.=.1
+-- PACK 2 PB......................................ON		.1-sim/112/button.=.1
+-- HOT AIR 1 PB...................................ON		.1-sim/110/button.=.1
+-- HOT AIR 2 PB...................................ON		.1-sim/114/button.=.1
+-- ANTI-ICE AS REQUIRED.......................SELECT
+-- APU MASTER SW.................................OFF		.1-sim/125/button.=.0
+-- APU GEN PB....................................OFF		.1-sim/101/button.=.0
+-- GROUND SPOILERS...............................ARM		.sim/cockpit2/controls/speedbrake_ratio.<.0
+-- RUDDER TRIM ZERO...........................SELECT		.sim/cockpit2/controls/rudder_trim.=.0
+-- FLAP LEVER....................................SET
+--   set flaps for takeoff and check
+-- PITCH TRIM..................................CHECK
+-- ECAM STATUS.................................CHECK
+-- === ELECTRICAL SYSTEMS
+-- ELMU...........................................ON		.1-sim/90/button.=.1
+-- PAX SYS........................................ON		.1-sim/91/button.=.1
+-- GALLEY.........................................ON		.1-sim/92/button.=.1
+-- COMMERCIAL.....................................ON		.1-sim/93/button.=.1.and.1-sim/94/button.=.1
+-- WIRELESS.......................................ON		.1-sim/15/button.=.1
+-- PASSENGER DATA................................OFF		.1-sim/16/button.=.1
+-- CABIN SATCOM...................................ON		.1-sim/17/button.=.1
+-- LANDING CAMERA.................................ON		.1-sim/18/button.=.1
+-- FAR 4..........................................ON		.1-sim/19/button.=.1.and.1-sim/20/button.=.1
+-- AFEX...........................................ON		.1-sim/21/button.=.1
+-- DER............................................ON		.1-sim/22/button.=.1
+-- === PRESSURIZATION
+-- CABIN ALT MODE...............................AUTO		.1-sim/122/button.=.1
+-- CABIN V/S MODE...............................AUTO		.1-sim/123/button.=.1
+-- =======================================================
+
+-- ======================== TAXI =========================
+-- NOSE LIGHTS..................................TAXI		.1-sim/11/switch.=.1
+-- RWY TURN OFF LTS...............................ON		.1-sim/8/switch.=.1
+-- PARK BRK......................................OFF		.1-sim/parckBrake.=.1
+-- THRUST LEVERS AS REQUIRED...................CHECK
+-- AUTOBRAKE RTO.................................SET		.1-sim/225/button.=.1
+-- =======================================================
+
+-- ===================== AFTER START =====================
+-- PACKS PB.......................................ON		.1-sim/107/button.=.1.and.1-sim/112/button.=.1
+-- TAXI PB.......................................OFF		.1-sim/132/button.=.0
+-- ND RANGE AS REQUIRED........................CHECK
+-- EFIS OPTIONS................................CHECK
+-- STROBE LIGHTS SW...............................ON		.1-sim/2/switch.>.0
+-- TABLE......................................STOWED		.1-sim/computer.=.0
+-- TCAS MODE TA/RA...............................SET		.1-sim/surv/TCASmode.=.1
+-- =======================================================
+
+-- ======================= TAKEOFF =======================
+-- CHRONO......................................START		.AirbusFBW/ChronoTimeND1.>.0.or.AirbusFBW/ChronoTimeND2.>.0
+-- THRUST LEVER FLEX/TOGA........................SET		.1-sim/R/throttle.>.0.and.1-sim/L/throttle.>.0
+-- TAKEOFF THRUST..............................CHECK
+-- V1 MONITOR..................................CHECK
+-- AT VR ROTATE..............................PERFORM
+-- LANDING GEAR...................................UP		.sim/cockpit/switches/gear_handle_status.=.0
+-- AP AS REQUIRED..............................CHECK
+-- THRUST LEVER CL.............................CHECK
+-- PACKS PB.......................................ON		.1-sim/107/button.=.1.and.1-sim/112/button.=.1
+-- FLAPS ZERO.................................SELECT		.1-sim/flaphandle.=.1
+-- RWY TURN OFF LTS..............................OFF		.1-sim/8/switch.=.0
+-- GROUND SPOILERS............................DISARM		.sim/cockpit2/controls/speedbrake_ratio.=.0
+-- =======================================================
+
+-- ==================== AFTER TAKEOFF ====================
+-- APU BLEED.....................................OFF		.1-sim/111/button.=.0
+-- APU MASTER SW.................................OFF		.1-sim/125/button.=.0
+-- ANTI-ICE AS REQUIRED........................CHECK
+-- =======================================================
+
+-- ======================== CLIMB ========================
+-- BARO REF STD AS REQUIRED....................CHECK
+-- CRZ FL SET AS REQUIRED......................CHECK
+-- ANTI-ICE AS REQUIRED........................CHECK
+-- SEATBELTS AS REQUIRED.......................CHECK
+-- ECAM MEMO REVIEW............................CHECK
+-- NAVAIDS.....................................CHECK
+-- OPT/MAX ALT.................................CHECK
+-- =======================================================
+
+-- ======================== CRUISE =======================
+-- ALT CRZ ON FMS..............................CHECK
+-- ECAM MEMO...................................CHECK
+-- ECAM SYS PAGES REVIEW.......................CHECK
+-- =======================================================
+
+-- ================= DESCENT PREPARATION =================
+-- WEATHER OBTAINED............................CHECK
+-- LDG ELEC....................................CHECK
+-- BARO REF PRESET.............................CHECK
+-- ECAM STATUS&MEMO............................CHECK
+-- APPROACH DATA INSERT........................CHECK
+-- POSITION/NAVAIDS PAGE.......................CHECK
+-- SEC PAGES AS REQUIRED.......................CHECK
+-- AUTOBRAKE AS REQUIRED.......................CHECK
+--   on short runways use 3 or higher
+-- ANTI-ICE AS REQUIRED........................CHECK
+-- =======================================================
+
+-- ======================= DESCENT =======================
+-- === AT 10 000 FT
+-- EXTERIOR LIGHTS SET.........................CHECK
+-- SEATBELTS......................................ON		.1-sim/12/switch.=.1
+-- FLS DATA....................................CHECK
+-- BARO REF....................................CHECK
+-- === DESCENT
+-- DESCENT MONITOR.............................CHECK
+-- RATE OF DESCENT AS REQUIRED.................CHECK
+-- SPEED BRAKES AS REQUIRED....................CHECK
+-- WXR ON EFIS AS REQUIRED.....................CHECK
+-- HOLDING PATTERN AS REQUIRED.................CHECK
+-- =======================================================
+
 ---PRECISION APPROACH
 --INITIAL APPROACH
 -- SEATBELTS.ON.1-sim/12/switch.=.1
@@ -392,6 +409,7 @@ testProc:addItem(IndirectChecklistItem:new("FUEL","TESTED 100 #exchange|PERC|per
 -- FLAPS FULL.SELECT.sim/flightmodel2/wing/flap2_deg[3].>.30
 -- TABLE.STOWED.1-sim/computer.=.0
 -- FLIGHT PARAMETERS.CHECK
+
 ---NON-PRECISION APPROACH WITH FLS
 --INITIAL APPROACH
 -- SEATBELTS.ON.1-sim/12/switch.=.1
@@ -431,6 +449,7 @@ testProc:addItem(IndirectChecklistItem:new("FUEL","TESTED 100 #exchange|PERC|per
 -- FLAPS FULL.SELECT.sim/flightmodel2/wing/flap2_deg[3].>.30
 -- TABLE.STOWED.1-sim/computer.=.0
 -- FLIGHT PARAMETERS.CHECK
+
 ---NON-PRECISION APPROACH WITHOUT FLS
 --INITIAL APPROACH
 -- SEATBELTS.ON.1-sim/12/switch.=.1
@@ -462,6 +481,7 @@ testProc:addItem(IndirectChecklistItem:new("FUEL","TESTED 100 #exchange|PERC|per
 -- FLAPS FULL.SELECT.sim/flightmodel2/wing/flap2_deg[3].>.30
 -- TABLE.STOWED.1-sim/computer.=.0
 -- FLIGHT PARAMETERS.CHECK
+
 ---VISUAL APPROACH
 --VISUAL APPROACH
 -- ?.perform the approach on a nominal 3 deg glideslope 
@@ -481,6 +501,7 @@ testProc:addItem(IndirectChecklistItem:new("FUEL","TESTED 100 #exchange|PERC|per
 -- AUTOBRAKE.CONFIRM
 -- GROUND SPOILERS.ARM.sim/cockpit2/controls/speedbrake_ratio.<.0
 -- LANDING LIGHTS.ON.1-sim/10/switch.=.1
+
 ---LANDING
 --LANDING
 -- !.MANUAL
@@ -504,8 +525,8 @@ testProc:addItem(IndirectChecklistItem:new("FUEL","TESTED 100 #exchange|PERC|per
 -- REV.STOW.sim/flightmodel/position/groundspeed.<.10.and.1-sim/R/reverser.=.0
 -- AUTOBRAKE DISARMED.CHECK
 -- AP.DISCONNECT.1-sim/misc/AP1status.=.0.or.1-sim/misc/AP2status.=.0
----GO AROUND
---GO AROUND
+
+-- ====================== GO AROUND ======================
 -- THRUST LEVER TOGA.SET.1-sim/R/throttle.=.1.and.1-sim/L/throttle.=.1
 -- ROTATION.CHECK
 -- FMA MAN TOGO, SRS, GA, TRK.CHECK
@@ -513,6 +534,7 @@ testProc:addItem(IndirectChecklistItem:new("FUEL","TESTED 100 #exchange|PERC|per
 -- NAV MODE.SELECT.AirbusFBW/NDmodeCapt.=.2.or.AirbusFBW/NDmodeFO.=.2
 -- THRUST LEVERS CL.CHECK
 -- FLAPS ON SCHEDULE.CHECK
+
 --FROM AN INTERMEDIATE APPROACH ALTITUDE
 -- !.apply the following steps in order to interrupt the
 -- !.approach, or perform a go-around, when the aircraft
@@ -530,71 +552,75 @@ testProc:addItem(IndirectChecklistItem:new("FUEL","TESTED 100 #exchange|PERC|per
 -- FLAPS RETRACT ONE STEP.CHECK
 -- HDG.PULL.1-sim/fcu/hdgPull.>.0
 -- NAV MODE.SELECT.AirbusFBW/NDmodeCapt.=.2.or.AirbusFBW/NDmodeFO.=.2
----AFTER LANDING
---AFTER LANDING
--- GROUND SPOILERS.DISARM.sim/cockpit2/controls/speedbrake_ratio.=.0
--- FLAPS ZERO.SELECT.1-sim/flaphandle.=.1
--- APU MASTER SW.ON.1-sim/125/button.=.1
--- APU PAGE ON SD.CHECK
--- APU START PB.ON.1-sim/126/button.=.1
--- !!. wait for APU AVAIL sign
--- APU AVAIL.CONFIRM.sim/cockpit/engine/APU_N1.>.97
--- APU BLEED PB.ON.1-sim/111/button.=.1
--- ENG START SELECTOR.NORM.1-sim/eng/startSwitch.=.1
--- ANTI-ICE AS REQUIRED.CHECK
--- LANDING LIGHTS.OFF.1-sim/10/switch.=.0
--- NOSE LIGHTS.TAXI.1-sim/11/switch.=.1
--- RWY TURN OFF LIGHTS.ON.1-sim/8/switch.=.1
--- STROBE LIGHTS.OFF.1-sim/2/switch.=.0
--- ND ZOOM AS REQUIRED.CHECK
--- WX ON EFIS CP OFF.CHECK
--- TERR ON EFIS CP OFF.CHECK
--- BRAKE TEMPERATURE.MONITOR
----PARKING
---PARKING
--- NOSE LIGHTS.OFF.1-sim/11/switch.=.2
--- RWY TURN OFF LIGHTS.OFF.1-sim/8/switch.=.0
--- ANTI-ICE WING.OFF.1-sim/117/button.=.0
--- ANTI-ICE AUTO MODE.OFF.1-sim/118/button.=.0
--- ANTI-ICE ENG.OFF.1-sim/119/button.=.0.and.1-sim/120/button.=.0
--- ANTI-ICE PROBE.OFF.1-sim/121/button.=.0
--- PARK BRK.ON.1-sim/parckBrake.=.0
--- ENG MASTER SWITCHES.OFF.1-sim/eng/cutoff/L/switch.=.1.and.1-sim/eng/cutoff/R/switch.=.1
--- SEATBELTS SELECTOR.OFF.1-sim/12/switch.=.0
--- BEACON.OFF.1-sim/3/switch.=.0
--- FUEL PUMP 1.OFF.1-sim/68/button.=.0.and.1-sim/69/button.=.0
--- FUEL PUMP 2.OFF.1-sim/81/button.=.0.and.1-sim/82/button.=.0
----SECURING THE AIRCRAFT
---SECURING THE AIRCRAFT
--- PARK BRK.ON.1-sim/parckBrake.=.0
--- OXYGEN CREW.OFF.1-sim/38/button.=.0
--- ADIRS SELECTOR 1.OFF.1-sim/adirs/1/switch.=.0
--- ADIRS SELECTOR 2.OFF.1-sim/adirs/2/switch.=.0
--- ADIRS SELECTOR 3.OFF.1-sim/adirs/3/switch.=.0
--- APU BLEED PB.OFF.1-sim/111/button.=.0
--- !!.if available
--- EXT PWR 1.ON.?.1-sim/elec/gpu1ON.=.1.1-sim/97/button.=.1.zero/zero.=.0
--- !!.if available
--- EXT PWR 2.ON.?.1-sim/elec/gpu2ON.=.1.1-sim/104/button.=.1.zero/zero.=.0
--- APU MASTER SW PB-SW.OFF.1-sim/125/button.=.0
--- NO SMOKING SELECTOR.OFF.1-sim/13/switch.=.0
--- WIRELESS.OFF.1-sim/15/button.=.0
--- CABIN SATCOM.OFF.1-sim/17/button.=.0
--- LANDING CAMERA.OFF.1-sim/18/button.=.0
--- FAR 4.OFF.1-sim/19/button.=.0.and.1-sim/20/button.=.0
--- AFEX.OFF.1-sim/21/button.=.0
--- DER.OFF.1-sim/22/button.=.0
--- CROSS FEED.OFF.1-sim/78/button.=.0.and.1-sim/79/button.=.0
--- MAIN FUEL PUMPS.OFF.1-sim/68/button.=.0.and.1-sim/81/button.=.0
--- STBY FUEL PUMPS.OFF.1-sim/69/button.=.0.and.1-sim/82/button.=.0
--- 1 & 2 FUEL PUMPS.OFF.1-sim/70/button.=.0.and.1-sim/80/button.=.0
--- CTR TK FEED PB.OFF.1-sim/84/button.=.0
--- TRANSFER FEEDs.OFF.1-sim/83/button.=.0.and.1-sim/85/button.=.0
--- MAINTENANCE PANEL ALL WHITE LTS OFF.CHECK
--- BAT 1.OFF.1-sim/86/button.=.0
--- BAT EMER 1.OFF.1-sim/87/button.=.0
--- BAT EMER 2.OFF.1-sim/88/button.=.0
--- BAT 2.OFF.1-sim/89/button.=.0
+-- =======================================================
+
+-- ==================== AFTER LANDING ====================
+-- GROUND SPOILERS............................DISARM		.sim/cockpit2/controls/speedbrake_ratio.=.0
+-- FLAPS ZERO.................................SELECT		.1-sim/flaphandle.=.1
+-- APU MASTER SW..................................ON		.1-sim/125/button.=.1
+-- APU PAGE ON SD..............................CHECK
+-- APU START PB...................................ON		.1-sim/126/button.=.1
+--   wait for APU AVAIL sign
+-- APU AVAIL.................................CONFIRM		.sim/cockpit/engine/APU_N1.>.97
+-- APU BLEED PB...................................ON		.1-sim/111/button.=.1
+-- ENG START SELECTOR...........................NORM		.1-sim/eng/startSwitch.=.1
+-- ANTI-ICE AS REQUIRED........................CHECK
+-- LANDING LIGHTS................................OFF		.1-sim/10/switch.=.0
+-- NOSE LIGHTS..................................TAXI		.1-sim/11/switch.=.1
+-- RWY TURN OFF LIGHTS............................ON		.1-sim/8/switch.=.1
+-- STROBE LIGHTS.................................OFF		.1-sim/2/switch.=.0
+-- ND ZOOM AS REQUIRED.........................CHECK
+-- WX ON EFIS CP OFF...........................CHECK
+-- TERR ON EFIS CP OFF.........................CHECK
+-- BRAKE TEMPERATURE.........................MONITOR
+-- =======================================================
+
+-- ======================= PARKING =======================
+-- NOSE LIGHTS...................................OFF		.1-sim/11/switch.=.2
+-- RWY TURN OFF LIGHTS...........................OFF		.1-sim/8/switch.=.0
+-- ANTI-ICE WING.................................OFF		.1-sim/117/button.=.0
+-- ANTI-ICE AUTO MODE............................OFF		.1-sim/118/button.=.0
+-- ANTI-ICE ENG..................................OFF		.1-sim/119/button.=.0.and.1-sim/120/button.=.0
+-- ANTI-ICE PROBE................................OFF		.1-sim/121/button.=.0
+-- PARK BRK.......................................ON		.1-sim/parckBrake.=.0
+-- ENG MASTER SWITCHES...........................OFF		.1-sim/eng/cutoff/L/switch.=.1.and.1-sim/eng/cutoff/R/switch.=.1
+-- SEATBELTS SELECTOR............................OFF		.1-sim/12/switch.=.0
+-- BEACON........................................OFF		.1-sim/3/switch.=.0
+-- FUEL PUMP 1...................................OFF		.1-sim/68/button.=.0.and.1-sim/69/button.=.0
+-- FUEL PUMP 2...................................OFF		.1-sim/81/button.=.0.and.1-sim/82/button.=.0
+-- =======================================================
+
+-- ================ SECURING THE AIRCRAFT ================
+-- PARK BRK.......................................ON		.1-sim/parckBrake.=.0
+-- OXYGEN CREW...................................OFF		.1-sim/38/button.=.0
+-- ADIRS SELECTOR 1..............................OFF		.1-sim/adirs/1/switch.=.0
+-- ADIRS SELECTOR 2..............................OFF		.1-sim/adirs/2/switch.=.0
+-- ADIRS SELECTOR 3..............................OFF		.1-sim/adirs/3/switch.=.0
+-- APU BLEED PB..................................OFF		.1-sim/111/button.=.0
+--   if available
+-- EXT PWR 1......................................ON		.?.1-sim/elec/gpu1ON.=.1.1-sim/97/button.=.1.zero/zero.=.0
+--   if available
+-- EXT PWR 2......................................ON		.?.1-sim/elec/gpu2ON.=.1.1-sim/104/button.=.1.zero/zero.=.0
+-- APU MASTER SW PB-SW...........................OFF		.1-sim/125/button.=.0
+-- NO SMOKING SELECTOR...........................OFF		.1-sim/13/switch.=.0
+-- WIRELESS......................................OFF		.1-sim/15/button.=.0
+-- CABIN SATCOM..................................OFF		.1-sim/17/button.=.0
+-- LANDING CAMERA................................OFF		.1-sim/18/button.=.0
+-- FAR 4.........................................OFF		.1-sim/19/button.=.0.and.1-sim/20/button.=.0
+-- AFEX..........................................OFF		.1-sim/21/button.=.0
+-- DER...........................................OFF		.1-sim/22/button.=.0
+-- CROSS FEED....................................OFF		.1-sim/78/button.=.0.and.1-sim/79/button.=.0
+-- MAIN FUEL PUMPS...............................OFF		.1-sim/68/button.=.0.and.1-sim/81/button.=.0
+-- STBY FUEL PUMPS...............................OFF		.1-sim/69/button.=.0.and.1-sim/82/button.=.0
+-- 1 & 2 FUEL PUMPS..............................OFF		.1-sim/70/button.=.0.and.1-sim/80/button.=.0
+-- CTR TK FEED PB................................OFF		.1-sim/84/button.=.0
+-- TRANSFER FEEDs................................OFF		.1-sim/83/button.=.0.and.1-sim/85/button.=.0
+-- MAINTENANCE PANEL ALL WHITE LTS OFF.........CHECK
+-- BAT 1.........................................OFF		.1-sim/86/button.=.0
+-- BAT EMER 1....................................OFF		.1-sim/87/button.=.0
+-- BAT EMER 2....................................OFF		.1-sim/88/button.=.0
+-- BAT 2.........................................OFF		.1-sim/89/button.=.0
+-- =======================================================
 
 
 
@@ -3283,4 +3309,4 @@ function getActiveSOP()
 	return activeSOP
 end
 
-return SOP_A350
+return SOP_A359

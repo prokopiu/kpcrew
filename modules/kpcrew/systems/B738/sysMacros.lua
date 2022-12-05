@@ -552,10 +552,54 @@ end
 -- flaps retract during takeoff bck??
 
 -- 10000 feet activities up and down
+function kc_macro_above_10000_ft()
+	kc_macro_ext_lights_above10()
+	command_once("laminar/B738/toggle_switch/seatbelt_sign_up") 
+	command_once("laminar/B738/toggle_switch/seatbelt_sign_up") 
+end
 
--- fire tests ?!? as bck
--- apu start bck
--- gpu start bck
+function kc_macro_below_10000_ft()
+	kc_macro_ext_lights_below10()
+	command_once("laminar/B738/toggle_switch/seatbelt_sign_up") 
+	command_once("laminar/B738/toggle_switch/seatbelt_sign_up") 
+	command_once("laminar/B738/toggle_switch/seatbelt_sign_dn") 
+end
+
+function kc_macro_at_trans_alt()
+	if get("laminar/B738/EFIS/baro_set_std_pilot") == 0 then 
+		command_once("laminar/B738/EFIS_control/capt/push_button/std_press")
+	end
+	if get("laminar/B738/EFIS/baro_set_std_copilot") == 0 then 
+		command_once("laminar/B738/EFIS_control/fo/push_button/std_press")
+	end
+end
+
+function kc_macro_at_trans_lvl()
+	if activeBriefings:get("arrival:atisQNH") ~= "" then
+		if activePrefSet:get("general:baro_mode_hpa") then
+			return 	get("laminar/B738/EFIS/baro_sel_in_hg_pilot") == tonumber(activeBriefings:get("arrival:atisQNH")) * 0.02952999 and 
+					get("laminar/B738/EFIS/baro_sel_in_hg_copilot") == tonumber(activeBriefings:get("arrival:atisQNH")) * 0.02952999
+		else
+			return 	get("laminar/B738/EFIS/baro_sel_in_hg_pilot") == tonumber(activeBriefings:get("arrival:atisQNH")) and 
+					get("laminar/B738/EFIS/baro_sel_in_hg_copilot") == tonumber(activeBriefings:get("arrival:atisQNH"))
+		end
+	end
+	if get("laminar/B738/EFIS/baro_set_std_pilot") == 1 then 
+		command_once("laminar/B738/EFIS_control/capt/push_button/std_press")
+	end
+	if get("laminar/B738/EFIS/baro_set_std_copilot") == 1 then 
+		command_once("laminar/B738/EFIS_control/fo/push_button/std_press")
+	end
+	if activeBriefings:get("arrival:atisQNH") ~= "" then
+		if activePrefSet:get("general:baro_mode_hpa") then
+			set("laminar/B738/EFIS/baro_sel_in_hg_pilot", tonumber(activeBriefings:get("arrival:atisQNH")) * 0.02952999)
+			set("laminar/B738/EFIS/baro_sel_in_hg_copilot", tonumber(activeBriefings:get("arrival:atisQNH")) * 0.02952999) 
+		else
+			set("laminar/B738/EFIS/baro_sel_in_hg_pilot", tonumber(activeBriefings:get("arrival:atisQNH")))
+			set("laminar/B738/EFIS/baro_sel_in_hg_copilot", tonumber(activeBriefings:get("arrival:atisQNH")))
+		end
+	end
+end
 
 -- B738 specific macros
 
@@ -582,6 +626,19 @@ end
 function kc_macro_b738_lowerdu_eng()
 	set("laminar/B738/systems/lowerDU_page",1)
 	set("laminar/B738/systems/lowerDU_page2",0)
+end
+
+-- set the autobrake value depending on the briefing setting
+function kc_macro_b738_set_autobrake()
+	if activeBriefings:get("approach:autobrake") == 2 then
+		command_once("laminar/B738/knob/autobrake_1")
+	elseif activeBriefings:get("approach:autobrake") == 3 then
+		command_once("laminar/B738/knob/autobrake_2")
+	elseif activeBriefings:get("approach:autobrake") == 4 then
+		command_once("laminar/B738/knob/autobrake_3")
+	elseif activeBriefings:get("approach:autobrake") == 5 then
+		command_once("laminar/B738/knob/autobrake_max")
+	end
 end
 
 -- bck callouts when needed
@@ -877,7 +934,6 @@ function kc_bck_b738_gen2down(trigger)
 	end
 	if kc_procvar_get(delayvar) == -1 then
 		kc_procvar_set(delayvar,0)
-		logMsg("now")
 		command_begin("laminar/B738/toggle_switch/gen2_dn")
 	else
 		if kc_procvar_get(delayvar) <= 0 then
@@ -887,6 +943,42 @@ function kc_bck_b738_gen2down(trigger)
 		else
 			kc_procvar_set(delayvar,kc_procvar_get(delayvar)-1)
 		end
+	end
+end
+
+-- wait for climbing through 10.000 ft then execute items
+function kc_bck_climb_through_10k(trigger)
+	if get("sim/cockpit2/gauges/indicators/altitude_ft_pilot") > 10000 then
+		kc_speakNoText(0,"ten thousand")
+		kc_macro_above_10000_ft()
+		kc_procvar_set(trigger,false)
+	end
+end
+
+-- wait for descending through 10.000 ft then execute items
+function kc_bck_descend_through_10k(trigger)
+	if get("sim/cockpit2/gauges/indicators/altitude_ft_pilot") > 10000 then
+		kc_speakNoText(0,"ten thousand")
+		kc_macro_below_10000_ft()
+		kc_procvar_set(trigger,false)
+	end
+end
+
+-- wait for climbing through trans alt then execute items
+function kc_bck_transition_altitude(trigger)
+	if get("sim/cockpit2/gauges/indicators/altitude_ft_pilot") > activeBriefings:get("departure:transalt") then
+		kc_speakNoText(0,"transition altitude")
+		kc_macro_at_trans_alt()
+		kc_procvar_set(trigger,false)
+	end
+end
+
+-- wait for descending through trans lvl then execute items
+function kc_bck_transition_level(trigger)
+	if get("sim/cockpit2/gauges/indicators/altitude_ft_pilot") < activeBriefings:get("arrival:translvl")*100 then
+		kc_speakNoText(0,"transition level")
+		kc_macro_at_trans_lvl()
+		kc_procvar_set(trigger,false)
 	end
 end
 
