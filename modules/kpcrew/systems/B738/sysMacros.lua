@@ -278,6 +278,7 @@ function kc_macro_ext_lights_above10()
 	sysLights.beaconSwitch:actuate(1)
 	sysLights.wingSwitch:actuate(0)
 	sysLights.wheelSwitch:actuate(0)
+	sysLights.landLightGroup:actuate(0)
 	if kc_is_daylight() then		
 		sysLights.logoSwitch:actuate(0)
 	else
@@ -294,7 +295,7 @@ function kc_macro_ext_lights_below10()
 	sysLights.wingSwitch:actuate(0)
 	sysLights.wheelSwitch:actuate(0)
 	sysLights.rwyLightGroup:actuate(0)
-	sysLights.landLightGroup:actuate(0)
+	sysLights.landLightGroup:actuate(1)
 	sysLights.llLeftSwitch:actuate(1)
 	sysLights.llRightSwitch:actuate(1)
 	if kc_is_daylight() then		
@@ -432,6 +433,14 @@ function kc_macro_fuelpumps_stand()
 	sysFuel.allFuelPumpGroup:actuate(0)
 	sysFuel.crossFeed:actuate(0)
 	if activePrefSet:get("aircraft:powerup_apu") == true then
+		sysFuel.fuelPumpLeftAft:actuate(1)
+	end
+end
+
+function kc_macro_fuelpumps_shutdown()
+	sysFuel.allFuelPumpGroup:actuate(0)
+	sysFuel.crossFeed:actuate(0)
+	if activeBriefings:get("approach:powerAtGate") == 2 then
 		sysFuel.fuelPumpLeftAft:actuate(1)
 	end
 end
@@ -957,7 +966,7 @@ end
 
 -- wait for descending through 10.000 ft then execute items
 function kc_bck_descend_through_10k(trigger)
-	if get("sim/cockpit2/gauges/indicators/altitude_ft_pilot") > 10000 then
+	if get("sim/cockpit2/gauges/indicators/altitude_ft_pilot") < 10000 then
 		kc_speakNoText(0,"ten thousand")
 		kc_macro_below_10000_ft()
 		kc_procvar_set(trigger,false)

@@ -127,6 +127,7 @@ if get("laminar/B738/annunciator/ground_power_avail") > 0 or
 	(get("laminar/B738/annunciator/ground_power_avail") == 0 and 
 	(get("laminar/B738/electrical/apu_power_bus1") == 1 or 
 	get("laminar/B738/electrical/apu_power_bus2") == 1)) then return 1 else return 0 end end)
+	
 sysElectric.gpuOnBus = SimpleAnnunciator:new("gpubus","sim/cockpit/electrical/gpu_on",0)
 
 -- APU GEN BUS OFF

@@ -1651,7 +1651,7 @@ beforeTaxiProc:addItem(ProcedureItem:new("ISOLATION VALVE SWITCH","AUTO",FlowIte
 	function () return sysAir.isoValveSwitch:getStatus() == sysAir.isoVlvAuto end))
 beforeTaxiProc:addItem(ProcedureItem:new("APU BLEED AIR SWITCH","OFF",FlowItem.actorFO,0,
 	function () return sysAir.apuBleedSwitch:getStatus() == 0 end,
-	function () kc_macro_bleeds_on() end))
+	function () sysAir.apuBleedSwitch:actuate(0) end))
 beforeTaxiProc:addItem(ProcedureItem:new("APU SWITCH","OFF",FlowItem.actorFO,0,
 	function () return sysElectric.apuStartSwitch:getStatus() == 0 end,
 	function () command_once("laminar/B738/spring_toggle_switch/APU_start_pos_up") end))
@@ -1668,7 +1668,7 @@ beforeTaxiProc:addItem(ProcedureItem:new("FLAP LEVER","SET TAKEOFF FLAPS %s|kc_p
 beforeTaxiProc:addItem(ProcedureItem:new("LE FLAPS EXT GREEN LIGHT","ILLUMINATED",FlowItem.actorFO,0,
 	function () return get("laminar/B738/annunciator/slats_extend") == 1 end))
 
-beforeTaxiProc:addItem(IndirectProcedureItem:new("FLIGHT CONTROLS","CHECK",FlowItem.actorBOTH,0,"fccheck",
+beforeTaxiProc:addItem(IndirectProcedureItem:new("FLIGHT CONTROLS","CHECKED",FlowItem.actorBOTH,0,"fccheck",
 	function () return get("sim/flightmodel2/wing/rudder1_deg") > 18 end,
 	function () 
 		kc_macro_b738_lowerdu_sys()
@@ -1883,12 +1883,12 @@ takeoffClimbProc:addItem(IndirectProcedureItem:new("GEAR","UP",FlowItem.actorPF,
 		kc_procvar_set("attransalt",true) -- background transition altitude activities
 	end))
 -- flaps schedule
-takeoffClimbProc:addItem(HoldProcedureItem:new("FLAPS 10","COMMAND",FlowItem.actorPF,
+takeoffClimbProc:addItem(HoldProcedureItem:new("FLAPS 10","COMMAND",FlowItem.actorPF,nil,
 	function () return sysControls.flapsSwitch:getStatus() < 0.625 end))
 takeoffClimbProc:addItem(ProcedureItem:new("FLAPS 10","SET",FlowItem.actorPNF,0,true,
 	function () command_once("laminar/B738/push_button/flaps_10") kc_speakNoText(0,"speed check flaps 10") end,
 	function () return sysControls.flapsSwitch:getStatus() < 0.625 end))
-takeoffClimbProc:addItem(HoldProcedureItem:new("FLAPS 5","COMMAND",FlowItem.actorPF,
+takeoffClimbProc:addItem(HoldProcedureItem:new("FLAPS 5","COMMAND",FlowItem.actorPF,nil,
 	function () return sysControls.flapsSwitch:getStatus() < 0.5 end))
 takeoffClimbProc:addItem(ProcedureItem:new("FLAPS 5","SET",FlowItem.actorPNF,0,true,
 	function () command_once("laminar/B738/push_button/flaps_5") kc_speakNoText(0,"speed check flaps 5") end,
@@ -1900,11 +1900,8 @@ takeoffClimbProc:addItem(HoldProcedureItem:new("FLAPS UP","COMMAND",FlowItem.act
 takeoffClimbProc:addItem(ProcedureItem:new("FLAPS UP","SET",FlowItem.actorPNF,0,true,
 	function () command_once("laminar/B738/push_button/flaps_0") kc_speakNoText(0,"speed check flaps up") end))
 --
-takeoffClimbProc:addItem(HoldProcedureItem:new("CMD-A","COMMAND ON",FlowItem.actorPF)
-	function () return sysMCP.ap1Switch:getStatus() == 1 end,
-	function () if activePrefSet:get("takeoff_cmda") == true then sysMCP.ap1Switch:actuate(1) end kc_speakNoText(0,"command a") end))
-takeoffClimbProc:addItem(ProcedureItem:new("CMD-A","ON",FlowItem.actorPNF,0,
-	function () return sysMCP.ap1Switch:getStatus() == 1 end,
+takeoffClimbProc:addItem(HoldProcedureItem:new("CMD-A","COMMAND ON",FlowItem.actorPF))
+takeoffClimbProc:addItem(ProcedureItem:new("CMD-A","ON",FlowItem.actorPNF,0,true,
 	function () 
 		sysMCP.ap1Switch:actuate(1) 
 		kc_speakNoText(0,"command a") 
@@ -2004,7 +2001,7 @@ descentChkl:addItem(ChecklistItem:new("#exchange|PRESSURIZATION|descent checklis
 descentChkl:addItem(ChecklistItem:new("RECALL","CHECKED",FlowItem.actorBOTH,0,
 	function() return sysGeneral.annunciators:getStatus() == 0 end,
 	function() command_once("laminar/B738/push_button/capt_six_pack") end))
-descentChkl:addItem(ChecklistItem:new("AUTOBRAKE","%s|kc_pref_split(kc_LandingAutoBrake)[activeBriefings:get(\"approach:autobrake\")]",FlowItem.actorPM,1))
+descentChkl:addItem(ChecklistItem:new("AUTOBRAKE","%s|kc_pref_split(kc_LandingAutoBrake)[activeBriefings:get(\"approach:autobrake\")]",FlowItem.actorPM,0))
 descentChkl:addItem(ChecklistItem:new("LANDING DATA","VREF %i, MINIMUMS %i|activeBriefings:get(\"approach:vref\")|activeBriefings:get(\"approach:decision\")",FlowItem.actorBOTH,0,
 	function () return get("laminar/B738/FMS/vref") ~= 0 and math.floor(sysEFIS.minsPilot:getStatus()) == activeBriefings:get("approach:decision") end,
 	function () 
@@ -2134,11 +2131,11 @@ landingProc:addItem(ProcedureItem:new("FLAPS 25","SET",FlowItem.actorPNF,0,true,
 landingProc:addItem(HoldProcedureItem:new("FLAPS 30","COMMAND",FlowItem.actorPF))
 landingProc:addItem(ProcedureItem:new("FLAPS 30","SET",FlowItem.actorPNF,0,true,
 	function () command_once("laminar/B738/push_button/flaps_30") kc_speakNoText(0,"speed check flaps 30") end))
-landingProc:addItem(HoldProcedureItem:new("FLAPS 40","COMMAND",FlowItem.actorPF,
-	function return activeBriefings:get("approach:flaps") < 2 end))
+landingProc:addItem(HoldProcedureItem:new("FLAPS 40","COMMAND",FlowItem.actorPF,nil,
+	function () return activeBriefings:get("approach:flaps") < 2 end))
 landingProc:addItem(ProcedureItem:new("FLAPS 40","SET",FlowItem.actorPNF,0,true,
 	function () command_once("laminar/B738/push_button/flaps_40") kc_speakNoText(0,"speed check flaps 40") end,
-	function return activeBriefings:get("approach:flaps") < 2 end))
+	function () return activeBriefings:get("approach:flaps") < 2 end))
 --
 landingProc:addItem(ProcedureItem:new("SPEED BRAKE","ARMED",FlowItem.actorPF,0,
 	function () return get("laminar/B738/annunciator/speedbrake_armed") == 1 end,
@@ -2203,7 +2200,7 @@ afterLandingProc:setFlightPhase(15)
 afterLandingProc:addItem(ProcedureItem:new("SPEED BRAKE","DOWN",FlowItem.actorPF,0,
 	function () return sysControls.spoilerLever:getStatus() == 0 end,
 	function () set("laminar/B738/flt_ctrls/speedbrake_lever",0) activeBckVars:set("general:timesIN",kc_dispTimeHHMM(get("sim/time/zulu_time_sec"))) end))
-afterLandingProc:addItem(ProcedureItem:new("CHRONO & ET","STOP",FlowItem.actorCPT,2))
+afterLandingProc:addItem(ProcedureItem:new("CHRONO & ET","STOP",FlowItem.actorCPT,0))
 afterLandingProc:addItem(ProcedureItem:new("WX RADAR","OFF",FlowItem.actorCPT,0,
 	function () return sysEFIS.wxrPilot:getStatus() == 0 end,
 	function () sysEFIS.wxrPilot:actuate(0) end))
@@ -2232,7 +2229,7 @@ afterLandingProc:addItem(ProcedureItem:new("TRANSPONDER","STBY",FlowItem.actorFO
 afterLandingProc:addItem(ProcedureItem:new("FLAPS","UP",FlowItem.actorFO,0,
 	function () return sysControls.flapsSwitch:getStatus() == 0 end,
 	function () sysControls.flapsSwitch:setValue(0) end))
-afterLandingProc:addItem(ProcedureItem:new("#spell|APU#","START",FlowItem.actorFO,0,
+afterLandingProc:addItem(ProcedureItem:new("#spell|APU# ","START",FlowItem.actorFO,0,
 	function () return sysElectric.apuRunningAnc:getStatus() == modeOn end,
 	function () 
 		kc_macro_b738_lowerdu_sys()
@@ -2244,6 +2241,8 @@ afterLandingProc:addItem(SimpleProcedureItem:new("  Hold APU switch in START pos
 afterLandingProc:addItem(IndirectProcedureItem:new("  #spell|APU# GEN OFF BUS LIGHT","ILLUMINATED",FlowItem.actorFO,0,"apu_gen_bus_end",
 	function () return sysElectric.apuGenBusOff:getStatus() == modeOn end,nil,
 	function () return activeBriefings:get("approach:powerAtGate") == 1 end))
+afterLandingProc:addItem(ProcedureItem:new("AIRCRAFT","CLEAN",FlowItem.actorFO,0,true,
+	function () kc_speakNoText(9,"aircraft cleaned up") end))
 
 -- ============= SHUTDOWN PROCEDURE (BOTH) ==============
 -- TAXI LIGHT SWITCH...........................OFF  (CPT) 
@@ -2299,7 +2298,10 @@ shutdownProc:addItem(ProcedureItem:new("ENGINE START LEVERS","CUTOFF",FlowItem.a
 	function () kc_speakNoText(0,"ready to cut engines") end))
 shutdownProc:addItem(ProcedureItem:new("FASTEN BELTS SWITCH","OFF",FlowItem.actorFO,0,
 	function () return sysGeneral.seatBeltSwitch:getStatus() == 0 end,
-	function () sysGeneral.seatBeltSwitch:actuate(0) end))
+	function () 
+		command_once("laminar/B738/toggle_switch/seatbelt_sign_up")
+		command_once("laminar/B738/toggle_switch/seatbelt_sign_up")
+	end))
 shutdownProc:addItem(ProcedureItem:new("EXTERNAL LIGHTS","SET",FlowItem.actorCPT,0,true,
 	function () kc_macro_ext_lights_stand() activeBckVars:set("general:timesON",kc_dispTimeHHMM(get("sim/time/zulu_time_sec"))) end))
 shutdownProc:addItem(ProcedureItem:new("FUEL PUMPS","APU 1 PUMP ON, REST OFF",FlowItem.actorCPT,0,
@@ -2344,8 +2346,9 @@ shutdownProc:addItem(ProcedureItem:new("ENGINE BLEED AIR SWITCHES","ON",FlowItem
 	function () return sysAir.bleedEng1Switch:getStatus() == 1 and sysAir.bleedEng2Switch:getStatus() == 1 end,
 	function () kc_macro_bleeds_on() end))
 shutdownProc:addItem(ProcedureItem:new("APU BLEED AIR SWITCH","ON",FlowItem.actorFO,0,
-	function () return sysAir.apuBleedSwitch:getStatus() == modeOn end,nil,
-	function () return not activeBriefings:get("approach:powerAtGate") == 1 end))
+	function () return sysAir.apuBleedSwitch:getStatus() == modeOn end,
+	function () sysAir.apuBleedSwitch:actuate(1) end,
+	function () return activeBriefings:get("approach:powerAtGate") == 1 end))
 shutdownProc:addItem(ProcedureItem:new("FLIGHT DIRECTOR SWITCHES","OFF",FlowItem.actorFO,0,
 	function () return sysMCP.fdirGroup:getStatus() == 0 end,
 	function () sysMCP.fdirGroup:actuate(0) end))
@@ -2379,18 +2382,13 @@ shutdownProc:addItem(ProcedureItem:new("MCP","RESET",FlowItem.actorFO,0,
 
 local shutdownChkl = Checklist:new("SHUTDOWN CHECKLIST","","shutdown checklist completed")
 shutdownChkl:setFlightPhase(17)
-shutdownChkl:addItem(ChecklistItem:new("FUEL PUMPS","ONE PUMP ON FOR APU, REST OFF",FlowItem.actorFO,0,
-	function () return sysFuel.allFuelPumpGroup:getStatus() == 1 end,
-	function () sysFuel.allFuelPumpGroup:actuate(modeOff) sysFuel.fuelPumpLeftAft:actuate(modeOn) end,
-	function () return activeBriefings:get("approach:powerAtGate") == 1 end))
 shutdownChkl:addItem(ChecklistItem:new("FUEL PUMPS","OFF",FlowItem.actorFO,0,
 	function () return sysFuel.allFuelPumpGroup:getStatus() == 0 end,
-	function () sysFuel.allFuelPumpGroup:actuate(modeOff) end,
-	function () return activeBriefings:get("approach:powerAtGate") == 2 end))
+	function () kc_macro_fuelpumps_shutdown() end))
 shutdownChkl:addItem(ChecklistItem:new("PROBE HEAT","OFF",FlowItem.actorFO,0,
 	function () return sysAice.probeHeatGroup:getStatus() == 0 end,
 	function () sysAice.probeHeatGroup:actuate(0) end))
-shutdownChkl:addItem(ChecklistItem:new("HYDRAULIC PANEL","SET",FlowItem.actorFO,2))
+shutdownChkl:addItem(ChecklistItem:new("HYDRAULIC PANEL","SET",FlowItem.actorFO,0))
 shutdownChkl:addItem(ChecklistItem:new("FLAPS","UP",FlowItem.actorCPT,0,
 	function () return sysControls.flapsSwitch:getStatus() == 0 end,
 	function () sysControls.flapsSwitch:setValue(0) end)) 
