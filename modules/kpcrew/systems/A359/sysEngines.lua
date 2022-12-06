@@ -31,13 +31,14 @@ sysEngines.reverseToggle 	= TwoStateToggleSwitch:new("reverse","sim/cockpit/warn
 	"sim/engines/thrust_reverse_toggle") 
 
 -- engine start switches
--- sysEngines.startLever1 		= MultiStateCmdSwitch:new("","1-sim/eng/cutoff/L/switch",0,
-	-- "laminar/B738/engine/mixture1_idle","laminar/B738/engine/mixture1_cutoff","laminar/B738/engine/mixture1_toggle")
--- sysEngines.startLever2 		= MultiStateCmdSwitch:new("","1-sim/eng/cutoff/L/switch",0,
-	-- "laminar/B738/engine/mixture2_idle","laminar/B738/engine/mixture2_cutoff","laminar/B738/engine/mixture2_toggle")
--- sysEngines.startLeverGroup 	= SwitchGroup:new("startLevers")
--- sysEngines.startLeverGroup:addSwitch(sysEngines.startLever1)
--- sysEngines.startLeverGroup:addSwitch(sysEngines.startLever2)
+sysEngines.startLever1 		= TwoStateDrefSwitch:new("master1","1-sim/eng/cutoff/L/switch",0)
+sysEngines.startLever2 		= TwoStateDrefSwitch:new("master2","1-sim/eng/cutoff/R/switch",0)
+sysEngines.startLeverGroup 	= SwitchGroup:new("startLevers")
+sysEngines.startLeverGroup:addSwitch(sysEngines.startLever1)
+sysEngines.startLeverGroup:addSwitch(sysEngines.startLever2)
+
+-- engine START SLECTOR
+sysEngines.startSelector	= TwoStateDrefSwitch:new("startselector","1-sim/eng/startSwitch",0)
 
 ----------- Annunciators
 

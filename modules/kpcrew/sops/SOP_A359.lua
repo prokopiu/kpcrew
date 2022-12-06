@@ -64,46 +64,6 @@ testProc:addItem(ProcedureItem:new("STEP1","DO",FlowItem.actorFO,0,true,
 		kc_macro_state_turnaround()
 	end))
 
--- ================= ELECTRICAL POWER-UP =================
--- All paper work on board and checked
--- M E L and Technical Logbook checked
--- 
--- AIRCRAFT ON BAT PWR.........................CHECK (F/O)
--- ENG MASTER SWITCHES...........................OFF (F/O) (.1-sim/eng/cutoff/L/switch.=.1.and.1-sim/eng/cutoff/R/switch.=.1
--- ENG START SELECTOR...........................NORM (F/O) (.1-sim/eng/startSwitch.=.1)
--- WIPERS SELECTOR...............................OFF (F/O) (.1-sim/misc/wiper/L/switch.=.2)
--- BAT 1..........................................ON (F/O) (.1-sim/86/button.=.1)
--- BAT EMER 1.....................................ON (F/O) (.1-sim/87/button.=.1
--- BAT EMER 2.....................................ON (F/O) .1-sim/88/button.=.1
--- BAT 2..........................................ON (F/O) .1-sim/89/button.=.1
--- if available
--- EXT PWR 1......................................ON (F/O) .?.1-sim/elec/gpu1ON.=.1.1-sim/97/button.=.1.zero/zero.=.0
--- EXT PWR 2......................................ON (F/O) .?.1-sim/elec/gpu2ON.=.1.1-sim/104/button.=.1.zero/zero.=.0
-
--- APU&ENG FIRE TEST
--- APU FIRE PB-SW............................GUARDED		.1-sim/38/cover.=.0
--- APU AGENT LIGHT OFF.........................CHECK
--- ENG 1 FIRE PB-SW..........................GUARDED		.1-sim/37/cover.=.0
--- ENG 2 FIRE PB-SW..........................GUARDED		.1-sim/39/cover.=.0
--- ALL ENG AGENT LIGHTS OFF....................CHECK
--- TEST PB......................................PUSH		.1-sim/fire/test.=.1
--- RESULT......................................CHECK
--- - continious repetitive chime sounds
--- - master warning light flash
--- - ECAM red alert ENG 1(2) FIRE, APU FIRE
--- - all ENG and APU PB-SW red
--- - all DISCH lights on
--- - ALL FIRE lights on ENG MASTER on
-
--- else --APU START
--- APU MASTER SW..................................ON       .1-sim/125/button.=.1
--- APU PAGE ON SD..............................CHECK
--- APU START PB...................................ON       .1-sim/126/button.=.1
--- . wait for APU AVAIL sign
--- APU AVAIL.................................CONFIRM      .sim/cockpit/engine/APU_N1.>.97
--- ELECTRICAL POWER UP.......................CONFIRM
--- =======================================================
-
 -- =============== ECAM & CKPT PREPARATION ===============
 -- === ECAM
 -- ECAM...........................................ON		.1-sim/ind/ecamMode.>.0
@@ -626,53 +586,55 @@ testProc:addItem(ProcedureItem:new("STEP1","DO",FlowItem.actorFO,0,true,
 -- =======================================================
 
 
+-- ======================================================================================
 
--- ============ Electrical Power Up Procedure ============
+-- ================= ELECTRICAL POWER-UP =================
+-- All paper work on board and checked
+-- M E L and Technical Logbook checked
+-- 
+-- === Initial checks
+-- CIRCUIT BREAKERS.....................CHECK ALL IN (F/O)
+-- AIRCRAFT ON BAT PWR.........................CHECK (F/O) 
+--   Check that no AC/DC power source is active
+-- ENG MASTER SWITCHES...........................OFF (F/O) .1-sim/eng/cutoff/L/switch.=.1.and.1-sim/eng/cutoff/R/switch.=.1
+-- ENG START SELECTOR...........................NORM (F/O) .1-sim/eng/startSwitch.=.1)
+-- WIPERS SELECTORS..............................OFF (F/O) .1-sim/misc/wiper/L/switch.=.2  1-sim/misc/wiper/R/switch)
+-- GEAR LEVER...................................DOWN (F/O) .sim/cockpit/switches/gear_handle_status.=.1
+-- FLAP LEVER...................................ZERO (F/O) .1-sim/flaphandle.=.1
 
--- ===== Initial checks
--- DC Electric Power
--- CIRCUIT BREAKERS (P6 PANEL)..........CHECK ALL IN (F/O)
--- CIRCUIT BREAKERS (P18 PANEL).........CHECK ALL IN (F/O)
--- DC POWER SWITCH...............................BAT (F/O)
--- BATTERY VOLTAGE...........................MIN 24V (F/O)
--- BATTERY SWITCH.......................GUARD CLOSED (F/O)
--- STANDBY POWER SWITCH.................GUARD CLOSED (F/O)
-
--- Hydraulic System
--- ELECTRIC HYDRAULIC PUMPS SWITCHES.............OFF (F/O)
--- ALTERNATE FLAPS MASTER SWITCH........GUARD CLOSED (F/O)
--- FLAP LEVER...................................SET  (F/O)
---   Set the flap lever to agree with the flap position.
-
--- Other
--- WINDSHIELD WIPER SELECTORS...................PARK (F/O)
--- LANDING GEAR LEVER...........................DOWN (F/O)
---   GREEN LANDING GEAR LIGHT......CHECK ILLUMINATED (F/O)
---   RED LANDING GEAR LIGHT.......CHECK EXTINGUISHED (F/O)
--- TAKEOFF CONFIG WARNING.......................TEST (F/O)
---   Move thrust levers full forward and back to idle.
+-- === Batteries on
+-- BAT 1..........................................ON (F/O) 
+-- BAT EMER 1.....................................ON (F/O) 
+-- BAT EMER 2.....................................ON (F/O) 
+-- BAT 2..........................................ON (F/O) 
 
 -- ==== Activate External Power
---   Use Zibo EFB to turn Ground Power on.         
---   GRD POWER AVAILABLE LIGHT...........ILLUMINATED (F/O)
---   GROUND POWER SWITCH..........................ON (F/O)
+--   Activate external power in Ground Services menu
+--   EXT PWR 1....................................ON (F/O) .?.1-sim/elec/gpu1ON.=.1.1-sim/97/button.=.1.zero/zero.=.0
+--   EXT PWR 2....................................ON (F/O) .?.1-sim/elec/gpu2ON.=.1.1-sim/104/button.=.1.zero/zero.=.0
 
 -- ==== Activate APU 
---   OVHT DET SWITCHES........................NORMAL (F/O)
---   OVHT FIRE TEST SWITCH................HOLD RIGHT (F/O)
---   MASTER FIRE WARN LIGHT.....................PUSH (F/O)
---   ENGINES EXT TEST SWITCH..........TEST 1 TO LEFT (F/O)
---   ENGINES EXT TEST SWITCH.........TEST 2 TO RIGHT (F/O)
---   APU.......................................START (F/O)
---     Hold APU switch in START position for 3-4 seconds.
---   APU GEN OFF BUS LIGHT...............ILLUMINATED (F/O)
---   APU GENERATOR BUS SWITCHES...................ON (F/O)
-
--- TRANSFER BUS LIGHTS............CHECK EXTINGUISHED (F/O)
--- SOURCE OFF LIGHTS..............CHECK EXTINGUISHED (F/O)
--- STANDBY POWER..................................ON (F/O)
---   STANDBY PWR LIGHT............CHECK EXTINGUISHED (F/O)
+--   APU FIRE PB-SW..........................GUARDED (F/O)	.1-sim/38/cover.=.0
+--   APU AGENT LIGHT OFF.......................CHECK (F/O)	. light dataref when activated
+--   ENG 1 FIRE PB-SW........................GUARDED (F/O)	.1-sim/37/cover.=.0
+--   ENG 2 FIRE PB-SW........................GUARDED (F/O)	.1-sim/39/cover.=.0
+--   ALL ENG AGENT LIGHTS OFF..................CHECK (F/O)	light datarefs
+--   TEST PB....................................PUSH (F/O)	.1-sim/fire/test.=.1
+--   RESULT....................................CHECK (F/O)
+--     - continuous repetitive chime sounds
+--     - master warning light flash
+--     - ECAM red alert ENG 1(2) FIRE, APU FIRE
+--     - all ENG and APU PB-SW red
+--     - all DISCH lights on
+--     - ALL FIRE lights on ENG MASTER on
+--   APU MASTER SW..................................ON       .1-sim/125/button.=.1
+--   APU PAGE ON SD..............................CHECK
+--   APU START PB...................................ON       .1-sim/126/button.=.1
+--     wait for APU AVAIL sign
+--   APU AVAIL.................................CONFIRM       .sim/cockpit/engine/APU_N1.>.97
+--   ELECTRICAL POWER UP.......................CONFIRM
 -- =======================================================
+
 
 local electricalPowerUpProc = Procedure:new("ELECTRICAL POWER UP","performing ELECTRICAL POWER UP","Power up finished")
 electricalPowerUpProc:setFlightPhase(1)
@@ -680,9 +642,9 @@ electricalPowerUpProc:addItem(SimpleProcedureItem:new("All paper work on board a
 electricalPowerUpProc:addItem(SimpleProcedureItem:new("M E L and Technical Logbook checked"))
 
 electricalPowerUpProc:addItem(SimpleProcedureItem:new("== Initial Checks"))
+
 electricalPowerUpProc:addItem(SimpleProcedureItem:new("==== DC Electric Power"))
-electricalPowerUpProc:addItem(ProcedureItem:new("CIRCUIT BREAKERS (P6 PANEL)","CHECK ALL IN",FlowItem.actorFO,0,true))
-electricalPowerUpProc:addItem(ProcedureItem:new("CIRCUIT BREAKERS (CONTROL STAND,P18 PANEL)","CHECK ALL IN",FlowItem.actorFO,0,true))
+electricalPowerUpProc:addItem(ProcedureItem:new("CIRCUIT BREAKERS","CHECK ALL IN",FlowItem.actorFO,0,true))
 electricalPowerUpProc:addItem(ProcedureItem:new("DC POWER SWITCH","BAT",FlowItem.actorFO,0,
 	function () return sysElectric.dcPowerSwitch:getStatus() == sysElectric.dcPwrBAT end,
 	function () sysElectric.dcPowerSwitch:actuate(sysElectric.dcPwrBAT) end))
@@ -3302,8 +3264,8 @@ activeSOP:addProcedure(testProc)
 -- activeSOP:addChecklist(secureChkl)
 
 -- =========== States ===========
-activeSOP:addState(turnAroundProc)
-activeSOP:addState(coldAndDarkProc)
+-- activeSOP:addState(turnAroundProc)
+-- activeSOP:addState(coldAndDarkProc)
 
 -- ==== Background Flow ====
 activeSOP:addBackground(backgroundFlow)

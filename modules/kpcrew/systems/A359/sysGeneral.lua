@@ -25,7 +25,7 @@ sysGeneral.parkBrakeSwitch 	= TwoStateToggleSwitch:new("parkbrake","sim/cockpit2
 	"sim/flight_controls/brakes_toggle_max")
 
 -- Landing Gear
-sysGeneral.GearSwitch 		= TwoStateCmdSwitch:new("gear","sim/cockpit2/controls/gear_handle_down",0,
+sysGeneral.GearSwitch 		= TwoStateCmdSwitch:new("gear","sim/cockpit/switches/gear_handle_status",0,
 	"sim/flight_controls/landing_gear_down","sim/flight_controls/landing_gear_up","nocommand")
 
 -- Doors
@@ -83,8 +83,11 @@ sysGeneral.irsUnitGroup:addSwitch(sysGeneral.irsUnit2Switch)
 sysGeneral.irsUnitGroup:addSwitch(sysGeneral.irsUnit3Switch)
 
 -- Windshield Wipers
-sysGeneral.wiperSwitch = MultiStateCmdSwitch:new("wipers","sim/cockpit2/switches/wiper_speed",0,
-	"sim/systems/wipers_dn","sim/systems/wipers_up",0,3,false)
+sysGeneral.wiperSwitch = TwoStateDrefSwitch:new("wiper left","1-sim/misc/wiper/L/switch"),0)
+sysGeneral.wiperSwitch2 = TwoStateDrefSwitch:new("wiper right","1-sim/misc/wiper/R/switch"),0)
+sysGeneral.wiperGroup = SwitchGroup:new("wipers")
+sysGeneral.wiperGroup:addSwitch(sysGeneral.wiperSwitch)
+sysGeneral.wiperGroup:addSwitch(sysGeneral.wiperSwitch2)
 
 ------------ Annunciators
 -- park brake

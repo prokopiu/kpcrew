@@ -48,7 +48,7 @@ kcSopFlightPhase = { [1] = "Cold & Dark", 	[2] = "Prel Preflight", [3] = "Prefli
 					 [5] = "After Start", 	[6] = "Taxi to Runway", [7] = "Before Takeoff", [8] = "Takeoff",
 					 [9] = "Climb", 		[10] = "Enroute", 		[11] = "Descent", 		[12] = "Arrival", 
 					 [13] = "Approach", 	[14] = "Landing", 		[15] = "Turnoff", 		[16] = "Taxi to Stand", 
-					 [17] = "Shutdown", 	[18] = "Turnaround",	[19] = "Flightplanning", [0] = "" }
+					 [17] = "Shutdown", 	[18] = "Turnaround",	[19] = "Flightplanning", [20] = "Go Around", [0] = " " }
 
 -- Set up SOP =========================================================================
 
@@ -2177,6 +2177,42 @@ landingChkl:addItem(ChecklistItem:new("GO AROUND HEADING","SET %s|activeBriefing
 	function() return sysMCP.hdgSelector:getStatus() == activeBriefings:get("approach:gaheading") end,
 	function() sysMCP.hdgSelector:setValue(activeBriefings:get("approach:gaheading")) end))
 
+-- ====================== GO AROUND ======================
+-- GO AROUND ALTITUDE...........................SET   (PM)
+-- GO AROUND HEADING............................SET   (PM)
+-- GO AROUND THRUST.............................SET  (CPT)
+-- mode HDG
+-- mode LVL CHG
+-- GEAR..................................COMMAND UP  (CPT)
+-- GEAR..........................................UP   (PM)
+-- flaps 15
+-- CMD-A.. Command
+-- set modes lnav/vnav is applicable
+-- flaps schedule
+-- flaps 5
+-- flaps 1
+-- flaps up
+-- =======================================================
+
+local goAroundProc = Procedure:new("GO AROUND","going around","")
+goAroundProc:setFlightPhase(20)
+goAroundProc:addItem(ProcedureItem:new("GO AROUND ALTITUDE","SET %s|activeBriefings:get(\"approach:gaaltitude\")",FlowItem.actorPM,0,
+	function() return sysMCP.altSelector:getStatus()  == activeBriefings:get("approach:gaaltitude") end,
+	function() sysMCP.altSelector:setValue(activeBriefings:get("approach:gaaltitude")) end))
+goAroundProc:addItem(ProcedureItem:new("GO AROUND HEADING","SET %s|activeBriefings:get(\"approach:gaheading\")",FlowItem.actorPM,0,
+	function() return sysMCP.hdgSelector:getStatus() == activeBriefings:get("approach:gaheading") end,
+	function() sysMCP.hdgSelector:setValue(activeBriefings:get("approach:gaheading")) end))
+goAroundProc:addItem(ProcedureItem:new("GO AROUND THRUST","SET",FlowItem.actorPF,0,true,
+	function () command_once("laminar/B738/autopilot/left_toga_press") kc_speakNoText(0,"go around thrust set") end))
+goAroundProc:addItem(HoldProcedureItem:new("GEAR","COMMAND UP",FlowItem.actorPF))
+goAroundProc:addItem(IndirectProcedureItem:new("GEAR","UP",FlowItem.actorPF,0,"gear_up_ga",
+	function () return sysGeneral.GearSwitch:getStatus() == 0 end,
+	function () 
+		sysGeneral.GearSwitch:actuate(0) 
+		kc_speakNoText(0,"gear coming up") 
+	end))
+
+
 -- ============== AFTER LANDING PROCEDURE ===============
 -- SPEED BRAKE................................DOWN   (PF)
 -- CHRONO & ET................................STOP  (CPT)
@@ -2557,6 +2593,7 @@ activeSOP:addProcedure(arrivalProc)
 activeSOP:addChecklist(approachChkl)
 activeSOP:addProcedure(landingProc)
 activeSOP:addChecklist(landingChkl)
+activeSOP:addProcedure(goAroundProc)
 activeSOP:addProcedure(afterLandingProc)
 activeSOP:addProcedure(shutdownProc)
 activeSOP:addChecklist(shutdownChkl)

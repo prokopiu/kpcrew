@@ -54,8 +54,27 @@ function kc_macro_state_turnaround()
 
 end
 
+-- A359 specific macros
 
--- function kc_bck_()
--- end
+-- A359 FIRE TEST
+function kc_bck_a359_fire_test(trigger)
+	local delayvar = trigger .. "delay"
+	if kc_procvar_exists(delayvar) == false then
+		kc_procvar_initialize_count(delayvar,-1)
+	end
+	if kc_procvar_get(delayvar) == -1 then
+		kc_procvar_set(delayvar,0)
+		set("1-sim/fire/test",1)
+	else
+		if kc_procvar_get(delayvar) <= 0 then
+			set("1-sim/fire/test",0)
+			kc_procvar_set(trigger,false)
+			kc_procvar_set(delayvar,-1)
+		else
+			kc_procvar_set(delayvar,kc_procvar_get(delayvar)-1)
+		end
+	end
+end
+
 
 return sysMacros
