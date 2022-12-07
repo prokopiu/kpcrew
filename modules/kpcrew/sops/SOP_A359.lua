@@ -48,7 +48,7 @@ kcSopFlightPhase = { [1] = "Cold & Dark", 	[2] = "Prel Preflight", [3] = "Prefli
 					 [5] = "After Start", 	[6] = "Taxi to Runway", [7] = "Before Takeoff", [8] = "Takeoff",
 					 [9] = "Climb", 		[10] = "Enroute", 		[11] = "Descent", 		[12] = "Arrival", 
 					 [13] = "Approach", 	[14] = "Landing", 		[15] = "Turnoff", 		[16] = "Taxi to Stand", 
-					 [17] = "Shutdown", 	[18] = "Turnaround",	[19] = "Flightplanning", [0] = "" }
+					 [17] = "Shutdown", 	[18] = "Turnaround",	[19] = "Flightplanning", [20] = "Go Around", [0] = "" }
 
 -- Set up SOP =========================================================================
 
@@ -64,6 +64,45 @@ testProc:addItem(ProcedureItem:new("STEP1","DO",FlowItem.actorFO,0,true,
 		kc_macro_state_turnaround()
 	end))
 
+-- =================== FMGS Preflight ====================
+-- ==== INITIAL DATA (CPT)                              
+--   IDENT page:................................OPEN (CPT)
+--     Verify Model and ENG RATING                 
+--     Verify navigation database ACTIVE date      
+--   POS INIT page:.............................OPEN (CPT)
+--     Verify time                                 
+--     REF AIRPORT...............................SET (CPT)
+-- ==== NAVIGATION DATA (CPT)                           
+--   RTE page:..................................OPEN (CPT)
+--     ORIGIN....................................SET (CPT)
+--     DEST......................................SET (CPT)
+--     FLT NO....................................SET (CPT)
+--     ROUTE...................................ENTER (CPT)
+--     ROUTE................................ACTIVATE (CPT)
+--     ROUTE.................................EXECUTE (CPT)
+--   DEPARTURES page:...........................OPEN (CPT)
+--     Select runway and departure routing         
+--     ROUTE:................................EXECUTE (CPT)
+--   LEGS page:.................................OPEN (CPT)
+--     Verify or enter correct RNP for departure   
+-- ==== PERFORMANCE DATA (CPT)                          
+--   PERF INIT page:............................OPEN (CPT)
+--     ZFW.....................................ENTER (CPT)
+--     GW...............................ENTER/VERIFY (CPT)
+--     RESERVES.........................ENTER/VERIFY (CPT)
+--     COST INDEX..............................ENTER (CPT)
+--     CRZ ALT.................................ENTER (CPT)
+--   N1 LIMIT page:.............................OPEN (CPT)
+--     Select assumed temp and/or fixed t/o rating 
+--     Select full or derated climb thrust         
+--   TAKEOFF REF page:..........................OPEN (CPT)
+--     FLAPS...................................ENTER (CPT)
+--     CG......................................ENTER (CPT)
+--     V SPEEDS................................ENTER (CPT)
+-- PREFLIGHT COMPLETE?........................VERIFY (CPT)
+-- PREPARE KPCREW DEPARTURE BRIEFING
+-- =======================================================
+
 -- =============== ECAM & CKPT PREPARATION ===============
 -- === ECAM
 -- ECAM...........................................ON		.1-sim/ind/ecamMode.>.0
@@ -74,6 +113,7 @@ testProc:addItem(ProcedureItem:new("STEP1","DO",FlowItem.actorFO,0,true,
 -- GATELINK.......................................ON		.1-sim/230/button.=.1
 -- COOLING........................................ON		.1-sim/42/button.=.1
 -- CABIN FANS.....................................ON		.1-sim/44/button.=.1.and.1-sim/45/button.=.1
+
 -- === Radio Management Panel
 -- RMP 1 & 2.................................CONFIRM
 -- FREQUENCIES..................................TUNE
@@ -84,7 +124,9 @@ testProc:addItem(ProcedureItem:new("STEP1","DO",FlowItem.actorFO,0,true,
 -- SQWK PAGE..................................SELECT		.1-sim/xxx/sqwkPageSelect.=.1
 -- SQWK MASTER...................................SET		.1-sim/surv/MFDinControl.=.0
 -- SQWK.......................................SELECT
+
 -- === COCKPIT PREPARATION
+
 -- ===== OVERHEAD PANEL
 -- All white lights off
 -- As a general rule all white lights should be off OH
@@ -134,6 +176,7 @@ testProc:addItem(ProcedureItem:new("STEP1","DO",FlowItem.actorFO,0,true,
 -- PRIM & SEC 2 FLT COMPs.........................ON		.1-sim/50/button.=.0.and.1-sim/51/button.=.0
 -- HYD ELEC PMP GREEN.............................ON		.1-sim/47/button.=.0
 -- HYD ELEC PMP YELLOW............................ON		.1-sim/49/button.=.0
+
 -- ===== CENTRE INSTRUMENT PANEL
 -- AIR DATA SELECTORS..........................CHECK
 -- GEAR LEVER...................................DOWN		.sim/cockpit/switches/gear_handle_status.=.1
@@ -596,11 +639,11 @@ testProc:addItem(ProcedureItem:new("STEP1","DO",FlowItem.actorFO,0,true,
 -- CIRCUIT BREAKERS.....................CHECK ALL IN (F/O)
 -- AIRCRAFT ON BAT PWR.........................CHECK (F/O) 
 --   Check that no AC/DC power source is active
--- ENG MASTER SWITCHES...........................OFF (F/O) .1-sim/eng/cutoff/L/switch.=.1.and.1-sim/eng/cutoff/R/switch.=.1
--- ENG START SELECTOR...........................NORM (F/O) .1-sim/eng/startSwitch.=.1)
--- WIPERS SELECTORS..............................OFF (F/O) .1-sim/misc/wiper/L/switch.=.2  1-sim/misc/wiper/R/switch)
--- GEAR LEVER...................................DOWN (F/O) .sim/cockpit/switches/gear_handle_status.=.1
--- FLAP LEVER...................................ZERO (F/O) .1-sim/flaphandle.=.1
+-- ENG MASTER SWITCHES...........................OFF (F/O) 
+-- ENG START SELECTOR...........................NORM (F/O) 
+-- WIPERS SELECTORS..............................OFF (F/O) 
+-- GEAR LEVER...................................DOWN (F/O) 
+-- FLAP LEVER...................................ZERO (F/O) 
 
 -- === Batteries on
 -- BAT 1..........................................ON (F/O) 
@@ -610,16 +653,16 @@ testProc:addItem(ProcedureItem:new("STEP1","DO",FlowItem.actorFO,0,true,
 
 -- ==== Activate External Power
 --   Activate external power in Ground Services menu
---   EXT PWR 1....................................ON (F/O) .?.1-sim/elec/gpu1ON.=.1.1-sim/97/button.=.1.zero/zero.=.0
---   EXT PWR 2....................................ON (F/O) .?.1-sim/elec/gpu2ON.=.1.1-sim/104/button.=.1.zero/zero.=.0
+--   EXT PWR 1....................................ON (F/O) 
+--   EXT PWR 2....................................ON (F/O) 
 
 -- ==== Activate APU 
---   APU FIRE PB-SW..........................GUARDED (F/O)	.1-sim/38/cover.=.0
---   APU AGENT LIGHT OFF.......................CHECK (F/O)	. light dataref when activated
---   ENG 1 FIRE PB-SW........................GUARDED (F/O)	.1-sim/37/cover.=.0
---   ENG 2 FIRE PB-SW........................GUARDED (F/O)	.1-sim/39/cover.=.0
---   ALL ENG AGENT LIGHTS OFF..................CHECK (F/O)	light datarefs
---   TEST PB....................................PUSH (F/O)	.1-sim/fire/test.=.1
+--   APU FIRE PB-SW..........................GUARDED (F/O)	
+--   APU AGENT LIGHT OFF.......................CHECK (F/O)	
+--   ENG 1 FIRE PB-SW........................GUARDED (F/O)	
+--   ENG 2 FIRE PB-SW........................GUARDED (F/O)	
+--   ALL ENG AGENT LIGHTS OFF..................CHECK (F/O)	
+--   TEST PB....................................PUSH (F/O)	
 --   RESULT....................................CHECK (F/O)
 --     - continuous repetitive chime sounds
 --     - master warning light flash
@@ -627,14 +670,13 @@ testProc:addItem(ProcedureItem:new("STEP1","DO",FlowItem.actorFO,0,true,
 --     - all ENG and APU PB-SW red
 --     - all DISCH lights on
 --     - ALL FIRE lights on ENG MASTER on
---   APU MASTER SW..................................ON       .1-sim/125/button.=.1
+--   APU MASTER SW..................................ON       
 --   APU PAGE ON SD..............................CHECK
---   APU START PB...................................ON       .1-sim/126/button.=.1
+--   APU START PB...................................ON       
 --     wait for APU AVAIL sign
---   APU AVAIL.................................CONFIRM       .sim/cockpit/engine/APU_N1.>.97
+--   APU AVAIL.................................CONFIRM       
 --   ELECTRICAL POWER UP.......................CONFIRM
 -- =======================================================
-
 
 local electricalPowerUpProc = Procedure:new("ELECTRICAL POWER UP","performing ELECTRICAL POWER UP","Power up finished")
 electricalPowerUpProc:setFlightPhase(1)
@@ -642,72 +684,105 @@ electricalPowerUpProc:addItem(SimpleProcedureItem:new("All paper work on board a
 electricalPowerUpProc:addItem(SimpleProcedureItem:new("M E L and Technical Logbook checked"))
 
 electricalPowerUpProc:addItem(SimpleProcedureItem:new("== Initial Checks"))
-
-electricalPowerUpProc:addItem(SimpleProcedureItem:new("==== DC Electric Power"))
-electricalPowerUpProc:addItem(ProcedureItem:new("CIRCUIT BREAKERS","CHECK ALL IN",FlowItem.actorFO,0,true))
-electricalPowerUpProc:addItem(ProcedureItem:new("DC POWER SWITCH","BAT",FlowItem.actorFO,0,
-	function () return sysElectric.dcPowerSwitch:getStatus() == sysElectric.dcPwrBAT end,
-	function () sysElectric.dcPowerSwitch:actuate(sysElectric.dcPwrBAT) end))
-electricalPowerUpProc:addItem(IndirectProcedureItem:new("BATTERY VOLTAGE","CHECK MIN 24V",FlowItem.actorFO,0,"bat24v",
-	function () return get("laminar/B738/dc_volt_value") > 23 end))
-electricalPowerUpProc:addItem(ProcedureItem:new("BATTERY SWITCH","GUARD CLOSED",FlowItem.actorFO,0,
-	function () return sysElectric.batteryCover:getStatus() == 0 end,
-	function () 
-		kc_macro_ext_lights_off()
-		sysElectric.batteryCover:actuate(0) 
-		kc_macro_int_lights_on()
-	end))
-electricalPowerUpProc:addItem(ProcedureItem:new("STANDBY POWER SWITCH","GUARD CLOSED",FlowItem.actorFO,0,
-	function () return sysElectric.stbyPowerCover:getStatus() == 1 end,
-	function () sysElectric.stbyPowerCover:actuate(1) end))
-
-electricalPowerUpProc:addItem(SimpleProcedureItem:new("==== Hydraulic System"))
-electricalPowerUpProc:addItem(ProcedureItem:new("ELECTRIC HYDRAULIC PUMPS SWITCHES","OFF",FlowItem.actorFO,0,
-	function () return sysHydraulic.elecHydPumpGroup:getStatus() == 0 end,
-	function () kc_macro_hydraulic_initial() end))
-electricalPowerUpProc:addItem(ProcedureItem:new("ALTERNATE FLAPS MASTER SWITCH","GUARD CLOSED",FlowItem.actorFO,0,
-	function () return sysControls.altFlapsCover:getStatus() == 0 end,
-	function () sysControls.altFlapsCover:actuate(0) end))
-electricalPowerUpProc:addItem(IndirectProcedureItem:new("FLAP LEVER","UP",FlowItem.actorFO,0,"initial_flap_lever",
+electricalPowerUpProc:addItem(HoldProcedureItem:new("AIRCRAFT ON BAT PWR","CHECK",FlowItem.actorFO,0,true))
+electricalPowerUpProc:addItem(SimpleProcedureItem:new("  Check that no AC/DC power source is active"))
+electricalPowerUpProc:addItem(ProcedureItem:new("ENG MASTER SWITCHES","OFF",FlowItem.actorFO,0,
+	function () return sysEngines.startLeverGroup:getStatus() == 0 end,
+	function () sysEngines.startLeverGroup:actuate(modeOff) end))
+electricalPowerUpProc:addItem(ProcedureItem:new("ENG START SELECTOR","NORM",FlowItem.actorFO,0,
+	function () return sysEngines.startSelector:getStatus() == sysEngines.startSelectorNORM end,
+	function () sysEngines.startLeverGroup:setValue(sysEngines.startSelectorNORM) end))
+electricalPowerUpProc:addItem(ProcedureItem:new("WIPERS SELECTORS","OFF",FlowItem.actorFO,0,
+	function () return sysGeneral.wiperGroup:getStatus() == 4 end,
+	function () sysGeneral.wiperGroup:setValue(2) end))
+electricalPowerUpProc:addItem(ProcedureItem:new("GEAR LEVER","DOWN",FlowItem.actorFO,0,
+	function () return sysGeneral.GearSwitch:getStatus() == 1 end,
+	function () sysGeneral.GearSwitch:actuate(1) end))
+electricalPowerUpProc:addItem(IndirectProcedureItem:new("FLAP LEVER","ZERO",FlowItem.actorFO,0,"initial_flap_lever",
 	function () return sysControls.flapsSwitch:getStatus() == 0 end))
-electricalPowerUpProc:addItem(SimpleProcedureItem:new("  Ensure flap lever agrees with indicated flap position."))
-electricalPowerUpProc:addItem(SimpleProcedureItem:new("  In Cold&Dark in SIM this is the UP position."))
 
-electricalPowerUpProc:addItem(SimpleProcedureItem:new("==== Other"))
-electricalPowerUpProc:addItem(ProcedureItem:new("WINDSHIELD WIPER SELECTORS","PARK",FlowItem.actorFO,0,
-	function () return sysGeneral.wiperGroup:getStatus() == 0 end,
-	function () sysGeneral.wiperGroup:actuate(modeOff) end))
-electricalPowerUpProc:addItem(ProcedureItem:new("LANDING GEAR LEVER","DOWN",FlowItem.actorFO,0,
-	function () return sysGeneral.GearSwitch:getStatus() == modeOn end,
-	function () sysGeneral.GearSwitch:actuate(modeOn) end))
-electricalPowerUpProc:addItem(ProcedureItem:new("  GREEN LANDING GEAR LIGHT","CHECK ILLUMINATED",FlowItem.actorFO,0,
-	function () return sysGeneral.gearLightsAnc:getStatus() == modeOn end))
-electricalPowerUpProc:addItem(ProcedureItem:new("  RED LANDING GEAR LIGHT","CHECK EXTINGUISHED",FlowItem.actorFO,0,
-	function () return sysGeneral.gearLightsRed:getStatus() == modeOff end))
-electricalPowerUpProc:addItem(IndirectProcedureItem:new("TAKEOFF CONFIG WARNING","TEST",FlowItem.actorFO,3,"takeoff_config_warn",
-	function () return get("laminar/B738/system/takeoff_config_warn") > 0 end,
-	function () 
-		kc_procvar_set("toctest",true) -- background test
-	end))
-electricalPowerUpProc:addItem(SimpleProcedureItem:new("  Move thrust levers full forward and back to idle."))
+electricalPowerUpProc:addItem(SimpleProcedureItem:new("=== Batteries on"))
+electricalPowerUpProc:addItem(ProcedureItem:new("BAT 1","ON",FlowItem.actorFO,0,
+	function () return sysElectric.batterySwitch:getStatus() == 1 end,
+	function () sysElectric.batterySwitch:actuate(1) end))
+electricalPowerUpProc:addItem(ProcedureItem:new("BAT EMER 1","ON",FlowItem.actorFO,0,
+	function () return sysElectric.batemerg1:getStatus() == 1 end,
+	function () sysElectric.batemerg1:actuate(1) end))
+electricalPowerUpProc:addItem(ProcedureItem:new("BAT EMER 2","ON",FlowItem.actorFO,0,
+	function () return sysElectric.batemerg2:getStatus() == 1 end,
+	function () sysElectric.batemerg2:actuate(1) end))
+electricalPowerUpProc:addItem(ProcedureItem:new("BAT 2","ON",FlowItem.actorFO,0,
+	function () return sysElectric.battery2Switch:getStatus() == 1 end,
+	function () sysElectric.battery2Switch:actuate(1) end))
 
-electricalPowerUpProc:addItem(SimpleProcedureItem:new("==== Activate External Power",
+electricalPowerUpProc:addItem(SimpleProcedureItem:new("=== Activate External Power",
 	function () return activePrefSet:get("aircraft:powerup_apu") == true end))
-electricalPowerUpProc:addItem(SimpleProcedureItem:new("  Use Zibo EFB to turn Ground Power on.",
+electricalPowerUpProc:addItem(SimpleProcedureItem:new(" Activate external power in Ground Services menu",
 	function () return activePrefSet:get("aircraft:powerup_apu") == true end))
-electricalPowerUpProc:addItem(ProcedureItem:new("  #exchange|GRD|GROUND# POWER AVAILABLE LIGHT","ILLUMINATED",FlowItem.actorFO,0,
-	function () return sysElectric.gpuAvailAnc:getStatus() == modeOn end,
+electricalPowerUpProc:addItem(ProcedureItem:new("EXT PWR 1&2","CONNECTED",FlowItem.actorFO,0,
+	function () return 
+		sysElectric.gpu1Connect:getStatus() == 1 and 
+		sysElectric.gpu2Connect:getStatus() == 2 
+	end,
 	function () 
-		kc_macro_gpu_connect()
+		sysElectric.gpu1Connect:actuate(1)	
+		sysElectric.gpu2Connect:actuate(1)
 	end,
 	function () return activePrefSet:get("aircraft:powerup_apu") == true end))
-electricalPowerUpProc:addItem(ProcedureItem:new("  GROUND POWER SWITCH","ON",FlowItem.actorFO,0,
+electricalPowerUpProc:addItem(ProcedureItem:new("EXT PWR 1&2","ON BUS",FlowItem.actorFO,0,
 	function () return sysElectric.gpuOnBus:getStatus() == 1 end,
-	function () sysElectric.gpuSwitch:step(cmdDown) end,
+	function () 
+		sysElectric.gpuSwitch:actuate(1)	
+		sysElectric.gpu2Switch:actuate(1)
+	end,
 	function () return activePrefSet:get("aircraft:powerup_apu") == true end))
 
-electricalPowerUpProc:addItem(SimpleProcedureItem:new("==== Activate APU",
+electricalPowerUpProc:addItem(SimpleProcedureItem:new("=== Activate APU",
 	function () return activePrefSet:get("aircraft:powerup_apu") == false end))
+electricalPowerUpProc:addItem(ProcedureItem:new("APU FIRE PB-SW","GUARDED",FlowItem.actorFO,0,
+	function () return get("1-sim/38/cover") == 0 end,
+	function () set("1-sim/38/cover",0) end,
+	function () return activePrefSet:get("aircraft:powerup_apu") == false end))
+electricalPowerUpProc:addItem(ProcedureItem:new("APU AGENT LIGHT OFF","CHECK",FlowItem.actorFO,0,
+	function () return true end,nil,
+	function () return activePrefSet:get("aircraft:powerup_apu") == false end))
+electricalPowerUpProc:addItem(ProcedureItem:new("ENG 1 FIRE PB-SW","GUARDED",FlowItem.actorFO,0,
+	function () return get("1-sim/37/cover") == 0 end,
+	function () set("1-sim/37/cover",0) end,
+	function () return activePrefSet:get("aircraft:powerup_apu") == false end))
+electricalPowerUpProc:addItem(ProcedureItem:new("ENG 2 FIRE PB-SW","GUARDED",FlowItem.actorFO,0,
+	function () return get("1-sim/39/cover") == 0 end,
+	function () set("1-sim/39/cover",0) end,
+	function () return activePrefSet:get("aircraft:powerup_apu") == false end))
+electricalPowerUpProc:addItem(ProcedureItem:new("ALL AGENT LIGHTS OFF","CHECK",FlowItem.actorFO,0,
+	function () return true end,nil,
+	function () return activePrefSet:get("aircraft:powerup_apu") == false end))
+electricalPowerUpProc:addItem(ProcedureItem:new("TEST PB","PUSH",FlowItem.actorFO,0,
+	function () return get("1-sim/fire/test") == 1 end,
+	function () set("1-sim/fire/test",1) end,
+	function () return activePrefSet:get("aircraft:powerup_apu") == false end))
+electricalPowerUpProc:addItem(HoldProcedureItem:new("RESULT","CHECK",FlowItem.actorFO,0,true,
+	function () return activePrefSet:get("aircraft:powerup_apu") == false end))
+electricalPowerUpProc:addItem(SimpleProcedureItem:new("- continuous repetitive chime sounds",
+	function () return activePrefSet:get("aircraft:powerup_apu") == false end))
+electricalPowerUpProc:addItem(SimpleProcedureItem:new("- master warning light flash",
+	function () return activePrefSet:get("aircraft:powerup_apu") == false end))
+electricalPowerUpProc:addItem(SimpleProcedureItem:new("- ECAM red alert ENG 1(2) FIRE, APU FIRE",
+	function () return activePrefSet:get("aircraft:powerup_apu") == false end))
+electricalPowerUpProc:addItem(SimpleProcedureItem:new("- all ENG and APU PB-SW red",
+	function () return activePrefSet:get("aircraft:powerup_apu") == false end))
+electricalPowerUpProc:addItem(SimpleProcedureItem:new("- all DISCH lights on",
+	function () return activePrefSet:get("aircraft:powerup_apu") == false end))
+electricalPowerUpProc:addItem(SimpleProcedureItem:new("- ALL FIRE lights on ENG MASTER on",
+	function () return activePrefSet:get("aircraft:powerup_apu") == false end))
+electricalPowerUpProc:addItem(ProcedureItem:new("APU AVAIL","CONFIRM",FlowItem.actorFO,0,
+	function () return get("sim/cockpit/engine/APU_N1") > 0.97 end,nil,
+	function () return activePrefSet:get("aircraft:powerup_apu") == false end))
+electricalPowerUpProc:addItem(HoldProcedureItem:new("ELECTRICAL POWER UP","CONFIRM",FlowItem.actorFO,0,true))
+
+
+
+
 electricalPowerUpProc:addItem(ProcedureItem:new("  OVHT DET SWITCH","NORMAL",FlowItem.actorFO,0,true,
 	function () sysElectric.gpuSwitch:step(cmdUp) end,
 	function () return activePrefSet:get("aircraft:powerup_apu") == false end))
@@ -746,6 +821,47 @@ electricalPowerUpProc:addItem(ProcedureItem:new("  #spell|APU# GENERATOR BUS SWI
 	function () return sysElectric.apuGenBusOff:getStatus() == 0 end,
 	function () sysElectric.apuGenBus1:actuate(1) sysElectric.apuGenBus2:actuate(1) end,
 	function () return activePrefSet:get("aircraft:powerup_apu") == false end))
+
+--   APU MASTER SW..................................ON       .1-sim/125/button.=.1
+--   APU PAGE ON SD..............................CHECK
+--   APU START PB...................................ON       .1-sim/126/button.=.1
+--     wait for APU AVAIL sign
+--   APU AVAIL.................................CONFIRM       .sim/cockpit/engine/APU_N1.>.97
+--   ELECTRICAL POWER UP.......................CONFIRM
+
+
+
+electricalPowerUpProc:addItem(SimpleProcedureItem:new("==== Hydraulic System"))
+electricalPowerUpProc:addItem(ProcedureItem:new("ELECTRIC HYDRAULIC PUMPS SWITCHES","OFF",FlowItem.actorFO,0,
+	function () return sysHydraulic.elecHydPumpGroup:getStatus() == 0 end,
+	function () kc_macro_hydraulic_initial() end))
+electricalPowerUpProc:addItem(ProcedureItem:new("ALTERNATE FLAPS MASTER SWITCH","GUARD CLOSED",FlowItem.actorFO,0,
+	function () return sysControls.altFlapsCover:getStatus() == 0 end,
+	function () sysControls.altFlapsCover:actuate(0) end))
+electricalPowerUpProc:addItem(IndirectProcedureItem:new("FLAP LEVER","UP",FlowItem.actorFO,0,"initial_flap_lever",
+	function () return sysControls.flapsSwitch:getStatus() == 0 end))
+electricalPowerUpProc:addItem(SimpleProcedureItem:new("  Ensure flap lever agrees with indicated flap position."))
+electricalPowerUpProc:addItem(SimpleProcedureItem:new("  In Cold&Dark in SIM this is the UP position."))
+
+electricalPowerUpProc:addItem(SimpleProcedureItem:new("==== Other"))
+electricalPowerUpProc:addItem(ProcedureItem:new("WINDSHIELD WIPER SELECTORS","PARK",FlowItem.actorFO,0,
+	function () return sysGeneral.wiperGroup:getStatus() == 0 end,
+	function () sysGeneral.wiperGroup:actuate(modeOff) end))
+electricalPowerUpProc:addItem(ProcedureItem:new("LANDING GEAR LEVER","DOWN",FlowItem.actorFO,0,
+	function () return sysGeneral.GearSwitch:getStatus() == modeOn end,
+	function () sysGeneral.GearSwitch:actuate(modeOn) end))
+electricalPowerUpProc:addItem(ProcedureItem:new("  GREEN LANDING GEAR LIGHT","CHECK ILLUMINATED",FlowItem.actorFO,0,
+	function () return sysGeneral.gearLightsAnc:getStatus() == modeOn end))
+electricalPowerUpProc:addItem(ProcedureItem:new("  RED LANDING GEAR LIGHT","CHECK EXTINGUISHED",FlowItem.actorFO,0,
+	function () return sysGeneral.gearLightsRed:getStatus() == modeOff end))
+electricalPowerUpProc:addItem(IndirectProcedureItem:new("TAKEOFF CONFIG WARNING","TEST",FlowItem.actorFO,3,"takeoff_config_warn",
+	function () return get("laminar/B738/system/takeoff_config_warn") > 0 end,
+	function () 
+		kc_procvar_set("toctest",true) -- background test
+	end))
+electricalPowerUpProc:addItem(SimpleProcedureItem:new("  Move thrust levers full forward and back to idle."))
+
+
 
 electricalPowerUpProc:addItem(SimpleProcedureItem:new("==== "))
 electricalPowerUpProc:addItem(ProcedureItem:new("TRANSFER BUS LIGHTS","CHECK EXTINGUISHED",FlowItem.actorFO,0,

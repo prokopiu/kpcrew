@@ -5,6 +5,7 @@
 -- @author Kosta Prokopiu
 -- @copyright 2022 Kosta Prokopiu
 local sysEngines = {
+	startSelectorNORM = 1
 }
 
 local TwoStateDrefSwitch 	= require "kpcrew.systems.TwoStateDrefSwitch"

@@ -27,6 +27,7 @@ sysGeneral.parkBrakeSwitch 	= TwoStateToggleSwitch:new("parkbrake","sim/cockpit2
 -- Landing Gear
 sysGeneral.GearSwitch 		= TwoStateCmdSwitch:new("gear","sim/cockpit/switches/gear_handle_status",0,
 	"sim/flight_controls/landing_gear_down","sim/flight_controls/landing_gear_up","nocommand")
+-- 1-sim/flaphandle.=.1
 
 -- Doors
 sysGeneral.doorL1			= TwoStateToggleSwitch:new("doorl1",drefSlider,0,"sim/operation/slider_01")
