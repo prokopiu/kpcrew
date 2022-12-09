@@ -402,6 +402,19 @@ function kc_macro_glareshield_takeoff()
 	end
 end
 
+-- glareshield go around setup
+function kc_macro_glareshield_goaround()
+	sysMCP.fdirGroup:actuate(1)
+	sysMCP.athrSwitch:actuate(1)
+	sysMCP.iasSelector:setValue(activeBriefings:get("takeoff:v2"))
+	sysMCP.hdgSelector:setValue(activeBriefings:get("departure:initHeading"))
+	sysMCP.altSelector:setValue(activeBriefings:get("departure:initAlt"))
+	if activeBriefings:get("takeoff:apMode") == 1 then
+		sysMCP.lnavSwitch:actuate(1)
+		sysMCP.vnavSwitch:actuate(1)
+	end
+end
+
 -- efis initial setup
 function kc_macro_efis_initial()
 	sysEFIS.mtrsPilot:actuate(0)
@@ -417,6 +430,51 @@ function kc_macro_efis_initial()
 		sysEFIS.minsTypeCopilot:actuate(flag) 
 	if activePrefSet:get("aircraft:efis_mins_dh") then flag=0 else flag=1 end
 		sysEFIS.minsTypePilot:actuate(flag) 
+end
+
+-- baro mode as in preference
+function kc_macro_set_pref_baro_mode()
+	if activePrefSet:get("general:baro_mode_hpa") then 
+		sysGeneral.baroModeGroup:actuate(1) 
+	else 
+		sysGeneral.baroModeGroup:actuate(0) 
+	end
+end
+
+-- set baros to local pressure at departure airport
+function kc_macro_set_local_baro()
+	set("laminar/B738/EFIS/baro_sel_in_hg_pilot",math.ceil(get("sim/weather/barometer_sealevel_inhg")*100)/100)
+	set("laminar/B738/EFIS/baro_sel_in_hg_copilot",math.ceil(get("sim/weather/barometer_sealevel_inhg")*100)/100) 
+end
+
+-- test if all baros are set to local baro
+function kc_macro_test_local_baro()
+	return get("laminar/B738/EFIS/baro_sel_in_hg_pilot") == math.ceil(get("sim/weather/barometer_sealevel_inhg")*100)/100 and 
+		get("laminar/B738/EFIS/baro_sel_in_hg_copilot") == math.ceil(get("sim/weather/barometer_sealevel_inhg")*100)/100 
+end
+
+-- set baros to briefng
+function kc_macro_set_briefed_baro()
+	if activeBriefings:get("arrival:atisQNH") ~= "" then
+		if activePrefSet:get("general:baro_mode_hpa") then
+			set("laminar/B738/EFIS/baro_sel_in_hg_pilot", tonumber(activeBriefings:get("arrival:atisQNH")) * 0.02952999)
+			set("laminar/B738/EFIS/baro_sel_in_hg_copilot", tonumber(activeBriefings:get("arrival:atisQNH")) * 0.02952999) 
+		else
+			set("laminar/B738/EFIS/baro_sel_in_hg_pilot", tonumber(activeBriefings:get("arrival:atisQNH")))
+			set("laminar/B738/EFIS/baro_sel_in_hg_copilot", tonumber(activeBriefings:get("arrival:atisQNH")))
+		end
+	end
+end
+
+-- test if all baros are set to local baro
+function kc_macro_test_briefed_baro()
+	if activePrefSet:get("general:baro_mode_hpa") then
+		return 	get("laminar/B738/EFIS/baro_sel_in_hg_pilot") == tonumber(activeBriefings:get("arrival:atisQNH")) * 0.02952999 and 
+				get("laminar/B738/EFIS/baro_sel_in_hg_copilot") == tonumber(activeBriefings:get("arrival:atisQNH")) * 0.02952999
+	else
+		return 	get("laminar/B738/EFIS/baro_sel_in_hg_pilot") == tonumber(activeBriefings:get("arrival:atisQNH")) and 
+				get("laminar/B738/EFIS/baro_sel_in_hg_copilot") == tonumber(activeBriefings:get("arrival:atisQNH"))
+	end
 end
 
 -- glareshield landing setup

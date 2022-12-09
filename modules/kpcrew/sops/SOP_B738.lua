@@ -917,13 +917,19 @@ preflightFOProc:addItem(ProcedureItem:new("METERS SWITCH","%s|(activePrefSet:get
 	end))
 
 preflightFOProc:addItem(ProcedureItem:new("BAROMETRIC REFERENCE SELECTOR","%s|(activePrefSet:get(\"general:baro_mode_hpa\")) and \"HPA\" or \"IN\"",FlowItem.actorFO,0,
-	function () return sysGeneral.baroModeGroup:getStatus() == (activePrefSet:get("general:baro_mode_hpa") == true and 3 or 0) end,
-	function () if activePrefSet:get("general:baro_mode_hpa") then sysGeneral.baroModeGroup:actuate(1) else sysGeneral.baroModeGroup:actuate(0) end end))
+	function () 
+		return sysGeneral.baroModeGroup:getStatus() == (activePrefSet:get("general:baro_mode_hpa") == true and 3 or 0) 
+	end,
+	function () 
+		kc_macro_set_pref_baro_mode()
+	end))
 preflightFOProc:addItem(ProcedureItem:new("BAROMETRIC SELECTORS TO LOCAL","%s|kc_getQNHString(kc_metar_local)",FlowItem.actorFO,0,
-	function () return get("laminar/B738/EFIS/baro_sel_in_hg_pilot") == math.ceil(get("sim/weather/barometer_sealevel_inhg")*100)/100 and 
-		get("laminar/B738/EFIS/baro_sel_in_hg_copilot") == math.ceil(get("sim/weather/barometer_sealevel_inhg")*100)/100 end,
-	function () set("laminar/B738/EFIS/baro_sel_in_hg_pilot",math.ceil(get("sim/weather/barometer_sealevel_inhg")*100)/100)
-				set("laminar/B738/EFIS/baro_sel_in_hg_copilot",math.ceil(get("sim/weather/barometer_sealevel_inhg")*100)/100) end))
+	function () 
+		return kc_macro_test_local_baro()
+	end,
+	function () 
+		kc_macro_set_local_baro()
+	end))
 
 preflightFOProc:addItem(ProcedureItem:new("VOR/ADF SWITCHES","AS NEEDED",FlowItem.actorFO,0,
 	function () return sysEFIS.voradf1Copilot:getStatus() == 1 and sysEFIS.voradf2Copilot:getStatus() == 1 end,
@@ -1084,13 +1090,15 @@ preflightCPTProc:addItem(ProcedureItem:new("FLIGHT PATH VECTOR","%s|(activePrefS
 		sysEFIS.fpvPilot:actuate(flag) 
 	end))
 preflightCPTProc:addItem(ProcedureItem:new("BAROMETRIC REFERENCE SELECTOR","%s|(activePrefSet:get(\"general:baro_mode_hpa\")) and \"HPA\" or \"IN\"",FlowItem.actorCPT,0,
-	function () return sysGeneral.baroModeGroup:getStatus() == (activePrefSet:get("general:baro_mode_hpa") == true and 3 or 0) end,
-	function () if activePrefSet:get("general:baro_mode_hpa") then sysGeneral.baroModeGroup:actuate(1) else sysGeneral.baroModeGroup:actuate(0) end end))
+	function () 
+		return sysGeneral.baroModeGroup:getStatus() == (activePrefSet:get("general:baro_mode_hpa") == true and 3 or 0) 
+	end,
+	function () 
+		kc_macro_set_pref_baro_mode()
+	end))
 preflightCPTProc:addItem(ProcedureItem:new("BAROMETRIC SELECTORS TO LOCAL","%s|kc_getQNHString(kc_metar_local)",FlowItem.actorFO,0,
-	function () return get("laminar/B738/EFIS/baro_sel_in_hg_pilot") == math.ceil(get("sim/weather/barometer_sealevel_inhg")*100)/100 and 
-		get("laminar/B738/EFIS/baro_sel_in_hg_copilot") == math.ceil(get("sim/weather/barometer_sealevel_inhg")*100)/100 end,
-	function () set("laminar/B738/EFIS/baro_sel_in_hg_pilot",math.ceil(get("sim/weather/barometer_sealevel_inhg")*100)/100)
-				set("laminar/B738/EFIS/baro_sel_in_hg_copilot",math.ceil(get("sim/weather/barometer_sealevel_inhg")*100)/100) end))
+	function () return kc_macro_test_local_baro() end,
+	function () kc_macro_set_local_baro() end))
 				
 preflightCPTProc:addItem(ProcedureItem:new("VOR/ADF SWITCHES","VOR",FlowItem.actorCPT,0,
 	function () return sysEFIS.voradf1Pilot:getStatus() == 1 and sysEFIS.voradf2Pilot:getStatus() == 1 end,
@@ -2048,28 +2056,8 @@ arrivalProc:addItem(ProcedureItem:new("LOGO LIGHT SWITCH","%s|(kc_is_daylight())
 local approachChkl = Checklist:new("APPROACH CHECKLIST","","approach checklist completed")
 approachChkl:setFlightPhase(13)
 approachChkl:addItem(ChecklistItem:new("#exchange|ALTIMETERS|approach checklist. altimeters","QNH %s |activeBriefings:get(\"arrival:atisQNH\")",FlowItem.actorBOTH,0,true,
-	function () 
-		if activeBriefings:get("arrival:atisQNH") ~= "" then
-			if activePrefSet:get("general:baro_mode_hpa") then
-				return 	get("laminar/B738/EFIS/baro_sel_in_hg_pilot") == tonumber(activeBriefings:get("arrival:atisQNH")) * 0.02952999 and 
-						get("laminar/B738/EFIS/baro_sel_in_hg_copilot") == tonumber(activeBriefings:get("arrival:atisQNH")) * 0.02952999
-			else
-				return 	get("laminar/B738/EFIS/baro_sel_in_hg_pilot") == tonumber(activeBriefings:get("arrival:atisQNH")) and 
-						get("laminar/B738/EFIS/baro_sel_in_hg_copilot") == tonumber(activeBriefings:get("arrival:atisQNH"))
-			end
-		end
-	end,
-	function () 
-		if activeBriefings:get("arrival:atisQNH") ~= "" then
-			if activePrefSet:get("general:baro_mode_hpa") then
-				set("laminar/B738/EFIS/baro_sel_in_hg_pilot", tonumber(activeBriefings:get("arrival:atisQNH")) * 0.02952999)
-				set("laminar/B738/EFIS/baro_sel_in_hg_copilot", tonumber(activeBriefings:get("arrival:atisQNH")) * 0.02952999) 
-			else
-				set("laminar/B738/EFIS/baro_sel_in_hg_pilot", tonumber(activeBriefings:get("arrival:atisQNH")))
-				set("laminar/B738/EFIS/baro_sel_in_hg_copilot", tonumber(activeBriefings:get("arrival:atisQNH")))
-			end
-		end
-	end))
+	function () return kc_macro_test_briefed_baro() end,
+	function () kc_macro_set_briefed_baro() end))
 approachChkl:addItem(ChecklistItem:new("NAVIGATION AIDS","SET AND CHECKED",FlowItem.actorBOTH,0,true,nil,nil))
 
 -- =============== LANDING PROCEDURE (PM) ===============
@@ -2111,7 +2099,31 @@ landingProc:addItem(ProcedureItem:new("COURSE NAV 1","SET %s|activeBriefings:get
 landingProc:addItem(ProcedureItem:new("COURSE NAV2","SET %s|activeBriefings:get(\"approach:nav2Course\")",FlowItem.actorFO,0,
 	function() return math.ceil(sysMCP.crs2Selector:getStatus()) == activeBriefings:get("approach:nav2Course") end,
 	function() sysMCP.crs2Selector:setValue(activeBriefings:get("approach:nav2Course")) end))
---
+landingProc:addItem(ProcedureItem:new("AIR CONDITIONING PACK SWITCHES","AUTO",FlowItem.actorFO,0,
+	function () return sysAir.packSwitchGroup:getStatus() == 1 end,
+	function () sysAir.packSwitchGroup:setValue(sysAir.packModeAuto) end,
+	function () return activeBriefings:get("approach:packs") > 1 end))
+landingProc:addItem(ProcedureItem:new("AIR CONDITIONING PACK SWITCHES","OFF",FlowItem.actorFO,0,
+	function () return sysAir.packSwitchGroup:getStatus() == 0 end,
+	function () sysAir.packSwitchGroup:setValue(0) end,
+	function () return activeBriefings:get("approach:packs") > 1 end))
+landingProc:addItem(ProcedureItem:new("WING ANTI-ICE SWITCH","OFF",FlowItem.actorFO,0,
+	function () return sysAice.wingAntiIce:getStatus() == 0 end,
+	function () sysAice.wingAntiIce:actuate(0) end,
+	function () return activeBriefings:get("approach:antiice") == 3 end))
+landingProc:addItem(ProcedureItem:new("WING ANTI-ICE SWITCH","ON",FlowItem.actorFO,0,
+	function () return sysAice.wingAntiIce:getStatus() == 1 end,
+	function () sysAice.wingAntiIce:actuate(1) end,
+	function () return activeBriefings:get("approach:antiice") < 3 end))
+landingProc:addItem(ProcedureItem:new("ENGINE ANTI-ICE SWITCHES","OFF",FlowItem.actorFO,0,
+	function () return sysAice.engAntiIceGroup:getStatus() == 0 end,
+	function () sysAice.engAntiIceGroup:actuate(0) end,
+	function () return activeBriefings:get("approach:antiice") > 1 end))
+landingProc:addItem(ProcedureItem:new("ENGINE ANTI-ICE SWITCHES","ON",FlowItem.actorFO,0,
+	function () return sysAice.engAntiIceGroup:getStatus() == 2 end,
+	function () sysAice.engAntiIceGroup:actuate(1) end,
+	function () return activeBriefings:get("approach:antiice") == 1 end))
+
 landingProc:addItem(SimpleProcedureItem:new("==== Flaps & Gear Schedule"))	
 landingProc:addItem(HoldProcedureItem:new("FLAPS 1","COMMAND",FlowItem.actorPF))
 landingProc:addItem(ProcedureItem:new("FLAPS 1","SET",FlowItem.actorPNF,0,true,
@@ -2152,8 +2164,6 @@ landingProc:addItem(ProcedureItem:new("GO AROUND HEADING","SET %s|activeBriefing
 -- SPEEDBRAKE................................ARMED   (PF)
 -- LANDING GEAR...............................DOWN   (PF)
 -- FLAPS..........................___, GREEN LIGHT   (PF)
--- GO AROUND ALTITUDE......................... SET   (PM)
--- GO AROUND HEADING...........................SET   (PM)
 -- ======================================================
 
 local landingChkl = Checklist:new("LANDING CHECKLIST","","landing checklist completed")
@@ -2170,12 +2180,6 @@ landingChkl:addItem(ChecklistItem:new("FLAPS","%s, GREEN LIGHT|kc_pref_split(kc_
 	function () return sysControls.flapsSwitch:getStatus() == sysControls.flaps_pos[activeBriefings:get("approach:flaps")+5] 
 	and get("laminar/B738/annunciator/slats_extend") == 1 end,
 	function () sysControls.flapsSwitch:setValue(sysControls.flaps_pos[activeBriefings:get("approach:flaps")+5]) end))
-landingChkl:addItem(ChecklistItem:new("GO AROUND ALTITUDE","SET %s|activeBriefings:get(\"approach:gaaltitude\")",FlowItem.actorPM,0,
-	function() return sysMCP.altSelector:getStatus()  == activeBriefings:get("approach:gaaltitude") end,
-	function() sysMCP.altSelector:setValue(activeBriefings:get("approach:gaaltitude")) end))
-landingChkl:addItem(ChecklistItem:new("GO AROUND HEADING","SET %s|activeBriefings:get(\"approach:gaheading\")",FlowItem.actorPM,0,
-	function() return sysMCP.hdgSelector:getStatus() == activeBriefings:get("approach:gaheading") end,
-	function() sysMCP.hdgSelector:setValue(activeBriefings:get("approach:gaheading")) end))
 
 -- ====================== GO AROUND ======================
 -- GO AROUND ALTITUDE...........................SET   (PM)
@@ -2204,6 +2208,8 @@ goAroundProc:addItem(ProcedureItem:new("GO AROUND HEADING","SET %s|activeBriefin
 	function() sysMCP.hdgSelector:setValue(activeBriefings:get("approach:gaheading")) end))
 goAroundProc:addItem(ProcedureItem:new("GO AROUND THRUST","SET",FlowItem.actorPF,0,true,
 	function () command_once("laminar/B738/autopilot/left_toga_press") kc_speakNoText(0,"go around thrust set") end))
+goAroundProc:addItem(ProcedureItem:new("HDG MODE","SET",FlowItem.actorPF,0,true,
+	function () sysMCP.hdgselSwitch:actuate(1) end))
 goAroundProc:addItem(HoldProcedureItem:new("GEAR","COMMAND UP",FlowItem.actorPF))
 goAroundProc:addItem(IndirectProcedureItem:new("GEAR","UP",FlowItem.actorPF,0,"gear_up_ga",
 	function () return sysGeneral.GearSwitch:getStatus() == 0 end,
@@ -2211,6 +2217,48 @@ goAroundProc:addItem(IndirectProcedureItem:new("GEAR","UP",FlowItem.actorPF,0,"g
 		sysGeneral.GearSwitch:actuate(0) 
 		kc_speakNoText(0,"gear coming up") 
 	end))
+goAroundProc:addItem(ProcedureItem:new("FLAPS 15","SET",FlowItem.actorPNF,0,true,
+	function () 
+		command_once("laminar/B738/push_button/flaps_15") 
+		kc_speakNoText(0,"speed check flaps 15") 
+	end))
+goAroundProc:addItem(HoldProcedureItem:new("LVL CHG","COMMAND",FlowItem.actorPF))
+goAroundProc:addItem(ProcedureItem:new("LVL CHG","SET",FlowItem.actorPF,0,
+	function () return sysMCP.lvlchgSwitch:getStatus() == 1 end,
+	function () 
+		sysMCP.lvlchgSwitch:actuate(1) 
+		kc_speakNoText(0,"level change") 
+	end))
+goAroundProc:addItem(ProcedureItem:new("FLAPS UP SPEED","SET %s|get(\"laminar/B738/pfd/flaps_up\")",FlowItem.actorPM,0,
+	function() return sysMCP.iasSelector:getStatus() ==  get("laminar/B738/pfd/flaps_up") end,
+	function() sysMCP.iasSelector:setValue(get("laminar/B738/pfd/flaps_up")) end))
+goAroundProc:addItem(HoldProcedureItem:new("CMD-A","COMMAND ON",FlowItem.actorPF))
+goAroundProc:addItem(ProcedureItem:new("CMD-A","ON",FlowItem.actorPNF,0,true,
+	function () 
+		sysMCP.ap1Switch:actuate(1) 
+		kc_speakNoText(0,"command a") 
+	end))
+goAroundProc:addItem(HoldProcedureItem:new("FLAPS 5","COMMAND",FlowItem.actorPF))
+goAroundProc:addItem(ProcedureItem:new("FLAPS 5","SET",FlowItem.actorPNF,0,true,
+	function () 
+		command_once("laminar/B738/push_button/flaps_5") 
+		kc_speakNoText(0,"speed check flaps 5") 
+	end))
+goAroundProc:addItem(HoldProcedureItem:new("LNAV & VNAV","COMMAND",FlowItem.actorPF))
+goAroundProc:addItem(ProcedureItem:new("LNAV VNAV","SET",FlowItem.actorPNF,0,
+	function () 
+		return sysMCP.lnavSwitch:getStatus() == 1 and sysMCP.vnavSwitch:getStatus() == 1 
+	end, 
+	function () 
+		sysMCP.lnavSwitch:actuate(1) 
+		sysMCP.vnavSwitch:actuate(1) 
+	end))
+goAroundProc:addItem(HoldProcedureItem:new("FLAPS 1","COMMAND",FlowItem.actorPF))
+goAroundProc:addItem(ProcedureItem:new("FLAPS 1","SET",FlowItem.actorPNF,0,true,
+	function () command_once("laminar/B738/push_button/flaps_1") kc_speakNoText(0,"speed check flaps 1") end))
+goAroundProc:addItem(HoldProcedureItem:new("FLAPS UP","COMMAND",FlowItem.actorPF))
+goAroundProc:addItem(ProcedureItem:new("FLAPS UP","SET",FlowItem.actorPNF,0,true,
+	function () command_once("laminar/B738/push_button/flaps_0") kc_speakNoText(0,"speed check flaps up") end))
 
 
 -- ============== AFTER LANDING PROCEDURE ===============
