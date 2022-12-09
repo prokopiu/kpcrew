@@ -1,9 +1,9 @@
--- Standard Operating Procedure for Zibo Mod B738 module
+-- Standard Operating Procedure for FlightFactor A350
 
--- @classmod SOP_B738
+-- @classmod SOP_A359
 -- @author Kosta Prokopiu
 -- @copyright 2022 Kosta Prokopiu
-local SOP_B738 = {
+local SOP_A359 = {
 }
 
 -- SOP related imports
@@ -48,73 +48,634 @@ kcSopFlightPhase = { [1] = "Cold & Dark", 	[2] = "Prel Preflight", [3] = "Prefli
 					 [5] = "After Start", 	[6] = "Taxi to Runway", [7] = "Before Takeoff", [8] = "Takeoff",
 					 [9] = "Climb", 		[10] = "Enroute", 		[11] = "Descent", 		[12] = "Arrival", 
 					 [13] = "Approach", 	[14] = "Landing", 		[15] = "Turnoff", 		[16] = "Taxi to Stand", 
-					 [17] = "Shutdown", 	[18] = "Turnaround",	[19] = "Flightplanning", [20] = "Go Around", [0] = " " }
+					 [17] = "Shutdown", 	[18] = "Turnaround",	[19] = "Flightplanning", [20] = "Go Around", [0] = "" }
 
 -- Set up SOP =========================================================================
 
-activeSOP = SOP:new("Zibo Mod SOP")
+activeSOP = SOP:new("FF A350 SOP")
 
 local testProc = Checklist:new("TEST","","")
 testProc:addItem(IndirectChecklistItem:new("FUEL","TESTED 100 #exchange|PERC|percent",FlowItem.actorFO,0,"oxygentestedcpt",
-	function () return get("laminar/B738/push_button/oxy_test_cpt_pos") == 1 end))
-testProc:addItem(ChecklistItem:new("WINDOW HEAT","ON",FlowItem.actorFO,0,
+	function () return 1 == 1 end))
+
+local testProc = Procedure:new("TEST","","")
+testProc:addItem(ProcedureItem:new("STEP1","DO",FlowItem.actorFO,0,true,
 	function () 
-			return sysMCP.vhfNavSwitch:getStatus() == 0 and 
-			sysMCP.irsNavSwitch:getStatus() == 0 and 
-			sysMCP.fmcNavSwitch:getStatus() == 0 and 
-			sysMCP.displaySourceSwitch:getStatus() == 0 and 
-			sysMCP.displayControlSwitch:getStatus() == 0 
+		kc_macro_state_turnaround()
 	end))
 
+-- =================== FMGS Preflight ====================
+-- ==== INITIAL DATA (CPT)                              
+--   IDENT page:................................OPEN (CPT)
+--     Verify Model and ENG RATING                 
+--     Verify navigation database ACTIVE date      
+--   POS INIT page:.............................OPEN (CPT)
+--     Verify time                                 
+--     REF AIRPORT...............................SET (CPT)
+-- ==== NAVIGATION DATA (CPT)                           
+--   RTE page:..................................OPEN (CPT)
+--     ORIGIN....................................SET (CPT)
+--     DEST......................................SET (CPT)
+--     FLT NO....................................SET (CPT)
+--     ROUTE...................................ENTER (CPT)
+--     ROUTE................................ACTIVATE (CPT)
+--     ROUTE.................................EXECUTE (CPT)
+--   DEPARTURES page:...........................OPEN (CPT)
+--     Select runway and departure routing         
+--     ROUTE:................................EXECUTE (CPT)
+--   LEGS page:.................................OPEN (CPT)
+--     Verify or enter correct RNP for departure   
+-- ==== PERFORMANCE DATA (CPT)                          
+--   PERF INIT page:............................OPEN (CPT)
+--     ZFW.....................................ENTER (CPT)
+--     GW...............................ENTER/VERIFY (CPT)
+--     RESERVES.........................ENTER/VERIFY (CPT)
+--     COST INDEX..............................ENTER (CPT)
+--     CRZ ALT.................................ENTER (CPT)
+--   N1 LIMIT page:.............................OPEN (CPT)
+--     Select assumed temp and/or fixed t/o rating 
+--     Select full or derated climb thrust         
+--   TAKEOFF REF page:..........................OPEN (CPT)
+--     FLAPS...................................ENTER (CPT)
+--     CG......................................ENTER (CPT)
+--     V SPEEDS................................ENTER (CPT)
+-- PREFLIGHT COMPLETE?........................VERIFY (CPT)
+-- PREPARE KPCREW DEPARTURE BRIEFING
+-- =======================================================
+
+-- =============== ECAM & CKPT PREPARATION ===============
+-- === ECAM
+-- ECAM...........................................ON		.1-sim/ind/ecamMode.>.0
+--   Recommended to use ecam auto mode
+-- ECAM AUTO MODE..............................CHECK
+-- NSS DATA TO AVCS...............................ON		.1-sim/53/button.=.1
+-- CAB DATA TO NSS................................ON		.1-sim/54/button.=.1
+-- GATELINK.......................................ON		.1-sim/230/button.=.1
+-- COOLING........................................ON		.1-sim/42/button.=.1
+-- CABIN FANS.....................................ON		.1-sim/44/button.=.1.and.1-sim/45/button.=.1
+
+-- === Radio Management Panel
+-- RMP 1 & 2.................................CONFIRM
+-- FREQUENCIES..................................TUNE
+-- RAD NAV STBY OFF............................CHECK
+-- COM1.......................................SELECT		.sim/cockpit2/radios/actuators/audio_com_selection.=.6
+-- SOUND......................................SELECT		.1-sim/radio/lamp/1/1.>.0.or.1-sim/radio/lamp/2/1.>.0
+-- VOLUME.......................................TUNE		.1-sim/radio/1/1/rotary.>.0.or.1-sim/radio/2/1/rotary.>.0
+-- SQWK PAGE..................................SELECT		.1-sim/xxx/sqwkPageSelect.=.1
+-- SQWK MASTER...................................SET		.1-sim/surv/MFDinControl.=.0
+-- SQWK.......................................SELECT
+
+-- === COCKPIT PREPARATION
+
+-- ===== OVERHEAD PANEL
+-- All white lights off
+-- As a general rule all white lights should be off OH
+-- scanning sequence is from left to right and from 
+-- bottom to top
+-- EMER CALLS....................................OFF		.1-sim/37/button.=.0
+-- EVAC COMMAND..............................GUARDED		.1-sim/30/cover.=.0
+-- CAPT & PURS.............................CAPT&PURS		.1-sim/1/switch.=.1
+-- OXYGEN CREW....................................ON		.1-sim/38/button.=.1
+-- PRIM & SEC 1 FLT COMPs.........................ON		.1-sim/29/button.=.0.and.1-sim/30/button.=.0
+-- PRIM & SEC 3 FLT COMPs.........................ON		.1-sim/31/button.=.0.and.1-sim/32/button.=.0
+-- ADIRS SELECTOR 1..............................NAV		.1-sim/adirs/1/switch.=.1
+-- ADIRS SELECTOR 2..............................NAV		.1-sim/adirs/2/switch.=.1
+-- ADIRS SELECTOR 3..............................NAV		.1-sim/adirs/3/switch.=.1
+-- ADR 1..........................................ON		.1-sim/26/button.=.1
+-- ADR 2..........................................ON		.1-sim/28/button.=.1
+-- ADR 3..........................................ON		.1-sim/27/button.=.1
+-- IR 1...........................................ON		.1-sim/23/button.=.1
+-- IR 2...........................................ON		.1-sim/25/button.=.1
+-- IR 3...........................................ON		.1-sim/24/button.=.1
+-- STROBE LT SW..................................OFF		.1-sim/2/switch.=.0
+-- BEACON LT SW..................................OFF		.1-sim/3/switch.=.0
+-- NAV LT SW......................................ON		.1-sim/4/switch.=.1
+-- REMAINING LIGHTS AS REQUIRED................CHECK
+-- SEATBELTS......................................ON		.1-sim/12/switch.=.1
+-- NO SMOKING.....................................ON		.1-sim/13/switch.=.1
+-- XBLEED SELECTOR..............................AUTO		.1-sim/air/crossBeedSwitch.=.1
+-- AIR FLOW SELECTOR............................NORM		.1-sim/air/airFlowSwitch.=.1
+-- TEMP SELECTORS AS REQUIRED.................SELECT
+--   Select comfortable temperature
+-- ECAM ELEC DC PAGE............................CALL		.1-sim/ind/ecamMode.=.7
+-- ALL BATTERIES CURRENT BELOW 60A.............CHECK
+-- APU GEN PB.....................................ON		.1-sim/101/button.=.1
+-- APU GEN FAULT LT OFF........................CHECK
+-- GENs 1.........................................ON		.1-sim/96/button.=.1.and.1-sim/99/button.=.1
+--   FAULT lights visible
+-- GENs 2.........................................ON		.1-sim/103/button.=.1.and.1-sim/106/button.=.1
+--   FAULT lights visible
+-- BUS TIE......................................AUTO		.1-sim/100/button.=.1
+-- MAIN FUEL PUMPS................................ON		.1-sim/68/button.=.1.and.1-sim/81/button.=.1
+-- MAIN FUEL PUMPS................................ON		.1-sim/68/button.=.1.and.1-sim/81/button.=.1
+-- STBY FUEL PUMPS..............................AUTO		.1-sim/69/button.=.1.and.1-sim/82/button.=.1
+-- 1 & 2 FUEL PUMPS...............................ON		.1-sim/70/button.=.1.and.1-sim/80/button.=.1
+-- CTR TK FEED PB...............................AUTO		.1-sim/84/button.=.1
+-- MAINTENANCE PANEL ALL WHITE LTS OFF.........CHECK
+-- CARGO AIR SEL AS REQUIRED..................SELECT
+-- PRIM & SEC 2 FLT COMPs.........................ON		.1-sim/50/button.=.0.and.1-sim/51/button.=.0
+-- HYD ELEC PMP GREEN.............................ON		.1-sim/47/button.=.0
+-- HYD ELEC PMP YELLOW............................ON		.1-sim/49/button.=.0
+
+-- ===== CENTRE INSTRUMENT PANEL
+-- AIR DATA SELECTORS..........................CHECK
+-- GEAR LEVER...................................DOWN		.sim/cockpit/switches/gear_handle_status.=.1
+-- A-SKID.........................................ON		.1-sim/37/switch.=.1
+-- STBY INSTRUMENTS ON.........................CHECK
+-- ===== PEDESTAL
+-- PARK BRK.......................................ON		.1-sim/parckBrake.=.0
+-- L/G/GRAVITY EXTN..............................OFF		.1-sim/brg/emer.=.1
+-- L/G/GRAVITY EXTN..........................GUARDED		.1-sim/36/cover.=.0
+-- THRUST LEVERS................................IDLE		.1-sim/R/throttle.=.0.and.1-sim/L/throttle.=.0
+-- REVERSE LEVERS.............................STOWED		.1-sim/L/reverser.=.0.and.1-sim/R/reverser.=.0
+-- ENG MASTER SWITCHES...........................OFF		.1-sim/eng/cutoff/L/switch.=.1.and.1-sim/eng/cutoff/R/switch.=.1
+-- CKPT DOOR PB..................................OFF		.1-sim/221/button.=.0
+-- SURV SYS 1 PBs.................................ON		.1-sim/216/button.=.1.and.1-sim/217/button.=.1
+-- SURV SYS 2 PBs.................................ON		.1-sim/218/button.=.1.and.1-sim/220/button.=.1
+-- ===== MFD SURV
+-- SURV PAGE..................................SELECT		.1-sim/mfd/guage.=.3
+-- CONTROLS PAGE..............................SELECT		.1-sim/mfd/page.=.1
+--   Press DEFAULT SETTINGS for quick setup
+-- XPDR.........................................AUTO		.1-sim/surv/XPDRmode.=.3
+-- TCAS MODE TA/RA & NORM.....................SELECT		.1-sim/surv/TCASmode.=.1.and.1-sim/surv/TCASdisplay.=.1
+-- WXR AUTO...................................SELECT		.1-sim/surv/WXRelev.=.1
+-- WXR WX AUTO................................SELECT		.1-sim/surv/WXRon.=.1
+-- WXR PRED AUTO..............................SELECT		.1-sim/surv/WXRpred.=.1
+-- WXR TURB AUTO..............................SELECT		.1-sim/surv/WXRturb.=.1
+-- WXR GAIN AUTO..............................SELECT		.1-sim/surv/WXRgain.=.1
+-- WXR MODE AUTO..............................SELECT		.1-sim/surv/WXRmode.=.1
+-- WXR ON VD AUTO.............................SELECT		.1-sim/surv/WXRonvd.=.1
+-- TAWS TERRAIN MODE..............................ON		.1-sim/surv/TAWSterr.=.1
+-- TAWS GPWS......................................ON		.1-sim/surv/TAWSgpws.=.1
+-- TAWS GS MODE...................................ON		.1-sim/surv/TAWSgs.=.1
+-- TAWS FLAP MODE.................................ON		.1-sim/surv/TAWSflap.=.1
+-- ===== MFD FMS INITIALIZATION
+-- INIT PAGE....................................OPEN		.1-sim/mfd/page.=.24
+-- FLIGHT NUMBER...............................ENTER		.1-sim/checklist/flightNumber.~.0
+-- FROM FIELD...................................FILL		.1-sim/checklist/from.~.0
+-- TO FIELD.....................................FILL		.1-sim/checklist/to.~.0
+-- === GLARESHIELD BARO REF
+-- BARO REF BOTH SET...........................CHECK
+--   Set the QNH/QFE on the EFIS and on the ISIS
+--   check barometer settings and altitude indications on 
+--   PFD and ISIS
+--   the maximum difference is: 20ft
+--   check stby AH barometer setting and altitude
+-- ===== GLARESHIELD
+-- ND MODE & RANGE AS REQUIRED.................CHECK
+--   set the minimum range to display the first waypoint
+-- PFD ON......................................CHECK
+-- NORTH REF...................................CHECK
+-- SPD/MACH WINDOW DASHED......................CHECK
+-- HDG/TRK WINDOW DASHED.......................CHECK
+-- HDG V/S - TRK FPA HDG V/S...................CHECK
+-- ALT WINDOW INITIAL CLEARANCE................CHECK
+-- =======================================================
+
+-- =============== BEFORE PUSHBACK & START ===============
+-- === BEFORE PUSHBACK CLEARANCE
+-- FUEL QUANTITY...............................CHECK
+--   on the ECAM permanent data, check FOB corresponds
+--   with the F-PLAN
+-- FINAL LOADSHEET.............................CHECK
+-- ZFW/ZFCG IN FMS.............................CHECK
+--   compare the ZFW/ZFCG of the final loadsheet
+--   with data entered into FMS
+-- ECAM CWCG...................................CHECK
+--   check within operating limits
+-- SEATS, SEAT BELT, PEDALS...................ADJUST
+-- EXT PWR.......................................OFF		.1-sim/97/button.=.0.and.1-sim/104/button.=.0
+-- === AT START CLEARANCE
+-- THRUST LEVERS................................IDLE		.1-sim/R/throttle.=.0.and.1-sim/L/throttle.=.0
+-- PARK BRK......................................OFF		.1-sim/parckBrake.=.1
+-- PUSHBACK TRUCK...............................CALL
+--   use the menu to call for pushback truck
+--   use the pedals and thrust levers to control the truck
+-- =======================================================
+
+-- ==================== ENGINE START =====================
+-- === ENGINE START
+-- HYD ENG 1 PUMPS................................ON		.1-sim/65/button.=.1.and.1-sim/67/button.=.1
+-- HYD ENG 2 PUMPS................................ON		.1-sim/75/button.=.1.and.1-sim/77/button.=.1
+-- BEACON LT......................................ON		.1-sim/3/switch.=.1
+-- APU AVAIL.................................CONFIRM		.sim/cockpit/engine/APU_N1.>.97
+-- APU BLEED......................................ON		.1-sim/111/button.=.1
+-- ECAM AUTO MODE..............................CHECK
+-- ENG START SELECTOR..........................START		.1-sim/eng/startSwitch.=.2
+-- ENG MASTER 1...................................ON		.1-sim/eng/cutoff/L/switch.=.0
+--   monitor engine parameters: EGT, N3, N1
+-- ECAM ENG PAGE..................................ON		.1-sim/ind/ecamMode.=.1
+-- ENG 1 AVAIL...............................CONFIRM		.sim/flightmodel/engine/ENGN_N1_[0].>.20
+-- ENG MASTER 2...................................ON		.1-sim/eng/cutoff/R/switch.=.0
+--   monitor engine parameters: EGT, N3, N1
+-- ENG 2 AVAIL...............................CONFIRM		.sim/flightmodel/engine/ENGN_N1_[1].>.20
+-- =======================================================
+
+-- ===================== AFTER START =====================
+-- === ENGINE & CONTROLS
+-- PARK BRK.......................................ON		.1-sim/parckBrake.=.0
+-- ENG START SELECTOR...........................NORM		.1-sim/eng/startSwitch.=.1
+-- ENG 1 BLEED....................................ON		.1-sim/109/button.=.1
+-- ENG 2 BLEED....................................ON		.1-sim/115/button.=.1
+-- APU BLEED.....................................OFF		.1-sim/111/button.=.0
+-- PACK 1 PB......................................ON		.1-sim/107/button.=.1
+-- PACK 2 PB......................................ON		.1-sim/112/button.=.1
+-- HOT AIR 1 PB...................................ON		.1-sim/110/button.=.1
+-- HOT AIR 2 PB...................................ON		.1-sim/114/button.=.1
+-- ANTI-ICE AS REQUIRED.......................SELECT
+-- APU MASTER SW.................................OFF		.1-sim/125/button.=.0
+-- APU GEN PB....................................OFF		.1-sim/101/button.=.0
+-- GROUND SPOILERS...............................ARM		.sim/cockpit2/controls/speedbrake_ratio.<.0
+-- RUDDER TRIM ZERO...........................SELECT		.sim/cockpit2/controls/rudder_trim.=.0
+-- FLAP LEVER....................................SET
+--   set flaps for takeoff and check
+-- PITCH TRIM..................................CHECK
+-- ECAM STATUS.................................CHECK
+-- === ELECTRICAL SYSTEMS
+-- ELMU...........................................ON		.1-sim/90/button.=.1
+-- PAX SYS........................................ON		.1-sim/91/button.=.1
+-- GALLEY.........................................ON		.1-sim/92/button.=.1
+-- COMMERCIAL.....................................ON		.1-sim/93/button.=.1.and.1-sim/94/button.=.1
+-- WIRELESS.......................................ON		.1-sim/15/button.=.1
+-- PASSENGER DATA................................OFF		.1-sim/16/button.=.1
+-- CABIN SATCOM...................................ON		.1-sim/17/button.=.1
+-- LANDING CAMERA.................................ON		.1-sim/18/button.=.1
+-- FAR 4..........................................ON		.1-sim/19/button.=.1.and.1-sim/20/button.=.1
+-- AFEX...........................................ON		.1-sim/21/button.=.1
+-- DER............................................ON		.1-sim/22/button.=.1
+-- === PRESSURIZATION
+-- CABIN ALT MODE...............................AUTO		.1-sim/122/button.=.1
+-- CABIN V/S MODE...............................AUTO		.1-sim/123/button.=.1
+-- =======================================================
+
+-- ======================== TAXI =========================
+-- NOSE LIGHTS..................................TAXI		.1-sim/11/switch.=.1
+-- RWY TURN OFF LTS...............................ON		.1-sim/8/switch.=.1
+-- PARK BRK......................................OFF		.1-sim/parckBrake.=.1
+-- THRUST LEVERS AS REQUIRED...................CHECK
+-- AUTOBRAKE RTO.................................SET		.1-sim/225/button.=.1
+-- =======================================================
+
+-- ===================== AFTER START =====================
+-- PACKS PB.......................................ON		.1-sim/107/button.=.1.and.1-sim/112/button.=.1
+-- TAXI PB.......................................OFF		.1-sim/132/button.=.0
+-- ND RANGE AS REQUIRED........................CHECK
+-- EFIS OPTIONS................................CHECK
+-- STROBE LIGHTS SW...............................ON		.1-sim/2/switch.>.0
+-- TABLE......................................STOWED		.1-sim/computer.=.0
+-- TCAS MODE TA/RA...............................SET		.1-sim/surv/TCASmode.=.1
+-- =======================================================
+
+-- ======================= TAKEOFF =======================
+-- CHRONO......................................START		.AirbusFBW/ChronoTimeND1.>.0.or.AirbusFBW/ChronoTimeND2.>.0
+-- THRUST LEVER FLEX/TOGA........................SET		.1-sim/R/throttle.>.0.and.1-sim/L/throttle.>.0
+-- TAKEOFF THRUST..............................CHECK
+-- V1 MONITOR..................................CHECK
+-- AT VR ROTATE..............................PERFORM
+-- LANDING GEAR...................................UP		.sim/cockpit/switches/gear_handle_status.=.0
+-- AP AS REQUIRED..............................CHECK
+-- THRUST LEVER CL.............................CHECK
+-- PACKS PB.......................................ON		.1-sim/107/button.=.1.and.1-sim/112/button.=.1
+-- FLAPS ZERO.................................SELECT		.1-sim/flaphandle.=.1
+-- RWY TURN OFF LTS..............................OFF		.1-sim/8/switch.=.0
+-- GROUND SPOILERS............................DISARM		.sim/cockpit2/controls/speedbrake_ratio.=.0
+-- =======================================================
+
+-- ==================== AFTER TAKEOFF ====================
+-- APU BLEED.....................................OFF		.1-sim/111/button.=.0
+-- APU MASTER SW.................................OFF		.1-sim/125/button.=.0
+-- ANTI-ICE AS REQUIRED........................CHECK
+-- =======================================================
+
+-- ======================== CLIMB ========================
+-- BARO REF STD AS REQUIRED....................CHECK
+-- CRZ FL SET AS REQUIRED......................CHECK
+-- ANTI-ICE AS REQUIRED........................CHECK
+-- SEATBELTS AS REQUIRED.......................CHECK
+-- ECAM MEMO REVIEW............................CHECK
+-- NAVAIDS.....................................CHECK
+-- OPT/MAX ALT.................................CHECK
+-- =======================================================
+
+-- ======================== CRUISE =======================
+-- ALT CRZ ON FMS..............................CHECK
+-- ECAM MEMO...................................CHECK
+-- ECAM SYS PAGES REVIEW.......................CHECK
+-- =======================================================
+
+-- ================= DESCENT PREPARATION =================
+-- WEATHER OBTAINED............................CHECK
+-- LDG ELEC....................................CHECK
+-- BARO REF PRESET.............................CHECK
+-- ECAM STATUS&MEMO............................CHECK
+-- APPROACH DATA INSERT........................CHECK
+-- POSITION/NAVAIDS PAGE.......................CHECK
+-- SEC PAGES AS REQUIRED.......................CHECK
+-- AUTOBRAKE AS REQUIRED.......................CHECK
+--   on short runways use 3 or higher
+-- ANTI-ICE AS REQUIRED........................CHECK
+-- =======================================================
+
+-- ======================= DESCENT =======================
+-- === AT 10 000 FT
+-- EXTERIOR LIGHTS SET.........................CHECK
+-- SEATBELTS......................................ON		.1-sim/12/switch.=.1
+-- FLS DATA....................................CHECK
+-- BARO REF....................................CHECK
+-- === DESCENT
+-- DESCENT MONITOR.............................CHECK
+-- RATE OF DESCENT AS REQUIRED.................CHECK
+-- SPEED BRAKES AS REQUIRED....................CHECK
+-- WXR ON EFIS AS REQUIRED.....................CHECK
+-- HOLDING PATTERN AS REQUIRED.................CHECK
+-- =======================================================
+
+---PRECISION APPROACH
+--INITIAL APPROACH
+-- SEATBELTS.ON.1-sim/12/switch.=.1
+-- APPROACH PHASE.CHECK
+-- POSITIONING MONITOR.CHECK
+-- MANAGED SPEED.CHECK
+-- SPEED BRAKES AS REQUIRED.CHECK
+--FINAL APPROACH
+-- APP PB FCU.SELECT.AirbusFBW/APPRilluminated.=.1
+-- AP.ON.1-sim/misc/AP1status.=.1.or.1-sim/misc/AP2status.=.1
+-- FMA.CHECK
+-- !!.check that FMS displays the approach capability
+-- FLAPS 1.SELECT.sim/flightmodel2/wing/flap2_deg[3].>.9
+-- TCAS MODE TA/RA.SET.1-sim/surv/TCASmode.=.1
+-- LOC CAPTURE.MONITOR
+-- G/S CAPTURE.MONITOR
+-- FLAPS 2.SELECT.sim/flightmodel2/wing/flap2_deg[3].>.14
+-- GEAR LEVER.DOWN.sim/cockpit/switches/gear_handle_status.=.1
+-- AUTOBRAKE.CONFIRM
+-- GROUND SPOILERS.ARM.sim/cockpit2/controls/speedbrake_ratio.<.0
+-- LANDING LIGHTS.ON.1-sim/10/switch.=.1
+-- FLAPS 3.SELECT.sim/flightmodel2/wing/flap2_deg[3].>.19
+-- ECAM WHEEL PAGE.SELECT.1-sim/ind/ecamMode.=.3
+-- ECAM WHEEL PAGE.CHECK
+-- FLAPS FULL.SELECT.sim/flightmodel2/wing/flap2_deg[3].>.30
+-- TABLE.STOWED.1-sim/computer.=.0
+-- FLIGHT PARAMETERS.CHECK
+
+---NON-PRECISION APPROACH WITH FLS
+--INITIAL APPROACH
+-- SEATBELTS.ON.1-sim/12/switch.=.1
+-- APPROACH PHASE.CHECK
+-- POSITIONING MONITOR.CHECK
+-- MANAGED SPEED.CHECK
+-- SPEED BRAKES AS REQUIRED.CHECK
+-- RNP AS REQUIRED.CHECK
+-- FLS CAPABILITY.CHECK
+-- VOR(ADF) NEEDLES AS REQUIRED.CHECK
+--FINAL APPROACH
+-- ?.the preferred technique for flying an NPA approach with 
+-- ?.the FLS function is to fly a decelerated approach by 
+-- ?.using:
+-- !!.the AP and FD
+-- !!.F-LOC, LOC, or LOC B/C
+-- !!.F-G/S
+-- !!.the A/THR in SPEED mode
+-- !!.the managed speed target
+-- APP PB FCU.SELECT.SELECT.AirbusFBW/APPRilluminated.=.1
+-- FLYING REFERENCE.TRK-FPA.CHECK
+-- FLS CAPABILITY.CHECK
+-- FLAPS 1.SELECT.sim/flightmodel2/wing/flap2_deg[3].>.9
+-- TCAS MODE TA/RA.SET.1-sim/surv/TCASmode.=.1
+-- F-LOC, LOC, or LOC B/C.MONITOR
+-- F-G/S CAPTURE.CHECK
+-- FPA MODE AS REQUIRED.CHECK
+-- F-G/S MODE ENGAGED.CHECK
+-- FLAPS 2.SELECT.sim/flightmodel2/wing/flap2_deg[3].>.14
+-- GEAR LEVER.DOWN.sim/cockpit/switches/gear_handle_status.=.1
+-- AUTOBRAKE.CONFIRM
+-- GROUND SPOILERS.ARM.sim/cockpit2/controls/speedbrake_ratio.<.0
+-- LANDING LIGHTS.ON.1-sim/10/switch.=.1
+-- FLAPS 3.SELECT.sim/flightmodel2/wing/flap2_deg[3].>.19
+-- ECAM WHEEL PAGE.SELECT.1-sim/ind/ecamMode.=.3
+-- ECAM WHEEL PAGE.CHECK
+-- FLAPS FULL.SELECT.sim/flightmodel2/wing/flap2_deg[3].>.30
+-- TABLE.STOWED.1-sim/computer.=.0
+-- FLIGHT PARAMETERS.CHECK
+
+---NON-PRECISION APPROACH WITHOUT FLS
+--INITIAL APPROACH
+-- SEATBELTS.ON.1-sim/12/switch.=.1
+-- APPROACH PHASE.CHECK
+-- POSITIONING MONITOR.CHECK
+-- MANAGED SPEED.CHECK
+-- SPEED BRAKES AS REQUIRED.CHECK
+--FINAL APPROACH
+-- ?.the preferred technique for flying an NPA approach  
+-- ?.without the FLS function is to fly a decelerated 
+-- ?.approach by using:
+-- !!.the AP and FD
+-- !!.the A/THR in SPEED mode
+-- !!.the managed speed target
+-- GPS PRIMARY ON POSITION AVAIL.CHECK
+-- RNMP FOR APPROACH.CHECK
+-- LOC PB.SELECT.1-sim/146/button.=.1
+-- FLAPS 1.SELECT.sim/flightmodel2/wing/flap2_deg[3].>.9
+-- TCAS MODE TA/RA.SET.1-sim/surv/TCASmode.=.1
+-- FPA SET.CHECK
+-- FLAPS 2.SELECT.sim/flightmodel2/wing/flap2_deg[3].>.14
+-- GEAR LEVER.DOWN.sim/cockpit/switches/gear_handle_status.=.1
+-- AUTOBRAKE.CONFIRM
+-- GROUND SPOILERS.ARM.sim/cockpit2/controls/speedbrake_ratio.<.0
+-- LANDING LIGHTS.ON.1-sim/10/switch.=.1
+-- FLAPS 3.SELECT.sim/flightmodel2/wing/flap2_deg[3].>.19
+-- ECAM WHEEL PAGE.SELECT.1-sim/ind/ecamMode.=.2
+-- ECAM WHEEL PAGE.CHECK
+-- FLAPS FULL.SELECT.sim/flightmodel2/wing/flap2_deg[3].>.30
+-- TABLE.STOWED.1-sim/computer.=.0
+-- FLIGHT PARAMETERS.CHECK
+
+---VISUAL APPROACH
+--VISUAL APPROACH
+-- ?.perform the approach on a nominal 3 deg glideslope 
+-- ?.using visual references
+-- ?.the approach should be stabilized by 500ft above airfield
+-- ?.elevations on the correct approach path, in the landing 
+-- ?.configuration at VAPP
+-- ACTIVATE APPR ON FMS.CHECK
+-- FD PB.OFF.sim/cockpit/autopilot/autopilot_mode.=.0
+-- TRK-FPA PB SELECTED.CHECK
+-- A/THR.ON.sim/cockpit2/autopilot/autothrottle_enabled.=.1
+-- FLAPS 1.SELECT.sim/flightmodel2/wing/flap2_deg[3].>.9
+-- TCAS MODE TA/RA.SET.1-sim/surv/TCASmode.=.1
+-- FPA SET.CHECK
+-- FLAPS 2.SELECT.sim/flightmodel2/wing/flap2_deg[3].>.14
+-- GEAR LEVER.DOWN.sim/cockpit/switches/gear_handle_status.=.1
+-- AUTOBRAKE.CONFIRM
+-- GROUND SPOILERS.ARM.sim/cockpit2/controls/speedbrake_ratio.<.0
+-- LANDING LIGHTS.ON.1-sim/10/switch.=.1
+
+-- ======================= LANDING =======================
+-- === MANUAL
+-- AP............................................OFF		.1-sim/misc/AP1status.=.1.or.1-sim/misc/AP2status.=.0
+-- FLARE INITIATE..............................CHECK
+-- ATTITUDE..................................MONITOR
+-- THRUST LEVERS................................IDLE		.1-sim/R/throttle.=.0.and.1-sim/L/throttle.=.0
+-- === AUTOMATIC
+-- FMA.........................................CHECK
+-- FLARE.....................................MONITOR
+-- THRUST LEVERS................................IDLE		.1-sim/R/throttle.=.0.and.1-sim/L/throttle.=.0
+-- LATERAL GUIDANCE..........................MONITOR
+--   FOLLOW IN BOTH CASES
+-- DEROTATION INITIATE.........................CHECK
+-- REV..........................................PULL		.?.sim/flightmodel/failures/onground_all.=.1.1-sim/R/reverser.>.0.zero/zero.=.1
+-- GROUND SPOILERS............................DEPLOY		.sim/cockpit2/controls/speedbrake_ratio.>.0
+-- REVERSERS...................................CHECK
+-- AUTOBRAKE.................................MONITOR
+-- DECELERATION................................CHECK
+-- REV..........................................IDLE		.sim/flightmodel/position/groundspeed.<.40.and.1-sim/ind/eng/curTHR/L.<.5
+-- REV..........................................STOW		.sim/flightmodel/position/groundspeed.<.10.and.1-sim/R/reverser.=.0
+-- AUTOBRAKE DISARMED..........................CHECK
+-- AP.....................................DISCONNECT		.1-sim/misc/AP1status.=.0.or.1-sim/misc/AP2status.=.0
+
+-- ====================== GO AROUND ======================
+-- THRUST LEVER TOGA.............................SET		.1-sim/R/throttle.=.1.and.1-sim/L/throttle.=.1
+-- ROTATION....................................CHECK
+-- FMA MAN TOGO, SRS, GA, TRK..................CHECK
+-- GEAR LEVER.....................................UP		.sim/cockpit/switches/gear_handle_status.=.0
+-- NAV MODE...................................SELECT		.AirbusFBW/NDmodeCapt.=.2.or.AirbusFBW/NDmodeFO.=.2
+-- THRUST LEVERS CL............................CHECK
+-- FLAPS ON SCHEDULE...........................CHECK
+-- == FROM AN INTERMEDIATE APPROACH ALTITUDE
+--   apply the following steps in order to interrupt the
+--   approach, or perform a go-around, when the aircraft
+--   is at an intermediate altitude and if TOGA is not 
+--   required
+-- THRUST LEVERS TOGA, THEN RETARD.............CHECK
+-- APPLICABLE AP/FD...........................SELECT
+--   apply the following steps in order to interrupt an
+--   ILS, GLS approach, or an approach using FLS, and 
+--   perform a go-around when the aircraft is above the
+--   missed approach altitude and TOGA is not required
+-- LOC.........................................PRESS		.1-sim/146/button.=.1
+-- ALT.......................................MONITOR
+-- SPEED........................................PULL		.1-sim/fcu/spdPull.>.0
+-- FLAPS RETRACT ONE STEP......................CHECK
+-- HDG..........................................PULL		.1-sim/fcu/hdgPull.>.0
+-- NAV MODE...................................SELECT		.AirbusFBW/NDmodeCapt.=.2.or.AirbusFBW/NDmodeFO.=.2
+-- =======================================================
+
+-- ==================== AFTER LANDING ====================
+-- GROUND SPOILERS............................DISARM		.sim/cockpit2/controls/speedbrake_ratio.=.0
+-- FLAPS ZERO.................................SELECT		.1-sim/flaphandle.=.1
+-- APU MASTER SW..................................ON		.1-sim/125/button.=.1
+-- APU PAGE ON SD..............................CHECK
+-- APU START PB...................................ON		.1-sim/126/button.=.1
+--   wait for APU AVAIL sign
+-- APU AVAIL.................................CONFIRM		.sim/cockpit/engine/APU_N1.>.97
+-- APU BLEED PB...................................ON		.1-sim/111/button.=.1
+-- ENG START SELECTOR...........................NORM		.1-sim/eng/startSwitch.=.1
+-- ANTI-ICE AS REQUIRED........................CHECK
+-- LANDING LIGHTS................................OFF		.1-sim/10/switch.=.0
+-- NOSE LIGHTS..................................TAXI		.1-sim/11/switch.=.1
+-- RWY TURN OFF LIGHTS............................ON		.1-sim/8/switch.=.1
+-- STROBE LIGHTS.................................OFF		.1-sim/2/switch.=.0
+-- ND ZOOM AS REQUIRED.........................CHECK
+-- WX ON EFIS CP OFF...........................CHECK
+-- TERR ON EFIS CP OFF.........................CHECK
+-- BRAKE TEMPERATURE.........................MONITOR
+-- =======================================================
+
+-- ======================= PARKING =======================
+-- NOSE LIGHTS...................................OFF		.1-sim/11/switch.=.2
+-- RWY TURN OFF LIGHTS...........................OFF		.1-sim/8/switch.=.0
+-- ANTI-ICE WING.................................OFF		.1-sim/117/button.=.0
+-- ANTI-ICE AUTO MODE............................OFF		.1-sim/118/button.=.0
+-- ANTI-ICE ENG..................................OFF		.1-sim/119/button.=.0.and.1-sim/120/button.=.0
+-- ANTI-ICE PROBE................................OFF		.1-sim/121/button.=.0
+-- PARK BRK.......................................ON		.1-sim/parckBrake.=.0
+-- ENG MASTER SWITCHES...........................OFF		.1-sim/eng/cutoff/L/switch.=.1.and.1-sim/eng/cutoff/R/switch.=.1
+-- SEATBELTS SELECTOR............................OFF		.1-sim/12/switch.=.0
+-- BEACON........................................OFF		.1-sim/3/switch.=.0
+-- FUEL PUMP 1...................................OFF		.1-sim/68/button.=.0.and.1-sim/69/button.=.0
+-- FUEL PUMP 2...................................OFF		.1-sim/81/button.=.0.and.1-sim/82/button.=.0
+-- =======================================================
+
+-- ================ SECURING THE AIRCRAFT ================
+-- PARK BRK.......................................ON		.1-sim/parckBrake.=.0
+-- OXYGEN CREW...................................OFF		.1-sim/38/button.=.0
+-- ADIRS SELECTOR 1..............................OFF		.1-sim/adirs/1/switch.=.0
+-- ADIRS SELECTOR 2..............................OFF		.1-sim/adirs/2/switch.=.0
+-- ADIRS SELECTOR 3..............................OFF		.1-sim/adirs/3/switch.=.0
+-- APU BLEED PB..................................OFF		.1-sim/111/button.=.0
+--   if available
+-- EXT PWR 1......................................ON		.?.1-sim/elec/gpu1ON.=.1.1-sim/97/button.=.1.zero/zero.=.0
+--   if available
+-- EXT PWR 2......................................ON		.?.1-sim/elec/gpu2ON.=.1.1-sim/104/button.=.1.zero/zero.=.0
+-- APU MASTER SW PB-SW...........................OFF		.1-sim/125/button.=.0
+-- NO SMOKING SELECTOR...........................OFF		.1-sim/13/switch.=.0
+-- WIRELESS......................................OFF		.1-sim/15/button.=.0
+-- CABIN SATCOM..................................OFF		.1-sim/17/button.=.0
+-- LANDING CAMERA................................OFF		.1-sim/18/button.=.0
+-- FAR 4.........................................OFF		.1-sim/19/button.=.0.and.1-sim/20/button.=.0
+-- AFEX..........................................OFF		.1-sim/21/button.=.0
+-- DER...........................................OFF		.1-sim/22/button.=.0
+-- CROSS FEED....................................OFF		.1-sim/78/button.=.0.and.1-sim/79/button.=.0
+-- MAIN FUEL PUMPS...............................OFF		.1-sim/68/button.=.0.and.1-sim/81/button.=.0
+-- STBY FUEL PUMPS...............................OFF		.1-sim/69/button.=.0.and.1-sim/82/button.=.0
+-- 1 & 2 FUEL PUMPS..............................OFF		.1-sim/70/button.=.0.and.1-sim/80/button.=.0
+-- CTR TK FEED PB................................OFF		.1-sim/84/button.=.0
+-- TRANSFER FEEDs................................OFF		.1-sim/83/button.=.0.and.1-sim/85/button.=.0
+-- MAINTENANCE PANEL ALL WHITE LTS OFF.........CHECK
+-- BAT 1.........................................OFF		.1-sim/86/button.=.0
+-- BAT EMER 1....................................OFF		.1-sim/87/button.=.0
+-- BAT EMER 2....................................OFF		.1-sim/88/button.=.0
+-- BAT 2.........................................OFF		.1-sim/89/button.=.0
+-- =======================================================
 
 
--- ============ Electrical Power Up Procedure ============
+-- ======================================================================================
+
+-- ================= ELECTRICAL POWER-UP =================
 -- All paper work on board and checked
 -- M E L and Technical Logbook checked
+-- 
+-- === Initial checks
+-- CIRCUIT BREAKERS.....................CHECK ALL IN (F/O)
+-- AIRCRAFT ON BAT PWR.........................CHECK (F/O) 
+--   Check that no AC/DC power source is active
+-- ENG MASTER SWITCHES...........................OFF (F/O) 
+-- ENG START SELECTOR...........................NORM (F/O) 
+-- WIPERS SELECTORS..............................OFF (F/O) 
+-- GEAR LEVER...................................DOWN (F/O) 
+-- FLAP LEVER...................................ZERO (F/O) 
 
--- ===== Initial checks
--- DC Electric Power
--- CIRCUIT BREAKERS (P6 PANEL)..........CHECK ALL IN (F/O)
--- CIRCUIT BREAKERS (P18 PANEL).........CHECK ALL IN (F/O)
--- DC POWER SWITCH...............................BAT (F/O)
--- BATTERY VOLTAGE...........................MIN 24V (F/O)
--- BATTERY SWITCH.......................GUARD CLOSED (F/O)
--- STANDBY POWER SWITCH.................GUARD CLOSED (F/O)
-
--- Hydraulic System
--- ELECTRIC HYDRAULIC PUMPS SWITCHES.............OFF (F/O)
--- ALTERNATE FLAPS MASTER SWITCH........GUARD CLOSED (F/O)
--- FLAP LEVER...................................SET  (F/O)
---   Set the flap lever to agree with the flap position.
-
--- Other
--- WINDSHIELD WIPER SELECTORS...................PARK (F/O)
--- LANDING GEAR LEVER...........................DOWN (F/O)
---   GREEN LANDING GEAR LIGHT......CHECK ILLUMINATED (F/O)
---   RED LANDING GEAR LIGHT.......CHECK EXTINGUISHED (F/O)
--- TAKEOFF CONFIG WARNING.......................TEST (F/O)
---   Move thrust levers full forward and back to idle.
+-- === Batteries on
+-- BAT 1..........................................ON (F/O) 
+-- BAT EMER 1.....................................ON (F/O) 
+-- BAT EMER 2.....................................ON (F/O) 
+-- BAT 2..........................................ON (F/O) 
 
 -- ==== Activate External Power
---   Use Zibo EFB to turn Ground Power on.         
---   GRD POWER AVAILABLE LIGHT...........ILLUMINATED (F/O)
---   GROUND POWER SWITCH..........................ON (F/O)
+--   Activate external power in Ground Services menu
+--   EXT PWR 1....................................ON (F/O) 
+--   EXT PWR 2....................................ON (F/O) 
 
 -- ==== Activate APU 
---   OVHT DET SWITCHES........................NORMAL (F/O)
---   OVHT FIRE TEST SWITCH................HOLD RIGHT (F/O)
---   MASTER FIRE WARN LIGHT.....................PUSH (F/O)
---   ENGINES EXT TEST SWITCH..........TEST 1 TO LEFT (F/O)
---   ENGINES EXT TEST SWITCH.........TEST 2 TO RIGHT (F/O)
---   APU.......................................START (F/O)
---     Hold APU switch in START position for 3-4 seconds.
---   APU GEN OFF BUS LIGHT...............ILLUMINATED (F/O)
---   APU GENERATOR BUS SWITCHES...................ON (F/O)
-
--- TRANSFER BUS LIGHTS............CHECK EXTINGUISHED (F/O)
--- SOURCE OFF LIGHTS..............CHECK EXTINGUISHED (F/O)
--- STANDBY POWER..................................ON (F/O)
---   STANDBY PWR LIGHT............CHECK EXTINGUISHED (F/O)
+--   APU FIRE PB-SW..........................GUARDED (F/O)	
+--   APU AGENT LIGHT OFF.......................CHECK (F/O)	
+--   ENG 1 FIRE PB-SW........................GUARDED (F/O)	
+--   ENG 2 FIRE PB-SW........................GUARDED (F/O)	
+--   ALL ENG AGENT LIGHTS OFF..................CHECK (F/O)	
+--   TEST PB....................................PUSH (F/O)	
+--   RESULT....................................CHECK (F/O)
+--     - continuous repetitive chime sounds
+--     - master warning light flash
+--     - ECAM red alert ENG 1(2) FIRE, APU FIRE
+--     - all ENG and APU PB-SW red
+--     - all DISCH lights on
+--     - ALL FIRE lights on ENG MASTER on
+--   APU MASTER SW..................................ON       
+--   APU PAGE ON SD..............................CHECK
+--   APU START PB...................................ON       
+--     wait for APU AVAIL sign
+--   APU AVAIL.................................CONFIRM       
+--   ELECTRICAL POWER UP.......................CONFIRM
 -- =======================================================
 
 local electricalPowerUpProc = Procedure:new("ELECTRICAL POWER UP","performing ELECTRICAL POWER UP","Power up finished")
@@ -123,72 +684,105 @@ electricalPowerUpProc:addItem(SimpleProcedureItem:new("All paper work on board a
 electricalPowerUpProc:addItem(SimpleProcedureItem:new("M E L and Technical Logbook checked"))
 
 electricalPowerUpProc:addItem(SimpleProcedureItem:new("== Initial Checks"))
-electricalPowerUpProc:addItem(SimpleProcedureItem:new("==== DC Electric Power"))
-electricalPowerUpProc:addItem(ProcedureItem:new("CIRCUIT BREAKERS (P6 PANEL)","CHECK ALL IN",FlowItem.actorFO,0,true))
-electricalPowerUpProc:addItem(ProcedureItem:new("CIRCUIT BREAKERS (CONTROL STAND,P18 PANEL)","CHECK ALL IN",FlowItem.actorFO,0,true))
-electricalPowerUpProc:addItem(ProcedureItem:new("DC POWER SWITCH","BAT",FlowItem.actorFO,0,
-	function () return sysElectric.dcPowerSwitch:getStatus() == sysElectric.dcPwrBAT end,
-	function () sysElectric.dcPowerSwitch:actuate(sysElectric.dcPwrBAT) end))
-electricalPowerUpProc:addItem(IndirectProcedureItem:new("BATTERY VOLTAGE","CHECK MIN 24V",FlowItem.actorFO,0,"bat24v",
-	function () return get("laminar/B738/dc_volt_value") > 23 end))
-electricalPowerUpProc:addItem(ProcedureItem:new("BATTERY SWITCH","GUARD CLOSED",FlowItem.actorFO,0,
-	function () return sysElectric.batteryCover:getStatus() == 0 end,
-	function () 
-		kc_macro_ext_lights_off()
-		sysElectric.batteryCover:actuate(0) 
-		kc_macro_int_lights_on()
-	end))
-electricalPowerUpProc:addItem(ProcedureItem:new("STANDBY POWER SWITCH","GUARD CLOSED",FlowItem.actorFO,0,
-	function () return sysElectric.stbyPowerCover:getStatus() == 1 end,
-	function () sysElectric.stbyPowerCover:actuate(1) end))
-
-electricalPowerUpProc:addItem(SimpleProcedureItem:new("==== Hydraulic System"))
-electricalPowerUpProc:addItem(ProcedureItem:new("ELECTRIC HYDRAULIC PUMPS SWITCHES","OFF",FlowItem.actorFO,0,
-	function () return sysHydraulic.elecHydPumpGroup:getStatus() == 0 end,
-	function () kc_macro_hydraulic_initial() end))
-electricalPowerUpProc:addItem(ProcedureItem:new("ALTERNATE FLAPS MASTER SWITCH","GUARD CLOSED",FlowItem.actorFO,0,
-	function () return sysControls.altFlapsCover:getStatus() == 0 end,
-	function () sysControls.altFlapsCover:actuate(0) end))
-electricalPowerUpProc:addItem(IndirectProcedureItem:new("FLAP LEVER","UP",FlowItem.actorFO,0,"initial_flap_lever",
+electricalPowerUpProc:addItem(HoldProcedureItem:new("AIRCRAFT ON BAT PWR","CHECK",FlowItem.actorFO,0,true))
+electricalPowerUpProc:addItem(SimpleProcedureItem:new("  Check that no AC/DC power source is active"))
+electricalPowerUpProc:addItem(ProcedureItem:new("ENG MASTER SWITCHES","OFF",FlowItem.actorFO,0,
+	function () return sysEngines.startLeverGroup:getStatus() == 0 end,
+	function () sysEngines.startLeverGroup:actuate(modeOff) end))
+electricalPowerUpProc:addItem(ProcedureItem:new("ENG START SELECTOR","NORM",FlowItem.actorFO,0,
+	function () return sysEngines.startSelector:getStatus() == sysEngines.startSelectorNORM end,
+	function () sysEngines.startLeverGroup:setValue(sysEngines.startSelectorNORM) end))
+electricalPowerUpProc:addItem(ProcedureItem:new("WIPERS SELECTORS","OFF",FlowItem.actorFO,0,
+	function () return sysGeneral.wiperGroup:getStatus() == 4 end,
+	function () sysGeneral.wiperGroup:setValue(2) end))
+electricalPowerUpProc:addItem(ProcedureItem:new("GEAR LEVER","DOWN",FlowItem.actorFO,0,
+	function () return sysGeneral.GearSwitch:getStatus() == 1 end,
+	function () sysGeneral.GearSwitch:actuate(1) end))
+electricalPowerUpProc:addItem(IndirectProcedureItem:new("FLAP LEVER","ZERO",FlowItem.actorFO,0,"initial_flap_lever",
 	function () return sysControls.flapsSwitch:getStatus() == 0 end))
-electricalPowerUpProc:addItem(SimpleProcedureItem:new("  Ensure flap lever agrees with indicated flap position."))
-electricalPowerUpProc:addItem(SimpleProcedureItem:new("  In Cold&Dark in SIM this is the UP position."))
 
-electricalPowerUpProc:addItem(SimpleProcedureItem:new("==== Other"))
-electricalPowerUpProc:addItem(ProcedureItem:new("WINDSHIELD WIPER SELECTORS","PARK",FlowItem.actorFO,0,
-	function () return sysGeneral.wiperGroup:getStatus() == 0 end,
-	function () sysGeneral.wiperGroup:actuate(modeOff) end))
-electricalPowerUpProc:addItem(ProcedureItem:new("LANDING GEAR LEVER","DOWN",FlowItem.actorFO,0,
-	function () return sysGeneral.GearSwitch:getStatus() == modeOn end,
-	function () sysGeneral.GearSwitch:actuate(modeOn) end))
-electricalPowerUpProc:addItem(ProcedureItem:new("  GREEN LANDING GEAR LIGHT","CHECK ILLUMINATED",FlowItem.actorFO,0,
-	function () return sysGeneral.gearLightsAnc:getStatus() == modeOn end))
-electricalPowerUpProc:addItem(ProcedureItem:new("  RED LANDING GEAR LIGHT","CHECK EXTINGUISHED",FlowItem.actorFO,0,
-	function () return sysGeneral.gearLightsRed:getStatus() == modeOff end))
-electricalPowerUpProc:addItem(IndirectProcedureItem:new("TAKEOFF CONFIG WARNING","TEST",FlowItem.actorFO,3,"takeoff_config_warn",
-	function () return get("laminar/B738/system/takeoff_config_warn") > 0 end,
-	function () 
-		kc_procvar_set("toctest",true) -- background test
-	end))
-electricalPowerUpProc:addItem(SimpleProcedureItem:new("  Move thrust levers full forward and back to idle."))
+electricalPowerUpProc:addItem(SimpleProcedureItem:new("=== Batteries on"))
+electricalPowerUpProc:addItem(ProcedureItem:new("BAT 1","ON",FlowItem.actorFO,0,
+	function () return sysElectric.batterySwitch:getStatus() == 1 end,
+	function () sysElectric.batterySwitch:actuate(1) end))
+electricalPowerUpProc:addItem(ProcedureItem:new("BAT EMER 1","ON",FlowItem.actorFO,0,
+	function () return sysElectric.batemerg1:getStatus() == 1 end,
+	function () sysElectric.batemerg1:actuate(1) end))
+electricalPowerUpProc:addItem(ProcedureItem:new("BAT EMER 2","ON",FlowItem.actorFO,0,
+	function () return sysElectric.batemerg2:getStatus() == 1 end,
+	function () sysElectric.batemerg2:actuate(1) end))
+electricalPowerUpProc:addItem(ProcedureItem:new("BAT 2","ON",FlowItem.actorFO,0,
+	function () return sysElectric.battery2Switch:getStatus() == 1 end,
+	function () sysElectric.battery2Switch:actuate(1) end))
 
-electricalPowerUpProc:addItem(SimpleProcedureItem:new("==== Activate External Power",
+electricalPowerUpProc:addItem(SimpleProcedureItem:new("=== Activate External Power",
 	function () return activePrefSet:get("aircraft:powerup_apu") == true end))
-electricalPowerUpProc:addItem(SimpleProcedureItem:new("  Use Zibo EFB to turn Ground Power on.",
+electricalPowerUpProc:addItem(SimpleProcedureItem:new(" Activate external power in Ground Services menu",
 	function () return activePrefSet:get("aircraft:powerup_apu") == true end))
-electricalPowerUpProc:addItem(ProcedureItem:new("  #exchange|GRD|GROUND# POWER AVAILABLE LIGHT","ILLUMINATED",FlowItem.actorFO,0,
-	function () return sysElectric.gpuAvailAnc:getStatus() == modeOn end,
+electricalPowerUpProc:addItem(ProcedureItem:new("EXT PWR 1&2","CONNECTED",FlowItem.actorFO,0,
+	function () return 
+		sysElectric.gpu1Connect:getStatus() == 1 and 
+		sysElectric.gpu2Connect:getStatus() == 2 
+	end,
 	function () 
-		kc_macro_gpu_connect()
+		sysElectric.gpu1Connect:actuate(1)	
+		sysElectric.gpu2Connect:actuate(1)
 	end,
 	function () return activePrefSet:get("aircraft:powerup_apu") == true end))
-electricalPowerUpProc:addItem(ProcedureItem:new("  GROUND POWER SWITCH","ON",FlowItem.actorFO,0,
+electricalPowerUpProc:addItem(ProcedureItem:new("EXT PWR 1&2","ON BUS",FlowItem.actorFO,0,
 	function () return sysElectric.gpuOnBus:getStatus() == 1 end,
-	function () sysElectric.gpuSwitch:step(cmdDown) end,
+	function () 
+		sysElectric.gpuSwitch:actuate(1)	
+		sysElectric.gpu2Switch:actuate(1)
+	end,
 	function () return activePrefSet:get("aircraft:powerup_apu") == true end))
 
-electricalPowerUpProc:addItem(SimpleProcedureItem:new("==== Activate APU",
+electricalPowerUpProc:addItem(SimpleProcedureItem:new("=== Activate APU",
 	function () return activePrefSet:get("aircraft:powerup_apu") == false end))
+electricalPowerUpProc:addItem(ProcedureItem:new("APU FIRE PB-SW","GUARDED",FlowItem.actorFO,0,
+	function () return get("1-sim/38/cover") == 0 end,
+	function () set("1-sim/38/cover",0) end,
+	function () return activePrefSet:get("aircraft:powerup_apu") == false end))
+electricalPowerUpProc:addItem(ProcedureItem:new("APU AGENT LIGHT OFF","CHECK",FlowItem.actorFO,0,
+	function () return true end,nil,
+	function () return activePrefSet:get("aircraft:powerup_apu") == false end))
+electricalPowerUpProc:addItem(ProcedureItem:new("ENG 1 FIRE PB-SW","GUARDED",FlowItem.actorFO,0,
+	function () return get("1-sim/37/cover") == 0 end,
+	function () set("1-sim/37/cover",0) end,
+	function () return activePrefSet:get("aircraft:powerup_apu") == false end))
+electricalPowerUpProc:addItem(ProcedureItem:new("ENG 2 FIRE PB-SW","GUARDED",FlowItem.actorFO,0,
+	function () return get("1-sim/39/cover") == 0 end,
+	function () set("1-sim/39/cover",0) end,
+	function () return activePrefSet:get("aircraft:powerup_apu") == false end))
+electricalPowerUpProc:addItem(ProcedureItem:new("ALL AGENT LIGHTS OFF","CHECK",FlowItem.actorFO,0,
+	function () return true end,nil,
+	function () return activePrefSet:get("aircraft:powerup_apu") == false end))
+electricalPowerUpProc:addItem(ProcedureItem:new("TEST PB","PUSH",FlowItem.actorFO,0,
+	function () return get("1-sim/fire/test") == 1 end,
+	function () set("1-sim/fire/test",1) end,
+	function () return activePrefSet:get("aircraft:powerup_apu") == false end))
+electricalPowerUpProc:addItem(HoldProcedureItem:new("RESULT","CHECK",FlowItem.actorFO,0,true,
+	function () return activePrefSet:get("aircraft:powerup_apu") == false end))
+electricalPowerUpProc:addItem(SimpleProcedureItem:new("- continuous repetitive chime sounds",
+	function () return activePrefSet:get("aircraft:powerup_apu") == false end))
+electricalPowerUpProc:addItem(SimpleProcedureItem:new("- master warning light flash",
+	function () return activePrefSet:get("aircraft:powerup_apu") == false end))
+electricalPowerUpProc:addItem(SimpleProcedureItem:new("- ECAM red alert ENG 1(2) FIRE, APU FIRE",
+	function () return activePrefSet:get("aircraft:powerup_apu") == false end))
+electricalPowerUpProc:addItem(SimpleProcedureItem:new("- all ENG and APU PB-SW red",
+	function () return activePrefSet:get("aircraft:powerup_apu") == false end))
+electricalPowerUpProc:addItem(SimpleProcedureItem:new("- all DISCH lights on",
+	function () return activePrefSet:get("aircraft:powerup_apu") == false end))
+electricalPowerUpProc:addItem(SimpleProcedureItem:new("- ALL FIRE lights on ENG MASTER on",
+	function () return activePrefSet:get("aircraft:powerup_apu") == false end))
+electricalPowerUpProc:addItem(ProcedureItem:new("APU AVAIL","CONFIRM",FlowItem.actorFO,0,
+	function () return get("sim/cockpit/engine/APU_N1") > 0.97 end,nil,
+	function () return activePrefSet:get("aircraft:powerup_apu") == false end))
+electricalPowerUpProc:addItem(HoldProcedureItem:new("ELECTRICAL POWER UP","CONFIRM",FlowItem.actorFO,0,true))
+
+
+
+
 electricalPowerUpProc:addItem(ProcedureItem:new("  OVHT DET SWITCH","NORMAL",FlowItem.actorFO,0,true,
 	function () sysElectric.gpuSwitch:step(cmdUp) end,
 	function () return activePrefSet:get("aircraft:powerup_apu") == false end))
@@ -227,6 +821,47 @@ electricalPowerUpProc:addItem(ProcedureItem:new("  #spell|APU# GENERATOR BUS SWI
 	function () return sysElectric.apuGenBusOff:getStatus() == 0 end,
 	function () sysElectric.apuGenBus1:actuate(1) sysElectric.apuGenBus2:actuate(1) end,
 	function () return activePrefSet:get("aircraft:powerup_apu") == false end))
+
+--   APU MASTER SW..................................ON       .1-sim/125/button.=.1
+--   APU PAGE ON SD..............................CHECK
+--   APU START PB...................................ON       .1-sim/126/button.=.1
+--     wait for APU AVAIL sign
+--   APU AVAIL.................................CONFIRM       .sim/cockpit/engine/APU_N1.>.97
+--   ELECTRICAL POWER UP.......................CONFIRM
+
+
+
+electricalPowerUpProc:addItem(SimpleProcedureItem:new("==== Hydraulic System"))
+electricalPowerUpProc:addItem(ProcedureItem:new("ELECTRIC HYDRAULIC PUMPS SWITCHES","OFF",FlowItem.actorFO,0,
+	function () return sysHydraulic.elecHydPumpGroup:getStatus() == 0 end,
+	function () kc_macro_hydraulic_initial() end))
+electricalPowerUpProc:addItem(ProcedureItem:new("ALTERNATE FLAPS MASTER SWITCH","GUARD CLOSED",FlowItem.actorFO,0,
+	function () return sysControls.altFlapsCover:getStatus() == 0 end,
+	function () sysControls.altFlapsCover:actuate(0) end))
+electricalPowerUpProc:addItem(IndirectProcedureItem:new("FLAP LEVER","UP",FlowItem.actorFO,0,"initial_flap_lever",
+	function () return sysControls.flapsSwitch:getStatus() == 0 end))
+electricalPowerUpProc:addItem(SimpleProcedureItem:new("  Ensure flap lever agrees with indicated flap position."))
+electricalPowerUpProc:addItem(SimpleProcedureItem:new("  In Cold&Dark in SIM this is the UP position."))
+
+electricalPowerUpProc:addItem(SimpleProcedureItem:new("==== Other"))
+electricalPowerUpProc:addItem(ProcedureItem:new("WINDSHIELD WIPER SELECTORS","PARK",FlowItem.actorFO,0,
+	function () return sysGeneral.wiperGroup:getStatus() == 0 end,
+	function () sysGeneral.wiperGroup:actuate(modeOff) end))
+electricalPowerUpProc:addItem(ProcedureItem:new("LANDING GEAR LEVER","DOWN",FlowItem.actorFO,0,
+	function () return sysGeneral.GearSwitch:getStatus() == modeOn end,
+	function () sysGeneral.GearSwitch:actuate(modeOn) end))
+electricalPowerUpProc:addItem(ProcedureItem:new("  GREEN LANDING GEAR LIGHT","CHECK ILLUMINATED",FlowItem.actorFO,0,
+	function () return sysGeneral.gearLightsAnc:getStatus() == modeOn end))
+electricalPowerUpProc:addItem(ProcedureItem:new("  RED LANDING GEAR LIGHT","CHECK EXTINGUISHED",FlowItem.actorFO,0,
+	function () return sysGeneral.gearLightsRed:getStatus() == modeOff end))
+electricalPowerUpProc:addItem(IndirectProcedureItem:new("TAKEOFF CONFIG WARNING","TEST",FlowItem.actorFO,3,"takeoff_config_warn",
+	function () return get("laminar/B738/system/takeoff_config_warn") > 0 end,
+	function () 
+		kc_procvar_set("toctest",true) -- background test
+	end))
+electricalPowerUpProc:addItem(SimpleProcedureItem:new("  Move thrust levers full forward and back to idle."))
+
+
 
 electricalPowerUpProc:addItem(SimpleProcedureItem:new("==== "))
 electricalPowerUpProc:addItem(ProcedureItem:new("TRANSFER BUS LIGHTS","CHECK EXTINGUISHED",FlowItem.actorFO,0,
@@ -917,19 +1552,13 @@ preflightFOProc:addItem(ProcedureItem:new("METERS SWITCH","%s|(activePrefSet:get
 	end))
 
 preflightFOProc:addItem(ProcedureItem:new("BAROMETRIC REFERENCE SELECTOR","%s|(activePrefSet:get(\"general:baro_mode_hpa\")) and \"HPA\" or \"IN\"",FlowItem.actorFO,0,
-	function () 
-		return sysGeneral.baroModeGroup:getStatus() == (activePrefSet:get("general:baro_mode_hpa") == true and 3 or 0) 
-	end,
-	function () 
-		kc_macro_set_pref_baro_mode()
-	end))
+	function () return sysGeneral.baroModeGroup:getStatus() == (activePrefSet:get("general:baro_mode_hpa") == true and 3 or 0) end,
+	function () if activePrefSet:get("general:baro_mode_hpa") then sysGeneral.baroModeGroup:actuate(1) else sysGeneral.baroModeGroup:actuate(0) end end))
 preflightFOProc:addItem(ProcedureItem:new("BAROMETRIC SELECTORS TO LOCAL","%s|kc_getQNHString(kc_metar_local)",FlowItem.actorFO,0,
-	function () 
-		return kc_macro_test_local_baro()
-	end,
-	function () 
-		kc_macro_set_local_baro()
-	end))
+	function () return get("laminar/B738/EFIS/baro_sel_in_hg_pilot") == math.ceil(get("sim/weather/barometer_sealevel_inhg")*100)/100 and 
+		get("laminar/B738/EFIS/baro_sel_in_hg_copilot") == math.ceil(get("sim/weather/barometer_sealevel_inhg")*100)/100 end,
+	function () set("laminar/B738/EFIS/baro_sel_in_hg_pilot",math.ceil(get("sim/weather/barometer_sealevel_inhg")*100)/100)
+				set("laminar/B738/EFIS/baro_sel_in_hg_copilot",math.ceil(get("sim/weather/barometer_sealevel_inhg")*100)/100) end))
 
 preflightFOProc:addItem(ProcedureItem:new("VOR/ADF SWITCHES","AS NEEDED",FlowItem.actorFO,0,
 	function () return sysEFIS.voradf1Copilot:getStatus() == 1 and sysEFIS.voradf2Copilot:getStatus() == 1 end,
@@ -1090,15 +1719,13 @@ preflightCPTProc:addItem(ProcedureItem:new("FLIGHT PATH VECTOR","%s|(activePrefS
 		sysEFIS.fpvPilot:actuate(flag) 
 	end))
 preflightCPTProc:addItem(ProcedureItem:new("BAROMETRIC REFERENCE SELECTOR","%s|(activePrefSet:get(\"general:baro_mode_hpa\")) and \"HPA\" or \"IN\"",FlowItem.actorCPT,0,
-	function () 
-		return sysGeneral.baroModeGroup:getStatus() == (activePrefSet:get("general:baro_mode_hpa") == true and 3 or 0) 
-	end,
-	function () 
-		kc_macro_set_pref_baro_mode()
-	end))
+	function () return sysGeneral.baroModeGroup:getStatus() == (activePrefSet:get("general:baro_mode_hpa") == true and 3 or 0) end,
+	function () if activePrefSet:get("general:baro_mode_hpa") then sysGeneral.baroModeGroup:actuate(1) else sysGeneral.baroModeGroup:actuate(0) end end))
 preflightCPTProc:addItem(ProcedureItem:new("BAROMETRIC SELECTORS TO LOCAL","%s|kc_getQNHString(kc_metar_local)",FlowItem.actorFO,0,
-	function () return kc_macro_test_local_baro() end,
-	function () kc_macro_set_local_baro() end))
+	function () return get("laminar/B738/EFIS/baro_sel_in_hg_pilot") == math.ceil(get("sim/weather/barometer_sealevel_inhg")*100)/100 and 
+		get("laminar/B738/EFIS/baro_sel_in_hg_copilot") == math.ceil(get("sim/weather/barometer_sealevel_inhg")*100)/100 end,
+	function () set("laminar/B738/EFIS/baro_sel_in_hg_pilot",math.ceil(get("sim/weather/barometer_sealevel_inhg")*100)/100)
+				set("laminar/B738/EFIS/baro_sel_in_hg_copilot",math.ceil(get("sim/weather/barometer_sealevel_inhg")*100)/100) end))
 				
 preflightCPTProc:addItem(ProcedureItem:new("VOR/ADF SWITCHES","VOR",FlowItem.actorCPT,0,
 	function () return sysEFIS.voradf1Pilot:getStatus() == 1 and sysEFIS.voradf2Pilot:getStatus() == 1 end,
@@ -1659,7 +2286,7 @@ beforeTaxiProc:addItem(ProcedureItem:new("ISOLATION VALVE SWITCH","AUTO",FlowIte
 	function () return sysAir.isoValveSwitch:getStatus() == sysAir.isoVlvAuto end))
 beforeTaxiProc:addItem(ProcedureItem:new("APU BLEED AIR SWITCH","OFF",FlowItem.actorFO,0,
 	function () return sysAir.apuBleedSwitch:getStatus() == 0 end,
-	function () sysAir.apuBleedSwitch:actuate(0) end))
+	function () kc_macro_bleeds_on() end))
 beforeTaxiProc:addItem(ProcedureItem:new("APU SWITCH","OFF",FlowItem.actorFO,0,
 	function () return sysElectric.apuStartSwitch:getStatus() == 0 end,
 	function () command_once("laminar/B738/spring_toggle_switch/APU_start_pos_up") end))
@@ -1676,7 +2303,7 @@ beforeTaxiProc:addItem(ProcedureItem:new("FLAP LEVER","SET TAKEOFF FLAPS %s|kc_p
 beforeTaxiProc:addItem(ProcedureItem:new("LE FLAPS EXT GREEN LIGHT","ILLUMINATED",FlowItem.actorFO,0,
 	function () return get("laminar/B738/annunciator/slats_extend") == 1 end))
 
-beforeTaxiProc:addItem(IndirectProcedureItem:new("FLIGHT CONTROLS","CHECKED",FlowItem.actorBOTH,0,"fccheck",
+beforeTaxiProc:addItem(IndirectProcedureItem:new("FLIGHT CONTROLS","CHECK",FlowItem.actorBOTH,0,"fccheck",
 	function () return get("sim/flightmodel2/wing/rudder1_deg") > 18 end,
 	function () 
 		kc_macro_b738_lowerdu_sys()
@@ -1845,7 +2472,7 @@ runwayEntryProc:addItem(ProcedureItem:new("PACKS & BLEEDS","SET",FlowItem.actorF
 -- ======================================================
 
 --chrono
-local takeoffClimbProc = Procedure:new("TAKEOFF & INITIAL CLIMB","")
+local takeoffClimbProc = Procedure:new("TAKEOFF & INITIAL CLIMB","takeoff")
 takeoffClimbProc:setFlightPhase(8)
 takeoffClimbProc:addItem(ProcedureItem:new("EXTERNAL LIGHTS","SET",FlowItem.actorFO,0,true,
 	function () kc_macro_ext_lights_takeoff() end))
@@ -1884,42 +2511,113 @@ takeoffClimbProc:addItem(IndirectProcedureItem:new("POSITIVE RATE","GT 40 FT AGL
 takeoffClimbProc:addItem(HoldProcedureItem:new("GEAR","COMMAND UP",FlowItem.actorPF))
 takeoffClimbProc:addItem(IndirectProcedureItem:new("GEAR","UP",FlowItem.actorPF,0,"gear_up_to",
 	function () return sysGeneral.GearSwitch:getStatus() == 0 end,
-	function () 
-		sysGeneral.GearSwitch:actuate(0) 
-		kc_speakNoText(0,"gear coming up") 
-		kc_procvar_set("above10k",true) -- background 10.000 ft activities
-		kc_procvar_set("attransalt",true) -- background transition altitude activities
-	end))
--- flaps schedule
+	function () sysGeneral.GearSwitch:actuate(0) kc_speakNoText(0,"gear up") end))
+-- takeoffClimbProc:addItem(IndirectProcedureItem:new("FLAPS 15 SPEED","REACHED",FlowItem.actorPNF,0,"toflap15spd",
+	-- function () return get("sim/cockpit2/gauges/indicators/airspeed_kts_pilot") > get("laminar/B738/pfd/flaps_15")-5 end,nil,
+	-- function () return sysControls.flapsSwitch:getStatus() < 0.625 end))
 takeoffClimbProc:addItem(HoldProcedureItem:new("FLAPS 10","COMMAND",FlowItem.actorPF,nil,
 	function () return sysControls.flapsSwitch:getStatus() < 0.625 end))
-takeoffClimbProc:addItem(ProcedureItem:new("FLAPS 10","SET",FlowItem.actorPNF,0,true,
+takeoffClimbProc:addItem(ProcedureItem:new("FLAPS 10","SET",FlowItem.actorPNF,0,
+	function () return sysControls.flapsSwitch:getStatus() == 0.5 end,
 	function () command_once("laminar/B738/push_button/flaps_10") kc_speakNoText(0,"speed check flaps 10") end,
-	function () return sysControls.flapsSwitch:getStatus() < 0.625 end))
+	function () return sysControls.flapsSwitch:getStatus() < 0.5 end))
+-- takeoffClimbProc:addItem(IndirectProcedureItem:new("FLAPS 10 SPEED","REACHED",FlowItem.actorPNF,0,"toflap10spd",
+	-- function () return get("sim/cockpit2/gauges/indicators/airspeed_kts_pilot") > get("laminar/B738/pfd/flaps_10")-5 end,nil,
+	-- function () return sysControls.flapsSwitch:getStatus() < 0.5 end))
 takeoffClimbProc:addItem(HoldProcedureItem:new("FLAPS 5","COMMAND",FlowItem.actorPF,nil,
 	function () return sysControls.flapsSwitch:getStatus() < 0.5 end))
-takeoffClimbProc:addItem(ProcedureItem:new("FLAPS 5","SET",FlowItem.actorPNF,0,true,
+takeoffClimbProc:addItem(ProcedureItem:new("FLAPS 5","SET",FlowItem.actorPNF,0,
+	function () return sysControls.flapsSwitch:getStatus() == 0.375 end,
 	function () command_once("laminar/B738/push_button/flaps_5") kc_speakNoText(0,"speed check flaps 5") end,
-	function () return sysControls.flapsSwitch:getStatus() < 0.5 end))
-takeoffClimbProc:addItem(HoldProcedureItem:new("FLAPS 1","COMMAND",FlowItem.actorPF))
-takeoffClimbProc:addItem(ProcedureItem:new("FLAPS 1","SET",FlowItem.actorPNF,0,true,
-	function () command_once("laminar/B738/push_button/flaps_1") kc_speakNoText(0,"speed check flaps 1") end))
-takeoffClimbProc:addItem(HoldProcedureItem:new("FLAPS UP","COMMAND",FlowItem.actorPF))
-takeoffClimbProc:addItem(ProcedureItem:new("FLAPS UP","SET",FlowItem.actorPNF,0,true,
+	function () return sysControls.flapsSwitch:getStatus() < 0.375 end))
+-- takeoffClimbProc:addItem(IndirectProcedureItem:new("FLAPS 5 SPEED","REACHED",FlowItem.actorPNF,0,"toflap5spd",
+	-- function () return get("sim/cockpit2/gauges/indicators/airspeed_kts_pilot") > get("laminar/B738/pfd/flaps_5")-5 end,nil,
+	-- function () return sysControls.flapsSwitch:getStatus() < 0.375 end))
+takeoffClimbProc:addItem(HoldProcedureItem:new("FLAPS 1","COMMAND",FlowItem.actorPF,nil,
+	function () return sysControls.flapsSwitch:getStatus() < 0.375 end))
+takeoffClimbProc:addItem(ProcedureItem:new("FLAPS 1","SET",FlowItem.actorPNF,0,
+	function () return sysControls.flapsSwitch:getStatus() == 0.125 end,
+	function () command_once("laminar/B738/push_button/flaps_1") kc_speakNoText(0,"speed check flaps 1") end,
+	function () return sysControls.flapsSwitch:getStatus() < 0.125 end))
+-- takeoffClimbProc:addItem(IndirectProcedureItem:new("FLAPS 1 SPEED","REACHED",FlowItem.actorPNF,0,"toflap1spd",
+	-- function () return get("sim/cockpit2/gauges/indicators/airspeed_kts_pilot") > get("laminar/B738/pfd/flaps_1")-5 end))
+takeoffClimbProc:addItem(HoldProcedureItem:new("FLAPS UP","COMMAND",FlowItem.actorPF,nil,
+	function () return sysControls.flapsSwitch:getStatus() < 0.125 end))
+takeoffClimbProc:addItem(ProcedureItem:new("FLAPS UP","SET",FlowItem.actorPNF,0,
+	function () return sysControls.flapsSwitch:getStatus() == 0 end,
 	function () command_once("laminar/B738/push_button/flaps_0") kc_speakNoText(0,"speed check flaps up") end))
---
-takeoffClimbProc:addItem(HoldProcedureItem:new("CMD-A","COMMAND ON",FlowItem.actorPF))
-takeoffClimbProc:addItem(ProcedureItem:new("CMD-A","ON",FlowItem.actorPNF,0,true,
-	function () 
-		sysMCP.ap1Switch:actuate(1) 
-		kc_speakNoText(0,"command a") 
-	end))
+takeoffClimbProc:addItem(IndirectProcedureItem:new("ACCELERATION ALTITUDE","GT 300 FT AGL",FlowItem.actorPNF,0,"toaccalt",
+	function () return get("sim/flightmodel/position/y_agl") > 300 end))
+takeoffClimbProc:addItem(ProcedureItem:new("CMD-A","ON",FlowItem.actorPF,0,
+	function () return sysMCP.ap1Switch:getStatus() == 1 end,
+	function () if activePrefSet:get("takeoff_cmda") == true then sysMCP.ap1Switch:actuate(1) end kc_speakNoText(0,"command a") end))
 takeoffClimbProc:addItem(ProcedureItem:new("AUTO BRAKE SELECT SWITCH","OFF",FlowItem.actorFO,0,
 	function () return sysGeneral.autobrake:getStatus() == 1 end,
 	function () command_once("laminar/B738/knob/autobrake_off") end))
 takeoffClimbProc:addItem(ProcedureItem:new("GEAR","OFF",FlowItem.actorPF,0,
 	function () return sysGeneral.GearSwitch:getStatus() == 0.5 end,
 	function () command_once("laminar/B738/push_button/gear_off") end))
+	
+takeoffClimbProc:addItem(IndirectProcedureItem:new("TRANSITION ALTITUDE","REACHED",FlowItem.actorPF,0,"to_trans_alt",
+	function () return get("sim/cockpit2/gauges/indicators/altitude_ft_pilot") > activeBriefings:get("departure:transalt") end,nil,
+	function () return activeBriefings:get("departure:transalt") > 10000 end))
+takeoffClimbProc:addItem(IndirectProcedureItem:new("ALTIMETERS","STD",FlowItem.actorPF,0,"to_altimeters",
+	function () return get("laminar/B738/EFIS/baro_set_std_pilot") == 1 and get("laminar/B738/EFIS/baro_set_std_copilot") == 1 end,
+	function () 
+	    kc_speakNoText(0,"transition altitude")
+		if get("laminar/B738/EFIS/baro_set_std_pilot") == 0 then 
+			command_once("laminar/B738/EFIS_control/capt/push_button/std_press")
+		end
+		if get("laminar/B738/EFIS/baro_set_std_copilot") == 0 then 
+			command_once("laminar/B738/EFIS_control/fo/push_button/std_press")
+		end
+	end,
+	function () return activeBriefings:get("departure:transalt") > 10000 end))
+
+takeoffClimbProc:addItem(IndirectProcedureItem:new("10.000 FT","REACHED",FlowItem.actorPF,0,"to_10000",
+	function () return get("sim/cockpit2/gauges/indicators/altitude_ft_pilot") > 10000 end,nil,
+	function () return activeBriefings:get("departure:transalt") <= 10000 end))
+takeoffClimbProc:addItem(ProcedureItem:new("EXTERNAL LIGHTS","SET",FlowItem.actorPM,0,true,
+	function () kc_macro_ext_lights_above10()  kc_speakNoText(0,"ten thousand") end,
+	function () return activeBriefings:get("departure:transalt") <= 10000 end))
+
+takeoffClimbProc:addItem(ProcedureItem:new("FASTEN BELTS SWITCH","OFF",FlowItem.actorPM,0,
+	function () return sysGeneral.seatBeltSwitch:getStatus() == 0 end,
+	function () 
+		command_once("laminar/B738/toggle_switch/seatbelt_sign_up") 
+		command_once("laminar/B738/toggle_switch/seatbelt_sign_up") 
+	end,
+	function () return activeBriefings:get("departure:transalt") <= 10000 end))
+
+takeoffClimbProc:addItem(IndirectProcedureItem:new("10.000 FT","REACHED",FlowItem.actorPF,0,"to_10000",
+	function () return get("sim/cockpit2/gauges/indicators/altitude_ft_pilot") > 10000 end,nil,
+	function () return activeBriefings:get("departure:transalt") > 10000 end))
+takeoffClimbProc:addItem(ProcedureItem:new("EXTERNAL LIGHTS","SET",FlowItem.actorPM,0,true,
+	function () kc_macro_ext_lights_above10()  kc_speakNoText(0,"ten thousand") end,
+	function () return activeBriefings:get("departure:transalt") <= 10000 end))
+takeoffClimbProc:addItem(ProcedureItem:new("FASTEN BELTS SWITCH","OFF",FlowItem.actorPM,0,
+	function () return sysGeneral.seatBeltSwitch:getStatus() == 0 end,
+	function () 
+		command_once("laminar/B738/toggle_switch/seatbelt_sign_up") 
+		command_once("laminar/B738/toggle_switch/seatbelt_sign_up") 
+	end,
+	function () return activeBriefings:get("departure:transalt") > 10000 end))
+
+takeoffClimbProc:addItem(IndirectProcedureItem:new("TRANSITION ALTITUDE","REACHED",FlowItem.actorPF,0,"to_trans_alt",
+	function () return get("sim/cockpit2/gauges/indicators/altitude_ft_pilot") > activeBriefings:get("departure:transalt") end,nil,
+	function () return activeBriefings:get("departure:transalt") <= 10000 end))
+takeoffClimbProc:addItem(IndirectProcedureItem:new("ALTIMETERS","STD",FlowItem.actorPF,0,"to_altimeters",
+	function () return get("laminar/B738/EFIS/baro_set_std_pilot") == 1 and get("laminar/B738/EFIS/baro_set_std_copilot") == 1 end,
+	function () 
+	    kc_speakNoText(0,"transition altitude")
+		if get("laminar/B738/EFIS/baro_set_std_pilot") == 0 then 
+			command_once("laminar/B738/EFIS_control/capt/push_button/std_press")
+		end
+		if get("laminar/B738/EFIS/baro_set_std_copilot") == 0 then 
+			command_once("laminar/B738/EFIS_control/fo/push_button/std_press")
+		end
+	end,
+	function () return activeBriefings:get("departure:transalt") <= 10000 end))
 takeoffClimbProc:addItem(ProcedureItem:new("ENGINE START SWITCHES","OFF",FlowItem.actorPM,0,
 	function () return sysEngines.engStarterGroup:getStatus() == 2 end,
 	function () sysEngines.engStarterGroup:actuate(1) end))
@@ -1990,7 +2688,15 @@ descentProc:addItem(SimpleProcedureItem:new("Set or verify the navigation radios
 descentProc:addItem(ProcedureItem:new("AUTO BRAKE SELECT SWITCH","%s|kc_pref_split(kc_LandingAutoBrake)[activeBriefings:get(\"approach:autobrake\")]",FlowItem.actorPM,0,
 	function () return sysGeneral.autobrake:getStatus() == activeBriefings:get("approach:autobrake") end,
 	function () 
-		kc_macro_b738_set_autobrake()
+		if activeBriefings:get("approach:autobrake") == 2 then
+			command_once("laminar/B738/knob/autobrake_1")
+		elseif activeBriefings:get("approach:autobrake") == 3 then
+			command_once("laminar/B738/knob/autobrake_2")
+		elseif activeBriefings:get("approach:autobrake") == 4 then
+			command_once("laminar/B738/knob/autobrake_3")
+		elseif activeBriefings:get("approach:autobrake") == 5 then
+			command_once("laminar/B738/knob/autobrake_max")
+		end
 	end))
 
 -- =============== DESCENT CHECKLIST (PM) ===============
@@ -2009,7 +2715,7 @@ descentChkl:addItem(ChecklistItem:new("#exchange|PRESSURIZATION|descent checklis
 descentChkl:addItem(ChecklistItem:new("RECALL","CHECKED",FlowItem.actorBOTH,0,
 	function() return sysGeneral.annunciators:getStatus() == 0 end,
 	function() command_once("laminar/B738/push_button/capt_six_pack") end))
-descentChkl:addItem(ChecklistItem:new("AUTOBRAKE","%s|kc_pref_split(kc_LandingAutoBrake)[activeBriefings:get(\"approach:autobrake\")]",FlowItem.actorPM,0))
+descentChkl:addItem(ChecklistItem:new("AUTOBRAKE","%s|kc_pref_split(kc_LandingAutoBrake)[activeBriefings:get(\"approach:autobrake\")]",FlowItem.actorPM,1))
 descentChkl:addItem(ChecklistItem:new("LANDING DATA","VREF %i, MINIMUMS %i|activeBriefings:get(\"approach:vref\")|activeBriefings:get(\"approach:decision\")",FlowItem.actorBOTH,0,
 	function () return get("laminar/B738/FMS/vref") ~= 0 and math.floor(sysEFIS.minsPilot:getStatus()) == activeBriefings:get("approach:decision") end,
 	function () 
@@ -2034,15 +2740,119 @@ descentChkl:addItem(ChecklistItem:new("APPROACH BRIEFING","COMPLETED",FlowItem.a
 
 local arrivalProc = Procedure:new("ARRIVAL PROCEDURE","","ready for approach checklist")
 arrivalProc:setFlightPhase(12)
-arrivalProc:addItem(ProcedureItem:new("F/O MONITORS TRANS LVL AND 10000 FT","CHECK",FlowItem.actorPM,0,true,
+
+arrivalProc:addItem(IndirectProcedureItem:new("10.000 FT","ANNOUNCE REACHED",FlowItem.actorPM,0,"ldg_10000",
+	function () return get("sim/cockpit2/gauges/indicators/altitude_ft_pilot") <= 10000 end,nil,
+	function () return activeBriefings:get("arrival:translvl") > 100 end))
+arrivalProc:addItem(ProcedureItem:new("EXTERNAL LIGHTS","SET",FlowItem.actorPM,0,true,
+	function () kc_macro_ext_lights_below10() kc_speakNoText(0,"ten thousand") end,
+	function () return activeBriefings:get("arrival:translvl") > 100 end))
+arrivalProc:addItem(ProcedureItem:new("FASTEN BELTS SWITCH","ON",FlowItem.actorPM,0,
+	function () return sysGeneral.seatBeltSwitch:getStatus() > 0 end,
 	function () 
-		kc_procvar_set("below10k",true) -- background 10.000 ft activities
-		kc_procvar_set("attranslvl",true) -- background transition level activities
-	end))
+		command_once("laminar/B738/toggle_switch/seatbelt_sign_up") 
+		command_once("laminar/B738/toggle_switch/seatbelt_sign_up") 
+		command_once("laminar/B738/toggle_switch/seatbelt_sign_dn") 
+	end,
+	function () return activeBriefings:get("arrival:translvl") > 100 end))
+
+arrivalProc:addItem(IndirectProcedureItem:new("TRANSITION LEVEL","ANNOUNCE REACHED",FlowItem.actorPM,0,"ldg_trans_lvl",
+	function () return get("sim/cockpit2/gauges/indicators/altitude_ft_pilot") < activeBriefings:get("arrival:translvl")*100 end,nil,
+	function () return activeBriefings:get("arrival:translvl") <= 100 end))
+arrivalProc:addItem(IndirectProcedureItem:new("ALTIMETERS","QNH %s |activeBriefings:get(\"arrival:atisQNH\")",FlowItem.actorBOTH,0,"ldg_altimeters",
+	function () 
+		if activeBriefings:get("arrival:atisQNH") ~= "" then
+			if activePrefSet:get("general:baro_mode_hpa") then
+				return 	get("laminar/B738/EFIS/baro_sel_in_hg_pilot") == tonumber(activeBriefings:get("arrival:atisQNH")) * 0.02952999 and 
+						get("laminar/B738/EFIS/baro_sel_in_hg_copilot") == tonumber(activeBriefings:get("arrival:atisQNH")) * 0.02952999
+			else
+				return 	get("laminar/B738/EFIS/baro_sel_in_hg_pilot") == tonumber(activeBriefings:get("arrival:atisQNH")) and 
+						get("laminar/B738/EFIS/baro_sel_in_hg_copilot") == tonumber(activeBriefings:get("arrival:atisQNH"))
+			end
+		end
+	end,
+	function () 
+	    kc_speakNoText(0,"transition level")
+		if get("laminar/B738/EFIS/baro_set_std_pilot") == 1 then 
+			command_once("laminar/B738/EFIS_control/capt/push_button/std_press")
+		end
+		if get("laminar/B738/EFIS/baro_set_std_copilot") == 1 then 
+			command_once("laminar/B738/EFIS_control/fo/push_button/std_press")
+		end
+		if activeBriefings:get("arrival:atisQNH") ~= "" then
+			if activePrefSet:get("general:baro_mode_hpa") then
+				set("laminar/B738/EFIS/baro_sel_in_hg_pilot", tonumber(activeBriefings:get("arrival:atisQNH")) * 0.02952999)
+				set("laminar/B738/EFIS/baro_sel_in_hg_copilot", tonumber(activeBriefings:get("arrival:atisQNH")) * 0.02952999) 
+			else
+				set("laminar/B738/EFIS/baro_sel_in_hg_pilot", tonumber(activeBriefings:get("arrival:atisQNH")))
+				set("laminar/B738/EFIS/baro_sel_in_hg_copilot", tonumber(activeBriefings:get("arrival:atisQNH")))
+			end
+		end
+	end,
+	function () return activeBriefings:get("arrival:translvl") <= 100 end))
+
+arrivalProc:addItem(IndirectProcedureItem:new("TRANSITION LEVEL","ANNOUNCE REACHED",FlowItem.actorPM,0,"ldg_trans_lvl",
+	function () return get("sim/cockpit2/gauges/indicators/altitude_ft_pilot") < activeBriefings:get("arrival:translvl")*100 end,nil,
+	function () return activeBriefings:get("arrival:translvl") > 100 end))
+arrivalProc:addItem(IndirectProcedureItem:new("ALTIMETERS","QNH %s |activeBriefings:get(\"arrival:atisQNH\")",FlowItem.actorBOTH,0,"ldg_altimeters",
+	function () 
+		if activeBriefings:get("arrival:atisQNH") ~= "" then
+			if activePrefSet:get("general:baro_mode_hpa") then
+				return 	get("laminar/B738/EFIS/baro_sel_in_hg_pilot") == tonumber(activeBriefings:get("arrival:atisQNH")) * 0.02952999 and 
+						get("laminar/B738/EFIS/baro_sel_in_hg_copilot") == tonumber(activeBriefings:get("arrival:atisQNH")) * 0.02952999
+			else
+				return 	get("laminar/B738/EFIS/baro_sel_in_hg_pilot") == tonumber(activeBriefings:get("arrival:atisQNH")) and 
+						get("laminar/B738/EFIS/baro_sel_in_hg_copilot") == tonumber(activeBriefings:get("arrival:atisQNH"))
+			end
+		end
+	end,
+	function () 
+	    kc_speakNoText(0,"transition level")
+		if get("laminar/B738/EFIS/baro_set_std_pilot") == 1 then 
+			command_once("laminar/B738/EFIS_control/capt/push_button/std_press")
+		end
+		if get("laminar/B738/EFIS/baro_set_std_copilot") == 1 then 
+			command_once("laminar/B738/EFIS_control/fo/push_button/std_press")
+		end
+		if activeBriefings:get("arrival:atisQNH") ~= "" then
+			if activePrefSet:get("general:baro_mode_hpa") then
+				set("laminar/B738/EFIS/baro_sel_in_hg_pilot", tonumber(activeBriefings:get("arrival:atisQNH")) * 0.02952999)
+				set("laminar/B738/EFIS/baro_sel_in_hg_copilot", tonumber(activeBriefings:get("arrival:atisQNH")) * 0.02952999) 
+			else
+				set("laminar/B738/EFIS/baro_sel_in_hg_pilot", tonumber(activeBriefings:get("arrival:atisQNH")))
+				set("laminar/B738/EFIS/baro_sel_in_hg_copilot", tonumber(activeBriefings:get("arrival:atisQNH")))
+			end
+		end
+	end,
+	function () return activeBriefings:get("arrival:translvl") > 100 end))
+
+arrivalProc:addItem(IndirectProcedureItem:new("10.000 FT","ANNOUNCE REACHED",FlowItem.actorPM,0,"ldg_10000",
+	function () return get("sim/cockpit2/gauges/indicators/altitude_ft_pilot") <= 10000 end,nil,
+	function () return activeBriefings:get("arrival:translvl") <= 100 end))
+arrivalProc:addItem(ProcedureItem:new("EXTERNAL LIGHTS","SET",FlowItem.actorPM,0,true,
+	function () kc_macro_ext_lights_below10() kc_speakNoText(0,"ten thousand") end,
+	function () return activeBriefings:get("arrival:translvl") > 100 end))
+arrivalProc:addItem(ProcedureItem:new("FASTEN BELTS SWITCH","ON",FlowItem.actorPM,0,
+	function () return sysGeneral.seatBeltSwitch:getStatus() > 0 end,
+	function () 
+		command_once("laminar/B738/toggle_switch/seatbelt_sign_up") 
+		command_once("laminar/B738/toggle_switch/seatbelt_sign_up") 
+		command_once("laminar/B738/toggle_switch/seatbelt_sign_dn") 
+	end,
+	function () return activeBriefings:get("arrival:translvl") <= 100 end))
+
 arrivalProc:addItem(ProcedureItem:new("AUTO BRAKE SELECT SWITCH","%s|kc_pref_split(kc_LandingAutoBrake)[activeBriefings:get(\"approach:autobrake\")]",FlowItem.actorFO,0,
 	function () return sysGeneral.autobrake:getStatus() == activeBriefings:get("approach:autobrake") end,
 	function () 
-		kc_macro_b738_set_autobrake()
+		if activeBriefings:get("approach:autobrake") == 2 then
+			command_once("laminar/B738/knob/autobrake_1")
+		elseif activeBriefings:get("approach:autobrake") == 3 then
+			command_once("laminar/B738/knob/autobrake_2")
+		elseif activeBriefings:get("approach:autobrake") == 4 then
+			command_once("laminar/B738/knob/autobrake_3")
+		elseif activeBriefings:get("approach:autobrake") == 5 then
+			command_once("laminar/B738/knob/autobrake_max")
+		end
 	end))
 arrivalProc:addItem(ProcedureItem:new("LOGO LIGHT SWITCH","%s|(kc_is_daylight()) and \"OFF\" or \"ON\"",FlowItem.actorFO,0,
 	function () return sysLights.logoSwitch:getStatus() == (kc_is_daylight() and 0 or 1) end,
@@ -2056,12 +2866,32 @@ arrivalProc:addItem(ProcedureItem:new("LOGO LIGHT SWITCH","%s|(kc_is_daylight())
 local approachChkl = Checklist:new("APPROACH CHECKLIST","","approach checklist completed")
 approachChkl:setFlightPhase(13)
 approachChkl:addItem(ChecklistItem:new("#exchange|ALTIMETERS|approach checklist. altimeters","QNH %s |activeBriefings:get(\"arrival:atisQNH\")",FlowItem.actorBOTH,0,true,
-	function () return kc_macro_test_briefed_baro() end,
-	function () kc_macro_set_briefed_baro() end))
+	function () 
+		if activeBriefings:get("arrival:atisQNH") ~= "" then
+			if activePrefSet:get("general:baro_mode_hpa") then
+				return 	get("laminar/B738/EFIS/baro_sel_in_hg_pilot") == tonumber(activeBriefings:get("arrival:atisQNH")) * 0.02952999 and 
+						get("laminar/B738/EFIS/baro_sel_in_hg_copilot") == tonumber(activeBriefings:get("arrival:atisQNH")) * 0.02952999
+			else
+				return 	get("laminar/B738/EFIS/baro_sel_in_hg_pilot") == tonumber(activeBriefings:get("arrival:atisQNH")) and 
+						get("laminar/B738/EFIS/baro_sel_in_hg_copilot") == tonumber(activeBriefings:get("arrival:atisQNH"))
+			end
+		end
+	end,
+	function () 
+		if activeBriefings:get("arrival:atisQNH") ~= "" then
+			if activePrefSet:get("general:baro_mode_hpa") then
+				set("laminar/B738/EFIS/baro_sel_in_hg_pilot", tonumber(activeBriefings:get("arrival:atisQNH")) * 0.02952999)
+				set("laminar/B738/EFIS/baro_sel_in_hg_copilot", tonumber(activeBriefings:get("arrival:atisQNH")) * 0.02952999) 
+			else
+				set("laminar/B738/EFIS/baro_sel_in_hg_pilot", tonumber(activeBriefings:get("arrival:atisQNH")))
+				set("laminar/B738/EFIS/baro_sel_in_hg_copilot", tonumber(activeBriefings:get("arrival:atisQNH")))
+			end
+		end
+	end))
 approachChkl:addItem(ChecklistItem:new("NAVIGATION AIDS","SET AND CHECKED",FlowItem.actorBOTH,0,true,nil,nil))
 
 -- =============== LANDING PROCEDURE (PM) ===============
--- LANDING LIGHTS...............................ON  (CPT)
+-- LANDING LIGHTS,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,ON  (CPT)
 -- RWY TURNOFF LIGHTS...........................ON  (CPT)
 -- ENGINE START SWITCHES......................CONT   (PM)
 -- SPEED BRAKE...............................ARMED   (PF)
@@ -2090,6 +2920,9 @@ local landingProc = Procedure:new("LANDING PROCEDURE","","ready for landing chec
 landingProc:setFlightPhase(13)
 landingProc:addItem(ProcedureItem:new("EXTERNAL LIGHTS","SET",FlowItem.actorCPT,0,true,
 	function () kc_macro_ext_lights_land() end))
+-- landingProc:addItem(ProcedureItem:new("RWY TURNOFF LIGHTS","ON",FlowItem.actorCPT,0,
+	-- function () return sysLights.rwyLightGroup:getStatus() > 0 end,
+	-- function () sysLights.rwyLightGroup:actuate(1) end))
 landingProc:addItem(ProcedureItem:new("ENGINE START SWITCHES","CONT",FlowItem.actorPM,0,
 	function () return sysEngines.engStarterGroup:getStatus() == 4 end,
 	function () sysEngines.engStarterGroup:actuate(2) end)) 
@@ -2099,56 +2932,42 @@ landingProc:addItem(ProcedureItem:new("COURSE NAV 1","SET %s|activeBriefings:get
 landingProc:addItem(ProcedureItem:new("COURSE NAV2","SET %s|activeBriefings:get(\"approach:nav2Course\")",FlowItem.actorFO,0,
 	function() return math.ceil(sysMCP.crs2Selector:getStatus()) == activeBriefings:get("approach:nav2Course") end,
 	function() sysMCP.crs2Selector:setValue(activeBriefings:get("approach:nav2Course")) end))
-landingProc:addItem(ProcedureItem:new("AIR CONDITIONING PACK SWITCHES","AUTO",FlowItem.actorFO,0,
-	function () return sysAir.packSwitchGroup:getStatus() == 1 end,
-	function () sysAir.packSwitchGroup:setValue(sysAir.packModeAuto) end,
-	function () return activeBriefings:get("approach:packs") > 1 end))
-landingProc:addItem(ProcedureItem:new("AIR CONDITIONING PACK SWITCHES","OFF",FlowItem.actorFO,0,
-	function () return sysAir.packSwitchGroup:getStatus() == 0 end,
-	function () sysAir.packSwitchGroup:setValue(0) end,
-	function () return activeBriefings:get("approach:packs") > 1 end))
-landingProc:addItem(ProcedureItem:new("WING ANTI-ICE SWITCH","OFF",FlowItem.actorFO,0,
-	function () return sysAice.wingAntiIce:getStatus() == 0 end,
-	function () sysAice.wingAntiIce:actuate(0) end,
-	function () return activeBriefings:get("approach:antiice") == 3 end))
-landingProc:addItem(ProcedureItem:new("WING ANTI-ICE SWITCH","ON",FlowItem.actorFO,0,
-	function () return sysAice.wingAntiIce:getStatus() == 1 end,
-	function () sysAice.wingAntiIce:actuate(1) end,
-	function () return activeBriefings:get("approach:antiice") < 3 end))
-landingProc:addItem(ProcedureItem:new("ENGINE ANTI-ICE SWITCHES","OFF",FlowItem.actorFO,0,
-	function () return sysAice.engAntiIceGroup:getStatus() == 0 end,
-	function () sysAice.engAntiIceGroup:actuate(0) end,
-	function () return activeBriefings:get("approach:antiice") > 1 end))
-landingProc:addItem(ProcedureItem:new("ENGINE ANTI-ICE SWITCHES","ON",FlowItem.actorFO,0,
-	function () return sysAice.engAntiIceGroup:getStatus() == 2 end,
-	function () sysAice.engAntiIceGroup:actuate(1) end,
-	function () return activeBriefings:get("approach:antiice") == 1 end))
 
 landingProc:addItem(SimpleProcedureItem:new("==== Flaps & Gear Schedule"))	
-landingProc:addItem(HoldProcedureItem:new("FLAPS 1","COMMAND",FlowItem.actorPF))
-landingProc:addItem(ProcedureItem:new("FLAPS 1","SET",FlowItem.actorPNF,0,true,
-	function () command_once("laminar/B738/push_button/flaps_1") kc_speakNoText(0,"speed check flaps 1") end))
-landingProc:addItem(HoldProcedureItem:new("FLAPS 5","COMMAND",FlowItem.actorPF))
-landingProc:addItem(ProcedureItem:new("FLAPS 5","SET",FlowItem.actorPNF,0,true,
-	function () command_once("laminar/B738/push_button/flaps_5") kc_speakNoText(0,"speed check flaps 5") end))
-landingProc:addItem(HoldProcedureItem:new("FLAPS 15","COMMAND",FlowItem.actorPF))
-landingProc:addItem(ProcedureItem:new("FLAPS 15","SET",FlowItem.actorPNF,0,true,
-	function () command_once("laminar/B738/push_button/flaps_15") kc_speakNoText(0,"speed check flaps 15") end))
-landingProc:addItem(HoldProcedureItem:new("GEAR","COMMAND DOWN",FlowItem.actorPF))
-landingProc:addItem(ProcedureItem:new("GEAR","DOWN",FlowItem.actorPNF,0,true,
-	function () sysGeneral.GearSwitch:actuate(modeOn) kc_speakNoText(0,"gear coming down") end))
-landingProc:addItem(HoldProcedureItem:new("FLAPS 25","COMMAND",FlowItem.actorPF))
-landingProc:addItem(ProcedureItem:new("FLAPS 25","SET",FlowItem.actorPNF,0,true,
-	function () command_once("laminar/B738/push_button/flaps_25") kc_speakNoText(0,"speed check flaps 25") end))
-landingProc:addItem(HoldProcedureItem:new("FLAPS 30","COMMAND",FlowItem.actorPF))
-landingProc:addItem(ProcedureItem:new("FLAPS 30","SET",FlowItem.actorPNF,0,true,
-	function () command_once("laminar/B738/push_button/flaps_30") kc_speakNoText(0,"speed check flaps 30") end))
-landingProc:addItem(HoldProcedureItem:new("FLAPS 40","COMMAND",FlowItem.actorPF,nil,
+landingProc:addItem(IndirectProcedureItem:new("FLAPS 1 SPEED","REACHED",FlowItem.actorPNF,0,"ldgflap1spd",
+	function () return get("sim/cockpit2/gauges/indicators/airspeed_kts_pilot") < get("laminar/B738/pfd/flaps_1") end))
+landingProc:addItem(ProcedureItem:new("FLAPS 1","SET",FlowItem.actorPNF,0,"ldgflap1set",
+	function () return sysControls.flapsSwitch:getStatus() == 0.125 end))
+landingProc:addItem(IndirectProcedureItem:new("FLAPS 5 SPEED","REACHED",FlowItem.actorPNF,0,"ldgflap5spd",
+	function () return get("sim/cockpit2/gauges/indicators/airspeed_kts_pilot") < get("laminar/B738/pfd/flaps_5") end,
+	function () kc_speakNoText("speed check flaps 1") end))
+landingProc:addItem(ProcedureItem:new("FLAPS 5","SET",FlowItem.actorPNF,0,"ldgflap5set",
+	function () return sysControls.flapsSwitch:getStatus() == 0.375 end))
+landingProc:addItem(IndirectProcedureItem:new("FLAPS 10 SPEED","REACHED",FlowItem.actorPNF,0,"ldgflap10spd",
+	function () return get("sim/cockpit2/gauges/indicators/airspeed_kts_pilot") < get("laminar/B738/pfd/flaps_10") end,
+	function () kc_speakNoText("speed check flaps 5") end))
+landingProc:addItem(IndirectProcedureItem:new("FLAPS 10","SET",FlowItem.actorPNF,0,"ldgflap10set",
+	function () return sysControls.flapsSwitch:getStatus() == 0.500 end))
+landingProc:addItem(IndirectProcedureItem:new("LANDING GEAR","DOWN",FlowItem.actorPNF,0,"ldggeardown",
+	function () return sysGeneral.GearSwitch:getStatus() == modeOn end,
+	function () kc_speakNoText("speed check flaps 10") end))
+landingProc:addItem(IndirectProcedureItem:new("FLAPS 15 SPEED","REACHED",FlowItem.actorPNF,0,"ldgflap15spd",
+	function () return get("sim/cockpit2/gauges/indicators/airspeed_kts_pilot") < get("laminar/B738/pfd/flaps_15") end))
+landingProc:addItem(IndirectProcedureItem:new("FLAPS 15","SET",FlowItem.actorPNF,0,"ldgflap15set",
+	function () return sysControls.flapsSwitch:getStatus() == 0.625 end))
+landingProc:addItem(IndirectProcedureItem:new("FLAPS 25 SPEED","REACHED",FlowItem.actorPNF,0,"ldgflap25spd",
+	function () return get("sim/cockpit2/gauges/indicators/airspeed_kts_pilot") < get("laminar/B738/pfd/flaps_25") end,
+	function () kc_speakNoText("speed check flaps 15") end))
+landingProc:addItem(IndirectProcedureItem:new("FLAPS 25","SET",FlowItem.actorPNF,0,"ldgflap25set",
+	function () return sysControls.flapsSwitch:getStatus() == 0.75 end))
+landingProc:addItem(IndirectProcedureItem:new("FLAPS 30","SET",FlowItem.actorPNF,0,"ldgflap30set",
+	function () return sysControls.flapsSwitch:getStatus() == 0.875 end,
+	function () kc_speakNoText("speed check flaps 25") end,
 	function () return activeBriefings:get("approach:flaps") < 2 end))
-landingProc:addItem(ProcedureItem:new("FLAPS 40","SET",FlowItem.actorPNF,0,true,
-	function () command_once("laminar/B738/push_button/flaps_40") kc_speakNoText(0,"speed check flaps 40") end,
-	function () return activeBriefings:get("approach:flaps") < 2 end))
---
+landingProc:addItem(IndirectProcedureItem:new("FLAPS 40","SET",FlowItem.actorPNF,0,"ldgflap40set",
+	function () return sysControls.flapsSwitch:getStatus() == 0.875 end,
+	function () kc_speakNoText("speed check flaps 30") end,
+	function () return activeBriefings:get("approach:flaps") < 3 end))
 landingProc:addItem(ProcedureItem:new("SPEED BRAKE","ARMED",FlowItem.actorPF,0,
 	function () return get("laminar/B738/annunciator/speedbrake_armed") == 1 end,
 	function () kc_speakNoText(0,"Speed brake armed?") end))
@@ -2164,6 +2983,8 @@ landingProc:addItem(ProcedureItem:new("GO AROUND HEADING","SET %s|activeBriefing
 -- SPEEDBRAKE................................ARMED   (PF)
 -- LANDING GEAR...............................DOWN   (PF)
 -- FLAPS..........................___, GREEN LIGHT   (PF)
+-- GO AROUND ALTITUDE......................... SET   (PM)
+-- GO AROUND HEADING...........................SET   (PM)
 -- ======================================================
 
 local landingChkl = Checklist:new("LANDING CHECKLIST","","landing checklist completed")
@@ -2180,86 +3001,12 @@ landingChkl:addItem(ChecklistItem:new("FLAPS","%s, GREEN LIGHT|kc_pref_split(kc_
 	function () return sysControls.flapsSwitch:getStatus() == sysControls.flaps_pos[activeBriefings:get("approach:flaps")+5] 
 	and get("laminar/B738/annunciator/slats_extend") == 1 end,
 	function () sysControls.flapsSwitch:setValue(sysControls.flaps_pos[activeBriefings:get("approach:flaps")+5]) end))
-
--- ====================== GO AROUND ======================
--- GO AROUND ALTITUDE...........................SET   (PM)
--- GO AROUND HEADING............................SET   (PM)
--- GO AROUND THRUST.............................SET  (CPT)
--- mode HDG
--- mode LVL CHG
--- GEAR..................................COMMAND UP  (CPT)
--- GEAR..........................................UP   (PM)
--- flaps 15
--- CMD-A.. Command
--- set modes lnav/vnav is applicable
--- flaps schedule
--- flaps 5
--- flaps 1
--- flaps up
--- =======================================================
-
-local goAroundProc = Procedure:new("GO AROUND","going around","")
-goAroundProc:setFlightPhase(20)
-goAroundProc:addItem(ProcedureItem:new("GO AROUND ALTITUDE","SET %s|activeBriefings:get(\"approach:gaaltitude\")",FlowItem.actorPM,0,
+landingChkl:addItem(ChecklistItem:new("GO AROUND ALTITUDE","SET %s|activeBriefings:get(\"approach:gaaltitude\")",FlowItem.actorPM,0,
 	function() return sysMCP.altSelector:getStatus()  == activeBriefings:get("approach:gaaltitude") end,
 	function() sysMCP.altSelector:setValue(activeBriefings:get("approach:gaaltitude")) end))
-goAroundProc:addItem(ProcedureItem:new("GO AROUND HEADING","SET %s|activeBriefings:get(\"approach:gaheading\")",FlowItem.actorPM,0,
+landingChkl:addItem(ChecklistItem:new("GO AROUND HEADING","SET %s|activeBriefings:get(\"approach:gaheading\")",FlowItem.actorPM,0,
 	function() return sysMCP.hdgSelector:getStatus() == activeBriefings:get("approach:gaheading") end,
 	function() sysMCP.hdgSelector:setValue(activeBriefings:get("approach:gaheading")) end))
-goAroundProc:addItem(ProcedureItem:new("GO AROUND THRUST","SET",FlowItem.actorPF,0,true,
-	function () command_once("laminar/B738/autopilot/left_toga_press") kc_speakNoText(0,"go around thrust set") end))
-goAroundProc:addItem(ProcedureItem:new("HDG MODE","SET",FlowItem.actorPF,0,true,
-	function () sysMCP.hdgselSwitch:actuate(1) end))
-goAroundProc:addItem(HoldProcedureItem:new("GEAR","COMMAND UP",FlowItem.actorPF))
-goAroundProc:addItem(IndirectProcedureItem:new("GEAR","UP",FlowItem.actorPF,0,"gear_up_ga",
-	function () return sysGeneral.GearSwitch:getStatus() == 0 end,
-	function () 
-		sysGeneral.GearSwitch:actuate(0) 
-		kc_speakNoText(0,"gear coming up") 
-	end))
-goAroundProc:addItem(ProcedureItem:new("FLAPS 15","SET",FlowItem.actorPNF,0,true,
-	function () 
-		command_once("laminar/B738/push_button/flaps_15") 
-		kc_speakNoText(0,"speed check flaps 15") 
-	end))
-goAroundProc:addItem(HoldProcedureItem:new("LVL CHG","COMMAND",FlowItem.actorPF))
-goAroundProc:addItem(ProcedureItem:new("LVL CHG","SET",FlowItem.actorPF,0,
-	function () return sysMCP.lvlchgSwitch:getStatus() == 1 end,
-	function () 
-		sysMCP.lvlchgSwitch:actuate(1) 
-		kc_speakNoText(0,"level change") 
-	end))
-goAroundProc:addItem(ProcedureItem:new("FLAPS UP SPEED","SET %s|get(\"laminar/B738/pfd/flaps_up\")",FlowItem.actorPM,0,
-	function() return sysMCP.iasSelector:getStatus() ==  get("laminar/B738/pfd/flaps_up") end,
-	function() sysMCP.iasSelector:setValue(get("laminar/B738/pfd/flaps_up")) end))
-goAroundProc:addItem(HoldProcedureItem:new("CMD-A","COMMAND ON",FlowItem.actorPF))
-goAroundProc:addItem(ProcedureItem:new("CMD-A","ON",FlowItem.actorPNF,0,true,
-	function () 
-		sysMCP.ap1Switch:actuate(1) 
-		kc_speakNoText(0,"command a") 
-	end))
-goAroundProc:addItem(HoldProcedureItem:new("FLAPS 5","COMMAND",FlowItem.actorPF))
-goAroundProc:addItem(ProcedureItem:new("FLAPS 5","SET",FlowItem.actorPNF,0,true,
-	function () 
-		command_once("laminar/B738/push_button/flaps_5") 
-		kc_speakNoText(0,"speed check flaps 5") 
-	end))
-goAroundProc:addItem(HoldProcedureItem:new("LNAV & VNAV","COMMAND",FlowItem.actorPF))
-goAroundProc:addItem(ProcedureItem:new("LNAV VNAV","SET",FlowItem.actorPNF,0,
-	function () 
-		return sysMCP.lnavSwitch:getStatus() == 1 and sysMCP.vnavSwitch:getStatus() == 1 
-	end, 
-	function () 
-		sysMCP.lnavSwitch:actuate(1) 
-		sysMCP.vnavSwitch:actuate(1) 
-	end))
-goAroundProc:addItem(HoldProcedureItem:new("FLAPS 1","COMMAND",FlowItem.actorPF))
-goAroundProc:addItem(ProcedureItem:new("FLAPS 1","SET",FlowItem.actorPNF,0,true,
-	function () command_once("laminar/B738/push_button/flaps_1") kc_speakNoText(0,"speed check flaps 1") end))
-goAroundProc:addItem(HoldProcedureItem:new("FLAPS UP","COMMAND",FlowItem.actorPF))
-goAroundProc:addItem(ProcedureItem:new("FLAPS UP","SET",FlowItem.actorPNF,0,true,
-	function () command_once("laminar/B738/push_button/flaps_0") kc_speakNoText(0,"speed check flaps up") end))
-
 
 -- ============== AFTER LANDING PROCEDURE ===============
 -- SPEED BRAKE................................DOWN   (PF)
@@ -2284,7 +3031,7 @@ afterLandingProc:setFlightPhase(15)
 afterLandingProc:addItem(ProcedureItem:new("SPEED BRAKE","DOWN",FlowItem.actorPF,0,
 	function () return sysControls.spoilerLever:getStatus() == 0 end,
 	function () set("laminar/B738/flt_ctrls/speedbrake_lever",0) activeBckVars:set("general:timesIN",kc_dispTimeHHMM(get("sim/time/zulu_time_sec"))) end))
-afterLandingProc:addItem(ProcedureItem:new("CHRONO & ET","STOP",FlowItem.actorCPT,0))
+afterLandingProc:addItem(ProcedureItem:new("CHRONO & ET","STOP",FlowItem.actorCPT,2))
 afterLandingProc:addItem(ProcedureItem:new("WX RADAR","OFF",FlowItem.actorCPT,0,
 	function () return sysEFIS.wxrPilot:getStatus() == 0 end,
 	function () sysEFIS.wxrPilot:actuate(0) end))
@@ -2313,7 +3060,7 @@ afterLandingProc:addItem(ProcedureItem:new("TRANSPONDER","STBY",FlowItem.actorFO
 afterLandingProc:addItem(ProcedureItem:new("FLAPS","UP",FlowItem.actorFO,0,
 	function () return sysControls.flapsSwitch:getStatus() == 0 end,
 	function () sysControls.flapsSwitch:setValue(0) end))
-afterLandingProc:addItem(ProcedureItem:new("#spell|APU# ","START",FlowItem.actorFO,0,
+afterLandingProc:addItem(ProcedureItem:new("#spell|APU#","START",FlowItem.actorFO,0,
 	function () return sysElectric.apuRunningAnc:getStatus() == modeOn end,
 	function () 
 		kc_macro_b738_lowerdu_sys()
@@ -2325,8 +3072,6 @@ afterLandingProc:addItem(SimpleProcedureItem:new("  Hold APU switch in START pos
 afterLandingProc:addItem(IndirectProcedureItem:new("  #spell|APU# GEN OFF BUS LIGHT","ILLUMINATED",FlowItem.actorFO,0,"apu_gen_bus_end",
 	function () return sysElectric.apuGenBusOff:getStatus() == modeOn end,nil,
 	function () return activeBriefings:get("approach:powerAtGate") == 1 end))
-afterLandingProc:addItem(ProcedureItem:new("AIRCRAFT","CLEAN",FlowItem.actorFO,0,true,
-	function () kc_speakNoText(9,"aircraft cleaned up") end))
 
 -- ============= SHUTDOWN PROCEDURE (BOTH) ==============
 -- TAXI LIGHT SWITCH...........................OFF  (CPT) 
@@ -2359,6 +3104,9 @@ afterLandingProc:addItem(ProcedureItem:new("AIRCRAFT","CLEAN",FlowItem.actorFO,0
 
 local shutdownProc = Procedure:new("SHUTDOWN PROCEDURE","shutting down","ready for shutdown checklist")
 shutdownProc:setFlightPhase(17)
+-- shutdownProc:addItem(ProcedureItem:new("TAXI LIGHT SWITCH","OFF",FlowItem.actorCPT,0,
+	-- function () return sysLights.taxiSwitch:getStatus() == 0 end,
+	-- function () sysLights.taxiSwitch:actuate(0) activeBckVars:set("general:timesON",kc_dispTimeHHMM(get("sim/time/zulu_time_sec"))) end))
 shutdownProc:addItem(ProcedureItem:new("PARKING BRAKE","SET",FlowItem.actorCPT,0,
 	function () return sysGeneral.parkBrakeSwitch:getStatus() == modeOn end,
 	function () sysGeneral.parkBrakeSwitch:actuate(modeOn) end))
@@ -2382,10 +3130,7 @@ shutdownProc:addItem(ProcedureItem:new("ENGINE START LEVERS","CUTOFF",FlowItem.a
 	function () kc_speakNoText(0,"ready to cut engines") end))
 shutdownProc:addItem(ProcedureItem:new("FASTEN BELTS SWITCH","OFF",FlowItem.actorFO,0,
 	function () return sysGeneral.seatBeltSwitch:getStatus() == 0 end,
-	function () 
-		command_once("laminar/B738/toggle_switch/seatbelt_sign_up")
-		command_once("laminar/B738/toggle_switch/seatbelt_sign_up")
-	end))
+	function () sysGeneral.seatBeltSwitch:actuate(0) end))
 shutdownProc:addItem(ProcedureItem:new("EXTERNAL LIGHTS","SET",FlowItem.actorCPT,0,true,
 	function () kc_macro_ext_lights_stand() activeBckVars:set("general:timesON",kc_dispTimeHHMM(get("sim/time/zulu_time_sec"))) end))
 shutdownProc:addItem(ProcedureItem:new("FUEL PUMPS","APU 1 PUMP ON, REST OFF",FlowItem.actorCPT,0,
@@ -2430,9 +3175,8 @@ shutdownProc:addItem(ProcedureItem:new("ENGINE BLEED AIR SWITCHES","ON",FlowItem
 	function () return sysAir.bleedEng1Switch:getStatus() == 1 and sysAir.bleedEng2Switch:getStatus() == 1 end,
 	function () kc_macro_bleeds_on() end))
 shutdownProc:addItem(ProcedureItem:new("APU BLEED AIR SWITCH","ON",FlowItem.actorFO,0,
-	function () return sysAir.apuBleedSwitch:getStatus() == modeOn end,
-	function () sysAir.apuBleedSwitch:actuate(1) end,
-	function () return activeBriefings:get("approach:powerAtGate") == 1 end))
+	function () return sysAir.apuBleedSwitch:getStatus() == modeOn end,nil,
+	function () return not activeBriefings:get("approach:powerAtGate") == 1 end))
 shutdownProc:addItem(ProcedureItem:new("FLIGHT DIRECTOR SWITCHES","OFF",FlowItem.actorFO,0,
 	function () return sysMCP.fdirGroup:getStatus() == 0 end,
 	function () sysMCP.fdirGroup:actuate(0) end))
@@ -2466,13 +3210,18 @@ shutdownProc:addItem(ProcedureItem:new("MCP","RESET",FlowItem.actorFO,0,
 
 local shutdownChkl = Checklist:new("SHUTDOWN CHECKLIST","","shutdown checklist completed")
 shutdownChkl:setFlightPhase(17)
+shutdownChkl:addItem(ChecklistItem:new("FUEL PUMPS","ONE PUMP ON FOR APU, REST OFF",FlowItem.actorFO,0,
+	function () return sysFuel.allFuelPumpGroup:getStatus() == 1 end,
+	function () sysFuel.allFuelPumpGroup:actuate(modeOff) sysFuel.fuelPumpLeftAft:actuate(modeOn) end,
+	function () return activeBriefings:get("approach:powerAtGate") == 1 end))
 shutdownChkl:addItem(ChecklistItem:new("FUEL PUMPS","OFF",FlowItem.actorFO,0,
 	function () return sysFuel.allFuelPumpGroup:getStatus() == 0 end,
-	function () kc_macro_fuelpumps_shutdown() end))
+	function () sysFuel.allFuelPumpGroup:actuate(modeOff) end,
+	function () return activeBriefings:get("approach:powerAtGate") == 2 end))
 shutdownChkl:addItem(ChecklistItem:new("PROBE HEAT","OFF",FlowItem.actorFO,0,
 	function () return sysAice.probeHeatGroup:getStatus() == 0 end,
 	function () sysAice.probeHeatGroup:actuate(0) end))
-shutdownChkl:addItem(ChecklistItem:new("HYDRAULIC PANEL","SET",FlowItem.actorFO,0))
+shutdownChkl:addItem(ChecklistItem:new("HYDRAULIC PANEL","SET",FlowItem.actorFO,2))
 shutdownChkl:addItem(ChecklistItem:new("FLAPS","UP",FlowItem.actorCPT,0,
 	function () return sysControls.flapsSwitch:getStatus() == 0 end,
 	function () sysControls.flapsSwitch:setValue(0) end)) 
@@ -2548,10 +3297,6 @@ kc_procvar_initialize_bool("cargofiretest", false) -- B738 CARGO FIRE test
 kc_procvar_initialize_bool("apustart", false) -- B738 start apu
 kc_procvar_initialize_bool("gen1down", false) -- B738 hold GEN1 switch down
 kc_procvar_initialize_bool("gen2down", false) -- B738 hold GEN2 switch down
-kc_procvar_initialize_bool("above10k", false) -- aircraft climbs through 10.000 ft
-kc_procvar_initialize_bool("below10k", false) -- aircraft descends through 10.000 ft
-kc_procvar_initialize_bool("attransalt", false) -- aircraft climbs through transition altitude
-kc_procvar_initialize_bool("attranslvl", false) -- aircraft descends through transition level
 
 backgroundFlow:addItem(BackgroundProcedureItem:new("","","SYS",0,
 	function () 
@@ -2600,56 +3345,43 @@ backgroundFlow:addItem(BackgroundProcedureItem:new("","","SYS",0,
 		if kc_procvar_get("gen2down") == true then 
 			kc_bck_b738_gen2down("gen2down")
 		end
-		if kc_procvar_get("above10k") == true then 
-			kc_bck_climb_through_10k("above10k")
-		end
-		if kc_procvar_get("below10k") == true then 
-			kc_bck_descend_through_10k("below10k")
-		end
-		if kc_procvar_get("attransalt") == true then 
-			kc_bck_transition_altitude("attransalt")
-		end
-		if kc_procvar_get("attranslvl") == true then 
-			kc_bck_transition_level("attranslvl")
-		end
 	end))
 	
 
 -- ============  =============
 -- add the checklists and procedures to the active sop
 activeSOP:addProcedure(testProc)
-activeSOP:addProcedure(electricalPowerUpProc)
-activeSOP:addProcedure(prelPreflightProc)
-activeSOP:addProcedure(cduPreflightProc)
-activeSOP:addProcedure(preflightFOProc)
-activeSOP:addProcedure(preflightFO2Proc)
-activeSOP:addProcedure(preflightFO3Proc)
-activeSOP:addProcedure(preflightCPTProc)
-activeSOP:addChecklist(preflightChkl)
-activeSOP:addProcedure(beforeStartProc)
-activeSOP:addChecklist(beforeStartChkl)
-activeSOP:addProcedure(pushstartProc)
-activeSOP:addProcedure(beforeTaxiProc)
-activeSOP:addChecklist(beforeTaxiChkl)
-activeSOP:addChecklist(beforeTakeoffChkl)
-activeSOP:addProcedure(runwayEntryProc)
-activeSOP:addProcedure(takeoffClimbProc)
-activeSOP:addChecklist(afterTakeoffChkl)
-activeSOP:addProcedure(descentProc)
-activeSOP:addChecklist(descentChkl)
-activeSOP:addProcedure(arrivalProc)
-activeSOP:addChecklist(approachChkl)
-activeSOP:addProcedure(landingProc)
-activeSOP:addChecklist(landingChkl)
-activeSOP:addProcedure(goAroundProc)
-activeSOP:addProcedure(afterLandingProc)
-activeSOP:addProcedure(shutdownProc)
-activeSOP:addChecklist(shutdownChkl)
-activeSOP:addChecklist(secureChkl)
+-- activeSOP:addProcedure(electricalPowerUpProc)
+-- activeSOP:addProcedure(prelPreflightProc)
+-- activeSOP:addProcedure(cduPreflightProc)
+-- activeSOP:addProcedure(preflightFOProc)
+-- activeSOP:addProcedure(preflightFO2Proc)
+-- activeSOP:addProcedure(preflightFO3Proc)
+-- activeSOP:addProcedure(preflightCPTProc)
+-- activeSOP:addChecklist(preflightChkl)
+-- activeSOP:addProcedure(beforeStartProc)
+-- activeSOP:addChecklist(beforeStartChkl)
+-- activeSOP:addProcedure(pushstartProc)
+-- activeSOP:addProcedure(beforeTaxiProc)
+-- activeSOP:addChecklist(beforeTaxiChkl)
+-- activeSOP:addChecklist(beforeTakeoffChkl)
+-- activeSOP:addProcedure(runwayEntryProc)
+-- activeSOP:addProcedure(takeoffClimbProc)
+-- activeSOP:addChecklist(afterTakeoffChkl)
+-- activeSOP:addProcedure(descentProc)
+-- activeSOP:addChecklist(descentChkl)
+-- activeSOP:addProcedure(arrivalProc)
+-- activeSOP:addChecklist(approachChkl)
+-- activeSOP:addProcedure(landingProc)
+-- activeSOP:addChecklist(landingChkl)
+-- activeSOP:addProcedure(afterLandingProc)
+-- activeSOP:addProcedure(shutdownProc)
+-- activeSOP:addChecklist(shutdownChkl)
+-- activeSOP:addChecklist(secureChkl)
 
 -- =========== States ===========
-activeSOP:addState(turnAroundProc)
-activeSOP:addState(coldAndDarkProc)
+-- activeSOP:addState(turnAroundProc)
+-- activeSOP:addState(coldAndDarkProc)
 
 -- ==== Background Flow ====
 activeSOP:addBackground(backgroundFlow)
@@ -2658,4 +3390,4 @@ function getActiveSOP()
 	return activeSOP
 end
 
-return SOP_B738
+return SOP_A359

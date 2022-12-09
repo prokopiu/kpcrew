@@ -110,6 +110,9 @@ sysElectric.genSwitchGroup:addSwitch(sysElectric.gen2Switch)
 sysElectric.apuStartSwitch 	= MultiStateCmdSwitch:new("apu","laminar/B738/spring_toggle_switch/APU_start_pos",0,
 	"laminar/B738/spring_toggle_switch/APU_start_pos_dn","laminar/B738/spring_toggle_switch/APU_start_pos_up",-1,1,true)
 
+-- Avionics Bus
+sysElectric.avionicsBus		= InopSwitch:new("aviobus")
+
 -- ======== Annunciators
 
 -- LOW VOLTAGE annunciator
@@ -124,6 +127,7 @@ if get("laminar/B738/annunciator/ground_power_avail") > 0 or
 	(get("laminar/B738/annunciator/ground_power_avail") == 0 and 
 	(get("laminar/B738/electrical/apu_power_bus1") == 1 or 
 	get("laminar/B738/electrical/apu_power_bus2") == 1)) then return 1 else return 0 end end)
+	
 sysElectric.gpuOnBus = SimpleAnnunciator:new("gpubus","sim/cockpit/electrical/gpu_on",0)
 
 -- APU GEN BUS OFF

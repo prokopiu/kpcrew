@@ -6,13 +6,16 @@
 require "kpcrew.genutils"
 require "kpcrew.systems.activities"
 
-local KPH_VERSION = "2.3-alpha5"
+local KPH_VERSION = "2.3-alpha6"
 
 -- disable windows by changing from true to false
 local show_mcp_panel = false
 local show_light_panel = false
 local show_radio_panel = false
 local show_efis_panel = false
+
+
+-- auto reverse certain axes
 
 logMsg ("FWL: ** Starting KPHARDWARE version " .. KPH_VERSION .." **")
 
@@ -30,6 +33,9 @@ if PLANE_ICAO == "B738" then
 	end
 -- elseif PLANE_ICAO == "A320" and PLANE_TAILNUMBER == "A320" then
 	-- kc_acf_icao = "A20N"
+end
+if PLANE_ICAO == "A359" then
+	kh_acf_icao = "A359"
 end
 -- if PLANE_ICAO == "MD11" then
 	-- kh_acf_icao = "MD11"
@@ -129,12 +135,17 @@ create_command("kp/xsp/systems/all_baro_down",		"All baro down","sysGeneral.baro
 create_command("kp/xsp/systems/all_baro_up",		"All baro up","sysGeneral.baroGroup:step(cmdUp)","","")
 
 ----------------- Electric --------------------
-create_command("kp/xsp/electric/bat1_master_on",	"Battery Master 1 On","sysElectric.bat1Switch:actuate(modeOn)","","")
-create_command("kp/xsp/electric/bat1_master_off",	"Battery Master 1 Off","sysElectric.bat1Switch:actuate(modeOff)","","")
-create_command("kp/xsp/electric/alt1_on",			"Alternator 1 On","sysElectric.alt1Switch:actuate(modeOn)","","")
-create_command("kp/xsp/electric/alt1_off",			"Alternator 1 Off","sysElectric.alt1Switch:actuate(modeOff)","","")
+create_command("kp/xsp/electric/bat1_master_on",	"Battery Master 1 On","sysElectric.batterySwitch:actuate(modeOn)","","")
+create_command("kp/xsp/electric/bat1_master_off",	"Battery Master 1 Off","sysElectric.batterySwitch:actuate(modeOff)","","")
+create_command("kp/xsp/electric/bat1_master_tgl",	"Battery Master 1 Toggle","sysElectric.batterySwitch:actuate(modeToggle)","","")
+
+create_command("kp/xsp/electric/alt1_on",			"Alternator 1 On","sysElectric.genSwitchGroup:actuate(modeOn)","","")
+create_command("kp/xsp/electric/alt1_off",			"Alternator 1 Off","sysElectric.genSwitchGroup:actuate(modeOff)","","")
+create_command("kp/xsp/electric/alt1_tgl",			"Alternator 1 Toggle","sysElectric.genSwitchGroup:actuate(modeToggle)","","")
+
 create_command("kp/xsp/electric/avionics_on",		"Avionics On","sysElectric.avionicsBus:actuate(modeOn)","","")
-create_command("kp/xsp/electric/avionics_off",		"Avionics Off","sysElectric.avionicsBus:actuate(modeOf)","","")
+create_command("kp/xsp/electric/avionics_off",		"Avionics Off","sysElectric.avionicsBus:actuate(modeOff)","","")
+create_command("kp/xsp/electric/avionics_tgl",		"Avionics Toggle","sysElectric.avionicsBus:actuate(modeToggle)","","")
 
 ----------------- Flight Controls --------------------
 

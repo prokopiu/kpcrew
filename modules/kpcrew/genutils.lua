@@ -891,6 +891,8 @@ function kc_procvar_initialize_bool(procvarid, value)
 	local procvar = getBckVars():find("procvars:" .. procvarid)
 	if procvar == nil then 
 		kc_global_procvars:add(kcPreference:new(procvarid,value,kcPreference.typeToggle,procvarid .. "|TRUE|FALSE"))
+	else
+		kc_procvar_set(procvarid,value)
 	end
 end
 
@@ -899,6 +901,8 @@ function kc_procvar_initialize_count(procvarid, value)
 	local procvar = getBckVars():find("procvars:" .. procvarid)
 	if procvar == nil then 
 		kc_global_procvars:add(kcPreference:new(procvarid,value,kcPreference.typeInt,procvarid .. "|0"))
+	else
+		kc_procvar_set(procvarid,value)
 	end
 end
 
@@ -908,3 +912,21 @@ function kc_procvar_get(procvarid)
 	return procvar:getValue()
 end
 
+-- BetterPushback integration
+function kc_pushback_plan()
+	if activePrefSet:get("general:betterPushback") == true then
+		command_once("BetterPushback/start_planner")
+	end
+end
+
+function kc_pushback_call()
+	if activePrefSet:get("general:betterPushback") == true then
+		command_once("BetterPushback/connect_first")
+	end
+end
+
+function kc_pushback_end()
+	if activePrefSet:get("general:betterPushback") == true then
+		command_once("BetterPushback/disconnect")
+	end
+end

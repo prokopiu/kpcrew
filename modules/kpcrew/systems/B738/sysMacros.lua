@@ -25,11 +25,8 @@ function kc_macro_state_cold_and_dark()
 
 	kc_macro_int_lights_off()	
 
-	sysMCP.vhfNavSwitch:actuate(0)
-	sysMCP.irsNavSwitch:setValue(0)
-	sysMCP.fmcNavSwitch:setValue(0)
-	sysMCP.displaySourceSwitch:setValue(0)
-	sysMCP.displayControlSwitch:setValue(0)
+	kc_macro_b738_navswitches_init()
+	
 	sysControls.yawDamper:actuate(modeOff)
 	
 	kc_macro_fuelpumps_off()
@@ -62,11 +59,10 @@ function kc_macro_state_cold_and_dark()
 	set("laminar/B738/air/trim_air_pos",1)
 	sysAir.recircFanLeft:actuate(modeOff) 
 	sysAir.recircFanRight:actuate(modeOff)
-	sysAir.packSwitchGroup:setValue(sysAir.packModeOff)
-	sysAir.bleedEng1Switch:actuate(0) 
-	sysAir.bleedEng2Switch:actuate(0)
-	sysAir.apuBleedSwitch:actuate(modeOff)
-	sysAir.isoValveSwitch:setValue(sysAir.isoVlvClosed)
+	
+	kc_macro_packs_off()
+	kc_macro_bleeds_off()
+
 	sysAir.maxCruiseAltitude:setValue(0)
 	sysAir.landingAltitude:setValue(0)
 	command_once("laminar/B738/toggle_switch/air_valve_ctrl_left")
@@ -94,6 +90,7 @@ function kc_macro_state_cold_and_dark()
 
 	kc_macro_glareshield_initial()
 	kc_macro_efis_initial()
+	kc_macro_b738_lowerdu_off()
 	
 	sysElectric.batteryCover:actuate(modeOn)
 	sysElectric.batterySwitch:actuate(modeOff)
@@ -131,11 +128,8 @@ function kc_macro_state_turnaround()
 		sysElectric.gpuSwitch:actuate(cmdDown)
 	end
 
-	sysMCP.vhfNavSwitch:actuate(0)
-	sysMCP.irsNavSwitch:setValue(0)
-	sysMCP.fmcNavSwitch:setValue(0)
-	sysMCP.displaySourceSwitch:setValue(0)
-	sysMCP.displayControlSwitch:setValue(0)
+	kc_macro_b738_navswitches_init()
+	
 	sysControls.yawDamper:actuate(modeOff)
 
 	kc_macro_fuelpumps_off()
@@ -160,7 +154,8 @@ function kc_macro_state_turnaround()
 	sysAice.engAntiIceGroup:actuate(0)
 	
 	kc_macro_hydraulic_initial()
-
+	kc_macro_b738_lowerdu_off()
+	
 	set("laminar/B738/toggle_switch/air_temp_source",3)
 	sysAir.contCabTemp:setValue(0.5) 
 	sysAir.fwdCabTemp:setValue(0.5) 
@@ -168,11 +163,10 @@ function kc_macro_state_turnaround()
 	set("laminar/B738/air/trim_air_pos",1)
 	sysAir.recircFanLeft:actuate(modeOn) 
 	sysAir.recircFanRight:actuate(modeOn)
-	sysAir.packSwitchGroup:setValue(sysAir.packModeAuto)
-	sysAir.bleedEng1Switch:actuate(1) 
-	sysAir.bleedEng2Switch:actuate(1)
-	sysAir.apuBleedSwitch:actuate(modeOff)
-	sysAir.isoValveSwitch:setValue(sysAir.isoVlvOpen)
+
+	kc_macro_packs_on()
+	kc_macro_bleeds_on()
+
 	sysAir.maxCruiseAltitude:setValue(0)
 	sysAir.landingAltitude:setValue(0)
 	command_once("laminar/B738/toggle_switch/air_valve_ctrl_left")
@@ -284,6 +278,7 @@ function kc_macro_ext_lights_above10()
 	sysLights.beaconSwitch:actuate(1)
 	sysLights.wingSwitch:actuate(0)
 	sysLights.wheelSwitch:actuate(0)
+	sysLights.landLightGroup:actuate(0)
 	if kc_is_daylight() then		
 		sysLights.logoSwitch:actuate(0)
 	else
@@ -300,7 +295,7 @@ function kc_macro_ext_lights_below10()
 	sysLights.wingSwitch:actuate(0)
 	sysLights.wheelSwitch:actuate(0)
 	sysLights.rwyLightGroup:actuate(0)
-	sysLights.landLightGroup:actuate(0)
+	sysLights.landLightGroup:actuate(1)
 	sysLights.llLeftSwitch:actuate(1)
 	sysLights.llRightSwitch:actuate(1)
 	if kc_is_daylight() then		
@@ -394,7 +389,31 @@ function kc_macro_glareshield_initial()
 	sysMCP.turnRateSelector:actuate(3)
 end
 
--- initialise IRS
+-- glareshield takeoff setup
+function kc_macro_glareshield_takeoff()
+	sysMCP.fdirGroup:actuate(1)
+	sysMCP.athrSwitch:actuate(1)
+	sysMCP.iasSelector:setValue(activeBriefings:get("takeoff:v2"))
+	sysMCP.hdgSelector:setValue(activeBriefings:get("departure:initHeading"))
+	sysMCP.altSelector:setValue(activeBriefings:get("departure:initAlt"))
+	if activeBriefings:get("takeoff:apMode") == 1 then
+		sysMCP.lnavSwitch:actuate(1)
+		sysMCP.vnavSwitch:actuate(1)
+	end
+end
+
+-- glareshield go around setup
+function kc_macro_glareshield_goaround()
+	sysMCP.fdirGroup:actuate(1)
+	sysMCP.athrSwitch:actuate(1)
+	sysMCP.iasSelector:setValue(activeBriefings:get("takeoff:v2"))
+	sysMCP.hdgSelector:setValue(activeBriefings:get("departure:initHeading"))
+	sysMCP.altSelector:setValue(activeBriefings:get("departure:initAlt"))
+	if activeBriefings:get("takeoff:apMode") == 1 then
+		sysMCP.lnavSwitch:actuate(1)
+		sysMCP.vnavSwitch:actuate(1)
+	end
+end
 
 -- efis initial setup
 function kc_macro_efis_initial()
@@ -413,8 +432,54 @@ function kc_macro_efis_initial()
 		sysEFIS.minsTypePilot:actuate(flag) 
 end
 
--- glareshield takeoff setup
+-- baro mode as in preference
+function kc_macro_set_pref_baro_mode()
+	if activePrefSet:get("general:baro_mode_hpa") then 
+		sysGeneral.baroModeGroup:actuate(1) 
+	else 
+		sysGeneral.baroModeGroup:actuate(0) 
+	end
+end
+
+-- set baros to local pressure at departure airport
+function kc_macro_set_local_baro()
+	set("laminar/B738/EFIS/baro_sel_in_hg_pilot",math.ceil(get("sim/weather/barometer_sealevel_inhg")*100)/100)
+	set("laminar/B738/EFIS/baro_sel_in_hg_copilot",math.ceil(get("sim/weather/barometer_sealevel_inhg")*100)/100) 
+end
+
+-- test if all baros are set to local baro
+function kc_macro_test_local_baro()
+	return get("laminar/B738/EFIS/baro_sel_in_hg_pilot") == math.ceil(get("sim/weather/barometer_sealevel_inhg")*100)/100 and 
+		get("laminar/B738/EFIS/baro_sel_in_hg_copilot") == math.ceil(get("sim/weather/barometer_sealevel_inhg")*100)/100 
+end
+
+-- set baros to briefng
+function kc_macro_set_briefed_baro()
+	if activeBriefings:get("arrival:atisQNH") ~= "" then
+		if activePrefSet:get("general:baro_mode_hpa") then
+			set("laminar/B738/EFIS/baro_sel_in_hg_pilot", tonumber(activeBriefings:get("arrival:atisQNH")) * 0.02952999)
+			set("laminar/B738/EFIS/baro_sel_in_hg_copilot", tonumber(activeBriefings:get("arrival:atisQNH")) * 0.02952999) 
+		else
+			set("laminar/B738/EFIS/baro_sel_in_hg_pilot", tonumber(activeBriefings:get("arrival:atisQNH")))
+			set("laminar/B738/EFIS/baro_sel_in_hg_copilot", tonumber(activeBriefings:get("arrival:atisQNH")))
+		end
+	end
+end
+
+-- test if all baros are set to local baro
+function kc_macro_test_briefed_baro()
+	if activePrefSet:get("general:baro_mode_hpa") then
+		return 	get("laminar/B738/EFIS/baro_sel_in_hg_pilot") == tonumber(activeBriefings:get("arrival:atisQNH")) * 0.02952999 and 
+				get("laminar/B738/EFIS/baro_sel_in_hg_copilot") == tonumber(activeBriefings:get("arrival:atisQNH")) * 0.02952999
+	else
+		return 	get("laminar/B738/EFIS/baro_sel_in_hg_pilot") == tonumber(activeBriefings:get("arrival:atisQNH")) and 
+				get("laminar/B738/EFIS/baro_sel_in_hg_copilot") == tonumber(activeBriefings:get("arrival:atisQNH"))
+	end
+end
+
 -- glareshield landing setup
+-- initialise IRS
+
 
 -- fuel pumps all off
 function kc_macro_fuelpumps_off()
@@ -426,6 +491,14 @@ function kc_macro_fuelpumps_stand()
 	sysFuel.allFuelPumpGroup:actuate(0)
 	sysFuel.crossFeed:actuate(0)
 	if activePrefSet:get("aircraft:powerup_apu") == true then
+		sysFuel.fuelPumpLeftAft:actuate(1)
+	end
+end
+
+function kc_macro_fuelpumps_shutdown()
+	sysFuel.allFuelPumpGroup:actuate(0)
+	sysFuel.crossFeed:actuate(0)
+	if activeBriefings:get("approach:powerAtGate") == 2 then
 		sysFuel.fuelPumpLeftAft:actuate(1)
 	end
 end
@@ -478,8 +551,63 @@ end
 -- start 1st engine
 -- start nth engine
 
--- air switches for takeoff
--- air switches all on
+-- packs all off
+function kc_macro_packs_off()
+	sysAir.packSwitchGroup:setValue(sysAir.packModeOff)
+	sysAir.isoValveSwitch:setValue(sysAir.isoVlvClosed)
+end
+
+-- packs for engine start
+function kc_macro_packs_start()
+	sysAir.packSwitchGroup:setValue(sysAir.packModeOff)
+	sysAir.isoValveSwitch:setValue(sysAir.isoVlvOpen)
+end
+
+-- packs for takeoff
+function kc_macro_packs_takeoff()
+	if activeBriefings:get("takeoff:packs") < 3 then 
+		sysAir.packSwitchGroup:setValue(sysAir.packModeAuto)
+	else
+		sysAir.packSwitchGroup:setValue(sysAir.packModeOff)
+	end
+	sysAir.isoValveSwitch:setValue(sysAir.isoVlvAuto)
+end
+
+-- packs all on
+function kc_macro_packs_on()
+	sysAir.packSwitchGroup:setValue(sysAir.packModeAuto)
+	sysAir.isoValveSwitch:setValue(sysAir.isoVlvAuto)
+end
+
+-- bleeds all off
+function kc_macro_bleeds_off()
+	sysAir.bleedEng1Switch:actuate(0) 
+	sysAir.bleedEng2Switch:actuate(0) 
+	sysAir.apuBleedSwitch:actuate(0)
+end
+
+-- bleeds on
+function kc_macro_bleeds_on()
+	sysAir.bleedEng1Switch:actuate(1) 
+	sysAir.bleedEng2Switch:actuate(1)
+	if get("sim/cockpit/engine/APU_running") == 1 and 
+		get("laminar/B738/engine/eng1_egt") < 50 and 
+		get("laminar/B738/engine/eng2_egt") < 50 then
+		sysAir.apuBleedSwitch:actuate(1)
+	end
+end
+
+-- bleeds takeoff 
+function kc_macro_bleeds_takeoff()
+	if activeBriefings:get("takeoff:bleeds") > 1 then 
+		sysAir.bleedEng1Switch:actuate(1) 
+		sysAir.bleedEng2Switch:actuate(1) 
+	else
+		sysAir.bleedEng1Switch:actuate(0) 
+		sysAir.bleedEng2Switch:actuate(0) 
+	end
+	sysAir.apuBleedSwitch:actuate(0)
+end
 
 -- xpdr standby
 -- xpdr mode c
@@ -491,10 +619,94 @@ end
 -- flaps retract during takeoff bck??
 
 -- 10000 feet activities up and down
+function kc_macro_above_10000_ft()
+	kc_macro_ext_lights_above10()
+	command_once("laminar/B738/toggle_switch/seatbelt_sign_up") 
+	command_once("laminar/B738/toggle_switch/seatbelt_sign_up") 
+end
 
--- fire tests ?!? as bck
--- apu start bck
--- gpu start bck
+function kc_macro_below_10000_ft()
+	kc_macro_ext_lights_below10()
+	command_once("laminar/B738/toggle_switch/seatbelt_sign_up") 
+	command_once("laminar/B738/toggle_switch/seatbelt_sign_up") 
+	command_once("laminar/B738/toggle_switch/seatbelt_sign_dn") 
+end
+
+function kc_macro_at_trans_alt()
+	if get("laminar/B738/EFIS/baro_set_std_pilot") == 0 then 
+		command_once("laminar/B738/EFIS_control/capt/push_button/std_press")
+	end
+	if get("laminar/B738/EFIS/baro_set_std_copilot") == 0 then 
+		command_once("laminar/B738/EFIS_control/fo/push_button/std_press")
+	end
+end
+
+function kc_macro_at_trans_lvl()
+	if activeBriefings:get("arrival:atisQNH") ~= "" then
+		if activePrefSet:get("general:baro_mode_hpa") then
+			return 	get("laminar/B738/EFIS/baro_sel_in_hg_pilot") == tonumber(activeBriefings:get("arrival:atisQNH")) * 0.02952999 and 
+					get("laminar/B738/EFIS/baro_sel_in_hg_copilot") == tonumber(activeBriefings:get("arrival:atisQNH")) * 0.02952999
+		else
+			return 	get("laminar/B738/EFIS/baro_sel_in_hg_pilot") == tonumber(activeBriefings:get("arrival:atisQNH")) and 
+					get("laminar/B738/EFIS/baro_sel_in_hg_copilot") == tonumber(activeBriefings:get("arrival:atisQNH"))
+		end
+	end
+	if get("laminar/B738/EFIS/baro_set_std_pilot") == 1 then 
+		command_once("laminar/B738/EFIS_control/capt/push_button/std_press")
+	end
+	if get("laminar/B738/EFIS/baro_set_std_copilot") == 1 then 
+		command_once("laminar/B738/EFIS_control/fo/push_button/std_press")
+	end
+	if activeBriefings:get("arrival:atisQNH") ~= "" then
+		if activePrefSet:get("general:baro_mode_hpa") then
+			set("laminar/B738/EFIS/baro_sel_in_hg_pilot", tonumber(activeBriefings:get("arrival:atisQNH")) * 0.02952999)
+			set("laminar/B738/EFIS/baro_sel_in_hg_copilot", tonumber(activeBriefings:get("arrival:atisQNH")) * 0.02952999) 
+		else
+			set("laminar/B738/EFIS/baro_sel_in_hg_pilot", tonumber(activeBriefings:get("arrival:atisQNH")))
+			set("laminar/B738/EFIS/baro_sel_in_hg_copilot", tonumber(activeBriefings:get("arrival:atisQNH")))
+		end
+	end
+end
+
+-- B738 specific macros
+
+-- B738 NAV switches initial
+function kc_macro_b738_navswitches_init()
+	sysMCP.vhfNavSwitch:actuate(0) 
+	sysMCP.irsNavSwitch:setValue(0)
+	sysMCP.fmcNavSwitch:setValue(0)
+	sysMCP.displaySourceSwitch:setValue(0)
+	sysMCP.displayControlSwitch:setValue(0) 
+end
+
+-- B738 Lower DU modes
+function kc_macro_b738_lowerdu_off()
+	set("laminar/B738/systems/lowerDU_page",0)
+	set("laminar/B738/systems/lowerDU_page2",0)
+end
+
+function kc_macro_b738_lowerdu_sys()
+	set("laminar/B738/systems/lowerDU_page",0)
+	set("laminar/B738/systems/lowerDU_page2",1)
+end
+
+function kc_macro_b738_lowerdu_eng()
+	set("laminar/B738/systems/lowerDU_page",1)
+	set("laminar/B738/systems/lowerDU_page2",0)
+end
+
+-- set the autobrake value depending on the briefing setting
+function kc_macro_b738_set_autobrake()
+	if activeBriefings:get("approach:autobrake") == 2 then
+		command_once("laminar/B738/knob/autobrake_1")
+	elseif activeBriefings:get("approach:autobrake") == 3 then
+		command_once("laminar/B738/knob/autobrake_2")
+	elseif activeBriefings:get("approach:autobrake") == 4 then
+		command_once("laminar/B738/knob/autobrake_3")
+	elseif activeBriefings:get("approach:autobrake") == 5 then
+		command_once("laminar/B738/knob/autobrake_max")
+	end
+end
 
 -- bck callouts when needed
 
@@ -769,8 +981,8 @@ function kc_bck_b738_gen1down(trigger)
 	end
 	if kc_procvar_get(delayvar) == -1 then
 		kc_procvar_set(delayvar,0)
-			command_begin("laminar/B738/toggle_switch/gen1_dn")
-		else
+		command_begin("laminar/B738/toggle_switch/gen1_dn")
+	else
 		if kc_procvar_get(delayvar) <= 0 then
 			command_end("laminar/B738/toggle_switch/gen1_dn") 
 			kc_procvar_set(trigger,false)
@@ -789,8 +1001,8 @@ function kc_bck_b738_gen2down(trigger)
 	end
 	if kc_procvar_get(delayvar) == -1 then
 		kc_procvar_set(delayvar,0)
-			command_begin("laminar/B738/toggle_switch/gen2_dn")
-		else
+		command_begin("laminar/B738/toggle_switch/gen2_dn")
+	else
 		if kc_procvar_get(delayvar) <= 0 then
 			command_end("laminar/B738/toggle_switch/gen2_dn") 
 			kc_procvar_set(trigger,false)
@@ -798,6 +1010,42 @@ function kc_bck_b738_gen2down(trigger)
 		else
 			kc_procvar_set(delayvar,kc_procvar_get(delayvar)-1)
 		end
+	end
+end
+
+-- wait for climbing through 10.000 ft then execute items
+function kc_bck_climb_through_10k(trigger)
+	if get("sim/cockpit2/gauges/indicators/altitude_ft_pilot") > 10000 then
+		kc_speakNoText(0,"ten thousand")
+		kc_macro_above_10000_ft()
+		kc_procvar_set(trigger,false)
+	end
+end
+
+-- wait for descending through 10.000 ft then execute items
+function kc_bck_descend_through_10k(trigger)
+	if get("sim/cockpit2/gauges/indicators/altitude_ft_pilot") < 10000 then
+		kc_speakNoText(0,"ten thousand")
+		kc_macro_below_10000_ft()
+		kc_procvar_set(trigger,false)
+	end
+end
+
+-- wait for climbing through trans alt then execute items
+function kc_bck_transition_altitude(trigger)
+	if get("sim/cockpit2/gauges/indicators/altitude_ft_pilot") > activeBriefings:get("departure:transalt") then
+		kc_speakNoText(0,"transition altitude")
+		kc_macro_at_trans_alt()
+		kc_procvar_set(trigger,false)
+	end
+end
+
+-- wait for descending through trans lvl then execute items
+function kc_bck_transition_level(trigger)
+	if get("sim/cockpit2/gauges/indicators/altitude_ft_pilot") < activeBriefings:get("arrival:translvl")*100 then
+		kc_speakNoText(0,"transition level")
+		kc_macro_at_trans_lvl()
+		kc_procvar_set(trigger,false)
 	end
 end
 

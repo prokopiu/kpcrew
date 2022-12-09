@@ -113,7 +113,7 @@ function kcFlowExecutor:execute()
 	elseif flowState == Flow.RUN then
 	
 		-- execute the flow step by step
-		-- logMsg("Step: [" .. step:getClassName() .. "] State: " .. step.states[step:getState()+1] .. " \"" .. step:getChallengeText() .. "\"")
+		logMsg("Step: [" .. step:getClassName() .. "] State: " .. step.states[step:getState()+1] .. " \"" .. step:getChallengeText() .. "\"")
 
 		-- initial state
 		if step:getState() == FlowItem.INIT then
@@ -135,6 +135,8 @@ function kcFlowExecutor:execute()
 				end
 				step:setState(FlowItem.RUN)
 			end 
+			kc_procvar_set("waitformaster",false)
+
 		end
 
 		-- running steps 
@@ -193,6 +195,7 @@ function kcFlowExecutor:execute()
 		-- step is done and can be closed - next one to be selected if available
 		if step:getState() == FlowItem.DONE then
 			jump2NextStep(self.flow, self.bgr)
+			kc_procvar_set("waitformaster",false)
 		end 
 
 	-- paused
