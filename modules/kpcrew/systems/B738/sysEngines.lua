@@ -18,36 +18,60 @@ local MultiStateCmdSwitch 	= require "kpcrew.systems.MultiStateCmdSwitch"
 local InopSwitch 			= require "kpcrew.systems.InopSwitch"
 local KeepPressedSwitchCmd	= require "kpcrew.systems.KeepPressedSwitchCmd"
 
---------- Switches
+--------- Switch datarefs common
 
-local drefEngine1Fire 	 	= "laminar/B738/annunciator/engine1_fire"
-local drefEngine2Fire 	 	= "laminar/B738/annunciator/engine2_fire"
-local drefAPUFire 		 	= "laminar/B738/annunciator/apu_fire"
+local drefStartLever1		= "laminar/B738/engine/mixture_ratio1"
+local drefStartLever2		= "laminar/B738/engine/mixture_ratio2"
+local drefIgnitionSelector	= "laminar/B738/toggle_switch/eng_start_source"
+
+--------- Annunciator datarefs common
+
+local drefReverserState		= "sim/cockpit/warnings/annunciators/reverse"
+local drefThrustLever1		= "laminar/B738/engine/thrust1_leveler"
+local drefThrustLever2		= "laminar/B738/engine/thrust2_leveler"
+local drefReverseLever1		= "laminar/B738/flt_ctrls/reverse_lever1"
+local drefReverseLever2		= "laminar/B738/flt_ctrls/reverse_lever2"
 local drefEngine1Starter 	= "laminar/B738/air/engine1/starter_valve"
 local drefEngine2Starter 	= "laminar/B738/air/engine2/starter_valve"
 local drefEngine1Oil 	 	= "laminar/B738/engine/eng1_oil_press"
 local drefEngine2Oil 	 	= "laminar/B738/engine/eng2_oil_press"
+local drefEngine1Fire 	 	= "laminar/B738/annunciator/engine1_fire"
+local drefEngine2Fire 	 	= "laminar/B738/annunciator/engine2_fire"
+local drefAPUFire 		 	= "laminar/B738/annunciator/apu_fire"
+
+--------- Switch commands common
+
+local cmdReverserToggle		= "sim/engines/thrust_reverse_toggle"
+local cmdStartLever1Off		= "laminar/B738/engine/mixture1_cutoff"
+local cmdStartLever1On		= "laminar/B738/engine/mixture1_idle"
+local cmdStartLever1Tgl		= "laminar/B738/engine/mixture1_toggle"
+local cmdStartLever2Off		= "laminar/B738/engine/mixture2_cutoff"
+local cmdStartLever2On		= "laminar/B738/engine/mixture2_idle"
+local cmdStartLever2Tgl		= "laminar/B738/engine/mixture2_toggle"
+local cmdIgnSelectorDown	= "laminar/B738/toggle_switch/eng_start_source_left"
+local cmdIgnSelectorUp		= "laminar/B738/toggle_switch/eng_start_source_right"
+
+--------- Actuator definitions
 
 -- Reverse Toggle
-sysEngines.reverseToggle 	= TwoStateToggleSwitch:new("reverse","sim/cockpit/warnings/annunciators/reverse",0,
-	"sim/engines/thrust_reverse_toggle") 
+sysEngines.reverseToggle 	= TwoStateToggleSwitch:new("reverse",drefReverserState,0,cmdReverserToggle) 
 
 -- engine start levers (fuel)
-sysEngines.startLever1 		= TwoStateCmdSwitch:new("","laminar/B738/engine/mixture_ratio1",0,
-	"laminar/B738/engine/mixture1_idle","laminar/B738/engine/mixture1_cutoff","laminar/B738/engine/mixture1_toggle")
-sysEngines.startLever2 		= TwoStateCmdSwitch:new("","laminar/B738/engine/mixture_ratio2",0,
-	"laminar/B738/engine/mixture2_idle","laminar/B738/engine/mixture2_cutoff","laminar/B738/engine/mixture2_toggle")
+sysEngines.startLever1 		= TwoStateCmdSwitch:new("",drefStartLever1,0,
+	cmdStartLever1On,cmdStartLever1Off,cmdStartLever1Tgl)
+sysEngines.startLever2 		= TwoStateCmdSwitch:new("",drefStartLever2,0,
+	cmdStartLever2On,cmdStartLever2Off,cmdStartLever2Tgl)
 sysEngines.startLeverGroup 	= SwitchGroup:new("startLevers")
 sysEngines.startLeverGroup:addSwitch(sysEngines.startLever1)
 sysEngines.startLeverGroup:addSwitch(sysEngines.startLever2)
 
+-- IGN select
+sysEngines.ignSelectSwitch 	= MultiStateCmdSwitch:new("",drefIgnitionSelector,0,
+	cmdIgnSelectorUp,cmdIgnSelectorDown,-1,1,false)
+
 -- OVHT Test
 sysEngines.ovhtFireTestSwitch = KeepPressedSwitchCmd:new("OVHTtest","laminar/B738/toggle_switch/fire_test",0,
 	"laminar/B738/toggle_switch/fire_test_rgt")
-
--- IGN select
-sysEngines.ignSelectSwitch 	= MultiStateCmdSwitch:new("","laminar/B738/toggle_switch/eng_start_source",0,
-	"laminar/B738/toggle_switch/eng_start_source_left","laminar/B738/toggle_switch/eng_start_source_right",-1,1,false)
 
 -- STARTER Switches
 sysEngines.engStart1Switch 	= MultiStateCmdSwitch:new("","laminar/B738/engine/starter1_pos",0,
@@ -75,6 +99,24 @@ sysEngines.eecSwitchGroup:addSwitch(sysEngines.eecSwitch1)
 sysEngines.eecSwitchGroup:addSwitch(sysEngines.eecSwitch2)
 
 ----------- Annunciators
+
+-- Reverse Thrust
+sysEngines.reverseAnc 		= CustomAnnunciator:new("reverserstate",
+function ()
+	if get(drefReverserState,0) > 0 then
+		return 1
+	else
+		return 0
+	end
+end)
+
+-- Thrust lever state
+sysEngines.thrustLever1 	= SimpleAnnunciator:new ("",drefThrustLever1,0)
+sysEngines.thrustLever2 	= SimpleAnnunciator:new ("",drefThrustLever2,0)
+
+-- Reverser lever state
+sysEngines.reverseLever1 	= SimpleAnnunciator:new("",drefReverseLever1,0)
+sysEngines.reverseLever2 	= SimpleAnnunciator:new("",drefReverseLever2,0)
 
 -- ENGINE FIRE annunciator
 sysEngines.engineFireAnc 	= CustomAnnunciator:new("enginefire",
@@ -105,22 +147,6 @@ function ()
 		return 1
 	end
 end)
-
--- Reverse Thrust
-sysEngines.reverseAnc 		= CustomAnnunciator:new("enginestarter",
-function ()
-	if get("sim/cockpit/warnings/annunciators/reverse",0) > 0 then
-		return 1
-	else
-		return 0
-	end
-end)
-
-sysEngines.reverseLever1 	= SimpleAnnunciator:new("","laminar/B738/flt_ctrls/reverse_lever1",0)
-sysEngines.reverseLever2 	= SimpleAnnunciator:new("","laminar/B738/flt_ctrls/reverse_lever2",0)
-
-sysEngines.thrustLever1 	= SimpleAnnunciator:new ("","laminar/B738/engine/thrust1_leveler",0)
-sysEngines.thrustLever2 	= SimpleAnnunciator:new ("","laminar/B738/engine/thrust2_leveler",0)
 
 sysEngines.fadecFail 		= CustomAnnunciator:new("fadecfail",
 function () 

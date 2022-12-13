@@ -84,8 +84,8 @@ sysGeneral.irsUnitGroup:addSwitch(sysGeneral.irsUnit2Switch)
 sysGeneral.irsUnitGroup:addSwitch(sysGeneral.irsUnit3Switch)
 
 -- Windshield Wipers
-sysGeneral.wiperSwitch = TwoStateDrefSwitch:new("wiper left","1-sim/misc/wiper/L/switch"),0)
-sysGeneral.wiperSwitch2 = TwoStateDrefSwitch:new("wiper right","1-sim/misc/wiper/R/switch"),0)
+sysGeneral.wiperSwitch = TwoStateDrefSwitch:new("wiper left","1-sim/misc/wiper/L/switch",0)
+sysGeneral.wiperSwitch2 = TwoStateDrefSwitch:new("wiper right","1-sim/misc/wiper/R/switch",0)
 sysGeneral.wiperGroup = SwitchGroup:new("wipers")
 sysGeneral.wiperGroup:addSwitch(sysGeneral.wiperSwitch)
 sysGeneral.wiperGroup:addSwitch(sysGeneral.wiperSwitch2)
