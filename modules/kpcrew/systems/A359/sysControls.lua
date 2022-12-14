@@ -27,46 +27,71 @@ local CustomAnnunciator 	= require "kpcrew.systems.CustomAnnunciator"
 local TwoStateToggleSwitch	= require "kpcrew.systems.TwoStateToggleSwitch"
 local MultiStateCmdSwitch 	= require "kpcrew.systems.MultiStateCmdSwitch"
 local InopSwitch 			= require "kpcrew.systems.InopSwitch"
+local KeepPressedSwitchCmd	= require "kpcrew.systems.KeepPressedSwitchCmd"
 
---------- Switches
+--------- Switch datarefs common
+
+local drefFlapPosition		= "sim/cockpit2/controls/flap_ratio"
+local drefElevatorTrim		= "sim/cockpit2/controls/elevator_trim"
+local drefAileronTrim 		= "sim/cockpit2/controls/aileron_trim"
+local drefRudderTrim 		= "sim/cockpit2/controls/rudder_trim"
+local drefYawDamper			= "sim/cockpit2/switches/yaw_damper_on"
+
+--------- Annunciator datarefs common
+
+local drefHydraulic1Anc		= "1-sim/hyd/systemG"
+local drefHydraulic2Anc		= "1-sim/hyd/systemY"
+
+--------- Switch commands common
+
+local cmdFlapsDown			= "sim/flight_controls/flaps_down"
+local cmdFlapsUp			= "sim/flight_controls/flaps_up"
+local cmdElevTrimDown		= "sim/flight_controls/pitch_trim_down"
+local cmdElevTrimUp			= "sim/flight_controls/pitch_trim_up"
+local cmdAileronTrimDown	= "sim/flight_controls/aileron_trim_left"
+local cmdAileronTrimUp		= "sim/flight_controls/aileron_trim_right"
+local cmdAileronTrimRst		= "sim/flight_controls/aileron_trim_center"
+local cmdRudderTrimDown		= "sim/flight_controls/rudder_trim_left"
+local cmdRudderTrimUp		= "sim/flight_controls/rudder_trim_left"
+local cmdRudderTrimRst		= "sim/flight_controls/rudder_trim_center"
+local cmdYawDamperTgl		= "sim/systems/yaw_damper_toggle"
+
+--------- Actuator definitions
 
 -- ** Flaps 
-sysControls.flapsSwitch 	= TwoStateCustomSwitch:new("flaps","sim/cockpit2/controls/flap_ratio",0,
+sysControls.flapsSwitch 	= TwoStateCustomSwitch:new("flaps",drefFlapPosition,0,
 	function () 
-		command_once("sim/flight_controls/flaps_down")
+		command_once(cmdFlapsDown)
 	end,
 	function () 
-		command_once("sim/flight_controls/flaps_up")
+		command_once(cmdFlapsUp)
 	end,
 	function () 
 		return
 	end
 )
 
-MultiStateCmdSwitch:new("flaps","sim/cockpit2/controls/flap_ratio",0,
-"sim/flight_controls/flaps_up","sim/flight_controls/flaps_down",0,1,true)
-
 -- ** Pitch Trim
-sysControls.pitchTrimSwitch = MultiStateCmdSwitch:new("pitchtrim","sim/cockpit2/controls/elevator_trim",0,
-	"sim/flight_controls/pitch_trim_up","sim/flight_controls/pitch_trim_down",-1,1,false)
+sysControls.pitchTrimSwitch = MultiStateCmdSwitch:new("pitchtrim",drefElevatorTrim,0,
+	cmdElevTrimUp,cmdElevTrimDown,-1,1,false)
 
 -- ** Aileron Trim
-sysControls.aileronTrimSwitch = MultiStateCmdSwitch:new("ailerontrim","sim/cockpit2/controls/aileron_trim",0,
-	"sim/flight_controls/aileron_trim_right","sim/flight_controls/aileron_trim_left",-1,1,false)
+sysControls.aileronTrimSwitch = MultiStateCmdSwitch:new("ailerontrim",drefAileronTrim,0,
+	cmdAileronTrimUp,cmdAileronTrimDown,-1,1,false)
 
-sysControls.aileronReset 	= TwoStateToggleSwitch:new("aileronreset","sim/cockpit2/controls/aileron_trim",0,
-	"sim/flight_controls/aileron_trim_center")
+sysControls.aileronReset 	= TwoStateToggleSwitch:new("aileronreset",drefAileronTrim,0,
+	cmdAileronTrimRst)
 
 -- ** Rudder Trim
-sysControls.rudderTrimSwitch = MultiStateCmdSwitch:new("ruddertrim","sim/cockpit2/controls/rudder_trim",0,
-	"sim/flight_controls/rudder_trim_right","sim/flight_controls/rudder_trim_left",-1,1,false)
+sysControls.rudderTrimSwitch = MultiStateCmdSwitch:new("ruddertrim",drefRudderTrim,0,
+	cmdRudderTrimUp,cmdRudderTrimDown,-1,1,false)
 
-sysControls.rudderReset = TwoStateToggleSwitch:new("rudderreset","sim/cockpit2/controls/rudder_trim",0,
-	"sim/flight_controls/rudder_trim_center")
+sysControls.rudderReset = TwoStateToggleSwitch:new("rudderreset",drefRudderTrim,0,
+	cmdRudderTrimRst)
 
 -- YAW Damper
-sysControls.yawDamper = TwoStateToggleSwitch:new("yawdamper","sim/cockpit2/switches/yaw_damper_on",0,
-	"sim/systems/yaw_damper_toggle")
+sysControls.yawDamper = TwoStateToggleSwitch:new("yawdamper",drefYawDamper,0,
+	cmdYawDamperTgl)
 
 --------- Annunciators
 

@@ -16,18 +16,33 @@ local CustomAnnunciator 	= require "kpcrew.systems.CustomAnnunciator"
 local TwoStateToggleSwitch	= require "kpcrew.systems.TwoStateToggleSwitch"
 local MultiStateCmdSwitch 	= require "kpcrew.systems.MultiStateCmdSwitch"
 local InopSwitch 			= require "kpcrew.systems.InopSwitch"
+local KeepPressedSwitchCmd	= require "kpcrew.systems.KeepPressedSwitchCmd"
+
+--------- Switch datarefs common
+
+local drefSlider 			= "sim/cockpit2/switches/custom_slider_on"
+local drefParkbrake			= "sim/cockpit2/controls/parking_brake_ratio"
+local drefGearLever			= "sim/cockpit/switches/gear_handle_status"
+
+--------- Annunciator datarefs common
 
 local drefCurrentBaro 		= "sim/weather/barometer_sealevel_inhg"
-local drefSlider 			= "sim/cockpit2/switches/custom_slider_on"
+
+--------- Switch commands common
+
+local cmdParkbrake			= "sim/flight_controls/brakes_toggle_max"
+local cmdGearDown			= "sim/flight_controls/landing_gear_down"
+local cmdGearUp				= "sim/flight_controls/landing_gear_up"
+
+--------- Actuator definitions
 
 -- Parking Brake
-sysGeneral.parkBrakeSwitch 	= TwoStateToggleSwitch:new("parkbrake","sim/cockpit2/controls/parking_brake_ratio",0,
-	"sim/flight_controls/brakes_toggle_max")
+sysGeneral.parkBrakeSwitch 	= TwoStateToggleSwitch:new("parkbrake",drefParkbrake,0,
+	cmdParkbrake)
 
 -- Landing Gear
-sysGeneral.GearSwitch 		= TwoStateCmdSwitch:new("gear","sim/cockpit/switches/gear_handle_status",0,
-	"sim/flight_controls/landing_gear_down","sim/flight_controls/landing_gear_up","nocommand")
--- 1-sim/flaphandle.=.1
+sysGeneral.GearSwitch 		= TwoStateCmdSwitch:new("gear",drefGearLever,0,
+	cmdGearDown,cmdGearUp,"nocommand")
 
 -- Doors
 sysGeneral.doorL1			= TwoStateToggleSwitch:new("doorl1",drefSlider,0,"sim/operation/slider_01")

@@ -36,8 +36,19 @@ local CustomAnnunciator 	= require "kpcrew.systems.CustomAnnunciator"
 local TwoStateToggleSwitch	= require "kpcrew.systems.TwoStateToggleSwitch"
 local MultiStateCmdSwitch 	= require "kpcrew.systems.MultiStateCmdSwitch"
 local InopSwitch 			= require "kpcrew.systems.InopSwitch"
+local KeepPressedSwitchCmd	= require "kpcrew.systems.KeepPressedSwitchCmd"
 
-------------- Switches
+--------- Switch datarefs common
+
+
+--------- Annunciator datarefs common
+
+
+--------- Switch commands common
+
+
+--------- Actuator definitions
+
 
 -- MAP ZOOM
 sysEFIS.mapZoomPilot 		= MultiStateCmdSwitch:new("mapzoompilot","sim/cockpit/switches/EFIS_map_range_selector",0,

@@ -57,18 +57,6 @@ activeSOP = SOP:new("FF A350 SOP")
 local testProc = Procedure:new("TEST","","")
 
 testProc:addItem(SimpleProcedureItem:new("=== Batteries on"))
-testProc:addItem(ProcedureItem:new("BAT 1","ON",FlowItem.actorFO,0,
-	function () return sysElectric.batterySwitch:getStatus() == 1 end,
-	function () sysElectric.batterySwitch:actuate(1) end))
-testProc:addItem(ProcedureItem:new("BAT EMER 1","ON",FlowItem.actorFO,0,
-	function () return sysElectric.batemerg1:getStatus() == 1 end,
-	function () sysElectric.batemerg1:actuate(1) end))
-testProc:addItem(ProcedureItem:new("BAT EMER 2","ON",FlowItem.actorFO,0,
-	function () return sysElectric.batemerg2:getStatus() == 1 end,
-	function () sysElectric.batemerg2:actuate(1) end))
-testProc:addItem(ProcedureItem:new("BAT 2","ON",FlowItem.actorFO,0,
-	function () return sysElectric.battery2Switch:getStatus() == 1 end,
-	function () sysElectric.battery2Switch:actuate(1) end))
 
 
 -- =================== FMGS Preflight ====================
@@ -199,6 +187,7 @@ testProc:addItem(ProcedureItem:new("BAT 2","ON",FlowItem.actorFO,0,
 -- CKPT DOOR PB..................................OFF		.1-sim/221/button.=.0
 -- SURV SYS 1 PBs.................................ON		.1-sim/216/button.=.1.and.1-sim/217/button.=.1
 -- SURV SYS 2 PBs.................................ON		.1-sim/218/button.=.1.and.1-sim/220/button.=.1
+
 -- ===== MFD SURV
 -- SURV PAGE..................................SELECT		.1-sim/mfd/guage.=.3
 -- CONTROLS PAGE..............................SELECT		.1-sim/mfd/page.=.1
@@ -216,11 +205,13 @@ testProc:addItem(ProcedureItem:new("BAT 2","ON",FlowItem.actorFO,0,
 -- TAWS GPWS......................................ON		.1-sim/surv/TAWSgpws.=.1
 -- TAWS GS MODE...................................ON		.1-sim/surv/TAWSgs.=.1
 -- TAWS FLAP MODE.................................ON		.1-sim/surv/TAWSflap.=.1
+
 -- ===== MFD FMS INITIALIZATION
 -- INIT PAGE....................................OPEN		.1-sim/mfd/page.=.24
 -- FLIGHT NUMBER...............................ENTER		.1-sim/checklist/flightNumber.~.0
 -- FROM FIELD...................................FILL		.1-sim/checklist/from.~.0
 -- TO FIELD.....................................FILL		.1-sim/checklist/to.~.0
+
 -- === GLARESHIELD BARO REF
 -- BARO REF BOTH SET...........................CHECK
 --   Set the QNH/QFE on the EFIS and on the ISIS
@@ -228,6 +219,7 @@ testProc:addItem(ProcedureItem:new("BAT 2","ON",FlowItem.actorFO,0,
 --   PFD and ISIS
 --   the maximum difference is: 20ft
 --   check stby AH barometer setting and altitude
+
 -- ===== GLARESHIELD
 -- ND MODE & RANGE AS REQUIRED.................CHECK
 --   set the minimum range to display the first waypoint
@@ -298,6 +290,7 @@ testProc:addItem(ProcedureItem:new("BAT 2","ON",FlowItem.actorFO,0,
 --   set flaps for takeoff and check
 -- PITCH TRIM..................................CHECK
 -- ECAM STATUS.................................CHECK
+
 -- === ELECTRICAL SYSTEMS
 -- ELMU...........................................ON		.1-sim/90/button.=.1
 -- PAX SYS........................................ON		.1-sim/91/button.=.1
@@ -310,6 +303,7 @@ testProc:addItem(ProcedureItem:new("BAT 2","ON",FlowItem.actorFO,0,
 -- FAR 4..........................................ON		.1-sim/19/button.=.1.and.1-sim/20/button.=.1
 -- AFEX...........................................ON		.1-sim/21/button.=.1
 -- DER............................................ON		.1-sim/22/button.=.1
+
 -- === PRESSURIZATION
 -- CABIN ALT MODE...............................AUTO		.1-sim/122/button.=.1
 -- CABIN V/S MODE...............................AUTO		.1-sim/123/button.=.1
@@ -399,35 +393,35 @@ testProc:addItem(ProcedureItem:new("BAT 2","ON",FlowItem.actorFO,0,
 
 ---PRECISION APPROACH
 --INITIAL APPROACH
--- SEATBELTS.ON.1-sim/12/switch.=.1
+-- SEATBELTS.ON.											1-sim/12/switch.=.1
 -- APPROACH PHASE.CHECK
 -- POSITIONING MONITOR.CHECK
 -- MANAGED SPEED.CHECK
 -- SPEED BRAKES AS REQUIRED.CHECK
 --FINAL APPROACH
--- APP PB FCU.SELECT.AirbusFBW/APPRilluminated.=.1
--- AP.ON.1-sim/misc/AP1status.=.1.or.1-sim/misc/AP2status.=.1
+-- APP PB FCU.SELECT.										AirbusFBW/APPRilluminated.=.1
+-- AP.ON.													1-sim/misc/AP1status.=.1.or.1-sim/misc/AP2status.=.1
 -- FMA.CHECK
 -- !!.check that FMS displays the approach capability
--- FLAPS 1.SELECT.sim/flightmodel2/wing/flap2_deg[3].>.9
--- TCAS MODE TA/RA.SET.1-sim/surv/TCASmode.=.1
+-- FLAPS 1.SELECT.											sim/flightmodel2/wing/flap2_deg[3].>.9
+-- TCAS MODE TA/RA.SET.										1-sim/surv/TCASmode.=.1
 -- LOC CAPTURE.MONITOR
 -- G/S CAPTURE.MONITOR
--- FLAPS 2.SELECT.sim/flightmodel2/wing/flap2_deg[3].>.14
--- GEAR LEVER.DOWN.sim/cockpit/switches/gear_handle_status.=.1
+-- FLAPS 2.SELECT.											sim/flightmodel2/wing/flap2_deg[3].>.14
+-- GEAR LEVER.DOWN.											sim/cockpit/switches/gear_handle_status.=.1
 -- AUTOBRAKE.CONFIRM
--- GROUND SPOILERS.ARM.sim/cockpit2/controls/speedbrake_ratio.<.0
--- LANDING LIGHTS.ON.1-sim/10/switch.=.1
--- FLAPS 3.SELECT.sim/flightmodel2/wing/flap2_deg[3].>.19
--- ECAM WHEEL PAGE.SELECT.1-sim/ind/ecamMode.=.3
+-- GROUND SPOILERS.ARM.										sim/cockpit2/controls/speedbrake_ratio.<.0
+-- LANDING LIGHTS.ON.										1-sim/10/switch.=.1
+-- FLAPS 3.SELECT.											sim/flightmodel2/wing/flap2_deg[3].>.19
+-- ECAM WHEEL PAGE.SELECT.									1-sim/ind/ecamMode.=.3
 -- ECAM WHEEL PAGE.CHECK
--- FLAPS FULL.SELECT.sim/flightmodel2/wing/flap2_deg[3].>.30
--- TABLE.STOWED.1-sim/computer.=.0
+-- FLAPS FULL.SELECT.										sim/flightmodel2/wing/flap2_deg[3].>.30
+-- TABLE.STOWED.											1-sim/computer.=.0
 -- FLIGHT PARAMETERS.CHECK
 
 ---NON-PRECISION APPROACH WITH FLS
 --INITIAL APPROACH
--- SEATBELTS.ON.1-sim/12/switch.=.1
+-- SEATBELTS.ON.											1-sim/12/switch.=.1
 -- APPROACH PHASE.CHECK
 -- POSITIONING MONITOR.CHECK
 -- MANAGED SPEED.CHECK
@@ -444,25 +438,25 @@ testProc:addItem(ProcedureItem:new("BAT 2","ON",FlowItem.actorFO,0,
 -- !!.F-G/S
 -- !!.the A/THR in SPEED mode
 -- !!.the managed speed target
--- APP PB FCU.SELECT.SELECT.AirbusFBW/APPRilluminated.=.1
+-- APP PB FCU.SELECT.SELECT.								AirbusFBW/APPRilluminated.=.1
 -- FLYING REFERENCE.TRK-FPA.CHECK
 -- FLS CAPABILITY.CHECK
--- FLAPS 1.SELECT.sim/flightmodel2/wing/flap2_deg[3].>.9
--- TCAS MODE TA/RA.SET.1-sim/surv/TCASmode.=.1
+-- FLAPS 1.SELECT.											sim/flightmodel2/wing/flap2_deg[3].>.9
+-- TCAS MODE TA/RA.SET.										1-sim/surv/TCASmode.=.1
 -- F-LOC, LOC, or LOC B/C.MONITOR
 -- F-G/S CAPTURE.CHECK
 -- FPA MODE AS REQUIRED.CHECK
 -- F-G/S MODE ENGAGED.CHECK
--- FLAPS 2.SELECT.sim/flightmodel2/wing/flap2_deg[3].>.14
--- GEAR LEVER.DOWN.sim/cockpit/switches/gear_handle_status.=.1
+-- FLAPS 2.SELECT.											sim/flightmodel2/wing/flap2_deg[3].>.14
+-- GEAR LEVER.DOWN.											sim/cockpit/switches/gear_handle_status.=.1
 -- AUTOBRAKE.CONFIRM
--- GROUND SPOILERS.ARM.sim/cockpit2/controls/speedbrake_ratio.<.0
--- LANDING LIGHTS.ON.1-sim/10/switch.=.1
--- FLAPS 3.SELECT.sim/flightmodel2/wing/flap2_deg[3].>.19
--- ECAM WHEEL PAGE.SELECT.1-sim/ind/ecamMode.=.3
+-- GROUND SPOILERS.ARM.										sim/cockpit2/controls/speedbrake_ratio.<.0
+-- LANDING LIGHTS.ON.										1-sim/10/switch.=.1
+-- FLAPS 3.SELECT.											sim/flightmodel2/wing/flap2_deg[3].>.19
+-- ECAM WHEEL PAGE.SELECT.									1-sim/ind/ecamMode.=.3
 -- ECAM WHEEL PAGE.CHECK
--- FLAPS FULL.SELECT.sim/flightmodel2/wing/flap2_deg[3].>.30
--- TABLE.STOWED.1-sim/computer.=.0
+-- FLAPS FULL.SELECT.										sim/flightmodel2/wing/flap2_deg[3].>.30
+-- TABLE.STOWED.											1-sim/computer.=.0
 -- FLIGHT PARAMETERS.CHECK
 
 ---NON-PRECISION APPROACH WITHOUT FLS
@@ -481,20 +475,20 @@ testProc:addItem(ProcedureItem:new("BAT 2","ON",FlowItem.actorFO,0,
 -- !!.the managed speed target
 -- GPS PRIMARY ON POSITION AVAIL.CHECK
 -- RNMP FOR APPROACH.CHECK
--- LOC PB.SELECT.1-sim/146/button.=.1
--- FLAPS 1.SELECT.sim/flightmodel2/wing/flap2_deg[3].>.9
--- TCAS MODE TA/RA.SET.1-sim/surv/TCASmode.=.1
+-- LOC PB.SELECT.											1-sim/146/button.=.1
+-- FLAPS 1.SELECT.											sim/flightmodel2/wing/flap2_deg[3].>.9
+-- TCAS MODE TA/RA.SET.										1-sim/surv/TCASmode.=.1
 -- FPA SET.CHECK
--- FLAPS 2.SELECT.sim/flightmodel2/wing/flap2_deg[3].>.14
--- GEAR LEVER.DOWN.sim/cockpit/switches/gear_handle_status.=.1
+-- FLAPS 2.SELECT.											sim/flightmodel2/wing/flap2_deg[3].>.14
+-- GEAR LEVER.DOWN.											sim/cockpit/switches/gear_handle_status.=.1
 -- AUTOBRAKE.CONFIRM
--- GROUND SPOILERS.ARM.sim/cockpit2/controls/speedbrake_ratio.<.0
--- LANDING LIGHTS.ON.1-sim/10/switch.=.1
--- FLAPS 3.SELECT.sim/flightmodel2/wing/flap2_deg[3].>.19
--- ECAM WHEEL PAGE.SELECT.1-sim/ind/ecamMode.=.2
+-- GROUND SPOILERS.ARM.										sim/cockpit2/controls/speedbrake_ratio.<.0
+-- LANDING LIGHTS.ON.										1-sim/10/switch.=.1
+-- FLAPS 3.SELECT.											sim/flightmodel2/wing/flap2_deg[3].>.19
+-- ECAM WHEEL PAGE.SELECT.									1-sim/ind/ecamMode.=.2
 -- ECAM WHEEL PAGE.CHECK
--- FLAPS FULL.SELECT.sim/flightmodel2/wing/flap2_deg[3].>.30
--- TABLE.STOWED.1-sim/computer.=.0
+-- FLAPS FULL.SELECT.										sim/flightmodel2/wing/flap2_deg[3].>.30
+-- TABLE.STOWED.											1-sim/computer.=.0
 -- FLIGHT PARAMETERS.CHECK
 
 ---VISUAL APPROACH
@@ -505,17 +499,17 @@ testProc:addItem(ProcedureItem:new("BAT 2","ON",FlowItem.actorFO,0,
 -- ?.elevations on the correct approach path, in the landing 
 -- ?.configuration at VAPP
 -- ACTIVATE APPR ON FMS.CHECK
--- FD PB.OFF.sim/cockpit/autopilot/autopilot_mode.=.0
+-- FD PB.OFF.												sim/cockpit/autopilot/autopilot_mode.=.0
 -- TRK-FPA PB SELECTED.CHECK
--- A/THR.ON.sim/cockpit2/autopilot/autothrottle_enabled.=.1
--- FLAPS 1.SELECT.sim/flightmodel2/wing/flap2_deg[3].>.9
--- TCAS MODE TA/RA.SET.1-sim/surv/TCASmode.=.1
+-- A/THR.ON.												sim/cockpit2/autopilot/autothrottle_enabled.=.1
+-- FLAPS 1.SELECT.											sim/flightmodel2/wing/flap2_deg[3].>.9
+-- TCAS MODE TA/RA.SET.										1-sim/surv/TCASmode.=.1
 -- FPA SET.CHECK
--- FLAPS 2.SELECT.sim/flightmodel2/wing/flap2_deg[3].>.14
--- GEAR LEVER.DOWN.sim/cockpit/switches/gear_handle_status.=.1
+-- FLAPS 2.SELECT.											sim/flightmodel2/wing/flap2_deg[3].>.14
+-- GEAR LEVER.DOWN.											sim/cockpit/switches/gear_handle_status.=.1
 -- AUTOBRAKE.CONFIRM
--- GROUND SPOILERS.ARM.sim/cockpit2/controls/speedbrake_ratio.<.0
--- LANDING LIGHTS.ON.1-sim/10/switch.=.1
+-- GROUND SPOILERS.ARM.										sim/cockpit2/controls/speedbrake_ratio.<.0
+-- LANDING LIGHTS.ON.										1-sim/10/switch.=.1
 
 -- ======================= LANDING =======================
 -- === MANUAL

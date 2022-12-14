@@ -99,7 +99,7 @@ sysLights.instrLightGroup:addSwitch(sysLights.instr4Light)
 sysLights.instrLightGroup:addSwitch(sysLights.instr5Light)
 sysLights.instrLightGroup:addSwitch(sysLights.instr6Light)
 sysLights.instrLightGroup:addSwitch(sysLights.instr7Light)
-sysLights.instrLightGroup:actuate(modeOff)
+-- sysLights.instrLightGroup:actuate(modeOff)
 
 --------- Annunciators
 -- ** annunciator to mark any landing lights on
