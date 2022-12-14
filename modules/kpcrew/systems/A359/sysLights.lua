@@ -27,11 +27,15 @@ local drefNavLights			= "1-sim/4/switch"
 local drefTaxiLights		= "1-sim/11/switch"
 local drefRWYTurnoff		= "1-sim/8/switch"
 local drefLandingLight1		= "1-sim/10/switch"
+local drefWingLights		= "1-sim/9/switch"
+local drefLogoLights		= "1-sim/5/switch"
+local drefDomeLight			= "1-sim/lights/integ/Rotery"
+local drefInstrLight1		= "1-sim/lights/pedestal/Rotery"
+local drefInstrLight2		= "1-sim/lights/mainPnl/Rotery"
+local drefInstrLight3		= "1-sim/lights/side/Rotery"
+local drefInstrLight4		= "1-sim/lights/conLightRotery"
+local drefInstrLight5		= "1-sim/lights/map/Rotery"
 
--- local drefLandingLights 	= "sim/cockpit2/switches/landing_lights_switch"	
--- local drefGenericLights 	= "sim/cockpit2/switches/generic_lights_switch"
--- local drefInstrLights 		= "sim/cockpit2/switches/instrument_brightness_ratio"
--- local drefPanelLights 		= "sim/cockpit2/switches/panel_brightness_ratio"
 
 --------- Annunciator datarefs common
 
@@ -40,10 +44,6 @@ local drefLandingLight1		= "1-sim/10/switch"
 
 
 --------- Actuator definitions
-
-
-
------------ Switches
 
 -- **Beacons or Anticollision Lights, single, onoff, command driven
 sysLights.beaconSwitch 		= TwoStateDrefSwitch:new("beacon",drefBeaconLights,0)
@@ -55,7 +55,28 @@ sysLights.positionSwitch 	= TwoStateDrefSwitch:new("position",drefNavLights,0)
 sysLights.strobesSwitch 	= TwoStateDrefSwitch:new("strobes",drefStrobeLights,0)
 
 -- Taxi/Nose Lights, single onoff command driven
-sysLights.taxiSwitch 		= TwoStateDrefSwitch:new("taxi",drefTaxiLights,0)
+sysLights.taxiSwitch 		= TwoStateCustomSwitch:new("taxi",drefTaxiLights,0,
+	function () 
+		set(drefTaxiLights,1)
+	end,
+	function () 
+		set(drefTaxiLights,2)
+	end,
+	function () 
+		if get(drefTaxiLights) == 2 then
+			set(drefTaxiLights,1)
+		else
+			set(drefTaxiLights,2)
+		end
+	end,
+	function () 
+		if get(drefTaxiLights) == 2 then
+			return 0
+		else
+			return 1
+		end
+	end
+)
 
 -- Landing Lights, single onoff command driven
 sysLights.llLeftSwitch 		= TwoStateDrefSwitch:new("llleft",drefLandingLight1,0)
@@ -65,100 +86,70 @@ sysLights.landLightGroup:addSwitch(sysLights.llLeftSwitch)
 -- sysLights.landLightGroup:addSwitch(sysLights.llRightSwitch)
 
 -- Logo Light
-sysLights.logoSwitch 		= InopSwitch:new("logo")
+sysLights.logoSwitch 		= TwoStateDrefSwitch:new("logo",drefLogoLights,0)
 
 -- RWY Turnoff Lights
-sysLights.rwyLeftSwitch 	= TwoStateDrefSwitch:new("rwyleft",drefStrobeLights,0)
+sysLights.rwyLeftSwitch 	= TwoStateDrefSwitch:new("rwyleft",drefRWYTurnoff,0)
 -- sysLights.rwyRightSwitch 	= InopSwitch:new("rwyright")
 sysLights.rwyLightGroup 	= SwitchGroup:new("runwaylights")
 sysLights.rwyLightGroup:addSwitch(sysLights.rwyLeftSwitch)
 -- sysLights.rwyLightGroup:addSwitch(sysLights.rwyRightSwitch)
 
 -- Wing Lights
-sysLights.wingSwitch 		= InopSwitch:new("wing")
+sysLights.wingSwitch 		= TwoStateDrefSwitch:new("wing",drefWingLights,0)
 
 -- Wheel well Lights
 sysLights.wheelSwitch 		= InopSwitch:new("wheel")
 
 -- Dome Light
-sysLights.domeLightSwitch 	= InopSwitch:new("dome")
+sysLights.domeLightSwitch 	= TwoStateDrefSwitch:new("dome",drefDomeLight,0)
 
 -- Instrument Lights
-sysLights.instr1Light		= InopSwitch:new("Lights")
--- sysLights.instr2Light		= TwoStateDrefSwitch:new("","sim/cockpit2/switches/panel_brightness_ratio",-1)
--- sysLights.instr3Light		= TwoStateDrefSwitch:new("","sim/cockpit2/switches/instrument_brightness_ratio",2)
--- sysLights.instr4Light		= TwoStateDrefSwitch:new("","sim/cockpit2/switches/instrument_brightness_ratio",-1)
--- sysLights.instr5Light		= TwoStateDrefSwitch:new("","sim/cockpit2/switches/instrument_brightness_ratio",3)
--- sysLights.instr6Light		= TwoStateDrefSwitch:new("","sim/cockpit2/switches/instrument_brightness_ratio",1)
--- sysLights.instr7Light		= TwoStateDrefSwitch:new("","sim/cockpit2/switches/panel_brightness_ratio",1)
--- sysLights.instr8Light		= TwoStateDrefSwitch:new("","sim/cockpit2/switches/panel_brightness_ratio",2)
--- sysLights.instr9Light		= TwoStateDrefSwitch:new("","sim/cockpit2/switches/panel_brightness_ratio",3)
+sysLights.instr1Light		= TwoStateDrefSwitch:new("Lights",drefInstrLight1,0)
+sysLights.instr2Light		= TwoStateDrefSwitch:new("",drefInstrLight2,0)
+sysLights.instr3Light		= TwoStateDrefSwitch:new("",drefInstrLight3,0)
+sysLights.instr4Light		= TwoStateDrefSwitch:new("",drefInstrLight4,0)
+sysLights.instr5Light		= TwoStateDrefSwitch:new("",drefInstrLight5,0)
 sysLights.instrLightGroup 	= SwitchGroup:new("instrumentlights")
 sysLights.instrLightGroup:addSwitch(sysLights.instr1Light)
--- sysLights.instrLightGroup:addSwitch(sysLights.instr2Light)
--- sysLights.instrLightGroup:addSwitch(sysLights.instr3Light)
--- sysLights.instrLightGroup:addSwitch(sysLights.instr4Light)
--- sysLights.instrLightGroup:addSwitch(sysLights.instr5Light)
--- sysLights.instrLightGroup:addSwitch(sysLights.instr6Light)
--- sysLights.instrLightGroup:addSwitch(sysLights.instr7Light)
--- sysLights.instrLightGroup:addSwitch(sysLights.instr8Light)
--- sysLights.instrLightGroup:addSwitch(sysLights.instr9Light)
--- sysLights.instrLightGroup:actuate(0)
+sysLights.instrLightGroup:addSwitch(sysLights.instr2Light)
+sysLights.instrLightGroup:addSwitch(sysLights.instr3Light)
+sysLights.instrLightGroup:addSwitch(sysLights.instr4Light)
+sysLights.instrLightGroup:addSwitch(sysLights.instr5Light)
 
 --------- Annunciators
 -- annunciator to mark any landing lights on
-sysLights.landingAnc 		= CustomAnnunciator:new("landinglights",
-function () 
-	-- if get(drefLandingLights,0) > 0 or get(drefLandingLights,1) > 0  or get(drefLandingLights,2) > 0 or get(drefLandingLights,3) > 0 then
-		-- return 1
-	-- else
-		return 0
-	-- end
-end)
+sysLights.landingAnc 		= SimpleAnnunciator:new("landinglights",drefLandingLight1,0)
 
 -- Beacons or Anticollision Light(s) status
-sysLights.beaconAnc 		= SimpleAnnunciator:new("beaconlights","sim/cockpit/electrical/beacon_lights_on",0)
+sysLights.beaconAnc 		= SimpleAnnunciator:new("beaconlights",drefBeaconLights,0)
 
 -- Position Light(s) status
-sysLights.positionAnc 		= SimpleAnnunciator:new("positionlights","sim/cockpit2/switches/navigation_lights_on",0)
+sysLights.positionAnc 		= SimpleAnnunciator:new("positionlights",drefNavLights,0)
 
 -- Strobe Light(s) status
-sysLights.strobesAnc 		= SimpleAnnunciator:new("strobelights","sim/cockpit2/switches/strobe_lights_on",0)
+sysLights.strobesAnc 		= SimpleAnnunciator:new("strobelights",drefStrobeLights,0)
 
 -- Taxi Light(s) status
-sysLights.taxiAnc 			= SimpleAnnunciator:new("strobelights","sim/cockpit2/switches/taxi_light_on",0)
+sysLights.taxiAnc 			= SimpleAnnunciator:new("taxilights",drefTaxiLights,0)
 
 -- Logo Light(s) status
-sysLights.logoAnc 			= SimpleAnnunciator:new("logolights","sim/cockpit2/switches/generic_lights_switch",0)
+sysLights.logoAnc 			= SimpleAnnunciator:new("logolights",drefLogoLights,0)
 
 -- runway turnoff lights
-sysLights.runwayAnc 		= CustomAnnunciator:new("runwaylights",
-function () 
-	-- if get(drefGenericLights,1) > 0 or get(drefGenericLights,2) > 0 then
-		-- return 1
-	-- else
-		return 0
-	-- end
-end)
+sysLights.runwayAnc 		= SimpleAnnunciator:new("runwaylights",drefRWYTurnoff,0)
 
 -- Wing Light(s) status
-sysLights.wingAnc 			= SimpleAnnunciator:new("winglights",drefGenericLights, 3)
+sysLights.wingAnc 			= SimpleAnnunciator:new("winglights",drefWingLights,0)
 
 -- Wheel well Light(s) status
-sysLights.wheelAnc 			= SimpleAnnunciator:new("wheellights",drefGenericLights,5)
+sysLights.wheelAnc 			= InopSwitch:new("wheellights")
 
 -- Dome Light(s) status
-sysLights.domeAnc 			= CustomAnnunciator:new("domelights",
-function () 
-	if get( "sim/cockpit/electrical/cockpit_lights",0) ~= 0 then
-		return 1
-	else
-		return 0
-	end
-end)
+sysLights.domeAnc 			= SimpleAnnunciator:new("domelights",drefDomeLight,0)
 
 -- Instrument Light(s) status
-sysLights.instrumentAnc = SimpleAnnunciator:new("instrumentlights", "sim/cockpit2/switches/instrument_brightness_ratio",0)
+sysLights.instrumentAnc 	= InopSwitch:new("instrumentlights")
 
 -- ===== UI related functions =====
 
@@ -192,19 +183,14 @@ function sysLights:render(ypos,height)
 	end
 
 	kc_imgui_label_mcp("LIGHTS:",10)
-	kc_imgui_label_mcp("LAND:",10)
-	kc_imgui_toggle_button_mcp("LEFT",sysLights.llLeftSwitch,10,42,25)
-	kc_imgui_toggle_button_mcp("RIGHT",sysLights.llRightSwitch,10,42,25)
-	kc_imgui_simple_button_mcp("ALL",sysLights.landLightGroup,10,42,25)
-	kc_imgui_label_mcp("|",10)
-	kc_imgui_toggle_button_mcp("RWYs",sysLights.rwyLightGroup,10,42,25)
+	kc_imgui_toggle_button_mcp("LAND",sysLights.llLeftSwitch,10,42,25)
+	kc_imgui_toggle_button_mcp("RWYs",sysLights.rwyLeftSwitch,10,42,25)
 	kc_imgui_toggle_button_mcp("TAXI",sysLights.taxiSwitch,10,42,25)
 	kc_imgui_toggle_button_mcp("LOGO",sysLights.logoSwitch,10,42,25)
 	kc_imgui_toggle_button_mcp("STRB",sysLights.strobesSwitch,10,42,25)
 	kc_imgui_toggle_button_mcp("POS",sysLights.positionSwitch,10,42,25)
 	kc_imgui_toggle_button_mcp("BEAC",sysLights.beaconSwitch,10,42,25)
 	kc_imgui_toggle_button_mcp("WING",sysLights.wingSwitch,10,42,25)
-	kc_imgui_toggle_button_mcp("WHL",sysLights.wheelSwitch,10,42,25)
 	kc_imgui_label_mcp("|",10)
 	kc_imgui_toggle_button_mcp("DOME",sysLights.domeLightSwitch,10,42,25)
 	kc_imgui_toggle_button_mcp("INSTR",sysLights.instrLightGroup,10,45,25)
