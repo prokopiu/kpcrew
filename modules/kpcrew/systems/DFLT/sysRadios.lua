@@ -170,7 +170,7 @@ function sysRadios:render(ypos,height)
 		imgui.Button("R", 17, 60)
 		if imgui.IsItemActive() then 
 			kh_radio_wnd_state = 1
-			float_wnd_set_geometry(kh_radio_wnd, 0, ypos, 825, ypos-height)
+			float_wnd_set_geometry(kh_radio_wnd, 0, ypos, 840, ypos-height)
 		end
 	end
 

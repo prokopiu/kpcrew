@@ -156,7 +156,7 @@ function sysEFIS:render(ypos,height)
 		imgui.Button("E", 17, 25)
 		if imgui.IsItemActive() then 
 			kh_efis_wnd_state = 1
-			float_wnd_set_geometry(kh_efis_wnd, 0, ypos, 790, ypos-height)
+			float_wnd_set_geometry(kh_efis_wnd, 0, ypos, 830, ypos-height)
 		end
 	end
 
@@ -177,6 +177,7 @@ function sysEFIS:render(ypos,height)
 	kc_imgui_value("%04d ",sysGeneral.baroMbar,10)
 	kc_imgui_value("%5.2f",sysGeneral.baroInhg,10)
 	kc_imgui_simple_actuator("UP",sysGeneral.baroGroup,cmdUp,10,23,25)
+	kc_imgui_toggle_button_mcp("STD",sysGeneral.barostdGroup,10,30,25)
 end
 
 return sysEFIS

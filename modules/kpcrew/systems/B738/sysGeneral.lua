@@ -29,6 +29,39 @@ local MultiStateCmdSwitch 	= require "kpcrew.systems.MultiStateCmdSwitch"
 local InopSwitch 			= require "kpcrew.systems.InopSwitch"
 local KeepPressedSwitchCmd	= require "kpcrew.systems.KeepPressedSwitchCmd"
 
+--------- Switch datarefs common
+
+local drefSlider 			= "sim/cockpit2/switches/custom_slider_on"
+local drefParkbrake			= "sim/cockpit2/controls/parking_brake_ratio"
+local drefGearLever			= "sim/cockpit/switches/gear_handle_status"
+local drefBaroLeft			= "laminar/B738/EFIS/baro_sel_in_hg_pilot"
+local drefBaroRight 		= "laminar/B738/EFIS/baro_sel_in_hg_copilot"
+local drefBaroStby	 		= "laminar/B738/knobs/standby_alt_baro"
+local drefBaroLeftStd 		= "laminar/B738/EFIS/baro_set_std_pilot"
+local drefBaroRightStd		= "laminar/B738/EFIS/baro_set_std_copilot"
+local drefBaroStbyStd		= "laminar/B738/gauges/standby_alt_std_mode"
+
+--------- Annunciator datarefs common
+
+local drefCurrentBaro 		= "sim/weather/barometer_sealevel_inhg"
+
+--------- Switch commands common
+
+local cmdParkbrake			= "sim/flight_controls/brakes_toggle_max"
+local cmdGearDown			= "sim/flight_controls/landing_gear_down"
+local cmdGearUp				= "sim/flight_controls/landing_gear_up"
+local cmdBaroLeftDown		= "laminar/B738/pilot/barometer_down"
+local cmdBaroLeftUp			= "laminar/B738/pilot/barometer_up"
+local cmdBaroRightDown		= "laminar/B738/copilot/barometer_down"
+local cmdBaroRightUp		= "laminar/B738/copilot/barometer_up"
+local cmdBaroStbyDown		= "laminar/B738/knob/standby_alt_baro_dn"
+local cmdBaroStbyUp			= "laminar/B738/knob/standby_alt_baro_up"
+local cmdBaroLeftStd 		= "laminar/B738/EFIS_control/capt/push_button/std_press"
+local cmdBaroRightStd 		= "laminar/B738/EFIS_control/fo/push_button/std_press"
+local cmdBaroStbyStd 		= "laminar/B738/toggle_switch/standby_alt_baro_std"
+
+--------- Actuator definitions
+
 -- Parking Brake
 sysGeneral.parkBrakeSwitch 	= TwoStateToggleSwitch:new("parkbrake","sim/cockpit2/controls/parking_brake_ratio",0,
 	"laminar/B738/push_button/park_brake_on_off")
@@ -74,11 +107,11 @@ sysGeneral.noSmokingSwitch 	= MultiStateCmdSwitch:new("","laminar/B738/toggle_sw
 
 -- Baro standard toggle
 sysGeneral.barostdPilot 	= TwoStateToggleSwitch:new("barostdpilot","laminar/B738/EFIS/baro_set_std_pilot",0,
-	"laminar/B738/EFIS_control/capt/push_button/std_press")
+	cmdBaroLeftStd)
 sysGeneral.barostdCopilot 	= TwoStateToggleSwitch:new("barostdcopilot","laminar/B738/EFIS/baro_set_std_copilot",0,
-	"laminar/B738/EFIS_control/fo/push_button/std_press")
+	cmdBaroRightStd)
 sysGeneral.barostdStandby 	= TwoStateToggleSwitch:new("barostdstandby","laminar/B738/gauges/standby_alt_std_mode",0,
-	"laminar/B738/toggle_switch/standby_alt_baro_std")
+	cmdBaroStbyStd)
 sysGeneral.barostdGroup 	= SwitchGroup:new("barostdgroup")
 sysGeneral.barostdGroup:addSwitch(sysGeneral.barostdPilot)
 sysGeneral.barostdGroup:addSwitch(sysGeneral.barostdCopilot)
@@ -97,16 +130,18 @@ sysGeneral.baroModeGroup:addSwitch(sysGeneral.baroModeCoPilot)
 sysGeneral.baroModeGroup:addSwitch(sysGeneral.baroModeStandby)
 
 -- Baro value
-sysGeneral.baroPilot 		= MultiStateCmdSwitch:new("baropilot","laminar/B738/EFIS/baro_sel_in_hg_pilot",0,
-	"laminar/B738/pilot/barometer_down","laminar/B738/pilot/barometer_up",22,32,false)
-sysGeneral.baroCoPilot 		= MultiStateCmdSwitch:new("barocopilot","laminar/B738/EFIS/baro_sel_in_hg_copilot",0,
-	"laminar/B738/copilot/barometer_down","laminar/B738/copilot/barometer_up",22,32,false)
-sysGeneral.baroStandby 		= MultiStateCmdSwitch:new("barostandby","laminar/B738/knobs/standby_alt_baro",0,
-	"laminar/B738/knob/standby_alt_baro_dn","laminar/B738/knob/standby_alt_baro_up",22,32,false)
+sysGeneral.baroPilot 		= MultiStateCmdSwitch:new("baropilot",drefBaroLeft,0,
+	cmdBaroLeftDown,cmdBaroLeftUp)
+sysGeneral.baroCoPilot 		= MultiStateCmdSwitch:new("barocopilot",drefBaroRight,0,
+	cmdBaroRightDown,cmdBaroRightUp)
+sysGeneral.baroStandby 		= MultiStateCmdSwitch:new("barostandby",drefBaroStby,0,
+	cmdBaroStbyDown,cmdBaroStbyUp)
 sysGeneral.baroGroup 		= SwitchGroup:new("barogroup")
 sysGeneral.baroGroup:addSwitch(sysGeneral.baroPilot)
 sysGeneral.baroGroup:addSwitch(sysGeneral.baroCoPilot)
 sysGeneral.baroGroup:addSwitch(sysGeneral.baroStandby)
+
+
 
 --- systems not used by kphardware
 

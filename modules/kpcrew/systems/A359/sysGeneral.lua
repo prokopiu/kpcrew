@@ -23,6 +23,15 @@ local KeepPressedSwitchCmd	= require "kpcrew.systems.KeepPressedSwitchCmd"
 local drefSlider 			= "sim/cockpit2/switches/custom_slider_on"
 local drefParkbrake			= "sim/cockpit2/controls/parking_brake_ratio"
 local drefGearLever			= "sim/cockpit/switches/gear_handle_status"
+local drefBaroLeft			= "sim/cockpit2/gauges/actuators/barometer_setting_in_hg_pilot"
+local drefBaroRight 		= "sim/cockpit2/gauges/actuators/barometer_setting_in_hg_copilot"
+local drefBaroStby	 		= "AirbusFBW/ISIBaroSetting"
+local drefBaroLeftMode 		= "1-sim/pres/pressModeLeft/switch"
+local drefBaroRightMode 	= "1-sim/pres/pressModeRight/switch"
+local drefBaroStbyMode		= "1-sim/175/button"
+local drefBaroLeftStd 		= "AirbusFBW/BaroStdCapt"
+local drefBaroRightStd		= "AirbusFBW/BaroStdFO"
+local drefBaroStbyStd		= "AirbusFBW/ISIBaroStd"
 
 --------- Annunciator datarefs common
 
@@ -33,6 +42,12 @@ local drefCurrentBaro 		= "sim/weather/barometer_sealevel_inhg"
 local cmdParkbrake			= "sim/flight_controls/brakes_toggle_max"
 local cmdGearDown			= "sim/flight_controls/landing_gear_down"
 local cmdGearUp				= "sim/flight_controls/landing_gear_up"
+local cmdBaroLeftDown		= "1-sim/comm/pressLeftRotaryDN"
+local cmdBaroLeftUp			= "1-sim/comm/pressLeftRotaryUP"
+local cmdBaroRightDown		= "1-sim/comm/pressRightRotaryDN"
+local cmdBaroRightUp		= "1-sim/comm/pressRightRotaryUP"
+local cmdBaroStbyDown		= "sim/instruments/barometer_stby_down"
+local cmdBaroStbyUp			= "sim/instruments/barometer_stby_up"
 
 --------- Actuator definitions
 
@@ -60,30 +75,30 @@ sysGeneral.doorGroup:addSwitch(sysGeneral.doorFCargo)
 sysGeneral.doorGroup:addSwitch(sysGeneral.doorACargo)
 
 -- Baro standard toggle
-sysGeneral.barostdPilot 	= InopSwitch:new("barostdpilot")
-sysGeneral.barostdCopilot 	= InopSwitch:new("barostdcopilot")
-sysGeneral.barostdStandby 	= InopSwitch:new("barostdstandby")
+sysGeneral.barostdPilot 	= TwoStateDrefSwitch:new("barostdpilot",drefBaroLeftStd,0)
+sysGeneral.barostdCopilot 	= TwoStateDrefSwitch:new("barostdcopilot",drefBaroRightStd,0)
+sysGeneral.barostdStandby 	= TwoStateDrefSwitch:new("barostdstandby",drefBaroStbyStd,0)
 sysGeneral.barostdGroup 	= SwitchGroup:new("barostdgroup")
 sysGeneral.barostdGroup:addSwitch(sysGeneral.barostdPilot)
 sysGeneral.barostdGroup:addSwitch(sysGeneral.barostdCopilot)
 sysGeneral.barostdGroup:addSwitch(sysGeneral.barostdStandby)
 
 -- Baro mode
-sysGeneral.baroModePilot 	= InopSwitch:new("baromodepilot")
-sysGeneral.baroModeCoPilot 	= InopSwitch:new("baromodecopilot")
-sysGeneral.baroModeStandby 	= InopSwitch:new("baromodecopilot")
+sysGeneral.baroModePilot 	= TwoStateDrefSwitch:new("baromodepilot",drefBaroLeftMode,0)
+sysGeneral.baroModeCoPilot 	= TwoStateDrefSwitch:new("baromodecopilot",drefBaroRightMode,0)
+sysGeneral.baroModeStandby 	= TwoStateDrefSwitch:new("baromodecopilot",drefBaroRightMode,0)
 sysGeneral.baroModeGroup 	= SwitchGroup:new("baromodegroup")
 sysGeneral.baroModeGroup:addSwitch(sysGeneral.baroModePilot)
 sysGeneral.baroModeGroup:addSwitch(sysGeneral.baroModeCoPilot)
 sysGeneral.baroModeGroup:addSwitch(sysGeneral.baroModeStandby)
 
 -- Baro value
-sysGeneral.baroPilot 		= MultiStateCmdSwitch:new("baropilot","sim/cockpit2/gauges/actuators/barometer_setting_in_hg_pilot",0,
-	"sim/instruments/barometer_down","sim/instruments/barometer_up")
-sysGeneral.baroCoPilot 		= MultiStateCmdSwitch:new("barocopilot","sim/cockpit2/gauges/actuators/barometer_setting_in_hg_copilot",0,
-	"sim/instruments/barometer_copilot_down","sim/instruments/barometer_copilot_up")
-sysGeneral.baroStandby 		= MultiStateCmdSwitch:new("barostandby","sim/cockpit2/gauges/actuators/barometer_setting_in_hg_stby",0,
-	"sim/instruments/barometer_stby_down","sim/instruments/barometer_stby_up")
+sysGeneral.baroPilot 		= MultiStateCmdSwitch:new("baropilot",drefBaroLeft,0,
+	cmdBaroLeftDown,cmdBaroLeftUp)
+sysGeneral.baroCoPilot 		= MultiStateCmdSwitch:new("barocopilot",drefBaroRight,0,
+	cmdBaroRightDown,cmdBaroRightUp)
+sysGeneral.baroStandby 		= MultiStateCmdSwitch:new("barostandby",drefBaroStby,0,
+	cmdBaroStbyDown,cmdBaroStbyUp)
 sysGeneral.baroGroup 		= SwitchGroup:new("barogroup")
 sysGeneral.baroGroup:addSwitch(sysGeneral.baroPilot)
 sysGeneral.baroGroup:addSwitch(sysGeneral.baroCoPilot)
