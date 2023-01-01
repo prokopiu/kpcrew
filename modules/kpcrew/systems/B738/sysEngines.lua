@@ -26,7 +26,7 @@ local drefIgnitionSelector	= "laminar/B738/toggle_switch/eng_start_source"
 
 --------- Annunciator datarefs common
 
-local drefReverserState		= "sim/cockpit/warnings/annunciators/reverse"
+local drefReverserState		= "sim/cockpit2/annunciators/reverser_on"
 local drefThrustLever1		= "laminar/B738/engine/thrust1_leveler"
 local drefThrustLever2		= "laminar/B738/engine/thrust2_leveler"
 local drefReverseLever1		= "laminar/B738/flt_ctrls/reverse_lever1"
@@ -53,8 +53,52 @@ local cmdIgnSelectorUp		= "laminar/B738/toggle_switch/eng_start_source_right"
 
 --------- Actuator definitions
 
--- Reverse Toggle
-sysEngines.reverseToggle 	= TwoStateToggleSwitch:new("reverse",drefReverserState,0,cmdReverserToggle) 
+-- Reversers
+sysEngines.reverser1 		= TwoStateCustomSwitch:new("reverse1",drefReverserState,-1,
+	function () 
+		command_begin("sim/engines/thrust_reverse_hold_1")
+	end,
+	function () 
+		command_end("sim/engines/thrust_reverse_hold_1")
+	end,
+	function () 
+	end	
+)
+sysEngines.reverser2 		= TwoStateCustomSwitch:new("reverse2",drefReverserState,1,
+	function () 
+		command_begin("sim/engines/thrust_reverse_hold_2")
+	end,
+	function () 
+		command_end("sim/engines/thrust_reverse_hold_2")
+	end,
+	function () 
+	end	
+)
+sysEngines.reverser3 		= TwoStateCustomSwitch:new("reverse3",drefReverserState,2,
+	function () 
+		command_begin("sim/engines/thrust_reverse_hold_3")
+	end,
+	function () 
+		command_end("sim/engines/thrust_reverse_hold_3")
+	end,
+	function () 
+	end	
+)
+sysEngines.reverser4 		= TwoStateCustomSwitch:new("reverse4",drefReverserState,3,
+	function () 
+		command_begin("sim/engines/thrust_reverse_hold_4")
+	end,
+	function () 
+		command_end("sim/engines/thrust_reverse_hold_4")
+	end,
+	function () 
+	end	
+)
+sysEngines.reverserGroup 	= SwitchGroup:new("reversers")
+sysEngines.reverserGroup:addSwitch(sysEngines.reverser1)
+sysEngines.reverserGroup:addSwitch(sysEngines.reverser2)
+sysEngines.reverserGroup:addSwitch(sysEngines.reverser3)
+sysEngines.reverserGroup:addSwitch(sysEngines.reverser4)
 
 -- engine start levers (fuel)
 sysEngines.startLever1 		= TwoStateCmdSwitch:new("",drefStartLever1,0,
@@ -98,12 +142,19 @@ sysEngines.eecSwitchGroup 	= SwitchGroup:new("eecswitches")
 sysEngines.eecSwitchGroup:addSwitch(sysEngines.eecSwitch1)
 sysEngines.eecSwitchGroup:addSwitch(sysEngines.eecSwitch2)
 
+-- ** Magnetos
+sysEngines.magnetoOff		= InopSwitch:new("magnetoOff")
+sysEngines.magnetoL			= InopSwitch:new("magnetoL")
+sysEngines.magnetoR			= InopSwitch:new("magnetoR")
+sysEngines.magnetoBoth		= InopSwitch:new("magnetoBoth")
+sysEngines.magnetoStart		= InopSwitch:new("magnetoStart")
+
 ----------- Annunciators
 
 -- Reverse Thrust
 sysEngines.reverseAnc 		= CustomAnnunciator:new("reverserstate",
 function ()
-	if get(drefReverserState,0) > 0 then
+	if get(drefReverserState,-1) > 0 then
 		return 1
 	else
 		return 0

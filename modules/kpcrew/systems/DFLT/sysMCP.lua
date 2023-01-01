@@ -140,7 +140,15 @@ sysMCP.displayControlSwitch = InopSwitch:new("dispctrl")
 sysMCP.fdirAnc 				= SimpleAnnunciator:new("fdiranc","sim/cockpit2/autopilot/flight_director_mode",0)
 
 -- HDG Select/mode annunciator
-sysMCP.hdgAnc 				= SimpleAnnunciator:new("hdganc","sim/cockpit2/autopilot/heading_mode",0)
+sysMCP.hdgAnc 				= CustomAnnunciator:new("hdganc",
+function () 
+	if get("sim/cockpit2/autopilot/heading_status") > 0 then
+		return 1
+	else
+		return 0
+	end
+end)
+
 
 -- NAV mode annunciator
 sysMCP.navAnc 				= CustomAnnunciator:new("navanc",

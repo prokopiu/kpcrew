@@ -47,19 +47,68 @@ MultiStateCmdSwitch:new("flaps","sim/cockpit2/controls/flap_ratio",0,
 "sim/flight_controls/flaps_up","sim/flight_controls/flaps_down",0,1,true)
 
 -- ** Pitch Trim
-sysControls.pitchTrimSwitch = MultiStateCmdSwitch:new("pitchtrim","sim/cockpit2/controls/elevator_trim",0,
-	"sim/flight_controls/pitch_trim_up","sim/flight_controls/pitch_trim_down",-1,1,false)
+sysControls.pitchTrimSwitch = TwoStateCustomSwitch:new("pitchtrim","sim/cockpit2/controls/elevator_trim",0,
+	function () 
+		command_once("sim/flight_controls/pitch_trim_down")
+	end,
+	function () 
+		command_once("sim/flight_controls/pitch_trim_up")
+	end,
+	function () 
+		return
+	end
+)
+sysControls.pitchTrimDownRepeat = TwoStateCustomSwitch:new("pitchtrim","sim/cockpit2/controls/elevator_trim",0,
+	function () 
+		command_begin("sim/flight_controls/pitch_trim_down")
+	end,
+	function () 
+		command_end("sim/flight_controls/pitch_trim_down")
+	end,
+	function () 
+		return
+	end
+)
+sysControls.pitchTrimUpRepeat = TwoStateCustomSwitch:new("pitchtrim","sim/cockpit2/controls/elevator_trim",0,
+	function () 
+		command_begin("sim/flight_controls/pitch_trim_up")
+	end,
+	function () 
+		command_end("sim/flight_controls/pitch_trim_up")
+	end,
+	function () 
+		return
+	end
+)
 
 -- ** Aileron Trim
-sysControls.aileronTrimSwitch = MultiStateCmdSwitch:new("ailerontrim","sim/cockpit2/controls/aileron_trim",0,
-	"sim/flight_controls/aileron_trim_right","sim/flight_controls/aileron_trim_left",-1,1,false)
+sysControls.aileronTrimSwitch = TwoStateCustomSwitch:new("ailerontrim","sim/cockpit2/controls/aileron_trim",0,
+	function () 
+		command_once("sim/flight_controls/aileron_trim_right")
+	end,
+	function () 
+		command_once("sim/flight_controls/aileron_trim_left")
+	end,
+	function () 
+		return
+	end
+)
 
 sysControls.aileronReset 	= TwoStateToggleSwitch:new("aileronreset","sim/cockpit2/controls/aileron_trim",0,
 	"sim/flight_controls/aileron_trim_center")
 
 -- ** Rudder Trim
-sysControls.rudderTrimSwitch = MultiStateCmdSwitch:new("ruddertrim","sim/cockpit2/controls/rudder_trim",0,
-	"sim/flight_controls/rudder_trim_right","sim/flight_controls/rudder_trim_left",-1,1,false)
+sysControls.rudderTrimSwitch = TwoStateCustomSwitch:new("ruddertrim","sim/cockpit2/controls/rudder_trim",0,
+	function () 
+		command_once("sim/flight_controls/rudder_trim_right")
+	end,
+	function () 
+		command_once("sim/flight_controls/rudder_trim_left")
+	end,
+	function () 
+		return
+	end
+)
 
 sysControls.rudderReset = TwoStateToggleSwitch:new("rudderreset","sim/cockpit2/controls/rudder_trim",0,
 	"sim/flight_controls/rudder_trim_center")

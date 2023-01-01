@@ -165,8 +165,11 @@ xsp_low_volts[0] = 0
 xsp_anc_hyd = create_dataref_table("kp/xsp/bravo/anc_hyd", "Int")
 xsp_anc_hyd[0] = 0
 
-xsp_fuel_pumps = create_dataref_table("kp/xsp/bravo/anc_fuel", "Int")
-xsp_fuel_pumps[0] = 0
+xsp_fuel_press = create_dataref_table("kp/xsp/bravo/anc_fuel_low", "Int")
+xsp_fuel_press[0] = 0
+
+xsp_fuel_aux_pump = create_dataref_table("kp/xsp/bravo/anc_fuel_aux_pump", "Int")
+xsp_fuel_aux_pump[0] = 0
 
 xsp_vacuum = create_dataref_table("kp/xsp/bravo/vacuum", "Int")
 xsp_vacuum[0] = 0
@@ -243,7 +246,10 @@ function xsp_set_bravo_lights()
 	xsp_anc_hyd[0] = sysHydraulic.hydraulicLowAnc:getStatus()
 	
 	-- LOW FUEL PRESSURE annunciator
-	xsp_fuel_pumps[0] = sysFuel.fuelLowAnc:getStatus()
+	xsp_fuel_press[0] = sysFuel.fuelLowAnc:getStatus()
+	
+	-- AUX FUEL PUMP working annunciators
+	xsp_fuel_aux_pump[0] = sysFuel.auxFuelPumpsAnc:getStatus()
 	
 	-- VACUUM annunciator
 	xsp_vacuum[0] = sysAir.vacuumAnc:getStatus()

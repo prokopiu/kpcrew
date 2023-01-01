@@ -135,25 +135,47 @@ create_command("kp/xsp/systems/all_baro_down",		"All baro down","sysGeneral.baro
 create_command("kp/xsp/systems/all_baro_up",		"All baro up","sysGeneral.baroGroup:step(cmdUp)","","")
 
 ----------------- Electric --------------------
-create_command("kp/xsp/electric/bat1_master_on",	"Battery Master 1 On","sysElectric.batterySwitch:actuate(modeOn)","","")
-create_command("kp/xsp/electric/bat1_master_off",	"Battery Master 1 Off","sysElectric.batterySwitch:actuate(modeOff)","","")
-create_command("kp/xsp/electric/bat1_master_tgl",	"Battery Master 1 Toggle","sysElectric.batterySwitch:actuate(modeToggle)","","")
+create_command("kp/xsp/electric/bat1_master_on",	"Battery Master 1 On","sysElectric.battery1HwSwitch:actuate(modeOn)","","")
+create_command("kp/xsp/electric/bat1_master_off",	"Battery Master 1 Off","sysElectric.battery1HwSwitch:actuate(modeOff)","","")
+create_command("kp/xsp/electric/bat1_master_tgl",	"Battery Master 1 Toggle","sysElectric.battery1HwSwitch:actuate(modeToggle)","","")
+create_command("kp/xsp/electric/bat2_master_on",	"Battery Master 2 On","sysElectric.battery2HwSwitch:actuate(modeOn)","","")
+create_command("kp/xsp/electric/bat2_master_off",	"Battery Master 2 Off","sysElectric.battery2HwSwitch:actuate(modeOff)","","")
+create_command("kp/xsp/electric/bat2_master_tgl",	"Battery Master 2 Toggle","sysElectric.battery2HwSwitch:actuate(modeToggle)","","")
+create_command("kp/xsp/electric/bat_all_master_on",	"Battery Master All On","sysElectric.batteryHwGroup:actuate(modeOn)","","")
+create_command("kp/xsp/electric/bat_all_master_off","Battery Master All Off","sysElectric.batteryHwGroup:actuate(modeOff)","","")
+create_command("kp/xsp/electric/bat_all_master_tgl","Battery Master All Toggle","sysElectric.batteryHwGroup:actuate(modeToggle)","","")
 
-create_command("kp/xsp/electric/alt1_on",			"Alternator 1 On","sysElectric.genSwitchGroup:actuate(modeOn)","","")
-create_command("kp/xsp/electric/alt1_off",			"Alternator 1 Off","sysElectric.genSwitchGroup:actuate(modeOff)","","")
-create_command("kp/xsp/electric/alt1_tgl",			"Alternator 1 Toggle","sysElectric.genSwitchGroup:actuate(modeToggle)","","")
+create_command("kp/xsp/electric/alt1_on",			"Alternator 1 On","sysElectric.alternator1Switch:actuate(modeOn)","","")
+create_command("kp/xsp/electric/alt1_off",			"Alternator 1 Off","sysElectric.alternator1Switch:actuate(modeOff)","","")
+create_command("kp/xsp/electric/alt1_tgl",			"Alternator 1 Toggle","sysElectric.alternator1Switch:actuate(modeToggle)","","")
+create_command("kp/xsp/electric/alt2_on",			"Alternator 2 On","sysElectric.alternator2Switch:actuate(modeOn)","","")
+create_command("kp/xsp/electric/alt2_off",			"Alternator 2 Off","sysElectric.alternator2Switch:actuate(modeOff)","","")
+create_command("kp/xsp/electric/alt2_tgl",			"Alternator 2 Toggle","sysElectric.alternator2Switch:actuate(modeToggle)","","")
+create_command("kp/xsp/electric/alt_all_on",		"Alternators On","sysElectric.alternatorSwitchGroup:actuate(modeOn)","","")
+create_command("kp/xsp/electric/alt_all_off",		"Alternators Off","sysElectric.alternatorSwitchGroup:actuate(modeOff)","","")
+create_command("kp/xsp/electric/alt_all_tgl",		"Alternators Toggle","sysElectric.alternatorSwitchGroup:actuate(modeToggle)","","")
 
-create_command("kp/xsp/electric/avionics_on",		"Avionics On","sysElectric.avionicsBus:actuate(modeOn)","","")
-create_command("kp/xsp/electric/avionics_off",		"Avionics Off","sysElectric.avionicsBus:actuate(modeOff)","","")
-create_command("kp/xsp/electric/avionics_tgl",		"Avionics Toggle","sysElectric.avionicsBus:actuate(modeToggle)","","")
+create_command("kp/xsp/electric/avionics1_on",		"Avionics 1 On","sysElectric.avionics1Bus:actuate(modeOn)","","")
+create_command("kp/xsp/electric/avionics1_off",		"Avionics 1 Off","sysElectric.avionics1Bus:actuate(modeOff)","","")
+create_command("kp/xsp/electric/avionics1_tgl",		"Avionics 1 Toggle","sysElectric.avionics1Bus:actuate(modeToggle)","","")
+create_command("kp/xsp/electric/avionics2_on",		"Avionics 2 On","sysElectric.avionics2Bus:actuate(modeOn)","","")
+create_command("kp/xsp/electric/avionics2_off",		"Avionics 2 Off","sysElectric.avionics2Bus:actuate(modeOff)","","")
+create_command("kp/xsp/electric/avionics2_tgl",		"Avionics 2 Toggle","sysElectric.avionics2Bus:actuate(modeToggle)","","")
+create_command("kp/xsp/electric/avionics_on",		"Avionics On","sysElectric.avionicsSwitchGroup:actuate(modeOn)","","")
+create_command("kp/xsp/electric/avionics_off",		"Avionics Off","sysElectric.avionicsSwitchGroup:actuate(modeOff)","","")
+create_command("kp/xsp/electric/avionics_tgl",		"Avionics Toggle","sysElectric.avionicsSwitchGroup:actuate(modeToggle)","","")
 
 ----------------- Flight Controls --------------------
 
 create_command("kp/xsp/controls/flaps_up",			"Flaps 1 Up","sysControls.flapsSwitch:actuate(sysControls.flapsUp)","","")
 create_command("kp/xsp/controls/flaps_down",		"Flaps 1 Down","sysControls.flapsSwitch:actuate(sysControls.flapsDown)","","")
 
-create_command("kp/xsp/controls/pitch_trim_up",		"Pitch Trim Up","sysControls.pitchTrimSwitch:actuate(sysControls.trimUp)", "sysControls.pitchTrimSwitch:actuate(sysControls.trimUp)", "")
-create_command("kp/xsp/controls/pitch_trim_down",	"Pitch Trim Down","sysControls.pitchTrimSwitch:actuate(sysControls.trimDown)", "sysControls.pitchTrimSwitch:actuate(sysControls.trimDown)", "")
+create_command("kp/xsp/controls/pitch_trim_up",		"Pitch Trim Up","sysControls.pitchTrimSwitch:actuate(sysControls.trimUp)","","")
+create_command("kp/xsp/controls/pitch_trim_down",	"Pitch Trim Down","sysControls.pitchTrimSwitch:actuate(sysControls.trimDown)","","")
+create_command("kp/xsp/controls/pitch_trim_up_run",	"Pitch Trim Up Run","sysControls.pitchTrimUpRepeat:actuate(1)","","")
+create_command("kp/xsp/controls/pitch_trim_up_stop","Pitch Trim Up Stop","sysControls.pitchTrimUpRepeat:actuate(0)","","")
+create_command("kp/xsp/controls/pitch_trim_dn_run",	"Pitch Trim Down Run","sysControls.pitchTrimDownRepeat:actuate(1)","","")
+create_command("kp/xsp/controls/pitch_trim_dn_stop","Pitch Trim Down Stop","sysControls.pitchTrimDownRepeat:actuate(0)","","")
 
 create_command("kp/xsp/controls/rudder_trim_left",	"Rudder Trim Left","sysControls.rudderTrimSwitch:actuate(sysControls.trimLeft)", "sysControls.rudderTrimSwitch:actuate(sysControls.trimLeft)", "")
 create_command("kp/xsp/controls/rudder_trim_right",	"Rudder Trim Right","sysControls.rudderTrimSwitch:actuate(sysControls.trimRight)", "sysControls.rudderTrimSwitch:actuate(sysControls.trimRight)", "")
@@ -164,9 +186,33 @@ create_command("kp/xsp/controls/aileron_trim_right","Aileron Trim Right","sysCon
 create_command("kp/xsp/controls/aileron_trim_center","Aileron Trim Center","sysControls.aileronReset:actuate(sysControls.trimCenter)", "", "")
 
 -- --------------- Engines
-create_command("kp/xsp/engines/reverse_on",			"Reverse Thrust On", "sysEngines.reverseToggle:actuate(modeOn)", "", "")
-create_command("kp/xsp/engines/reverse_off",		"Reverse Thrust Off", "sysEngines.reverseToggle:actuate(modeOff)", "", "")
-create_command("kp/xsp/engines/reverse_tgl",		"Reverse Thrust Toggle", "sysEngines.reverseToggle:actuate(modeToggle)", "", "")
+create_command("kp/xsp/engines/reverse1_on",		"Reverse Thrust 1 On", "sysEngines.reverser1:actuate(modeOn)", "", "")
+create_command("kp/xsp/engines/reverse1_off",		"Reverse Thrust 1 Off", "sysEngines.reverser1:actuate(modeOff)", "", "")
+create_command("kp/xsp/engines/reverse2_on",		"Reverse Thrust 1 On", "sysEngines.reverser2:actuate(modeOn)", "", "")
+create_command("kp/xsp/engines/reverse2_off",		"Reverse Thrust 1 Off", "sysEngines.reverser2:actuate(modeOff)", "", "")
+create_command("kp/xsp/engines/reverse3_on",		"Reverse Thrust 1 On", "sysEngines.reverser3:actuate(modeOn)", "", "")
+create_command("kp/xsp/engines/reverse3_off",		"Reverse Thrust 1 Off", "sysEngines.reverser3:actuate(modeOff)", "", "")
+create_command("kp/xsp/engines/reverse4_on",		"Reverse Thrust 1 On", "sysEngines.reverser4:actuate(modeOn)", "", "")
+create_command("kp/xsp/engines/reverse4_off",		"Reverse Thrust 1 Off", "sysEngines.reverser4:actuate(modeOff)", "", "")
+create_command("kp/xsp/engines/reverse_all_on",		"Reverse Thrust 1 On", "sysEngines.reverserGroup:actuate(modeOn)", "", "")
+create_command("kp/xsp/engines/reverse_all_off",	"Reverse Thrust 1 Off", "sysEngines.reverserGroup:actuate(modeOff)", "", "")
+
+create_command("kp/xsp/engines/magnetos_off",		"Magnetos Off", "sysEngines.magnetoOff:actuate(1)", "", "")
+create_command("kp/xsp/engines/magnetos_l",			"Magnetos Left", "sysEngines.magnetoL:actuate(1)", "", "")
+create_command("kp/xsp/engines/magnetos_r",			"Magnetos Right", "sysEngines.magnetoR:actuate(1)", "", "")
+create_command("kp/xsp/engines/magnetos_both",		"Magnetos Both", "sysEngines.magnetoBoth:actuate(1)", "", "")
+create_command("kp/xsp/engines/magnetos_start_run",	"Magnetos Start Run", "sysEngines.magnetoStartOn:actuate(1)", "", "")
+create_command("kp/xsp/engines/magnetos_start_end",	"Magnetos Start End", "sysEngines.magnetoStartStop:actuate(1)", "", "")
+
+-- --------------- Aice
+create_command("kp/xsp/aice/pitot_on",				"Pitot Heat On", "sysAice.probeHeatGroup:actuate(modeOn)","","")
+create_command("kp/xsp/aice/pitot_off",				"Pitot Heat Off", "sysAice.probeHeatGroup:actuate(modeOff)","","")
+create_command("kp/xsp/aice/pitot_tgl",				"Pitot Heat Toggle", "sysAice.probeHeatGroup:actuate(modeToggle)","","")
+
+-- --------------- Fuel
+create_command("kp/xsp/fuel/pumps_on",				"Fuel Pumps On", "sysFuel.allFuelPumpGroup:actuate(modeOn)","","")
+create_command("kp/xsp/fuel/pumps_off",				"Fuel Pumps Off", "sysFuel.allFuelPumpGroup:actuate(modeOff)","","")
+create_command("kp/xsp/fuel/pumps_tgl",				"Fuel Pumps Toggle", "sysFuel.allFuelPumpGroup:actuate(modeToggle)","","")
 
 -- ------------ A/P MCP functions
 create_command("kp/xsp/autopilot/both_fd_tgl",		"All FDs Toggle", "sysMCP.fdirGroup:actuate(modeToggle)", "", "")
@@ -179,8 +225,8 @@ create_command("kp/xsp/autopilot/app_tgl",			"Toggle Approach", "sysMCP.approach
 create_command("kp/xsp/autopilot/vs_tgl",			"Toggle Vertical Speed", "sysMCP.vsSwitch:actuate(modeToggle)","","")
 create_command("kp/xsp/autopilot/ias_tgl",			"Toggle IAS/Speed mode", "sysMCP.speedSwitch:actuate(modeToggle)","","")
 create_command("kp/xsp/autopilot/toga_press",		"Press Left TOGA", "sysMCP.togaPilotSwitch:actuate(modeToggle)","","")
-create_command("kp/xsp/autopilot/at_tgl",			"Toggle A/T", "sysMCP.athrSwitch:actuate(modeToggle)","","")
-create_command("kp/xsp/autopilot/at_arm",			"Arm A/T", "sysMCP.athrSwitch:actuate(modeOn)","","")
+create_command("kp/xsp/autopilot/at_tgl",			"A/T Tgl", "sysMCP.athrSwitch:actuate(modeToggle)","","")
+create_command("kp/xsp/autopilot/at_arm",			"A/T Arm", "sysMCP.athrSwitch:actuate(modeOn)","","")
 create_command("kp/xsp/autopilot/at_off",			"A/T OFF", "sysMCP.athrSwitch:actuate(modeOff)","","")
 
 -- N1 Boeing
@@ -204,8 +250,8 @@ create_command("kp/xsp/autopilot/spd_up",			"Speed increase", "sysMCP.iasSelecto
 create_command("kp/xsp/autopilot/hdg_dn",			"Heading decrease", "sysMCP.hdgSelector:step(cmdDown)","","")
 create_command("kp/xsp/autopilot/hdg_up",			"Heading increase", "sysMCP.hdgSelector:step(cmdUp)","","")
 
-create_command("kp/xsp/autopilot/alt_dn",			"Altitude decrease", "sysMCP.altSelector:step(cmdDown)","","")
-create_command("kp/xsp/autopilot/alt_up",			"Altitude increase", "sysMCP.altSelector:step(cmdUp)","","")
+create_command("kp/xsp/autopilot/alt_dn",			"Altitude decrease", "sysMCP.altSelector:step(0)","","")
+create_command("kp/xsp/autopilot/alt_up",			"Altitude increase", "sysMCP.altSelector:step(1)","","")
 
 create_command("kp/xsp/autopilot/vsp_dn",			"Vertical Speed decrease", "sysMCP.vspSelector:step(cmdDown)","","")
 create_command("kp/xsp/autopilot/vsp_up",			"Vertical Speed increase", "sysMCP.vspSelector:step(cmdUp)","","")

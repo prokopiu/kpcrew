@@ -95,5 +95,10 @@ end)
 
 sysFuel.xfeedVlvAnn 		= SimpleAnnunciator:new("","laminar/B738/annunciator/crossfeed",0)
 
+-- AUX FUEL PUMP ANC (do not use)
+sysFuel.auxFuelPumpsAnc = CustomAnnunciator:new("auxfuel",
+function ()
+	return 0
+end)
 
 return sysFuel

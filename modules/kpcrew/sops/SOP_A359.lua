@@ -252,6 +252,21 @@ testProc:addItem(SimpleProcedureItem:new("=== Batteries on"))
 --   use the pedals and thrust levers to control the truck
 -- =======================================================
 
+-- =============== BEFORE START CHECKLIST ================
+-- CKPT PREP..............................COMPLETED (BOTH)
+-- GEAR PINS & COVERS.......................REMOVED
+-- FUEL QTY.................................CHECKED
+-- T.O. DATA....................................SET
+-- BARO REF.................................____SET (BOTH)
+-- SEAT BELTS....................................ON
+-- ADIRS........................................NAV
+-- -------------------------------------------------------
+-- DOORS.....................................CLOSED
+-- PARK BRK.................................AS REQD
+-- BEACON........................................ON
+-- =======================================================
+
+
 -- ==================== ENGINE START =====================
 -- === ENGINE START
 -- HYD ENG 1 PUMPS................................ON		.1-sim/65/button.=.1.and.1-sim/67/button.=.1
@@ -309,6 +324,14 @@ testProc:addItem(SimpleProcedureItem:new("=== Batteries on"))
 -- CABIN V/S MODE...............................AUTO		.1-sim/123/button.=.1
 -- =======================================================
 
+
+-- ================ AFTER START CHECKLIST ================
+-- A-ICE....................................AS REQD
+-- PITCH TRIM...................................T.O
+-- RUDDER TRIM..............................NEUTRAL
+-- =======================================================
+
+
 -- ======================== TAXI =========================
 -- NOSE LIGHTS..................................TAXI		.1-sim/11/switch.=.1
 -- RWY TURN OFF LTS...............................ON		.1-sim/8/switch.=.1
@@ -326,6 +349,28 @@ testProc:addItem(SimpleProcedureItem:new("=== Batteries on"))
 -- TABLE......................................STOWED		.1-sim/computer.=.0
 -- TCAS MODE TA/RA...............................SET		.1-sim/surv/TCASmode.=.1
 -- =======================================================
+
+ 
+-- ============== BEFORE TAKEOFF CHECKLIST ===============
+-- F/CTL....................................CHECKED (BOTH)
+-- FLIGHT INSTRUMENTS.......................CHECKED (BOTH)
+-- BRIEFING.................................CONFIRM
+-- FLAPS SETTING..........................CONF ____ (BOTH)
+-- V1 / VR / V2 THR RATING....................CHECK (BOTH)
+-- SQUAWK..................................____ SET
+-- == T.O.
+-- - SEAT BELTS: ON
+-- - CABIN: READY
+-- - GND SPLRS: ARM
+-- - FLAPS: T.O
+-- - AUTO BRK: RTO
+-- - T.O CONFIG: NORMAL
+-- -------------------------------------------------------
+-- T.O RWY............................._____CONFIRM (BOTH)
+-- CABIN CREW................................ADVISE
+-- PACK 1+2.................................AS REQD
+-- =======================================================
+
 
 -- ======================= TAKEOFF =======================
 -- CHRONO......................................START		.AirbusFBW/ChronoTimeND1.>.0.or.AirbusFBW/ChronoTimeND2.>.0

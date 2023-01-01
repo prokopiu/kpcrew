@@ -42,14 +42,14 @@ sysLights.taxiSwitch 		= TwoStateCmdSwitch:new("taxi","sim/cockpit2/switches/tax
 	"sim/lights/taxi_lights_on","sim/lights/taxi_lights_off","sim/lights/taxi_lights_toggle")
 
 -- Landing Lights, single onoff command driven
-sysLights.llLeftSwitch 		= TwoStateDrefSwitch:new("llleft",drefLandingLights,1)
-sysLights.llRightSwitch 	= TwoStateDrefSwitch:new("llright",drefLandingLights,2)
+sysLights.llLeftSwitch 		= TwoStateDrefSwitch:new("llleft",drefLandingLights,-1)
+sysLights.llRightSwitch 	= TwoStateDrefSwitch:new("llright",drefLandingLights,1)
 sysLights.landLightGroup 	= SwitchGroup:new("landinglights")
 sysLights.landLightGroup:addSwitch(sysLights.llLeftSwitch)
 sysLights.landLightGroup:addSwitch(sysLights.llRightSwitch)
 
 -- Logo Light
-sysLights.logoSwitch 		= TwoStateDrefSwitch:new("logo",drefGenericLights,0)
+sysLights.logoSwitch 		= TwoStateDrefSwitch:new("logo",drefGenericLights,-1)
 
 -- RWY Turnoff Lights (2)
 sysLights.rwyLeftSwitch 	= TwoStateDrefSwitch:new("rwyleft",drefGenericLights,1)
@@ -68,7 +68,7 @@ sysLights.wheelSwitch 		= TwoStateDrefSwitch:new("wheel",drefGenericLights,5)
 sysLights.domeLightSwitch 	= TwoStateDrefSwitch:new("wheel","sim/cockpit/electrical/cockpit_lights",0)
 
 -- Instrument Lights
-sysLights.instr1Light		= TwoStateDrefSwitch:new("","sim/cockpit/electrical/instrument_brightness",0)
+sysLights.instr1Light		= TwoStateDrefSwitch:new("","sim/cockpit/electrical/instrument_brightness",-1)
 sysLights.instr2Light		= TwoStateDrefSwitch:new("","sim/cockpit2/switches/panel_brightness_ratio",-1)
 sysLights.instr3Light		= TwoStateDrefSwitch:new("","sim/cockpit2/switches/instrument_brightness_ratio",2)
 sysLights.instr4Light		= TwoStateDrefSwitch:new("","sim/cockpit2/switches/instrument_brightness_ratio",-1)

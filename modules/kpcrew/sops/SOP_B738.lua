@@ -2131,12 +2131,12 @@ landingProc:addItem(ProcedureItem:new("FLAPS 1","SET",FlowItem.actorPNF,0,true,
 landingProc:addItem(HoldProcedureItem:new("FLAPS 5","COMMAND",FlowItem.actorPF))
 landingProc:addItem(ProcedureItem:new("FLAPS 5","SET",FlowItem.actorPNF,0,true,
 	function () command_once("laminar/B738/push_button/flaps_5") kc_speakNoText(0,"speed check flaps 5") end))
-landingProc:addItem(HoldProcedureItem:new("FLAPS 15","COMMAND",FlowItem.actorPF))
-landingProc:addItem(ProcedureItem:new("FLAPS 15","SET",FlowItem.actorPNF,0,true,
-	function () command_once("laminar/B738/push_button/flaps_15") kc_speakNoText(0,"speed check flaps 15") end))
 landingProc:addItem(HoldProcedureItem:new("GEAR","COMMAND DOWN",FlowItem.actorPF))
 landingProc:addItem(ProcedureItem:new("GEAR","DOWN",FlowItem.actorPNF,0,true,
 	function () sysGeneral.GearSwitch:actuate(modeOn) kc_speakNoText(0,"gear coming down") end))
+landingProc:addItem(HoldProcedureItem:new("FLAPS 15","COMMAND",FlowItem.actorPF))
+landingProc:addItem(ProcedureItem:new("FLAPS 15","SET",FlowItem.actorPNF,0,true,
+	function () command_once("laminar/B738/push_button/flaps_15") kc_speakNoText(0,"speed check flaps 15") end))
 landingProc:addItem(HoldProcedureItem:new("FLAPS 25","COMMAND",FlowItem.actorPF))
 landingProc:addItem(ProcedureItem:new("FLAPS 25","SET",FlowItem.actorPNF,0,true,
 	function () command_once("laminar/B738/push_button/flaps_25") kc_speakNoText(0,"speed check flaps 25") end))

@@ -26,8 +26,10 @@ sysAice.windowHeatGroup 	= SwitchGroup:new("windowheat")
 sysAice.windowHeatGroup:addSwitch(sysAice.windowHeatLeftSide)
 
 -- Probe heat
-sysAice.probeHeatASwitch 	= InopSwitch:new("probeheat1")
-sysAice.probeHeatBSwitch 	= InopSwitch:new("probeheat2")
+sysAice.probeHeatASwitch 	= TwoStateCmdSwitch:new("probeheat1","sim/cockpit/switches/pitot_heat_on",0,
+	"sim/ice/pitot_heat0_on","sim/ice/pitot_heat0_off","sim/ice/pitot_heat0_tog")
+sysAice.probeHeatBSwitch 	= TwoStateCmdSwitch:new("probeheat2","sim/cockpit/switches/pitot_heat_on2",0,
+	"sim/ice/pitot_heat1_on","sim/ice/pitot_heat1_off","sim/ice/pitot_heat1_tog")
 sysAice.probeHeatGroup 		= SwitchGroup:new("probeHeat")
 sysAice.probeHeatGroup:addSwitch(sysAice.probeHeatASwitch)
 sysAice.probeHeatGroup:addSwitch(sysAice.probeHeatBSwitch)

@@ -17,6 +17,7 @@ local TwoStateToggleSwitch	= require "kpcrew.systems.TwoStateToggleSwitch"
 local MultiStateCmdSwitch 	= require "kpcrew.systems.MultiStateCmdSwitch"
 local InopSwitch 			= require "kpcrew.systems.InopSwitch"
 
+local drefReverserState		= "sim/cockpit2/annunciators/reverser_on"
 local drefEngine1Starter 	= "sim/flightmodel2/engines/starter_is_running"
 local drefEngine2Starter 	= "sim/flightmodel2/engines/starter_is_running"
 local drefEngine1Oil 		= "sim/cockpit/warnings/annunciators/oil_pressure_low"
@@ -26,9 +27,109 @@ local drefEngine2Fire 		= "sim/cockpit2/annunciators/engine_fires"
 
 ----------- Switches
 
--- Reverse Toggle
-sysEngines.reverseToggle 	= TwoStateToggleSwitch:new("reverse","sim/cockpit/warnings/annunciators/reverse",0,
-	"sim/engines/thrust_reverse_toggle") 
+-- Reversers
+sysEngines.reverser1 		= TwoStateCustomSwitch:new("reverse1",drefReverserState,-1,
+	function () 
+		command_begin("sim/engines/thrust_reverse_hold_1")
+	end,
+	function () 
+		command_end("sim/engines/thrust_reverse_hold_1")
+	end,
+	function () 
+	end	
+)
+sysEngines.reverser2 		= TwoStateCustomSwitch:new("reverse2",drefReverserState,1,
+	function () 
+		command_begin("sim/engines/thrust_reverse_hold_2")
+	end,
+	function () 
+		command_end("sim/engines/thrust_reverse_hold_2")
+	end,
+	function () 
+	end	
+)
+sysEngines.reverser3 		= TwoStateCustomSwitch:new("reverse3",drefReverserState,2,
+	function () 
+		command_begin("sim/engines/thrust_reverse_hold_3")
+	end,
+	function () 
+		command_end("sim/engines/thrust_reverse_hold_3")
+	end,
+	function () 
+	end	
+)
+sysEngines.reverser4 		= TwoStateCustomSwitch:new("reverse4",drefReverserState,3,
+	function () 
+		command_begin("sim/engines/thrust_reverse_hold_4")
+	end,
+	function () 
+		command_end("sim/engines/thrust_reverse_hold_4")
+	end,
+	function () 
+	end	
+)
+sysEngines.reverserGroup 	= SwitchGroup:new("reversers")
+sysEngines.reverserGroup:addSwitch(sysEngines.reverser1)
+sysEngines.reverserGroup:addSwitch(sysEngines.reverser2)
+sysEngines.reverserGroup:addSwitch(sysEngines.reverser3)
+sysEngines.reverserGroup:addSwitch(sysEngines.reverser4)
+
+-- ** Magnetos
+sysEngines.magnetoOff		= TwoStateCustomSwitch:new("magnetoOff","",0,
+	function () 
+		command_once("sim/magnetos/magnetos_off_1")
+	end,
+	function () 
+	end,
+	function () 
+	end	
+)
+sysEngines.magnetoL		= TwoStateCustomSwitch:new("magnetoL","",0,
+	function () 
+		command_once("sim/magnetos/magnetos_left_1")
+	end,
+	function () 
+	end,
+	function () 
+	end	
+)
+sysEngines.magnetoR		= TwoStateCustomSwitch:new("magnetoR","",0,
+	function () 
+		command_once("sim/magnetos/magnetos_right_1")
+	end,
+	function () 
+	end,
+	function () 
+	end	
+)
+sysEngines.magnetoBoth		= TwoStateCustomSwitch:new("magnetoBoth","",0,
+	function () 
+		command_once("sim/magnetos/magnetos_both_1")
+	end,
+	function () 
+	end,
+	function () 
+	end	
+)
+sysEngines.magnetoStartOn		= TwoStateCustomSwitch:new("magnetoStart","",0,
+	function () 
+		command_begin("sim/starters/engage_start_run_1")
+	end,
+	function () 
+	end,
+	function () 
+	end	
+)
+sysEngines.magnetoStartStop		= TwoStateCustomSwitch:new("magnetoStart","",0,
+	function () 
+		command_end("sim/starters/engage_start_run_1")
+	end,
+	function () 
+	end,
+	function () 
+	end	
+)
+
 
 ----------- Annunciators
 

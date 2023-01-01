@@ -17,7 +17,7 @@ local TwoStateToggleSwitch	= require "kpcrew.systems.TwoStateToggleSwitch"
 local MultiStateCmdSwitch 	= require "kpcrew.systems.MultiStateCmdSwitch"
 local InopSwitch 			= require "kpcrew.systems.InopSwitch"
 
-local drefAirANC 			= "sim/cockpit/warnings/annunciators/bleed_air_off"
+local drefAirANC 			= "sim/cockpit2/annunciators/low_vacuum"
 
 -- TRIM/RAM air
 sysAir.trimAirSwitch 		= InopSwitch:new("trimair")
