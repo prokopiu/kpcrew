@@ -27,6 +27,17 @@ local drefEngine2Fire 		= "sim/cockpit2/annunciators/engine_fires"
 
 ----------- Switches
 
+-- Starter Switches
+sysEngines.engStart1Switch	= InopSwitch:new("starter1")
+-- sysEngines.engStart2Switch	= InopSwitch:new("starter2")
+-- sysEngines.engStart3Switch	= InopSwitch:new("starter3")
+-- sysEngines.engStart4Switch	= InopSwitch:new("starter4")
+sysEngines.engStarterGroup 	= SwitchGroup:new("engstarters")
+sysEngines.engStarterGroup:addSwitch(sysEngines.engStart1Switch)
+-- sysEngines.engStarterGroup:addSwitch(sysEngines.engStart2Switch)
+-- sysEngines.engStarterGroup:addSwitch(sysEngines.engStart3Switch)
+-- sysEngines.engStarterGroup:addSwitch(sysEngines.engStart4Switch)
+
 -- Reversers
 sysEngines.reverser1 		= TwoStateCustomSwitch:new("reverse1",drefReverserState,-1,
 	function () 

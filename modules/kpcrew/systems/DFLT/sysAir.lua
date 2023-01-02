@@ -39,9 +39,13 @@ sysAir.isoValveSwitch 		= InopSwitch:new("isolation")
 -- BLEED AIR
 sysAir.bleedEng1Switch 		= InopSwitch:new("bleed1")
 sysAir.bleedEng2Switch 		= InopSwitch:new("bleed2")
+-- sysAir.bleedEng3Switch 		= InopSwitch:new("bleed3")
+-- sysAir.bleedEng4Switch 		= InopSwitch:new("bleed4")
 sysAir.engBleedGroup 		= SwitchGroup:new("EngBleeds")
 sysAir.engBleedGroup:addSwitch(sysAir.bleedEng1Switch)
 sysAir.engBleedGroup:addSwitch(sysAir.bleedEng2Switch)
+-- sysAir.engBleedGroup:addSwitch(sysAir.bleedEng3Switch)
+-- sysAir.engBleedGroup:addSwitch(sysAir.bleedEng4Switch)
 
 -- APU Bleed
 sysAir.apuBleedSwitch 		= InopSwitch:new("apubleed")

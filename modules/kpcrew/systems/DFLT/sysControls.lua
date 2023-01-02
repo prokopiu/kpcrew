@@ -43,9 +43,6 @@ sysControls.flapsSwitch 	= TwoStateCustomSwitch:new("flaps","sim/cockpit2/contro
 	end
 )
 
-MultiStateCmdSwitch:new("flaps","sim/cockpit2/controls/flap_ratio",0,
-"sim/flight_controls/flaps_up","sim/flight_controls/flaps_down",0,1,true)
-
 -- ** Pitch Trim
 sysControls.pitchTrimSwitch = TwoStateCustomSwitch:new("pitchtrim","sim/cockpit2/controls/elevator_trim",0,
 	function () 

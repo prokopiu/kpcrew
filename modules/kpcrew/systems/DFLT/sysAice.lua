@@ -21,9 +21,19 @@ local drefAiceWing 			= "sim/cockpit/switches/anti_ice_surf_heat"
 local drefAiceEng 			= "sim/cockpit/switches/anti_ice_inlet_heat"
 
 -- Window Heat
-sysAice.windowHeatLeftSide 	= InopSwitch:new("wheatleftside")
+sysAice.windowHeat1 		= TwoStateCmdSwitch:new("winheat1","sim/cockpit2/ice/ice_window_heat_on_window",-1,
+	"sim/ice/window_heat_on","sim/ice/window_heat_off","sim/ice/window_heat_tog")
+sysAice.windowHeat2 		= TwoStateCmdSwitch:new("winheat2","sim/cockpit2/ice/ice_window_heat_on_window",1,
+	"sim/ice/window2_heat_on","sim/ice/window2_heat_off","sim/ice/window2_heat_tog")
+sysAice.windowHeat3 		= TwoStateCmdSwitch:new("winheat3","sim/cockpit2/ice/ice_window_heat_on_window",2,
+	"sim/ice/window3_heat_on","sim/ice/window3_heat_off","sim/ice/window3_heat_tog")
+sysAice.windowHeat4 		= TwoStateCmdSwitch:new("winheat4","sim/cockpit2/ice/ice_window_heat_on_window",3,
+	"sim/ice/window4_heat_on","sim/ice/window4_heat_off","sim/ice/window4_heat_tog")
 sysAice.windowHeatGroup 	= SwitchGroup:new("windowheat")
-sysAice.windowHeatGroup:addSwitch(sysAice.windowHeatLeftSide)
+sysAice.windowHeatGroup:addSwitch(sysAice.windowHeat1)
+sysAice.windowHeatGroup:addSwitch(sysAice.windowHeat2)
+sysAice.windowHeatGroup:addSwitch(sysAice.windowHeat3)
+sysAice.windowHeatGroup:addSwitch(sysAice.windowHeat4)
 
 -- Probe heat
 sysAice.probeHeatASwitch 	= TwoStateCmdSwitch:new("probeheat1","sim/cockpit/switches/pitot_heat_on",0,
@@ -36,14 +46,21 @@ sysAice.probeHeatGroup:addSwitch(sysAice.probeHeatBSwitch)
 
 -- Wing anti ice
 sysAice.wingAntiIce 		= InopSwitch:new("wingaice")
+-- sysAice.wingAntiIce2 		= InopSwitch:new("wingaice2")
+sysAice.wingAiceGroup 		= SwitchGroup:new("wingaice")
+sysAice.wingAiceGroup:addSwitch(sysAice.wingAntiIce)
+-- sysAice.wingAiceGroup:addSwitch(sysAice.wingAntiIce2)
 
 -- ENG anti ice
 sysAice.engAntiIce1 		= InopSwitch:new("eng1aice")
-sysAice.engAntiIce2 		= InopSwitch:new("eng2aice")
+-- sysAice.engAntiIce2 		= InopSwitch:new("eng2aice")
+-- sysAice.engAntiIce3 		= InopSwitch:new("eng3aice")
+-- sysAice.engAntiIce4 		= InopSwitch:new("eng4aice")
 sysAice.engAntiIceGroup 	= SwitchGroup:new("engantiice")
 sysAice.engAntiIceGroup:addSwitch(sysAice.engAntiIce1)
-sysAice.engAntiIceGroup:addSwitch(sysAice.engAntiIce2)
-
+-- sysAice.engAntiIceGroup:addSwitch(sysAice.engAntiIce2)
+-- sysAice.engAntiIceGroup:addSwitch(sysAice.engAntiIce3)
+-- sysAice.engAntiIceGroup:addSwitch(sysAice.engAntiIce4)
 
 -- ==== Annunciators
 

@@ -37,6 +37,9 @@ end
 if PLANE_ICAO == "A359" then
 	kh_acf_icao = "A359"
 end
+if PLANE_ICAO == "C750" and PLANE_TAILNUMBER == "N750XP" then
+	kh_acf_icao = "C750"
+end
 -- if PLANE_ICAO == "MD11" then
 	-- kh_acf_icao = "MD11"
 -- end
@@ -57,18 +60,18 @@ end
 
 -- load aircraft specific systems
 
-local sysLights 	= require("kpcrew.systems." .. kh_acf_icao .. ".sysLights")
-local sysGeneral 	= require("kpcrew.systems." .. kh_acf_icao .. ".sysGeneral")	
-local sysControls 	= require("kpcrew.systems." .. kh_acf_icao .. ".sysControls")	
-local sysEngines 	= require("kpcrew.systems." .. kh_acf_icao .. ".sysEngines")	
-local sysElectric 	= require("kpcrew.systems." .. kh_acf_icao .. ".sysElectric")	
-local sysHydraulic 	= require("kpcrew.systems." .. kh_acf_icao .. ".sysHydraulic")	
-local sysFuel 		= require("kpcrew.systems." .. kh_acf_icao .. ".sysFuel")	
-local sysAir 		= require("kpcrew.systems." .. kh_acf_icao .. ".sysAir")	
-local sysAice 		= require("kpcrew.systems." .. kh_acf_icao .. ".sysAice")	
-local sysMCP 		= require("kpcrew.systems." .. kh_acf_icao .. ".sysMCP")	
-local sysEFIS 		= require("kpcrew.systems." .. kh_acf_icao .. ".sysEFIS")	
-local sysRadios 	= require("kpcrew.systems." .. kh_acf_icao .. ".sysRadios")	
+sysLights 		= require("kpcrew.systems." .. kh_acf_icao .. ".sysLights")
+sysGeneral 		= require("kpcrew.systems." .. kh_acf_icao .. ".sysGeneral")	
+sysControls 	= require("kpcrew.systems." .. kh_acf_icao .. ".sysControls")	
+sysEngines 		= require("kpcrew.systems." .. kh_acf_icao .. ".sysEngines")	
+sysElectric 	= require("kpcrew.systems." .. kh_acf_icao .. ".sysElectric")	
+sysHydraulic 	= require("kpcrew.systems." .. kh_acf_icao .. ".sysHydraulic")	
+sysFuel 		= require("kpcrew.systems." .. kh_acf_icao .. ".sysFuel")	
+sysAir 			= require("kpcrew.systems." .. kh_acf_icao .. ".sysAir")	
+sysAice 		= require("kpcrew.systems." .. kh_acf_icao .. ".sysAice")	
+sysMCP 			= require("kpcrew.systems." .. kh_acf_icao .. ".sysMCP")	
+sysEFIS 		= require("kpcrew.systems." .. kh_acf_icao .. ".sysEFIS")	
+sysRadios 		= require("kpcrew.systems." .. kh_acf_icao .. ".sysRadios")	
 
 -- ============ aircraft generic joystick/key commands
 
@@ -127,7 +130,7 @@ create_command("kp/xsp/systems/gears_up",			"Gears Up","sysGeneral.GearSwitch:ac
 create_command("kp/xsp/systems/gears_down",			"Gears Down","sysGeneral.GearSwitch:actuate(modeOn)","","")
 create_command("kp/xsp/systems/gears_off",			"Gears OFF","sysGeneral.GearSwitch:actuate(modeToggle)","","")
 
-create_command("kp/xsp/systems/all_alt_std",		"ALTS STD/QNH toggle","sysGeneral.barostdGroup:actuate(modeToggle)","","")
+create_command("kp/xsp/systems/all_alt_std",		"ALTS STD/QNH toggle","sysGeneral.barostdGroup:actuate(2)","","")
 
 create_command("kp/xsp/systems/baro_mode_tgl",		"Baro inch/mb toggle","sysGeneral.baroModeGroup:actuate(modeToggle)","","")
 

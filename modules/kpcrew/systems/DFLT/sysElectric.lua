@@ -47,9 +47,13 @@ sysElectric.gen1Switch 		= TwoStateCmdSwitch:new("gen1","sim/cockpit/electrical/
 	"sim/electrical/generator_1_on","sim/electrical/generator_1_off","sim/electrical/generator_1_toggle")
 sysElectric.gen2Switch 		= TwoStateCmdSwitch:new("gen2","sim/cockpit/electrical/generator_on",1,
 	"sim/electrical/generator_2_on","sim/electrical/generator_2_off","sim/electrical/generator_2_toggle")
+-- sysElectric.gen3Switch 		= InopSwitch:new("gen3")
+-- sysElectric.gen4Switch 		= InopSwitch:new("gen4")
 sysElectric.genSwitchGroup 	= SwitchGroup:new("genswitches")
 sysElectric.genSwitchGroup:addSwitch(sysElectric.gen1Switch)
 sysElectric.genSwitchGroup:addSwitch(sysElectric.gen2Switch)
+-- sysElectric.genSwitchGroup:addSwitch(sysElectric.gen3Switch)
+-- sysElectric.genSwitchGroup:addSwitch(sysElectric.gen4Switch)
 
 -- ** ALTERNATOR Switches to help when aircraft do not work with the switches
 sysElectric.alternator1Switch 		= TwoStateCmdSwitch:new("gen1","sim/cockpit/electrical/generator_on",-1,

@@ -58,9 +58,10 @@ sysEFIS.tfcPilot 			= InopSwitch:new("tfcpilot")
 sysEFIS.tfcCopilot 			= InopSwitch:new("tfccopilot")
 
 -- WX 
-sysEFIS.wxrPilot 			= TwoStateToggleSwitch:new("wxrpilot",
-	"sim/cockpit2/EFIS/EFIS_weather_on",0,"sim/instruments/EFIS_wxr")
-sysEFIS.wxrCopilot 			= InopSwitch:new("wxrcopilot")
+sysEFIS.wxrPilot 			= TwoStateToggleSwitch:new("wxrpilot","sim/cockpit2/EFIS/EFIS_weather_on",0,
+	"sim/instruments/EFIS_wxr")
+sysEFIS.wxrCopilot 			= TwoStateToggleSwitch:new("wxrcopilot","sim/cockpit2/EFIS/EFIS_weather_on_copilot",0,
+	"sim/instruments/EFIS_copilot_wxr")
 
 -- STA / VOR
 sysEFIS.staPilot 			= TwoStateToggleSwitch:new("stapilot","sim/cockpit2/EFIS/EFIS_vor_on",0,
