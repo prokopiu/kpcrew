@@ -116,9 +116,9 @@ create_command("kp/xsp/lights/instruments_on",		"Instrument Lights On","sysLight
 create_command("kp/xsp/lights/instruments_off",		"Instrument Lights Off","sysLights.instrLightGroup:actuate(modeOff)","","")
 create_command("kp/xsp/lights/instruments_tgl",		"Instrument Lights Toggle","sysLights.instrLightGroup:actuate(modeToggle)","","")
 
-create_command("kp/xsp/lights/dome_switch_on",		"Cockpit Lights On","sysLights.domeLightSwitch:actuate(modeOn)","","")
-create_command("kp/xsp/lights/dome_switch_off",		"Cockpit Lights Off","sysLights.domeLightSwitch:actuate(modeOff)","","")
-create_command("kp/xsp/lights/dome_switch_tgl",		"Cockpit Lights Toggle","sysLights.domeLightSwitch:actuate(modeToggle)","","")
+create_command("kp/xsp/lights/dome_switch_on",		"Cockpit Lights On","sysLights.domeLightGroup:actuate(modeOn)","","")
+create_command("kp/xsp/lights/dome_switch_off",		"Cockpit Lights Off","sysLights.domeLightGroup:actuate(modeOff)","","")
+create_command("kp/xsp/lights/dome_switch_tgl",		"Cockpit Lights Toggle","sysLights.domeLightGroup:actuate(modeToggle)","","")
 
 ---------------- General Systems ---------------------
 

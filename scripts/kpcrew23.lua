@@ -27,6 +27,8 @@ if PLANE_ICAO == "B738" then
 	end
 elseif PLANE_ICAO == "A359" then
 	kc_acf_icao = "A359"
+elseif PLANE_ICAO == "C750" and PLANE_TAILNUMBER == "N750XP" then
+	kc_acf_icao = "C750"
 -- elseif PLANE_ICAO == "A306" then
 	-- kc_acf_icao = "A306"
 -- elseif PLANE_ICAO == "MD11" then
