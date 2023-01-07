@@ -1949,7 +1949,6 @@ afterTakeoffChkl:addItem(ChecklistItem:new("FLAPS","UP, NO LIGHTS",FlowItem.acto
 	function () set("laminar/B738/flt_ctrls/flap_lever",0) end))
 
 -- ================= DESCENT PROCEDURE ==================
--- AUTOTHROTTLE................................ARM   (PF)
 -- LEFT AND RIGHT CENTER FUEL PUMPS SWITCHES...OFF   (PM)
 --   If center tank quantity below 3,000 lbs/1400 kgs
 -- PRESSURIZATION...................LAND ALT __ FT   (PM)

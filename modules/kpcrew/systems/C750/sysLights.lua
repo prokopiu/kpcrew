@@ -43,29 +43,16 @@ sysLights.beaconSwitch 		= TwoStateCustomSwitch:new("beacon","laminar/CitX/light
 )
 
 -- Position Lights, single onoff command driven
-sysLights.positionSwitch 	= TwoStateCustomSwitch:new("position","sim/cockpit2/switches/navigation_lights_on",0,
-	function () 
-		if get("laminar/CitX/lights/navigation") == 0 then
-			command_once("laminar/CitX/lights/cmd_navigation_toggle")
-		end
-	end,
-	function () 
-		if get("laminar/CitX/lights/navigation") ~= 0 then
-			command_once("laminar/CitX/lights/cmd_navigation_toggle")
-		end
-	end,
-	function () 
-		command_once("laminar/CitX/lights/cmd_navigation_toggle")
-	end	
-)
+sysLights.positionSwitch 	= TwoStateToggleSwitch:new("position","laminar/CitX/lights/navigation",0,
+	"laminar/CitX/lights/cmd_navigation_toggle")
 
 -- Strobe Lights, single onoff command driven
 sysLights.strobesSwitch 	= TwoStateCmdSwitch:new("strobes","sim/cockpit2/switches/strobe_lights_on",0,
 	"sim/lights/strobe_lights_on","sim/lights/strobe_lights_off","sim/lights/strobe_lights_toggle")
 
 -- Taxi/Nose Lights, single onoff command driven
-sysLights.taxiSwitch 		= TwoStateCmdSwitch:new("taxi","sim/cockpit2/switches/taxi_light_on",0,
-	"sim/lights/taxi_lights_on","sim/lights/taxi_lights_off","sim/lights/taxi_lights_toggle")
+sysLights.taxiSwitch 		= TwoStateToggleSwitch:new("taxi","laminar/CitX/lights/taxi",0,
+	"laminar/CitX/lights/cmd_taxi_toggle")
 
 -- Landing Lights, single onoff command driven
 sysLights.llLeftSwitch 		= TwoStateToggleSwitch:new("llleft","laminar/CitX/lights/landing_left",0,
@@ -81,11 +68,11 @@ sysLights.logoSwitch 		= TwoStateToggleSwitch:new("logo","laminar/CitX/lights/ta
 	"laminar/CitX/lights/cmd_tail_flood_toggle")
 
 -- RWY Turnoff Lights (2)
-sysLights.rwyLeftSwitch 	= TwoStateDrefSwitch:new("rwyleft",drefGenericLights,1)
-sysLights.rwyRightSwitch 	= TwoStateDrefSwitch:new("rwyright",drefGenericLights,2)
+sysLights.rwyLeftSwitch 	= InopSwitch:new("rwyleft")
+sysLights.rwyRightSwitch 	= InopSwitch:new("rwyright")
 sysLights.rwyLightGroup 	= SwitchGroup:new("runwaylights")
 sysLights.rwyLightGroup:addSwitch(sysLights.rwyLeftSwitch)
-sysLights.rwyLightGroup:addSwitch(sysLights.rwyRightSwitch)
+-- sysLights.rwyLightGroup:addSwitch(sysLights.rwyRightSwitch)
 
 -- Wing Lights
 sysLights.wingSwitch 		= TwoStateDrefSwitch:new("wing",drefGenericLights,3)

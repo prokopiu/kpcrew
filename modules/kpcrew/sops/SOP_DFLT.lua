@@ -54,6 +54,15 @@ kcSopFlightPhase = { [1] = "Cold & Dark", 	[2] = "Prel Preflight", [3] = "Prefli
 
 activeSOP = SOP:new("Default Aircraft SOP")
 
+local testProc = Procedure:new("TEST","","")
+testProc:setFlightPhase(1)
+testProc:addItem(ProcedureItem:new("BATTERY SWITCH","ON",FlowItem.actorFO,0,true,
+	function () 
+		command_end("sim/ignition/engage_starter_1")
+		command_end("sim/starters/engage_start_run_1")
+		command_end("sim/starters/engage_starter_1")
+	end))
+
 	
 -- ============ Electrical Power Up Procedure ============
 -- All paper work on board and checked

@@ -113,7 +113,7 @@ function kcFlowExecutor:execute()
 	elseif flowState == Flow.RUN then
 	
 		-- execute the flow step by step
-		logMsg("Step: [" .. step:getClassName() .. "] State: " .. step.states[step:getState()+1] .. " \"" .. step:getChallengeText() .. "\"")
+		-- logMsg("Step: [" .. step:getClassName() .. "] State: " .. step.states[step:getState()+1] .. " \"" .. step:getChallengeText() .. "\"")
 
 		-- initial state
 		if step:getState() == FlowItem.INIT then

@@ -5,7 +5,7 @@
 kc_acf_name 		= "Laminar Citation X 750"
 
 kc_TakeoffThrust 	= "RATED|DE-RATED|ASSUMED TEMPERATURE|RATED AND ASSUMED|DE-RATED AND ASSUMED"
-kc_TakeoffFlaps 	= "UP|SLAT|5|15"
+kc_TakeoffFlaps 	= "UP|5|15"
 kc_TakeoffAntiice 	= "NOT REQUIRED|ENGINE ONLY|ENGINE AND WING"
 kc_TakeoffPacks 	= "ON|AUTO|OFF"
 kc_TakeoffBleeds 	= "OFF|ON|UNDER PRESSURIZED"

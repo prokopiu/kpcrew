@@ -19,6 +19,12 @@ local InopSwitch 			= require "kpcrew.systems.InopSwitch"
 
 local drefFuelPressLow 		= "sim/cockpit2/annunciators/fuel_pressure_low"
 
+function sysFuel.fuel_balanced()
+	local tank1 = get("sim/cockpit2/fuel/fuel_quantity",1) 
+	local tank2 = get("sim/cockpit2/fuel/fuel_quantity",2) 
+	return math.abs(tank1-tank2) < 100
+end
+	
 ---------- Switches
 
 -- Fuel pumps
@@ -64,9 +70,9 @@ sysFuel.allFuelPumpGroup:addSwitch(sysFuel.fuelPumpRightAft)
 -- sysFuel.allFuelPumpGroup:addSwitch(sysFuel.fuelPumpCtrLeft)
 -- sysFuel.allFuelPumpGroup:addSwitch(sysFuel.fuelPumpCtrRight)
 
-sysFuel.crossFeed = TwoStateCmdSwitch:new("crossfeed","sim/cockpit2/fuel/auto_crossfeed",0,
-	"sim/fuel/auto_crossfeed_on_open","sim/fuel/auto_crossfeed_off")
-
+sysFuel.crossFeed = MultiStateCmdSwitch:new("crossfeed","laminar/CitX/fuel/crossfeed",0,
+	"laminar/CitX/oxygen/cmd_pass_oxy_dwn","laminar/CitX/oxygen/cmd_pass_oxy_up",-1,1,false)
+	
 ------------ Annunciators
 
 -- FUEL PRESSURE LOW annunciator
