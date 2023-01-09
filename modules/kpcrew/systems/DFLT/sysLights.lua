@@ -87,7 +87,7 @@ sysLights.instrLightGroup:addSwitch(sysLights.instr6Light)
 sysLights.instrLightGroup:addSwitch(sysLights.instr7Light)
 sysLights.instrLightGroup:addSwitch(sysLights.instr8Light)
 sysLights.instrLightGroup:addSwitch(sysLights.instr9Light)
-sysLights.instrLightGroup:actuate(0)
+-- sysLights.instrLightGroup:actuate(0)
 
 --------- Annunciators
 -- annunciator to mark any landing lights on

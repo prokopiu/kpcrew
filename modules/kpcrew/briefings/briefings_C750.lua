@@ -4,16 +4,16 @@
 -- @copyright 2022 Kosta Prokopiu
 kc_acf_name 		= "Laminar Citation X 750"
 
-kc_TakeoffThrust 	= "RATED|DE-RATED|ASSUMED TEMPERATURE|RATED AND ASSUMED|DE-RATED AND ASSUMED"
+kc_TakeoffThrust 	= "NORMAL"
 kc_TakeoffFlaps 	= "UP|5|15"
 kc_TakeoffAntiice 	= "NOT REQUIRED|ENGINE ONLY|ENGINE AND WING"
-kc_TakeoffPacks 	= "ON|AUTO|OFF"
-kc_TakeoffBleeds 	= "OFF|ON|UNDER PRESSURIZED"
-kc_TakeoffApModes 	= "LNAV/VNAV|HDG/FLCH"
+kc_TakeoffPacks 	= "ON|OFF"
+kc_TakeoffBleeds 	= "ON|OFF"
+kc_TakeoffApModes 	= "NAV/VNAV|HDG/FLCH"
 kc_apptypes 		= "ILS CAT 1|ILS CAT 2 OR 3|VOR|NDB|RNAV|VISUAL|TOUCH AND GO|CIRCLING"
 kc_LandingFlaps 	= "15|FULL"
-kc_LandingAutoBrake = "OFF|1|2|3|MAX"
-kc_LandingPacks 	= "OFF|ON|UNDER PRESSURIZED"
+kc_LandingAutoBrake = "OFF"
+kc_LandingPacks 	= "OFF|ON"
 kc_LandingAntiice 	= "NOT REQUIRED|ENGINE ONLY|ENGINE AND WING"
 kc_StartSequence 	= "2 THEN 1|1 THEN 2"
 kc_MELIssues 		= "no M E L issues|some M E L issues"
@@ -25,59 +25,87 @@ APP_apptype_list 	= "ILS CAT 1|ILS CAT 2 OR 3|VOR|NDB|RNAV|VISUAL|TOUCH AND GO|C
 APP_apu_list 		= "APU delayed start|APU|GPU"
 
 -- Reverse Thrust
-APP_rev_thrust_list = "NONE|MINIMUM|FULL"
+APP_rev_thrust_list = "NONE|FULL"
 
--- aircraft specs, weights in KG
-kc_DOW 				= 0  -- Dry Operating Weight (aka OEW)
-kc_MZFW  			= 0  -- Maximum Zero Fuel Weight
-kc_MaxFuel 			= 0  -- Maximum Fuel Capacity
-kc_MTOW 			= 0  -- Maximum Takeoff Weight
-kc_MLW  			= 0  -- Maximum Landing Weight
-kc_FFPH 			= 0  -- Fuel Flow per hour
-kc_MFL1				=  4204  -- max fuel in tank left
-kc_MFL2				=  9331  -- max fuel in tank center
-kc_MFL3				=  4204  -- max fuel in tank right
+-- Weights (lb/kg)	Citation X, CE-750
+-- Max Ramp					36,400/16.510
+-- Max Takeoff				31,400/14.242
+-- Max Landing				31,800/14.424
+-- Zero Fuel				24,400/11.067
+-- BOW						22,100/10.024
+-- Max Payload				 2,300/1.043
+-- Useful Load				14,300/6.486
+-- Executive Payload		 1,800/816
+-- Max Fuel					12,931/5.865
+-- Avail Payload Max Fuel	 1,369/620
+-- Avail Fuel Max Payload	12,000/5.443
+-- Avail Fuel Exec Payload	12,500/5.669
+
+kc_MaxRamp			= 16510 	-- Max Ramp weight
+kc_MTOW 			= 14242		-- Maximum Takeoff Weight
+kc_MLW  			= 14424		-- Maximum Landing Weight
+kc_MaxFuel 			= 5909		-- Maximum Fuel Capacity (lbs)
+kc_MZFW  			= 11067		-- Maximum Zero Fuel Weight
+kc_DOW 				= 10024		-- Dry Operating Weight (aka OEW)
+kc_MaxPayload		= 1043		-- Maximum Payload
+kc_FFPH 			= 1315		-- Fuel Flow per hour
+kc_MFL1				= 1595		-- max fuel in tank left
+kc_MFL2				= 2719		-- max fuel in tank center
+kc_MFL3				= 1595		-- max fuel in tank right
+
+-- Operating speeds
+kc_speeds_vs0		= 115		-- Stall Speed, Landing Configuration Vso 115 KIAS
+kc_speeds_vs1		= 136		-- Stall Speed, Clean Vs1 136 KIAS
+kc_speeds_vs		= 140		-- Minimum Controllable Speed Vs 140 KIAS
+kc_speeds_vx		= 270		-- Best Angle of Climb Vx 270 KIAS
+kc_speeds_vy		= 300		-- Best Rate of Climb Vy 300 KIAS
+kc_speeds_vfe		= 180		-- Maximum flaps Extended Speed Vfe 180 KIAS
+kc_speeds_vmo1		= 270		-- Maximum Operating Speed (Sea Level to 8,000 ft) Vmo 270 KIAS
+kc_speeds_vmo2		= 350		-- Maximum Operating Speed (Above 8,000 ft) Vmo 350 KIAS
+kc_speeds_vmo3		= 0.935		-- Maximum Mach Number Vmo 0.935 Mach
+kc_speeds_vle		= 210		-- Maximum Gear Operating Speed Vle 210 KIAS
+kc_speeds_vlo		= 210		-- Maximum Gear Extended Speed Vlo 210 KIAS
 
 kc_show_load_button = true
 kc_show_cost_index 	= false
 
 function kc_get_DOW()
 	if activePrefSet:get("general:weight_kgs") then
-		return get("sim/aircraft/weight/acf_m_empty")
+		return kc_DOW
 	else
-		return get("sim/aircraft/weight/acf_m_empty") * 2.20462262
+		return kc_DOW * 2.20462262
 	end
 end
 
 function kc_get_MZFW()
 	if activePrefSet:get("general:weight_kgs") then
-		return get("sim/aircraft/weight/acf_m_max") - kc_get_MaxFuel()
+		return kc_MZFW
 	else
-		return get("sim/aircraft/weight/acf_m_max") * 2.20462262 - kc_get_MaxFuel()
+		return kc_MZFW * 2.20462262
 	end
 end
 
 function kc_get_MaxFuel()
 	if activePrefSet:get("general:weight_kgs") then
-		return get("sim/aircraft/weight/acf_m_fuel_tot")
+		return kc_MaxFuel
 	else
-		return get("sim/aircraft/weight/acf_m_fuel_tot") * 2.20462262
+		return kc_MaxFuel * 2.20462262
 	end
 end
 
 function kc_get_MTOW()
 	if activePrefSet:get("general:weight_kgs") then
-		return get("sim/aircraft/weight/acf_m_max")
+		return kc_MTOW
 	else
-		return get("sim/aircraft/weight/acf_m_max") * 2.20462262
+		return kc_MTOW * 2.20462262
 	end
 end
 
 function kc_get_MLW()
 	if activePrefSet:get("general:weight_kgs") then
-		return get("sim/aircraft/weight/acf_m_max")
+		return kc_MLW
 	else
-		return get("sim/aircraft/weight/acf_m_max") * 2.20462262
+		return kc_MLW * 2.20462262
 	end
 end
 
@@ -110,15 +138,19 @@ function kc_get_zfw()
 end
 
 function kc_set_payload()
-	set("sim/flightmodel/weight/m_fixed",activeBriefings:get("flight:payload"))
+	-- payload
+	set("sim/flightmodel/weight/m_fixed",activeBriefings:get("flight:toweight"))
+
+	-- fuel
+	set("sim/aircraft/weight/acf_m_fuel_tot",10000)
 	local fgoal = activeBriefings:get("flight:takeoffFuel")
-	set("sim/flightmodel/weight/m_fuel2",math.min(kc_MFL2,fgoal/2))
-	set("sim/flightmodel/weight/m_fuel3",math.min(kc_MFL2,fgoal/2))
-	local fdiff = fgoal - (kc_MFL2 + kc_MFL3)
+	set_array("sim/flightmodel/weight/m_fuel",1,math.min(kc_MFL1,fgoal/2))
+	set_array("sim/flightmodel/weight/m_fuel",2,math.min(kc_MFL3,fgoal/2))
+	local fdiff = fgoal - (kc_MFL1 + kc_MFL3)
 	if fdiff > 0 then
-		set("sim/flightmodel/weight/m_fuel1",math.min(kc_MFL1,fdiff))
+		set_array("sim/flightmodel/weight/m_fuel",0,math.min(kc_MFL2,fdiff))
 	else
-		set("sim/flightmodel/weight/m_fuel1",0)
+		set_array("sim/flightmodel/weight/m_fuel",0,0)
 	end
 end
 

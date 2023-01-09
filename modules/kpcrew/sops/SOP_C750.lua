@@ -756,19 +756,63 @@ preTaxiProc:addItem(ProcedureItem:new("TAXI LIGHT","ON",FlowItem.actorFO,0,
 	function () sysLights.taxiSwitch:actuate(1) end))
 
 -- =================== BEFORE TAKEOFF ====================
--- FLAPS.............................SET AS REQUIRED 		
--- sw_item_c:\white\FLAPS 5 or 15 [PDL]|CHECK SET:((sim/cockpit2/controls/flap_handle_request_ratio:0.5)&&(sim/cockpit2/controls/flap_system_deploy_ratio:0.5))||((sim/cockpit2/controls/flap_handle_request_ratio:0.75)&&(sim/cockpit2/controls/flap_system_deploy_ratio:0.75))
--- sw_item_c:\white\V SPEEDS [FMC]|SET AND CHECKED
--- sw_item_c:\white\ALTITUDE [MCP]|SET CHECKED
--- sw_item_c:\white\HEADING BUG [MCP]|SET
--- sw_item_c:\white\AP HDG MODE [MCP]|SET:sim/cockpit2/autopilot/heading_mode:1
--- sw_item_c:\white\AP VNAV [MCP]|SET:sim/cockpit2/autopilot/fms_vnav:1
--- sw_item_c:\white\AP MAC TRIM [MCP]|ON 
--- sw_item_c:\white\ENGINE ANTI-ICE [RPL]|AS REQUIRED:1:1
--- sw_item_c:\white\STABILIZER ANTI-ICE [RPL]|AS REQUIRED:1:1
--- sw_item_c:\white\WINDSHIELD HEAT LH & RH [RPL]|ON:(sim/cockpit2/ice/ice_window_heat_on_window[0]:1)&&(sim/cockpit2/ice/ice_window_heat_on_window[1]:1)
+-- FLAPS.............................CHECK T/O FLAPS
+-- V SPEEDS..........................SET AND CHECKED
+-- AP ALTITUDE...........................SET CHECKED
+-- AP HEADING BUG................................SET
+-- AP HDG MODE...................................SET			:sim/cockpit2/autopilot/heading_mode:1
+-- AP VNAV.......................................SET			:sim/cockpit2/autopilot/fms_vnav:1
+-- AP MAC TRIM....................................ON			:laminar/CitX/autopilot/left_mtrim:1
+-- ENGINE ANTI-ICE.......................AS REQUIRED
+-- STABILIZER ANTI-ICE...................AS REQUIRED
+-- WINDSHIELD HEAT LH & RH........................ON			:(sim/cockpit2/ice/ice_window_heat_on_window[0]:1)&&(sim/cockpit2/ice/ice_window_heat_on_window[1]:1)
 -- =======================================================
 
+local beforeTakeoffProc = Procedure:new("PRE TAXI","","")
+beforeTakeoffProc:setFlightPhase(7)
+beforeTakeoffProc:addItem(ProcedureItem:new("FLAPS","CHECK T/O FLAPS %s|kc_pref_split(kc_TakeoffFlaps)[activeBriefings:get(\"takeoff:flaps\")]",FlowItem.actorFO,0,
+	function () return sysControls.flapsSwitch:getStatus() == sysControls.flaps_pos[activeBriefings:get("takeoff:flaps")] end,
+	function () sysControls.flapsSwitch:setValue(sysControls.flaps_pos[activeBriefings:get("takeoff:flaps")]) end)) 
+-- V SPEEDS..........................SET AND CHECKED
+beforeTakeoffProc:addItem(ProcedureItem:new("AP ALTITUDE","SET %05d|activeBriefings:get(\"departure:initAlt\")",FlowItem.actorCPT,0,
+	function () return sysMCP.altSelector:getStatus() == activeBriefings:get("departure:initAlt") end))
+beforeTakeoffProc:addItem(ProcedureItem:new("AP HEADING BUG","SET %03d|activeBriefings:get(\"departure:initHeading\")",FlowItem.actorCPT,0,
+	function () return sysMCP.hdgSelector:getStatus() == activeBriefings:get("departure:initHeading") end))
+beforeTakeoffProc:addItem(ProcedureItem:new("AP NAV MODE","ARM",FlowItem.actorCPT,0,
+	function () return sysMCP.vorlocSwitch:getStatus() == 1 end,
+	function () sysMCP.vorlocSwitch:actuate(1) end,
+	function () return activeBriefings:get("takeoff:apMode") ~= 1 end))
+beforeTakeoffProc:addItem(ProcedureItem:new("AP VNAV","ARM",FlowItem.actorCPT,0,
+	function () return sysMCP.vnavSwitch:getStatus() == 1 end,
+	function () sysMCP.vnavSwitch:actuate(1) end,
+	function () return activeBriefings:get("takeoff:apMode") ~= 1 end))
+beforeTakeoffProc:addItem(ProcedureItem:new("AP HDG MODE","ARM",FlowItem.actorCPT,0,
+	function () return sysMCP.hdgselSwitch:getStatus() == 1 end,
+	function () sysMCP.hdgselSwitch:actuate(1) end,
+	function () return activeBriefings:get("takeoff:apMode") == 1 end))
+beforeTakeoffProc:addItem(ProcedureItem:new("AP VNAV","ARM",FlowItem.actorCPT,0,
+	function () return sysMCP.vnavSwitch:getStatus() == 1 end,nil,
+	function () return activeBriefings:get("takeoff:apMode") == 1 end))
+-- AP MAC TRIM....................................ON			:laminar/CitX/autopilot/left_mtrim:1
+beforeTakeoffProc:addItem(ProcedureItem:new("ENGINE ANTI-ICE","OFF",FlowItem.actorFO,0,
+	function () return sysAice.engAntiIceGroup:getStatus() == 0 end,
+	function () sysAice.engAntiIceGroup:actuate(0) end,
+	function () return activeBriefings:get("takeoff:antiice") > 1 end))
+beforeTakeoffProc:addItem(ProcedureItem:new("ENGINE ANTI-ICE","ON",FlowItem.actorFO,0,
+	function () return sysAice.engAntiIceGroup:getStatus() == 2 end,
+	function () sysAice.engAntiIceGroup:actuate(1) end,
+	function () return activeBriefings:get("takeoff:antiice") == 1 end))
+beforeTakeoffProc:addItem(ProcedureItem:new("STABILIZER ANTI-ICE","OFF",FlowItem.actorFO,0,
+	function () return sysAice.wingAntiIce:getStatus() == 0 end,
+	function () sysAice.wingAntiIce:actuate(0) end,
+	function () return activeBriefings:get("takeoff:antiice") == 3 end))
+beforeTakeoffProc:addItem(ProcedureItem:new("STABILIZER ANTI-ICE","ON",FlowItem.actorFO,0,
+	function () return sysAice.wingAntiIce:getStatus() == 1 end,
+	function () sysAice.wingAntiIce:actuate(1) end,
+	function () return activeBriefings:get("takeoff:antiice") < 3 end))
+-- WINDSHIELD HEAT LH & RH........................ON			:(sim/cockpit2/ice/ice_window_heat_on_window[0]:1)&&(sim/cockpit2/ice/ice_window_heat_on_window[1]:1)
+-- sysAice.windowHeat1
+ 
 -- ============ RUNWAY ENTRY PROCEDURE (F/O) ============
 -- sw_item_c:\white\STROBE LIGHT|ON:sim/cockpit/electrical/strobe_lights_on:1
 -- sw_item_c:\white\TAXI LIGHT [RPL]|ON:sim/cockpit2/switches/taxi_light_on:1
@@ -777,6 +821,7 @@ preTaxiProc:addItem(ProcedureItem:new("TAXI LIGHT","ON",FlowItem.actorFO,0,
 -- LANDING LIGHTS................................ON (CPT)
 -- sw_item_c:\white\TRANSPONDER|ATC ALT ON:sim/cockpit2/radios/actuators/transponder_mode:3
 -- TRANSPONDER...................................ON (F/O)
+-- clock
 -- ======================================================
 
 -- =========== TAKEOFF & INITIAL CLIMB (BOTH) ===========
@@ -992,11 +1037,12 @@ preTaxiProc:addItem(ProcedureItem:new("TAXI LIGHT","ON",FlowItem.actorFO,0,
 local nopeProc = Procedure:new("NO PROCEDURES AVAILABLE")
 
 -- activeSOP:addProcedure(testProc)
-activeSOP:addProcedure(pushstartProc)
-activeSOP:addProcedure(preTaxiProc)
+activeSOP:addProcedure(beforeTakeoffProc)
 activeSOP:addProcedure(electricalPowerUpProc)
 activeSOP:addProcedure(preFlightProc)
 activeSOP:addProcedure(preStartProc)
+activeSOP:addProcedure(pushstartProc)
+activeSOP:addProcedure(preTaxiProc)
 
 -- ============= Background Flow ==============
 local backgroundFlow = Background:new("","","")
