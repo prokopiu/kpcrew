@@ -2276,6 +2276,8 @@ goAroundProc:addItem(ProcedureItem:new("FLAPS UP","SET",FlowItem.actorPNF,0,true
 -- AUTOBRAKE...................................OFF   (FO)
 -- FLAPS........................................UP   (FO)
 -- APU...........................START IF REQUIRED   (FO)
+-- TAXI LIGHT BEFORE GATE..............COMMAND OFF  (CPT)
+-- TAXI LIGHT SWITCH...........................OFF  (CPT) 
 -- ======================================================
 
 local afterLandingProc = Procedure:new("AFTER LANDING PROCEDURE","cleaning up")
@@ -2326,9 +2328,11 @@ afterLandingProc:addItem(IndirectProcedureItem:new("  #spell|APU# GEN OFF BUS LI
 	function () return activeBriefings:get("approach:powerAtGate") == 1 end))
 afterLandingProc:addItem(ProcedureItem:new("AIRCRAFT","CLEAN",FlowItem.actorFO,0,true,
 	function () kc_speakNoText(9,"aircraft cleaned up") end))
+takeoffClimbProc:addItem(HoldProcedureItem:new("TAXI LIGHT BEFORE STAND","COMMAND OFF",FlowItem.actorPF))
+afterLandingProc:addItem(ProcedureItem:new("TAXI LIGHT","OFF",FlowItem.actorFO,0,true,
+	function () sysLights.taxiSwitch:actuate(0) end))
 
 -- ============= SHUTDOWN PROCEDURE (BOTH) ==============
--- TAXI LIGHT SWITCH...........................OFF  (CPT) 
 -- PARKING BRAKE...............................SET  (CPT)
 -- ==== Electrical power
 -- APU GENERATOR BUS SWITCHES.........ON IF NEEDED   (FO)

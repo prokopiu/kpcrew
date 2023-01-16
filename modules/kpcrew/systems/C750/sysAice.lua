@@ -19,9 +19,9 @@ local InopSwitch 			= require "kpcrew.systems.InopSwitch"
 
 -- Window Heat
 sysAice.windowHeat1 		= TwoStateCmdSwitch:new("winheat1","laminar/CitX/ice/windshield_left",0,
-	"laminar/CitX/ice/cmd_windshield_left_dwn","laminar/CitX/ice/cmd_windshield_left_up","nocommand")
+	"laminar/CitX/ice/cmd_windshield_left_up","laminar/CitX/ice/cmd_windshield_left_dwn","nocommand")
 sysAice.windowHeat2 		= TwoStateCmdSwitch:new("winheat2","laminar/CitX/ice/windshield_right",0,
-	"laminar/CitX/ice/cmd_windshield_right_dwn","laminar/CitX/ice/cmd_windshield_right_up","nocommand")
+	"laminar/CitX/ice/cmd_windshield_right_up","laminar/CitX/ice/cmd_windshield_right_dwn","nocommand")
 sysAice.windowHeatGroup 	= SwitchGroup:new("windowheat")
 sysAice.windowHeatGroup:addSwitch(sysAice.windowHeat1)
 sysAice.windowHeatGroup:addSwitch(sysAice.windowHeat2)

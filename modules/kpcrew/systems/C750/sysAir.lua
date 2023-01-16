@@ -27,10 +27,60 @@ sysAir.recircFanLeft 		= InopSwitch:new("recirc1")
 sysAir.recircFanRight 		= InopSwitch:new("recirc2")
 
 -- PACK switches
-sysAir.packLeftSwitch 		= TwoStateCmdSwitch:new("pack1","laminar/CitX/bleedair/air_cond_cockpit",0,
-	"laminar/CitX/bleedair/cmd_air_cond_cockpit_up","laminar/CitX/bleedair/cmd_air_cond_cockpit_dwn","nocommand")
-sysAir.packRightSwitch 		= TwoStateCmdSwitch:new("pack2","laminar/CitX/bleedair/air_cond_cabin",0,
-	"laminar/CitX/bleedair/cmd_air_cond_cabin_up","laminar/CitX/bleedair/cmd_air_cond_cabin_dwn","nocommand")
+sysAir.packLeftSwitch 		= TwoStateCustomSwitch:new("pack1","laminar/CitX/bleedair/air_cond_cockpit",0,
+	function () 
+		command_once("laminar/CitX/bleedair/cmd_air_cond_cockpit_dwn")
+		command_once("laminar/CitX/bleedair/cmd_air_cond_cockpit_dwn")
+		command_once("laminar/CitX/bleedair/cmd_air_cond_cockpit_up")
+	end,
+	function () 
+		command_once("laminar/CitX/bleedair/cmd_air_cond_cockpit_dwn")
+		command_once("laminar/CitX/bleedair/cmd_air_cond_cockpit_dwn")
+	end,
+	function () 
+		if get("laminar/CitX/bleedair/engine_left") > 0 then 
+			command_once("laminar/CitX/bleedair/cmd_air_cond_cockpit_dwn")
+			command_once("laminar/CitX/bleedair/cmd_air_cond_cockpit_dwn")
+		else
+			command_once("laminar/CitX/bleedair/cmd_air_cond_cockpit_dwn")
+			command_once("laminar/CitX/bleedair/cmd_air_cond_cockpit_dwn")
+			command_once("laminar/CitX/bleedair/cmd_air_cond_cockpit_up")
+		end
+	end,
+	function ()
+		if get("laminar/CitX/bleedair/air_cond_cockpit") > 0 then
+			return 1
+		else
+			return 2
+		end
+	end)
+sysAir.packRightSwitch 		= TwoStateCustomSwitch:new("pack2","laminar/CitX/bleedair/air_cond_cabin",0,
+	function () 
+		command_once("laminar/CitX/bleedair/cmd_air_cond_cabin_dwn")
+		command_once("laminar/CitX/bleedair/cmd_air_cond_cabin_dwn")
+		command_once("laminar/CitX/bleedair/cmd_air_cond_cabin_up")
+	end,
+	function () 
+		command_once("laminar/CitX/bleedair/cmd_air_cond_cabin_dwn")
+		command_once("laminar/CitX/bleedair/cmd_air_cond_cabin_dwn")
+	end,
+	function () 
+		if get("laminar/CitX/bleedair/engine_left") > 0 then 
+			command_once("laminar/CitX/bleedair/cmd_air_cond_cabin_dwn")
+			command_once("laminar/CitX/bleedair/cmd_air_cond_cabin_dwn")
+		else
+			command_once("laminar/CitX/bleedair/cmd_air_cond_cabin_dwn")
+			command_once("laminar/CitX/bleedair/cmd_air_cond_cabin_dwn")
+			command_once("laminar/CitX/bleedair/cmd_air_cond_cabin_up")
+		end
+	end,
+	function ()
+		if get("laminar/CitX/bleedair/air_cond_cabin") > 0 then
+			return 1
+		else
+			return 2
+		end
+	end)
 sysAir.packSwitchGroup 		= SwitchGroup:new("PackBleeds")
 sysAir.packSwitchGroup:addSwitch(sysAir.packLeftSwitch)
 sysAir.packSwitchGroup:addSwitch(sysAir.packRightSwitch)
@@ -40,10 +90,62 @@ sysAir.isoValveSwitch 		= TwoStateCmdSwitch:new("isolation","laminar/CitX/bleeda
 	"laminar/CitX/bleedair/cmd_iso_valve_up","laminar/CitX/bleedair/cmd_iso_valve_dwn","nocommand")
 
 -- BLEED AIR
-sysAir.bleedEng1Switch 		= TwoStateCmdSwitch:new("bleed1","laminar/CitX/bleedair/engine_left",0,
-	"laminar/CitX/bleedair/cmd_engine_left_up","laminar/CitX/bleedair/cmd_engine_left_down","nocommand")
-sysAir.bleedEng2Switch 		= TwoStateCmdSwitch:new("bleed2","laminar/CitX/bleedair/engine_right",0,
-	"laminar/CitX/bleedair/cmd_engine_right_up","laminar/CitX/bleedair/cmd_engine_right_down","nocommand")
+sysAir.bleedEng1Switch 		= TwoStateCustomSwitch:new("bleed1","laminar/CitX/bleedair/engine_left",0,
+	-- NORM is HP/LP
+	function () 
+		if get("laminar/CitX/bleedair/engine_left") > 1 then 
+			command_once("laminar/CitX/bleedair/cmd_engine_left_dwn")
+		elseif get("laminar/CitX/bleedair/engine_left") < 1 then 
+			command_once("laminar/CitX/bleedair/cmd_engine_left_up")
+		end
+	end,
+	function () 
+		command_once("laminar/CitX/bleedair/cmd_engine_left_dwn")
+		command_once("laminar/CitX/bleedair/cmd_engine_left_dwn")
+	end,
+	function () 
+		if get("laminar/CitX/bleedair/engine_left") > 0 then 
+			command_once("laminar/CitX/bleedair/cmd_engine_left_dwn")
+			command_once("laminar/CitX/bleedair/cmd_engine_left_dwn")
+		else
+			command_once("laminar/CitX/bleedair/cmd_engine_left_up")
+		end
+	end,
+	function ()
+		if get("laminar/CitX/bleedair/engine_left") > 0 then
+			return 1
+		else
+			return 2
+		end
+	end)
+sysAir.bleedEng2Switch 		= TwoStateCustomSwitch:new("bleed2","laminar/CitX/bleedair/engine_right",0,
+	-- NORM is HP/LP
+	function () 
+		if get("laminar/CitX/bleedair/engine_right") > 1 then 
+			command_once("laminar/CitX/bleedair/cmd_engine_right_dwn")
+		elseif get("laminar/CitX/bleedair/engine_right") < 1 then 
+			command_once("laminar/CitX/bleedair/cmd_engine_right_up")
+		end
+	end,
+	function () 
+		command_once("laminar/CitX/bleedair/cmd_engine_right_dwn")
+		command_once("laminar/CitX/bleedair/cmd_engine_right_dwn")
+	end,
+	function () 
+		if get("laminar/CitX/bleedair/engine_right") > 0 then 
+			command_once("laminar/CitX/bleedair/cmd_engine_right_dwn")
+			command_once("laminar/CitX/bleedair/cmd_engine_right_dwn")
+		else
+			command_once("laminar/CitX/bleedair/cmd_engine_right_up")
+		end
+	end,
+	function ()
+		if get("laminar/CitX/bleedair/engine_right") > 0 then
+			return 1
+		else
+			return 2
+		end
+	end)
 -- sysAir.bleedEng3Switch 		= InopSwitch:new("bleed3")
 -- sysAir.bleedEng4Switch 		= InopSwitch:new("bleed4")
 sysAir.engBleedGroup 		= SwitchGroup:new("EngBleeds")

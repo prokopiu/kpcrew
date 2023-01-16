@@ -18,10 +18,10 @@ local MultiStateCmdSwitch 	= require "kpcrew.systems.MultiStateCmdSwitch"
 local InopSwitch 			= require "kpcrew.systems.InopSwitch"
 
 local drefVORLocLight 		= "laminar/CitX/autopilot/nav_mode_on"
-local drefHDGLight			= "laminar/CitX/autopilot/hdg_mode_on"
+local drefHDGLight			= "sim/cockpit2/autopilot/heading_mode"
 local drefSPDLight 			= "laminar/CitX/autopilot/flc_mode_on"
 local drefVSLight 			= "laminar/CitX/autopilot/vs_mode_on"
-local drefVNAVLight 		= "laminar/CitX/autopilot/vnav_mode_on"
+local drefVNAVLight 		= "sim/cockpit2/autopilot/fms_vnav"
 local drefAPRLight			= "laminar/CitX/autopilot/app_mode_on"
 local drefLALTLight			= "laminar/CitX/autopilot/alt_mode_on"
 local drefBCLight			= "laminar/CitX/autopilot/bc_mode_on"
@@ -98,7 +98,7 @@ sysMCP.spdIntvSwitch 		= InopSwitch:new("spdintv")
 
 -- VNAV
 sysMCP.vnavSwitch 			= TwoStateToggleSwitch:new("vnav",drefVNAVLight,0,
-	"laminar/CitX/autopilot/flc_mode_on")
+	"laminar/CitX/autopilot/cmd_vnav_mode")
 
 -- LVL CHG
 sysMCP.lvlchgSwitch 		= InopSwitch:new("lvlchg")

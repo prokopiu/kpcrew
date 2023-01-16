@@ -47,8 +47,27 @@ sysLights.positionSwitch 	= TwoStateToggleSwitch:new("position","laminar/CitX/li
 	"laminar/CitX/lights/cmd_navigation_toggle")
 
 -- Strobe Lights, single onoff command driven
-sysLights.strobesSwitch 	= TwoStateCmdSwitch:new("strobes","sim/cockpit2/switches/strobe_lights_on",0,
-	"sim/lights/strobe_lights_on","sim/lights/strobe_lights_off","sim/lights/strobe_lights_toggle")
+sysLights.strobesSwitch 	= TwoStateCustomSwitch:new("strobes","sim/cockpit2/switches/strobe_lights_on",0,
+	function () 
+		if get("laminar/CitX/lights/gnd_rec_anti_coll") ~= 2 then
+			command_once("laminar/CitX/lights/cmd_gnd_rec_anti_coll_up")
+			command_once("laminar/CitX/lights/cmd_gnd_rec_anti_coll_up")
+		end
+	end,
+	function () 
+		if get("laminar/CitX/lights/gnd_rec_anti_coll") == 2 then
+			command_once("laminar/CitX/lights/cmd_gnd_rec_anti_coll_dwn")
+		end
+	end,
+	function () 
+		if get("laminar/CitX/lights/gnd_rec_anti_coll") == 2 then
+			command_once("laminar/CitX/lights/cmd_gnd_rec_anti_coll_dwn")
+		elseif get("laminar/CitX/lights/gnd_rec_anti_coll") ~= 2 then
+			command_once("laminar/CitX/lights/cmd_gnd_rec_anti_coll_up")
+			command_once("laminar/CitX/lights/cmd_gnd_rec_anti_coll_up")
+		end
+	end
+)
 
 -- Taxi/Nose Lights, single onoff command driven
 sysLights.taxiSwitch 		= TwoStateToggleSwitch:new("taxi","laminar/CitX/lights/taxi",0,
@@ -75,10 +94,10 @@ sysLights.rwyLightGroup:addSwitch(sysLights.rwyLeftSwitch)
 -- sysLights.rwyLightGroup:addSwitch(sysLights.rwyRightSwitch)
 
 -- Wing Lights
-sysLights.wingSwitch 		= TwoStateDrefSwitch:new("wing",drefGenericLights,3)
+sysLights.wingSwitch 		= InopSwitch:new("wing")
 
 -- Wheel well Lights
-sysLights.wheelSwitch 		= TwoStateDrefSwitch:new("wheel",drefGenericLights,5)
+sysLights.wheelSwitch 		= InopSwitch:new("wheel")
 
 -- Dome Light
 sysLights.domeLightSwitch 	= TwoStateDrefSwitch:new("dome","sim/cockpit/electrical/cockpit_lights",0)
