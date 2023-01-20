@@ -102,6 +102,10 @@ sysGeneral.irsUnitGroup:addSwitch(sysGeneral.irsUnit3Switch)
 -- Windshield Wipers
 sysGeneral.wiperSwitch = InopSwitch:new("wipers")
 
+-- Antiskid
+sysGeneral.antiSkid = TwoStateToggleSwitch:new("antiskid"m"laminar/CitX/hydraulics/antiskid",0,
+	"laminar/CitX/hydraulics/cmd_antiskid_toggle")
+
 ------------ Annunciators
 -- park brake
 sysGeneral.parkbrakeAnc 	= CustomAnnunciator:new("parkbrake",

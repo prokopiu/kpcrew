@@ -142,7 +142,8 @@ sysRadios.adf2Flip 			= TwoStateToggleSwitch:new("",drefAdf2Flip,0,
 sysRadios.adf2ActiveFreq 	= SimpleAnnunciator:new("",drefAdf2ActiveFreq,0)
 sysRadios.adf2StandbyFreq 	= SimpleAnnunciator:new("",drefAdf2StandbyFreq,0)
 
-sysRadios.xpdrSwitch 		= InopSwitch:new ("xpdr")
+-- XPDR
+sysRadios.xpdrSwitch 		= TwoStateDrefSwitch:new("xpdr","sim/cockpit2/radios/actuators/transponder_mode",0)
 sysRadios.xpdrCode 			= TwoStateDrefSwitch:new ("xpdr",drefXpdrCode,0)
 
 -- render the MCP part

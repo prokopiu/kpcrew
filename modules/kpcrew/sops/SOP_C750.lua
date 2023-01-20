@@ -570,7 +570,7 @@ pushstartProc:addItem(ProcedureItem:new("PARKING BRAKE","SET",FlowItem.actorFO,0
 -- ENGINE ANTI-ICE......................AS REQUIRED
 -- STABILIZER ANTI-ICE..................AS REQUIRED
 -- FUEL QTY BALANCE...........................CHECK
--- HYD PUMP A & B..............................NORM		:(laminar/CitX/hydraulics/unload_pump_B:1)&&(laminar/CitX/hydraulics/unload_pump_A:1)
+-- HYD PUMP A & B..............................NORM
 -- FLIGHT CONTROLS............................CHECK
 -- =======================================================
 
@@ -673,7 +673,9 @@ afterStartProc:addItem(ProcedureItem:new("STABILIZER ANTI-ICE","ON",FlowItem.act
 	function () return activeBriefings:get("takeoff:antiice") < 3 end))
 afterStartProc:addItem(IndirectProcedureItem:new("FUEL QUANTITY","CHECK BAL IN EICAS",FlowItem.actorFO,0,"fuelbalanced2",
 	function () return sysFuel.fuel_balanced() end))
--- HYD PUMP A & B..............................NORM		:(laminar/CitX/hydraulics/unload_pump_B:1)&&(laminar/CitX/hydraulics/unload_pump_A:1)
+afterStartProc:addItem(ProcedureItem:new("HYD PUMP A & B","NORM",FlowItem.actorFO,0,
+	function () return sysHydraulic.engHydPumpGroup:getStatus() == 2 end,
+	function () sysHydraulic.engHydPumpGroup:actuate(1) end)) 
 afterStartProc:addItem(IndirectProcedureItem:new("FLIGHT CONTROLS","CHECKED",FlowItem.actorBOTH,0,"fccheck",
 	function () return get("sim/flightmodel2/wing/rudder1_deg") > 18 end))
 
@@ -742,7 +744,7 @@ preTaxiProc:addItem(ProcedureItem:new("TAXI LIGHT","ON",FlowItem.actorFO,0,
 -- ENGINE ANTI-ICE.......................AS REQUIRED
 -- STABILIZER ANTI-ICE...................AS REQUIRED
 -- WINDSHIELD HEAT LH & RH........................ON
--- ANTI SKID ON : laminar/CitX/hydraulics/antiskid:1
+-- ANTI SKID....................................NORM
 -- =======================================================
 
 local beforeTakeoffProc = Procedure:new("BEFORE TAKEOFF","","")
@@ -800,11 +802,9 @@ beforeTakeoffProc:addItem(ProcedureItem:new("WINDSHIELD HEAT LH & RH","ON",FlowI
 	function () return sysAice.windowHeatGroup:getStatus() == 2 end,
 	function () sysAice.windowHeatGroup:actuate(1) end))
 beforeTakeoffProc:addItem(ProcedureItem:new("ANTISKID","NORM",FlowItem.actorFO,0,
-	function () return get("laminar/CitX/hydraulics/antiskid") == 0 end,
+	function () return sysGeneral.antiSkid:getStatus() == 0 end,
 	function () 
-		if get("laminar/CitX/hydraulics/antiskid") ~= 0 then
-			command_once("laminar/CitX/hydraulics/cmd_antiskid_toggle")
-		end
+		sysGeneral.antiSkid:actuate(0)
 	end))
 
 -- ============ RUNWAY ENTRY PROCEDURE (F/O) ============
@@ -827,9 +827,9 @@ runwayEntryProc:addItem(ProcedureItem:new("LANDING LIGHT","ON",FlowItem.actorFO,
 	function () return sysLights.landLightGroup:getStatus() > 0 end,
 	function () sysLights.landLightGroup:actuate(1) end))
 runwayEntryProc:addItem(ProcedureItem:new("TRANSPONDER","ON",FlowItem.actorFO,0,
-	function () return get("sim/cockpit2/radios/actuators/transponder_mode") == 3 end,
+	function () return sysRadios.xpdrSwitch:getStatus() == 3 end,
 	function () 
-		set("sim/cockpit2/radios/actuators/transponder_mode",3)
+		sysRadios.xpdrSwitch:actuate(3)
 		activeBckVars:set("general:timesOUT",kc_dispTimeHHMM(get("sim/time/zulu_time_sec")))
 	end))
 runwayEntryProc:addItem(ProcedureItem:new("PACKS & BLEEDS","SET",FlowItem.actorFO,0,true,
@@ -925,7 +925,7 @@ descentProc:setFlightPhase(11)
 descentProc:addItem(ProcedureItem:new("PRESSURIZATION","LAND ALT %i FT|activeBriefings:get(\"arrival:aptElevation\")",FlowItem.actorPM,0,
 	function () 
 		return math.abs(get("laminar/CitX/pressurization/altitude") - 
-			kc_round_step(activeBriefings:get("arrival:aptElevation"),50) < 100 
+			kc_round_step(activeBriefings:get("arrival:aptElevation"),50)) < 100 
 	end))
 descentProc:addItem(HoldProcedureItem:new("VREF","CHECK IN FMC",FlowItem.actorPF,nil))
 descentProc:addItem(ProcedureItem:new("LANDING DATA","VREF %i, MINIMUMS %i|get(\"laminar/B738/FMS/vref\")|activeBriefings:get(\"approach:decision\")",FlowItem.actorPM,0,
@@ -981,7 +981,7 @@ descentProc:addItem(ProcedureItem:new("MONITOR TRANS LVL AND 10000 FT","CHECK",F
 -- COURSE NAV 1................................SET
 -- COURSE NAV 2................................SET
 -- ==== Flaps & Gear Schedule
--- LANDING GEAR...............................DOWN
+-- LANDING GEAR.......................DOWN 3 GREEN
 -- FLAPS 5 SPEED...........................REACHED
 -- FLAPS 5.....................................SET
 -- FLAPS 15 SPEED..........................REACHED
@@ -990,19 +990,6 @@ descentProc:addItem(ProcedureItem:new("MONITOR TRANS LVL AND 10000 FT","CHECK",F
 -- FLAPS FULL..................................SET
 -- GO AROUND ALTITUDE......................... SET
 -- GO AROUND HEADING...........................SET
--- ======================================================
-
--- sw_item_c:\white\V SPEEDS|CHECKED
--- sw_item_c:\white\LANDING GEAR|DOWN 3 GREEN:(sim/aircraft/parts/acf_gear_deploy[0]:1)&&(sim/aircraft/parts/acf_gear_deploy[1]:1)&&(sim/aircraft/parts/acf_gear_deploy[2]:1)
--- sw_item_c:\white\FLAPS 5|SPEED CHECK:sim/cockpit2/gauges/indicators/airspeed_kts_pilot:<250
--- sw_item_c:\white\FLAPS 5|FLAPS 5:sim/cockpit2/controls/flap_system_deploy_ratio:0.5
--- sw_item_c:\white\FLAPS 15|SPEED CHECK:sim/cockpit2/gauges/indicators/airspeed_kts_pilot:<210
--- sw_item_c:\white\FLAPS 15|FLAPS 15:sim/cockpit2/controls/flap_system_deploy_ratio:0.75
--- sw_itemvoid_c:\yellow\ CHECK Flaps Full if not required
--- sw_item_c:\white\FLAPS FULL|SPEED CHECK:sim/cockpit2/gauges/indicators/airspeed_kts_pilot:<180
--- sw_item_c:\white\FLAPS FULL|FLAPS DOWN:sim/cockpit2/controls/flap_system_deploy_ratio:1
--- sw_item_c:\white\TAXI LIGHT|ON:sim/cockpit/electrical/taxi_light_on:1
--- sw_item_c:\white\AP & YD|DISCONNECT:(sim/cockpit/autopilot/autopilot_mode:<2)&&(sim/cockpit/switches/yaw_damper_on:0)
 -- ======================================================
 
 local landingProc = Procedure:new("LANDING PROCEDURE","","ready for landing checklist")
@@ -1023,6 +1010,30 @@ landingProc:addItem(ProcedureItem:new("AIR CONDITIONING PACK SWITCHES","OFF",Flo
 	function () return sysAir.packSwitchGroup:getStatus() == 0 end,
 	function () sysAir.packSwitchGroup:setValue(0) end,
 	function () return activeBriefings:get("approach:packs") > 1 end))
+landingProc:addItem(SimpleProcedureItem:new("==== Flaps & Gear Schedule"))
+landingProc:addItem(ProcedureItem:new("LANDING GEAR HANDLE","DOWN",FlowItem.actorFO,0,
+	function () return sysGeneral.GearSwitch:getStatus() == 1 end,
+	function () sysGeneral.GearSwitch:actuate(1) end))
+landingProc:addItem(ProcedureItem:new("  GREEN LANDING GEAR LIGHT","CHECK ILLUMINATED",FlowItem.actorFO,0,
+	function () return sysGeneral.gearLightsAnc:getStatus() == 1 end))
+landingProc:addItem(ProcedureItem:new("FLAPS 5","SPEED CHECK (<250 KT)",FlowItem.actorPF,nil,
+	function return get("sim/cockpit2/gauges/indicators/airspeed_kts_pilot" < 250 end))
+landingProc:addItem(HoldProcedureItem:new("FLAPS 5","COMMAND",FlowItem.actorPF))
+landingProc:addItem(ProcedureItem:new("FLAPS 5","SET",FlowItem.actorPNF,0,true,
+	function () return sysControls.flapsSwitch:getStatus() == 0.5 end,
+	function () sysControls.flapsSwitch:setValue(sysControls.flaps_pos[2]) end))
+landingProc:addItem(ProcedureItem:new("FLAPS 15","SPEED CHECK (<210 KT)",FlowItem.actorPF,nil,
+	function return get("sim/cockpit2/gauges/indicators/airspeed_kts_pilot" < 210 end))
+landingProc:addItem(HoldProcedureItem:new("FLAPS 15","COMMAND",FlowItem.actorPF))
+landingProc:addItem(ProcedureItem:new("FLAPS 15","SET",FlowItem.actorPNF,0,true,
+	function () return sysControls.flapsSwitch:getStatus() == 0.75 end,
+	function () sysControls.flapsSwitch:setValue(sysControls.flaps_pos[3]) end))
+landingProc:addItem(ProcedureItem:new("FLAPS FULL","SPEED CHECK (<180 KT)",FlowItem.actorPF,nil,
+	function return get("sim/cockpit2/gauges/indicators/airspeed_kts_pilot" < 180 end)
+landingProc:addItem(HoldProcedureItem:new("FLAPS FULL","COMMAND",FlowItem.actorPF))
+landingProc:addItem(ProcedureItem:new("FLAPS FULL","SET",FlowItem.actorPNF,0,true,
+	function () return sysControls.flapsSwitch:getStatus() == 1 end,
+	function () sysControls.flapsSwitch:setValue(sysControls.flaps_pos[4]) end))
 
 -- ====================== GO AROUND ======================
 -- GO AROUND ALTITUDE...........................SET   (PM)
@@ -1040,6 +1051,46 @@ landingProc:addItem(ProcedureItem:new("AIR CONDITIONING PACK SWITCHES","OFF",Flo
 -- flaps 1
 -- flaps up
 -- =======================================================
+
+local goAroundProc = Procedure:new("GO AROUND","going around","")
+goAroundProc:setFlightPhase(20)
+goAroundProc:addItem(ProcedureItem:new("GO AROUND ALTITUDE","SET %s|activeBriefings:get(\"approach:gaaltitude\")",FlowItem.actorPM,0,
+	function() return sysMCP.altSelector:getStatus()  == activeBriefings:get("approach:gaaltitude") end,
+	function() sysMCP.altSelector:setValue(activeBriefings:get("approach:gaaltitude")) end))
+goAroundProc:addItem(ProcedureItem:new("GO AROUND HEADING","SET %s|activeBriefings:get(\"approach:gaheading\")",FlowItem.actorPM,0,
+	function() return sysMCP.hdgSelector:getStatus() == activeBriefings:get("approach:gaheading") end,
+	function() sysMCP.hdgSelector:setValue(activeBriefings:get("approach:gaheading")) end))
+goAroundProc:addItem(IndirectProcedureItem:new("THRUST SETTING","T/O",FlowItem.actorPNF,0,"gathrust",
+	function () return get("laminar/CitX/throttle/ratio_ALL") > 0.98 end))
+goAroundProc:addItem(ProcedureItem:new("HDG MODE","SET",FlowItem.actorPF,0,true,
+	function () sysMCP.hdgselSwitch:actuate(1) end))
+goAroundProc:addItem(HoldProcedureItem:new("GEAR","COMMAND UP",FlowItem.actorPF))
+goAroundProc:addItem(IndirectProcedureItem:new("GEAR","UP",FlowItem.actorPF,0,"gear_up_ga",
+	function () return sysGeneral.GearSwitch:getStatus() == 0 end,
+	function () 
+		sysGeneral.GearSwitch:actuate(0) 
+	end))
+goAroundProc:addItem(HoldProcedureItem:new("A/P","ON",FlowItem.actorPF))
+goAroundProc:addItem(ProcedureItem:new("A/P","ON",FlowItem.actorPNF,0,true,
+	function () 
+		sysMCP.ap1Switch:actuate(1) 
+	end))
+-- flaps schedule
+goAroundProc:addItem(HoldProcedureItem:new("FLAPS 15","COMMAND AT >160 KTS",FlowItem.actorPF,nil,
+	function () return sysControls.flapsSwitch:getStatus() < 1 end))
+goAroundProc:addItem(ProcedureItem:new("FLAPS 15","SET",FlowItem.actorPNF,0,true,
+	function () sysControls.flapsSwitch:setValue(sysControls.flaps_pos[3]) end,
+	function () return sysControls.flapsSwitch:getStatus() < 1 end))
+goAroundProc:addItem(HoldProcedureItem:new("FLAPS 5","COMMAND AT >190 KTS",FlowItem.actorPF,nil,
+	function () return sysControls.flapsSwitch:getStatus() < 0.75 end))
+goAroundProc:addItem(ProcedureItem:new("FLAPS 5","SET",FlowItem.actorPNF,0,true,
+	function () sysControls.flapsSwitch:setValue(sysControls.flaps_pos[2]) end,
+	function () return sysControls.flapsSwitch:getStatus() < 0.75 end))
+goAroundProc:addItem(HoldProcedureItem:new("FLAPS UP","COMMAND AT >230 KTS",FlowItem.actorPF))
+goAroundProc:addItem(ProcedureItem:new("FLAPS UP","SET",FlowItem.actorPNF,0,true,
+	function () sysControls.flapsSwitch:setValue(sysControls.flaps_pos[0]) end))
+takeoffClimbProc:addItem(ProcedureItem:new("POWER LEVERS","CLIMB",FlowItem.actorPF,0,
+	function () return get("laminar/CitX/throttle/ratio_ALL") == .9 end))
 
 -- ============== AFTER LANDING PROCEDURE ===============
 -- SPEED BRAKE................................DOWN   (PF)
@@ -1130,6 +1181,7 @@ activeSOP:addProcedure(runwayEntryProc)
 activeSOP:addProcedure(takeoffClimbProc)
 activeSOP:addProcedure(descentProc)
 activeSOP:addProcedure(landingProc)
+activeSOP:addProcedure(goAroundProc)
 
 -- === States ===
 -- ================= Cold & Dark State ==================
