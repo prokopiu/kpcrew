@@ -839,6 +839,8 @@ runwayEntryProc:addItem(ProcedureItem:new("PACKS & BLEEDS","SET",FlowItem.actorF
 	end))
 
 -- =========== TAKEOFF & INITIAL CLIMB (BOTH) ===========
+-- time ET CHRONO?
+-- wx radar?
 -- TAKEOFF................................ANNOUNCE
 -- THRUST SETTING...........................40% N1
 -- sw_item_c:\white\POWER LEVERS|T/O SET			
@@ -1089,82 +1091,105 @@ goAroundProc:addItem(ProcedureItem:new("FLAPS 5","SET",FlowItem.actorPNF,0,true,
 goAroundProc:addItem(HoldProcedureItem:new("FLAPS UP","COMMAND AT >230 KTS",FlowItem.actorPF))
 goAroundProc:addItem(ProcedureItem:new("FLAPS UP","SET",FlowItem.actorPNF,0,true,
 	function () sysControls.flapsSwitch:setValue(sysControls.flaps_pos[0]) end))
-takeoffClimbProc:addItem(ProcedureItem:new("POWER LEVERS","CLIMB",FlowItem.actorPF,0,
+goAroundProc:addItem(ProcedureItem:new("POWER LEVERS","CLIMB",FlowItem.actorPF,0,
 	function () return get("laminar/CitX/throttle/ratio_ALL") == .9 end))
 
 -- ============== AFTER LANDING PROCEDURE ===============
--- SPEED BRAKE................................DOWN   (PF)
--- CHRONO & ET................................STOP  (CPT)
--- WX RADAR....................................OFF  (CPT)
--- APU.......................................START   (FO)
---   Hold APU switch in START position for 3-4 seconds
---   APU GEN OFF BUS LIGHT.............ILLUMINATED   (FO)
--- PROBE HEAT..................................OFF   (FO)
--- STROBES.....................................OFF   (FO)
--- LANDING LIGHTS..............................OFF   (FO)
--- TAXI LIGHTS..................................ON  (CPT)
--- ENGINE START SWITCHES.......................OFF   (FO)
--- TRAFFIC SWITCH..............................OFF   (FO)
--- AUTOBRAKE...................................OFF   (FO)
--- FLAPS........................................UP   (FO)
--- APU...........................START IF REQUIRED   (FO)
--- sw_item_c:\white\LANDING LIGHT|OFF:(sim/cockpit2/switches/landing_lights_switch[0]:0)&&(sim/cockpit2/switches/landing_lights_switch[1]:0)
--- sw_item_c:\white\STROBE LIGHT|OFF:sim/cockpit/electrical/strobe_lights_on:0
--- sw_item_c:\white\GND SPOILERS|RETRACT:sim/cockpit2/controls/speedbrake_ratio:0
--- sw_item_c:\white\FLAPS|UP:sim/flightmodel2/wing/flap1_deg[1]:0
--- sw_item_c:\white\PITOT STATIC HEAT|OFF:(sim/cockpit/switches/pitot_heat_on:0)&&(sim/cockpit/switches/pitot_heat_on2:0)
--- sw_item_c:\white\ICE PROT|AS REQD
--- sw_item_c:\white\TRANSPONDER|STANDBY:sim/cockpit2/radios/actuators/transponder_mode:1
--- sw_item_c:\white\WX RADAR|OFF
+-- TRANSPONDER.............................STANDBY
+-- GND SPOILERS............................RETRACT
+-- WX RADAR....................................OFF
+-- CHRONO & ET................................STOP
+-- PITOT/STATIC................................OFF  
+-- LANDING LIGHT...............................OFF
+-- STROBE LIGHT................................OFF
+-- TAXI LIGHTS..................................ON
+-- FLAPS........................................UP
+-- APU...........................START IF REQUIRED
+-- ICE PROT................................AS REQD
 -- ======================================================
-
+local afterLandingProc = Procedure:new("AFTER LANDING PROCEDURE","")
+afterLandingProc:setFlightPhase(15)
+afterLandingProc:addItem(ProcedureItem:new("TRANSPONDER","STBY",FlowItem.actorFO,0,
+	function () return get("sim/cockpit2/radios/actuators/transponder_mode") == 1 end,
+	function () 
+		set("sim/cockpit2/radios/actuators/transponder_mode",3)	
+	end,
+	function () return activePrefSet:get("general:xpdrusa") == true end))
+afterLandingProc:addItem(ProcedureItem:new("GROUND SPOILERS","RETRACT",FlowItem.actorFO,0,
+	function () return get("sim/cockpit2/controls/speedbrake_ratio") == 0 end,
+	function () set("sim/cockpit2/controls/speedbrake_ratio",0) end))
+afterLandingProc:addItem(ProcedureItem:new("WX RADAR","OFF",FlowItem.actorFO,0,
+	function () return true end))
+afterLandingProc:addItem(ProcedureItem:new("CHRONO & ET","STOP",FlowItem.actorFO,0,
+	function () return true end,
+	function () activeBckVars:set("general:timesIN",kc_dispTimeHHMM(get("sim/time/zulu_time_sec"))) end))
+afterLandingProc:addItem(ProcedureItem:new("PITOT/STATIC","BOTH OFF",FlowItem.actorFO,0,
+	function () return sysAice.probeHeatGroup:getStatus() == 0 end,
+	function () sysAice.probeHeatGroup:actuate(0) end))
+afterLandingProc:addItem(ProcedureItem:new("FLAPS UP","SET",FlowItem.actorFO,0,true,
+	function () sysControls.flapsSwitch:setValue(sysControls.flaps_pos[0]) end))
+afterLandingProc:addItem(ProcedureItem:new("#spell|APU# SYSTEM MASTER","ON",FlowItem.actorFO,0,
+	function () return sysElectric.apuMasterSwitch:getStatus() == 1 end,
+	function () sysElectric.apuMasterSwitch:actuate(1) end))
+afterLandingProc:addItem(ProcedureItem:new("#spell|APU# STARTER","ON",FlowItem.actorFO,0,
+	function () return get("sim/cockpit2/electrical/APU_starter_switch") > 0 end,
+	function () 
+		command_end("laminar/CitX/APU/test_button")
+		command_begin("laminar/CitX/APU/starter_switch_up") 
+	end))
+afterLandingProc:addItem(IndirectProcedureItem:new("#spell|APU#","STARTING",FlowItem.actorFO,0,"apustarting",
+	function () return get("sim/cockpit/engine/APU_N1") > 3 end))
+afterLandingProc:addItem(IndirectProcedureItem:new("#spell|APU#","STARTED",FlowItem.actorFO,0,"apurunning",
+	function () return get("sim/cockpit/engine/APU_N1") == 100 end,
+	function () command_end("laminar/CitX/APU/starter_switch_up") end))
+afterLandingProc:addItem(ProcedureItem:new("ENGINE ANTI-ICE","OFF",FlowItem.actorFO,0,
+	function () return sysAice.engAntiIceGroup:getStatus() == 0 end,
+	function () sysAice.engAntiIceGroup:actuate(0) end))
+afterLandingProc:addItem(ProcedureItem:new("STABILIZER ANTI-ICE","OFF",FlowItem.actorFO,0,
+	function () return sysAice.wingAntiIce:getStatus() == 0 end,
+	function () sysAice.wingAntiIce:actuate(0) end))
+afterLandingProc:addItem(ProcedureItem:new("EXTERNAL LIGHTS","AS REQUIRED",FlowItem.actorFO,0,
+	function () return sysLights.landLightGroup:getStatus() == 0 end,
+	function () kc_macro_ext_lights_rwyvacate() end))
+-- command taxi light off
+-- taxi light off
 
 -- ============= SHUTDOWN PROCEDURE (BOTH) ==============
--- TAXI LIGHT SWITCH...........................OFF  (CPT) 
--- PARKING BRAKE...............................SET  (CPT)
--- ==== Electrical power
--- APU GENERATOR BUS SWITCHES.........ON IF NEEDED   (FO)
--- GRD POWER AVAILABLE LIGHT...........ILLUMINATED   (FO)
--- GROUND POWER SWITCH................ON IF NEEDED   (FO)
--- ENGINE START LEVERS......................CUTOFF  (CPT)
--- FASTEN BELTS SWITCH.........................OFF   (FO)
--- ANTI COLLISION LIGHT SWITCH.................OFF   (FO)
--- FUEL PUMPS..............APU 1 PUMP ON, REST OFF  (CPT)
--- FUEL PUMPS............ALL OFF IF APU NOT RUNNIG  (CPT)
--- CAB/UTIL POWER SWITCH........................ON  (CPT)
--- IFE/PASS SEAT POWER SWITCH..................OFF  (CPT)
--- PROBE HEAT..................................OFF   (FO)
--- WING ANTI-ICE SWITCH........................OFF   (FO)
--- ENGINE ANTI-ICE SWITCHES....................OFF   (FO)
--- ENGINE HYDRAULIC PUMPS SWITCHES..............ON   (FO)
--- ELECTRIC HYDRAULIC PUMPS SWITCHES...........OFF   (FO)
--- RECIRCULATION FAN SWITCHES.................AUTO   (FO)
--- AIR CONDITIONING PACK SWITCHES.............AUTO   (FO)
--- ISOLATION VALVE SWITCH.....................OPEN   (FO)
--- ENGINE BLEED AIR SWITCHES....................ON   (FO)
+-- THROTTLES..................................IDLE			:sim/multiplayer/controls/engine_throttle_request:0
+-- TAXI LIGHT SWITCH...........................OFF 
+-- PARK BRAKE..................................SET			:sim/cockpit2/controls/parking_brake_ratio:1
+-- WHEEL CHOCKS................................SET
+-- APU GENERATOR BUS SWITCHES.........ON IF NEEDED
 -- APU BLEED AIR SWITCH...............ON IF NEEDED   (FO)
--- FLIGHT DIRECTOR SWITCHES....................OFF   (FO)
--- TRANSPONDER................................STBY   (FO)
--- MCP.......................................RESET   (FO)
--- sw_item_c:\white\THROTTLES|IDLE:sim/multiplayer/controls/engine_throttle_request:0
--- sw_item_c:\white\PARK BRAKE|SET:sim/cockpit2/controls/parking_brake_ratio:1
--- sw_item_c:\white\WHEEL CHOCKS|SET
--- sw_item_c:\white\EXTERNAL POWER|AS REQUIRED
--- sw_item_c:\white\PSG BELT & SAFETY LT|OFF:sim/cockpit2/switches/fasten_seat_belts:0
--- sw_item_c:\white\WINDSHIELD HEAT LH & RH|OFF:(sim/cockpit2/ice/ice_window_heat_on_window[0]:0)&&(sim/cockpit2/ice/ice_window_heat_on_window[1]:0)
--- sw_item_c:\white\ENGINE BLEED AIR|OFF:(sim/cockpit2/bleedair/actuators/engine_bleed_sov[0]:0)&&(sim/cockpit2/bleedair/actuators/engine_bleed_sov[1]:0)
--- sw_item_c:\white\EMR LIGHTS|OFF
--- sw_item_c:\white\STANDBY ATTITUDE ADI|CAGED
--- sw_item_c:\white\AVIONICS SWITCH|OFF:sim/cockpit2/switches/avionics_power_on:0
--- sw_item_c:\white\EICAS SWITCH|OFF:sim/cockpit2/switches/gnd_com_power_on:0
--- sw_item_c:\white\ICE PROT|OFF
--- sw_item_c:\white\POWER LEVERS|CUT OFF:(sim/flightmodel2/engines/has_fuel_flow_after_mixture[0]:0)&&(sim/flightmodel2/engines/has_fuel_flow_after_mixture[1]:0)
--- sw_item_c:\white\FUEL BOOST BOTH|OFF:(sim/cockpit2/engine/actuators/fuel_pump_on[1]:0)&&(sim/cockpit2/engine/actuators/fuel_pump_on[0]:0)
+-- EXTERNAL POWER......................AS REQUIRED
+-- GRD POWER AVAILABLE LIGHT...........ILLUMINATED
+-- POWER LEVERS............................CUT OFF	:(sim/flightmodel2/engines/has_fuel_flow_after_mixture[0]:0) &&(sim/flightmodel2/engines/has_fuel_flow_after_mixture[1]:0)
+-- PSG BELT & SAFETY LT........................OFF			:sim/cockpit2/switches/fasten_seat_belts:0
 -- sw_item_c:\white\GEN 1 & 2|OFF:(sim/cockpit/electrical/generator_on[0]:0)&&(sim/cockpit/electrical/generator_on[1]:0)
 -- sw_item_c:\white\BCN / EXT LIGHTS|OFF
--- sw_item_c:\white\STANDBY POWER|OFF:sim/cockpit/electrical/battery_array_on[0]:0
--- sw_item_c:\white\BATTERY SWITCHES|OFF:(sim/cockpit2/electrical/battery_on[1]:0)&&(sim/cockpit2/electrical/battery_on[2]:0)
+-- WINDSHIELD HEAT LH & RH.....................OFF	:(sim/cockpit2/ice/ice_window_heat_on_window[0]:0)&&(sim/cockpit2/ice/ice_window_heat_on_window[1]:0)
+-- ENGINE BLEED AIR............................OFF	:(sim/cockpit2/bleedair/actuators/engine_bleed_sov[0]:0)&&(sim/cockpit2/bleedair/actuators/engine_bleed_sov[1]:0)
+-- EMR LIGHTS..................................OFF
+-- FUEL BOOST.............................BOTH OFF	:(sim/cockpit2/engine/actuators/fuel_pump_on[1]:0)&&(sim/cockpit2/engine/actuators/fuel_pump_on[0]:0)
+-- PROBE HEAT..................................OFF   (FO)
+-- sw_item_c:\white\ICE PROT|OFF
+-- ENGINE HYDRAULIC PUMPS SWITCHES..............ON   (FO)
+-- ELECTRIC HYDRAULIC PUMPS SWITCHES...........OFF   (FO)
+-- STANDBY ATTITUDE ADI|CAGED
+-- AVIONICS SWITCH|OFF:sim/cockpit2/switches/avionics_power_on:0
+-- EICAS SWITCH|OFF:sim/cockpit2/switches/gnd_com_power_on:0
+-- STANDBY POWER|OFF:sim/cockpit/electrical/battery_array_on[0]:0
+-- BATTERY SWITCHES|OFF:(sim/cockpit2/electrical/battery_on[1]:0)&&(sim/cockpit2/electrical/battery_on[2]:0)
 -- ======================================================
+
+local shutdownProc = Procedure:new("SHUTDOWN PROCEDURE","","")
+shutdownProc:setFlightPhase(17)
+
+shutdownProc:addItem(ProcedureItem:new("TRANSPONDER","STBY",FlowItem.actorFO,0,
+	function () return get("sim/cockpit2/radios/actuators/transponder_mode") == 1 end,
+	function () 
+		set("sim/cockpit2/radios/actuators/transponder_mode",3)	
+	end))
 
 -- ============  =============
 -- add the checklists and procedures to the active sop
@@ -1182,6 +1207,7 @@ activeSOP:addProcedure(takeoffClimbProc)
 activeSOP:addProcedure(descentProc)
 activeSOP:addProcedure(landingProc)
 activeSOP:addProcedure(goAroundProc)
+activeSOP:addProcedure(afterLandingProc)
 
 -- === States ===
 -- ================= Cold & Dark State ==================
