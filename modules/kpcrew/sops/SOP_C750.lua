@@ -1193,7 +1193,7 @@ shutdownProc:addItem(IndirectProcedureItem:new("THROTTLES","IDLE",FlowItem.actor
 shutdownProc:addItem(ProcedureItem:new("TRANSPONDER","STBY",FlowItem.actorFO,0,
 	function () return get("sim/cockpit2/radios/actuators/transponder_mode") == 1 end,
 	function () 
-		set("sim/cockpit2/radios/actuators/transponder_mode",3)	
+		set("sim/cockpit2/radios/actuators/transponder_mode",1)	
 	end))
 shutdownProc:addItem(ProcedureItem:new("TAXI LIGHT","OFF",FlowItem.actorFO,0,
 	function () return sysLights.taxiSwitch:getStatus() == 0 end,
@@ -1241,7 +1241,7 @@ shutdownProc:addItem(ProcedureItem:new("L & R ENG BLD AIR","OFF",FlowItem.actorF
 		return sysAir.engBleedGroup:getStatus() == 0
 	end,
 	function () 
-		sysAice.engBleedGroup:actuate(0)
+		sysAir.engBleedGroup:actuate(0)
 	end))
 shutdownProc:addItem(ProcedureItem:new("EMERG LT","OFF",FlowItem.actorFO,0,
 	function () return get("laminar/CitX/lights/emerg_light_switch") == 0 end,
@@ -1288,7 +1288,6 @@ shutdownProc:addItem(ProcedureItem:new("EICAS SWITCH","OFF",FlowItem.actorFO,0,
 shutdownProc:addItem(ProcedureItem:new("STANDBY POWER","OFF",FlowItem.actorFO,0,
 	function () return get("laminar/CitX/electrical/battery_stby_pwr") == 0 end,
 	function () 
-		command_end("laminar/CitX/electrical/cmd_stby_pwr_dwn")
 		command_end("laminar/CitX/electrical/cmd_stby_pwr_dwn")
 	end))
 shutdownProc:addItem(ProcedureItem:new("BATTERY SWITCH 1 & 2","OFF",FlowItem.actorFO,0,

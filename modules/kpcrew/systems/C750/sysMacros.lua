@@ -13,46 +13,84 @@ function kc_macro_state_cold_and_dark()
 	kc_macro_bleeds_off()
 	kc_macro_packs_off()
 
--- SEAT BELTS/PASS SAFETY OFF
--- PASSENGER OXYGEN.............................OFF		
--- FUEL CROSS FEED...............................OFF		
--- GRVTY XFLOW...................................OFF		
--- CTR WING XFER LH & RH........................OFF		
--- FUEL BOOST BOTH..............................OFF
--- LOAD SHED....................................NORM		
--- IGNITION SWITCHES.............................OFF		
--- FADEC SWITCHES...............................NORM		
--- PRESSURIZATION SOURCES...................ALL NORM
--- TEMPs AUTO		
--- PTOT OFF
--- WING INSPO LÖITE  OFF
--- WINDSHIELD OFF
--- ENGNIE AICE OFF
--- STAB AICE OFF
--- SLAT AICE OFF
--- HYD AUX OFF
--- HYD PUMPS OFF
--- ANTI SKID OFF laminar/CitX/hydraulics/antiskid:0
--- AT SEL NORM
--- MANUAL NORM
--- PAC BLEED SELECT NORM
--- WEMAC BOOT OFF
--- STANDBY POWER.................................OFF
--- PANEL LIGHTS..................................OFF
--- EMERG LT......................................OFF
--- GEN LH & RH...................................OFF
--- LANDING GEAR HANDLE..........................DOWN
--- FLAP LEVER.....................................UP
--- AVIONICS SWITCH................................OFF		
--- EICAS SWITCH...................................OFF		
--- DISPLAYS.......................................OFF
--- APU GEN......................................OFF			
--- APU GEN BLEED AIR............................OFF			
--- APU STARTER...................PRESS DOWN TO STOP
--- APU......................................STOPPED
--- APU SYSTEM MASTER............................OFF			
--- EXT PWR.......................................OFF		
--- BATTERY SWITCH 1 & 2..........................OFF		
+	set("sim/cockpit2/radios/actuators/transponder_mode",3)	
+	sysGeneral.parkBrakeSwitch:actuate(1)
+	sysElectric.gen1Switch:actuate(0)
+	sysElectric.gen2Switch:actuate(0)
+	command_once("laminar/CitX/lights/cmd_seat_belt_pass_safety_dwn") 
+	command_once("laminar/CitX/lights/cmd_seat_belt_pass_safety_dwn") 
+	command_once("laminar/CitX/lights/cmd_seat_belt_pass_safety_up") 
+	sysAice.windowHeatGroup:actuate(0)
+	sysAir.engBleedGroup:actuate(0)
+	command_once("laminar/CitX/lights/emerg_light_switch_dwn")
+	command_once("laminar/CitX/fuel/cmd_boost_left_dwn")
+	command_once("laminar/CitX/fuel/cmd_boost_left_dwn")
+	command_once("laminar/CitX/fuel/cmd_boost_left_up")
+	command_once("laminar/CitX/fuel/cmd_boost_right_dwn")
+	command_once("laminar/CitX/fuel/cmd_boost_right_dwn")
+	command_once("laminar/CitX/fuel/cmd_boost_right_up")
+	sysAice.probeHeatGroup:actuate(0)
+	sysAice.engAntiIceGroup:actuate(0)
+	sysAice.wingAntiIce:actuate(0)
+	sysHydraulic.engHydPumpGroup:actuate(0)
+	sysHydraulic.elecHydPumpGroup:actuate(0)
+	sysElectric.avionicsSwitchGroup:actuate(0)
+	if get("laminar/CitX/electrical/avionics_eicas") == 1 then
+		command_once("laminar/CitX/electrical/cmd_avionics_eicas_toggle")
+	end
+	command_end("laminar/CitX/electrical/cmd_stby_pwr_dwn")
+	command_end("laminar/CitX/electrical/cmd_stby_pwr_dwn")
+	sysElectric.batterySwitch:actuate(0) 
+	sysElectric.battery2Switch:actuate(0) 
+	command_once("laminar/CitX/oxygen/cmd_pass_oxy_dwn")
+	command_once("laminar/CitX/oxygen/cmd_pass_oxy_dwn")
+	sysFuel.crossFeed:actuate(0)
+	if get("laminar/CitX/fuel/gravity_flow") ~= 0 then 
+		command_once("laminar/CitX/fuel/cmd_gravity_flow_toggle")
+	end
+	command_once("laminar/CitX/fuel/cmd_transfer_right_dwn")
+	command_once("laminar/CitX/fuel/cmd_transfer_right_dwn")
+	command_once("laminar/CitX/fuel/cmd_transfer_left_dwn")
+	command_once("laminar/CitX/fuel/cmd_transfer_left_dwn")
+	if get("laminar/CitX/engine/ignition_switch_left") > 0 then 
+		command_once("laminar/CitX/engine/cmd_ignition_switch_left_dwn")
+	elseif get("laminar/CitX/engine/ignition_switch_left") < 0 then 
+		command_once("laminar/CitX/engine/cmd_ignition_switch_left_up")
+	end
+	if get("laminar/CitX/engine/ignition_switch_right") > 0 then 
+		command_once("laminar/CitX/engine/cmd_ignition_switch_right_dwn")
+	elseif get("laminar/CitX/engine/ignition_switch_right") < 0 then 
+		command_once("laminar/CitX/engine/cmd_ignition_switch_right_up")
+	end
+	if get("laminar/CitX/pressurization/alt_sel") ~= 0 then
+		command_once("laminar/CitX/pressurization/cmd_alt_sel_toggle")
+	end
+	if get("laminar/CitX/pressurization/manual") ~= 0 then
+		command_once("laminar/CitX/pressurization/cmd_manual_toggle")
+	end
+	command_once("laminar/CitX/pressurization/cmd_pac_bleed_dwn")
+	command_once("laminar/CitX/pressurization/cmd_pac_bleed_dwn")
+	sysGeneral.antiSkid:actuate(1)
+	if get("laminar/CitX/pressurization/alt_sel") ~= 0 then
+		command_once("laminar/CitX/pressurization/cmd_alt_sel_toggle")
+	end
+	if get("laminar/CitX/pressurization/manual") ~= 0 then
+		command_once("laminar/CitX/pressurization/cmd_manual_toggle")
+	end
+	command_once("laminar/CitX/pressurization/cmd_pac_bleed_dwn")
+	command_once("laminar/CitX/pressurization/cmd_pac_bleed_dwn")
+	command_once("laminar/CitX/APU/gen_switch_dwn") 
+	command_once("laminar/CitX/APU/gen_switch_dwn") 
+	sysAir.apuBleedSwitch:actuate(0)
+	command_begin("laminar/CitX/APU/starter_switch_dwn") 
+	command_end("laminar/CitX/APU/starter_switch_dwn")
+	sysElectric.apuMasterSwitch:actuate(0)
+	command_once("laminar/CitX/electrical/cmd_stby_pwr_dwn")
+	command_begin("laminar/CitX/electrical/cmd_stby_pwr_dwn")
+	sysElectric.gpuSwitch:actuate(0)
+	sysGeneral.GearSwitch:actuate(1)
+	sysElectric.batterySwitch:actuate(0) 
+	sysElectric.battery2Switch:actuate(0) 
 end
 
 function kc_macro_state_turnaround()
