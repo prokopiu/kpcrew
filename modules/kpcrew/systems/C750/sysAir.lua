@@ -51,7 +51,7 @@ sysAir.packLeftSwitch 		= TwoStateCustomSwitch:new("pack1","laminar/CitX/bleedai
 		if get("laminar/CitX/bleedair/air_cond_cockpit") > 0 then
 			return 1
 		else
-			return 2
+			return 0
 		end
 	end)
 sysAir.packRightSwitch 		= TwoStateCustomSwitch:new("pack2","laminar/CitX/bleedair/air_cond_cabin",0,
@@ -78,7 +78,7 @@ sysAir.packRightSwitch 		= TwoStateCustomSwitch:new("pack2","laminar/CitX/bleeda
 		if get("laminar/CitX/bleedair/air_cond_cabin") > 0 then
 			return 1
 		else
-			return 2
+			return 0
 		end
 	end)
 sysAir.packSwitchGroup 		= SwitchGroup:new("PackBleeds")
@@ -115,7 +115,7 @@ sysAir.bleedEng1Switch 		= TwoStateCustomSwitch:new("bleed1","laminar/CitX/bleed
 		if get("laminar/CitX/bleedair/engine_left") > 0 then
 			return 1
 		else
-			return 2
+			return 0
 		end
 	end)
 sysAir.bleedEng2Switch 		= TwoStateCustomSwitch:new("bleed2","laminar/CitX/bleedair/engine_right",0,
@@ -143,7 +143,7 @@ sysAir.bleedEng2Switch 		= TwoStateCustomSwitch:new("bleed2","laminar/CitX/bleed
 		if get("laminar/CitX/bleedair/engine_right") > 0 then
 			return 1
 		else
-			return 2
+			return 0
 		end
 	end)
 -- sysAir.bleedEng3Switch 		= InopSwitch:new("bleed3")

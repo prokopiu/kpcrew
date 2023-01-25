@@ -103,7 +103,7 @@ sysGeneral.irsUnitGroup:addSwitch(sysGeneral.irsUnit3Switch)
 sysGeneral.wiperSwitch = InopSwitch:new("wipers")
 
 -- Antiskid
-sysGeneral.antiSkid = TwoStateToggleSwitch:new("antiskid"m"laminar/CitX/hydraulics/antiskid",0,
+sysGeneral.antiSkid = TwoStateToggleSwitch:new("antiskid","laminar/CitX/hydraulics/antiskid",0,
 	"laminar/CitX/hydraulics/cmd_antiskid_toggle")
 
 ------------ Annunciators
