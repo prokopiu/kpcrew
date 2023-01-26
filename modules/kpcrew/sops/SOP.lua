@@ -284,7 +284,7 @@ function kcSOP:render()
 			end
 			imgui.PushStyleColor(imgui.constant.Col.Button, color)
 			imgui.PushStyleColor(imgui.constant.Col.ButtonActive, 0xFF001F9F)
-			imgui.PushStyleColor(imgui.constant.Col.ButtonHovered, 0xFF001F9F)
+			imgui.PushStyleColor(imgui.constant.Col.ButtonHovered, 0xFF004F9F)
 			if imgui.Button(flow:getName() .. " [" .. self:getPhaseString(flow:getFlightPhase()) .. "]", self:getBtnWidth(), 18) then
 				self:setActiveFlowIndex(kc_indexOf(flows,flow))
 			end

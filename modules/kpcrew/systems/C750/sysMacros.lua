@@ -91,9 +91,52 @@ function kc_macro_state_cold_and_dark()
 	sysGeneral.GearSwitch:actuate(1)
 	sysElectric.batterySwitch:actuate(0) 
 	sysElectric.battery2Switch:actuate(0) 
+	command_once("sim/flight_controls/door_open_1")
 end
 
 function kc_macro_state_turnaround()
+	command_once("sim/flight_controls/door_open_1")
+	command_once("laminar/CitX/electrical/cmd_stby_pwr_dwn")
+	command_begin("laminar/CitX/electrical/cmd_stby_pwr_dwn")
+	command_end("laminar/CitX/electrical/cmd_stby_pwr_dwn")
+	command_once("laminar/CitX/electrical/cmd_stby_pwr_up")
+	command_once("laminar/CitX/electrical/cmd_stby_pwr_up")
+	kc_macro_int_lights_on()
+	command_once("laminar/CitX/lights/emerg_light_switch_up")
+	sysElectric.batterySwitch:actuate(1) 
+	sysElectric.battery2Switch:actuate(1) 
+	sysElectric.gen1Switch:actuate(0)
+	sysElectric.gen2Switch:actuate(0)
+	sysElectric.gpuSwitch:actuate(1)
+	sysGeneral.GearSwitch:actuate(1)
+	sysControls.flapsSwitch:setValue(0)
+	sysElectric.apuMasterSwitch:actuate(1)
+	sysElectric.avionicsSwitchGroup:actuate(1)
+	if get("laminar/CitX/electrical/avionics_eicas") == 0 then
+		command_once("laminar/CitX/electrical/cmd_avionics_eicas_toggle")
+	end
+	sysLights.dispLightGroup:actuate(1)
+	sysLights.positionSwitch:actuate(1)
+	if get("laminar/CitX/oxygen/pass_oxy") == 0 then 
+		command_once("laminar/CitX/oxygen/cmd_pass_oxy_up")
+	elseif get("laminar/CitX/oxygen/pass_oxy") == 2 then 
+		command_once("laminar/CitX/oxygen/cmd_pass_oxy_dwn")
+	end
+	sysFuel.crossFeed:actuate(0)
+	if get("laminar/CitX/fuel/gravity_flow") ~= 0 then 
+		command_once("laminar/CitX/fuel/cmd_gravity_flow_toggle")
+	end
+	command_once("laminar/CitX/fuel/cmd_transfer_right_dwn")
+	command_once("laminar/CitX/fuel/cmd_transfer_right_dwn")
+	command_once("laminar/CitX/fuel/cmd_transfer_left_dwn")
+	command_once("laminar/CitX/fuel/cmd_transfer_left_dwn")
+	command_once("laminar/CitX/fuel/cmd_boost_left_dwn")
+	command_once("laminar/CitX/fuel/cmd_boost_left_dwn")
+	command_once("laminar/CitX/fuel/cmd_boost_right_dwn")
+	command_once("laminar/CitX/fuel/cmd_boost_right_dwn")
+	command_end("laminar/CitX/APU/starter_switch_up")
+	command_once("laminar/CitX/APU/gen_switch_up") 
+	command_once("laminar/CitX/APU/gen_switch_up") 
 end
 
 -- external lights all off
