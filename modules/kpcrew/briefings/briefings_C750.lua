@@ -12,7 +12,7 @@ kc_TakeoffBleeds 	= "ON|OFF"
 kc_TakeoffApModes 	= "NAV/VNAV|HDG/FLCH"
 kc_apptypes 		= "ILS CAT 1|ILS CAT 2 OR 3|VOR|NDB|RNAV|VISUAL|TOUCH AND GO|CIRCLING"
 kc_LandingFlaps 	= "15|FULL"
-kc_LandingAutoBrake = "OFF"
+kc_LandingAutoBrake = "NO AUTOBRAKE"
 kc_LandingPacks 	= "ON|OFF"
 kc_LandingAntiice 	= "NOT REQUIRED|ENGINE ONLY|ENGINE AND WING"
 kc_StartSequence 	= "2 THEN 1|1 THEN 2"
@@ -156,16 +156,26 @@ end
 
 -- set the takeoff details v-speeds, trim
 function kc_set_takeoff_details()
-	-- activeBriefings:set("takeoff:v1",get("laminar/B738/FMS/v1_set"))
-	-- activeBriefings:set("takeoff:vr",get("laminar/B738/FMS/vr"))
-	-- activeBriefings:set("takeoff:v2",get("laminar/B738/FMS/v2_set"))
+	command_once("sim/FMS/clb")
+	command_once("sim/FMS/ls_2r")
+	command_once("sim/FMS/ls_4r")
+	local line = get("sim/cockpit2/radios/indicators/fms_cdu1_text_line0") 
+	command_once("sim/FMS/next")
+	activeBriefings:set("takeoff:v1",string.sub(get("sim/cockpit2/radios/indicators/fms_cdu1_text_line2"),1,3)) 
+	activeBriefings:set("takeoff:vr",string.sub(get("sim/cockpit2/radios/indicators/fms_cdu1_text_line4"),1,3)) 
+	activeBriefings:set("takeoff:v2",string.sub(get("sim/cockpit2/radios/indicators/fms_cdu1_text_line6"),1,3)) 
 	-- activeBriefings:set("takeoff:elevatorTrim",get("laminar/B738/FMS/trim_calc"))
 end
 
 -- set the landing details v-speeds, trim
 function kc_set_landing_details()
-	-- activeBriefings:set("approach:vref",get("laminar/B738/FMS/vref"))
-	-- activeBriefings:set("approach:vapp",get("laminar/B738/FMS/vref")+5)
+	command_once("sim/FMS/clb")
+	command_once("sim/FMS/ls_4r")
+	command_once("sim/FMS/next")
+	command_once("sim/FMS/next")
+	command_once("sim/FMS/next")
+	activeBriefings:set("approach:vref",string.sub(get("sim/cockpit2/radios/indicators/fms_cdu1_text_line2"),1,3)) 
+	activeBriefings:set("approach:vapp",string.sub(get("sim/cockpit2/radios/indicators/fms_cdu1_text_line4"),1,3))
 end
 
 -- briefings to be more aircraft specific

@@ -147,6 +147,10 @@ sysLights.instrLightGroup:addSwitch(sysLights.instr4Light)
 -- sysLights.instrLightGroup:addSwitch(sysLights.instr9Light)
 -- sysLights.instrLightGroup:actuate(0)
 
+sysLights.cabinLight 		= TwoStateToggleSwitch:new("cabinlight","laminar/CitX/lights/cabin_master",0,
+	"laminar/CitX/lights/cmd_cabin_master_toggle")
+
+
 --------- Annunciators
 -- annunciator to mark any landing lights on
 sysLights.landingAnc 		= CustomAnnunciator:new("landinglights",

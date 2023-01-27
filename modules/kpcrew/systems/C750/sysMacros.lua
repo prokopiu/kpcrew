@@ -40,8 +40,6 @@ function kc_macro_state_cold_and_dark()
 	end
 	command_end("laminar/CitX/electrical/cmd_stby_pwr_dwn")
 	command_end("laminar/CitX/electrical/cmd_stby_pwr_dwn")
-	sysElectric.batterySwitch:actuate(0) 
-	sysElectric.battery2Switch:actuate(0) 
 	command_once("laminar/CitX/oxygen/cmd_pass_oxy_dwn")
 	command_once("laminar/CitX/oxygen/cmd_pass_oxy_dwn")
 	sysFuel.crossFeed:actuate(0)
@@ -89,7 +87,7 @@ function kc_macro_state_cold_and_dark()
 	command_begin("laminar/CitX/electrical/cmd_stby_pwr_dwn")
 	sysElectric.gpuSwitch:actuate(0)
 	sysGeneral.GearSwitch:actuate(1)
-	sysElectric.batterySwitch:actuate(0) 
+	sysElectric.batterySwitch:actuate(0)
 	sysElectric.battery2Switch:actuate(0) 
 	command_once("sim/flight_controls/door_open_1")
 end
@@ -277,7 +275,7 @@ end
 
 -- packs all off
 function kc_macro_packs_off()
-	sysAir.packSwitchGroup:setValue(0)
+	sysAir.packSwitchGroup:actuate(0)
 end
 
 -- packs for engine start
@@ -305,7 +303,7 @@ end
 
 -- packs all on
 function kc_macro_packs_on()
-	sysAir.packSwitchGroup:setValue(1)
+	sysAir.packSwitchGroup:actuate(1)
 end
 
 -- 10000 feet activities up and down
@@ -323,9 +321,8 @@ function kc_macro_below_10000_ft()
 end
 
 function kc_macro_at_trans_alt()
-	if math.abs(get("sim/cockpit2/gauges/actuators/barometer_setting_in_hg_pilot")-29.921249) > 0.01 then 
-		command_once("sim/instruments/barometer_std")
-	end
+	command_once("sim/instruments/barometer_std")
+	command_once("sim/instruments/barometer_copilot_std")
 end
 
 function kc_macro_at_trans_lvl()
@@ -346,26 +343,88 @@ end
 -- internal lights all off
 function kc_macro_int_lights_off()
 	sysLights.domeLightGroup:setValue(0)
-	sysLights.instrLightGroup:actuate(0)
+	sysLights.instrLightGroup:setValue(0)
 	if get("laminar/CitX/lights/dim_lights_switch") ~= 0 then
 		command_once("laminar/CitX/lights/dimming_switch_toggle")
 	end
+	sysLights.domeLightSwitch:actuate(0)
+	set("laminar/CitX/lights/flood_knob",0)
+	set("laminar/CitX/lights/elec_knob",0)
+	set("laminar/CitX/lights/left_knob",0)
+	set("laminar/CitX/lights/ctr_knob",0)
+	set("laminar/CitX/lights/right_knob",0)
+	set("laminar/CitX/lights/map_left_knob",0)
+	set("laminar/CitX/lights/map_right_knob",0)
+	set("laminar/CitX/lights/aux_knob",0)
+	sysLights.dispLightGroup:setValue(0)
+	sysLights.cabinLight:actuate(0)
 end
 
 -- internal lights at stand
 function kc_macro_int_lights_on()
 	if kc_is_daylight() then		
 		sysLights.domeLightGroup:setValue(0)
-		sysLights.instrLightGroup:actuate(0)
+		sysLights.instrLightGroup:setValue(0)
 		if get("laminar/CitX/lights/dim_lights_switch") ~= 0 then
 			command_once("laminar/CitX/lights/dimming_switch_toggle")
 		end
+		sysLights.domeLightSwitch:actuate(0)
+		set("laminar/CitX/lights/flood_knob",0)
+		set("laminar/CitX/lights/elec_knob",0)
+		set("laminar/CitX/lights/left_knob",0)
+		set("laminar/CitX/lights/ctr_knob",0)
+		set("laminar/CitX/lights/right_knob",0)	
+		set("laminar/CitX/lights/map_left_knob",0)
+		set("laminar/CitX/lights/map_right_knob",0)
+		set("laminar/CitX/lights/aux_knob",0)
+		sysLights.cabinLight:actuate(0)
 	else
 		sysLights.domeLightGroup:setValue(1)
-		sysLights.instrLightGroup:actuate(1)
+		sysLights.instrLightGroup:setValue(0.75)
+		if get("laminar/CitX/lights/dim_lights_switch") ~= 0 then
+			command_once("laminar/CitX/lights/dimming_switch_toggle")
+		end
+		sysLights.domeLightSwitch:actuate(1)
+		set("laminar/CitX/lights/flood_knob",1)
+		set("laminar/CitX/lights/elec_knob",1)
+		set("laminar/CitX/lights/left_knob",1)
+		set("laminar/CitX/lights/ctr_knob",1)
+		set("laminar/CitX/lights/right_knob",1)
+		set("laminar/CitX/lights/map_left_knob",1)
+		set("laminar/CitX/lights/map_right_knob",1)
+		set("laminar/CitX/lights/aux_knob",1)
+		sysLights.cabinLight:actuate(1)
+	end
+end
+
+-- internal lights at stand
+function kc_macro_int_lights_taxi()
+	if kc_is_daylight() then		
+		sysLights.domeLightGroup:setValue(0)
+		sysLights.instrLightGroup:setValue(0)
+		if get("laminar/CitX/lights/dim_lights_switch") ~= 0 then
+			command_once("laminar/CitX/lights/dimming_switch_toggle")
+		end
+		sysLights.domeLightSwitch:actuate(0)
+		set("laminar/CitX/lights/flood_knob",0)
+		set("laminar/CitX/lights/elec_knob",0)
+		set("laminar/CitX/lights/left_knob",0)
+		set("laminar/CitX/lights/ctr_knob",0)
+		set("laminar/CitX/lights/right_knob",0)	
+		sysLights.cabinLight:actuate(0)
+	else
+		sysLights.domeLightSwitch:actuate(0)
+		set("laminar/CitX/lights/flood_knob",0.5)
+		set("laminar/CitX/lights/elec_knob",0.5)
+		set("laminar/CitX/lights/left_knob",0.5)
+		set("laminar/CitX/lights/ctr_knob",0.5)
+		set("laminar/CitX/lights/right_knob",0.5)
+		sysLights.domeLightGroup:setValue(0.1)
+		sysLights.instrLightGroup:setValue(0.5)
 		if get("laminar/CitX/lights/dim_lights_switch") == 0 then
 			command_once("laminar/CitX/lights/dimming_switch_toggle")
 		end
+		sysLights.cabinLight:actuate(1)
 	end
 end
 
