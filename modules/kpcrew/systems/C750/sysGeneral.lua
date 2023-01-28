@@ -70,7 +70,7 @@ sysGeneral.barostdGroup:addSwitch(sysGeneral.barostdCopilot)
 sysGeneral.barostdGroup:addSwitch(sysGeneral.barostdStandby)
 
 -- Baro mode
-sysGeneral.baroModePilot 	= InopSwitch:new("baromodepilot")
+sysGeneral.baroModePilot 	= TwoStateDrefSwitch:new("baromodepilot","sim/physics/metric_press",0)
 sysGeneral.baroModeCoPilot 	= InopSwitch:new("baromodecopilot")
 sysGeneral.baroModeStandby 	= InopSwitch:new("baromodecopilot")
 sysGeneral.baroModeGroup 	= SwitchGroup:new("baromodegroup")

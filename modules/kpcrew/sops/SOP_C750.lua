@@ -203,6 +203,7 @@ electricalPowerUpProc:addItem(IndirectProcedureItem:new("BATTERIES, 24 VOLTS","C
 --   PFD CONFIG
 -- =======================================================
 
+-- to be added later
 -- GND IDLE HIGH / NORM
 -- ENG SYNC FAN/OFF/TURBINE
 -- AILERON LATCH
@@ -214,7 +215,6 @@ electricalPowerUpProc:addItem(IndirectProcedureItem:new("BATTERIES, 24 VOLTS","C
 -- WING XOVER
 -- CABIN DUMP
 -- AHRS DG TEST & SLEW
-
 
 local preFlightProc = Procedure:new("PRE FLIGHT","","")
 preFlightProc:setFlightPhase(3)
@@ -266,7 +266,7 @@ preFlightProc:addItem(ProcedureItem:new("FUEL BOOST BOTH","NORM",FlowItem.actorF
 	end))
 preFlightProc:addItem(ProcedureItem:new("LOAD SHED","NORM",FlowItem.actorFO,0,
 	function () 
-		return get("laminar/CitX/electrical/load_shed") == 1 
+		return get("laminar/CitX/electrical/load_shed") == 0
 	end,
 	function ()  
 		command_once("laminar/CitX/electrical/cmd_load_shed_dwn")
@@ -319,11 +319,10 @@ preFlightProc:addItem(ProcedureItem:new("FLAP LEVER","UP",FlowItem.actorFO,0,
 preFlightProc:addItem(IndirectProcedureItem:new("ROTARY TEST","CHECK",FlowItem.actorFO,0,"rotarytest",
 	function () return get("sim/cockpit/warnings/autopilot_test_ap_lit") == 1 end))
 preFlightProc:addItem(SimpleProcedureItem:new("== Flight Preps"))
-preFlightProc:addItem(SimpleProcedureItem:new("  SETUP FMS"))
-preFlightProc:addItem(SimpleProcedureItem:new("  GET ATIS"))
-preFlightProc:addItem(SimpleProcedureItem:new("  GET CLEARANCE"))
-preFlightProc:addItem(SimpleProcedureItem:new("  T/O BRIEF"))
-preFlightProc:addItem(SimpleProcedureItem:new("  PFD CONFIG"))
+preFlightProc:addItem(HoldProcedureItem:new("FMS","SET UP",FlowItem.actorCPT,true))
+preFlightProc:addItem(HoldProcedureItem:new("ATIS","RECEIVED",FlowItem.actorCPT,true))
+preFlightProc:addItem(HoldProcedureItem:new("CLEARANCE","OBTAINED",FlowItem.actorCPT,true))
+preFlightProc:addItem(HoldProcedureItem:new("TAKEOFF BRIEF","COMPLETED",FlowItem.actorCPT,true))
 
 -- ================ PREPARATION CHECKLIST ================ 
 -- BATTERY SWITCH 1 & 2...........................ON
@@ -339,13 +338,13 @@ preFlightProc:addItem(SimpleProcedureItem:new("  PFD CONFIG"))
 local preflightChkl = Checklist:new("PREPARATION CHECKLIST","","")
 preflightChkl:setFlightPhase(3)
 
-preflightChkl:addItem(ChecklistItem:new("BATTERY SWITCH 1 & 2","ON",FlowItem.actorCPT,0,
+preflightChkl:addItem(ChecklistItem:new("BATTERY SWITCH 1 & 2","ON",FlowItem.actorFO,0,
 	function () return sysElectric.batterySwitch:getStatus() == 1 and sysElectric.battery2Switch:getStatus() == 1 end,
 	function () 
 		sysElectric.batterySwitch:actuate(1) 
 		sysElectric.battery2Switch:actuate(1) 
 	end))
-preflightChkl:addItem(ChecklistItem:new("GEN LEFT & RIGHT","OFF",FlowItem.actorCPT,0,
+preflightChkl:addItem(ChecklistItem:new("LEFT & RIGHT GENERATOR","OFF",FlowItem.actorFO,0,
 	function () 
 		return sysElectric.gen1Switch:getStatus() == 0 and 
 			sysElectric.gen2Switch:getStatus() == 0
@@ -354,27 +353,26 @@ preflightChkl:addItem(ChecklistItem:new("GEN LEFT & RIGHT","OFF",FlowItem.actorC
 		sysElectric.gen1Switch:actuate(0)
 		sysElectric.gen2Switch:actuate(0)
 	end))
-preflightChkl:addItem(ChecklistItem:new("EXTERNAL POWER OR A P U","ON",FlowItem.actorCPT,0,
+preflightChkl:addItem(ChecklistItem:new("EXTERNAL POWER OR A P U","ON",FlowItem.actorFO,0,
 	function () return 
 		sysElectric.gpuSwitch:getStatus() == 1 or
 		get("sim/cockpit/electrical/generator_apu_amps") > 0
 	end))
-preflightChkl:addItem(ChecklistItem:new("AVIONICS SWITCH","ON",FlowItem.actorCPT,0,
+preflightChkl:addItem(ChecklistItem:new("AVIONICS SWITCH","ON",FlowItem.actorFO,0,
 	function () return sysElectric.avionicsSwitchGroup:getStatus() == 1 end,
 	function () sysElectric.avionicsSwitchGroup:actuate(1) end))
-preflightChkl:addItem(ChecklistItem:new("EICAS SWITCH","ON",FlowItem.actorCPT,0,
+preflightChkl:addItem(ChecklistItem:new("EICAS SWITCH","ON",FlowItem.actorFO,0,
 	function () return get("laminar/CitX/electrical/avionics_eicas") == 1 end,
 	function () 
 		if get("laminar/CitX/electrical/avionics_eicas") == 0 then
 			command_once("laminar/CitX/electrical/cmd_avionics_eicas_toggle")
 		end
 	end))
-preflightChkl:addItem(ChecklistItem:new("PARKING BRAKE","SET",FlowItem.actorCPT,0,
+preflightChkl:addItem(ChecklistItem:new("PARKING BRAKE","SET",FlowItem.actorFO,0,
 	function () return sysGeneral.parkBrakeSwitch:getStatus() == 1 end,
 	function () sysGeneral.parkBrakeSwitch:actuate(1) end))
-preflightChkl:addItem(ChecklistItem:new("IRS","ALIGN/NAV",FlowItem.actorCPT,0,true))
-preflightChkl:addItem(ChecklistItem:new("FMS","SET",FlowItem.actorCPT,0,true))
--- Airport altitude set
+preflightChkl:addItem(ChecklistItem:new("I R S","ALIGNED & ON NAV",FlowItem.actorFO,0,true))
+preflightChkl:addItem(ChecklistItem:new("F M S","SET",FlowItem.actorCPT,0,true))
 
 -- ====================== PRE START ======================
 -- AUX PUMP A.....................................ON		
@@ -450,20 +448,20 @@ preStartProc:addItem(ProcedureItem:new("#spell|APU# BLEED AIR","ON",FlowItem.act
 local beforeStartChkl = Checklist:new("BEFORE START CHECKLIST","","")
 beforeStartChkl:setFlightPhase(4)
 
-beforeStartChkl:addItem(ChecklistItem:new("GROUND RECOGNITION LIGHT","ON",FlowItem.actorCPT,0,
+beforeStartChkl:addItem(ChecklistItem:new("GROUND RECOGNITION LIGHT","ON",FlowItem.actorFO,0,
 	function () return sysLights.beaconSwitch:getStatus() > 0 end,
 	function () sysLights.beaconSwitch:actuate(1) end))
-beforeStartChkl:addItem(ChecklistItem:new("DOORS","CLOSED",FlowItem.actorCPT,0,
+beforeStartChkl:addItem(ChecklistItem:new("DOORS","CLOSED",FlowItem.actorFO,0,
 	function () return get("sim/cockpit2/switches/door_open",0) == 0 end,
 	function () command_once("sim/flight_controls/door_close_1") end))
-beforeStartChkl:addItem(ChecklistItem:new("PASSENGER ADVISORY LIGHTS","PASS SAFETY",FlowItem.actorCPT,0,
+beforeStartChkl:addItem(ChecklistItem:new("PASSENGER ADVISORY LIGHTS","PASS SAFETY",FlowItem.actorFO,0,
 	function () return get("laminar/CitX/lights/seat_belt_pass_safety") == 1 end,
 	function () 
 		command_once("laminar/CitX/lights/cmd_seat_belt_pass_safety_dwn") 
 		command_once("laminar/CitX/lights/cmd_seat_belt_pass_safety_dwn") 
 	end))
 beforeStartChkl:addItem(ChecklistItem:new("EICAS","CHECKED",FlowItem.actorCPT,0,true))
-beforeStartChkl:addItem(ChecklistItem:new("CENTER WING TRANSFER SWITCHES","BOTH NORMAL",FlowItem.actorCPT,0,
+beforeStartChkl:addItem(ChecklistItem:new("CENTER WING TRANSFER SWITCHES","BOTH NORMAL",FlowItem.actorFO,0,
 	function () 
 		return get("laminar/CitX/fuel/transfer_left") == 2 and 
 		get("laminar/CitX/fuel/transfer_right") == 2
@@ -509,7 +507,6 @@ pushstartProc:addItem(IndirectProcedureItem:new("PARKING BRAKE","SET",FlowItem.a
 	function () return sysGeneral.parkBrakeSwitch:getStatus() == 1 end,
 	function () 
 		sysGeneral.parkBrakeSwitch:actuate(1) 
-		-- also trigger timers and turn dome light off
 		activeBckVars:set("general:timesOFF",kc_dispTimeHHMM(get("sim/time/zulu_time_sec"))) 
 	end))
 pushstartProc:addItem(HoldProcedureItem:new("PUSHBACK SERVICE","ENGAGE",FlowItem.actorCPT,
@@ -827,7 +824,7 @@ preTaxiProc:addItem(ProcedureItem:new("TRANSPONDER","STBY",FlowItem.actorFO,0,
 		end
 	end,
 	function () return activePrefSet:get("general:xpdrusa") == true end))
-preTaxiProc:addItem(ProcedureItem:new("STABILIZER TRIM","IN GREEN",FlowItem.actorCPT,0,
+preTaxiProc:addItem(ProcedureItem:new("STABILIZER TRIM","IN GREEN BAND",FlowItem.actorCPT,0,
 	function () 
 		local trimwheel = get("sim/cockpit2/controls/elevator_trim")
 		if get("sim/cockpit2/controls/flap_system_deploy_ratio") == 0.5 then
@@ -858,7 +855,57 @@ preTaxiProc:addItem(IndirectProcedureItem:new("INTERNAL LIGHTS","SET",FlowItem.a
 
 local beforeTaxiChkl = Checklist:new("BEFORE TAXI CHECKLIST","","")
 beforeTaxiChkl:setFlightPhase(6)
-
+beforeTaxiChkl:addItem(ChecklistItem:new("FLIGHT CONTROLS","CHECKED",FlowItem.actorCPT,0,true))
+beforeTaxiChkl:addItem(ChecklistItem:new("FLAPS","SET TAKEOFF FLAPS %s|kc_pref_split(kc_TakeoffFlaps)[activeBriefings:get(\"takeoff:flaps\")]",FlowItem.actorFO,0,
+	function () return sysControls.flapsSwitch:getStatus() == sysControls.flaps_pos[activeBriefings:get("takeoff:flaps")] end,
+	function () sysControls.flapsSwitch:setValue(sysControls.flaps_pos[activeBriefings:get("takeoff:flaps")]) end)) 
+beforeTaxiChkl:addItem(ChecklistItem:new("STABILIZER TRIM","IN GREEN BAND",FlowItem.actorFO,0,
+	function () 
+		local trimwheel = get("sim/cockpit2/controls/elevator_trim")
+		if get("sim/cockpit2/controls/flap_system_deploy_ratio") == 0.5 then
+			return trimwheel >= -0.43 and trimwheel <= 0 
+		elseif get("sim/cockpit2/controls/flap_system_deploy_ratio") == 0.75 then
+			return trimwheel >= -0.21 and trimwheel <= 0.42 
+		else
+			return false
+		end
+	end))
+beforeTaxiChkl:addItem(ChecklistItem:new("RUDDER & AILERON TRIM","AILERON: %4.2f RUDDER: %4.2f|activeBriefings:get(\"takeoff:aileronTrim\")|activeBriefings:get(\"takeoff:rudderTrim\")",FlowItem.actorCPT,0,
+	function () 
+		local ailGoal = activeBriefings:get("takeoff:aileronTrim")
+		local rudGoal = activeBriefings:get("takeoff:rudderTrim")
+		local ailDif = math.abs(ailGoal-get("sim/cockpit2/controls/aileron_trim"))
+		local rudDif = math.abs(rudGoal-get("sim/cockpit2/controls/rudder_trim"))
+		if (ailDif < 0.06 and rudDif < 0.02) then
+			return true
+		else
+			return false
+		end
+	end))
+beforeTaxiChkl:addItem(ChecklistItem:new("ENGINE ANTI-ICE","OFF",FlowItem.actorFO,0,
+	function () return sysAice.engAntiIceGroup:getStatus() == 0 end,
+	function () sysAice.engAntiIceGroup:actuate(0) end,
+	function () return activeBriefings:get("takeoff:antiice") > 1 end))
+beforeTaxiChkl:addItem(ChecklistItem:new("ENGINE ANTI-ICE","ON",FlowItem.actorFO,0,
+	function () return sysAice.engAntiIceGroup:getStatus() == 2 end,
+	function () sysAice.engAntiIceGroup:actuate(1) end,
+	function () return activeBriefings:get("takeoff:antiice") == 1 end))
+beforeTaxiChkl:addItem(ChecklistItem:new("STABILIZER ANTI-ICE","OFF",FlowItem.actorFO,0,
+	function () return sysAice.wingAntiIce:getStatus() == 0 end,
+	function () sysAice.wingAntiIce:actuate(0) end,
+	function () return activeBriefings:get("takeoff:antiice") == 3 end))
+beforeTaxiChkl:addItem(ChecklistItem:new("STABILIZER ANTI-ICE","ON",FlowItem.actorFO,0,
+	function () return sysAice.wingAntiIce:getStatus() == 1 end,
+	function () sysAice.wingAntiIce:actuate(1) end,
+	function () return activeBriefings:get("takeoff:antiice") < 3 end))
+beforeTaxiChkl:addItem(ChecklistItem:new("BAROMETRIC SELECTORS TO LOCAL","%s|activeBriefings:get(\"departure:atisQNH\")",FlowItem.actorFO,0,
+	function () 
+		return true --kc_macro_test_local_baro()
+	end,
+	function () 
+		kc_macro_set_pref_baro_mode()
+		kc_macro_set_local_baro()
+	end))
 
 -- =================== BEFORE TAKEOFF ====================
 -- FLAPS.............................CHECK T/O FLAPS
@@ -972,7 +1019,6 @@ runwayEntryProc:addItem(ProcedureItem:new("PACKS & BLEEDS","AS REQUIRED",FlowIte
 	end))
 
 -- =========== TAKEOFF & INITIAL CLIMB (BOTH) ===========
--- time ET CHRONO?
 -- wx radar?
 -- TAKEOFF................................ANNOUNCE
 -- THRUST SETTING..........................TAKEOFF
@@ -1015,7 +1061,7 @@ takeoffClimbProc:addItem(ProcedureItem:new("A/P","ON",FlowItem.actorPNF,0,true,
 	function () 
 		sysMCP.ap1Switch:actuate(1) 
 	end))
--- flaps schedule
+takeoffClimbProc:addItem(SimpleProcedureItem:new("=== FLAPS SCHEDULE"))
 takeoffClimbProc:addItem(HoldProcedureItem:new("FLAPS 5","COMMAND AT >190 KTS",FlowItem.actorPF,nil,
 	function () return sysControls.flapsSwitch:getStatus() < 0.75 end))
 takeoffClimbProc:addItem(ProcedureItem:new("FLAPS 5","SET",FlowItem.actorPNF,0,true,
@@ -1032,7 +1078,7 @@ takeoffClimbProc:addItem(ProcedureItem:new("PACKS & BLEEDS","ON",FlowItem.actorF
 		kc_macro_bleeds_on()
 	end))
 
--- AFTER TAKEOFF:
+-- AFTER TAKEOFF CHECKLIST:
 -- Gear ........................ UP
 -- Flaps ....................... UP
 -- Throttle .................... CLIMB DETENT
@@ -1450,6 +1496,11 @@ shutdownProc:addItem(ProcedureItem:new("HYD PUMP A & B","OFF",FlowItem.actorFO,0
 shutdownProc:addItem(ProcedureItem:new("AUX PUMP A","OFF",FlowItem.actorFO,0,
 	function () return sysHydraulic.elecHydPumpGroup:getStatus() == 0 end,
 	function () sysHydraulic.elecHydPumpGroup:actuate(0) end))
+
+
+
+
+
 -- STANDBY ATTITUDE ADI|CAGED
 -- shutdownProc:addItem(ProcedureItem:new("AVIONICS SWITCH","OFF",FlowItem.actorFO,0,
 	-- function () return sysElectric.avionicsSwitchGroup:getStatus() == 0 end,
@@ -1497,12 +1548,13 @@ shutdownProc:addItem(ProcedureItem:new("AUX PUMP A","OFF",FlowItem.actorFO,0,
 -- activeSOP:addProcedure(testProc)
 activeSOP:addProcedure(electricalPowerUpProc)
 activeSOP:addProcedure(preFlightProc)
--- activeSOP:addProcedure(preflightChkl)
+activeSOP:addProcedure(preflightChkl)
 activeSOP:addProcedure(preStartProc)
--- activeSOP:addProcedure(beforeStartChkl)
+activeSOP:addProcedure(beforeStartChkl)
 activeSOP:addProcedure(pushstartProc)
 activeSOP:addProcedure(afterStartProc)
 activeSOP:addProcedure(preTaxiProc)
+activeSOP:addProcedure(beforeTaxiChkl)
 activeSOP:addProcedure(beforeTakeoffProc)
 activeSOP:addProcedure(runwayEntryProc)
 activeSOP:addProcedure(takeoffClimbProc)
@@ -1544,6 +1596,7 @@ turnaroundProc:addItem(ProcedureItem:new("TURNAROUND STATE","SET","SYS",0,true,
 		command_once("laminar/CitX/APU/bleed_switch_up")
 		electricalPowerUpProc:setState(Flow.FINISH)
 		preFlightProc:setState(Flow.FINISH)
+		getActiveSOP():setActiveFlowIndex(3)
 	end))
 
 activeSOP:addState(turnaroundProc)

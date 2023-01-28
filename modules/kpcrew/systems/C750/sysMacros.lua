@@ -340,6 +340,27 @@ function kc_macro_at_trans_lvl()
 	end
 end
 
+-- baro mode as in preference
+function kc_macro_set_pref_baro_mode()
+	if activePrefSet:get("general:baro_mode_hpa") then 
+		set("sim/physics/metric_press",1)
+	else 
+		set("sim/physics/metric_press",0)
+	end
+end
+
+-- set baros to local pressure at departure airport
+function kc_macro_set_local_baro()
+	set("sim/cockpit/misc/barometer_setting",math.floor(get("sim/weather/barometer_sealevel_inhg")*100)/100)
+	set("sim/cockpit/misc/barometer_setting2",math.floor(get("sim/weather/barometer_sealevel_inhg")*100)/100) 
+end
+
+-- test if all baros are set to local baro
+function kc_macro_test_local_baro()
+	return get("sim/cockpit/misc/barometer_setting") == math.floor(get("sim/weather/barometer_sealevel_inhg")*100)/100 and 
+		get("sim/cockpit/misc/barometer_setting2") == math.floor(get("sim/weather/barometer_sealevel_inhg")*100)/100 
+end
+
 -- internal lights all off
 function kc_macro_int_lights_off()
 	sysLights.domeLightGroup:setValue(0)
