@@ -57,6 +57,7 @@ activeSOP = SOP:new("Laminar Citation X SOP")
 -- ============ Electrical Power Up Procedure ============
 -- All paper work on board and checked
 -- == Initial checks
+-- PARKING BRAKE.................................SET
 -- STANDBY POWER................................TEST 
 -- STANDBY POWER..................................ON		
 -- PANEL LIGHTS..........................AS REQUIRED
@@ -86,6 +87,9 @@ electricalPowerUpProc:setFlightPhase(1)
 electricalPowerUpProc:addItem(SimpleProcedureItem:new("All paper work on board and checked"))
 
 electricalPowerUpProc:addItem(SimpleProcedureItem:new("== Initial Checks"))
+electricalPowerUpProc:addItem(ChecklistItem:new("PARKING BRAKE","SET",FlowItem.actorFO,0,
+	function () return sysGeneral.parkBrakeSwitch:getStatus() == 1 end,
+	function () sysGeneral.parkBrakeSwitch:actuate(1) end))
 electricalPowerUpProc:addItem(IndirectProcedureItem:new("STANDBY POWER","TEST",FlowItem.actorFO,2,"stbytest",
 	function () return get("laminar/CitX/electrical/battery_stby_pwr") == -1 end,
 	function () 
@@ -134,7 +138,8 @@ electricalPowerUpProc:addItem(ProcedureItem:new("  GREEN LANDING GEAR LIGHT","CH
 electricalPowerUpProc:addItem(IndirectProcedureItem:new("FLAP LEVER","UP",FlowItem.actorFO,0,"initial_flap_lever",
 	function () return sysControls.flapsSwitch:getStatus() == 0 end,
 	function () sysControls.flapsSwitch:setValue(0) end))
-electricalPowerUpProc:addItem(SimpleProcedureItem:new("==== APU ON"))
+	
+electricalPowerUpProc:addItem(SimpleProcedureItem:new("== APU ON"))
 electricalPowerUpProc:addItem(ProcedureItem:new("#spell|APU# SYSTEM MASTER","ON",FlowItem.actorFO,0,
 	function () return sysElectric.apuMasterSwitch:getStatus() == 1 end,
 	function () sysElectric.apuMasterSwitch:actuate(1) end))
@@ -160,6 +165,8 @@ electricalPowerUpProc:addItem(ProcedureItem:new("#spell|APU# GEN","ON",FlowItem.
 	end))
 electricalPowerUpProc:addItem(IndirectProcedureItem:new("#spell|APU# AMPS","< 200 A",FlowItem.actorFO,0,"apubelow200",
 	function () return get("sim/cockpit/electrical/generator_apu_amps") < 200 end))
+
+electricalPowerUpProc:addItem(SimpleProcedureItem:new("== AVIONICS"))
 electricalPowerUpProc:addItem(ProcedureItem:new("AVIONICS SWITCH","ON",FlowItem.actorFO,0,
 	function () return sysElectric.avionicsSwitchGroup:getStatus() == 1 end,
 	function () sysElectric.avionicsSwitchGroup:actuate(1) end))
@@ -318,6 +325,7 @@ preFlightProc:addItem(ProcedureItem:new("FLAP LEVER","UP",FlowItem.actorFO,0,
 	function () return sysControls.flapsSwitch:getStatus() == 0 end))
 preFlightProc:addItem(IndirectProcedureItem:new("ROTARY TEST","CHECK",FlowItem.actorFO,0,"rotarytest",
 	function () return get("sim/cockpit/warnings/autopilot_test_ap_lit") == 1 end))
+	
 preFlightProc:addItem(SimpleProcedureItem:new("== Flight Preps"))
 preFlightProc:addItem(HoldProcedureItem:new("FMS","SET UP",FlowItem.actorCPT,true))
 preFlightProc:addItem(HoldProcedureItem:new("ATIS","RECEIVED",FlowItem.actorCPT,true))

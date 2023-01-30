@@ -1,9 +1,9 @@
--- Standard Operating Procedure for JarDesign A20N
+-- Standard Operating Procedure for FlightFactor A320
 
--- @classmod SOP_A20N
+-- @classmod SOP_A320
 -- @author Kosta Prokopiu
--- @copyright 2022 Kosta Prokopiu
-local SOP_A20N = {
+-- @copyright 2023 Kosta Prokopiu
+local SOP_A320 = {
 }
 
 -- SOP related imports
@@ -43,11 +43,11 @@ kcSopFlightPhase = { [1] = "Cold & Dark", 	[2] = "Prel Cockpit Prep", [3] = "Coc
 					 [5] = "After Start", 	[6] = "Taxi to Runway", [7] = "Before Takeoff", [8] = "Takeoff",
 					 [9] = "Climb", 		[10] = "Enroute", 		[11] = "Descent", 		[12] = "Arrival", 
 					 [13] = "Approach", 	[14] = "Landing", 		[15] = "Turnoff", 		[16] = "Taxi to Stand", 
-					 [17] = "Shutdown", 	[18] = "Turnaround",	[19] = "Flightplanning", [0] = "" }
+					 [17] = "Shutdown", 	[18] = "Turnaround",	[19] = "Flightplanning", [20] = "Go Around", [0] = "" }
 
 -- Set up SOP =========================================================================
 
-activeSOP = SOP:new("FlightFactor A320 SOP")
+activeSOP = SOP:new("FlightFcator A320 SOP")
 
 -- ============ PRELIMINARY COCKPIT PREP (PM) ============
 -- ==== AIRCRAFT SETUP
@@ -1173,5 +1173,5 @@ function getActiveSOP()
 	return activeSOP
 end
 
-return SOP_A20N
+return SOP_A320
 
