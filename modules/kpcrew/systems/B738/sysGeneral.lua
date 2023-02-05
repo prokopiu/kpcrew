@@ -146,8 +146,10 @@ sysGeneral.baroGroup:addSwitch(sysGeneral.baroStandby)
 --- systems not used by kphardware
 
 -- IRS
-sysGeneral.irsUnit1Switch = MultiStateCmdSwitch:new("irsunit1","laminar/B738/toggle_switch/irs_left",0,"laminar/B738/toggle_switch/irs_L_left","laminar/B738/toggle_switch/irs_L_right",0,3,true)
-sysGeneral.irsUnit2Switch = MultiStateCmdSwitch:new("irsunit2","laminar/B738/toggle_switch/irs_right",0,"laminar/B738/toggle_switch/irs_R_left","laminar/B738/toggle_switch/irs_R_right",0,3,true)
+sysGeneral.irsUnit1Switch = MultiStateCmdSwitch:new("irsunit1","laminar/B738/toggle_switch/irs_left",0,
+	"laminar/B738/toggle_switch/irs_L_left","laminar/B738/toggle_switch/irs_L_right",0,3,true)
+sysGeneral.irsUnit2Switch = MultiStateCmdSwitch:new("irsunit2","laminar/B738/toggle_switch/irs_right",0,
+	"laminar/B738/toggle_switch/irs_R_left","laminar/B738/toggle_switch/irs_R_right",0,3,true)
 sysGeneral.irsUnit3Switch = InopSwitch:new("irsunit3")
 
 sysGeneral.irsUnitGroup = SwitchGroup:new("irsunits")
@@ -157,65 +159,97 @@ sysGeneral.irsUnitGroup:addSwitch(sysGeneral.irsUnit2Switch)
 
 -- Wipers
 
-sysGeneral.wiperLeftSwitch = MultiStateCmdSwitch:new("","laminar/B738/switches/left_wiper_pos",0,"laminar/B738/knob/left_wiper_dn","laminar/B738/knob/left_wiper_up",0,3,true)
-sysGeneral.wiperRightSwitch = MultiStateCmdSwitch:new("","laminar/B738/switches/right_wiper_pos",0,"laminar/B738/knob/right_wiper_dn","laminar/B738/knob/right_wiper_up",0,3,true)
+sysGeneral.wiperLeftSwitch = MultiStateCmdSwitch:new("","laminar/B738/switches/left_wiper_pos",0,
+	"laminar/B738/knob/left_wiper_dn","laminar/B738/knob/left_wiper_up",0,3,true)
+sysGeneral.wiperRightSwitch = MultiStateCmdSwitch:new("","laminar/B738/switches/right_wiper_pos",0,
+	"laminar/B738/knob/right_wiper_dn","laminar/B738/knob/right_wiper_up",0,3,true)
 
 sysGeneral.wiperGroup = SwitchGroup:new("wipers")
 sysGeneral.wiperGroup:addSwitch(sysGeneral.wiperLeftSwitch)
 sysGeneral.wiperGroup:addSwitch(sysGeneral.wiperRightSwitch)
 
 -- Emergency Exit Lights
-sysGeneral.emerExitLightsSwitch = MultiStateCmdSwitch:new("","laminar/B738/toggle_switch/emer_exit_lights",0,"laminar/B738/toggle_switch/emer_exit_lights_up","laminar/B738/toggle_switch/emer_exit_lights_dn",0,2,true)
-sysGeneral.emerExitLightsCover = TwoStateToggleSwitch:new("","laminar/B738/button_switch/cover_position",9,"laminar/B738/button_switch_cover09")
+sysGeneral.emerExitLightsSwitch = MultiStateCmdSwitch:new("","laminar/B738/toggle_switch/emer_exit_lights",0,
+	"laminar/B738/toggle_switch/emer_exit_lights_up","laminar/B738/toggle_switch/emer_exit_lights_dn",0,2,true)
+sysGeneral.emerExitLightsCover = TwoStateToggleSwitch:new("","laminar/B738/button_switch/cover_position",9,
+	"laminar/B738/button_switch_cover09")
 
 -- FDR recorder
-sysGeneral.fdrSwitch = TwoStateToggleSwitch:new("","laminar/B738/switches/fdr_pos",0,"laminar/B738/toggle_switch/fdr")
-sysGeneral.fdrCover = TwoStateToggleSwitch:new("","laminar/B738/switches/fdr_cover_pos",0,"laminar/B738/toggle_switch/fdr_cover")
+sysGeneral.fdrSwitch = TwoStateToggleSwitch:new("","laminar/B738/switches/fdr_pos",0,
+	"laminar/B738/toggle_switch/fdr")
+sysGeneral.fdrCover = TwoStateToggleSwitch:new("","laminar/B738/switches/fdr_cover_pos",0,
+	"laminar/B738/toggle_switch/fdr_cover")
 
 -- Voice Recorder
-sysGeneral.vcrSwitch = TwoStateCmdSwitch:new("","laminar/B738/toggle_switch/vcr",0,"laminar/B738/toggle_switch/vcr_auto","laminar/B738/toggle_switch/vcr_on")
+sysGeneral.vcrSwitch = TwoStateCmdSwitch:new("","laminar/B738/toggle_switch/vcr",0,
+	"laminar/B738/toggle_switch/vcr_auto","laminar/B738/toggle_switch/vcr_on")
 
 -- Attendence button 
-sysGeneral.attendanceButton = KeepPressedSwitchCmd:new("","laminar/B738/push_button/attend_pos",0,"laminar/B738/push_button/attend")
+sysGeneral.attendanceButton = KeepPressedSwitchCmd:new("","laminar/B738/push_button/attend_pos",0,
+	"laminar/B738/push_button/attend")
 
 -- Equipment Cooling
-sysGeneral.equipCoolExhaust = TwoStateToggleSwitch:new("","laminar/B738/toggle_switch/eq_cool_exhaust",0,"laminar/B738/toggle_switch/eq_cool_exhaust")
-sysGeneral.equipCoolSupply = TwoStateToggleSwitch:new("","laminar/B738/toggle_switch/eq_cool_supply",0,"laminar/B738/toggle_switch/eq_cool_supply")
+sysGeneral.equipCoolExhaust = TwoStateToggleSwitch:new("","laminar/B738/toggle_switch/eq_cool_exhaust",0,
+	"laminar/B738/toggle_switch/eq_cool_exhaust")
+sysGeneral.equipCoolSupply = TwoStateToggleSwitch:new("","laminar/B738/toggle_switch/eq_cool_supply",0,
+	"laminar/B738/toggle_switch/eq_cool_supply")
 
 -- Passenger lights
-sysGeneral.noSmokingSwitch = MultiStateCmdSwitch:new("","laminar/B738/toggle_switch/no_smoking_pos",0,"laminar/B738/toggle_switch/no_smoking_dn","laminar/B738/toggle_switch/no_smoking_up",0,2,false)
-sysGeneral.seatBeltSwitch = MultiStateCmdSwitch:new("","laminar/B738/toggle_switch/seatbelt_sign_pos",0,"laminar/B738/toggle_switch/seatbelt_sign_dn","laminar/B738/toggle_switch/seatbelt_sign_up",0,2,false)
+sysGeneral.noSmokingSwitch = MultiStateCmdSwitch:new("","laminar/B738/toggle_switch/no_smoking_pos",0,
+	"laminar/B738/toggle_switch/no_smoking_dn","laminar/B738/toggle_switch/no_smoking_up",0,2,false)
+sysGeneral.seatBeltSwitch = MultiStateCmdSwitch:new("","laminar/B738/toggle_switch/seatbelt_sign_pos",0,
+	"laminar/B738/toggle_switch/seatbelt_sign_dn","laminar/B738/toggle_switch/seatbelt_sign_up",0,2,false)
 
 -- DISPLAY UNITS
-sysGeneral.displayUnitsFO = MultiStateCmdSwitch:new("","laminar/B738/toggle_switch/main_pnl_du_fo",0,"laminar/B738/toggle_switch/main_pnl_du_fo_right","laminar/B738/toggle_switch/main_pnl_du_fo_left",-1,3,false)
-sysGeneral.displayUnitsCPT = MultiStateCmdSwitch:new("","laminar/B738/toggle_switch/main_pnl_du_capt",0,"laminar/B738/toggle_switch/main_pnl_du_capt_left","laminar/B738/toggle_switch/main_pnl_du_capt_right",-1,3,false)
+sysGeneral.displayUnitsFO = MultiStateCmdSwitch:new("","laminar/B738/toggle_switch/main_pnl_du_fo",0,
+	"laminar/B738/toggle_switch/main_pnl_du_fo_right","laminar/B738/toggle_switch/main_pnl_du_fo_left",-1,3,false)
+sysGeneral.displayUnitsCPT = MultiStateCmdSwitch:new("","laminar/B738/toggle_switch/main_pnl_du_capt",0,
+	"laminar/B738/toggle_switch/main_pnl_du_capt_left","laminar/B738/toggle_switch/main_pnl_du_capt_right",-1,3,false)
 
 -- LOWER DU
-sysGeneral.lowerDuFO = MultiStateCmdSwitch:new("","laminar/B738/toggle_switch/lower_du_fo",0,"laminar/B738/toggle_switch/lower_du_fo_right","laminar/B738/toggle_switch/lower_du_fo_left",-1,1,false)
-sysGeneral.lowerDuCPT = MultiStateCmdSwitch:new("","laminar/B738/toggle_switch/lower_du_capt",0,"laminar/B738/toggle_switch/lower_du_capt_left","laminar/B738/toggle_switch/lower_du_capt_right",-1,1,false)
+sysGeneral.lowerDuFO = MultiStateCmdSwitch:new("","laminar/B738/toggle_switch/lower_du_fo",0,
+	"laminar/B738/toggle_switch/lower_du_fo_right","laminar/B738/toggle_switch/lower_du_fo_left",-1,1,false)
+sysGeneral.lowerDuCPT = MultiStateCmdSwitch:new("","laminar/B738/toggle_switch/lower_du_capt",0,
+	"laminar/B738/toggle_switch/lower_du_capt_left","laminar/B738/toggle_switch/lower_du_capt_right",-1,1,false)
 
 -- GPWS
 
-sysGeneral.flapInhibitSwitch 	= TwoStateToggleSwitch:new("","laminar/B738/toggle_switch/gpws_flap_pos",0,"laminar/B738/toggle_switch/gpws_flap")
-sysGeneral.gearInhibitSwitch 	= TwoStateToggleSwitch:new("","laminar/B738/toggle_switch/gpws_gear_pos",0,"laminar/B738/toggle_switch/gpws_gear")
-sysGeneral.terrainInhibitSwitch = TwoStateToggleSwitch:new("","laminar/B738/toggle_switch/gpws_terr_pos",0,"laminar/B738/toggle_switch/gpws_terr")
+sysGeneral.flapInhibitSwitch 	= TwoStateToggleSwitch:new("","laminar/B738/toggle_switch/gpws_flap_pos",0,
+	"laminar/B738/toggle_switch/gpws_flap")
+sysGeneral.gearInhibitSwitch 	= TwoStateToggleSwitch:new("","laminar/B738/toggle_switch/gpws_gear_pos",0,
+	"laminar/B738/toggle_switch/gpws_gear")
+sysGeneral.terrainInhibitSwitch = TwoStateToggleSwitch:new("","laminar/B738/toggle_switch/gpws_terr_pos",0,
+	"laminar/B738/toggle_switch/gpws_terr")
 
-sysGeneral.flapInhibitCover 	= TwoStateToggleSwitch:new("","laminar/B738/toggle_switch/gpws_flap_cover_pos",0,"laminar/B738/toggle_switch/gpws_flap_cover")
-sysGeneral.gearInhibitCover 	= TwoStateToggleSwitch:new("","laminar/B738/toggle_switch/gpws_gear_cover_pos",0,"laminar/B738/toggle_switch/gpws_gear_cover")
-sysGeneral.terrainInhibitCover 	= TwoStateToggleSwitch:new("","laminar/B738/toggle_switch/gpws_terr_cover_pos",0,"laminar/B738/toggle_switch/gpws_terr_cover")
+sysGeneral.flapInhibitCover 	= TwoStateToggleSwitch:new("","laminar/B738/toggle_switch/gpws_flap_cover_pos",0,
+	"laminar/B738/toggle_switch/gpws_flap_cover")
+sysGeneral.gearInhibitCover 	= TwoStateToggleSwitch:new("","laminar/B738/toggle_switch/gpws_gear_cover_pos",0,
+	"laminar/B738/toggle_switch/gpws_gear_cover")
+sysGeneral.terrainInhibitCover 	= TwoStateToggleSwitch:new("","laminar/B738/toggle_switch/gpws_terr_cover_pos",0,
+	"laminar/B738/toggle_switch/gpws_terr_cover")
 
 -- Autobrake
-sysGeneral.autobrake = MultiStateCmdSwitch:new("","laminar/B738/autobrake/autobrake_pos",0,"laminar/B738/knob/autobrake_dn","laminar/B738/knob/autobrake_up",0,5,true)
+sysGeneral.autobrake = MultiStateCmdSwitch:new("","laminar/B738/autobrake/autobrake_pos",0,
+	"laminar/B738/knob/autobrake_dn","laminar/B738/knob/autobrake_up",0,5,true)
 
 -- Lights Test
-sysGeneral.lightTest = TwoStateCmdSwitch:new("","laminar/B738/toggle_switch/bright_test",0,"laminar/B738/toggle_switch/bright_test_ip","laminar/B738/toggle_switch/bright_test_dn")
+sysGeneral.lightTest = TwoStateCmdSwitch:new("","laminar/B738/toggle_switch/bright_test",0,
+	"laminar/B738/toggle_switch/bright_test_ip","laminar/B738/toggle_switch/bright_test_dn")
 
 -- capt chronometer
-sysGeneral.clockDispModeCPT = MultiStateCmdSwitch:new("","laminar/B738/clock/clock_display_mode_capt",0,"laminar/B738/push_button/chrono_disp_mode_capt","laminar/B738/push_button/chrono_disp_mode_capt",1,4,true)
-sysGeneral.clockDispModeFO = MultiStateCmdSwitch:new("","laminar/B738/clock/clock_display_mode_fo",0,"laminar/B738/push_button/chrono_disp_mode_fo","laminar/B738/push_button/chrono_disp_mode_fo",1,4,true)
+sysGeneral.clockDispModeCPT = MultiStateCmdSwitch:new("","laminar/B738/clock/clock_display_mode_capt",0,
+	"laminar/B738/push_button/chrono_disp_mode_capt","laminar/B738/push_button/chrono_disp_mode_capt",1,4,true)
+sysGeneral.clockDispModeFO = MultiStateCmdSwitch:new("","laminar/B738/clock/clock_display_mode_fo",0,
+	"laminar/B738/push_button/chrono_disp_mode_fo","laminar/B738/push_button/chrono_disp_mode_fo",1,4,true)
 sysGeneral.clockDispModeGrp = SwitchGroup:new("dispmodeclock")
 sysGeneral.clockDispModeGrp:addSwitch(sysGeneral.clockDispModeCPT)
 sysGeneral.clockDispModeGrp:addSwitch(sysGeneral.clockDispModeFO)
+
+-- PAX OXY
+sysGeneral.PaxOxySwitch = TwoStateCmdSwitch:new("","laminar/B738/one_way_switch/pax_oxy_pos",0,
+	"laminar/B738/one_way_switch/pax_oxy_on","laminar/B738/one_way_switch/pax_oxy_norm","laminar/B738/one_way_switch/pax_oxy_norm")
+sysGeneral.PaxOxyCover = TwoStateToggleSwitch:new("","laminar/B738/button_switch/cover_position",7,
+	"laminar/B738/button_switch_cover07")
 
 ------------ Annunciators
 -- park brake

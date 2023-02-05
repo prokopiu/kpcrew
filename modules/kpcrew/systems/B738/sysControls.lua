@@ -39,7 +39,7 @@ sysControls.flapsSwitch 	= TwoStateCustomSwitch:new("flaps","laminar/B738/flt_ct
 		command_once("sim/flight_controls/flaps_up")
 	end,
 	function () 
-		return
+		-- do nothing
 	end
 )
 

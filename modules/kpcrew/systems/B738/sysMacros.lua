@@ -952,6 +952,26 @@ function kc_bck_b738_cargofire_test(trigger)
 	end
 end
 
+-- B738 TCAS TEST
+function kc_bck_b738_tcas_test(trigger)
+	local delayvar = trigger .. "delay"
+	if kc_procvar_exists(delayvar) == false then
+		kc_procvar_initialize_count(delayvar,-1)
+	end
+	if kc_procvar_get(delayvar) == -1 then
+		kc_procvar_set(delayvar,0)
+		command_begin("laminar/B738/knob/transponder_mode_dn")
+	else
+		if kc_procvar_get(delayvar) <= 0 then
+			command_end("laminar/B738/knob/transponder_mode_dn")  
+			kc_procvar_set(trigger,false)
+			kc_procvar_set(delayvar,-1)
+		else
+			kc_procvar_set(delayvar,kc_procvar_get(delayvar)-1)
+		end
+	end
+end
+
 -- B738 APU START
 function kc_bck_b738_apustart(trigger)
 	local delayvar = trigger .. "delay"

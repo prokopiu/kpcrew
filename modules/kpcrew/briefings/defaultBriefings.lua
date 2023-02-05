@@ -238,6 +238,8 @@ end
 -- =================== FLIGHT DATA ==================
 local flight = kcPreferenceGroup:new("flight","FLIGHT")
 -- flight:setInitialOpen(true)
+flight:add(kcPreference:new("firstFlightDay",true,kcPreference.typeToggle,"First Flight of the Day|First Flight|Not First Flight"))
+
 flight:add(kcPreference:new("simbrief",0,kcPreference.typeExecButton,"Simbrief Data Load|Fetch SIMBRIEF|kc_download_simbrief()"))
 
 flight:add(kcPreference:new("callsign","",kcPreference.typeText,"ATC Callsign|"))
@@ -454,7 +456,8 @@ local approach2 = kcPreferenceGroup:new("approach","APPROACH GROUND")
 approach2:add(kcPreference:new("gndFrequency2",122.800,kcPreference.typeCOMFreq,"Ground Frequency|"))
 approach2:add(kcPreference:new("gateStand",1,kcPreference.typeList,"Gate/Stand|" .. kc_APP_gatestand_list))
 approach2:add(kcPreference:new("parkingPosition","",kcPreference.typeText,"Parking Position|"))
-approach2:add(kcPreference:new("powerAtGate",1,kcPreference.typeList,"*Power at Stand|" .. kc_APP_power_at_stand))
+approach2:add(kcPreference:new("powerAtGate",1,kcPreference.typeList,"External Power at Stand|" .. kc_APP_power_at_stand))
+approach2:add(kcPreference:new("activateAPUafterLand",1,kcPreference.typeToggle,"*Start APU after Landing|Start APU|APU remains off"))
 approach2:add(kcPreference:new("taxiIn","",kcPreference.typeText,"Taxi to Position via|"))
 
 -- =================== APPROACH BRIEFING ==================

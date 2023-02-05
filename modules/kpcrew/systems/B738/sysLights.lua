@@ -73,8 +73,8 @@ sysLights.rwyLightGroup:addSwitch(sysLights.rwyLeftSwitch)
 sysLights.rwyLightGroup:addSwitch(sysLights.rwyRightSwitch)
 
 -- ** Wing Lights
-sysLights.wingSwitch 		= TwoStateCmdSwitch:new("wing",drefGenericLights,0,
-	"laminar/B738/toggle_switch/wing_light","laminar/B738/switch/wing_light_off","laminar/B738/switch/wing_light_toggle")
+sysLights.wingSwitch 		= TwoStateCmdSwitch:new("wing","laminar/B738/toggle_switch/wing_light",0,
+	"laminar/B738/switch/wing_light_on","laminar/B738/switch/wing_light_off","laminar/B738/switch/wing_light_toggle")
 
 -- ** Wheel well Lights
 sysLights.wheelSwitch 		= TwoStateDrefSwitch:new("wheel","laminar/B738/toggle_switch/wheel_light",0)

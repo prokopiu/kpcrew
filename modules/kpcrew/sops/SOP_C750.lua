@@ -87,7 +87,7 @@ electricalPowerUpProc:setFlightPhase(1)
 electricalPowerUpProc:addItem(SimpleProcedureItem:new("All paper work on board and checked"))
 
 electricalPowerUpProc:addItem(SimpleProcedureItem:new("== Initial Checks"))
-electricalPowerUpProc:addItem(ChecklistItem:new("PARKING BRAKE","SET",FlowItem.actorFO,0,
+electricalPowerUpProc:addItem(ProcedureItem:new("PARKING BRAKE","SET",FlowItem.actorFO,0,
 	function () return sysGeneral.parkBrakeSwitch:getStatus() == 1 end,
 	function () sysGeneral.parkBrakeSwitch:actuate(1) end))
 electricalPowerUpProc:addItem(IndirectProcedureItem:new("STANDBY POWER","TEST",FlowItem.actorFO,2,"stbytest",
@@ -858,7 +858,7 @@ preTaxiProc:addItem(IndirectProcedureItem:new("INTERNAL LIGHTS","SET",FlowItem.a
 -- STABILIZER TRIM.....................IN GREEN BAND
 -- RUDDER & AILERON TRIM...........................0
 -- ANIT-ICE..............................AS REQUIRED
--- ALTIMETER.....................................SET
+-- BAROMETRIC SELECTORS TO LOCAL.................SET
 -- =======================================================
 
 local beforeTaxiChkl = Checklist:new("BEFORE TAXI CHECKLIST","","")
@@ -906,7 +906,7 @@ beforeTaxiChkl:addItem(ChecklistItem:new("STABILIZER ANTI-ICE","ON",FlowItem.act
 	function () return sysAice.wingAntiIce:getStatus() == 1 end,
 	function () sysAice.wingAntiIce:actuate(1) end,
 	function () return activeBriefings:get("takeoff:antiice") < 3 end))
-beforeTaxiChkl:addItem(ChecklistItem:new("BAROMETRIC SELECTORS TO LOCAL","%s|activeBriefings:get(\"departure:atisQNH\")",FlowItem.actorFO,0,
+beforeTaxiChkl:addItem(ChecklistItem:new("BAROMETRIC SELECTORS TO LOCAL","%s SET|activeBriefings:get(\"departure:atisQNH\")",FlowItem.actorFO,0,
 	function () 
 		return true --kc_macro_test_local_baro()
 	end,
@@ -989,11 +989,19 @@ beforeTakeoffProc:addItem(ProcedureItem:new("ANTISKID","NORM",FlowItem.actorFO,0
 		sysGeneral.antiSkid:actuate(0)
 	end))
 
--- BEFORE TAKEOFF:
--- Radar ....................... On
--- Transponder ................. TA/RA
+-- ============== BEFORE TAKEOFF CHECKLIST ===============
+-- WEATHER RADAR..................................ON
+-- TRANSPONDER.................................TA/RA
 -- Yaw Damper and Mach Trim .... CHECKED
 -- EICAS ....................... CHECKED
+-- =======================================================
+
+-- local beforeTaxiChkl = Checklist:new("BEFORE TAKEOFF CHECKLIST","","")
+-- beforeTaxiChkl:setFlightPhase(6)
+-- beforeTaxiChkl:addItem(ChecklistItem:new("FLIGHT CONTROLS","CHECKED",FlowItem.actorCPT,0,true))
+-- beforeTaxiChkl:addItem(ChecklistItem:new("FLAPS","SET TAKEOFF FLAPS %s|kc_pref_split(kc_TakeoffFlaps)[activeBriefings:get(\"takeoff:flaps\")]",FlowItem.actorFO,0,
+	-- function () return sysControls.flapsSwitch:getStatus() == sysControls.flaps_pos[activeBriefings:get("takeoff:flaps")] end,
+	-- function () sysControls.flapsSwitch:setValue(sysControls.flaps_pos[activeBriefings:get("takeoff:flaps")]) end)) 
 
 -- ============ RUNWAY ENTRY PROCEDURE (F/O) ============
 -- STROBE LIGHT..................................ON	
@@ -1581,6 +1589,7 @@ coldAndDarkProc:addItem(ProcedureItem:new("C&D","SET","SYS",0,true,
 		kc_macro_state_cold_and_dark()
 		electricalPowerUpProc:setState(Flow.NEW)
 		preFlightProc:setState(Flow.NEW)
+		getActiveSOP():setActiveFlowIndex(1)
 	end))
 
 activeSOP:addState(coldAndDarkProc)
