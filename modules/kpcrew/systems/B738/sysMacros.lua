@@ -121,7 +121,7 @@ function kc_macro_state_turnaround()
 	sysGeneral.vcrSwitch:actuate(modeOn)
 	sysEngines.eecSwitchGroup:actuate(modeOn)
 	sysEngines.eecGuardGroup:actuate(modeOff)
-	sysGeneral.irsUnitGroup:actuate(sysGeneral.irsUnitOFF)
+	sysGeneral.irsUnitGroup:actuate(sysGeneral.irsUnitNAV)
 
 	if activePrefSet:get("aircraft:powerup_apu") == false then
 		kc_macro_gpu_connect()

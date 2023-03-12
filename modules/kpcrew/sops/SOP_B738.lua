@@ -401,16 +401,26 @@ prelPreflightProc:addItem(ProcedureItem:new("ELECTRICAL POWER UP","COMPLETE",Flo
 	function () sysGeneral.attendanceButton:repeatOff() end))
 prelPreflightProc:addItem(ProcedureItem:new("FLIGHT DATA RECORDER SWITCH","GUARD CLOSED",FlowItem.actorFO,0,
 	function () return  sysGeneral.fdrSwitch:getStatus() == modeOff and sysGeneral.fdrCover:getStatus() == modeOff end,
-	function () sysGeneral.fdrSwitch:actuate(modeOn) sysGeneral.fdrCover:actuate(modeOff) end))
+	function () 
+		sysGeneral.fdrSwitch:actuate(modeOn) 
+		sysGeneral.fdrCover:actuate(modeOff) 
+		kc_wnd_brief_action=1  -- open briefing window
+	end))
 prelPreflightProc:addItem(IndirectProcedureItem:new("MACH OVERSPEED TEST 1","PERFORM",FlowItem.actorFO,0,"mach_ovspd_test1",
 	function () return get("laminar/B738/push_button/mach_warn1_pos") == 1 end,
 	function () 
 		kc_procvar_set("mach1test",true) -- background test
+	end,
+	function ()
+		return activeBriefings:get("flight:firstFlightDay") == false 
 	end))
 prelPreflightProc:addItem(IndirectProcedureItem:new("MACH OVERSPEED TEST 2","PERFORM",FlowItem.actorFO,0,"mach_ovspd_test2",
 	function () return get("laminar/B738/push_button/mach_warn2_pos") == 1 end,
 	function () 
 		kc_procvar_set("mach2test",true) -- background test
+	end,
+	function ()
+		return activeBriefings:get("flight:firstFlightDay") == false 
 	end))
 
 -- ==================== CDU Preflight ====================
@@ -1126,10 +1136,13 @@ preflightFOProc:addItem(ProcedureItem:new("GEAR INHIBIT SWITCH","GUARD CLOSED",F
 preflightFOProc:addItem(ProcedureItem:new("TERRAIN INHIBIT SWITCH","GUARD CLOSED",FlowItem.actorFO,0,
 	function () return sysGeneral.terrainInhibitCover:getStatus() == 0 end,
 	function () sysGeneral.terrainInhibitCover:actuate(0) end))
-prelPreflightProc:addItem(IndirectProcedureItem:new("GPWS SYSTEM TEST","PERFORM",FlowItem.actorFO,0,"gpws_test",
+preflightFOProc:addItem(IndirectProcedureItem:new("GPWS SYSTEM TEST","PERFORM",FlowItem.actorFO,0,"gpws_test",
 	function () return get("laminar/B738/push_button/gpws_test_pos") > 0 end,
 	function () 
 		kc_procvar_set("gpwstest",true) -- background test
+	end,
+	function ()
+		return activeBriefings:get("flight:firstFlightDay") == false 
 	end))
 	
 preflightFOProc:addItem(SimpleProcedureItem:new("==== LANDING GEAR panel"))
@@ -1221,11 +1234,17 @@ preflightFOProc:addItem(IndirectProcedureItem:new("STALL WARNING TEST 1","PERFOR
 	function () return get("laminar/B738/push_button/stall_test1") == 1 end,
 	function () 
 		kc_procvar_set("stall1test",true) -- background test
+	end,
+	function ()
+		return activeBriefings:get("flight:firstFlightDay") == false 
 	end))
 preflightFOProc:addItem(IndirectProcedureItem:new("STALL WARNING TEST 2","PERFORM",FlowItem.actorFO,0,"stall_warning_test",
 	function () return get("laminar/B738/push_button/stall_test2") == 1 end,
 	function () 
 		kc_procvar_set("stall2test",true) -- background test
+	end,
+	function ()
+		return activeBriefings:get("flight:firstFlightDay") == false 
 	end))
 preflightFOProc:addItem(SimpleProcedureItem:new("  Wait for 4 minutes AC power if not functioning"))
 
@@ -1244,39 +1263,6 @@ preflightFOProc:addItem(SimpleProcedureItem:new("  Wait for 4 minutes AC power i
 		-- sysEFIS.mtrsPilot:actuate(modeOff)
 		-- sysEFIS.fpvPilot:actuate(modeOff)
 	-- end))
-
-
-
-
-
-
-
-
-
-
-
--- ========== PREFLIGHT PROCEDURE PART 2 (F/O) ===========
-
-
-
--- =======================================================
-
-	
--- differential pressure 0 on th eground
-	
-
--- ========== PREFLIGHT PROCEDURE PART 3 (F/O) ===========
-
--- =======================================================
-
-
-
--- ============== PREFLIGHT PROCEDURE (CAPT) ============
-
-
-
--- =======================================================
-
 
 -- ================= PREFLIGHT CHECKLIST ================= 
 -- OXYGEN..............................TESTED, 100% (BOTH)

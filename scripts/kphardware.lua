@@ -34,9 +34,9 @@ if PLANE_ICAO == "B738" then
 -- elseif PLANE_ICAO == "A320" and PLANE_TAILNUMBER == "A320" then
 	-- kc_acf_icao = "A20N"
 end
-if PLANE_ICAO == "A359" then
-	kh_acf_icao = "A359"
-end
+-- if PLANE_ICAO == "A359" then
+	-- kh_acf_icao = "A359"
+-- end
 if PLANE_ICAO == "C750" and PLANE_TAILNUMBER == "N750XP" then
 	kh_acf_icao = "C750"
 end
@@ -136,6 +136,13 @@ create_command("kp/xsp/systems/baro_mode_tgl",		"Baro inch/mb toggle","sysGenera
 
 create_command("kp/xsp/systems/all_baro_down",		"All baro down","sysGeneral.baroGroup:step(cmdDown)","","")
 create_command("kp/xsp/systems/all_baro_up",		"All baro up","sysGeneral.baroGroup:step(cmdUp)","","")
+
+create_command("kp/xsp/systems/door_l1_toggle",		"Toggle door L1","sysGeneral.doorL1:actuate(modeToggle)","","")
+create_command("kp/xsp/systems/door_l2_toggle",		"Toggle door L2","sysGeneral.doorL2:actuate(modeToggle)","","")
+create_command("kp/xsp/systems/door_r1_toggle",		"Toggle door R2","sysGeneral.doorR1:actuate(modeToggle)","","")
+create_command("kp/xsp/systems/door_r2_toggle",		"Toggle door R2","sysGeneral.doorR2:actuate(modeToggle)","","")
+create_command("kp/xsp/systems/door_cf_toggle",		"Toggle door FWD CARGO","sysGeneral.doorFCargo:actuate(modeToggle)","","")
+create_command("kp/xsp/systems/door_ca_toggle",		"Toggle door AFT CARGO","sysGeneral.doorACargo:actuate(modeToggle)","","")
 
 ----------------- Electric --------------------
 create_command("kp/xsp/electric/bat1_master_on",	"Battery Master 1 On","sysElectric.battery1HwSwitch:actuate(modeOn)","","")
