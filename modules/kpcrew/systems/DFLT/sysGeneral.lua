@@ -54,12 +54,12 @@ sysGeneral.GearSwitch 		= TwoStateCmdSwitch:new("gear","sim/cockpit2/controls/ge
 	"sim/flight_controls/landing_gear_down","sim/flight_controls/landing_gear_up","nocommand")
 
 -- Doors
-sysGeneral.doorL1			= TwoStateToggleSwitch:new("doorl1",drefSlider,0,"sim/operation/slider_01")
-sysGeneral.doorL2			= TwoStateToggleSwitch:new("doorl2",drefSlider,0,"sim/operation/slider_02")
-sysGeneral.doorR1			= TwoStateToggleSwitch:new("doorr1",drefSlider,0,"sim/operation/slider_03")
-sysGeneral.doorR2			= TwoStateToggleSwitch:new("doorr2",drefSlider,0,"sim/operation/slider_04")
-sysGeneral.doorFCargo 		= TwoStateToggleSwitch:new("doorfcargo",drefSlider,0,"sim/operation/slider_05")
-sysGeneral.doorACargo 		= TwoStateToggleSwitch:new("dooracrago",drefSlider,0,"sim/operation/slider_06")
+sysGeneral.doorL1			= TwoStateToggleSwitch:new("doorl1",drefSlider,-1,"sim/operation/slider_01")
+sysGeneral.doorL2			= TwoStateToggleSwitch:new("doorl2",drefSlider,1,"sim/operation/slider_02")
+sysGeneral.doorR1			= TwoStateToggleSwitch:new("doorr1",drefSlider,2,"sim/operation/slider_03")
+sysGeneral.doorR2			= TwoStateToggleSwitch:new("doorr2",drefSlider,3,"sim/operation/slider_04")
+sysGeneral.doorFCargo 		= TwoStateToggleSwitch:new("doorfcargo",drefSlider,4,"sim/operation/slider_05")
+sysGeneral.doorACargo 		= TwoStateToggleSwitch:new("dooracrago",drefSlider,5,"sim/operation/slider_06")
 sysGeneral.doorGroup = SwitchGroup:new("doors")
 sysGeneral.doorGroup:addSwitch(sysGeneral.doorL1)
 sysGeneral.doorGroup:addSwitch(sysGeneral.doorL2)

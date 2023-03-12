@@ -157,12 +157,10 @@ function kc_set_landing_details()
 	activeBriefings:set("approach:vref",get("laminar/B738/FMS/vref"))
 	activeBriefings:set("approach:vapp",get("laminar/B738/FMS/vref")+get("laminar/B738/FMS/approach_wind_corr"))
 	local ldgflaps = get("laminar/B738/FMS/approach_flaps")
-	if ldgflaps == 15 then 
+	if ldgflaps == 30 then
 		activeBriefings:set("approach:flaps",1)
-	elseif ldgflaps == 30 then
-		activeBriefings:set("approach:flaps",2)
 	elseif ldgflaps == 40 then
-		activeBriefings:set("approach:flaps",3)
+		activeBriefings:set("approach:flaps",2)
 	end
 end
 

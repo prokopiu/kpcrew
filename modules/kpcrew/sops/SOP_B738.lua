@@ -129,7 +129,7 @@ electricalPowerUpProc:addItem(SimpleProcedureItem:new("M E L and Technical Logbo
 electricalPowerUpProc:addItem(SimpleProcedureItem:new("== Initial Checks"))
 electricalPowerUpProc:addItem(SimpleProcedureItem:new("==== DC Electric Power"))
 electricalPowerUpProc:addItem(ProcedureItem:new("CIRCUIT BREAKERS (P6 PANEL)","CHECK ALL IN",FlowItem.actorFO,0,true))
-electricalPowerUpProc:addItem(ProcedureItem:new("CIRCUIT BREAKERS (CONTROL STAND,P18 PANEL)","CHECK ALL IN",FlowItem.actorFO,0,true))
+electricalPowerUpProc:addItem(ProcedureItem:new("CIRCUIT BREAKERS (CONTROL,P18 PANEL)","CHECK ALL IN",FlowItem.actorFO,0,true))
 electricalPowerUpProc:addItem(ProcedureItem:new("DC POWER SWITCH","BAT",FlowItem.actorFO,0,
 	function () return sysElectric.dcPowerSwitch:getStatus() == sysElectric.dcPwrBAT end,
 	function () sysElectric.dcPowerSwitch:actuate(sysElectric.dcPwrBAT) end))
@@ -202,7 +202,12 @@ electricalPowerUpProc:addItem(SimpleProcedureItem:new("==== Activate APU",
 	function () return activePrefSet:get("aircraft:powerup_apu") == false end))
 electricalPowerUpProc:addItem(ProcedureItem:new("FUEL PUMPS","ALL OFF",FlowItem.actorFO,0,
 	function () return sysFuel.allFuelPumpGroup:getStatus() == 0 end,
-	function () kc_macro_fuelpumps_stand() end))
+	function () kc_macro_fuelpumps_stand() end,
+	function () return activePrefSet:get("aircraft:powerup_apu") == true end))
+electricalPowerUpProc:addItem(ProcedureItem:new("FUEL PUMPS","OFF/LEFT FWD ON",FlowItem.actorFO,0,
+	function () return sysFuel.allFuelPumpGroup:getStatus() == 1 end,
+	function () kc_macro_fuelpumps_stand() end,
+	function () return activePrefSet:get("aircraft:powerup_apu") == false end))
 electricalPowerUpProc:addItem(ProcedureItem:new("  OVHT DET SWITCH","NORMAL",FlowItem.actorFO,0,true,
 	function () sysElectric.gpuSwitch:step(cmdUp) end,
 	function () 
@@ -407,8 +412,6 @@ prelPreflightProc:addItem(IndirectProcedureItem:new("MACH OVERSPEED TEST 2","PER
 	function () 
 		kc_procvar_set("mach2test",true) -- background test
 	end))
-
-
 
 -- ==================== CDU Preflight ====================
 -- ==== INITIAL DATA (CPT)                              
@@ -2402,7 +2405,7 @@ afterLandingProc:addItem(ProcedureItem:new("#spell|APU# ","START",FlowItem.actor
 	function () return sysElectric.apuRunningAnc:getStatus() == modeOn end,
 	function () 
 		kc_macro_b738_lowerdu_sys()
-		kc_procvar_set("apustart")
+		kc_procvar_set("apustart",true)
 	end,
 	function () return activeBriefings:get("approach:powerAtGate") == 1 end))
 afterLandingProc:addItem(SimpleProcedureItem:new("  Hold APU switch in START position for 3-4 seconds.",
@@ -2477,11 +2480,11 @@ shutdownProc:addItem(ProcedureItem:new("EXTERNAL LIGHTS","SET",FlowItem.actorCPT
 	function () kc_macro_ext_lights_stand() activeBckVars:set("general:timesON",kc_dispTimeHHMM(get("sim/time/zulu_time_sec"))) end))
 shutdownProc:addItem(ProcedureItem:new("FUEL PUMPS","APU 1 PUMP ON, REST OFF",FlowItem.actorCPT,0,
 	function () return sysFuel.allFuelPumpGroup:getStatus() == 1 end,
-	function () kc_macro_fuelpumps_stand() end,
+	function () kc_macro_fuelpumps_shutdown() end,
 	function () return activeBriefings:get("approach:powerAtGate") == 1 end))
 shutdownProc:addItem(ProcedureItem:new("FUEL PUMPS","ALL OFF",FlowItem.actorFO,0,
 	function () return sysFuel.allFuelPumpGroup:getStatus() == 0 end,
-	function () kc_macro_fuelpumps_stand() end,
+	function () kc_macro_fuelpumps_shutdown() end,
 	function () return activeBriefings:get("approach:powerAtGate") == 2 end))
 shutdownProc:addItem(ProcedureItem:new("CAB/UTIL POWER SWITCH","ON",FlowItem.actorCPT,0,
 	function () return sysElectric.cabUtilPwr:getStatus() == modeOn end,
@@ -2553,9 +2556,14 @@ shutdownProc:addItem(ProcedureItem:new("MCP","RESET",FlowItem.actorFO,0,
 
 local shutdownChkl = Checklist:new("SHUTDOWN CHECKLIST","","shutdown checklist completed")
 shutdownChkl:setFlightPhase(17)
-shutdownChkl:addItem(ChecklistItem:new("FUEL PUMPS","OFF",FlowItem.actorFO,0,
+shutdownChkl:addItem(ChecklistItem:new("FUEL PUMPS","APU 1 PUMP ON, REST OFF",FlowItem.actorFO,0,
+	function () return sysFuel.allFuelPumpGroup:getStatus() == 1 end,
+	function () kc_macro_fuelpumps_shutdown() end,
+	function () return activeBriefings:get("approach:powerAtGate") == 1 end))
+shutdownChkl:addItem(ChecklistItem:new("FUEL PUMPS","ALL OFF",FlowItem.actorFO,0,
 	function () return sysFuel.allFuelPumpGroup:getStatus() == 0 end,
-	function () kc_macro_fuelpumps_shutdown() end))
+	function () kc_macro_fuelpumps_shutdown() end,
+	function () return activeBriefings:get("approach:powerAtGate") == 2 end))
 shutdownChkl:addItem(ChecklistItem:new("PROBE HEAT","OFF",FlowItem.actorFO,0,
 	function () return sysAice.probeHeatGroup:getStatus() == 0 end,
 	function () sysAice.probeHeatGroup:actuate(0) end))
@@ -2715,7 +2723,7 @@ backgroundFlow:addItem(BackgroundProcedureItem:new("","","SYS",0,
 -- activeSOP:addProcedure(testProc)
 activeSOP:addProcedure(electricalPowerUpProc)
 activeSOP:addProcedure(prelPreflightProc)
-activeSOP:addProcedure(cduPreflightProc)
+-- activeSOP:addProcedure(cduPreflightProc)
 activeSOP:addProcedure(preflightFOProc)
 activeSOP:addChecklist(preflightChkl)
 activeSOP:addProcedure(beforeStartProc)

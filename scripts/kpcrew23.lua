@@ -10,7 +10,7 @@ require "kpcrew.systems.activities"
 local Flow = require "kpcrew.Flow"
 local FlowItem = require "kpcrew.FlowItem"
 
-kc_VERSION = "2.3-alpha6"
+kc_VERSION = "2.3-alpha7"
 kc_simversion = get("sim/version/xplane_internal_version")
 
 logMsg ( "FWL: ** Starting KPCrew version " .. kc_VERSION .." **" )
@@ -213,7 +213,7 @@ kc_ctrl_wnd_state = 0
 function kc_master_button()
 	if getActivePrefs():get("general:assistance") == 1 and kc_ctrl_wnd_state == 0 then
 		kc_ctrl_wnd_state = 1
-		local xpos = kc_scrn_width - 750
+		local xpos = kc_scrn_width - 755
 		float_wnd_set_geometry(kc_ctrl_wnd, xpos, 46, kc_scrn_width, 1)
 	end
 	if kc_mstr_button_state == kc_mstr_state_new_flow then
@@ -272,7 +272,7 @@ end
 function kc_init_ctrl_window()
 	if kc_ctrl_wnd == 0 or kc_ctrl_wnd == nil then	
 		kc_ctrl_wnd = float_wnd_create(25, 45, 2, true)
-		local xpos = kc_scrn_width - 750
+		local xpos = kc_scrn_width - 755
 		if kc_ctrl_wnd_state == 0 then
 			xpos = kc_scrn_width - 25
 		end
@@ -332,7 +332,7 @@ function kc_ctrl_builder()
 	if get("sim/graphics/view/window_width") ~= kc_scrn_width or get("sim/graphics/view/window_height") ~= kc_scrn_height then
 		kc_scrn_width = get("sim/graphics/view/window_width")
 		kc_scrn_height = get("sim/graphics/view/window_height")
-		local xpos = kc_scrn_width - 750
+		local xpos = kc_scrn_width - 755
 		if kc_ctrl_wnd_state == 0 then
 			xpos = kc_scrn_width - 25
 		end
@@ -347,7 +347,7 @@ function kc_ctrl_builder()
 		imgui.Button("<", 15, 25)
 		if imgui.IsItemActive() then
 			kc_ctrl_wnd_state = 1
-			local xpos = kc_scrn_width - 750
+			local xpos = kc_scrn_width - 755
 			float_wnd_set_geometry(kc_ctrl_wnd, xpos, 46, kc_scrn_width, 1)
 		end
 		imgui.SameLine()
@@ -599,7 +599,7 @@ create_command("kp/crew/next", "KPCrew Nextbutton","kc_next_button()","","")
 create_command("kp/crew/prev", "KPCrew Prevbutton","kc_prev_button()","","")
 create_command("kp/crew/flowwindow", "KPCrew Toggle Flow Window","kc_wnd_flow_action=1","","")
 create_command("kp/crew/sopwindow", "KPCrew Toggle SOP Window","kc_wnd_sop_action=1","","")
-create_command("kp/crew/openmaster", "KPCrew Open Master Window","kc_ctrl_wnd_state = 1 kc_ctrl_wnd_off=false local xpos = kc_scrn_width - 750 float_wnd_set_geometry(kc_ctrl_wnd, xpos, 46, kc_scrn_width, 1)","","")
+create_command("kp/crew/openmaster", "KPCrew Open Master Window","kc_ctrl_wnd_state = 1 kc_ctrl_wnd_off=false local xpos = kc_scrn_width - 755 float_wnd_set_geometry(kc_ctrl_wnd, xpos, 46, kc_scrn_width, 1)","","")
 create_command("kp/crew/briefwindow", "KPCrew Toggle Briefing Window","kc_wnd_brief_action=1","","")
 
-add_macro("KPCrew Toggle Control Window", "kc_ctrl_wnd_state = 1 kc_ctrl_wnd_off=false local xpos = kc_scrn_width - 750 float_wnd_set_geometry(kc_ctrl_wnd, xpos, 46, kc_scrn_width, 1)")
+add_macro("KPCrew Toggle Control Window", "kc_ctrl_wnd_state = 1 kc_ctrl_wnd_off=false local xpos = kc_scrn_width - 755 float_wnd_set_geometry(kc_ctrl_wnd, xpos, 46, kc_scrn_width, 1)")

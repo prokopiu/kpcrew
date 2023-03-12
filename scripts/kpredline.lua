@@ -39,7 +39,7 @@ function draw_redlines()
 	  
 	  local latitude = get("sim/flightmodel/position/latitude")
 	  local longitude = get("sim/flightmodel/position/longitude")
-	  local pressalt = get("sim/flightmodel2/position/pressure_altitude")
+	  local pressalt = get("sim/cockpit2/autopilot/altitude_readout_preselector")
 	  local hdg = get("sim/flightmodel/position/magpsi")
 	  local ias = get("sim/flightmodel/position/indicated_airspeed")
 	  local gs = get("sim/flightmodel/position/groundspeed")

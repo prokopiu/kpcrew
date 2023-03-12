@@ -6,7 +6,7 @@
 require "kpcrew.genutils"
 require "kpcrew.systems.activities"
 
-local KPH_VERSION = "2.3-alpha6"
+local KPH_VERSION = "2.3-alpha7"
 
 -- disable windows by changing from true to false
 local show_mcp_panel = false

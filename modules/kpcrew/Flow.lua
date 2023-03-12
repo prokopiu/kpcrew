@@ -336,7 +336,7 @@ end
 
 -- get calculated winow width
 function kcFlow:getWndWidth()
-	return self:getLineLength() * 7 + 43
+	return self:getLineLength() * 7 + 50
 end
 
 -- get calculated window x position

@@ -298,7 +298,7 @@ end
 
 -- get the calculated height for the window
 function kcSOP:getWndHeight()
-	return self:getNumberOfFlows() * 23 + 12 + 25
+	return self:getNumberOfFlows() * 23 + 12 + 27
 end
 
 -- get the max width of buttons in the list based on labels
@@ -316,7 +316,7 @@ end
 
 -- get the calculated width for the checklist window
 function kcSOP:getWndWidth()
-	return self:getBtnWidth() + 15
+	return self:getBtnWidth() + 20
 end
 
 -- get the calculated X position based on window width

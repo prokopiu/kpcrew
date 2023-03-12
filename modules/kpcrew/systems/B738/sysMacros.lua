@@ -491,7 +491,7 @@ function kc_macro_fuelpumps_stand()
 	sysFuel.allFuelPumpGroup:actuate(0)
 	sysFuel.crossFeed:actuate(0)
 	if activePrefSet:get("aircraft:powerup_apu") == true then
-		sysFuel.fuelPumpLeftAft:actuate(1)
+		sysFuel.fuelPumpLeftFwd:actuate(1)
 	end
 end
 
@@ -499,7 +499,7 @@ function kc_macro_fuelpumps_shutdown()
 	sysFuel.allFuelPumpGroup:actuate(0)
 	sysFuel.crossFeed:actuate(0)
 	if activeBriefings:get("approach:powerAtGate") == 2 then
-		sysFuel.fuelPumpLeftAft:actuate(1)
+		sysFuel.fuelPumpLeftFwd:actuate(1)
 	end
 end
 
