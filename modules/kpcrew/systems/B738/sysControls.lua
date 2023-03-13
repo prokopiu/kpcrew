@@ -9,8 +9,8 @@ local sysControls = {
 	trimLeft 	= 1,
 	trimRight 	= 0,
 	
-	flapsUp 	= 1,
-	flapsDown 	= 0,
+	flapsUp 	= 0,
+	flapsDown 	= 1,
 	
 	trimUp 		= 0,
 	trimDown 	= 1,
@@ -31,16 +31,47 @@ local InopSwitch 			= require "kpcrew.systems.InopSwitch"
 --------- Switches
 
 -- Flaps 
-sysControls.flapsSwitch 	= MultiStateCmdSwitch:new("flaps","laminar/B738/flt_ctrls/flap_lever",0,
-	"sim/flight_controls/flaps_down","sim/flight_controls/flaps_up",0,1,false)
+sysControls.flapsSwitch 	= TwoStateCustomSwitch:new("flaps","laminar/B738/flt_ctrls/flap_lever",0,
+	function () 
+		command_once("sim/flight_controls/flaps_down")
+	end,
+	function () 
+		command_once("sim/flight_controls/flaps_up")
+	end,
+	function () 
+		-- do nothing
+	end
+)
 
 -- Pitch Trim
 sysControls.pitchTrimSwitch = TwoStateCustomSwitch:new("pitchtrim","sim/cockpit2/controls/elevator_trim",0,
 	function () 
-		command_once("laminar/B738/flight_controls/pitch_trim_down")
+		command_once("sim/flight_controls/pitch_trim_down")
 	end,
 	function () 
-		command_once("laminar/B738/flight_controls/pitch_trim_up")
+		command_once("sim/flight_controls/pitch_trim_up")
+	end,
+	function () 
+		return
+	end
+)
+sysControls.pitchTrimDownRepeat = TwoStateCustomSwitch:new("pitchtrim","sim/cockpit2/controls/elevator_trim",0,
+	function () 
+		command_begin("sim/flight_controls/pitch_trim_down")
+	end,
+	function () 
+		command_end("sim/flight_controls/pitch_trim_down")
+	end,
+	function () 
+		return
+	end
+)
+sysControls.pitchTrimUpRepeat = TwoStateCustomSwitch:new("pitchtrim","sim/cockpit2/controls/elevator_trim",0,
+	function () 
+		command_begin("sim/flight_controls/pitch_trim_up")
+	end,
+	function () 
+		command_end("sim/flight_controls/pitch_trim_up")
 	end,
 	function () 
 		return

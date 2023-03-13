@@ -1,28 +1,28 @@
 -- Hardware specific modules - Honeycomb Bravo Throttle
 
-local sysLights 			= require("kpcrew.systems." .. kh_acf_icao .. ".sysLights")
-local sysGeneral 			= require("kpcrew.systems." .. kh_acf_icao .. ".sysGeneral")	
-local sysControls 			= require("kpcrew.systems." .. kh_acf_icao .. ".sysControls")	
-local sysEngines 			= require("kpcrew.systems." .. kh_acf_icao .. ".sysEngines")	
-local sysElectric 			= require("kpcrew.systems." .. kh_acf_icao .. ".sysElectric")	
-local sysHydraulic 			= require("kpcrew.systems." .. kh_acf_icao .. ".sysHydraulic")	
-local sysFuel 				= require("kpcrew.systems." .. kh_acf_icao .. ".sysFuel")	
-local sysAir 				= require("kpcrew.systems." .. kh_acf_icao .. ".sysAir")	
-local sysAice 				= require("kpcrew.systems." .. kh_acf_icao .. ".sysAice")	
-local sysMCP 				= require("kpcrew.systems." .. kh_acf_icao .. ".sysMCP")	
-local sysEFIS 				= require("kpcrew.systems." .. kh_acf_icao .. ".sysEFIS")	
-local sysFMC 				= require("kpcrew.systems." .. kh_acf_icao .. ".sysFMC")	
-local sysRadios				= require("kpcrew.systems." .. kh_acf_icao .. ".sysRadios")	
+sysLights 				= require("kpcrew.systems." .. kh_acf_icao .. ".sysLights")
+sysGeneral 				= require("kpcrew.systems." .. kh_acf_icao .. ".sysGeneral")	
+sysControls 			= require("kpcrew.systems." .. kh_acf_icao .. ".sysControls")	
+sysEngines 				= require("kpcrew.systems." .. kh_acf_icao .. ".sysEngines")	
+sysElectric 			= require("kpcrew.systems." .. kh_acf_icao .. ".sysElectric")	
+sysHydraulic 			= require("kpcrew.systems." .. kh_acf_icao .. ".sysHydraulic")	
+sysFuel 				= require("kpcrew.systems." .. kh_acf_icao .. ".sysFuel")	
+sysAir 					= require("kpcrew.systems." .. kh_acf_icao .. ".sysAir")	
+sysAice 				= require("kpcrew.systems." .. kh_acf_icao .. ".sysAice")	
+sysMCP 					= require("kpcrew.systems." .. kh_acf_icao .. ".sysMCP")	
+sysEFIS 				= require("kpcrew.systems." .. kh_acf_icao .. ".sysEFIS")	
+sysFMC 					= require("kpcrew.systems." .. kh_acf_icao .. ".sysFMC")	
+sysRadios				= require("kpcrew.systems." .. kh_acf_icao .. ".sysRadios")	
 
-xsp_bravo_mode = 1
-xsp_bravo_layer = 0
-xsp_fine_coarse = 1
+xsp_bravo_mode 			= 1
+xsp_bravo_layer 		= 0
+xsp_fine_coarse 		= 1
 
-bravo_mode_alt = 1
-bravo_mode_vs = 2
-bravo_mode_hdg = 3
-bravo_mode_crs = 4
-bravo_mode_ias = 5
+bravo_mode_alt 			= 1
+bravo_mode_vs 			= 2
+bravo_mode_hdg 			= 3
+bravo_mode_crs 			= 4
+bravo_mode_ias 			= 5
 
 
 -- generic up function depending on mode and layer
@@ -165,8 +165,11 @@ xsp_low_volts[0] = 0
 xsp_anc_hyd = create_dataref_table("kp/xsp/bravo/anc_hyd", "Int")
 xsp_anc_hyd[0] = 0
 
-xsp_fuel_pumps = create_dataref_table("kp/xsp/bravo/anc_fuel", "Int")
-xsp_fuel_pumps[0] = 0
+xsp_fuel_press = create_dataref_table("kp/xsp/bravo/anc_fuel_low", "Int")
+xsp_fuel_press[0] = 0
+
+xsp_fuel_aux_pump = create_dataref_table("kp/xsp/bravo/anc_fuel_aux_pump", "Int")
+xsp_fuel_aux_pump[0] = 0
 
 xsp_vacuum = create_dataref_table("kp/xsp/bravo/vacuum", "Int")
 xsp_vacuum[0] = 0
@@ -243,7 +246,10 @@ function xsp_set_bravo_lights()
 	xsp_anc_hyd[0] = sysHydraulic.hydraulicLowAnc:getStatus()
 	
 	-- LOW FUEL PRESSURE annunciator
-	xsp_fuel_pumps[0] = sysFuel.fuelLowAnc:getStatus()
+	xsp_fuel_press[0] = sysFuel.fuelLowAnc:getStatus()
+	
+	-- AUX FUEL PUMP working annunciators
+	xsp_fuel_aux_pump[0] = sysFuel.auxFuelPumpsAnc:getStatus()
 	
 	-- VACUUM annunciator
 	xsp_vacuum[0] = sysAir.vacuumAnc:getStatus()

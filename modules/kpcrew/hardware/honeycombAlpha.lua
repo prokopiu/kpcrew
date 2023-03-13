@@ -50,7 +50,7 @@ create_command("kp/xsp/alpha/STROBE_on",	"Alpha STROBE On", "sysLights.strobesSw
 create_command("kp/xsp/alpha/STROBE_off",	"Alpha STROBE Off", "sysLights.strobesSwitch:actuate(modeOff)", "", "")
 
 -- MAGNETO OFF
-create_command("kp/xsp/alpha/MAGNETO_OFF",	"Alpha MAGNETO OFF", "sysEngines.magnetos:adjustValue(0,0,3)", "", "")
+create_command("kp/xsp/alpha/MAGNETO_OFF",	"Alpha MAGNETO OFF", "sysEngines.magnetoOff:actuate(1)", "", "")
 -- R
 create_command("kp/xsp/alpha/MAGNETO_R",	"Alpha MAGNETO R", "sysEngines.magnetos:adjustValue(1,0,3)", "", "")
 -- L

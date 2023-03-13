@@ -121,7 +121,7 @@ function kc_macro_state_turnaround()
 	sysGeneral.vcrSwitch:actuate(modeOn)
 	sysEngines.eecSwitchGroup:actuate(modeOn)
 	sysEngines.eecGuardGroup:actuate(modeOff)
-	sysGeneral.irsUnitGroup:actuate(sysGeneral.irsUnitOFF)
+	sysGeneral.irsUnitGroup:actuate(sysGeneral.irsUnitNAV)
 
 	if activePrefSet:get("aircraft:powerup_apu") == false then
 		kc_macro_gpu_connect()
@@ -491,7 +491,7 @@ function kc_macro_fuelpumps_stand()
 	sysFuel.allFuelPumpGroup:actuate(0)
 	sysFuel.crossFeed:actuate(0)
 	if activePrefSet:get("aircraft:powerup_apu") == true then
-		sysFuel.fuelPumpLeftAft:actuate(1)
+		sysFuel.fuelPumpLeftFwd:actuate(1)
 	end
 end
 
@@ -499,7 +499,7 @@ function kc_macro_fuelpumps_shutdown()
 	sysFuel.allFuelPumpGroup:actuate(0)
 	sysFuel.crossFeed:actuate(0)
 	if activeBriefings:get("approach:powerAtGate") == 2 then
-		sysFuel.fuelPumpLeftAft:actuate(1)
+		sysFuel.fuelPumpLeftFwd:actuate(1)
 	end
 end
 
@@ -944,6 +944,26 @@ function kc_bck_b738_cargofire_test(trigger)
 	else
 		if kc_procvar_get(delayvar) <= 0 then
 			command_end("laminar/B738/push_button/cargo_fire_test_push")  
+			kc_procvar_set(trigger,false)
+			kc_procvar_set(delayvar,-1)
+		else
+			kc_procvar_set(delayvar,kc_procvar_get(delayvar)-1)
+		end
+	end
+end
+
+-- B738 TCAS TEST
+function kc_bck_b738_tcas_test(trigger)
+	local delayvar = trigger .. "delay"
+	if kc_procvar_exists(delayvar) == false then
+		kc_procvar_initialize_count(delayvar,-1)
+	end
+	if kc_procvar_get(delayvar) == -1 then
+		kc_procvar_set(delayvar,0)
+		command_begin("laminar/B738/knob/transponder_mode_dn")
+	else
+		if kc_procvar_get(delayvar) <= 0 then
+			command_end("laminar/B738/knob/transponder_mode_dn")  
 			kc_procvar_set(trigger,false)
 			kc_procvar_set(delayvar,-1)
 		else

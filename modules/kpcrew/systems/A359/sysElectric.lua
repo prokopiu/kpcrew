@@ -18,10 +18,23 @@ local MultiStateCmdSwitch 	= require "kpcrew.systems.MultiStateCmdSwitch"
 local InopSwitch 			= require "kpcrew.systems.InopSwitch"
 local KeepPressedSwitchCmd	= require "kpcrew.systems.KeepPressedSwitchCmd"
 
---------- Switches
+--------- Switch datarefs common
+
+local drefBatterySwitch		= "1-sim/86/button"
+
+--------- Annunciator datarefs common
+
+
+--------- Switch commands common
+
+local cmdBatteryOff			= ""
+local cmdBatteryOn			= ""
+local cmdBatteryTgl			= ""
+
+--------- Actuator definitions
 
 -- ** BATTERY Switch
-sysElectric.batterySwitch 	= TwoStateDrefSwitch:new("battery1","1-sim/86/button",0)
+sysElectric.batterySwitch 	= TwoStateDrefSwitch:new("battery1",drefBatterySwitch,0)
 sysElectric.battery2Switch 	= TwoStateDrefSwitch:new("battery2","1-sim/89/button",0)
 sysElectric.batemerg1		= TwoStateDrefSwitch:new("battery2","1-sim/87/button",0)
 sysElectric.batemerg2		= TwoStateDrefSwitch:new("battery2","1-sim/88/button",0)

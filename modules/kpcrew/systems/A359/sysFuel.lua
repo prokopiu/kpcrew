@@ -16,10 +16,30 @@ local CustomAnnunciator 	= require "kpcrew.systems.CustomAnnunciator"
 local TwoStateToggleSwitch	= require "kpcrew.systems.TwoStateToggleSwitch"
 local MultiStateCmdSwitch 	= require "kpcrew.systems.MultiStateCmdSwitch"
 local InopSwitch 			= require "kpcrew.systems.InopSwitch"
+local KeepPressedSwitchCmd	= require "kpcrew.systems.KeepPressedSwitchCmd"
+
+--------- Switch datarefs common
+
+-- local drefMainFuelPump1		= "1-sim/68/button"						.=.1.and.1-sim/81/button.=.1
+-- local dref	MAIN FUEL PUMPS................................ON		.1-sim/68/button.=.1.and.1-sim/81/button.=.1
+-- local dref	STBY FUEL PUMPS..............................AUTO		.1-sim/69/button.=.1.and.1-sim/82/button.=.1
+-- local dref	1 & 2 FUEL PUMPS...............................ON		.1-sim/70/button.=.1.and.1-sim/80/button.=.1
+-- local dref	FUEL PUMP 1...................................OFF		.1-sim/68/button.=.0.and.1-sim/69/button.=.0
+-- local dref	FUEL PUMP 2...................................OFF		.1-sim/81/button.=.0.and.1-sim/82/button.=.0
+-- local dref	MAIN FUEL PUMPS...............................OFF		.1-sim/68/button.=.0.and.1-sim/81/button.=.0
+-- local dref	STBY FUEL PUMPS...............................OFF		.1-sim/69/button.=.0.and.1-sim/82/button.=.0
+-- local dref	1 & 2 FUEL PUMPS..............................OFF		.1-sim/70/button.=.0.and.1-sim/80/button.=.0
+-- local dref	CTR TK FEED PB................................OFF		.1-sim/84/button.=.0
+-- local dref	TRANSFER FEEDs................................OFF		.1-sim/83/button.=.0.and.1-sim/85/button.=.0
+
+--------- Annunciator datarefs common
 
 local drefFuelPressLow 		= "sim/cockpit2/annunciators/fuel_pressure_low"
 
----------- Switches
+--------- Switch commands common
+
+
+--------- Actuator definitions
 
 -- Fuel pumps
 sysFuel.fuelPumpLeftAft 	= TwoStateCmdSwitch:new ("fuelpumpleftaft","sim/cockpit2/fuel/fuel_tank_pump_on",1,

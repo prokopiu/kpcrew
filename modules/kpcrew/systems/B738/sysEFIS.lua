@@ -60,7 +60,7 @@ sysEFIS.ctrCopilot 			= TwoStateToggleSwitch:new("ctrcopilot","laminar/B738/EFIS
 -- TFC
 sysEFIS.tfcPilot 			= TwoStateToggleSwitch:new("tfcpilot","laminar/B738/EFIS/tcas_on",0,
 	"laminar/B738/EFIS_control/capt/push_button/tfc_press")
-sysEFIS.tfcCopilot 			= TwoStateToggleSwitch:new("tfccopilot","laminar/B738/EFIS/tcas_off_show_fo",0,
+sysEFIS.tfcCopilot 			= TwoStateToggleSwitch:new("tfccopilot","laminar/B738/EFIS/tcas_on_fo",0,
 	"laminar/B738/EFIS_control/fo/push_button/tfc_press")
 
 -- WX 

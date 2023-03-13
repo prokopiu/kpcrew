@@ -151,6 +151,9 @@ sysMCP.altSelector 			= TwoStateCustomSwitch:new("alt","laminar/B738/autopilot/m
 	end,
 	function () 
 		return
+	end,
+	function () 
+		return get("laminar/B738/autopilot/mcp_alt_dial")
 	end
 )
 -- ALT INTV

@@ -25,6 +25,7 @@ local ProcedureItem 		= require "kpcrew.procedures.ProcedureItem"
 local SimpleProcedureItem 	= require "kpcrew.procedures.SimpleProcedureItem"
 local IndirectProcedureItem = require "kpcrew.procedures.IndirectProcedureItem"
 local BackgroundProcedureItem = require "kpcrew.procedures.BackgroundProcedureItem"
+local HoldProcedureItem 	= require "kpcrew.procedures.HoldProcedureItem"
 
 sysLights 					= require("kpcrew.systems." .. kc_acf_icao .. ".sysLights")
 sysGeneral 					= require("kpcrew.systems." .. kc_acf_icao .. ".sysGeneral")	
@@ -52,6 +53,15 @@ kcSopFlightPhase = { [1] = "Cold & Dark", 	[2] = "Prel Preflight", [3] = "Prefli
 -- Set up SOP =========================================================================
 
 activeSOP = SOP:new("Default Aircraft SOP")
+
+local testProc = Procedure:new("TEST","","")
+testProc:setFlightPhase(1)
+testProc:addItem(ProcedureItem:new("BATTERY SWITCH","ON",FlowItem.actorFO,0,true,
+	function () 
+		command_end("sim/ignition/engage_starter_1")
+		command_end("sim/starters/engage_start_run_1")
+		command_end("sim/starters/engage_starter_1")
+	end))
 
 	
 -- ============ Electrical Power Up Procedure ============

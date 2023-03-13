@@ -284,7 +284,7 @@ function kcSOP:render()
 			end
 			imgui.PushStyleColor(imgui.constant.Col.Button, color)
 			imgui.PushStyleColor(imgui.constant.Col.ButtonActive, 0xFF001F9F)
-			imgui.PushStyleColor(imgui.constant.Col.ButtonHovered, 0xFF001F9F)
+			imgui.PushStyleColor(imgui.constant.Col.ButtonHovered, 0xFF004F9F)
 			if imgui.Button(flow:getName() .. " [" .. self:getPhaseString(flow:getFlightPhase()) .. "]", self:getBtnWidth(), 18) then
 				self:setActiveFlowIndex(kc_indexOf(flows,flow))
 			end
@@ -298,7 +298,7 @@ end
 
 -- get the calculated height for the window
 function kcSOP:getWndHeight()
-	return self:getNumberOfFlows() * 23 + 12 + 25
+	return self:getNumberOfFlows() * 23 + 12 + 27
 end
 
 -- get the max width of buttons in the list based on labels
@@ -316,7 +316,7 @@ end
 
 -- get the calculated width for the checklist window
 function kcSOP:getWndWidth()
-	return self:getBtnWidth() + 15
+	return self:getBtnWidth() + 20
 end
 
 -- get the calculated X position based on window width

@@ -128,10 +128,11 @@ end
 -- set payload (does not work in all addons and sim versions)
 function kc_set_payload()
 	-- only XP11
-	if activeBckVars:get("general:simversion") < 12000 then
+	-- if activeBckVars:get("general:simversion") < 12000 then
 		local payload = activeBriefings:get("flight:toweight")
 		set("sim/flightmodel/weight/m_fixed", payload)
-	end
+	-- end
+	set("sim/aircraft/weight/acf_m_fuel_tot",20000)
 	local fgoal = activeBriefings:get("flight:takeoffFuel")
 	set("sim/flightmodel/weight/m_fuel1",math.min(kc_MFL1,fgoal/2))
 	set("sim/flightmodel/weight/m_fuel3",math.min(kc_MFL3,fgoal/2))
@@ -156,12 +157,10 @@ function kc_set_landing_details()
 	activeBriefings:set("approach:vref",get("laminar/B738/FMS/vref"))
 	activeBriefings:set("approach:vapp",get("laminar/B738/FMS/vref")+get("laminar/B738/FMS/approach_wind_corr"))
 	local ldgflaps = get("laminar/B738/FMS/approach_flaps")
-	if ldgflaps == 15 then 
+	if ldgflaps == 30 then
 		activeBriefings:set("approach:flaps",1)
-	elseif ldgflaps == 30 then
-		activeBriefings:set("approach:flaps",2)
 	elseif ldgflaps == 40 then
-		activeBriefings:set("approach:flaps",3)
+		activeBriefings:set("approach:flaps",2)
 	end
 end
 

@@ -52,6 +52,13 @@ sysElectric.batterySwitch 	= TwoStateCmdSwitch:new("batter1","laminar/B738/elect
 sysElectric.batteryCover 	= TwoStateToggleSwitch:new("batt1cvr","laminar/B738/button_switch/cover_position",2,
 	"laminar/B738/button_switch_cover02")
 
+-- ** HARDWARE BATTERY Switch
+sysElectric.battery1HwSwitch 	= InopSwitch:new("battery1")
+sysElectric.battery2HwSwitch 	= InopSwitch:new("battery2")
+sysElectric.batteryHwGroup 	= SwitchGroup:new("battery hardware")
+sysElectric.batteryHwGroup:addSwitch(battery1HwSwitch)
+sysElectric.batteryHwGroup:addSwitch(battery2HwSwitch)
+
 -- Cabin Util Power Boeing
 sysElectric.cabUtilPwr 		= TwoStateToggleSwitch:new("cabutil","laminar/B738/toggle_switch/cab_util_pos",0,
 	"laminar/B738/autopilot/cab_util_toggle")
@@ -83,6 +90,13 @@ sysElectric.genDriveSwitches = SwitchGroup:new("genDriveSwitches")
 sysElectric.genDriveSwitches:addSwitch(sysElectric.genDrive1Switch)
 sysElectric.genDriveSwitches:addSwitch(sysElectric.genDrive2Switch)
 
+-- ** ALTERNATOR Switches to help when aircraft do not work with the switches
+sysElectric.alternator1Switch 		= InopSwitch:new("alt1")
+sysElectric.alternator2Switch 		= InopSwitch:new("alt2")
+sysElectric.alternatorSwitchGroup 	= SwitchGroup:new("altswitches")
+sysElectric.alternatorSwitchGroup:addSwitch(sysElectric.alternator1Switch)
+sysElectric.alternatorSwitchGroup:addSwitch(sysElectric.alternator2Switch)
+
 sysElectric.genDrive1Cover 	= TwoStateToggleSwitch:new("drive1cvr","laminar/B738/button_switch/cover_position",4,
 	"laminar/B738/button_switch_cover04")
 sysElectric.genDrive2Cover 	= TwoStateToggleSwitch:new("drive2cvr","laminar/B738/button_switch/cover_position",5,
@@ -110,8 +124,12 @@ sysElectric.genSwitchGroup:addSwitch(sysElectric.gen2Switch)
 sysElectric.apuStartSwitch 	= MultiStateCmdSwitch:new("apu","laminar/B738/spring_toggle_switch/APU_start_pos",0,
 	"laminar/B738/spring_toggle_switch/APU_start_pos_dn","laminar/B738/spring_toggle_switch/APU_start_pos_up",-1,1,true)
 
--- Avionics Bus
-sysElectric.avionicsBus		= InopSwitch:new("aviobus")
+-- ** Avionics Buses
+sysElectric.avionics1Bus		= InopSwitch:new("aviobus1")
+sysElectric.avionics2Bus		= InopSwitch:new("aviobus2")
+sysElectric.avionicsSwitchGroup 	= SwitchGroup:new("altswitches")
+sysElectric.avionicsSwitchGroup:addSwitch(sysElectric.avionics1Bus)
+sysElectric.avionicsSwitchGroup:addSwitch(sysElectric.avionics2Bus)
 
 -- ======== Annunciators
 

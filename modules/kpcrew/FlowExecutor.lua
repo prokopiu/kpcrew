@@ -113,7 +113,7 @@ function kcFlowExecutor:execute()
 	elseif flowState == Flow.RUN then
 	
 		-- execute the flow step by step
-		logMsg("Step: [" .. step:getClassName() .. "] State: " .. step.states[step:getState()+1] .. " \"" .. step:getChallengeText() .. "\"")
+		-- logMsg("Step: [" .. step:getClassName() .. "] State: " .. step.states[step:getState()+1] .. " \"" .. step:getChallengeText() .. "\"")
 
 		-- initial state
 		if step:getState() == FlowItem.INIT then
@@ -123,8 +123,11 @@ function kcFlowExecutor:execute()
 
 			if self.flow:getClassName() == "Checklist" then
 				-- calculate delay for challenge spoken text
+				local _,n = string.gsub(step:getChallengeText(),"%S+","")
+				if step:getWaitTime() > 0 then
+					n = step:getWaitTime() * 3
+				end
 				if self.nextStepTime == 0 then
-					local _,n = string.gsub(step:getChallengeText(),"%S+","")
 					self.nextStepTime = kc_getPcTime() + n/3
 					step:setState(FlowItem.PAUSE)
 				end
@@ -150,7 +153,7 @@ function kcFlowExecutor:execute()
 			end
 
 			-- calculate wait time against PC time
-			if step:getWaitTime() > 0 then 
+			if step:getWaitTime() > 0 and self.flow:getClassName() ~= "Checklist" then 
 				if self.nextStepTime == 0 then
 					self.nextStepTime = kc_getPcTime() + step:getWaitTime()
 					step:setState(FlowItem.PAUSE)

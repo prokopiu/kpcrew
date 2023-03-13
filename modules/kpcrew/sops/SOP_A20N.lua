@@ -47,7 +47,7 @@ kcSopFlightPhase = { [1] = "Cold & Dark", 	[2] = "Prel Cockpit Prep", [3] = "Coc
 
 -- Set up SOP =========================================================================
 
-activeSOP = SOP:new("JarDesign A20N SOP")
+activeSOP = SOP:new("FlightFactor A320 SOP")
 
 -- ============ PRELIMINARY COCKPIT PREP (PM) ============
 -- ==== AIRCRAFT SETUP

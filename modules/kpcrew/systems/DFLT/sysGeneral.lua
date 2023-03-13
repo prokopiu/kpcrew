@@ -16,9 +16,34 @@ local CustomAnnunciator 	= require "kpcrew.systems.CustomAnnunciator"
 local TwoStateToggleSwitch	= require "kpcrew.systems.TwoStateToggleSwitch"
 local MultiStateCmdSwitch 	= require "kpcrew.systems.MultiStateCmdSwitch"
 local InopSwitch 			= require "kpcrew.systems.InopSwitch"
+local KeepPressedSwitchCmd	= require "kpcrew.systems.KeepPressedSwitchCmd"
+
+--------- Switch datarefs common
+
+local drefSlider 			= "sim/cockpit2/switches/custom_slider_on"
+local drefParkbrake			= "sim/cockpit2/controls/parking_brake_ratio"
+local drefGearLever			= "sim/cockpit/switches/gear_handle_status"
+local drefBaroLeft			= "sim/cockpit2/gauges/actuators/barometer_setting_in_hg_pilot"
+local drefBaroRight 		= "sim/cockpit2/gauges/actuators/barometer_setting_in_hg_copilot"
+local drefBaroStby	 		= "sim/cockpit2/gauges/actuators/barometer_setting_in_hg_stby"
+
+--------- Annunciator datarefs common
 
 local drefCurrentBaro 		= "sim/weather/barometer_sealevel_inhg"
-local drefSlider 			= "sim/cockpit2/switches/custom_slider_on"
+
+--------- Switch commands common
+
+local cmdParkbrake			= "sim/flight_controls/brakes_toggle_max"
+local cmdGearDown			= "sim/flight_controls/landing_gear_down"
+local cmdGearUp				= "sim/flight_controls/landing_gear_up"
+local cmdBaroLeftDown		= "sim/instruments/barometer_down"
+local cmdBaroLeftUp			= "sim/instruments/barometer_up"
+local cmdBaroRightDown		= "sim/instruments/barometer_copilot_down"
+local cmdBaroRightUp		= "sim/instruments/barometer_copilot_up"
+local cmdBaroStbyDown		= "sim/instruments/barometer_stby_down"
+local cmdBaroStbyUp			= "sim/instruments/barometer_stby_up"
+
+--------- Actuator definitions
 
 -- Parking Brake
 sysGeneral.parkBrakeSwitch 	= TwoStateToggleSwitch:new("parkbrake","sim/cockpit2/controls/parking_brake_ratio",0,
@@ -29,12 +54,12 @@ sysGeneral.GearSwitch 		= TwoStateCmdSwitch:new("gear","sim/cockpit2/controls/ge
 	"sim/flight_controls/landing_gear_down","sim/flight_controls/landing_gear_up","nocommand")
 
 -- Doors
-sysGeneral.doorL1			= TwoStateToggleSwitch:new("doorl1",drefSlider,0,"sim/operation/slider_01")
-sysGeneral.doorL2			= TwoStateToggleSwitch:new("doorl2",drefSlider,0,"sim/operation/slider_02")
-sysGeneral.doorR1			= TwoStateToggleSwitch:new("doorr1",drefSlider,0,"sim/operation/slider_03")
-sysGeneral.doorR2			= TwoStateToggleSwitch:new("doorr2",drefSlider,0,"sim/operation/slider_04")
-sysGeneral.doorFCargo 		= TwoStateToggleSwitch:new("doorfcargo",drefSlider,0,"sim/operation/slider_05")
-sysGeneral.doorACargo 		= TwoStateToggleSwitch:new("dooracrago",drefSlider,0,"sim/operation/slider_06")
+sysGeneral.doorL1			= TwoStateToggleSwitch:new("doorl1",drefSlider,-1,"sim/operation/slider_01")
+sysGeneral.doorL2			= TwoStateToggleSwitch:new("doorl2",drefSlider,1,"sim/operation/slider_02")
+sysGeneral.doorR1			= TwoStateToggleSwitch:new("doorr1",drefSlider,2,"sim/operation/slider_03")
+sysGeneral.doorR2			= TwoStateToggleSwitch:new("doorr2",drefSlider,3,"sim/operation/slider_04")
+sysGeneral.doorFCargo 		= TwoStateToggleSwitch:new("doorfcargo",drefSlider,4,"sim/operation/slider_05")
+sysGeneral.doorACargo 		= TwoStateToggleSwitch:new("dooracrago",drefSlider,5,"sim/operation/slider_06")
 sysGeneral.doorGroup = SwitchGroup:new("doors")
 sysGeneral.doorGroup:addSwitch(sysGeneral.doorL1)
 sysGeneral.doorGroup:addSwitch(sysGeneral.doorL2)
@@ -62,12 +87,12 @@ sysGeneral.baroModeGroup:addSwitch(sysGeneral.baroModeCoPilot)
 sysGeneral.baroModeGroup:addSwitch(sysGeneral.baroModeStandby)
 
 -- Baro value
-sysGeneral.baroPilot 		= MultiStateCmdSwitch:new("baropilot","sim/cockpit2/gauges/actuators/barometer_setting_in_hg_pilot",0,
-	"sim/instruments/barometer_down","sim/instruments/barometer_up")
-sysGeneral.baroCoPilot 		= MultiStateCmdSwitch:new("barocopilot","sim/cockpit2/gauges/actuators/barometer_setting_in_hg_copilot",0,
-	"sim/instruments/barometer_copilot_down","sim/instruments/barometer_copilot_up")
-sysGeneral.baroStandby 		= MultiStateCmdSwitch:new("barostandby","sim/cockpit2/gauges/actuators/barometer_setting_in_hg_stby",0,
-	"sim/instruments/barometer_stby_down","sim/instruments/barometer_stby_up")
+sysGeneral.baroPilot 		= MultiStateCmdSwitch:new("baropilot",drefBaroLeft,0,
+	cmdBaroLeftDown,cmdBaroLeftUp)
+sysGeneral.baroCoPilot 		= MultiStateCmdSwitch:new("barocopilot",drefBaroRight,0,
+	cmdBaroRightDown,cmdBaroRightUp)
+sysGeneral.baroStandby 		= MultiStateCmdSwitch:new("barostandby",drefBaroStby,0,
+	cmdBaroStbyDown,cmdBaroStbyUp)
 sysGeneral.baroGroup 		= SwitchGroup:new("barogroup")
 sysGeneral.baroGroup:addSwitch(sysGeneral.baroPilot)
 sysGeneral.baroGroup:addSwitch(sysGeneral.baroCoPilot)
