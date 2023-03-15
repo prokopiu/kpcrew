@@ -48,4 +48,10 @@ function ()
 	end
 end)
 
+-- AUX FUEL PUMP ANC (do not use)
+sysFuel.auxFuelPumpsAnc = CustomAnnunciator:new("auxfuel",
+function ()
+	return 0
+end)
+
 return sysFuel

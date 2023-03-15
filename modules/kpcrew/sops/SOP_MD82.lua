@@ -94,6 +94,41 @@ testProc:addItem(ProcedureItem:new("BATTERY SWITCH","ON",FlowItem.actorFO,0,true
 --     Bring APU power on bus
 -- =======================================================
 
+-- CIRCUIT BREAKERS (P6 PANEL)..........CHECK ALL IN (F/O)
+-- WINDSHIELD WIPER SELECTORS...................PARK (F/O)
+-- LANDING GEAR LEVER...........................DOWN (F/O)
+--   GREEN LANDING GEAR LIGHT......CHECK ILLUMINATED (F/O)
+--   RED LANDING GEAR LIGHT.......CHECK EXTINGUISHED (F/O)
+
+-- Parking brake ON
+--  Battery Switch ON / LOCK
+--  Fire loop test PERFORM
+--  POS/STROBE LIGHTS BOTH rotatniug beacon
+-- ==== Activate External Power
+--   GRD POWER AVAILABLE LIGHT...........ILLUMINATED (F/O)
+--   AC POWER SWITCH.............................GRD (F/O)
+--   GROUND POWER SWITCH..........................ON (F/O)
+-- ==== Activate APU 
+--   APU.......................................START (F/O)
+--     Start APU if available and specific to the aircraft
+--   APU.....................................RUNNING
+--     Bring APU power on bus
+-- • START PUMP SW (DC) ON
+-- • APU START SW START
+-- • Monitor light 'APU STARTER ON' on WAAP
+-- • Monitor light 'APU PWR AVAIL'
+-- • APU POWER 115Volt, 400Hz CHECK
+-- • APU L and R BUS ON
+-- • power consumption is below 1.0 CHECK
+-- • APU AIR (>60 seconds) ON
+-- • AIR pressure centure duct CHECK
+-- • Right PNEU-X-FEED OPEN
+-- • Right AIR COND SUPPLY AUTO
+--  Right AFT FUEL PUMP SW ON
+--  START PUMP SW (DC) OFF
+--  WING/NACL LIGHTS ON if required
+
+
 local electricalPowerUpProc = Procedure:new("ELECTRICAL POWER UP","performing ELECTRICAL POWER UP","Power up finished")
 electricalPowerUpProc:setFlightPhase(1)
 electricalPowerUpProc:addItem(SimpleProcedureItem:new("All paper work on board and checked"))
@@ -159,7 +194,7 @@ electricalPowerUpProc:addItem(SimpleProcedureItem:new("Bring #spell|APU# power o
 	function () return activePrefSet:get("aircraft:powerup_apu") == false end))
 
 
--- ============ PRELIMINARY PREFLIGHT PROCEDURES =========
+-- ================= PREFLIGHT PROCEDURE =================
 -- ELECTRICAL POWER UP......................COMPLETE (F/O)
 -- STALL WARNING TEST........................PERFORM (F/O)
 --   AC power must be available
@@ -174,38 +209,85 @@ electricalPowerUpProc:addItem(SimpleProcedureItem:new("Bring #spell|APU# power o
 -- ELECTRIC HYDRAULIC PUMPS SWITCHES..............ON (F/O)
 -- =======================================================
 
-local prelPreflightProc = Procedure:new("PREL PREFLIGHT PROCEDURE","preliminary pre flight","I finished the preliminary preflight")
-prelPreflightProc:setFlightPhase(2)
-prelPreflightProc:addItem(ProcedureItem:new("ELECTRICAL POWER UP","COMPLETE",FlowItem.actorFO,0,
+-- PRIMARY FLIGHT DISPLAY'S.......................ON
+-- NAVIGATION DISPLAY'S .......................ON
+-- ANNUNCIATOR LIGHTS .......................TEST
+-- FLIGHT DIRECTOR’S .......................ON
+-- EFIS .......................TEST
+-- AUTOLAND AVAILABILITY .......................TEST
+-- TRIM .......................TEST
+-- ENGINE SYNC SELECTOR .......................OFF
+-- GALLEY POWER .......................ON
+-- FUEL PUMP SWITCH .......................TEST
+-- NO SMOKING .......................ON
+-- PITOT HEATER .......................TEST
+-- WINDSHIELD HEAT .......................ON
+-- PNEUMATIC X-FEEDS .......................OPEN
+-- GPWS .......................TEST
+-- WINDSHEAR .......................TEST
+-- ANTI SKID .......................TEST
+-- STALL .......................TEST
+-- OVERSPEED .......................TEST
+-- YAW DAMPER .......................ON
+-- ICE FOD .......................TEST
+-- TCAS .......................TEST
+-- SET XPONDER .......................ABOVE
+-- TAKEOFF WARNING .......................TEST
+-- HYDRAULIC PUMP .......................TEST
+-- GEAR .......................TEST
+-- WX RADAR .......................TEST
+-- SET ALTIMETERS .......................SET
+-- TRP .......................TEST
+-- TRP TO TAKEOFF .......................SET
+-- ADF .......................TEST
+-- ZFW .......................TEST
+-- SHOW .......................ZFW
+
+-- STANDBY ATTITUDE INDICATOR .......................CAGE
+-- EMERGENCY LIGHT TEST (WITH FA VIA PA CALL BUTTON) .......................PERFORM 
+-- ARRIVAL ELEVATION (PRESSURIZATION AND FS2CREW PANEL) .......................SET 
+-- FLIGHT DATA RECORDER PANEL .......................SET 
+-- AIRCRAFT WALK ARROUND .......................PERFORM 
+-- PAPERS .......................CHECK 
+-- FLIGHT MANAGEMENT SYSTEM, MCDU PROGRAMMING .......................SET 
+-- FLIGHT CONTROL PANEL .......................SET 
+-- COM, NAV RADIO'S AND TRANSPONDER .......................SET 
+-- ALTIMETER .......................SET
+-- TRP (IF REDUCED TAKE OFF) .......................SET
+
+
+local preflightProc = Procedure:new("PREFLIGHT PROCEDURE","starting pre flight procedure","I finished the preflight procedure")
+preflightProc:setFlightPhase(2)
+preflightProc:addItem(ProcedureItem:new("ELECTRICAL POWER UP","COMPLETE",FlowItem.actorFO,0,
 	function () return 
 		sysElectric.apuGenBusOff:getStatus() == 1 or
 		sysElectric.gpuOnBus:getStatus() == 1
 	end))
-prelPreflightProc:addItem(IndirectProcedureItem:new("STALL WARNING TEST 1","PERFORM",FlowItem.actorFO,0,"stall_warning_test1",
+preflightProc:addItem(IndirectProcedureItem:new("STALL WARNING TEST 1","PERFORM",FlowItem.actorFO,0,"stall_warning_test1",
 	function () return get("sim/cockpit2/annunciators/stall_warning") == 1 end,
 	function () command_begin("sim/annunciator/test_stall") end))
-prelPreflightProc:addItem(SimpleProcedureItem:new("  AC power must be available"))
-prelPreflightProc:addItem(ProcedureItem:new("#exchange|XPDR|transponder#","SET 2000",FlowItem.actorFO,0,
+preflightProc:addItem(SimpleProcedureItem:new("  AC power must be available"))
+preflightProc:addItem(ProcedureItem:new("#exchange|XPDR|transponder#","SET 2000",FlowItem.actorFO,0,
 	function () return sysRadios.xpdrCode:getStatus() == 2000 end,
 	function () command_end("sim/annunciator/test_stall") sysRadios.xpdrCode:actuate(2000) end))
-prelPreflightProc:addItem(ProcedureItem:new("COCKPIT LIGHTS","%s|(kc_is_daylight()) and \"OFF\" or \"ON\"",FlowItem.actorFO,0,
+preflightProc:addItem(ProcedureItem:new("COCKPIT LIGHTS","%s|(kc_is_daylight()) and \"OFF\" or \"ON\"",FlowItem.actorFO,0,
 	function () return sysLights.domeAnc:getStatus() == (kc_is_daylight() and 0 or 1) end,
 	function () sysLights.domeLightSwitch:actuate(kc_is_daylight() and 0 or 1) end))
-prelPreflightProc:addItem(ProcedureItem:new("WING #exchange|&|and# WHEEL WELL LIGHTS","%s|(kc_is_daylight()) and \"OFF\" or \"ON\"",FlowItem.actorFO,0,
+preflightProc:addItem(ProcedureItem:new("WING #exchange|&|and# WHEEL WELL LIGHTS","%s|(kc_is_daylight()) and \"OFF\" or \"ON\"",FlowItem.actorFO,0,
 	function () return sysLights.wingSwitch:getStatus() == (kc_is_daylight() and 0 or 1) and sysLights.wheelSwitch:getStatus() == (kc_is_daylight() and 0 or 1) end,
 	function () sysLights.wingSwitch:actuate(kc_is_daylight() and 0 or 1) sysLights.wheelSwitch:actuate(kc_is_daylight() and 0 or 1) end))
-prelPreflightProc:addItem(ProcedureItem:new("FUEL PUMPS","APU 1 PUMP ON, REST OFF",FlowItem.actorFO,0,
+preflightProc:addItem(ProcedureItem:new("FUEL PUMPS","APU 1 PUMP ON, REST OFF",FlowItem.actorFO,0,
 	function () return sysFuel.fuelPumpGroup:getStatus() == 1 end,
 	function () sysFuel.fuelPumpGroup:actuate(modeOff) sysFuel.fuelPumpLeftAft:actuate(modeOn) end,
 	function () return not activePrefSet:get("aircraft:powerup_apu") end))
-prelPreflightProc:addItem(ProcedureItem:new("FUEL PUMPS","ALL OFF",FlowItem.actorFO,0,
+preflightProc:addItem(ProcedureItem:new("FUEL PUMPS","ALL OFF",FlowItem.actorFO,0,
 	function () return sysFuel.fuelPumpGroup:getStatus() == 0 end,
 	function () sysFuel.fuelPumpGroup:actuate(modeOff) end,
 	function () return activePrefSet:get("aircraft:powerup_apu") end))
-prelPreflightProc:addItem(ProcedureItem:new("POSITION LIGHTS","ON",FlowItem.actorFO,0,
+preflightProc:addItem(ProcedureItem:new("POSITION LIGHTS","ON",FlowItem.actorFO,0,
 	function () return sysLights.positionSwitch:getStatus() ~= 0 end,
 	function () sysLights.positionSwitch:actuate(modeOn) end))
-prelPreflightProc:addItem(ProcedureItem:new("#spell|MCP#","INITIALIZE",FlowItem.actorFO,0,
+preflightProc:addItem(ProcedureItem:new("#spell|MCP#","INITIALIZE",FlowItem.actorFO,0,
 	function () return sysMCP.altSelector:getStatus() == activePrefSet:get("aircraft:mcp_def_alt") end,
 	function () 
 		sysMCP.fdirGroup:actuate(modeOff)
@@ -218,11 +300,11 @@ prelPreflightProc:addItem(ProcedureItem:new("#spell|MCP#","INITIALIZE",FlowItem.
 		sysMCP.vspSelector:actuate(modeOff)
 		sysMCP.discAPSwitch:actuate(modeOff)
 	end))
-prelPreflightProc:addItem(ProcedureItem:new("PARKING BRAKE","SET",FlowItem.actorFO,0,
+preflightProc:addItem(ProcedureItem:new("PARKING BRAKE","SET",FlowItem.actorFO,0,
 	function () return sysGeneral.parkBrakeSwitch:getStatus() == modeOn end,
 	function () sysGeneral.parkBrakeSwitch:actuate(modeOn) end))
-prelPreflightProc:addItem(SimpleProcedureItem:new("Electric hydraulic pumps on for F/O walk-around"))
-prelPreflightProc:addItem(ProcedureItem:new("ELECTRIC HYDRAULIC PUMPS SWITCHES","ON",FlowItem.actorFO,0,
+preflightProc:addItem(SimpleProcedureItem:new("Electric hydraulic pumps on for F/O walk-around"))
+preflightProc:addItem(ProcedureItem:new("ELECTRIC HYDRAULIC PUMPS SWITCHES","ON",FlowItem.actorFO,0,
 	function () return sysHydraulic.elecHydPumpGroup:getStatus() == 1 end,
 	function () sysHydraulic.elecHydPumpGroup:actuate(modeOn) end))
 
@@ -272,21 +354,399 @@ prelPreflightProc:addItem(ProcedureItem:new("ELECTRIC HYDRAULIC PUMPS SWITCHES",
 -- =======================================================
 
 
--- ============  =============
--- add the checklists and procedures to the active sop
-local nopeProc = Procedure:new("NO PROCEDURES AVAILABLE")
+-- pre start above the line checklists
 
-activeSOP:addProcedure(testProc)
-activeSOP:addProcedure(electricalPowerUpProc)
-activeSOP:addProcedure(prelPreflightProc)
+-- CIRCUIT BREAKERS...........................CHECKED
+-- L & R BUS TIE/ DC BUS X TIE...........................AUTO/OPEN
+-- EMERG POWER...........................CHECKED/OFF
+-- GALLEY POWER...........................ON
+-- CABIN ALT CNTRL WHEEL/LEVER AUTO/VALVE...........................OPEN
+-- PNEUM X-FEED VALVE LEVERS...........................OPEN
+-- CABIN PRESS CONTROL...........................SET
+-- COCKPIT / CABIN CONTROL...........................TEMP AS REQUIRED
+-- OXYGEN CYL PRESS...........................CHECKED
+-- FLIGHT RECORDER...........................CHECKED/SET
+-- VOICE RECORDER...........................CHECKED
+-- CADC/FD CMD/ EFIS SEL........................... NORM
+-- ENG SYNC SELECTOR ...........................OFF
+-- GPWS ...........................CHECKED
+-- ANTI-SKID ...........................CHECKED/ARMED
+-- STALL WARNING ...........................CHECKED
+-- MAX SPEED WARNING ...........................CHECKED
+-- MACH TRIM COMPENSATOR ...........................ON/NORM
+-- YAW DAMPER ...........................ON
+-- RADIO RACK ...........................FAN
+-- AIR COND SHUTOFF ...........................AUTO
+-- RAM AIR ...........................OFF
+-- FUEL PUMPS ...........................CHECKED
+-- IGNITION ...........................OFF
+-- EMER LIGHTS ...........................CHECKED/ARMED
+-- NO SMOKING/SEATBELT SW ...........................ON/ON
+-- PITOT HEAT ...........................CHECKED/OFF
+-- AIRFOIL / ENG ANTI ICE........................... OFF
+-- WINDSHIELD HEAT ...........................ON
+-- ANNUNCIATOR/ DIGITAL LIGHTS........................... CHECKED
+-- DFGS / NAVAIDS ...........................SET
+-- FLIGHT INSTRUMENTS........................... CHECKED
+-- BRAKE PRESSURE & TEMP........................... CHECKED
+-- HYDRAULIC SYSTEM ...........................CHECKED
+-- GEAR LIGHTS & AURAL WARNING........................... CHECKED
+-- FUEL USED ...........................RESET
+-- ENGINE INSTRUMENTS ...........................CHECKED
+-- STATIC AIR SELECTOR ...........................NORM
+-- TCAS ...........................CHECKED
+-- RADAR ...........................CHECKED
+-- RUD HYD CONTROL ...........................LEVER PWR
+-- FUEL X-FEED ...........................LEVER OFF
+-- FUEL SWITCHES ...........................CHECKED
+-- T/O WARNING........................... CHECKED
+-- STABILIZER ...........................CHECKED
+-- SPOILERS ...........................DISARMED/RET
+-- FLAPS/SLATS ...........................UP / RET
 
+
+
+-- pre start procedure
+-- briefings and atc
+-- fms programming
+
+-- AUTOFLIGHT PANEL SET
+-- •Initial altitude
+-- •Heading departure runway
+-- •V2 Air speed selecter
+-- Set speed bugs (clickspot ASI 12 o'clock for T/O speed bugs) SET
+-- TRANSPONDER SET
+-- "Are you ready for the Departure Brief?"
+-- Flap setting and CG takeoff condition computer SET
+-- Stabilizer trim SET
+-- APU / APU Air ON or START
+-- Seatbelt sign ON
+-- "PRE START CHECK BELOW THE LINE" Challenge
+
+
+-- pre start checklist below the line
+-- "PRE START CHECK BELOW THE LINE" CHALLENGE: FIRST OFFICER
+-- COVERS & PINS..REMOVED
+-- AIRCRAFT LOG & DOCUMENTS..CHECKED ON BOARD
+-- ALTIMETERS..QNH…. SET / CHECKED
+-- FUEL/OIL/HYD QUANTITY..CHECKED
+-- ZERO FUEL WEIGHT..SET
+-- TRP..TAKEOFF / … TAKEOFF FLEX
+-- STABILIZER..POINT ZERO SET (.. = 1 TO 12)
+-- FLAPS TAKEOFF SELECTOR..STOWED
+-- SPEED BUGS..SET
+
+
+-- "BEFORE START CHECK" (part 1)
+-- Parking Brakes..Set/Released
+-- Doors..Closed
+-- Start-up & Pushback Clrnce..Approved 
+-- BEFORE START CHECK (part 2 ) Challenge: First Officer (Silently DO - items)
+-- Pneum X-Feed Valve Levers OPEN
+-- Aux & Trans Hyd Pumps ON
+-- Anti-Collision Light ON
+-- Air Cond Supply OFF,BOTH
+-- Fuel Pumps ON
+-- Galley Power OFF
+-- Ignition A / B
+-- Pneum Press CHECK
+-- “BEFORE START CHECK COMPLETE, READY FOR ENGINE START”
+
+
+-- =========== PUSHBACK & ENGINE START (BOTH) ============
+-- PARKING BRAKE................................SET  (CPT)
+-- PUSHBACK SERVICE..........................ENGAGE  (CPT)
+-- Engine Start may be done during pushback or towing
+-- COMMUNICATION WITH GROUND..............ESTABLISH  (CPT)
+-- PARKING BRAKE...........................RELEASED  (CPT)
+-- PACKS................................AUTO OR OFF  (F/O)
+-- SYSTEM A HYDRAULIC PUMPS......................ON  (F/O)
+-- START FIRST ENGINE.............STARTING ENGINE _  (CPT)
+-- ENGINE START SWITCH........START SWITCH _ TO GRD  (CPT)
+--   Verify that the N2 RPM increases.
+--   When N1 rotation is seen and N2 is at 25%,
+--   ENGINE START LEVER................LEVER _ IDLE  (CPT)
+--   When starter switch jumps back call STARTER CUTOUT
+-- START SECOND ENGINE............STARTING ENGINE _  (CPT)
+-- ENGINE START SWITCH........START SWITCH _ TO GRD  (CPT)
+--   Verify that the N2 RPM increases.
+--   When N1 rotation is seen and N2 is at 25%,
+--   ENGINE START LEVER................LEVER _ IDLE  (CPT)
+--   When starter switch jumps back call STARTER CUTOUT
+-- PARKING BRAKE................................SET  (F/O)
+--   When instructed by ground crew after pushback/towing
+-- When pushback/towing complete
+--   TOW BAR DISCONNECTED....................VERIFY  (CPT)
+--   LOCKOUT PIN REMOVED.....................VERIFY  (CPT)
+-- =======================================================
+
+-- PUCHBACK and ENGINE START
+--  "Cockpit to ground" / "Ground from cockpit"
+--  "We’re ready for the pushback and engine start"  pushback dialogue
+--  Brakes released
+-- Pushback will start
+--  "Cabin crew close doors and arm slides"
+--  check sufficient pneumatic pressure and doors closed
+--  “START RIGHT ENGINE”  Engage start switch right engine and checks pressure
+-- “RIGHT START VALVE OPEN”
+--  fuel lever ON  “FUEL ON”
+--  “FUEL ON” “N2”, “OIL PRESSURE”, “N1”, “FUEL FLOW,” “EGT”
+-- Cabin crew close doors and arm slides  40% N1: Release start switch (Engine generator
+-- switched to the electrical bus)
+-- “RIGHT START VALVE CLOSED”
+-- Engine stabilized:  “STABILIZING” and resets timer
+--  Engine Anti Ice AS REQUIRED
+--  Reset timer
+--  “START LEFT ENGINE”  Engage start switch left engine and checks pressure
+-- “LEFT START VALVE OPEN”
+--  fuel lever ON  “FUEL ON”
+--  “FUEL ON” “N2”, “OIL PRESSURE”, “N1”, “FUEL FLOW,” “EGT”
+--  40% N1: Release start switch (Engine generator
+-- switched to the electrical bus)
+-- “LEFT START VALVE CLOSED”
+-- Engine stabilized:  “STABILIZING” and resets timer
+--  Engine Anti Ice AS REQUIRED
+--  Reset timer
+-- "ABORT START"  The FO will release the Start Switches. If the fuel levers
+-- are on, the FO will hold the Start Switches for 30
+-- seconds before releasing them.
+-- After pushback is finished:
+--  "Brakes set"
+--  "Thanks for the guidance" / "Good bye"
+
+
+-- "Cockpit to ground" / "Ground from cockpit"  Start up dialogue
+--  "We’re ready"
+-- Start engines
+--  "You can disconnect now"
+
+--  Check Electrical Loads (AC and DC) in limits CHECK  Engine generator volts and frequencies correct CHECK
+--  Galley Power ON  Engine Ignition off OFF
+--  Sets air conditioning supply AUTO  Set CAPT Pitot Heater ON
+--  Check Hydraulic pumps and switcheS HI/ON
+
+
+-- "AFTER (ENGINE) START CHECK"
+--  "Off"  Ignition
+--  "Checked"  Electrical Loads
+--  "Auto"  Air Cond Supply
+--  "On"  Galley Power
+--  "Off/ Eng anti ice on/ Both on"  Ice Protection Panel
+--  "“CLOSE THEM”, “OPEN THEM”." (FO will set! ; Open for airfoil anti-ice)  Pneumatic X-Feed Valve (Read and DO)
+-- Check Flight controls :  Flight Controls
+--  AILERONS FULL LEFT : “LEFT… SPOILER DEPLOYED”
+--  AILERONS FULL RIGHT: “RIGHT…SPOILER DEPLOYED”
+--  ELEVATOR FULL FORWARD: “ELEVATOR POWER ON”*
+--  PEDALS FULL RIGHT/LEFT: “PEDALS”
+--  "Flight Controls Check Completed"
+--  "Checked"  Hyd Pumps & Press "Checked/Hi/On"
+--  "Checked"  Annunciator Panel
+--  "Removed"  Ground Equipment
+--  "Received"  All Clear Signal
+-- Flaps Slats (Read and DO) "Set"
+
+
+-- Obtain TAXI clearance
+--  “WE ARE CLEAR ON THE LEFT”  Flood lights ON
+--  Nose Light ON Wing/Nacelle Lights ON
+-- Start taxi
+--  "TAXI CHECK" (in clear area)
+--  "Not required/ On / Off" (FO will set!)   Fuel Heat (Read and Do)
+--  "0 / 11 / 15 Degrees Takeoff *"  Flaps & Slats
+--  "Set and Checked"  EPR Bugs & TRP
+--  "No Changes, Verified*"  Takeoff Speeds
+--  "Performed"  TO Briefing
+--  "Set and Checked"  ATC/DFGS/Navaids
+--  "Pre-Flight Completed"  FMS
+-- APU Air/APU Master OFF / Leave APU on
+--  "Both Off / Air Off / "ON"  APU Air/Master SW
+--  "Checked"  Brake Temp & Pressure
+
+
+-- When ready for departure:
+--  “CABIN CREW BE SEATED FOR TAKEOFF”  Strobes ON
+-- Autobrake SET
+-- Ignition A
+--  Brake temperature <205 degrees C CHECK
+--  Weather Radar ON (3 degrees NU) IF REQUIRED
+--  Landing Lights ON Xpndr TARA
+--  "LINE UP CHECK"
+--  "Secured"  Cabin
+--  "Left Side Closed"  Windows
+--  "Checked"  Annunciator Panel
+--  "Set to A / Set to B"  Ignition
+--  "Auto / Manual"  Air Cond Supply
+-- Transponder (READ AND DO) "TARA"
+--  "Received / TO GO "  Takeoff Clearance
+--  "TAKEOFF CLEARANCE RECEIVED
+
+
+-- When cleared for Takeoff :
+--  Press TOGA button (FMA will announce TAK OFF TAK OFF)
+--  Wing Landing lights ON
+--  Cycles seatbelt switch.
+--  Asks FO: “READY?"
+--  Start timing (Turn on the clock to show flight time)  "Yes"
+--  “TAKEOFF”
+--  Throttles 1.40 EPR (brakes ON)
+--  Autothrottle, release brake (FMA will announce EPR T/O) ON
+-- "CLAMP" (A/T 60 knots)
+-- Rotate at Vr / RTO BEFORE V1  "V1", "Vr"
+--  8 degrees pitch; V2 + 10 knots
+--  Landing and mose Lights OFF  “GEAR UP”
+-- 200 ft  “AUTOPILOT ON”
+-- 400 ft  "ENGAGE HEADING SELECT" / "ARM NAVIGATION"
+-- 1500 ft  "ENGAGE VNAV" / "SET VERTICAL SPEED UP __"  Climb mode (CL on TRP)
+-- Accelerating to 250 knots
+--  "FLAPS UP” (speed > 3rd bug)
+--  “SLATS RETRACT” (speed > last bug)
+--  Autobrake
+-- F/O
+-- Ignition OFF
+--  Disarm autospoilers and autobrake DISARM
+--  Flaps TO selector STOWED
+--  Eng Hyd Pumps to LOW
+-- Aux & Xfer Hyd Pumps to OFF
+-- SET
+--  Engine Sync to N1 SET
+
+-- CLIMB CHECK Challenge: First Officer (silently)
+-- Response: NONE
+-- Gear "Up"
+-- Flaps/Slats "Up / Retracted"
+-- Autospoilers/ABS "Off / Disarmed"
+-- Flaps TO Selector "STOW"
+-- Trans & Aux Hyd Pumps "Off"
+-- Pressurization "Checked"
+-- Ignition "Set"
+-- Fuel Pumps "As Required"
+--  "On / Off/ Auto"  "Seatbelts" (READ) "On / Off/ Auto"
+
+-- 10000 feet  Wing Landing lights OFF
+-- Transition Altitude or cleared above :
+--  “TRANSITION 2992 / 1013"  Altimeter FO 2992 / 1013 SET
+--  Altimeter CA 2992 / 1013 SET
+--  "PASSING FLIGHT LEVEL xxx …. --> "NOW”
+
+
+-- descend
+-- 20000 feet  Flood, logo and Wing Nacelle lights ON
+-- 10000 feet  Wing Landing lights ON
+-- APPROACH  Setup Nav Radios SET
+-- "APPROACH CHECK"
+--  Engine Sync OFF
+--  "Set"  Navigation
+
+-- Reduce speed 235 knots: "SLATS EXTEND" and "FLAPS 11"
+--  NAV 1 TO ILS/LOCALIZER/VOR frequency / course SET
+-- Setup Nav Radios by FO:
+--  “SET ILS / LOCALISER / VOR ON NAV 2”
+--  "FLAPS 15" and reduce speed 210 knots
+-- Localiser/VOR active
+--  "ARM LOCALISER" / "ARM VOR"
+--  “LOCALISER CAPTURE"
+-- Glideslope +1 TO 1.5 DOT
+--  "GEAR DOWN"
+--  "ARM ILS"
+--  Reduce speed 180 knots
+--  “GLIDESLOPE CAPTURE”
+--  "FLAPS 28" and reduce speed 160 knots
+--  Go Arround altitude SET
+--  Bank limit 15 degrees SET
+--  "FLAPS 40" and reduce speed Vref
+-- After receive landing clearance
+--  Nose landing light ON
+-- CATII/CATIII approach, set Decision Altitude in the FS2Crew Configuration panel to 0.
+-- During the approach brief, when you ask the FO “Any Questions?” the FO will ask you if you want
+-- to do an Autoland. Reply “YES“ or “NO“.
+-- If Yes, the autoland calls (FLARE and ALIGN) will be enabled, and the DH selector on the FS2Crew
+-- FS2Crew Voice Flow Maddog 2008 SP3 version 1.00 Page 4 of 5
+--  Autobrake SET
+
+
+-- "FINAL CHECK"
+--  Set Engine Ignition
+--  "Down"  Gear
+--  Push GA on TRP
+--  Arm spoiler
+--  Autobrake SET
+--  "Set to A / Set to B"  Ignition
+--  "Armed"  Autospoilers & Autobrakes
+--  "Flaps ___ land"  Flaps & Slats
+--  "Received" / “TO GO”"  Landing Clearance
+--  "LANDING CLEARANCE RECEIVED"
+
+
+-- "AFTER LANDING CHECK" / "AFTER LANDING CHECK WITHOUT APU" Challenge: First Officer (silently)
+-- Response: NONE
+-- Timer stopped
+-- Spoiler/ ABS Ret & Off
+-- Flaps/ Slats 15 Degrees TO
+-- Pneum X-Feed Open
+-- Xpdr Standbyd
+-- Radar Off
+-- Left Air Cond Supply Off
+-- APU As Required
+
+
+-- Reaching gate
+--  “FLAPS AND SLATS”  Flaps and slats UP
+--  Parking Brake SET  Connect APU to the buses IF REQUIRED
+--  Connect external power and tie buses IF REQUIRED
+--  Fuel levers OFF  Anti Collision light OFF
+--  Seatbelt signs OFF
+--  "Cabin crew disarm slides and open doors"
+
+-- "PARKING CHECK"
+--  Fuel pumps excl. right aft if APU running OFF
+-- Hydraulic pumps OFF
+--  "Set"  Parking Brakes
+--  "Retracted"  Flaps/Slats
+--  "Established"  APU/EXT Power
+--  "Off"  Fuel Levers
+--  "Off"  Anti Collision
+--  "Off"  Hyd Pumps
+--  "Off"  Seat Belt SW
+--  "Off"  Ice Protection Panel
+--  "Standby"  Xpdr
+
+-- ======== STATES =============
+
+-- ================= Cold & Dark State ==================
+local coldAndDarkProc = State:new("COLD AND DARK","securing the aircraft","ready for secure checklist")
+coldAndDarkProc:setFlightPhase(1)
+coldAndDarkProc:addItem(ProcedureItem:new("OVERHEAD TOP","SET","SYS",0,true,
+	function () 
+		kc_macro_state_cold_and_dark()
+		-- getActiveSOP():setActiveFlowIndex(1)
+	end))
+
+-- ================= Turn Around State ==================
+local turnAroundProc = State:new("AIRCRAFT TURN AROUND","setting up the aircraft","aircraft configured for turn around")
+turnAroundProc:setFlightPhase(18)
+turnAroundProc:addItem(ProcedureItem:new("OVERHEAD TOP","SET","SYS",0,true,
+	function () 
+		kc_macro_state_turnaround()
+	end))
+	
 -- ============= Background Flow ==============
-local backgroundFlow = Background:new("","","")
+-- kc_procvar_initialize_bool("toctest", false)
 
+local backgroundFlow = Background:new("","","")
 backgroundFlow:addItem(BackgroundProcedureItem:new("","","SYS",0,
 	function () 
 		return
 	end))
+
+-- ============  =============
+-- add the checklists and procedures to the active sop
+activeSOP:addProcedure(testProc)
+-- activeSOP:addProcedure(electricalPowerUpProc)
+-- activeSOP:addProcedure(preflightProc)
+
+-- =========== States ===========
+activeSOP:addState(turnAroundProc)
+activeSOP:addState(coldAndDarkProc)
 
 -- ==== Background Flow ====
 activeSOP:addBackground(backgroundFlow)

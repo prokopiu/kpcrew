@@ -35,6 +35,9 @@ sysGeneral.doorR1 			= TwoStateToggleSwitch:new("doorr1",drefSlider,6,"sim/opera
 sysGeneral.doorR2 			= InopSwitch:new("doorr2")
 sysGeneral.doorFCargo 		= TwoStateToggleSwitch:new("doorfcargo",drefSlider,7,"sim/operation/slider_08")
 sysGeneral.doorACargo 		= TwoStateToggleSwitch:new("dooracrago",drefSlider,8,"sim/operation/slider_09")
+sysGeneral.stairsLeft 		= TwoStateToggleSwitch:new("stairs left",drefSlider,2,"sim/operation/slider_03")
+sysGeneral.cockpitDoor 		= TwoStateToggleSwitch:new("cockpitdoor",drefSlider,10,"sim/operation/slider_11")
+
 
 sysGeneral.doorGroup 		= SwitchGroup:new("doors")
 sysGeneral.doorGroup:addSwitch(sysGeneral.doorL1)
@@ -99,9 +102,9 @@ end)
 sysGeneral.gearLeftGreenAnc = SimpleAnnunciator:new("gear", "sim/flightmodel/movingparts/gear1def", 0)
 sysGeneral.gearRightGreenAnc = SimpleAnnunciator:new("gear", "sim/flightmodel/movingparts/gear2def", 0)
 sysGeneral.gearNodeGreenAnc = SimpleAnnunciator:new("gear", "sim/flightmodel/movingparts/gear3def", 0)
-sysGeneral.gearLeftRedAnc = Annunciator:new("gear")
-sysGeneral.gearRightRedAnc = Annunciator:new("gear")
-sysGeneral.gearNodeRedAnc = Annunciator:new("gear")
+sysGeneral.gearLeftRedAnc = InopSwitch:new("gear")
+sysGeneral.gearRightRedAnc = InopSwitch:new("gear")
+sysGeneral.gearNodeRedAnc = InopSwitch:new("gear")
 
 -- light on when gears extended else 0
 sysGeneral.gearLightsAnc = CustomAnnunciator:new("gearlights", 

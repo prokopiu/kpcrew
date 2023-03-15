@@ -10,7 +10,7 @@ local KPH_VERSION = "2.3-alpha8"
 
 -- disable windows by changing from true to false
 local show_mcp_panel = false
-local show_light_panel = false
+local show_light_panel = true
 local show_radio_panel = false
 local show_efis_panel = false
 

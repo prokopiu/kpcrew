@@ -31,20 +31,7 @@ sysLights.positionSwitch = TwoStateCmdSwitch:new("position","sim/cockpit2/switch
 sysLights.strobesSwitch = TwoStateCmdSwitch:new("strobes","sim/cockpit2/switches/strobe_lights_on",0,"sim/lights/strobe_lights_on","sim/lights/strobe_lights_off","sim/lights/strobe_lights_toggle")
 
 -- Taxi/Nose Lights, single onoff command driven
-sysLights.taxiSwitch = TwoStateCustomSwitch:new("taxi","sim/cockpit2/switches/taxi_light_on",0,
-function () 
-	set("sim/cockpit2/switches/taxi_light_on",2)
-end,
-function () 
-	set_array("sim/cockpit2/switches/taxi_light_on",0)
-end,
-function () 
-	if get("sim/cockpit2/switches/taxi_light_on") > 0 then
-		set("sim/cockpit2/switches/taxi_light_on",0)
-	else
-		set("sim/cockpit2/switches/taxi_light_on",2)
-	end
-end)
+sysLights.taxiSwitch = TwoStateDrefSwitch:new("taxi","sim/cockpit2/switches/taxi_light_on",0)
 
 -- Landing Lights, single onoff command driven
 sysLights.llLeftSwitch = TwoStateCustomSwitch:new("llleft",drefLandingLights,1,
@@ -172,7 +159,7 @@ function ()
 end)
 
 -- Instrument Light(s) status
-sysLights.instrumentAnc = SimpleAnnunciator:new("instrumentlights", "sim/cockpit2/switches/instrument_brightness_ratio")
+sysLights.instrumentAnc = SimpleAnnunciator:new("instrumentlights", "sim/cockpit2/switches/instrument_brightness_ratio",-1)
 
 -- ===== UI related functions =====
 
@@ -201,7 +188,7 @@ function sysLights:render(ypos,height)
 		imgui.Button("L", 17, 25)
 		if imgui.IsItemActive() then 
 			kh_light_wnd_state = 1
-			float_wnd_set_geometry(kh_light_wnd, 0, ypos, 815, ypos-height)
+			float_wnd_set_geometry(kh_light_wnd, 0, ypos, 820, ypos-height)
 		end
 	end
 
