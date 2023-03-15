@@ -1,38 +1,42 @@
--- DFLT airplane 
+-- MD82 airplane 
 -- aircraft general systems
+
+-- @classmod sysGeneral
+-- @author Kosta Prokopiu
+-- @copyright 2023 Kosta Prokopiu
 
 local sysGeneral = {
 }
 
-local TwoStateDrefSwitch = require "kpcrew.systems.TwoStateDrefSwitch"
-local TwoStateCmdSwitch = require "kpcrew.systems.TwoStateCmdSwitch"
-local TwoStateCustomSwitch = require "kpcrew.systems.TwoStateCustomSwitch"
-local SwitchGroup  = require "kpcrew.systems.SwitchGroup"
-local SimpleAnnunciator = require "kpcrew.systems.SimpleAnnunciator"
-local CustomAnnunciator = require "kpcrew.systems.CustomAnnunciator"
-local TwoStateToggleSwitch = require "kpcrew.systems.TwoStateToggleSwitch"
-local MultiStateCmdSwitch = require "kpcrew.systems.MultiStateCmdSwitch"
-local InopSwitch = require "kpcrew.systems.InopSwitch"
-local Annunciator = require "kpcrew.systems.Annunciator"
+local TwoStateDrefSwitch 	= require "kpcrew.systems.TwoStateDrefSwitch"
+local TwoStateCmdSwitch	 	= require "kpcrew.systems.TwoStateCmdSwitch"
+local TwoStateCustomSwitch 	= require "kpcrew.systems.TwoStateCustomSwitch"
+local SwitchGroup  			= require "kpcrew.systems.SwitchGroup"
+local SimpleAnnunciator 	= require "kpcrew.systems.SimpleAnnunciator"
+local CustomAnnunciator 	= require "kpcrew.systems.CustomAnnunciator"
+local TwoStateToggleSwitch	= require "kpcrew.systems.TwoStateToggleSwitch"
+local MultiStateCmdSwitch 	= require "kpcrew.systems.MultiStateCmdSwitch"
+local InopSwitch 			= require "kpcrew.systems.InopSwitch"
+local KeepPressedSwitchCmd	= require "kpcrew.systems.KeepPressedSwitchCmd"
 
-local drefCurrentBaro = "sim/weather/barometer_sealevel_inhg"
-local drefSlider = "sim/cockpit2/switches/custom_slider_on"
+local drefCurrentBaro 		= "sim/weather/barometer_sealevel_inhg"
+local drefSlider 			= "sim/cockpit2/switches/custom_slider_on"
 
 -- Parking Brake
-sysGeneral.parkBrakeSwitch = TwoStateToggleSwitch:new("parkbrake","sim/cockpit2/controls/parking_brake_ratio",0,"sim/flight_controls/brakes_toggle_max")
+sysGeneral.parkBrakeSwitch 	= TwoStateToggleSwitch:new("parkbrake","sim/cockpit2/controls/parking_brake_ratio",0,"sim/flight_controls/brakes_toggle_max")
 
 -- Landing Gear
-sysGeneral.GearSwitch = TwoStateCmdSwitch:new("gear","sim/cockpit2/controls/gear_handle_down",0,"sim/flight_controls/landing_gear_down","sim/flight_controls/landing_gear_up","nocommand")
+sysGeneral.GearSwitch 		= TwoStateCmdSwitch:new("gear","sim/cockpit2/controls/gear_handle_down",0,"sim/flight_controls/landing_gear_down","sim/flight_controls/landing_gear_up","nocommand")
 
 -- Doors
-sysGeneral.doorL1 = TwoStateToggleSwitch:new("doorl1",drefSlider,0,"sim/operation/slider_01")
-sysGeneral.doorL2 = TwoStateToggleSwitch:new("doorl2",drefSlider,0,"sim/operation/slider_02")
-sysGeneral.doorR1 = TwoStateToggleSwitch:new("doorr1",drefSlider,0,"sim/operation/slider_03")
-sysGeneral.doorR2 = TwoStateToggleSwitch:new("doorr2",drefSlider,0,"sim/operation/slider_04")
-sysGeneral.doorFCargo = TwoStateToggleSwitch:new("doorfcargo",drefSlider,0,"sim/operation/slider_05")
-sysGeneral.doorACargo = TwoStateToggleSwitch:new("dooracrago",drefSlider,0,"sim/operation/slider_06")
+sysGeneral.doorL1 			= TwoStateToggleSwitch:new("doorl1",drefSlider,-1,"sim/operation/slider_01")
+sysGeneral.doorL2 			= TwoStateToggleSwitch:new("doorl2",drefSlider,2,"sim/operation/slider_03")
+sysGeneral.doorR1 			= TwoStateToggleSwitch:new("doorr1",drefSlider,6,"sim/operation/slider_07")
+sysGeneral.doorR2 			= InopSwitch:new("doorr2")
+sysGeneral.doorFCargo 		= TwoStateToggleSwitch:new("doorfcargo",drefSlider,7,"sim/operation/slider_08")
+sysGeneral.doorACargo 		= TwoStateToggleSwitch:new("dooracrago",drefSlider,8,"sim/operation/slider_09")
 
-sysGeneral.doorGroup = SwitchGroup:new("doors")
+sysGeneral.doorGroup 		= SwitchGroup:new("doors")
 sysGeneral.doorGroup:addSwitch(sysGeneral.doorL1)
 sysGeneral.doorGroup:addSwitch(sysGeneral.doorL2)
 sysGeneral.doorGroup:addSwitch(sysGeneral.doorR1)

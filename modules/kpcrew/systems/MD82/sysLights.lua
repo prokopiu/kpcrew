@@ -82,7 +82,7 @@ sysLights.landLightGroup:addSwitch(sysLights.llLeftSwitch)
 sysLights.landLightGroup:addSwitch(sysLights.llRightSwitch)
 
 -- Logo Light
-sysLights.logoSwitch = TwoStateToggleSwitch:new("logo",drefGenericLights,0,"sim/lights/generic_01_light_tog")
+sysLights.logoSwitch = TwoStateToggleSwitch:new("logo",drefGenericLights,-1,"sim/lights/generic_01_light_tog")
 
 -- RWY Turnoff Lights (2)
 sysLights.rwyLeftSwitch = TwoStateDrefSwitch:new("rwyleft",drefGenericLights,1)

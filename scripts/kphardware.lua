@@ -6,7 +6,7 @@
 require "kpcrew.genutils"
 require "kpcrew.systems.activities"
 
-local KPH_VERSION = "2.3-alpha7"
+local KPH_VERSION = "2.3-alpha8"
 
 -- disable windows by changing from true to false
 local show_mcp_panel = false
@@ -31,12 +31,14 @@ if PLANE_ICAO == "B738" then
 	else
 		kh_acf_icao = "B738" -- Zibo Mod and variants
 	end
--- elseif PLANE_ICAO == "A320" and PLANE_TAILNUMBER == "A320" then
-	-- kc_acf_icao = "A20N"
 end
+-- if PLANE_ICAO == "A320" and PLANE_TAILNUMBER == "A320" then
+	-- kc_acf_icao = "A20N"
+-- end
 -- if PLANE_ICAO == "A359" then
 	-- kh_acf_icao = "A359"
 -- end
+-- XP12 Citation X
 if PLANE_ICAO == "C750" and PLANE_TAILNUMBER == "N750XP" then
 	kh_acf_icao = "C750"
 end
@@ -49,9 +51,10 @@ end
 -- if PLANE_ICAO == "E135" or PLANE_ICAO == "E140" or PLANE_ICAO == "E145" or PLANE_ICAO == "E45X" then
 	-- kh_acf_icao = "ERJF"
 -- end
--- if PLANE_ICAO == "MD82" then
-	-- kh_acf_icao = "MD82"
--- end
+-- Laminar MD-82
+if PLANE_ICAO == "MD82" and PLANE_TAILNUMBER == "N552AA" then
+	kh_acf_icao = "MD82"
+end
 -- if PLANE_ICAO == "B744" then
 	-- kh_acf_icao = "B744"
 -- end

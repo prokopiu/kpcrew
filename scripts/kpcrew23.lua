@@ -1,7 +1,7 @@
 --[[
 	*** KPCREW 2.3
 	Virtual copilot for X-PLane 11/12
-	Kosta Prokopiu, October 2022
+	Kosta Prokopiu, March 2023
 --]]
 
 require "kpcrew.genutils"
@@ -10,7 +10,7 @@ require "kpcrew.systems.activities"
 local Flow = require "kpcrew.Flow"
 local FlowItem = require "kpcrew.FlowItem"
 
-kc_VERSION = "2.3-alpha7"
+kc_VERSION = "2.3-alpha8"
 kc_simversion = get("sim/version/xplane_internal_version")
 
 logMsg ( "FWL: ** Starting KPCrew version " .. kc_VERSION .." **" )
@@ -27,6 +27,7 @@ if PLANE_ICAO == "B738" then
 	end
 -- elseif PLANE_ICAO == "A359" then
 	-- kc_acf_icao = "A359"
+-- XP12 Citation X
 elseif PLANE_ICAO == "C750" and PLANE_TAILNUMBER == "N750XP" then
 	kc_acf_icao = "C750"
 -- elseif PLANE_ICAO == "A306" then
@@ -37,7 +38,11 @@ elseif PLANE_ICAO == "C750" and PLANE_TAILNUMBER == "N750XP" then
 	-- kc_acf_icao = "B732"
 -- elseif PLANE_ICAO == "A320" and PLANE_TAILNUMBER == "A320" then
 	-- kc_acf_icao = "A20N"
+-- Laminar MD-82
+elseif PLANE_ICAO == "MD82" and PLANE_TAILNUMBER == "N552AA" then
+	kc_acf_icao = "MD82"
 end
+
 -- Aircraft Specific SOP/Checklist/Procedure Definitions
 kcPreferenceSet 		= require("kpcrew.preferences.PreferenceSet")
 kcPreferenceGroup 		= require("kpcrew.preferences.PreferenceGroup")
