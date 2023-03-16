@@ -64,7 +64,7 @@ function sysRadio:render(ypos,height)
 
 	-- reposition when screen size changes
 	if  kh_radio_wnd_state < 0 then
-		float_wnd_set_position(kh_radio_wnd, 0, kh_scrn_height - ypos)
+		float_wnd_set_position(kh_radio_wnd, 0, ypos)
 		float_wnd_set_geometry(kh_radio_wnd,  0, ypos, 25, ypos-height)
 		kh_radio_wnd_state = 0
 	end

@@ -47,6 +47,13 @@ function ()
 	else
 		set_array(drefLandingLights,1,1)
 	end
+end,
+function () 
+	if get(drefLandingLights,1) == 1 then
+		return 1
+	else
+		return 0
+	end
 end)
 
 sysLights.llRightSwitch = TwoStateCustomSwitch:new("llright",drefLandingLights,2,
@@ -61,6 +68,13 @@ function ()
 		set_array(drefLandingLights,2,-1)
 	else
 		set_array(drefLandingLights,2,1)
+	end
+end,
+function () 
+	if get(drefLandingLights,2) == 1 then
+		return 1
+	else
+		return 0
 	end
 end)
 
@@ -188,7 +202,7 @@ function sysLights:render(ypos,height)
 		imgui.Button("L", 17, 25)
 		if imgui.IsItemActive() then 
 			kh_light_wnd_state = 1
-			float_wnd_set_geometry(kh_light_wnd, 0, ypos, 820, ypos-height)
+			float_wnd_set_geometry(kh_light_wnd, 0, ypos, 780, ypos-height)
 		end
 	end
 
@@ -205,7 +219,7 @@ function sysLights:render(ypos,height)
 	kc_imgui_toggle_button_mcp("POS",sysLights.positionSwitch,10,42,25)
 	kc_imgui_toggle_button_mcp("BEAC",sysLights.beaconSwitch,10,42,25)
 	kc_imgui_toggle_button_mcp("WING",sysLights.wingSwitch,10,42,25)
-	kc_imgui_toggle_button_mcp("WHL",sysLights.wheelSwitch,10,42,25)
+	-- kc_imgui_toggle_button_mcp("WHL",sysLights.wheelSwitch,10,42,25)
 	kc_imgui_label_mcp("|",10)
 	kc_imgui_toggle_button_mcp("DOME",sysLights.domeLightSwitch,10,42,25)
 	kc_imgui_toggle_button_mcp("INSTR",sysLights.instrLightGroup,10,45,25)

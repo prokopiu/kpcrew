@@ -93,7 +93,7 @@ sysMCP.hdgSelector = MultiStateCmdSwitch:new("hdg","sim/cockpit2/autopilot/headi
 sysMCP.turnRateSelector = InopSwitch:new("turnrate")
 
 -- LNAV
-sysMCP.lnavSwitch = TwoStateToggleSwitch:new("lnav","",0,"laminar/md82cmd/autopilot/toggleFMS")
+sysMCP.lnavSwitch = InopSwitch:new("lnav")
 
 -- ALT
 sysMCP.altSelector = MultiStateCmdSwitch:new("alt","sim/cockpit2/autopilot/altitude_dial_ft",0,"sim/autopilot/altitude_down","sim/autopilot/altitude_up")
@@ -189,7 +189,7 @@ function sysMCP:render(ypos,height)
 		imgui.Button("M", 17, 25)
 		if imgui.IsItemActive() then 
 			kh_mcp_wnd_state = 1
-			float_wnd_set_geometry(kh_mcp_wnd, 0, ypos, 1005, ypos-height)
+			float_wnd_set_geometry(kh_mcp_wnd, 0, ypos, 960, ypos-height)
 		end
 	end
 
@@ -205,11 +205,11 @@ function sysMCP:render(ypos,height)
 	kc_imgui_toggle_button_mcp("N1",sysMCP.n1Switch,10,22,25)
 	kc_imgui_toggle_button_mcp("SP",sysMCP.speedSwitch,10,22,25)
 	kc_imgui_rotary_mcp("SPD:%03d",sysMCP.iasSelector,10,12)
-	kc_imgui_toggle_button_mcp("VN",sysMCP.vnavSwitch,10,22,25)
+	-- kc_imgui_toggle_button_mcp("VN",sysMCP.vnavSwitch,10,22,25)
 	kc_imgui_toggle_button_mcp("LC",sysMCP.lvlchgSwitch,10,22,25)
 	kc_imgui_rotary_mcp("HDG:%03d",sysMCP.hdgSelector,10,13)
 	kc_imgui_toggle_button_mcp("HD",sysMCP.hdgselSwitch,10,22,25)
-	kc_imgui_toggle_button_mcp("LN",sysMCP.lnavSwitch,10,22,25)
+	-- kc_imgui_toggle_button_mcp("LN",sysMCP.lnavSwitch,10,22,25)
 	kc_imgui_toggle_button_mcp("LO",sysMCP.vorlocSwitch,10,22,25)
 	kc_imgui_toggle_button_mcp("AP",sysMCP.approachSwitch,10,22,25)
 	kc_imgui_rotary_mcp("ALT:%05d",sysMCP.altSelector,10,14)

@@ -9,10 +9,10 @@ require "kpcrew.systems.activities"
 local KPH_VERSION = "2.3-alpha8"
 
 -- disable windows by changing from true to false
-local show_mcp_panel = false
+local show_mcp_panel = true
 local show_light_panel = true
-local show_radio_panel = false
-local show_efis_panel = false
+local show_radio_panel = true
+local show_efis_panel = true
 
 
 -- auto reverse certain axes
@@ -436,18 +436,19 @@ local start_y_pos = 0
 
 kh_mcp_wnd = nil
 kh_mcp_start_pos = 0
-local mcp_window_height = 46 
+local mcp_window_height = 46
 local mcp_window_width = 25
 
 function kh_init_mcp_window()
 	if kh_mcp_wnd == 0 or kh_mcp_wnd == nil then	
-		start_y_pos = start_y_pos + mcp_window_height
 		kh_mcp_start_pos = start_y_pos
+		start_y_pos = start_y_pos + mcp_window_height
 		kh_mcp_wnd = float_wnd_create(mcp_window_width, mcp_window_height, 2, true)
 		float_wnd_set_title(kh_mcp_wnd, "")
-		float_wnd_set_position(kh_mcp_wnd, 0, kh_scrn_height - start_y_pos)
+		float_wnd_set_position(kh_mcp_wnd, 0, kh_mcp_start_pos) --kh_scrn_height - start_y_pos)
 		float_wnd_set_imgui_builder(kh_mcp_wnd, "kh_mcp_builder")
 		float_wnd_set_onclose(kh_mcp_wnd, "kh_close_mcp_window")
+		kh_mcp_start_pos = start_y_pos
 	end
 end
 
@@ -492,13 +493,14 @@ local light_window_width = 25
 
 function kh_init_light_window()
 	if kh_light_wnd == 0 or kh_light_wnd == nil then	
-		start_y_pos = start_y_pos + light_window_height
 		kh_light_start_pos = start_y_pos
+		start_y_pos = start_y_pos + light_window_height
 		kh_light_wnd = float_wnd_create(light_window_width, light_window_height, 2, true)
 		float_wnd_set_title(kh_light_wnd, "")
-		float_wnd_set_position(kh_light_wnd, 0, kh_scrn_height - start_y_pos)
+		float_wnd_set_position(kh_light_wnd, 0, kh_light_start_pos) --kh_scrn_height - start_y_pos)
 		float_wnd_set_imgui_builder(kh_light_wnd, "kh_light_builder")
 		float_wnd_set_onclose(kh_light_wnd, "kh_close_light_window")
+		kh_light_start_pos = start_y_pos
 	end
 end
 
@@ -543,13 +545,14 @@ local radio_window_width = 25
 
 function kh_init_radio_window()
 	if kh_radio_wnd == 0 or kh_radio_wnd == nil then	
-		start_y_pos = start_y_pos + radio_window_height
 		kh_radio_start_pos = start_y_pos
+		start_y_pos = start_y_pos + radio_window_height
 		kh_radio_wnd = float_wnd_create(radio_window_width, radio_window_height, 2, true)
 		float_wnd_set_title(kh_radio_wnd, "")
-		float_wnd_set_position(kh_radio_wnd, 0, kh_scrn_height - start_y_pos)
+		float_wnd_set_position(kh_radio_wnd, 0, kh_radio_start_pos)
 		float_wnd_set_imgui_builder(kh_radio_wnd, "kh_radio_builder")
 		float_wnd_set_onclose(kh_radio_wnd, "kh_close_radio_window")
+		kh_radio_start_pos = start_y_pos
 	end
 end
 
@@ -594,13 +597,14 @@ local efis_window_width = 25
 
 function kh_init_efis_window()
 	if kh_efis_wnd == 0 or kh_efis_wnd == nil then	
-		start_y_pos = start_y_pos + efis_window_height
 		kh_efis_start_pos = start_y_pos
+		start_y_pos = start_y_pos + efis_window_height
 		kh_efis_wnd = float_wnd_create(efis_window_width, efis_window_height, 2, true)
 		float_wnd_set_title(kh_efis_wnd, "")
-		float_wnd_set_position(kh_efis_wnd, 0, kh_scrn_height - start_y_pos)
+		float_wnd_set_position(kh_efis_wnd, 0, kh_efis_start_pos) --kh_scrn_height - start_y_pos)
 		float_wnd_set_imgui_builder(kh_efis_wnd, "kh_efis_builder")
 		float_wnd_set_onclose(kh_efis_wnd, "kh_close_efis_window")
+		kh_efis_start_pos = start_y_pos
 	end
 end
 
