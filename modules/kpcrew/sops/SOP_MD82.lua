@@ -63,71 +63,43 @@ testProc:addItem(ProcedureItem:new("BATTERY SWITCH","ON",FlowItem.actorFO,0,true
 		command_end("sim/starters/engage_starter_1")
 	end))
 
-	
 -- ============ Electrical Power Up Procedure ============
 -- All paper work on board and checked
 -- M E L and Technical Logbook checked
 
 -- ===== Initial checks
--- DC Electric Power
--- BATTERY VOLTAGE...........................MIN 24V (F/O)
--- BATTERY SWITCH.................................ON (F/O)
-
--- Hydraulic System
--- ELECTRIC HYDRAULIC PUMP.......................OFF (F/O)
+-- CIRCUIT BREAKERS.....................CHECK ALL IN (F/O)
+-- WINDSHIELD WIPER SELECTORS...................PARK (F/O)
+-- LANDING GEAR LEVER...........................DOWN (F/O)
 -- FLAP LEVER....................................SET (F/O)
 --   Set the flap lever to agree with the flap position.
+-- PARKING BRAKE..................................ON (F/O)
 
--- Other
--- WINDSHIELD WIPER SELECTORS...................PARK (F/O)
--- LANDING GEAR LEVER...........................DOWN (F/O)
---   GREEN LANDING GEAR LIGHT......CHECK ILLUMINATED (F/O)
+-- DC Electric Power
+-- BATTERY SWITCH..........................ON & LOCK (F/O)
+-- ANTI COLLISION LIGHT...........................ON (F/O)
 
 -- ==== Activate External Power
---   GROUND POWER..........................CONNECTED (F/O)
---     Ensure that GPU is on Bus
+-- EXT POWER.................................CONNECT (F/O)
+-- EXT PWR L & R..............................ON BUS (F/O)
 
 -- ==== Activate APU 
---   APU.......................................START (F/O)
---     Start APU if available and specific to the aircraft
---   APU.....................................RUNNING
---     Bring APU power on bus
+-- FIRE LOOP TEST............................PERFORM (F/O)
+-- START PUMP SW (DC).............................ON (F/O)
+-- APU START SW................................START (F/O)
+--   APU STARTER LIGHT ON WAAP...........ILLUMINATED (F/O)
+--   APU PWR AVAIL.......................ILLUMINATED (F/O)
+--   APU POWER 115V & 400HZ....................CHECK (F/O)
+--   APU L & R BUS................................ON (F/O)
+--   APU POWER CONSUMPTION...........CHECK BELOW 1.0 (F/O)
+--   APU AIR......................................ON (F/O)
+-- • AIR pressure centure duct CHECK  ?? ?where
+--   RIGHT PNEU-X-FEED..........................OPEN (F/O)
+--   RIGHT AIR COND SUPPLY......................AUTO (F/O)
+--   RIGHT AFT FUEL PUMP SW.......................ON (F/O)
+--   START PUMP SW (DC)..........................OFF (F/O)
+--   WING/NACL LIGHTS.............................ON (F/O)   if required
 -- =======================================================
-
--- CIRCUIT BREAKERS (P6 PANEL)..........CHECK ALL IN (F/O)
--- WINDSHIELD WIPER SELECTORS...................PARK (F/O)
--- LANDING GEAR LEVER...........................DOWN (F/O)
---   GREEN LANDING GEAR LIGHT......CHECK ILLUMINATED (F/O)
---   RED LANDING GEAR LIGHT.......CHECK EXTINGUISHED (F/O)
-
--- Parking brake ON
---  Battery Switch ON / LOCK
---  Fire loop test PERFORM
---  POS/STROBE LIGHTS BOTH rotatniug beacon
--- ==== Activate External Power
---   GRD POWER AVAILABLE LIGHT...........ILLUMINATED (F/O)
---   AC POWER SWITCH.............................GRD (F/O)
---   GROUND POWER SWITCH..........................ON (F/O)
--- ==== Activate APU 
---   APU.......................................START (F/O)
---     Start APU if available and specific to the aircraft
---   APU.....................................RUNNING
---     Bring APU power on bus
--- • START PUMP SW (DC) ON
--- • APU START SW START
--- • Monitor light 'APU STARTER ON' on WAAP
--- • Monitor light 'APU PWR AVAIL'
--- • APU POWER 115Volt, 400Hz CHECK
--- • APU L and R BUS ON
--- • power consumption is below 1.0 CHECK
--- • APU AIR (>60 seconds) ON
--- • AIR pressure centure duct CHECK
--- • Right PNEU-X-FEED OPEN
--- • Right AIR COND SUPPLY AUTO
---  Right AFT FUEL PUMP SW ON
---  START PUMP SW (DC) OFF
---  WING/NACL LIGHTS ON if required
-
 
 local electricalPowerUpProc = Procedure:new("ELECTRICAL POWER UP","performing ELECTRICAL POWER UP","Power up finished")
 electricalPowerUpProc:setFlightPhase(1)
