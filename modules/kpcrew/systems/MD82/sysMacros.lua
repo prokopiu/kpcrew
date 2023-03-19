@@ -22,9 +22,47 @@ function kc_macro_state_cold_and_dark()
 	end
 	sysControls.yawDamper:actuate(0)
 	kc_macro_ext_lights_off()
+	sysGeneral.wiperSwitch1:actuate(0)
+	sysGeneral.GearSwitch:actuate(1)
+	sysAir.engBleedGroup:actuate(0)
+	sysAir.packSwitchGroup:actuate(0)
+	sysFuel.fuelPumpGroup:actuate(0)
+	kc_macro_gpu_disconnect()
+	if get("laminar/md82/safeguard",3) == 1 then 
+		command_once("laminar/md82cmd/safeguard03")
+	end
+	command_once("sim/electrical/APU_off")
+	sysElectric.apuGenBus1:actuate(0)
+	sysElectric.apuGenBus2:actuate(0)
+	sysAir.apuBleedSwitch:actuate(0)
+	sysAir.bleedEng1Switch:actuate(0)
+	sysAir.packLeftSwitch:actuate(0)
+	sysFuel.fuelPumpRightAft:actuate(0)
+	sysElectric.batterySwitch:actuate(0) 
+	sysLights.positionSwitch:actuate(0)
+	sysElectric.voltmeterSwitch:actuate(1) 
+	sysEngines.startPumpDc:actuate(0)
 end
 
 function kc_macro_state_turnaround()
+	sysGeneral.wiperSwitch1:actuate(0)
+	sysGeneral.GearSwitch:actuate(1)
+	sysElectric.voltmeterSwitch:actuate(4) 
+	sysElectric.batterySwitch:actuate(1) 
+	if get("laminar/md82/safeguard",3) == 0 then 
+		command_once("laminar/md82cmd/safeguard03")
+	end
+	kc_macro_ext_lights_stand()
+	kc_macro_int_lights_on()
+	sysAir.engBleedGroup:actuate(0)
+	sysAir.packSwitchGroup:actuate(0)
+	sysFuel.fuelPumpGroup:actuate(0)
+	sysLights.positionSwitch:actuate(1)
+	if activePrefSet:get("aircraft:powerup_apu") == false then 
+		kc_macro_gpu_connect()
+	else
+		sysEngines.startPumpDc:actuate(1)
+	end
 end
 
 -- external lights all off
@@ -38,6 +76,66 @@ function kc_macro_ext_lights_off()
 	sysLights.logoSwitch:actuate(0)
 	sysLights.wingSwitch:actuate(0)
 end
+
+-- external lights at the stand
+function kc_macro_ext_lights_stand()
+	sysLights.landLightGroup:actuate(0)
+	sysLights.rwyLightGroup:actuate(0)
+	sysLights.taxiSwitch:actuate(0)
+	sysLights.strobesSwitch:actuate(0)
+	sysLights.positionSwitch:actuate(1)
+	sysLights.beaconSwitch:actuate(0)
+	if kc_is_daylight() then		
+		sysLights.wingSwitch:actuate(0)
+		sysLights.logoSwitch:actuate(0)
+	else
+		sysLights.wingSwitch:actuate(1)
+		sysLights.logoSwitch:actuate(1)
+	end
+end
+
+
+-- internal lights at stand
+function kc_macro_int_lights_on()
+	if kc_is_daylight() then		
+		sysLights.domeLightSwitch:actuate(0)
+		sysLights.instrLightGroup:actuate(0)
+		sysLights.instr2Light:actuate(1)
+		sysLights.instr6Light:actuate(1)
+		sysLights.instr7Light:actuate(1)
+	else
+		sysLights.domeLightSwitch:actuate(1)
+		sysLights.instrLightGroup:actuate(1)
+	end
+end
+
+-- connect and start gpu
+function kc_macro_gpu_connect()
+	if get("sim/cockpit/electrical/gpu_on") == 0 then
+		command_once("sim/electrical/GPU_on")
+		if get("laminar/md82/electrical/cross_tie_GPU_L") == 0 then
+			command_once("laminar/md82cmd/electrical/cross_tie_GPU_L")
+		end
+		if get("laminar/md82/electrical/cross_tie_GPU_R") == 0 then
+			command_once("laminar/md82cmd/electrical/cross_tie_GPU_R")
+		end
+	end
+end
+
+-- diconnect gpu
+function kc_macro_gpu_disconnect()
+	if get("sim/cockpit/electrical/gpu_on") == 1 then
+		if get("laminar/md82/electrical/cross_tie_GPU_L") > 0 then
+			command_once("laminar/md82cmd/electrical/cross_tie_GPU_L")
+		end
+		if get("laminar/md82/electrical/cross_tie_GPU_R") > 0 then
+			command_once("laminar/md82cmd/electrical/cross_tie_GPU_R")
+		end
+		command_once("sim/electrical/GPU_off")
+	end
+end
+
+
 
 -- function kc_bck_()
 -- end

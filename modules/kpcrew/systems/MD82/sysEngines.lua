@@ -26,6 +26,10 @@ local drefEngine2Fire = "sim/cockpit2/annunciators/engine_fires"
 -- Reverse Toggle
 sysEngines.reverseToggle = TwoStateToggleSwitch:new("reverse","sim/cockpit/warnings/annunciators/reverse",0,"sim/engines/thrust_reverse_toggle") 
 
+-- Start Pump DC
+sysEngines.startPumpDc = TwoStateCmdSwitch:new("startPump","sim/cockpit/engine/fuel_pump_on",0,
+	"sim/fuel/fuel_pumps_on","sim/fuel/fuel_pumps_off","sim/fuel/fuel_pumps_tog")
+
 ----------- Annunciators
 
 -- ENGINE FIRE annunciator

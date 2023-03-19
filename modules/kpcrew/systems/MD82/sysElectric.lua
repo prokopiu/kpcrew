@@ -6,6 +6,12 @@
 -- @copyright 2023 Kosta Prokopiu
 
 local sysElectric = {
+	VOLTMTR_APU = 0,
+	VOLTMTR_EXT = 1,
+	VOLTMTR_LEFT = 2,
+	VOLTMTR_RIGHT = 3,
+	VOLTMTR_BATVOLT = 4,
+	VOLTMTR_BATAMP = 5
 }
 
 local TwoStateDrefSwitch 	= require "kpcrew.systems.TwoStateDrefSwitch"
@@ -17,11 +23,40 @@ local CustomAnnunciator 	= require "kpcrew.systems.CustomAnnunciator"
 local TwoStateToggleSwitch	= require "kpcrew.systems.TwoStateToggleSwitch"
 local MultiStateCmdSwitch 	= require "kpcrew.systems.MultiStateCmdSwitch"
 local InopSwitch 			= require "kpcrew.systems.InopSwitch"
+local KeepPressedSwitchCmd	= require "kpcrew.systems.KeepPressedSwitchCmd"
+
+-- Battery Power
+sysElectric.batterySwitch 		= TwoStateCmdSwitch:new("GPU","sim/cockpit/electrical/battery_array_on",0,
+	"sim/electrical/battery_1_on","sim/electrical/battery_1_off","sim/electrical/battery_1_toggle")
 
 -- Ground Power
 sysElectric.gpuSwitch 		= TwoStateCmdSwitch:new("GPU","sim/cockpit/electrical/gpu_on",0,
-	"sim/bleed_air/gpu_on","sim/bleed_air/gpu_off","sim/bleed_air/gpu_toggle")
+	"sim/electric/gpu_on","sim/electric/gpu_off","sim/electric/gpu_toggle","nocommand")
 
+-- GPU Bus Switches
+sysElectric.gpuGenBus1 		= TwoStateToggleSwitch:new("gpubus1","laminar/md82/electrical/cross_tie_GPU_L",0,
+	"laminar/md82cmd/electrical/cross_tie_GPU_L")
+sysElectric.gpuGenBus2 		= TwoStateToggleSwitch:new("gpubus2","laminar/md82/electrical/cross_tie_GPU_R",0,
+	"laminar/md82cmd/electrical/cross_tie_GPU_R")
+
+-- APU MASTER
+sysElectric.apuMasterSwitch = TwoStateCmdSwitch:new("apu","sim/cockpit/engine/APU_switch",0,
+	"sim/electrical/APU_on","sim/electrical/APU_off","nocommand")
+-- APU Starter
+sysElectric.apuStartSwitch 	= KeepPressedSwitchCmd:new("apu","sim/cockpit/engine/APU_switch",0,
+	"sim/electrical/APU_start")
+
+-- APU Bus Switches
+sysElectric.apuGenBus1 		= TwoStateToggleSwitch:new("apubus1","laminar/md82/electrical/cross_tie_APU_L",0,
+	"laminar/md82cmd/electrical/cross_tie_APU_L")
+sysElectric.apuGenBus2 		= TwoStateToggleSwitch:new("apubus2","laminar/md82/electrical/cross_tie_APU_R",0,
+	"laminar/md82cmd/electrical/cross_tie_APU_R")
+
+-- Voltmeter MD82
+sysElectric.voltmeterSwitch = MultiStateCmdSwitch:new("voltmeter","laminar/md82/electrical/voltmeter_source",0,
+	"laminar/md82cmd/electrical/voltmeter_source_dwn","laminar/md82cmd/electrical/voltmeter_source_up",0,5,true)
+	
+-- == Annunciators
 
 -- LOW VOLTAGE annunciator
 sysElectric.lowVoltageAnc = SimpleAnnunciator:new("lowvoltage","sim/cockpit2/annunciators/low_voltage",0)
