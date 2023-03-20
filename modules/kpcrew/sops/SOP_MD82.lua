@@ -209,6 +209,7 @@ electricalPowerUpProc:addItem(ProcedureItem:new("  RIGHT AFT FUEL PUMP SW","ON",
 		sysFuel.fuelPumpRightAft:actuate(1)
 	end,
 	function () return activePrefSet:get("aircraft:powerup_apu") == false end))
+-- • AIR pressure centure duct CHECK  ?? ?where
 electricalPowerUpProc:addItem(ProcedureItem:new("START PUMP SW (DC)","OFF",FlowItem.actorFO,0,
 	function () return sysEngines.startPumpDc:getStatus() == 0 end,
 	function () sysEngines.startPumpDc:actuate(0) end,
@@ -218,76 +219,66 @@ electricalPowerUpProc:addItem(SimpleProcedureItem:new("==== "))
 electricalPowerUpProc:addItem(ProcedureItem:new("AVIONICS BRIGHTNESS","SET",FlowItem.actorFO,0,
 	function () return sysLights.instr7Light:getStatus() > 0 end))
 
-
---   START PUMP SW (DC)..........................OFF (F/O)
-
--- • AIR pressure centure duct CHECK  ?? ?where
-
-
-
 -- ================= PREFLIGHT PROCEDURE =================
 -- ELECTRICAL POWER UP......................COMPLETE (F/O)
--- STALL WARNING TEST........................PERFORM (F/O)
---   AC power must be available
--- XPDR.....................................SET 2000 (F/O)
--- COCKPIT LIGHTS......................SET AS NEEDED (F/O)
--- WING & WHEEL WELL LIGHTS..........SET AS REQUIRED (F/O)
--- FUEL PUMPS................................ALL OFF (F/O)
--- POSITION LIGHTS................................ON (F/O)
--- MCP....................................INITIALIZE (F/O)
--- PARKING BRAKE.................................SET (F/O)
--- Electric hydraulic pumps on for F/O walk-around
--- ELECTRIC HYDRAULIC PUMPS SWITCHES..............ON (F/O)
+-- PRIMARY FLIGHT DISPLAYS........................ON F
+-- NAVIGATION DISPLAYS............................ON F
+-- ANNUNCIATOR LIGHTS ..........................TEST
+-- FLIGHT DIRECTORS...............................ON
+-- EFIS ........................................TEST ??
+-- AUTOLAND AVAILABILITY........................TEST ??
+-- TRIM.........................................TEST ??
+-- ENGINE SYNC SELECTOR..........................OFF 
+-- GALLEY POWER...................................ON
+-- FUEL PUMP SWITCH.............................TEST ??
+-- NO SMOKING.....................................ON
+-- PITOT HEATER.................................TEST ??
+-- WINDSHIELD HEAT................................ON
+-- PNEUMATIC X-FEEDS............................OPEN
+-- GPWS.........................................TEST ??
+-- WINDSHEAR....................................TEST ??
+-- ANTI SKID....................................TEST ??
+-- STALL........................................TEST ??
+-- OVERSPEED....................................TEST ??
+-- YAW DAMPER.....................................ON 
+-- ICE FOD......................................TEST ??
+-- TCAS.........................................TEST ??
+-- SET XPONDER.................................ABOVE
+-- TAKEOFF WARNING..............................TEST
+-- HYDRAULIC PUMP...............................TEST
+-- GEAR.........................................TEST
+-- WX RADAR.....................................TEST
+-- SET ALTIMETERS................................SET
+-- TRP..........................................TEST
+-- TRP TO TAKEOFF................................SET
+-- ADF..........................................TEST
+-- ZFW..........................................TEST
+-- STANDBY ATTITUDE INDICATOR...................CAGE C
+-- EMERGENCY LIGHT TEST......................PERFORM C
+-- ARRIVAL ELEVATION.............................SET C
+-- FLIGHT DATA RECORDER PANEL....................SET C
+-- FLIGHT MANAGEMENT SYSTEM, MCDU PROGRAMMING....SET C
+-- FLIGHT CONTROL PANEL..........................SET C
+-- AUTOFLIGHT PANEL SET
+-- •Initial altitude
+-- •Heading departure runway
+-- •V2 Air speed selecter
+-- Set speed bugs (clickspot ASI 12 o'clock for T/O speed bugs) SET
+-- TRANSPONDER SET
+-- "Are you ready for the Departure Brief?"
+-- Flap setting and CG takeoff condition computer SET
+-- Stabilizer trim SET
+-- APU / APU Air ON or START
+-- Seatbelt sign ON
+-- "PRE START CHECK BELOW THE LINE" Challenge
+-- COM, NAV RADIO'S AND TRANSPONDER..............SET C
+-- ALTIMETER.....................................SET C
+-- TRP (IF REDUCED TAKE OFF) ....................SET C
+-- SPEED BUGS....................................SET C
+-- DEPARTURE BRIEF...........................PERFORM C
 -- =======================================================
 
--- PRIMARY FLIGHT DISPLAY'S.......................ON
--- NAVIGATION DISPLAY'S .......................ON
--- ANNUNCIATOR LIGHTS .......................TEST
--- FLIGHT DIRECTOR’S .......................ON
--- EFIS .......................TEST
--- AUTOLAND AVAILABILITY .......................TEST
--- TRIM .......................TEST
--- ENGINE SYNC SELECTOR .......................OFF
--- GALLEY POWER .......................ON
--- FUEL PUMP SWITCH .......................TEST
--- NO SMOKING .......................ON
--- PITOT HEATER .......................TEST
--- WINDSHIELD HEAT .......................ON
--- PNEUMATIC X-FEEDS .......................OPEN
--- GPWS .......................TEST
--- WINDSHEAR .......................TEST
--- ANTI SKID .......................TEST
--- STALL .......................TEST
--- OVERSPEED .......................TEST
--- YAW DAMPER .......................ON
--- ICE FOD .......................TEST
--- TCAS .......................TEST
--- SET XPONDER .......................ABOVE
--- TAKEOFF WARNING .......................TEST
--- HYDRAULIC PUMP .......................TEST
--- GEAR .......................TEST
--- WX RADAR .......................TEST
--- SET ALTIMETERS .......................SET
--- TRP .......................TEST
--- TRP TO TAKEOFF .......................SET
--- ADF .......................TEST
--- ZFW .......................TEST
--- SHOW .......................ZFW
-
--- STANDBY ATTITUDE INDICATOR .......................CAGE
--- EMERGENCY LIGHT TEST (WITH FA VIA PA CALL BUTTON) .......................PERFORM 
--- ARRIVAL ELEVATION (PRESSURIZATION AND FS2CREW PANEL) .......................SET 
--- FLIGHT DATA RECORDER PANEL .......................SET 
--- AIRCRAFT WALK ARROUND .......................PERFORM 
--- PAPERS .......................CHECK 
--- FLIGHT MANAGEMENT SYSTEM, MCDU PROGRAMMING .......................SET 
--- FLIGHT CONTROL PANEL .......................SET 
--- COM, NAV RADIO'S AND TRANSPONDER .......................SET 
--- ALTIMETER .......................SET
--- TRP (IF REDUCED TAKE OFF) .......................SET
-
-
-local preflightProc = Procedure:new("PREFLIGHT PROCEDURE","starting pre flight procedure","I finished the preflight procedure")
+local preflightProc = Procedure:new("PREFLIGHT PROCEDURE","starting pre flight procedure","")
 preflightProc:setFlightPhase(2)
 preflightProc:addItem(ProcedureItem:new("ELECTRICAL POWER UP","COMPLETE",FlowItem.actorFO,0,
 	function () return 
@@ -339,149 +330,84 @@ preflightProc:addItem(ProcedureItem:new("ELECTRIC HYDRAULIC PUMPS SWITCHES","ON"
 	function () return sysHydraulic.elecHydPumpGroup:getStatus() == 1 end,
 	function () sysHydraulic.elecHydPumpGroup:actuate(modeOn) end))
 
--- ================ Preflight Procedure ==================
--- ==== Flight control panel                            
--- YAW DAMPER SWITCH..............................ON (F/O)
 
--- ==== Fuel panel                                      
--- FUEL PUMP SWITCHES........................ALL OFF (F/O)
---   If APU running turn one of the left fuel pumps on
--- FUEL CROSS FEED...............................OFF (F/O)
--- CROSS FEED VALVE LIGHT...............EXTINGUISHED (F/O)
-
--- ==== Electrical panel                                
--- BATTERY SWITCH.......................GUARD CLOSED (F/O)
--- CAB/UTIL POWER SWITCH..........................ON (F/O)
--- IFE/PASS SEAT POWER SWITCH.....................ON (F/O)
--- STANDBY POWER SWITCH.................GUARD CLOSED (F/O)
--- GEN DRIVE DISCONNECT SWITCHES.......GUARDS CLOSED (F/O)
--- BUS TRANSFER SWITCH..................GUARD CLOSED (F/O)
-
--- ==== APU start if required
--- Overheat and fire protection panel              
--- OVHT FIRE TEST SWITCH..................HOLD RIGHT (F/O)
--- MASTER FIRE WARN LIGHT.......................PUSH (F/O)
--- ENGINES EXT TEST SWITCH............TEST 1 TO LEFT (F/O)
--- ENGINES EXT TEST SWITCH...........TEST 2 TO RIGHT (F/O)
--- APU PANEL
--- APU SWITCH..................................START (F/O)
---   Hold APU switch in START position for 3-4 seconds.
--- APU GEN OFF BUS LIGHT.................ILLUMINATED (F/O)
--- APU GENERATOR BUS SWITCHES.....................ON (F/O)
-
--- ==== Overhead items
--- EQUIPMENT COOLING SWITCHES...................NORM (F/O)
--- EMERGENCY EXIT LIGHTS SWITCH.........GUARD CLOSED (F/O)
--- NO SMOKING SWITCH..............................ON (F/O)
--- FASTEN BELTS SWITCH............................ON (F/O)
--- WINDSHIELD WIPER SELECTORS...................PARK (F/O)
-
--- ==== Anti-Ice
--- WINDOW HEAT SWITCHES...........................ON (F/O)
--- WINDOW HEAT ANNUNCIATORS............. ILLUMINATED (F/O)
--- PROBE HEAT SWITCHES...........................OFF (F/O)
--- WING ANTI-ICE SWITCH..........................OFF (F/O)
--- ENGINE ANTI-ICE SWITCHES......................OFF (F/O)
+-- ========= PRE-START CHECK ABOVE (F/O SILENT) ==========
+-- CIRCUIT BREAKERS.....................CHECK ALL IN (F/O)
+-- L & R BUS TIE/ DC BUS X TIE.............AUTO/OPEN (F/O)
+-- EMERG POWER...........................CHECKED/OFF (F/O)
+-- GALLEY POWER...................................ON (F/O)
+-- CABIN ALT CNTRL WHEEL/LEVER AUTO/VALVE.......OPEN (F/O)
+-- PNEUM X-FEED VALVE LEVERS....................OPEN (F/O)
+-- CABIN PRESS CONTROL...........................SET (F/O)
+-- COCKPIT / CABIN CONTROL..........TEMP AS REQUIRED (F/O)
+-- OXYGEN CYL PRESS..........................CHECKED (F/O)
+-- FLIGHT RECORDER.......................CHECKED/SET (F/O)
+-- VOICE RECORDER............................CHECKED (F/O)
+-- CADC/FD CMD/ EFIS SEL....................... NORM (F/O)
+-- ENG SYNC SELECTOR ............................OFF (F/O)
+-- GPWS......................................CHECKED (F/O)
+-- ANTI-SKID ..........................CHECKED/ARMED (F/O)
+-- STALL WARNING.............................CHECKED (F/O)
+-- MAX SPEED WARNING.........................CHECKED (F/O)
+-- MACH TRIM COMPENSATOR.....................ON/NORM (F/O)
+-- YAW DAMPER.....................................ON (F/O)
+-- RADIO RACK....................................FAN (F/O)
+-- AIR COND SHUTOFF.............................AUTO (F/O)
+-- RAM AIR.......................................OFF (F/O)
+-- FUEL PUMPS................................CHECKED (F/O)
+-- IGNITION......................................OFF (F/O)
+-- EMER LIGHTS.........................CHECKED/ARMED (F/O)
+-- NO SMOKING/SEATBELT SW......................ON/ON (F/O)
+-- PITOT HEAT............................CHECKED/OFF (F/O)
+-- AIRFOIL / ENG ANTI ICE....................... OFF (F/O)
+-- WINDSHIELD HEAT................................ON (F/O)
+-- ANNUNCIATOR / DIGITAL LIGHTS............. CHECKED (F/O)
+-- DFGS / NAVAIDS................................SET (F/O)
+-- FLIGHT INSTRUMENTS....................... CHECKED (F/O)
+-- BRAKE PRESSURE & TEMP.................... CHECKED (F/O)
+-- HYDRAULIC SYSTEM..........................CHECKED (F/O)
+-- GEAR LIGHTS & AURAL WARNING.............. CHECKED (F/O)
+-- FUEL USED...................................RESET (F/O)
+-- ENGINE INSTRUMENTS........................CHECKED (F/O)
+-- STATIC AIR SELECTOR..........................NORM (F/O)
+-- TCAS......................................CHECKED (F/O)
+-- RADAR.....................................CHECKED (F/O)
+-- RUD HYD CONTROL.........................LEVER PWR (F/O)
+-- FUEL X-FEED.............................LEVER OFF (F/O)
+-- FUEL SWITCHES.............................CHECKED (F/O)
+-- T/O WARNING.............................. CHECKED (F/O)
+-- STABILIZER................................CHECKED (F/O)
+-- SPOILERS.............................DISARMED/RET (F/O)
+-- FLAPS/SLATS..............................UP / RET (F/O)
 -- =======================================================
 
 
--- pre start above the line checklists
-
--- CIRCUIT BREAKERS...........................CHECKED
--- L & R BUS TIE/ DC BUS X TIE...........................AUTO/OPEN
--- EMERG POWER...........................CHECKED/OFF
--- GALLEY POWER...........................ON
--- CABIN ALT CNTRL WHEEL/LEVER AUTO/VALVE...........................OPEN
--- PNEUM X-FEED VALVE LEVERS...........................OPEN
--- CABIN PRESS CONTROL...........................SET
--- COCKPIT / CABIN CONTROL...........................TEMP AS REQUIRED
--- OXYGEN CYL PRESS...........................CHECKED
--- FLIGHT RECORDER...........................CHECKED/SET
--- VOICE RECORDER...........................CHECKED
--- CADC/FD CMD/ EFIS SEL........................... NORM
--- ENG SYNC SELECTOR ...........................OFF
--- GPWS ...........................CHECKED
--- ANTI-SKID ...........................CHECKED/ARMED
--- STALL WARNING ...........................CHECKED
--- MAX SPEED WARNING ...........................CHECKED
--- MACH TRIM COMPENSATOR ...........................ON/NORM
--- YAW DAMPER ...........................ON
--- RADIO RACK ...........................FAN
--- AIR COND SHUTOFF ...........................AUTO
--- RAM AIR ...........................OFF
--- FUEL PUMPS ...........................CHECKED
--- IGNITION ...........................OFF
--- EMER LIGHTS ...........................CHECKED/ARMED
--- NO SMOKING/SEATBELT SW ...........................ON/ON
--- PITOT HEAT ...........................CHECKED/OFF
--- AIRFOIL / ENG ANTI ICE........................... OFF
--- WINDSHIELD HEAT ...........................ON
--- ANNUNCIATOR/ DIGITAL LIGHTS........................... CHECKED
--- DFGS / NAVAIDS ...........................SET
--- FLIGHT INSTRUMENTS........................... CHECKED
--- BRAKE PRESSURE & TEMP........................... CHECKED
--- HYDRAULIC SYSTEM ...........................CHECKED
--- GEAR LIGHTS & AURAL WARNING........................... CHECKED
--- FUEL USED ...........................RESET
--- ENGINE INSTRUMENTS ...........................CHECKED
--- STATIC AIR SELECTOR ...........................NORM
--- TCAS ...........................CHECKED
--- RADAR ...........................CHECKED
--- RUD HYD CONTROL ...........................LEVER PWR
--- FUEL X-FEED ...........................LEVER OFF
--- FUEL SWITCHES ...........................CHECKED
--- T/O WARNING........................... CHECKED
--- STABILIZER ...........................CHECKED
--- SPOILERS ...........................DISARMED/RET
--- FLAPS/SLATS ...........................UP / RET
+-- ================ PRE-START CHECK BELOW ================
+-- COVERS & PINS.............................REMOVED (CPT)
+-- AIRCRAFT LOG & DOCUMENTS.........CHECKED ON BOARD (CPT)
+-- ALTIMETERS....................QNH…. SET / CHECKED (CPT)
+-- FUEL/OIL/HYD QUANTITY.....................CHECKED (CPT)
+-- ZERO FUEL WEIGHT..............................SET (CPT)
+-- TRP......................TAKEOFF / … TAKEOFF FLEX (CPT)
+-- STABILIZER..........POINT ZERO SET (.. = 1 TO 12) (CPT)
+-- FLAPS TAKEOFF SELECTOR.....................STOWED (CPT)
+-- SPEED BUGS....................................SET (CPT)
+-- =======================================================
 
 
-
--- pre start procedure
--- briefings and atc
--- fms programming
-
--- AUTOFLIGHT PANEL SET
--- •Initial altitude
--- •Heading departure runway
--- •V2 Air speed selecter
--- Set speed bugs (clickspot ASI 12 o'clock for T/O speed bugs) SET
--- TRANSPONDER SET
--- "Are you ready for the Departure Brief?"
--- Flap setting and CG takeoff condition computer SET
--- Stabilizer trim SET
--- APU / APU Air ON or START
--- Seatbelt sign ON
--- "PRE START CHECK BELOW THE LINE" Challenge
-
-
--- pre start checklist below the line
--- "PRE START CHECK BELOW THE LINE" CHALLENGE: FIRST OFFICER
--- COVERS & PINS..REMOVED
--- AIRCRAFT LOG & DOCUMENTS..CHECKED ON BOARD
--- ALTIMETERS..QNH…. SET / CHECKED
--- FUEL/OIL/HYD QUANTITY..CHECKED
--- ZERO FUEL WEIGHT..SET
--- TRP..TAKEOFF / … TAKEOFF FLEX
--- STABILIZER..POINT ZERO SET (.. = 1 TO 12)
--- FLAPS TAKEOFF SELECTOR..STOWED
--- SPEED BUGS..SET
-
-
--- "BEFORE START CHECK" (part 1)
--- Parking Brakes..Set/Released
--- Doors..Closed
--- Start-up & Pushback Clrnce..Approved 
--- BEFORE START CHECK (part 2 ) Challenge: First Officer (Silently DO - items)
--- Pneum X-Feed Valve Levers OPEN
--- Aux & Trans Hyd Pumps ON
--- Anti-Collision Light ON
--- Air Cond Supply OFF,BOTH
--- Fuel Pumps ON
--- Galley Power OFF
--- Ignition A / B
--- Pneum Press CHECK
--- “BEFORE START CHECK COMPLETE, READY FOR ENGINE START”
+-- ================= BEFORE-START CHECK ==================
+-- PARKING BRAKE.................................SET (CPT)
+-- DOORS......................................CLOSED (CPT)
+-- START-UP & PUSHBACK CLRNCE...............APPROVED (CPT)
+-- PNEUM X-FEED VALVE LEVERS....................OPEN (F/O)
+-- AUX & TRANS HYD PUMPS..........................ON (F/O)
+-- ANTI-COLLISION LIGHT...........................ON (F/O)
+-- AIR COND SUPPLY..........................OFF,BOTH (F/O)
+-- FUEL PUMPS.....................................ON (F/O)
+-- GALLEY POWER..................................OFF (F/O)
+-- IGNITION....................................A / B (F/O)
+-- PNEUM PRESS.................................CHECK (F/O)
+-- =======================================================
 
 
 -- =========== PUSHBACK & ENGINE START (BOTH) ============
@@ -512,12 +438,6 @@ preflightProc:addItem(ProcedureItem:new("ELECTRIC HYDRAULIC PUMPS SWITCHES","ON"
 -- =======================================================
 
 -- PUCHBACK and ENGINE START
---  "Cockpit to ground" / "Ground from cockpit"
---  "We’re ready for the pushback and engine start"  pushback dialogue
---  Brakes released
--- Pushback will start
---  "Cabin crew close doors and arm slides"
---  check sufficient pneumatic pressure and doors closed
 --  “START RIGHT ENGINE”  Engage start switch right engine and checks pressure
 -- “RIGHT START VALVE OPEN”
 --  fuel lever ON  “FUEL ON”
@@ -544,37 +464,29 @@ preflightProc:addItem(ProcedureItem:new("ELECTRIC HYDRAULIC PUMPS SWITCHES","ON"
 -- After pushback is finished:
 --  "Brakes set"
 --  "Thanks for the guidance" / "Good bye"
-
-
--- "Cockpit to ground" / "Ground from cockpit"  Start up dialogue
---  "We’re ready"
--- Start engines
---  "You can disconnect now"
-
 --  Check Electrical Loads (AC and DC) in limits CHECK  Engine generator volts and frequencies correct CHECK
 --  Galley Power ON  Engine Ignition off OFF
 --  Sets air conditioning supply AUTO  Set CAPT Pitot Heater ON
 --  Check Hydraulic pumps and switcheS HI/ON
 
+-- ============ AFTER ENGINE START CHECKLIST =============
+-- IGNITION......................................OFF (CPT)
+-- ELECTRICAL LOADS..........................CHECKED (CPT)
+-- AIR COND SUPPLY..............................AUTO (CPT)
+-- GALLEY POWER...................................ON (CPT)
+-- ICE PROTECTION PANEL..................AS REQUIRED (CPT)
+-- PNEUMATIC X-FEED VALVE................AS REQUIRED (CPT)
+-- FLIGHT CONTROLS...........................CHECKED (CPT)
+-- HYD PUMPS & PRESS.........................CHECKED (CPT)
+-- ANNUNCIATOR PANEL.........................CHECKED (CPT)
+-- GROUND EQUIPMENT..........................REMOVED (CPT)
+-- ALL CLEAR SIGNAL.........................RECEIVED (CPT)
+-- FLAPS SLATS (READ AND DO).....................SET (CPT)
+-- =======================================================
 
--- "AFTER (ENGINE) START CHECK"
---  "Off"  Ignition
---  "Checked"  Electrical Loads
---  "Auto"  Air Cond Supply
---  "On"  Galley Power
---  "Off/ Eng anti ice on/ Both on"  Ice Protection Panel
---  "“CLOSE THEM”, “OPEN THEM”." (FO will set! ; Open for airfoil anti-ice)  Pneumatic X-Feed Valve (Read and DO)
--- Check Flight controls :  Flight Controls
---  AILERONS FULL LEFT : “LEFT… SPOILER DEPLOYED”
---  AILERONS FULL RIGHT: “RIGHT…SPOILER DEPLOYED”
---  ELEVATOR FULL FORWARD: “ELEVATOR POWER ON”*
---  PEDALS FULL RIGHT/LEFT: “PEDALS”
---  "Flight Controls Check Completed"
---  "Checked"  Hyd Pumps & Press "Checked/Hi/On"
---  "Checked"  Annunciator Panel
---  "Removed"  Ground Equipment
---  "Received"  All Clear Signal
--- Flaps Slats (Read and DO) "Set"
+-- beforeTaxiProc:addItem(IndirectProcedureItem:new("FLIGHT CONTROLS","CHECKED",FlowItem.actorBOTH,0,"fccheck",
+	-- function () return get("sim/flightmodel2/wing/rudder1_deg") > 18 end,
+
 
 
 -- Obtain TAXI clearance
