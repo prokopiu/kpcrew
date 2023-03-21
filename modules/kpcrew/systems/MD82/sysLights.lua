@@ -58,10 +58,10 @@ end)
 
 sysLights.llRightSwitch = TwoStateCustomSwitch:new("llright",drefLandingLights,2,
 function () 
-	set(drefLandingLights,2,1)
+	set_array(drefLandingLights,2,1)
 end,
 function () 
-	set(drefLandingLights,2,-1)
+	set_array(drefLandingLights,2,-1)
 end,
 function () 
 	if get(drefLandingLights,2) >= 0 then
@@ -79,8 +79,8 @@ function ()
 end)
 
 sysLights.landLightGroup = SwitchGroup:new("landinglights")
-sysLights.landLightGroup:addSwitch(sysLights.llLeftSwitch)
 sysLights.landLightGroup:addSwitch(sysLights.llRightSwitch)
+sysLights.landLightGroup:addSwitch(sysLights.llLeftSwitch)
 
 -- Logo Light
 sysLights.logoSwitch = TwoStateToggleSwitch:new("logo",drefGenericLights,-1,"sim/lights/generic_01_light_tog")

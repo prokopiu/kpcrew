@@ -17,6 +17,18 @@ local InopSwitch = require "kpcrew.systems.InopSwitch"
 local drefAiceWing = "sim/cockpit/switches/anti_ice_surf_heat"
 local drefAiceEng = "sim/cockpit/switches/anti_ice_inlet_heat"
 
+-- Window Heat
+sysAice.windowHeatLeftSide 	= TwoStateCmdSwitch:new("wheatleftside","sim/cockpit2/ice/ice_window_heat_on",0,
+	"sim/ice/window_heat_on","sim/ice/window_heat_off","sim/ice/window_heat_tog")
+sysAice.windowHeatLeftFwd 	= InopSwitch:new("wheatleftfwd")
+sysAice.windowHeatRightSide = InopSwitch:new("wheatrightside")
+sysAice.windowHeatRightFwd 	= InopSwitch:new("wheatrightfwd")
+sysAice.windowHeatGroup 	= SwitchGroup:new("windowheat")
+sysAice.windowHeatGroup:addSwitch(sysAice.windowHeatLeftSide)
+sysAice.windowHeatGroup:addSwitch(sysAice.windowHeatLeftFwd)
+sysAice.windowHeatGroup:addSwitch(sysAice.windowHeatRightSide)
+sysAice.windowHeatGroup:addSwitch(sysAice.windowHeatRightFwd) 
+
 -- ANTI ICE annunciator
 sysAice.antiiceAnc = CustomAnnunciator:new("antiice",
 function ()

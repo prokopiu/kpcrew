@@ -55,7 +55,10 @@ sysElectric.apuGenBus2 		= TwoStateToggleSwitch:new("apubus2","laminar/md82/elec
 -- Voltmeter MD82
 sysElectric.voltmeterSwitch = MultiStateCmdSwitch:new("voltmeter","laminar/md82/electrical/voltmeter_source",0,
 	"laminar/md82cmd/electrical/voltmeter_source_dwn","laminar/md82cmd/electrical/voltmeter_source_up",0,5,true)
-	
+
+sysElectric.galleyPower = TwoStateToggleSwitch:new("galleypwr","sim/cockpit2/switches/generic_lights_switch",36,
+	"sim/lights/generic_37_light_tog")
+
 -- == Annunciators
 
 -- LOW VOLTAGE annunciator
@@ -63,5 +66,18 @@ sysElectric.lowVoltageAnc = SimpleAnnunciator:new("lowvoltage","sim/cockpit2/ann
 
 -- APU RUNNING annunciator
 sysElectric.apuRunningAnc = SimpleAnnunciator:new("apurunning","sim/cockpit2/electrical/APU_running",0)
+
+-- GPU on bus annunciator
+sysElectric.gpuOnBus = CustomAnnunciator:new("gpuonbus",
+function () 
+	if get("sim/cockpit/electrical/gpu_on") == 1 and 
+		get("laminar/md82/electrical/cross_tie_GPU_L") == 1 and
+		get("laminar/md82/electrical/cross_tie_GPU_R") == 1 then
+		return 1
+	else
+		return 0
+	end
+end)
+
 
 return sysElectric

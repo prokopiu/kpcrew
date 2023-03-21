@@ -203,7 +203,7 @@ electricalPowerUpProc:addItem(ProcedureItem:new("  RIGHT PNEU-X-FEED","OPEN",Flo
 	function () sysAir.bleedEng1Switch:actuate(1) end,
 	function () return activePrefSet:get("aircraft:powerup_apu") == false end))
 electricalPowerUpProc:addItem(ProcedureItem:new("  RIGHT AFT FUEL PUMP SW","ON",FlowItem.actorFO,0,
-	function () return sysAir.packLeftSwitch:getStatus() > 0 end,
+	function () return sysAir.fuelPumpRightAft:getStatus() > 0 end,
 	function () 
 		sysFuel.fuelPumpGroup:actuate(0)
 		sysFuel.fuelPumpRightAft:actuate(1)
@@ -221,44 +221,44 @@ electricalPowerUpProc:addItem(ProcedureItem:new("AVIONICS BRIGHTNESS","SET",Flow
 
 -- ================= PREFLIGHT PROCEDURE =================
 -- ELECTRICAL POWER UP......................COMPLETE (F/O)
--- PRIMARY FLIGHT DISPLAYS........................ON F
--- NAVIGATION DISPLAYS............................ON F
--- ANNUNCIATOR LIGHTS ..........................TEST
--- FLIGHT DIRECTORS...............................ON
--- EFIS ........................................TEST ??
--- AUTOLAND AVAILABILITY........................TEST ??
--- TRIM.........................................TEST ??
--- ENGINE SYNC SELECTOR..........................OFF 
--- GALLEY POWER...................................ON
--- FUEL PUMP SWITCH.............................TEST ??
--- NO SMOKING.....................................ON
--- PITOT HEATER.................................TEST ??
--- WINDSHIELD HEAT................................ON
--- PNEUMATIC X-FEEDS............................OPEN
--- GPWS.........................................TEST ??
--- WINDSHEAR....................................TEST ??
--- ANTI SKID....................................TEST ??
--- STALL........................................TEST ??
--- OVERSPEED....................................TEST ??
--- YAW DAMPER.....................................ON 
--- ICE FOD......................................TEST ??
--- TCAS.........................................TEST ??
--- SET XPONDER.................................ABOVE
--- TAKEOFF WARNING..............................TEST
--- HYDRAULIC PUMP...............................TEST
--- GEAR.........................................TEST
--- WX RADAR.....................................TEST
--- SET ALTIMETERS................................SET
--- TRP..........................................TEST
--- TRP TO TAKEOFF................................SET
--- ADF..........................................TEST
--- ZFW..........................................TEST
--- STANDBY ATTITUDE INDICATOR...................CAGE C
--- EMERGENCY LIGHT TEST......................PERFORM C
--- ARRIVAL ELEVATION.............................SET C
--- FLIGHT DATA RECORDER PANEL....................SET C
--- FLIGHT MANAGEMENT SYSTEM, MCDU PROGRAMMING....SET C
--- FLIGHT CONTROL PANEL..........................SET C
+-- PRIMARY FLIGHT DISPLAYS........................ON (F/O)
+-- NAVIGATION DISPLAYS............................ON (F/O)
+-- ANNUNCIATOR LIGHTS ..........................TEST (F/O)
+-- FLIGHT DIRECTORS...............................ON (F/O)
+-- EFIS ........................................TEST (F/O)
+-- AUTOLAND AVAILABILITY........................TEST (F/O)
+-- TRIM.........................................TEST (F/O)
+-- ENGINE SYNC SELECTOR..........................OFF (F/O)
+-- GALLEY POWER...................................ON (F/O)
+-- FUEL PUMP SWITCH.............................TEST (F/O)
+-- NO SMOKING.....................................ON (F/O)
+-- PITOT HEATER.................................TEST (F/O)
+-- WINDSHIELD HEAT................................ON (F/O)
+-- PNEUMATIC X-FEEDS............................OPEN (F/O)
+-- GPWS.........................................TEST (F/O)
+-- WINDSHEAR....................................TEST (F/O)
+-- ANTI SKID....................................TEST (F/O)
+-- STALL........................................TEST (F/O)
+-- OVERSPEED....................................TEST (F/O)
+-- YAW DAMPER.....................................ON (F/O)
+-- ICE FOD......................................TEST (F/O)
+-- TCAS.........................................TEST (F/O)
+-- SET XPONDER.................................ABOVE (F/O)
+-- TAKEOFF WARNING..............................TEST (F/O)
+-- HYDRAULIC PUMP...............................TEST (F/O)
+-- GEAR.........................................TEST (F/O)
+-- WX RADAR.....................................TEST (F/O)
+-- SET ALTIMETERS................................SET (F/O)
+-- TRP..........................................TEST (F/O)
+-- TRP TO TAKEOFF................................SET (F/O)
+-- ADF..........................................TEST (F/O)
+-- ZFW..........................................TEST (F/O)
+-- STANDBY ATTITUDE INDICATOR...................CAGE (CPT)
+-- EMERGENCY LIGHT TEST......................PERFORM (CPT)
+-- ARRIVAL ELEVATION.............................SET (CPT)
+-- FLIGHT DATA RECORDER PANEL....................SET (CPT)
+-- FLIGHT MANAGEMENT SYSTEM, MCDU PROGRAMMING....SET (CPT)
+-- FLIGHT CONTROL PANEL..........................SET (CPT)
 -- AUTOFLIGHT PANEL SET
 -- •Initial altitude
 -- •Heading departure runway
@@ -271,64 +271,70 @@ electricalPowerUpProc:addItem(ProcedureItem:new("AVIONICS BRIGHTNESS","SET",Flow
 -- APU / APU Air ON or START
 -- Seatbelt sign ON
 -- "PRE START CHECK BELOW THE LINE" Challenge
--- COM, NAV RADIO'S AND TRANSPONDER..............SET C
--- ALTIMETER.....................................SET C
--- TRP (IF REDUCED TAKE OFF) ....................SET C
--- SPEED BUGS....................................SET C
--- DEPARTURE BRIEF...........................PERFORM C
+-- COM, NAV RADIO'S AND TRANSPONDER..............SET (CPT)
+-- ALTIMETER.....................................SET (CPT)
+-- TRP (IF REDUCED TAKE OFF) ....................SET (CPT)
+-- SPEED BUGS....................................SET (CPT)
+-- DEPARTURE BRIEF...........................PERFORM (CPT)
 -- =======================================================
 
 local preflightProc = Procedure:new("PREFLIGHT PROCEDURE","starting pre flight procedure","")
 preflightProc:setFlightPhase(2)
 preflightProc:addItem(ProcedureItem:new("ELECTRICAL POWER UP","COMPLETE",FlowItem.actorFO,0,
 	function () return 
-		sysElectric.apuGenBusOff:getStatus() == 1 or
+		sysElectric.apuRunningAnc:getStatus() == 1 or
 		sysElectric.gpuOnBus:getStatus() == 1
 	end))
-preflightProc:addItem(IndirectProcedureItem:new("STALL WARNING TEST 1","PERFORM",FlowItem.actorFO,0,"stall_warning_test1",
-	function () return get("sim/cockpit2/annunciators/stall_warning") == 1 end,
-	function () command_begin("sim/annunciator/test_stall") end))
-preflightProc:addItem(SimpleProcedureItem:new("  AC power must be available"))
-preflightProc:addItem(ProcedureItem:new("#exchange|XPDR|transponder#","SET 2000",FlowItem.actorFO,0,
-	function () return sysRadios.xpdrCode:getStatus() == 2000 end,
-	function () command_end("sim/annunciator/test_stall") sysRadios.xpdrCode:actuate(2000) end))
-preflightProc:addItem(ProcedureItem:new("COCKPIT LIGHTS","%s|(kc_is_daylight()) and \"OFF\" or \"ON\"",FlowItem.actorFO,0,
-	function () return sysLights.domeAnc:getStatus() == (kc_is_daylight() and 0 or 1) end,
-	function () sysLights.domeLightSwitch:actuate(kc_is_daylight() and 0 or 1) end))
-preflightProc:addItem(ProcedureItem:new("WING #exchange|&|and# WHEEL WELL LIGHTS","%s|(kc_is_daylight()) and \"OFF\" or \"ON\"",FlowItem.actorFO,0,
-	function () return sysLights.wingSwitch:getStatus() == (kc_is_daylight() and 0 or 1) and sysLights.wheelSwitch:getStatus() == (kc_is_daylight() and 0 or 1) end,
-	function () sysLights.wingSwitch:actuate(kc_is_daylight() and 0 or 1) sysLights.wheelSwitch:actuate(kc_is_daylight() and 0 or 1) end))
-preflightProc:addItem(ProcedureItem:new("FUEL PUMPS","APU 1 PUMP ON, REST OFF",FlowItem.actorFO,0,
-	function () return sysFuel.fuelPumpGroup:getStatus() == 1 end,
-	function () sysFuel.fuelPumpGroup:actuate(modeOff) sysFuel.fuelPumpLeftAft:actuate(modeOn) end,
-	function () return not activePrefSet:get("aircraft:powerup_apu") end))
-preflightProc:addItem(ProcedureItem:new("FUEL PUMPS","ALL OFF",FlowItem.actorFO,0,
-	function () return sysFuel.fuelPumpGroup:getStatus() == 0 end,
-	function () sysFuel.fuelPumpGroup:actuate(modeOff) end,
-	function () return activePrefSet:get("aircraft:powerup_apu") end))
-preflightProc:addItem(ProcedureItem:new("POSITION LIGHTS","ON",FlowItem.actorFO,0,
-	function () return sysLights.positionSwitch:getStatus() ~= 0 end,
-	function () sysLights.positionSwitch:actuate(modeOn) end))
-preflightProc:addItem(ProcedureItem:new("#spell|MCP#","INITIALIZE",FlowItem.actorFO,0,
-	function () return sysMCP.altSelector:getStatus() == activePrefSet:get("aircraft:mcp_def_alt") end,
+preflightProc:addItem(ProcedureItem:new("PRIMARY FLIGHT DISPLAYS","ON",FlowItem.actorFO,0,
+	function () return sysLights.instr6Light:getStatus() == 1 end,
+	function () sysLights.instr6Light:actuate(1)end))
+preflightProc:addItem(ProcedureItem:new("NAVIGATION DISPLAYS","ON",FlowItem.actorFO,0,
+	function () return sysLights.instr7Light:getStatus() == 1 end,
+	function () sysLights.instr7Light:actuate(1)end))
+preflightProc:addItem(IndirectProcedureItem:new("ANNUNCIATOR LIGHTS","TEST",FlowItem.actorFO,3,"annuntest",
+	function () return get("sim/cockpit/warnings/annunciator_test_pressed") == 1 end,
+	function () command_begin("sim/annunciator/test_all_annunciators") end))
+preflightProc:addItem(ProcedureItem:new("FLIGHT DIRECTORS","ON",FlowItem.actorFO,0,
+	function () return sysMCP.fdirPilotSwitch:getStatus() == 1 end,
 	function () 
-		sysMCP.fdirGroup:actuate(modeOff)
-		sysMCP.athrSwitch:actuate(modeOff)
-		sysMCP.crs1Selector:actuate(1)
-		sysMCP.crs2Selector:actuate(1)
-		sysMCP.iasSelector:actuate(activePrefSet:get("aircraft:mcp_def_spd"))
-		sysMCP.hdgSelector:actuate(activePrefSet:get("aircraft:mcp_def_hdg"))
-		sysMCP.altSelector:actuate(activePrefSet:get("aircraft:mcp_def_alt"))
-		sysMCP.vspSelector:actuate(modeOff)
-		sysMCP.discAPSwitch:actuate(modeOff)
+		command_end("sim/annunciator/test_all_annunciators") 
+		sysMCP.fdirPilotSwitch:actuate(1)
 	end))
-preflightProc:addItem(ProcedureItem:new("PARKING BRAKE","SET",FlowItem.actorFO,0,
-	function () return sysGeneral.parkBrakeSwitch:getStatus() == modeOn end,
-	function () sysGeneral.parkBrakeSwitch:actuate(modeOn) end))
-preflightProc:addItem(SimpleProcedureItem:new("Electric hydraulic pumps on for F/O walk-around"))
-preflightProc:addItem(ProcedureItem:new("ELECTRIC HYDRAULIC PUMPS SWITCHES","ON",FlowItem.actorFO,0,
-	function () return sysHydraulic.elecHydPumpGroup:getStatus() == 1 end,
-	function () sysHydraulic.elecHydPumpGroup:actuate(modeOn) end))
+preflightProc:addItem(ProcedureItem:new("EFIS","TEST",FlowItem.actorFO,0,true,nil))
+preflightProc:addItem(ProcedureItem:new("AUTOLAND AVAILABILITY","TEST",FlowItem.actorFO,0,true,nil))
+preflightProc:addItem(ProcedureItem:new("TRIM","TEST",FlowItem.actorFO,0,true,nil))
+preflightProc:addItem(ProcedureItem:new("ENGINE SYNC SELECTOR","OFF",FlowItem.actorFO,0,true,nil))
+preflightProc:addItem(ProcedureItem:new("GALLEY POWER","ON",FlowItem.actorFO,0,
+	function () return sysElectric.galleyPower:getStatus() == 1 end,
+	function () sysElectric.galleyPower:actuate(1) end))
+preflightProc:addItem(ProcedureItem:new("FUEL PUMP SWITCH","TEST",FlowItem.actorFO,0,true,nil))
+preflightProc:addItem(ProcedureItem:new("NO SMOKING","ON",FlowItem.actorFO,0,
+	function () return sysGeneral.noSmokingSwitch:getStatus() == 1 end,
+	function () sysGeneral.noSmokingSwitch:actuate(1) end))
+preflightProc:addItem(ProcedureItem:new("PITOT HEATER","TEST",FlowItem.actorFO,0,true,nil))
+preflightProc:addItem(ProcedureItem:new("WINDSHIELD HEAT","ON",FlowItem.actorFO,0,
+	function () return sysAice.windowHeatGroup:getStatus() == 1 end,
+	function () sysAice.windowHeatGroup:actuate(1) end))
+preflightProc:addItem(ProcedureItem:new("PNEUMATIC X-FEEDS","OPEN",FlowItem.actorFO,0,
+	function () return sysAir.engBleedGroup:getStatus() == 2 end,
+	function () sysAir.engBleedGroup:actuate(1) end))
+preflightProc:addItem(ProcedureItem:new("GPWS","TEST",FlowItem.actorFO,0,true,nil))
+preflightProc:addItem(ProcedureItem:new("WINDSHEAR","TEST",FlowItem.actorFO,0,true,nil))
+preflightProc:addItem(ProcedureItem:new("ANTI SKID","TEST",FlowItem.actorFO,0,true,nil))
+preflightProc:addItem(ProcedureItem:new("STALL","TEST",FlowItem.actorFO,0,true,nil))
+preflightProc:addItem(ProcedureItem:new("OVERSPEED","TEST",FlowItem.actorFO,0,true,nil))
+preflightProc:addItem(ProcedureItem:new("YAW DAMPER","ON",FlowItem.actorFO,0,
+	function () return sysControls.yawDamper:getStatus() == 1 end,
+	function () sysControls.yawDamper:actuate(1) end))
+preflightProc:addItem(ProcedureItem:new("ICE FOD","TEST",FlowItem.actorFO,0,true,nil))
+preflightProc:addItem(ProcedureItem:new("TCAS","TEST",FlowItem.actorFO,0,true,nil))
+preflightProc:addItem(ProcedureItem:new("TRANSPONDER","ABOVE/SRBY",FlowItem.actorFO,0,
+	function () return sysRadios.xpdrSwitch:getStatus() > 1 end,
+	function () sysRadios.xpdrSwitch:actuate(0) end))
+preflightProc:addItem(ProcedureItem:new("TAKEOFF WARNING","TEST",FlowItem.actorFO,0,true,nil))
+preflightProc:addItem(ProcedureItem:new("HYDRAULIC PUMP","TEST",FlowItem.actorFO,0,true,nil))
+preflightProc:addItem(ProcedureItem:new("GEAR","TEST",FlowItem.actorFO,0,true,nil))
+preflightProc:addItem(ProcedureItem:new("WX RADAR","TEST",FlowItem.actorFO,0,true,nil))
 
 
 -- ========= PRE-START CHECK ABOVE (F/O SILENT) ==========
@@ -701,8 +707,8 @@ backgroundFlow:addItem(BackgroundProcedureItem:new("","","SYS",0,
 -- ============  =============
 -- add the checklists and procedures to the active sop
 -- activeSOP:addProcedure(testProc)
+activeSOP:addProcedure(preflightProc)
 activeSOP:addProcedure(electricalPowerUpProc)
--- activeSOP:addProcedure(preflightProc)
 
 -- =========== States ===========
 activeSOP:addState(turnAroundProc)

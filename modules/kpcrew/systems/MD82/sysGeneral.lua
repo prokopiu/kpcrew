@@ -95,7 +95,12 @@ sysGeneral.irsUnitGroup:addSwitch(sysGeneral.irsUnit3Switch)
 
 sysGeneral.wiperSwitch1 	= TwoStateCmdSwitch:new("wiper1","sim/cockpit2/switches/wiper_speed",0,
 	"sim/systems/wipers_up","sim/systems/wipers_dn","nocommand")
-	
+
+sysGeneral.seatBeltSwitch 	= TwoStateToggleSwitch:new("","sim/cockpit2/switches/fasten_seat_belts",0,
+	"sim/systems/seatbelt_sign_toggle")
+sysGeneral.noSmokingSwitch 	= TwoStateToggleSwitch:new("","sim/cockpit2/switches/no_smoking",0,
+	"sim/systems/no_smoking_toggle")
+
 ------------ Annunciators
 -- park brake
 sysGeneral.parkbrakeAnc = CustomAnnunciator:new("parkbrake",
