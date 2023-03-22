@@ -65,7 +65,7 @@ sysElectric.galleyPower = TwoStateToggleSwitch:new("galleypwr","sim/cockpit2/swi
 sysElectric.lowVoltageAnc = SimpleAnnunciator:new("lowvoltage","sim/cockpit2/annunciators/low_voltage",0)
 
 -- APU RUNNING annunciator
-sysElectric.apuRunningAnc = SimpleAnnunciator:new("apurunning","sim/cockpit2/electrical/APU_running",0)
+sysElectric.apuRunningAnc = SimpleAnnunciator:new("apurunning","sim/cockpit/engine/APU_running",0)
 
 -- GPU on bus annunciator
 sysElectric.gpuOnBus = CustomAnnunciator:new("gpuonbus",

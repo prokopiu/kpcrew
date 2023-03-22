@@ -90,7 +90,9 @@ sysMCP.lvlchgSwitch = InopSwitch:new("lvlchg")
 sysMCP.hdgSelector = MultiStateCmdSwitch:new("hdg","sim/cockpit2/autopilot/heading_dial_deg_mag_pilot",0,"sim/autopilot/heading_down","sim/autopilot/heading_up")
 
 -- TURNRATE
-sysMCP.turnRateSelector = InopSwitch:new("turnrate")
+sysMCP.turnRateSelector 	= MultiStateCmdSwitch:new("turnrate","sim/cockpit2/autopilot/bank_angle_mode",0,
+	"sim/autopilot/bank_limit_down","sim/autopilot/bank_limit_up",0,6,false)
+
 
 -- LNAV
 sysMCP.lnavSwitch = InopSwitch:new("lnav")

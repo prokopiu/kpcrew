@@ -135,6 +135,42 @@ function kc_macro_gpu_disconnect()
 	end
 end
 
+-- set baros to local pressure at departure airport
+function kc_macro_set_local_baro()
+	set("sim/cockpit2/gauges/actuators/barometer_setting_in_hg_pilot",math.floor(get("sim/weather/barometer_sealevel_inhg")*100)/100)
+end
+
+-- test if all baros are set to local baro
+function kc_macro_test_local_baro()
+	return get("sim/cockpit2/gauges/actuators/barometer_setting_in_hg_pilot") == math.floor(get("sim/weather/barometer_sealevel_inhg")*100)/100
+end
+
+-- glareshield initial setup
+function kc_macro_glareshield_initial()
+	sysMCP.fdirGroup:actuate(0)
+	sysMCP.athrSwitch:actuate(0)
+	sysMCP.crs1Selector:setValue(1)
+	sysMCP.crs2Selector:setValue(1)
+	sysMCP.iasSelector:setValue(activePrefSet:get("aircraft:mcp_def_spd"))
+	sysMCP.hdgSelector:setValue(activePrefSet:get("aircraft:mcp_def_hdg"))
+	sysMCP.altSelector:setValue(activePrefSet:get("aircraft:mcp_def_alt"))
+	sysMCP.vspSelector:setValue(0)
+	sysMCP.discAPSwitch:actuate(0)
+	sysMCP.turnRateSelector:actuate(5)
+end
+
+-- glareshield takeoff setup
+function kc_macro_glareshield_takeoff()
+	sysMCP.fdirGroup:actuate(1)
+	sysMCP.athrSwitch:actuate(1)
+	sysMCP.iasSelector:setValue(activeBriefings:get("takeoff:v2"))
+	sysMCP.hdgSelector:setValue(activeBriefings:get("departure:initHeading"))
+	sysMCP.altSelector:setValue(activeBriefings:get("departure:initAlt"))
+	if activeBriefings:get("takeoff:apMode") == 1 then
+		sysMCP.lnavSwitch:actuate(1)
+		sysMCP.vnavSwitch:actuate(1)
+	end
+end
 
 
 -- function kc_bck_()
