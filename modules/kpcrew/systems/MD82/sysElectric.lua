@@ -59,6 +59,13 @@ sysElectric.voltmeterSwitch = MultiStateCmdSwitch:new("voltmeter","laminar/md82/
 sysElectric.galleyPower = TwoStateToggleSwitch:new("galleypwr","sim/cockpit2/switches/generic_lights_switch",36,
 	"sim/lights/generic_37_light_tog")
 
+sysElectric.dcBusXTie = TwoStateToggleSwitch:new("dcbusxtie","laminar/md82/electrical/cross_tie_DC",0,
+	"laminar/md82cmd/electrical/cross_tie_DC")
+	
+sysElectric.acBusXTie = TwoStateToggleSwitch:new("acbusxtie","laminar/md82/electrical/cross_tie_AC",0,
+	"laminar/md82cmd/electrical/cross_tie_AC")
+	
+	
 -- == Annunciators
 
 -- LOW VOLTAGE annunciator

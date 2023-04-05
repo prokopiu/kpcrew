@@ -8,6 +8,7 @@ local sysMacros = {
 }
 
 function kc_macro_state_cold_and_dark()
+	set("sim/cockpit2/controls/flap_ratio",0)
 	sysGeneral.doorGroup:actuate(0)
 	sysGeneral.doorL1:actuate(1)
 	sysGeneral.stairsLeft:actuate(1)
@@ -46,6 +47,7 @@ end
 
 function kc_macro_state_turnaround()
 	sysGeneral.wiperSwitch1:actuate(0)
+	set("sim/cockpit2/controls/flap_ratio",0)
 	sysGeneral.GearSwitch:actuate(1)
 	sysElectric.voltmeterSwitch:actuate(4) 
 	sysElectric.batterySwitch:actuate(1) 
@@ -54,15 +56,40 @@ function kc_macro_state_turnaround()
 	end
 	kc_macro_ext_lights_stand()
 	kc_macro_int_lights_on()
+	sysLights.positionSwitch:actuate(1)
 	sysAir.engBleedGroup:actuate(0)
 	sysAir.packSwitchGroup:actuate(0)
 	sysFuel.fuelPumpGroup:actuate(0)
 	sysLights.positionSwitch:actuate(1)
-	if activePrefSet:get("aircraft:powerup_apu") == false then 
-		kc_macro_gpu_connect()
+	sysEngines.startPumpDc:actuate(1)
+	sysLights.beaconSwitch:actuate(1)
+end
+
+-- 2nd part after power up APU
+function kc_macro_state_turnaround2()
+	sysLights.instr6Light:actuate(1)
+	sysLights.instr7Light:actuate(1)
+	sysElectric.galleyPower:actuate(1)
+	sysGeneral.noSmokingSwitch:actuate(1)
+	sysAice.windowHeatGroup:actuate(1)
+	sysAir.engBleedGroup:actuate(1)
+	sysControls.yawDamper:actuate(1)
+	sysRadios.xpdrSwitch:actuate(0)
+	kc_macro_set_local_baro()
+	kc_wnd_brief_action=1
+	kc_macro_glareshield_initial()
+	sysMCP.fdirPilotSwitch:actuate(1)
+	sysRadios.xpdrSwitch:actuate(sysRadios.xpdrStby) 
+	local xpdrcode = activeBriefings:get("departure:squawk")
+	if xpdrCode == nil or xpdrCode == "" then
+		sysRadios.xpdrCode:actuate("2000")
 	else
-		sysEngines.startPumpDc:actuate(1)
+		sysRadios.xpdrCode:actuate(xpdrCode)
 	end
+	sysGeneral.seatBeltSwitch:actuate(1)
+	sysFuel.fuelPumpGroup:actuate(0)
+	sysFuel.fuelPumpRightAft:actuate(1)
+	kc_macro_gpu_disconnect()
 end
 
 -- external lights all off
