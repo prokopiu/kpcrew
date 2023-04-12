@@ -285,9 +285,6 @@ electricalPowerUpProc:addItem(ProcedureItem:new("   STANDBY #exchange|PWR|POWER#
 electricalPowerUpProc:addItem(ProcedureItem:new("POSITION LIGHTS","ON",FlowItem.actorFO,0,
 	function () return sysLights.positionSwitch:getStatus() ~= 0 end,
 	function () sysLights.positionSwitch:actuate(modeOn) end))
-electricalPowerUpProc:addItem(ProcedureItem:new("PARKING BRAKE","SET",FlowItem.actorFO,0,
-	function () return sysGeneral.parkBrakeSwitch:getStatus() == modeOn end,
-	function () sysGeneral.parkBrakeSwitch:actuate(modeOn) end))
 electricalPowerUpProc:addItem(ProcedureItem:new("WING LIGHTS","ON",FlowItem.actorFO,0,
 	function () return sysLights.wingSwitch:getStatus() == 1 end,
 	function () sysLights.wingSwitch:actuate(1) end,
@@ -296,6 +293,9 @@ electricalPowerUpProc:addItem(ProcedureItem:new("WING LIGHTS","OFF",FlowItem.act
 	function () return sysLights.wingSwitch:getStatus() == 0 end,
 	function () sysLights.wingSwitch:actuate(0) end,
 	function () return kc_is_daylight() == false end))
+electricalPowerUpProc:addItem(ProcedureItem:new("PARKING BRAKE","SET",FlowItem.actorFO,0,
+	function () return sysGeneral.parkBrakeSwitch:getStatus() == modeOn end,
+	function () sysGeneral.parkBrakeSwitch:actuate(modeOn) end))
 
 -- ============ PRELIMINARY PREFLIGHT PROCEDURES =========
 
@@ -399,13 +399,6 @@ prelPreflightProc:addItem(ProcedureItem:new("ELECTRICAL POWER UP","COMPLETE",Flo
 		sysElectric.gpuOnBus:getStatus() == 1
 	end,
 	function () sysGeneral.attendanceButton:repeatOff() end))
-prelPreflightProc:addItem(ProcedureItem:new("FLIGHT DATA RECORDER SWITCH","GUARD CLOSED",FlowItem.actorFO,0,
-	function () return  sysGeneral.fdrSwitch:getStatus() == modeOff and sysGeneral.fdrCover:getStatus() == modeOff end,
-	function () 
-		sysGeneral.fdrSwitch:actuate(modeOn) 
-		sysGeneral.fdrCover:actuate(modeOff) 
-		kc_wnd_brief_action=1  -- open briefing window
-	end))
 prelPreflightProc:addItem(IndirectProcedureItem:new("MACH OVERSPEED TEST 1","PERFORM",FlowItem.actorFO,0,"mach_ovspd_test1",
 	function () return get("laminar/B738/push_button/mach_warn1_pos") == 1 end,
 	function () 
@@ -421,6 +414,13 @@ prelPreflightProc:addItem(IndirectProcedureItem:new("MACH OVERSPEED TEST 2","PER
 	end,
 	function ()
 		return activeBriefings:get("flight:firstFlightDay") == false 
+	end))
+prelPreflightProc:addItem(ProcedureItem:new("FLIGHT DATA RECORDER SWITCH","GUARD CLOSED",FlowItem.actorFO,0,
+	function () return  sysGeneral.fdrSwitch:getStatus() == modeOff and sysGeneral.fdrCover:getStatus() == modeOff end,
+	function () 
+		sysGeneral.fdrSwitch:actuate(modeOn) 
+		sysGeneral.fdrCover:actuate(modeOff) 
+		kc_wnd_brief_action=1  -- open briefing window
 	end))
 
 -- ==================== CDU Preflight ====================
@@ -465,7 +465,7 @@ prelPreflightProc:addItem(IndirectProcedureItem:new("MACH OVERSPEED TEST 2","PER
 
 local cduPreflightProc = Procedure:new("CDU PREFLIGHT (OPTIONAL)")
 cduPreflightProc:setFlightPhase(2)
-cduPreflightProc:addItem(HoldProcedureItem:new("KPCREW BRIEFING","FILLED OUT",FlowItem.actorCPT,true))
+cduPreflightProc:addItem(HoldProcedureItem:new("KPCREW BRIEFING","FILLED OUT",FlowItem.actorCPT))
 
 
 cduPreflightProc:addItem(SimpleProcedureItem:new("OBTAIN CLERANCE FROM ATC"))
@@ -708,7 +708,8 @@ local preflightFOProc = Procedure:new("PREFLIGHT PROCEDURE","running preflight p
 preflightFOProc:setResize(false)
 preflightFOProc:setFlightPhase(3)
 
-preflightFOProc:addItem(HoldProcedureItem:new("KPCREW BRIEFING","FILLED OUT",FlowItem.actorCPT,true))
+preflightFOProc:addItem(HoldProcedureItem:new("KPCREW DEPARTURE BRIEFING","FILLED OUT",FlowItem.actorCPT,
+	function () kc_wnd_brief_action = 1 end))
 
 preflightFOProc:addItem(SimpleProcedureItem:new("==== FLT CONTROL panel"))
 preflightFOProc:addItem(ProcedureItem:new("FLIGHT CONTROL SWITCHES","GUARDS CLOSED",FlowItem.actorFO,0,
@@ -1516,7 +1517,7 @@ pushstartProc:addItem(IndirectProcedureItem:new("PARKING BRAKE","SET",FlowItem.a
 		kc_macro_b738_lowerdu_eng()
 		kc_pushback_plan()
 	end))
-pushstartProc:addItem(HoldProcedureItem:new("PUSHBACK SERVICE","ENGAGE",FlowItem.actorCPT,
+pushstartProc:addItem(HoldProcedureItem:new("PUSHBACK SERVICE","ENGAGE",FlowItem.actorCPT,nil,
 	function () return activeBriefings:get("taxi:gateStand") > 2 end))
 pushstartProc:addItem(SimpleProcedureItem:new("Engine Start may be done during pushback or towing",
 	function () return activeBriefings:get("taxi:gateStand") > 2 end))
@@ -1524,7 +1525,8 @@ pushstartProc:addItem(ProcedureItem:new("COMMUNICATION WITH GROUND","ESTABLISH",
 	function () kc_pushback_call() end,
 	function () return activeBriefings:get("taxi:gateStand") > 2 end))
 pushstartProc:addItem(IndirectProcedureItem:new("PARKING BRAKE","RELEASED",FlowItem.actorFO,0,"pb_parkbrk_release",
-	function () return sysGeneral.parkBrakeSwitch:getStatus() == 0 end))
+	function () return sysGeneral.parkBrakeSwitch:getStatus() == 0 end,nil,
+	function () return activeBriefings:get("taxi:gateStand") > 2 end))
 pushstartProc:addItem(ProcedureItem:new("PACKS","OFF",FlowItem.actorFO,0,
 	function () return sysAir.packSwitchGroup:getStatus() == sysAir.packModeOff end,
 	function () 
@@ -1644,23 +1646,20 @@ pushstartProc:addItem(ProcedureItem:new("STARTER CUTOUT","ANNOUNCE",FlowItem.act
 			return sysEngines.engStart2Switch:getStatus() == 1 
 		end 
 	end))
-pushstartProc:addItem(SimpleProcedureItem:new("When pushback/towing complete"))
+pushstartProc:addItem(SimpleProcedureItem:new("When pushback/towing complete",
+	function () return activeBriefings:get("taxi:gateStand") > 2 end))
 pushstartProc:addItem(HoldProcedureItem:new("  TOW BAR DISCONNECTED","VERIFY",FlowItem.actorCPT,
 	function () 
 		kc_speakNoText(0,"starter cutout") 
-	end))
+	end,
+	function () return activeBriefings:get("taxi:gateStand") > 2 end))
 pushstartProc:addItem(ProcedureItem:new("  LOCKOUT PIN REMOVED","VERIFY",FlowItem.actorCPT,0,true,
 	function () 
 		kc_pushback_end()
-	end))
-
+	end,
+	function () return activeBriefings:get("taxi:gateStand") > 2 end))
 pushstartProc:addItem(ProcedureItem:new("PARKING BRAKE","SET",FlowItem.actorFO,0,
-	function () return sysGeneral.parkBrakeSwitch:getStatus() == 1 end,
-	function () 
-		if sysGeneral.parkBrakeSwitch:getStatus() ~= 1 then
-			kc_speakNoText(0,"Set parking brake when push finished")
-		end
-	end))
+	function () return sysGeneral.parkBrakeSwitch:getStatus() == 1 end))
 
 -- ============= BEFORE TAXI PROCEDURE (F/O) =============
 -- HYDRAULIC PUMP SWITCHES...................ALL ON  (F/O)
@@ -2034,6 +2033,8 @@ afterTakeoffChkl:addItem(ChecklistItem:new("FLAPS","UP, NO LIGHTS",FlowItem.acto
 
 local descentProc = Procedure:new("DESCENT PROCEDURE","performing descent items","ready for descent checklist")
 descentProc:setFlightPhase(11)
+descentProc:addItem(HoldProcedureItem:new("KPCREW APPROACH BRIEFING","FILLED OUT",FlowItem.actorCPT,
+	function () kc_wnd_brief_action = 1 end))
 descentProc:addItem(ProcedureItem:new("LEFT AND RIGHT CENTER FUEL PUMPS SWITCHES","OFF",FlowItem.actorPM,0,
 	function () return sysFuel.ctrFuelPumpGroup:getStatus() == 0 end,
 	function () sysFuel.ctrFuelPumpGroup:actuate(0) end,

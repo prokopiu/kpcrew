@@ -327,10 +327,12 @@ preFlightProc:addItem(IndirectProcedureItem:new("ROTARY TEST","CHECK",FlowItem.a
 	function () return get("sim/cockpit/warnings/autopilot_test_ap_lit") == 1 end))
 	
 preFlightProc:addItem(SimpleProcedureItem:new("== Flight Preps"))
-preFlightProc:addItem(HoldProcedureItem:new("FMS","SET UP",FlowItem.actorCPT,true))
-preFlightProc:addItem(HoldProcedureItem:new("ATIS","RECEIVED",FlowItem.actorCPT,true))
-preFlightProc:addItem(HoldProcedureItem:new("CLEARANCE","OBTAINED",FlowItem.actorCPT,true))
-preFlightProc:addItem(HoldProcedureItem:new("TAKEOFF BRIEF","COMPLETED",FlowItem.actorCPT,true))
+preFlightProc:addItem(HoldProcedureItem:new("KPCREW DEPARTURE BRIEFING","FILLED OUT",FlowItem.actorCPT,
+	function () kc_wnd_brief_action = 1 end))
+preFlightProc:addItem(HoldProcedureItem:new("FMS","SET UP",FlowItem.actorCPT))
+preFlightProc:addItem(HoldProcedureItem:new("ATIS","RECEIVED",FlowItem.actorCPT))
+preFlightProc:addItem(HoldProcedureItem:new("CLEARANCE","OBTAINED",FlowItem.actorCPT))
+preFlightProc:addItem(HoldProcedureItem:new("TAKEOFF BRIEF","COMPLETED",FlowItem.actorCPT))
 
 -- ================ PREPARATION CHECKLIST ================ 
 -- BATTERY SWITCH 1 & 2...........................ON
@@ -1123,6 +1125,8 @@ takeoffClimbProc:addItem(ProcedureItem:new("PACKS & BLEEDS","ON",FlowItem.actorF
 
 local descentProc = Procedure:new("DESCENT PROCEDURE","","")
 descentProc:setFlightPhase(11)
+descentProc:addItem(HoldProcedureItem:new("KPCREW APPROACH BRIEFING","FILLED OUT",FlowItem.actorCPT,
+	function () kc_wnd_brief_action = 1 end))
 descentProc:addItem(IndirectProcedureItem:new("PRESSURIZATION","LAND ALT (%i) %i FT|get(\"laminar/CitX/pressurization/altitude\")|activeBriefings:get(\"arrival:aptElevation\")",FlowItem.actorPM,0,"landalt",
 	function () 
 		return math.abs(get("laminar/CitX/pressurization/altitude") - 
@@ -1201,7 +1205,7 @@ descentProc:addItem(ProcedureItem:new("MONITOR TRANS LVL AND 10000 FT","CHECK",F
 -- GO AROUND HEADING...........................SET
 -- ======================================================
 
-local landingProc = Procedure:new("LANDING PROCEDURE","","ready for landing checklist")
+local landingProc = Procedure:new("LANDING PROCEDURE","","")
 landingProc:setFlightPhase(13)
 landingProc:addItem(ProcedureItem:new("LANDING LIGHTS","ON",FlowItem.actorFO,0,
 	function () return sysLights.landLightGroup:getStatus() > 0 end,
@@ -1354,6 +1358,12 @@ afterLandingProc:addItem(ProcedureItem:new("PITOT/STATIC","BOTH OFF",FlowItem.ac
 	function () sysAice.probeHeatGroup:actuate(0) end))
 afterLandingProc:addItem(ProcedureItem:new("FLAPS UP","SET",FlowItem.actorFO,0,true,
 	function () sysControls.flapsSwitch:setValue(sysControls.flaps_pos[0]) end))
+afterLandingProc:addItem(ProcedureItem:new("EXTERNAL LIGHTS","AS REQUIRED",FlowItem.actorFO,0,
+	function () return sysLights.landLightGroup:getStatus() == 0 end,
+	function () kc_macro_ext_lights_rwyvacate() end))
+afterLandingProc:addItem(ProcedureItem:new("STABILIZER ANTI-ICE","OFF",FlowItem.actorFO,0,
+	function () return sysAice.wingAntiIce:getStatus() == 0 end,
+	function () sysAice.wingAntiIce:actuate(0) end))
 afterLandingProc:addItem(ProcedureItem:new("#spell|APU# SYSTEM MASTER","ON",FlowItem.actorFO,0,
 	function () return sysElectric.apuMasterSwitch:getStatus() == 1 end,
 	function () sysElectric.apuMasterSwitch:actuate(1) end))
@@ -1371,12 +1381,6 @@ afterLandingProc:addItem(IndirectProcedureItem:new("#spell|APU#","STARTED",FlowI
 afterLandingProc:addItem(ProcedureItem:new("ENGINE ANTI-ICE","OFF",FlowItem.actorFO,0,
 	function () return sysAice.engAntiIceGroup:getStatus() == 0 end,
 	function () sysAice.engAntiIceGroup:actuate(0) end))
-afterLandingProc:addItem(ProcedureItem:new("STABILIZER ANTI-ICE","OFF",FlowItem.actorFO,0,
-	function () return sysAice.wingAntiIce:getStatus() == 0 end,
-	function () sysAice.wingAntiIce:actuate(0) end))
-afterLandingProc:addItem(ProcedureItem:new("EXTERNAL LIGHTS","AS REQUIRED",FlowItem.actorFO,0,
-	function () return sysLights.landLightGroup:getStatus() == 0 end,
-	function () kc_macro_ext_lights_rwyvacate() end))
 -- command taxi light off
 -- taxi light off
 

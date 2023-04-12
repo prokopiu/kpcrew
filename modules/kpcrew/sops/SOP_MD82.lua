@@ -112,7 +112,7 @@ electricalPowerUpProc:addItem(ProcedureItem:new("WINDSHIELD WIPER SELECTORS","PA
 	function () sysGeneral.wiperSwitch1:actuate(0) end))
 electricalPowerUpProc:addItem(IndirectProcedureItem:new("FLAP LEVER","UP",FlowItem.actorFO,0,"initial_flap_lever",
 	function () return sysControls.flapsSwitch:getStatus() == 0 end,
-	function () sysControls.flapsSwitch:actuate(0) end))
+	function () sysControls.flapsSwitch:actuate(0) end))								 
 electricalPowerUpProc:addItem(ProcedureItem:new("LANDING GEAR LEVER","DOWN",FlowItem.actorFO,0,
 	function () return sysGeneral.GearSwitch:getStatus() == modeOn end,
 	function () sysGeneral.GearSwitch:actuate(modeOn) end))
@@ -291,7 +291,8 @@ preflightProc:addItem(IndirectProcedureItem:new("ANNUNCIATOR LIGHTS","TEST",Flow
 	function () return get("sim/cockpit/warnings/annunciator_test_pressed") == 1 end,
 	function () command_begin("sim/annunciator/test_all_annunciators") end,
 	function () return activeBriefings:get("flight:firstFlightDay") == true end))
-preflightProc:addItem(ProcedureItem:new("EFIS","TEST",FlowItem.actorFO,0,true,nil))
+preflightProc:addItem(ProcedureItem:new("EFIS","TEST",FlowItem.actorFO,0,true,
+	function () command_end("sim/annunciator/test_all_annunciators") end))
 preflightProc:addItem(ProcedureItem:new("AUTOLAND AVAILABILITY","TEST",FlowItem.actorFO,0,true,nil))
 preflightProc:addItem(ProcedureItem:new("TRIM","TEST",FlowItem.actorFO,0,true,nil))
 preflightProc:addItem(ProcedureItem:new("ENGINE SYNC SELECTOR","OFF",FlowItem.actorFO,0,true,nil))
@@ -352,8 +353,7 @@ preflightProc:addItem(ProcedureItem:new("AUTOFLIGHT PANEL","SET",FlowItem.actorC
 preflightProc:addItem(ProcedureItem:new("FLIGHT DIRECTORS","ON",FlowItem.actorCPT,0,
 	function () return sysMCP.fdirPilotSwitch:getStatus() == 1 end,
 	function () 
-		sysMCP.fdirPilotSwitch:actuate(1)
-		command_end("sim/annunciator/test_all_annunciators") 
+		sysMCP.fdirPilotSwitch:actuate(1)													   
 	end))
 preflightProc:addItem(ProcedureItem:new("TRANSPONDER CODE","SET",FlowItem.actorCPT,0,
 	function () return sysRadios.xpdrSwitch:getStatus() <= 1 end,
@@ -454,7 +454,8 @@ preflightProc:addItem(ProcedureItem:new("EXT POWER","DISCONNECT",FlowItem.actorC
 preflightProc:addItem(HoldProcedureItem:new("COM, NAV RADIO'S AND TRANSPONDER","SET",FlowItem.actorCPT))
 preflightProc:addItem(ProcedureItem:new("TRP (IF REDUCED TAKE OFF)","SET",FlowItem.actorCPT,0,true,nil))
 preflightProc:addItem(HoldProcedureItem:new("SPEED BUGS","SET",FlowItem.actorCPT))
-preflightProc:addItem(HoldProcedureItem:new("DEPARTURE BRIEF","PERFORM",FlowItem.actorCPT))
+preflightProc:addItem(HoldProcedureItem:new("KPCREW DEPARTURE BRIEF","PERFORM",FlowItem.actorCPT,
+	function () kc_wnd_brief_action = 1 end))
 
 
 -- ========= PRE-START CHECK ABOVE (F/O SILENT) ==========
@@ -581,9 +582,6 @@ preStartProc:addItem(ProcedureItem:new("FUEL PUMPS","CHECKED",FlowItem.actorFO,0
 -- preStartProc:addItem(ProcedureItem:new("","",FlowItem.actorFO,0,
 	-- function () return end,
 	-- function () end))
-
-
-
 
 -- ================ PRE-START CHECK BELOW ================
 -- COVERS & PINS.............................REMOVED (CPT)
@@ -888,7 +886,7 @@ turnAroundProc:addItem(ProcedureItem:new("  #spell|APU# PWR AVAIL LIGHT","ILLUMI
 		sysAir.packLeftSwitch:actuate(1)
 		sysFuel.fuelPumpRightAft:actuate(1)
 		getActiveSOP():setActiveFlowIndex(1)
-		sysEngines.startPumpDc:actuate(0)
+		sysEngines.startPumpDc:actuate(0)								   
 	end))
 turnAroundProc:addItem(ProcedureItem:new("SET REST","SET","SYS",6,true,
 	function () 
@@ -907,8 +905,8 @@ backgroundFlow:addItem(BackgroundProcedureItem:new("","","SYS",0,
 -- ============  =============
 -- add the checklists and procedures to the active sop
 -- activeSOP:addProcedure(testProc)
-activeSOP:addProcedure(preStartProc)
 activeSOP:addProcedure(electricalPowerUpProc)
+activeSOP:addProcedure(preStartProc)
 activeSOP:addProcedure(preflightProc)
 
 -- =========== States ===========
