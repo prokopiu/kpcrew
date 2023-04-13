@@ -483,19 +483,21 @@ preflightProc:addItem(HoldProcedureItem:new("KPCREW DEPARTURE BRIEF","PERFORM",F
 -- AIR COND SHUTOFF.............................AUTO (F/O)
 -- RAM AIR.......................................OFF (F/O)
 -- FUEL PUMPS................................CHECKED (F/O)
-
 -- IGNITION......................................OFF (F/O)
 -- EMER LIGHTS.........................CHECKED/ARMED (F/O)
--- NO SMOKING/SEATBELT SW......................ON/ON (F/O)
+-- NO SMOKING SW..................................ON (F/O)
+-- SEATBELT SW....................................ON (F/O)
 -- PITOT HEAT............................CHECKED/OFF (F/O)
 -- AIRFOIL / ENG ANTI ICE....................... OFF (F/O)
 -- WINDSHIELD HEAT................................ON (F/O)
 -- ANNUNCIATOR / DIGITAL LIGHTS............. CHECKED (F/O)
 -- DFGS / NAVAIDS................................SET (F/O)
+
 -- FLIGHT INSTRUMENTS....................... CHECKED (F/O)
 -- BRAKE PRESSURE & TEMP.................... CHECKED (F/O)
 -- HYDRAULIC SYSTEM..........................CHECKED (F/O)
 -- GEAR LIGHTS & AURAL WARNING.............. CHECKED (F/O)
+
 -- FUEL USED...................................RESET (F/O)
 -- ENGINE INSTRUMENTS........................CHECKED (F/O)
 -- STATIC AIR SELECTOR..........................NORM (F/O)
@@ -577,8 +579,50 @@ preStartProc:addItem(ProcedureItem:new("RAM AIR","OFF",FlowItem.actorFO,0,true))
 preStartProc:addItem(ProcedureItem:new("FUEL PUMPS","CHECKED",FlowItem.actorFO,0,
 	function () return sysFuel.fuelPumpGroup:getStatus() > 2 end,
 	function () sysFuel.fuelPumpGroup:actuate(1) end))
+preStartProc:addItem(ProcedureItem:new("IGNITION","OFF",FlowItem.actorFO,0,
+	function () return sysEngines.ignition:getStatus() == 0 end,
+	function () sysEngines.ignition:actuate(0) end))
+preStartProc:addItem(ProcedureItem:new("EMER LIGHTS","CHECKED/ARMED",FlowItem.actorFO,0,true))
+preStartProc:addItem(ProcedureItem:new("NO SMOKING SW","ON",FlowItem.actorFO,0,
+	function () return sysGeneral.noSmokingSwitch:getStatus() == 1 end,
+	function () sysGeneral.noSmokingSwitch:actuate(1) end))
+preStartProc:addItem(ProcedureItem:new("SEATBELT SW","ON",FlowItem.actorFO,0,
+	function () return sysGeneral.seatBeltSwitch:getStatus() == 1 end,
+	function () sysGeneral.seatBeltSwitch:actuate(1) end))
+preStartProc:addItem(ProcedureItem:new("PITOT HEAT","CHECKED/OFF",FlowItem.actorFO,0,
+	function () return sysAice.pitotHeat:getStatus() > 0 end,
+	function () sysAice.pitotHeat:actuate(2) end))
+preStartProc:addItem(ProcedureItem:new("AIRFOIL ANTI ICE","OFF",FlowItem.actorFO,0,
+	function () return sysAice.antiIceWingGroup:getStatus() == 0 end,
+	function () sysAice.antiIceWingGroup:actuate(0) end))
+preStartProc:addItem(ProcedureItem:new("ENG ANTI ICE","OFF",FlowItem.actorFO,0,
+	function () return sysAice.antiIceEngGroup:getStatus() == 0 end,
+	function () sysAice.antiIceEngGroup:actuate(0) end))
+preStartProc:addItem(ProcedureItem:new("WINDSHIELD HEAT","ON",FlowItem.actorFO,0,
+	function () return sysAice.windowHeatGroup:getStatus() > 0 end,
+	function () sysAice.windowHeatGroup:actuate(1) end))
+preStartProc:addItem(IndirectProcedureItem:new("ANNUNCIATOR / DIGITAL LIGHTS","CHECKED",FlowItem.actorFO,5,"annuntest",
+	function () return get("sim/cockpit/warnings/annunciator_test_pressed") == 1 end,
+	function () command_begin("sim/annunciator/test_all_annunciators") end))
+preStartProc:addItem(HoldProcedureItem:new("DFGS / NAVAIDS","SET",FlowItem.actorFO,0,
+	function () command_end("sim/annunciator/test_all_annunciators") end))
 	
+-- FLIGHT INSTRUMENTS....................... CHECKED (F/O)
+-- BRAKE PRESSURE & TEMP.................... CHECKED (F/O)
+-- HYDRAULIC SYSTEM..........................CHECKED (F/O)
+-- GEAR LIGHTS & AURAL WARNING.............. CHECKED (F/O)
 	
+preStartProc:addItem(HoldProcedureItem:new("FLIGHT INSTRUMENTS","CHECKED",FlowItem.actorFO,0))
+-- preStartProc:addItem(ProcedureItem:new("","",FlowItem.actorFO,0,
+	-- function () return end,
+	-- function () end))
+-- preStartProc:addItem(ProcedureItem:new("","",FlowItem.actorFO,0,
+	-- function () return end,
+	-- function () end))
+-- preStartProc:addItem(ProcedureItem:new("","",FlowItem.actorFO,0,
+	-- function () return end,
+	-- function () end))
+
 -- preStartProc:addItem(ProcedureItem:new("","",FlowItem.actorFO,0,
 	-- function () return end,
 	-- function () end))
@@ -905,8 +949,8 @@ backgroundFlow:addItem(BackgroundProcedureItem:new("","","SYS",0,
 -- ============  =============
 -- add the checklists and procedures to the active sop
 -- activeSOP:addProcedure(testProc)
-activeSOP:addProcedure(electricalPowerUpProc)
 activeSOP:addProcedure(preStartProc)
+activeSOP:addProcedure(electricalPowerUpProc)
 activeSOP:addProcedure(preflightProc)
 
 -- =========== States ===========
