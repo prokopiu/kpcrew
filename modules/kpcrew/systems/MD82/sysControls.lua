@@ -113,6 +113,8 @@ sysControls.rudderReset = TwoStateToggleSwitch:new("rudderreset","sim/cockpit2/c
 sysControls.yawDamper = TwoStateToggleSwitch:new("yawdamper","sim/cockpit2/switches/yaw_damper_on",0,
 	"sim/systems/yaw_damper_toggle")
 
+sysControls.speedBrake = TwoStateDrefSwitch:new("speedbrake","sim/cockpit2/controls/speedbrake_ratio",0)
+
 --------- Annunciators
 
 

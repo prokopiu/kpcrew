@@ -492,12 +492,10 @@ preflightProc:addItem(HoldProcedureItem:new("KPCREW DEPARTURE BRIEF","PERFORM",F
 -- WINDSHIELD HEAT................................ON (F/O)
 -- ANNUNCIATOR / DIGITAL LIGHTS............. CHECKED (F/O)
 -- DFGS / NAVAIDS................................SET (F/O)
-
 -- FLIGHT INSTRUMENTS....................... CHECKED (F/O)
 -- BRAKE PRESSURE & TEMP.................... CHECKED (F/O)
 -- HYDRAULIC SYSTEM..........................CHECKED (F/O)
 -- GEAR LIGHTS & AURAL WARNING.............. CHECKED (F/O)
-
 -- FUEL USED...................................RESET (F/O)
 -- ENGINE INSTRUMENTS........................CHECKED (F/O)
 -- STATIC AIR SELECTOR..........................NORM (F/O)
@@ -506,6 +504,7 @@ preflightProc:addItem(HoldProcedureItem:new("KPCREW DEPARTURE BRIEF","PERFORM",F
 -- RUD HYD CONTROL.........................LEVER PWR (F/O)
 -- FUEL X-FEED.............................LEVER OFF (F/O)
 -- FUEL SWITCHES.............................CHECKED (F/O)
+
 -- T/O WARNING.............................. CHECKED (F/O)
 -- STABILIZER................................CHECKED (F/O)
 -- SPOILERS.............................DISARMED/RET (F/O)
@@ -590,7 +589,7 @@ preStartProc:addItem(ProcedureItem:new("SEATBELT SW","ON",FlowItem.actorFO,0,
 	function () return sysGeneral.seatBeltSwitch:getStatus() == 1 end,
 	function () sysGeneral.seatBeltSwitch:actuate(1) end))
 preStartProc:addItem(ProcedureItem:new("PITOT HEAT","CHECKED/OFF",FlowItem.actorFO,0,
-	function () return sysAice.pitotHeat:getStatus() > 0 end,
+	function () return sysAice.pitotHeat:getStatus() < 2 end,
 	function () sysAice.pitotHeat:actuate(2) end))
 preStartProc:addItem(ProcedureItem:new("AIRFOIL ANTI ICE","OFF",FlowItem.actorFO,0,
 	function () return sysAice.antiIceWingGroup:getStatus() == 0 end,
@@ -604,28 +603,46 @@ preStartProc:addItem(ProcedureItem:new("WINDSHIELD HEAT","ON",FlowItem.actorFO,0
 preStartProc:addItem(IndirectProcedureItem:new("ANNUNCIATOR / DIGITAL LIGHTS","CHECKED",FlowItem.actorFO,5,"annuntest",
 	function () return get("sim/cockpit/warnings/annunciator_test_pressed") == 1 end,
 	function () command_begin("sim/annunciator/test_all_annunciators") end))
-preStartProc:addItem(HoldProcedureItem:new("DFGS / NAVAIDS","SET",FlowItem.actorFO,0,
+preStartProc:addItem(ProcedureItem:new("DFGS / NAVAIDS","SET",FlowItem.actorFO,0,true,
 	function () command_end("sim/annunciator/test_all_annunciators") end))
-	
--- FLIGHT INSTRUMENTS....................... CHECKED (F/O)
--- BRAKE PRESSURE & TEMP.................... CHECKED (F/O)
--- HYDRAULIC SYSTEM..........................CHECKED (F/O)
--- GEAR LIGHTS & AURAL WARNING.............. CHECKED (F/O)
-	
-preStartProc:addItem(HoldProcedureItem:new("FLIGHT INSTRUMENTS","CHECKED",FlowItem.actorFO,0))
--- preStartProc:addItem(ProcedureItem:new("","",FlowItem.actorFO,0,
-	-- function () return end,
-	-- function () end))
--- preStartProc:addItem(ProcedureItem:new("","",FlowItem.actorFO,0,
-	-- function () return end,
-	-- function () end))
--- preStartProc:addItem(ProcedureItem:new("","",FlowItem.actorFO,0,
-	-- function () return end,
-	-- function () end))
-
--- preStartProc:addItem(ProcedureItem:new("","",FlowItem.actorFO,0,
-	-- function () return end,
-	-- function () end))
+preStartProc:addItem(ProcedureItem:new("FLIGHT INSTRUMENTS","CHECKED",FlowItem.actorFO,0,true))
+preStartProc:addItem(ProcedureItem:new("BRAKE PRESSURE & TEMP","CHECKED",FlowItem.actorFO,0,true))
+preStartProc:addItem(ProcedureItem:new("HYDRAULIC SYSTEM","CHECKED",FlowItem.actorFO,0,true))
+preStartProc:addItem(ProcedureItem:new("GEAR LIGHTS & AURAL WARNING","CHECKED",FlowItem.actorFO,0,
+	function () return 
+		get("laminar/md82/controls/landing_gear_handle") == 1
+	end,
+	function () set("laminar/md82/controls/landing_gear_handle",1) end))
+preStartProc:addItem(ProcedureItem:new("FUEL USED","RESET",FlowItem.actorFO,0,true))
+preStartProc:addItem(ProcedureItem:new("ENGINE INSTRUMENTS","CHECKED",FlowItem.actorFO,0,
+	function () return 
+		get("sim/cockpit2/engine/indicators/EPR_ratio",0) == 1.0 and
+		get("sim/cockpit2/engine/indicators/EPR_ratio",1) == 1.0 and
+		get("sim/flightmodel/engine/ENGN_N1_",0) == 0 and
+		get("sim/flightmodel/engine/ENGN_N1_",1) == 0 and
+		get("sim/flightmodel2/engines/EGT_deg_C",0) < 10 and
+		get("sim/flightmodel2/engines/EGT_deg_C",1) < 10 and
+		get("sim/flightmodel/engine/ENGN_N2_",0) == 0 and
+		get("sim/flightmodel/engine/ENGN_N2_",1) == 0
+	end))
+preStartProc:addItem(ProcedureItem:new("STATIC AIR SELECTOR","NORM",FlowItem.actorFO,0,true))
+preStartProc:addItem(ProcedureItem:new("TCAS","CHECKED",FlowItem.actorFO,0,
+	function () return get("sim/cockpit/radios/transponder_mode") == 1 end,
+	function () set("sim/cockpit/radios/transponder_mode",1) end))
+preStartProc:addItem(ProcedureItem:new("RADAR","CHECKED",FlowItem.actorFO,0,true))
+preStartProc:addItem(ProcedureItem:new("RUD HYD CONTROL","LEVER PWR",FlowItem.actorFO,0,true))
+preStartProc:addItem(ProcedureItem:new("FUEL X-FEED","LEVER OFF",FlowItem.actorFO,0,true))
+preStartProc:addItem(ProcedureItem:new("FUEL SWITCHES","CHECKED",FlowItem.actorFO,0,
+	function () return sysFuel.fuelPumpGroup:getStatus() > 0 end,
+	function () sysFuel.fuelPumpGroup:actuate(1) end))
+preStartProc:addItem(ProcedureItem:new("T/O WARNING","CHECKED",FlowItem.actorFO,0,true))
+preStartProc:addItem(ProcedureItem:new("STABILIZER","CHECKED",FlowItem.actorFO,0,true))
+preStartProc:addItem(ProcedureItem:new("SPOILERS","DISARMED/RET",FlowItem.actorFO,0,
+	function () return sysControls.speedBrake:getStatus() == 0 end,
+	function () sysControls.speedBrake:actuate(0) end))
+preStartProc:addItem(ProcedureItem:new("FLAPS/SLATS","UP/RETRACTED",FlowItem.actorFO,0,
+	function () return sysControls.flapsSwitch:getStatus() == 0 end,
+	function () sysControls.flapsSwitch:actuate(0) end))
 
 -- ================ PRE-START CHECK BELOW ================
 -- COVERS & PINS.............................REMOVED (CPT)
