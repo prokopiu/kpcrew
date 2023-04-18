@@ -169,7 +169,7 @@ end
 
 -- test if all baros are set to local baro
 function kc_macro_test_local_baro()
-	return get("sim/cockpit2/gauges/actuators/barometer_setting_in_hg_pilot") == math.floor(get("sim/weather/barometer_sealevel_inhg")*100)/100
+	return math.floor(get("sim/cockpit2/gauges/actuators/barometer_setting_in_hg_pilot")*100)/100 == math.floor(get("sim/weather/barometer_sealevel_inhg")*100)/100
 end
 
 -- glareshield initial setup
@@ -199,6 +199,22 @@ function kc_macro_glareshield_takeoff()
 	end
 end
 
+-- speedbugs set
+function kc_macro_md82_set_to_speedbugs()
+	set("laminar/md82/IAS/custom_bug4",0.680363)
+	set("laminar/md82/IAS/custom_bug3",0.495849)
+	set("laminar/md82/IAS/custom_bug2",0.376973)
+	set("laminar/md82/IAS/custom_bug1",0.154392 + (activeBriefings:get("takeoff:v1")-100)*0.0038)
+	sysMCP.iasSelector:setValue(activeBriefings:get("takeoff:v2"))
+end
+
+-- speedbugs set
+function kc_macro_md82_set_ldg_speedbugs()
+	set("laminar/md82/IAS/custom_bug4",0.57328)
+	set("laminar/md82/IAS/custom_bug3",0.284922)
+	set("laminar/md82/IAS/custom_bug2",0.270964)
+	set("laminar/md82/IAS/custom_bug1",0.154392 + (activeBriefings:get("takeoff:v1")-100)*0.0038)
+end
 
 -- function kc_bck_()
 -- end

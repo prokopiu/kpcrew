@@ -511,7 +511,7 @@ preflightProc:addItem(HoldProcedureItem:new("KPCREW DEPARTURE BRIEF","PERFORM",F
 -- FLAPS/SLATS..............................UP / RET (F/O)
 -- =======================================================
 
-local preStartProc = Procedure:new("PRE-START CHECKS ABOVE THE LINE","performing pre-start checks","")
+local preStartProc = Procedure:new("PRE-START CHECKS ABOVE THE LINE","performing pre-start checks","ready for pre start checklist")
 preStartProc:setFlightPhase(4)
 preStartProc:setResize(false)
 preStartProc:addItem(ProcedureItem:new("CIRCUIT BREAKERS","CHECK ALL IN",FlowItem.actorFO,0,true))
@@ -656,6 +656,38 @@ preStartProc:addItem(ProcedureItem:new("FLAPS/SLATS","UP/RETRACTED",FlowItem.act
 -- SPEED BUGS....................................SET (CPT)
 -- =======================================================
 
+local preStartChecklist = Checklist:new("PRE-START CHECKLIST BELOW","pre start checklist","")
+preStartChecklist:setFlightPhase(4)
+
+preStartChecklist:addItem(ChecklistItem:new("COVERS & PINS","REMOVED",FlowItem.actorCPT,0,true))
+preStartChecklist:addItem(ChecklistItem:new("AIRCRAFT LOG & DOCUMENTS","CHECKED ON BOARD",FlowItem.actorCPT,0,true))
+preStartChecklist:addItem(ChecklistItem:new("ALTIMETERS","SET TO LOCAL: QNH %s|activeBriefings:get(\"departure:atisQNH\")",FlowItem.actorCPT,0,
+	function () 
+		return kc_macro_test_local_baro()
+	end,
+	function () 
+		kc_macro_set_local_baro()
+	end))
+preStartChecklist:addItem(ChecklistItem:new("FUEL/OIL/HYDRAULIC QUANTITY","CHECKED",FlowItem.actorCPT,0,true))
+preStartChecklist:addItem(ChecklistItem:new("ZERO FUEL WEIGHT","SET",FlowItem.actorCPT,0,true))
+preStartChecklist:addItem(ChecklistItem:new("TRP","AS REQUIRED",FlowItem.actorCPT,0,
+	function () return true end,
+	function ()  end))
+preStartChecklist:addItem(ChecklistItem:new("STABILIZER","SET",FlowItem.actorCPT,0,
+	function () return true end,
+	function ()  end))
+preStartChecklist:addItem(ChecklistItem:new("FLAPS TAKEOFF SELECTOR","SET 15",FlowItem.actorCPT,0,
+	function () return get("sim/cockpit2/controls/flap_ratio") >= 0.6 end,
+	function () set("sim/cockpit2/controls/flap_ratio",0.6) end))
+preStartChecklist:addItem(ChecklistItem:new("SPEED BUGS","SET",FlowItem.actorCPT,0,
+	function () return  
+		get("laminar/md82/IAS/custom_bug1") == (0.154392 + (activeBriefings:get("takeoff:v1")-100)*0.0038) and
+		get("laminar/md82/IAS/custom_bug2") == 0.376973 and
+		get("laminar/md82/IAS/custom_bug3") == 0.495849 and
+		get("laminar/md82/IAS/custom_bug4") == 0.680363 and
+		sysMCP.iasSelector:getStatus() == activeBriefings:get("takeoff:v2")
+	end,
+	function () kc_macro_md82_set_to_speedbugs() end))
 
 -- ================= BEFORE-START CHECK ==================
 -- PARKING BRAKE.................................SET (CPT)
@@ -952,6 +984,7 @@ turnAroundProc:addItem(ProcedureItem:new("  #spell|APU# PWR AVAIL LIGHT","ILLUMI
 turnAroundProc:addItem(ProcedureItem:new("SET REST","SET","SYS",6,true,
 	function () 
 		kc_macro_state_turnaround2()
+		getActiveSOP():setActiveFlowIndex(3)
 	end))
 	
 -- ============= Background Flow ==============
@@ -966,9 +999,10 @@ backgroundFlow:addItem(BackgroundProcedureItem:new("","","SYS",0,
 -- ============  =============
 -- add the checklists and procedures to the active sop
 -- activeSOP:addProcedure(testProc)
-activeSOP:addProcedure(preStartProc)
 activeSOP:addProcedure(electricalPowerUpProc)
 activeSOP:addProcedure(preflightProc)
+activeSOP:addProcedure(preStartProc)
+activeSOP:addProcedure(preStartChecklist)
 
 -- =========== States ===========
 activeSOP:addState(turnAroundProc)
