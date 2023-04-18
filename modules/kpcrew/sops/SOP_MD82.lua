@@ -703,6 +703,42 @@ preStartChecklist:addItem(ChecklistItem:new("SPEED BUGS","SET",FlowItem.actorCPT
 -- PNEUM PRESS.................................CHECK (F/O)
 -- =======================================================
 
+local beforeStartProc = Procedure:new("BEFORE START CHECKS","","")
+beforeStartProc:setFlightPhase(4)
+beforeStartProc:addItem(ProcedureItem:new("PARKING BRAKE","SET",FlowItem.actorCPT,0,
+	function () return sysGeneral.parkBrakeSwitch:getStatus() == 1 end,
+	function () sysGeneral.parkBrakeSwitch:actuate(1) end))
+beforeStartProc:addItem(ProcedureItem:new("DOORS","CLOSED",FlowItem.actorCPT,0,
+	function () return sysGeneral.doorGroup:getStatus() == 0 end,
+	function () sysGeneral.doorGroup:actuate(0) end))
+beforeStartProc:addItem(HoldProcedureItem:new("START-UP & PUSHBACK CLEARANCE","APPROVED",FlowItem.actorCPT,0))
+beforeStartProc:addItem(ProcedureItem:new("PNEUM X-FEED VALVE LEVERS","OPEN",FlowItem.actorFO,0,
+	function () return sysAir.engBleedGroup:getStatus() == 2 end,
+	function () sysAir.engBleedGroup:actuate(1) end))
+beforeStartProc:addItem(ProcedureItem:new("AUX & TRANS HYD PUMPS","ON",FlowItem.actorFO,0,
+	function () return sysHydraulic.auxHydPump:getStatus() == 1 end,
+	function () sysHydraulic.auxHydPump:actuate(1) end))
+beforeStartProc:addItem(ProcedureItem:new("ANTI-COLLISION LIGHT","ON",FlowItem.actorFO,0,
+	function () return sysLights.beaconSwitch:getStatus() == 1 end,
+	function () sysLights.beaconSwitch:actuate(1) end))
+beforeStartProc:addItem(ProcedureItem:new("AIR COND SUPPLY","OFF, BOTH",FlowItem.actorFO,0,
+	function () return sysAir.packSwitchGroup:getStatus() == 0 end,
+	function () sysAir.packSwitchGroup:actuate(0) end))
+beforeStartProc:addItem(ProcedureItem:new("FUEL PUMPS","ON",FlowItem.actorFO,0,
+	function () return sysFuel.fuelPumpGroup:getStatus() == 6 end,
+	function () sysFuel.fuelPumpGroup:actuate(1) end))
+beforeStartProc:addItem(ProcedureItem:new("GALLEY POWER","OFF",FlowItem.actorFO,0,
+	function () return sysElectric.galleyPower:getStatus() == 0 end,
+	function () sysElectric.galleyPower:actuate(0) end))
+beforeStartProc:addItem(ProcedureItem:new("IGNITION","A OR B",FlowItem.actorFO,0,
+	function () return sysEngines.ignition:getStatus() ~= 0 end,
+	function () sysEngines.ignition:actuate(2) end))
+beforeStartProc:addItem(ProcedureItem:new("PNEUM PRESS","CHECK",FlowItem.actorFO,0,
+	function () return get("laminar/md82/bleedair/bleedair_needle") > 2 end))
+
+-- beforeStartProc:addItem(ProcedureItem:new("","",FlowItem.actorFO,0,
+	-- function () return  end,
+	-- function ()   end))
 
 -- =========== PUSHBACK & ENGINE START (BOTH) ============
 -- PARKING BRAKE................................SET  (CPT)
@@ -999,6 +1035,7 @@ backgroundFlow:addItem(BackgroundProcedureItem:new("","","SYS",0,
 -- ============  =============
 -- add the checklists and procedures to the active sop
 -- activeSOP:addProcedure(testProc)
+activeSOP:addProcedure(beforeStartProc)
 activeSOP:addProcedure(electricalPowerUpProc)
 activeSOP:addProcedure(preflightProc)
 activeSOP:addProcedure(preStartProc)

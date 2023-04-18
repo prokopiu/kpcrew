@@ -30,7 +30,7 @@ sysEngines.reverseToggle = TwoStateToggleSwitch:new("reverse","sim/cockpit/warni
 sysEngines.startPumpDc = TwoStateCmdSwitch:new("startPump","sim/cockpit/engine/fuel_pump_on",0,
 	"sim/fuel/fuel_pumps_on","sim/fuel/fuel_pumps_off","sim/fuel/fuel_pumps_tog")
 
-sysEngines.ignition = MultiStateCmdSwitch:new("ignition","sim/cockpit2/engine/actuators/starter_hit",0,
+sysEngines.ignition = MultiStateCmdSwitch:new("ignition","laminar/md82/ignition_sys",0,
 	"laminar/md82cmd/ignition_sys_dwn","laminar/md82cmd/ignition_sys_up",0,4,true)
 	
 ----------- Annunciators
