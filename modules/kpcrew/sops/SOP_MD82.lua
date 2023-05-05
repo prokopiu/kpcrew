@@ -736,24 +736,22 @@ beforeStartProc:addItem(ProcedureItem:new("IGNITION","A OR B",FlowItem.actorFO,0
 beforeStartProc:addItem(ProcedureItem:new("PNEUM PRESS","CHECK",FlowItem.actorFO,0,
 	function () return get("laminar/md82/bleedair/bleedair_needle") > 2 end))
 
--- beforeStartProc:addItem(ProcedureItem:new("","",FlowItem.actorFO,0,
-	-- function () return  end,
-	-- function ()   end))
-
 -- =========== PUSHBACK & ENGINE START (BOTH) ============
 -- PARKING BRAKE................................SET  (CPT)
 -- PUSHBACK SERVICE..........................ENGAGE  (CPT)
 -- Engine Start may be done during pushback or towing
 -- COMMUNICATION WITH GROUND..............ESTABLISH  (CPT)
 -- PARKING BRAKE...........................RELEASED  (CPT)
+-- START SEQUENCE IS....................AS REQUIRED  (CPT)
+-- ENGINE START SWITCH.......HOLD TO START ENGINE _  (CPT)
+--   Verify that the N2 RPM increases.
+--   When N1 rotation is seen and N2 is at 15%,
+--   ENGINE FUEL LEVER...................LEVER _ ON  (CPT)
+--   Release starter switch
+
 -- PACKS................................AUTO OR OFF  (F/O)
 -- SYSTEM A HYDRAULIC PUMPS......................ON  (F/O)
 -- START FIRST ENGINE.............STARTING ENGINE _  (CPT)
--- ENGINE START SWITCH........START SWITCH _ TO GRD  (CPT)
---   Verify that the N2 RPM increases.
---   When N1 rotation is seen and N2 is at 25%,
---   ENGINE START LEVER................LEVER _ IDLE  (CPT)
---   When starter switch jumps back call STARTER CUTOUT
 -- START SECOND ENGINE............STARTING ENGINE _  (CPT)
 -- ENGINE START SWITCH........START SWITCH _ TO GRD  (CPT)
 --   Verify that the N2 RPM increases.
@@ -798,6 +796,91 @@ beforeStartProc:addItem(ProcedureItem:new("PNEUM PRESS","CHECK",FlowItem.actorFO
 --  Galley Power ON  Engine Ignition off OFF
 --  Sets air conditioning supply AUTO  Set CAPT Pitot Heater ON
 --  Check Hydraulic pumps and switcheS HI/ON
+
+-- beforeStartProc:addItem(ProcedureItem:new("","",FlowItem.actorFO,0,
+	-- function () return  end,
+	-- function ()   end))
+
+local pushstartProc = Procedure:new("PUSHBACK & ENGINE START","let's get ready for push and start")
+pushstartProc:setFlightPhase(4)
+pushstartProc:addItem(IndirectProcedureItem:new("PARKING BRAKE","SET",FlowItem.actorCPT,0,"pb_parkbrk_initial_set",
+	function () return sysGeneral.parkBrakeSwitch:getStatus() == 1 end,
+	function () 
+		sysGeneral.parkBrakeSwitch:actuate(1) 
+		-- also trigger timers and turn dome light off
+		activeBckVars:set("general:timesOFF",kc_dispTimeHHMM(get("sim/time/zulu_time_sec"))) 
+		sysLights.domeLightSwitch:actuate(0)
+		if activeBriefings:get("taxi:gateStand") <= 2 then
+			kc_pushback_plan()
+		end
+	end))
+pushstartProc:addItem(HoldProcedureItem:new("PUSHBACK SERVICE","ENGAGE",FlowItem.actorCPT,nil,
+	function () return activeBriefings:get("taxi:gateStand") > 2 end))
+pushstartProc:addItem(SimpleProcedureItem:new("Engine Start may be done during pushback or towing",
+	function () return activeBriefings:get("taxi:gateStand") > 2 end))
+pushstartProc:addItem(ProcedureItem:new("COMMUNICATION WITH GROUND","ESTABLISH",FlowItem.actorCPT,2,true,
+	function () kc_pushback_call() end,
+	function () return activeBriefings:get("taxi:gateStand") > 2 end))
+pushstartProc:addItem(IndirectProcedureItem:new("PARKING BRAKE","RELEASED",FlowItem.actorFO,0,"pb_parkbrk_release",
+	function () return sysGeneral.parkBrakeSwitch:getStatus() == 0 end,nil,
+	function () return activeBriefings:get("taxi:gateStand") > 2 end))
+pushstartProc:addItem(SimpleChecklistItem:new("Wait for start clearance from ground crew"))
+pushstartProc:addItem(ProcedureItem:new("START SEQUENCE","%s then %s|activeBriefings:get(\"taxi:startSequence\") == 1 and \"2\" or \"1\"|activeBriefings:get(\"taxi:startSequence\") == 1 and \"1\" or \"2\"",FlowItem.actorCPT,1,true,
+	function () 
+		local stext = string.format("Start sequence is %s then %s",activeBriefings:get("taxi:startSequence") == 1 and "2" or "1",activeBriefings:get("taxi:startSequence") == 1 and "1" or "2")
+		kc_speakNoText(0,stext)
+	end))
+pushstartProc:addItem(HoldProcedureItem:new("START FIRST ENGINE","START ENGINE %s|activeBriefings:get(\"taxi:startSequence\") == 1 and \"2\" or \"1\"",FlowItem.actorCPT))
+pushstartProc:addItem(IndirectProcedureItem:new("  ENGINE START SWITCH","HOLD START SWITCH %s ON|activeBriefings:get(\"taxi:startSequence\") == 1 and \"2\" or \"1\"",FlowItem.actorFO,0,"eng_start_1_grd",
+	function () 
+		if activeBriefings:get("taxi:startSequence") == 1 then
+			return sysEngines.engStart2Switch:getStatus() == 1 
+		else 
+			return sysEngines.engStart1Switch:getStatus() == 1 
+		end 
+	end,
+	function () 
+		if activeBriefings:get("taxi:startSequence") == 1 then
+			sysEngines.engStart2Switch:repeatOn(0) 
+			kc_speakNoText(0,"starting engine 2")
+		else 
+			sysEngines.engStart1Switch:repeatOn(0) 
+			kc_speakNoText(0,"starting engine 1")
+		end 
+	end))
+pushstartProc:addItem(SimpleProcedureItem:new("  Verify that the N2 RPM increases."))
+pushstartProc:addItem(ProcedureItem:new("  N2 ROTATION","AT 15%",FlowItem.actorCPT,0,
+	function () if activeBriefings:get("taxi:startSequence") == 1 then
+		return get("sim/flightmodel2/engines/N2_percent",0) > 14.9 else 
+		return get("sim/flightmodel2/engines/N2_percent") > 14.9 end end,
+	function () 
+			if activeBriefings:get("taxi:startSequence") == 1 then
+			sysEngines.engStart2Switch:repeatOff(0) 
+			kc_speakNoText(0,"starting engine 2")
+		else 
+			sysEngines.engStart1Switch:repeatOff(0) 
+			kc_speakNoText(0,"starting engine 1")
+		end 
+	end))
+pushstartProc:addItem(IndirectProcedureItem:new("  ENGINE START LEVER","LEVER %s IDLE|activeBriefings:get(\"taxi:startSequence\") == 1 and \"2\" or \"1\"",FlowItem.actorCPT,3,"eng_start_1_lever",
+	function () 
+		if activeBriefings:get("taxi:startSequence") == 1 then
+			return sysEngines.startLever2:getStatus() == 1 
+		else 
+			return sysEngines.startLever1:getStatus() == 1 
+		end
+	end,
+	function () 
+		kc_speakNoText(0,"N1 at 25 percent") 
+		if activeBriefings:get("taxi:startSequence") == 1 then
+			sysEngines.startLever2:actuate(1) 
+		else 
+			sysEngines.startLever1:actuate(1) 
+		end 
+	end))
+
+
+
 
 -- ============ AFTER ENGINE START CHECKLIST =============
 -- IGNITION......................................OFF (CPT)

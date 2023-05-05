@@ -1515,7 +1515,9 @@ pushstartProc:addItem(IndirectProcedureItem:new("PARKING BRAKE","SET",FlowItem.a
 		activeBckVars:set("general:timesOFF",kc_dispTimeHHMM(get("sim/time/zulu_time_sec"))) 
 		sysLights.domeLightSwitch:actuate(0)
 		kc_macro_b738_lowerdu_eng()
-		kc_pushback_plan()
+		if activeBriefings:get("taxi:gateStand") <= 2 then
+			kc_pushback_plan()
+		end
 	end))
 pushstartProc:addItem(HoldProcedureItem:new("PUSHBACK SERVICE","ENGAGE",FlowItem.actorCPT,nil,
 	function () return activeBriefings:get("taxi:gateStand") > 2 end))
