@@ -38,9 +38,9 @@ sysEngines.ignition = MultiStateCmdSwitch:new("ignition","laminar/md82/ignition_
 	"laminar/md82cmd/ignition_sys_dwn","laminar/md82cmd/ignition_sys_up",0,4,true)
 
 sysEngines.engStart1Switch = KeepPressedSwitchCmd:new("eng1start","sim/flightmodel2/engines/starter_is_running",-1,
-	"sim/ignition/engage_starter_1"
+	"sim/ignition/engage_starter_1")
 sysEngines.engStart2Switch = KeepPressedSwitchCmd:new("eng1start","sim/flightmodel2/engines/starter_is_running",1,
-	"sim/ignition/engage_starter_2"
+	"sim/ignition/engage_starter_2")
 sysEngines.engStart1Cover = TwoStateToggleSwitch:new("eng1startc","laminar/md82/safeguard",-1,
 	"laminar/md82cmd/safeguard00")
 sysEngines.engStart2Cover = TwoStateToggleSwitch:new("eng2startc","laminar/md82/safeguard",1,

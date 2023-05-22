@@ -766,36 +766,36 @@ beforeStartProc:addItem(ProcedureItem:new("PNEUM PRESS","CHECK",FlowItem.actorFO
 -- =======================================================
 
 -- PUCHBACK and ENGINE START
---  “START RIGHT ENGINE”  Engage start switch right engine and checks pressure
+-- “START RIGHT ENGINE” Engage start switch right engine and checks pressure
 -- “RIGHT START VALVE OPEN”
---  fuel lever ON  “FUEL ON”
---  “FUEL ON” “N2”, “OIL PRESSURE”, “N1”, “FUEL FLOW,” “EGT”
--- Cabin crew close doors and arm slides  40% N1: Release start switch (Engine generator
+-- fuel lever ON “FUEL ON”
+-- “FUEL ON” “N2”, “OIL PRESSURE”, “N1”, “FUEL FLOW,” “EGT”
+-- Cabin crew close doors and arm slides: 40% N1: Release start switch (Engine generator
 -- switched to the electrical bus)
 -- “RIGHT START VALVE CLOSED”
--- Engine stabilized:  “STABILIZING” and resets timer
---  Engine Anti Ice AS REQUIRED
---  Reset timer
---  “START LEFT ENGINE”  Engage start switch left engine and checks pressure
+-- Engine stabilized: “STABILIZING” and resets timer
+-- Engine Anti Ice AS REQUIRED
+-- Reset timer
+-- “START LEFT ENGINE”  Engage start switch left engine and checks pressure
 -- “LEFT START VALVE OPEN”
---  fuel lever ON  “FUEL ON”
---  “FUEL ON” “N2”, “OIL PRESSURE”, “N1”, “FUEL FLOW,” “EGT”
---  40% N1: Release start switch (Engine generator
+-- fuel lever ON  “FUEL ON”
+-- “FUEL ON” “N2”, “OIL PRESSURE”, “N1”, “FUEL FLOW,” “EGT”
+-- 40% N1: Release start switch (Engine generator
 -- switched to the electrical bus)
 -- “LEFT START VALVE CLOSED”
 -- Engine stabilized:  “STABILIZING” and resets timer
---  Engine Anti Ice AS REQUIRED
---  Reset timer
+-- Engine Anti Ice AS REQUIRED
+-- Reset timer
 -- "ABORT START"  The FO will release the Start Switches. If the fuel levers
 -- are on, the FO will hold the Start Switches for 30
 -- seconds before releasing them.
 -- After pushback is finished:
---  "Brakes set"
---  "Thanks for the guidance" / "Good bye"
---  Check Electrical Loads (AC and DC) in limits CHECK  Engine generator volts and frequencies correct CHECK
---  Galley Power ON  Engine Ignition off OFF
---  Sets air conditioning supply AUTO  Set CAPT Pitot Heater ON
---  Check Hydraulic pumps and switcheS HI/ON
+-- "Brakes set"
+-- "Thanks for the guidance" / "Good bye"
+-- Check Electrical Loads (AC and DC) in limits CHECK  Engine generator volts and frequencies correct CHECK
+-- Galley Power ON  Engine Ignition off OFF
+-- Sets air conditioning supply AUTO  Set CAPT Pitot Heater ON
+-- Check Hydraulic pumps and switcheS HI/ON
 
 -- beforeStartProc:addItem(ProcedureItem:new("","",FlowItem.actorFO,0,
 	-- function () return  end,
@@ -841,9 +841,11 @@ pushstartProc:addItem(IndirectProcedureItem:new("  ENGINE START SWITCH","HOLD ST
 	end,
 	function () 
 		if activeBriefings:get("taxi:startSequence") == 1 then
+			sysEngines.engStart2Cover:actuate(1)
 			sysEngines.engStart2Switch:repeatOn(0) 
 			kc_speakNoText(0,"starting engine 2")
 		else 
+			sysEngines.engStart1Cover:actuate(1)
 			sysEngines.engStart1Switch:repeatOn(0) 
 			kc_speakNoText(0,"starting engine 1")
 		end 
@@ -851,34 +853,117 @@ pushstartProc:addItem(IndirectProcedureItem:new("  ENGINE START SWITCH","HOLD ST
 pushstartProc:addItem(SimpleProcedureItem:new("  Verify that the N2 RPM increases."))
 pushstartProc:addItem(ProcedureItem:new("  N2 ROTATION","AT 15%",FlowItem.actorCPT,0,
 	function () if activeBriefings:get("taxi:startSequence") == 1 then
-		return get("sim/flightmodel2/engines/N2_percent",0) > 14.9 else 
-		return get("sim/flightmodel2/engines/N2_percent") > 14.9 end end,
-	function () 
-			if activeBriefings:get("taxi:startSequence") == 1 then
-			sysEngines.engStart2Switch:repeatOff(0) 
-			kc_speakNoText(0,"starting engine 2")
+			return get("sim/flightmodel2/engines/N2_percent",1) > 14.9 
 		else 
-			sysEngines.engStart1Switch:repeatOff(0) 
-			kc_speakNoText(0,"starting engine 1")
-		end 
+			return get("sim/flightmodel2/engines/N2_percent",0) > 14.9 
+		end
 	end))
 pushstartProc:addItem(IndirectProcedureItem:new("  ENGINE START LEVER","LEVER %s IDLE|activeBriefings:get(\"taxi:startSequence\") == 1 and \"2\" or \"1\"",FlowItem.actorCPT,3,"eng_start_1_lever",
 	function () 
 		if activeBriefings:get("taxi:startSequence") == 1 then
-			return sysEngines.startLever2:getStatus() == 1 
+			return sysEngines.fuelLever2:getStatus() == 1 
 		else 
-			return sysEngines.startLever1:getStatus() == 1 
+			return sysEngines.fuelLever1:getStatus() == 1 
 		end
 	end,
 	function () 
-		kc_speakNoText(0,"N1 at 25 percent") 
 		if activeBriefings:get("taxi:startSequence") == 1 then
-			sysEngines.startLever2:actuate(1) 
+			sysEngines.fuelLever2:actuate(1) 
 		else 
-			sysEngines.startLever1:actuate(1) 
+			sysEngines.fuelLever1:actuate(1) 
+		end 
+	end))
+pushstartProc:addItem(ProcedureItem:new("  N1 ROTATION","AT 24%",FlowItem.actorCPT,0,
+	function () if activeBriefings:get("taxi:startSequence") == 1 then
+			return get("sim/flightmodel2/engines/N1_percent",1) > 23.9 
+		else 
+			return get("sim/flightmodel2/engines/N1_percent",0) > 23.9
+		end
+	end,
+	function () 
+		if activeBriefings:get("taxi:startSequence") == 1 then
+			sysEngines.engStart2Switch:repeatOff(0) 
+			sysEngines.engStart2Cover:actuate(0)
+		else 
+			sysEngines.engStart1Switch:repeatOff(0) 
+			sysEngines.engStart1Cover:actuate(0)
 		end 
 	end))
 
+pushstartProc:addItem(HoldProcedureItem:new("START SECOND ENGINE","START ENGINE %s|activeBriefings:get(\"taxi:startSequence\") == 1 and \"1\" or \"2\"",FlowItem.actorCPT))
+pushstartProc:addItem(IndirectProcedureItem:new("  ENGINE START SWITCH","HOLD START SWITCH %s ON|activeBriefings:get(\"taxi:startSequence\") == 1 and \"1\" or \"2\"",FlowItem.actorFO,0,"eng_start_2_grd",
+	function () 
+		if activeBriefings:get("taxi:startSequence") == 1 then
+			return sysEngines.engStart1Switch:getStatus() == 1 
+		else 
+			return sysEngines.engStart2Switch:getStatus() == 1 
+		end 
+	end,
+	function () 
+		if activeBriefings:get("taxi:startSequence") == 1 then
+			sysEngines.engStart1Cover:actuate(1)
+			sysEngines.engStart1Switch:repeatOn(0) 
+			kc_speakNoText(0,"starting engine 1")
+		else 
+			sysEngines.engStart2Cover:actuate(1)
+			sysEngines.engStart2Switch:repeatOn(0) 
+			kc_speakNoText(0,"starting engine 2")
+		end 
+	end))
+pushstartProc:addItem(SimpleProcedureItem:new("  Verify that the N2 RPM increases."))
+pushstartProc:addItem(ProcedureItem:new("  N2 ROTATION","AT 15%",FlowItem.actorCPT,0,
+	function () if activeBriefings:get("taxi:startSequence") == 1 then
+			return get("sim/flightmodel2/engines/N2_percent",0) > 14.9 
+		else 
+			return get("sim/flightmodel2/engines/N2_percent",1) > 14.9 
+		end
+	end))
+pushstartProc:addItem(IndirectProcedureItem:new("  ENGINE START LEVER","LEVER %s IDLE|activeBriefings:get(\"taxi:startSequence\") == 1 and \"1\" or \"2\"",FlowItem.actorCPT,3,"eng_start_2_lever",
+	function () 
+		if activeBriefings:get("taxi:startSequence") == 1 then
+			return sysEngines.fuelLever1:getStatus() == 1 
+		else 
+			return sysEngines.fuelLever2:getStatus() == 1 
+		end
+	end,
+	function () 
+		if activeBriefings:get("taxi:startSequence") == 1 then
+			sysEngines.fuelLever1:actuate(1) 
+		else 
+			sysEngines.fuelLever2:actuate(1) 
+		end 
+	end))
+pushstartProc:addItem(ProcedureItem:new("  N1 ROTATION","AT 24%",FlowItem.actorCPT,0,
+	function () if activeBriefings:get("taxi:startSequence") == 1 then
+			return get("sim/flightmodel2/engines/N1_percent",0) > 23.9
+		else 
+			return get("sim/flightmodel2/engines/N1_percent",1) > 23.9 
+		end
+	end,
+	function () 
+		if activeBriefings:get("taxi:startSequence") == 1 then
+			sysEngines.engStart1Switch:repeatOff(0) 
+			sysEngines.engStart1Cover:actuate(0)
+		else 
+			sysEngines.engStart2Switch:repeatOff(0) 
+			sysEngines.engStart2Cover:actuate(0)
+		end 
+	end))
+
+pushstartProc:addItem(SimpleProcedureItem:new("When pushback/towing complete",
+	function () return activeBriefings:get("taxi:gateStand") > 2 end))
+pushstartProc:addItem(HoldProcedureItem:new("  TOW BAR DISCONNECTED","VERIFY",FlowItem.actorCPT,
+	function () 
+		kc_speakNoText(0,"starter cutout") 
+	end,
+	function () return activeBriefings:get("taxi:gateStand") > 2 end))
+pushstartProc:addItem(ProcedureItem:new("  LOCKOUT PIN REMOVED","VERIFY",FlowItem.actorCPT,0,true,
+	function () 
+		kc_pushback_end()
+	end,
+	function () return activeBriefings:get("taxi:gateStand") > 2 end))
+pushstartProc:addItem(ProcedureItem:new("PARKING BRAKE","SET",FlowItem.actorFO,0,
+	function () return sysGeneral.parkBrakeSwitch:getStatus() == 1 end))
 
 
 
@@ -1118,11 +1203,12 @@ backgroundFlow:addItem(BackgroundProcedureItem:new("","","SYS",0,
 -- ============  =============
 -- add the checklists and procedures to the active sop
 -- activeSOP:addProcedure(testProc)
-activeSOP:addProcedure(beforeStartProc)
+activeSOP:addProcedure(pushstartProc)
 activeSOP:addProcedure(electricalPowerUpProc)
 activeSOP:addProcedure(preflightProc)
 activeSOP:addProcedure(preStartProc)
 activeSOP:addProcedure(preStartChecklist)
+activeSOP:addProcedure(beforeStartProc)
 
 -- =========== States ===========
 activeSOP:addState(turnAroundProc)
