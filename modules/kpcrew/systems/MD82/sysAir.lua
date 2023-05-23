@@ -24,10 +24,30 @@ sysAir.apuBleedSwitch 		= TwoStateCmdSwitch:new("apubleed","laminar/md82/bleedai
 	"laminar/md82cmd/bleedair/APU_dwn","laminar/md82cmd/bleedair/APU_up","nocommand")
 
 -- PACK switches
-sysAir.packLeftSwitch 		= MultiStateCmdSwitch:new("pack1","laminar/md82/bleedair/bleedair_HVAC_L",0,
-	"laminar/md82cmd/bleedair/bleedair_HVAC_L_dwn","laminar/md82cmd/bleedair/bleedair_HVAC_L_up",0,2,true)
-sysAir.packRightSwitch 		= MultiStateCmdSwitch:new("pack2","laminar/md82/bleedair/bleedair_HVAC_R",0,
-	"laminar/md82cmd/bleedair/bleedair_HVAC_R_dwn","laminar/md82cmd/bleedair/bleedair_HVAC_R_up",0,2,true)
+sysAir.packLeftSwitch 		= TwoStateCustomSwitch:new("pack1","laminar/md82/bleedair/bleedair_HVAC_L",0,
+function ()
+	command_once("laminar/md82cmd/bleedair/bleedair_HVAC_L_dwn")
+	command_once("laminar/md82cmd/bleedair/bleedair_HVAC_L_dwn")
+end,
+function ()
+	command_once("laminar/md82cmd/bleedair/bleedair_HVAC_L_up")
+	command_once("laminar/md82cmd/bleedair/bleedair_HVAC_L_up")
+end,nil,
+function () 
+	return get("laminar/md82/bleedair/bleedair_HVAC_L")
+end)
+sysAir.packRightSwitch 		= TwoStateCustomSwitch:new("pack2","laminar/md82/bleedair/bleedair_HVAC_R",0,
+function ()
+	command_once("laminar/md82cmd/bleedair/bleedair_HVAC_R_dwn")
+	command_once("laminar/md82cmd/bleedair/bleedair_HVAC_R_dwn")
+end,
+function ()
+	command_once("laminar/md82cmd/bleedair/bleedair_HVAC_R_up")
+	command_once("laminar/md82cmd/bleedair/bleedair_HVAC_R_up")
+end,nil,
+function () 
+	return get("laminar/md82/bleedair/bleedair_HVAC_R")
+end)
 sysAir.packSwitchGroup 		= SwitchGroup:new("PackBleeds")
 sysAir.packSwitchGroup:addSwitch(sysAir.packLeftSwitch)
 sysAir.packSwitchGroup:addSwitch(sysAir.packRightSwitch)
