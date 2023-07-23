@@ -6,6 +6,7 @@
 
 -- ====== Global variables =======
 ks_acf_icao = "DFLT" -- active addon aircraft ICAO code (DFLT when nothing found)
+ks_mode_auto = true -- switches between manual mode (use the toggle command) and outside detection
 
 -- ====== Select the addon modules based on ICAO code
 if PLANE_ICAO == "PC12" then
@@ -46,7 +47,44 @@ function ks_switch_mute()
 	end
 end
 
+function ks_auto_switch()
+-- ==== intern
+-- 1000 = forward with 2D
+-- 1023 = forward with HUD
+-- 1024 = forward with no 
+-- 1026 = forward with 3D (default)
+-- ==== extern
+-- 1014 = tower (shift+5)	
+-- 1015 = runway (shift+3)
+-- 1017 = chase (shift+8) 
+-- 1018 = circle (shift+4)
+-- 1020 = still spot (shift+2)
+-- 1021 = linear spot (shift+1)
+-- 1028 = free camera (shift+0)
+-- 1031 = ride along (shift+6)
+
+	if ks_mode_auto == true then
+		if get("sim/graphics/view/view_type") == 1000 then ks_mute_state = true end
+		if get("sim/graphics/view/view_type") == 1023 then ks_mute_state = true end
+		if get("sim/graphics/view/view_type") == 1024 then ks_mute_state = true end
+		if get("sim/graphics/view/view_type") == 1026 then ks_mute_state = true end
+		if get("sim/graphics/view/view_type") == 1014 then ks_mute_state = false end
+		if get("sim/graphics/view/view_type") == 1015 then ks_mute_state = false end
+		if get("sim/graphics/view/view_type") == 1017 then ks_mute_state = false end
+		if get("sim/graphics/view/view_type") == 1018 then ks_mute_state = false end
+		if get("sim/graphics/view/view_type") == 1020 then ks_mute_state = false end
+		if get("sim/graphics/view/view_type") == 1021 then ks_mute_state = false end
+		if get("sim/graphics/view/view_type") == 1028 then ks_mute_state = false end
+		if get("sim/graphics/view/view_type") == 1031 then ks_mute_state = false end
+		ks_switch_mute()
+	end
+	
+end
+
 ks_switch_mute()
 
+do_often("ks_auto_switch()")
 add_macro("KPSoundMute Toggle Mute", "ks_switch_mute()")
+add_macro("KPSoundMute Toggle Auto", "ks_mode_auto=not ks_mode_auto")
 create_command("kp/soundmute/toggle", "KPSoundMute Toggle Mute","ks_switch_mute()","","")
+create_command("kp/soundmute/auto", "KPSoundMute Toggle Auto","ks_mode_auto=not ks_mode_auto","","")
