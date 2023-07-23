@@ -75,15 +75,15 @@ testProc:addItem(ChecklistItem:new("WINDOW HEAT","ON",FlowItem.actorFO,0,
 -- CIRCUIT BREAKERS (P6 PANEL)..........CHECK ALL IN (F/O)
 -- CIRCUIT BREAKERS (P18 PANEL).........CHECK ALL IN (F/O)
 -- DC POWER SWITCH...............................BAT (F/O)
--- BATTERY VOLTAGE...........................MIN 24V (F/O)
+-- BATTERY VOLTAGE.....................CHECK MIN 24V (F/O)
 -- BATTERY SWITCH.......................GUARD CLOSED (F/O)
 -- STANDBY POWER SWITCH.................GUARD CLOSED (F/O)
 
 -- Hydraulic System
 -- ELECTRIC HYDRAULIC PUMPS SWITCHES.............OFF (F/O)
 -- ALTERNATE FLAPS MASTER SWITCH........GUARD CLOSED (F/O)
--- FLAP LEVER...................................SET  (F/O)
---   Set the flap lever to agree with the flap position.
+-- FLAP LEVER.....................................UP (F/O)
+--   Ensure flap lever agrees with indicated flap position.
 
 -- Other
 -- WINDSHIELD WIPER SELECTORS...................PARK (F/O)
@@ -94,10 +94,10 @@ testProc:addItem(ChecklistItem:new("WINDOW HEAT","ON",FlowItem.actorFO,0,
 --   Move thrust levers full forward and back to idle.
 
 -- ==== Activate External Power
---   Use Zibo EFB to turn Ground Power on.         
---   GRD POWER AVAILABLE LIGHT...........ILLUMINATED (F/O)
---   AC POWER SWITCH.............................GRD (F/O)
---   GROUND POWER SWITCH..........................ON (F/O)
+-- Use Zibo EFB to turn Ground Power on.         
+-- GRD POWER AVAILABLE LIGHT...........ILLUMINATED (F/O)
+-- AC POWER SWITCH.............................GRD (F/O)
+-- GROUND POWER SWITCH..........................ON (F/O)
 
 -- ==== Activate APU 
 --   OVHT DET SWITCHES........................NORMAL (F/O)
@@ -178,19 +178,19 @@ electricalPowerUpProc:addItem(SimpleProcedureItem:new("  Move thrust levers full
 
 electricalPowerUpProc:addItem(SimpleProcedureItem:new("==== Activate External Power",
 	function () return activePrefSet:get("aircraft:powerup_apu") == true end))
-electricalPowerUpProc:addItem(SimpleProcedureItem:new("  Use Zibo EFB to turn Ground Power on.",
+electricalPowerUpProc:addItem(SimpleProcedureItem:new("Use Zibo EFB to turn Ground Power on.",
 	function () return activePrefSet:get("aircraft:powerup_apu") == true end))
-electricalPowerUpProc:addItem(ProcedureItem:new("  #exchange|GRD|GROUND# POWER AVAILABLE LIGHT","ILLUMINATED",FlowItem.actorFO,0,
+electricalPowerUpProc:addItem(ProcedureItem:new("#exchange|GRD|GROUND# POWER AVAILABLE LIGHT","ILLUMINATED",FlowItem.actorFO,0,
 	function () return sysElectric.gpuAvailAnc:getStatus() == modeOn end,
 	function () 
 		kc_macro_gpu_connect()
 	end,
 	function () return activePrefSet:get("aircraft:powerup_apu") == true end))
-electricalPowerUpProc:addItem(ProcedureItem:new("AC POWER SWITCH","GRD",FlowItem.actorFO,0,
+electricalPowerUpProc:addItem(ProcedureItem:new("AC/GRD POWER SWITCH","GRD",FlowItem.actorFO,0,
 	function () return sysElectric.acPowerSwitch:getStatus() == sysElectric.acPwrGRD end,
 	function () sysElectric.acPowerSwitch:actuate(sysElectric.acPwrGRD) end,
 	function () return activePrefSet:get("aircraft:powerup_apu") == true end))
-electricalPowerUpProc:addItem(ProcedureItem:new("GROUND POWER VOLTAGE","> 110 VOLT",FlowItem.actorFO,0,
+electricalPowerUpProc:addItem(ProcedureItem:new("GROUND POWER VOLTAGE","CHECK > 110 VOLT",FlowItem.actorFO,0,
 	function () return get("laminar/B738/ac_volt_value") > 110 end,nil,
 	function () return activePrefSet:get("aircraft:powerup_apu") == true end))
 electricalPowerUpProc:addItem(ProcedureItem:new("  GROUND POWER SWITCH","ON",FlowItem.actorFO,0,
@@ -208,13 +208,13 @@ electricalPowerUpProc:addItem(ProcedureItem:new("FUEL PUMPS","OFF/LEFT FWD ON",F
 	function () return sysFuel.allFuelPumpGroup:getStatus() == 1 end,
 	function () kc_macro_fuelpumps_stand() end,
 	function () return activePrefSet:get("aircraft:powerup_apu") == false end))
-electricalPowerUpProc:addItem(ProcedureItem:new("  OVHT DET SWITCH","NORMAL",FlowItem.actorFO,0,true,
+electricalPowerUpProc:addItem(ProcedureItem:new("OVHT DET SWITCH","NORMAL",FlowItem.actorFO,0,true,
 	function () sysElectric.gpuSwitch:step(cmdUp) end,
 	function () 
 		return activePrefSet:get("aircraft:powerup_apu") == false or 
 		activeBriefings:get("flight:firstFlightDay") == false 
 	end))
-electricalPowerUpProc:addItem(IndirectProcedureItem:new("  #exchange|OVHT|Overheat# FIRE TEST SWITCH","HOLD RIGHT",FlowItem.actorFO,0,"ovht_fire_test",
+electricalPowerUpProc:addItem(IndirectProcedureItem:new("#exchange|OVHT|Overheat# FIRE TEST SWITCH","HOLD RIGHT",FlowItem.actorFO,0,"ovht_fire_test",
 	function () return  sysEngines.ovhtFireTestSwitch:getStatus() > 0 end,
 	function () 
 		kc_procvar_set("ovhttest",true) -- background test 
@@ -223,12 +223,12 @@ electricalPowerUpProc:addItem(IndirectProcedureItem:new("  #exchange|OVHT|Overhe
 		return activePrefSet:get("aircraft:powerup_apu") == false or 
 		activeBriefings:get("flight:firstFlightDay") == false 
 	end))
-electricalPowerUpProc:addItem(ProcedureItem:new("  MASTER FIRE WARN LIGHT","PUSH",FlowItem.actorFO,0,true,nil,
+electricalPowerUpProc:addItem(ProcedureItem:new("MASTER FIRE WARN LIGHT","PUSH",FlowItem.actorFO,0,true,nil,
 	function () 
 		return activePrefSet:get("aircraft:powerup_apu") == false or 
 		activeBriefings:get("flight:firstFlightDay") == false 
 	end))
-electricalPowerUpProc:addItem(IndirectProcedureItem:new("  ENGINES #exchange|EXT|Extinguischer# TEST SWITCH","TEST 1 TO LEFT",FlowItem.actorFO,0,"eng_ext_test_1",
+electricalPowerUpProc:addItem(IndirectProcedureItem:new("ENGINES #exchange|EXT|Extinguischer# TEST SWITCH","TEST 1 TO LEFT",FlowItem.actorFO,0,"eng_ext_test_1",
 	function () return get("laminar/B738/toggle_switch/extinguisher_circuit_test") < 0 end,
 	function () 
 		kc_procvar_set("ext1test",true) -- background test 
@@ -237,7 +237,7 @@ electricalPowerUpProc:addItem(IndirectProcedureItem:new("  ENGINES #exchange|EXT
 		return activePrefSet:get("aircraft:powerup_apu") == false or 
 		activeBriefings:get("flight:firstFlightDay") == false 
 	end))
-electricalPowerUpProc:addItem(IndirectProcedureItem:new("  ENGINES #exchange|EXT|Extinguischer# TEST SWITCH","TEST 2 TO RIGHT",FlowItem.actorFO,0,"eng_ext_test_2",
+electricalPowerUpProc:addItem(IndirectProcedureItem:new("ENGINES #exchange|EXT|Extinguischer# TEST SWITCH","TEST 2 TO RIGHT",FlowItem.actorFO,0,"eng_ext_test_2",
 	function () return get("laminar/B738/toggle_switch/extinguisher_circuit_test") > 0 end,
 	function () 
 		kc_procvar_set("ext2test",true) -- background test 
@@ -828,7 +828,7 @@ preflightFOProc:addItem(IndirectProcedureItem:new("ENGINES #exchange|EXT|Extingu
 		return activePrefSet:get("aircraft:powerup_apu") == true or 
 		activeBriefings:get("flight:firstFlightDay") == false 
 	end))
-preflightFOProc:addItem(ProcedureItem:new("#spell|APU#","START",FlowItem.actorFO,0,
+preflightFOProc:addItem(ProcedureItem:new("#spell|APU# SWITCH","START",FlowItem.actorFO,0,
 	function () return sysElectric.apuRunningAnc:getStatus() == modeOn end,
 	function () 
 		kc_procvar_set("apustart",true) -- background start
@@ -1829,7 +1829,7 @@ beforeTaxiChkl:addItem(ChecklistItem:new("AUTOBRAKE","RTO",FlowItem.actorCPT,0,
 	function () sysGeneral.autobrake:actuate(0) end))
 beforeTaxiChkl:addItem(ChecklistItem:new("ENGINE START LEVERS","IDLE DETENT",FlowItem.actorCPT,0,
 	function () return sysEngines.startLeverGroup:getStatus() == 2 end))
-beforeTaxiChkl:addItem(IndirectChecklistItem:new("FLIGHT CONTROLS","CHECK",FlowItem.actorCPT,0,"fccheck",
+beforeTaxiChkl:addItem(IndirectChecklistItem:new("FLIGHT CONTROLS","CHECKED",FlowItem.actorCPT,0,"fccheck",
 	function () return get("sim/flightmodel2/wing/rudder1_deg") > 18 end,
 	function () 
 		kc_macro_b738_lowerdu_sys() 
