@@ -143,8 +143,8 @@ electricalPowerUpProc:addItem(ProcedureItem:new("BATTERY SWITCH","GUARD CLOSED",
 		kc_macro_int_lights_on()
 	end))
 electricalPowerUpProc:addItem(ProcedureItem:new("STANDBY POWER SWITCH","GUARD CLOSED",FlowItem.actorFO,0,
-	function () return sysElectric.stbyPowerCover:getStatus() == 1 end,
-	function () sysElectric.stbyPowerCover:actuate(1) end))
+	function () return sysElectric.stbyPowerCover:getStatus() == 0 end,
+	function () sysElectric.stbyPowerCover:actuate(0) end))
 
 electricalPowerUpProc:addItem(SimpleProcedureItem:new("==== Hydraulic System"))
 electricalPowerUpProc:addItem(ProcedureItem:new("ELECTRIC HYDRAULIC PUMPS SWITCHES","OFF",FlowItem.actorFO,0,
@@ -760,29 +760,29 @@ preflightFOProc:addItem(ProcedureItem:new("FUEL PUMPS","ALL OFF",FlowItem.actorF
 preflightFOProc:addItem(ProcedureItem:new("FUEL VALVE ANNUNCIATORS","DIM",FlowItem.actorFO,0,
 	function () return sysFuel.valveAnns:getStatus() == 1 end))
 preflightFOProc:addItem(IndirectProcedureItem:new("FUEL CROSS FEED","ON FOR TEST",FlowItem.actorFO,0,"xfeedtest",
-	function () return sysFuel.crossFeed:getStatus() == modeOn end,
-	function () sysFuel.crossFeed:actuate(modeOn) end))
+	function () return sysFuel.crossFeed:getStatus() == 1 end,
+	function () sysFuel.crossFeed:actuate(1) end))
 preflightFOProc:addItem(IndirectProcedureItem:new("CROSS FEED VALVE","CHECK DIM",FlowItem.actorFO,0,"xfeeddim",
 	function () return sysFuel.xfeedVlvAnn:getStatus() > 0 end))
 preflightFOProc:addItem(ProcedureItem:new("FUEL CROSS FEED","OFF",FlowItem.actorFO,0,
-	function () return sysFuel.crossFeed:getStatus() == modeOff end,
-	function () sysFuel.crossFeed:actuate(modeOff) end))
+	function () return sysFuel.crossFeed:getStatus() == 0 end,
+	function () sysFuel.crossFeed:actuate(0) end))
 preflightFOProc:addItem(ProcedureItem:new("CROSS FEED VALVE","EXTINGUISHED",FlowItem.actorFO,0,
 	function () return sysFuel.xfeedVlvAnn:getStatus() == 0 end))
 
 preflightFOProc:addItem(SimpleProcedureItem:new("==== ELECTRICAL panel"))
 preflightFOProc:addItem(ProcedureItem:new("BATTERY SWITCH","GUARD CLOSED",FlowItem.actorFO,0,
-	function () return sysElectric.batteryCover:getStatus() == modeOff end,
-	function () sysElectric.batteryCover:actuate(modeOff) end))
+	function () return sysElectric.batteryCover:getStatus() == 0 end,
+	function () sysElectric.batteryCover:actuate(0) end))
 preflightFOProc:addItem(ProcedureItem:new("CAB/UTIL POWER SWITCH","ON",FlowItem.actorFO,0,
-	function () return sysElectric.cabUtilPwr:getStatus() == modeOn end,
-	function () sysElectric.cabUtilPwr:actuate(modeOn) end))
+	function () return sysElectric.cabUtilPwr:getStatus() == 1 end,
+	function () sysElectric.cabUtilPwr:actuate(1) end))
 preflightFOProc:addItem(ProcedureItem:new("#spell|IFE# POWER SWITCH","ON",FlowItem.actorFO,0,
-	function () return sysElectric.ifePwr:getStatus() == modeOn end,
-	function () sysElectric.ifePwr:actuate(modeOn) end))
+	function () return sysElectric.ifePwr:getStatus() == 1 end,
+	function () sysElectric.ifePwr:actuate(1) end))
 preflightFOProc:addItem(ProcedureItem:new("STANDBY POWER SWITCH","GUARD CLOSED",FlowItem.actorFO,0,
-	function () return sysElectric.stbyPowerCover:getStatus() == modeOff end,
-	function () sysElectric.stbyPowerCover:actuate(modeOff) end))
+	function () return sysElectric.stbyPowerCover:getStatus() == 0 end,
+	function () sysElectric.stbyPowerCover:actuate(0) end))
 preflightFOProc:addItem(ProcedureItem:new("GEN DRIVE DISCONNECT SWITCHES","GUARDS CLOSED",FlowItem.actorFO,0,
 	function () return sysElectric.genDriveCovers:getStatus() == 0 end))
 preflightFOProc:addItem(ProcedureItem:new("BUS TRANSFER SWITCH","GUARD CLOSED",FlowItem.actorFO,0,
@@ -1158,15 +1158,14 @@ preflightFOProc:addItem(ProcedureItem:new("ANTISKID INOP LIGHT","VERIFY EXTINGUI
 preflightFOProc:addItem(IndirectProcedureItem:new("FUEL FLOW","RESET",FlowItem.actorFO,0,"fuelflowreset",
 	function () return get("laminar/B738/toggle_switch/fuel_flow_pos") ~= 0 end,
 	function () command_begin("laminar/B738/toggle_switch/fuel_flow_up") end))
-preflightFOProc:addItem(ProcedureItem:new("LOWER EICAS","SYS",FlowItem.actorFO,0,
+preflightFOProc:addItem(ProcedureItem:new("LOWER DU","SYS",FlowItem.actorFO,0,
 	function () return 
 		get("laminar/B738/systems/lowerDU_page2") == 1 and
 		get("laminar/B738/systems/lowerDU_page") == 0
 	end,
 	function ()
 		command_end("laminar/B738/toggle_switch/fuel_flow_up")
-		set("laminar/B738/systems/lowerDU_page2",1)
-		set("laminar/B738/systems/lowerDU_page",0)
+		kc_macro_b738_lowerdu_sys()
 	end))
 
 
@@ -1871,6 +1870,7 @@ runwayEntryProc:addItem(ProcedureItem:new("EXTERNAL LIGHTS","SET",FlowItem.actor
 	function () 
 		kc_macro_ext_lights_rwyentry() 
 		kc_macro_b738_lowerdu_off()
+		kc_procvar_set("fmacallouts",true) -- activate FMA callouts
 	end))
 runwayEntryProc:addItem(ProcedureItem:new("TRANSPONDER","ON",FlowItem.actorFO,0,
 	function () return sysRadios.xpdrSwitch:getStatus() == sysRadios.xpdrTARA end,
@@ -1952,7 +1952,7 @@ takeoffClimbProc:addItem(ProcedureItem:new("SET TAKEOFF THRUST","T/O MODE",FlowI
 	function () return get("laminar/B738/engine/indicators/N1_percent_1") > 70 end,
 	function () command_once("laminar/B738/autopilot/left_toga_press") kc_speakNoText(0,"takeoff thrust set") end))
 takeoffClimbProc:addItem(IndirectProcedureItem:new("POSITIVE RATE","GT 40 FT AGL",FlowItem.actorPNF,0,"toposrate",
-	function () return get("sim/cockpit2/tcas/targets/position/vertical_speed",0) > 100 and get("sim/flightmodel/position/y_agl") > 40 end))
+	function () return get("sim/cockpit2/tcas/targets/position/vertical_speed",0) > 50 and get("sim/flightmodel/position/y_agl") > 40 end))
 takeoffClimbProc:addItem(HoldProcedureItem:new("GEAR","COMMAND UP",FlowItem.actorPF))
 takeoffClimbProc:addItem(IndirectProcedureItem:new("GEAR","UP",FlowItem.actorPF,0,"gear_up_to",
 	function () return sysGeneral.GearSwitch:getStatus() == 0 end,
@@ -2031,6 +2031,10 @@ afterTakeoffChkl:addItem(ChecklistItem:new("FLAPS","UP, NO LIGHTS",FlowItem.acto
 -- LANDING DATA...............VREF __, MINIMUMS __   (PM)
 -- Set/verify navigation radios & course for the approach.
 -- AUTO BRAKE SELECT SWITCH..............AS NEEDED   (PM)
+-- Whatever comes first
+-- TRANSITION LEVEL...............ANNOUNCE REACHED   (PM)
+-- ALTIMETERS............................LOCAL QNH (BOTH)
+-- ====
 -- ======================================================
 
 local descentProc = Procedure:new("DESCENT PROCEDURE","performing descent items","ready for descent checklist")
@@ -2067,6 +2071,11 @@ descentProc:addItem(ProcedureItem:new("AUTO BRAKE SELECT SWITCH","%s|kc_pref_spl
 	function () 
 		kc_macro_b738_set_autobrake()
 	end))
+descentProc:addItem(ProcedureItem:new("F/O MONITORS TRANS LVL AND 10000 FT","CHECK",FlowItem.actorPM,0,true,
+	function () 
+		kc_procvar_set("below10k",true) -- background 10.000 ft activities
+		kc_procvar_set("attranslvl",true) -- background transition level activities
+	end))
 
 -- =============== DESCENT CHECKLIST (PM) ===============
 -- PRESSURIZATION...................LAND ALT _____   (PM)
@@ -2096,10 +2105,6 @@ descentChkl:addItem(ChecklistItem:new("LANDING DATA","VREF %i, MINIMUMS %i|activ
 descentChkl:addItem(ChecklistItem:new("APPROACH BRIEFING","COMPLETED",FlowItem.actorPF,1))
 
 -- ================= ARRIVAL PROCEDURE ==================
--- Whatever comes first
--- TRANSITION LEVEL...............ANNOUNCE REACHED   (PM)
--- ALTIMETERS............................LOCAL QNH (BOTH)
--- ====
 -- 10.000 FT......................ANNOUNCE REACHED   (PM)
 -- LANDING LIGHTS...............................ON   (PM)
 -- FASTEN BELTS SWITCH..........................ON   (PM)
@@ -2109,11 +2114,6 @@ descentChkl:addItem(ChecklistItem:new("APPROACH BRIEFING","COMPLETED",FlowItem.a
 
 local arrivalProc = Procedure:new("ARRIVAL PROCEDURE","","ready for approach checklist")
 arrivalProc:setFlightPhase(12)
-arrivalProc:addItem(ProcedureItem:new("F/O MONITORS TRANS LVL AND 10000 FT","CHECK",FlowItem.actorPM,0,true,
-	function () 
-		kc_procvar_set("below10k",true) -- background 10.000 ft activities
-		kc_procvar_set("attranslvl",true) -- background transition level activities
-	end))
 arrivalProc:addItem(ProcedureItem:new("AUTO BRAKE SELECT SWITCH","%s|kc_pref_split(kc_LandingAutoBrake)[activeBriefings:get(\"approach:autobrake\")]",FlowItem.actorFO,0,
 	function () return sysGeneral.autobrake:getStatus() == activeBriefings:get("approach:autobrake") end,
 	function () 
@@ -2360,7 +2360,11 @@ local afterLandingProc = Procedure:new("AFTER LANDING PROCEDURE","cleaning up")
 afterLandingProc:setFlightPhase(15)
 afterLandingProc:addItem(ProcedureItem:new("SPEED BRAKE","DOWN",FlowItem.actorPF,0,
 	function () return sysControls.spoilerLever:getStatus() == 0 end,
-	function () set("laminar/B738/flt_ctrls/speedbrake_lever",0) activeBckVars:set("general:timesIN",kc_dispTimeHHMM(get("sim/time/zulu_time_sec"))) end))
+	function () 
+		set("laminar/B738/flt_ctrls/speedbrake_lever",0) 
+		activeBckVars:set("general:timesIN",kc_dispTimeHHMM(get("sim/time/zulu_time_sec"))) 
+		kc_procvar_set("fmacallouts",false) -- deactivate FMA callouts
+	end))
 afterLandingProc:addItem(ProcedureItem:new("CHRONO & ET","STOP",FlowItem.actorCPT,0))
 afterLandingProc:addItem(ProcedureItem:new("WX RADAR","OFF",FlowItem.actorCPT,0,
 	function () return sysEFIS.wxrPilot:getStatus() == 0 end,
@@ -2400,7 +2404,7 @@ afterLandingProc:addItem(ProcedureItem:new("#spell|APU# ","START",FlowItem.actor
 afterLandingProc:addItem(SimpleProcedureItem:new("  Hold APU switch in START position for 3-4 seconds.",
 	function () return activeBriefings:get("approach:powerAtGate") == 1 end))
 afterLandingProc:addItem(IndirectProcedureItem:new("  #spell|APU# GEN OFF BUS LIGHT","ILLUMINATED",FlowItem.actorFO,0,"apu_gen_bus_end",
-	function () return sysElectric.apuGenBusOff:getStatus() == modeOn end,nil,
+	function () return sysElectric.apuGenBusOff:getStatus() == 1 end,nil,
 	function () return activeBriefings:get("approach:powerAtGate") == 1 end))
 afterLandingProc:addItem(ProcedureItem:new("AIRCRAFT","CLEAN",FlowItem.actorFO,0,true,
 	function () kc_speakNoText(9,"aircraft cleaned up") end))
@@ -2641,6 +2645,8 @@ kc_procvar_initialize_bool("above10k", false) -- aircraft climbs through 10.000 
 kc_procvar_initialize_bool("below10k", false) -- aircraft descends through 10.000 ft
 kc_procvar_initialize_bool("attransalt", false) -- aircraft climbs through transition altitude
 kc_procvar_initialize_bool("attranslvl", false) -- aircraft descends through transition level
+kc_procvar_initialize_bool("fmacallouts", false) -- make callouts when FMA modes change
+
 
 backgroundFlow:addItem(BackgroundProcedureItem:new("","","SYS",0,
 	function () 
@@ -2703,6 +2709,9 @@ backgroundFlow:addItem(BackgroundProcedureItem:new("","","SYS",0,
 		end
 		if kc_procvar_get("attranslvl") == true then 
 			kc_bck_transition_level("attranslvl")
+		end
+		if kc_procvar_get("fmacallouts") == true then 
+			kc_bck_fma_callouts("fmacallouts")
 		end
 	end))
 	
