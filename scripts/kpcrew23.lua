@@ -1,7 +1,7 @@
 --[[
 	*** KPCREW 2.3
 	Virtual copilot for X-PLane 11/12
-	Kosta Prokopiu, March 2023
+	Kosta Prokopiu, July 2023
 --]]
 
 require "kpcrew.genutils"
