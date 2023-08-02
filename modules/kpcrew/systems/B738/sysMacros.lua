@@ -197,7 +197,6 @@ function kc_macro_state_turnaround()
 
 	kc_macro_efis_initial()
 
-	kc_wnd_brief_action=1  -- open briefing window
 end
 
 -- external lights all off
@@ -1071,9 +1070,19 @@ end
 -- wait for descending through trans lvl then execute items
 function kc_bck_transition_level(trigger)
 	if get("sim/cockpit2/gauges/indicators/altitude_ft_pilot") < activeBriefings:get("arrival:translvl")*100 then
-		kc_speakNoText(0,"transition level")
 		kc_macro_at_trans_lvl()
 		kc_procvar_set(trigger,false)
+		kc_speakNoText(0,"transition level                  ready for approach checklist")
+	end
+end
+
+-- after takeoff FO steps
+function kc_bck_after_takeoff_items(trigger)
+	if sysControls.flapsSwitch:getStatus() == 0 then
+		command_once("laminar/B738/knob/autobrake_off")
+		command_once("laminar/B738/push_button/gear_off")
+		sysEngines.engStarterGroup:actuate(1)
+		kc_speakNoText(0,"ready for after takeoff checklist")
 	end
 end
 
