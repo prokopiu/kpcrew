@@ -764,6 +764,34 @@ preflightCPTProc:addItem(kcProcedureItem:new("STABILIZER TRIM CUTOUT SWITCHES","
 preflightCPTProc:addItem(kcProcedureItem:new("RADIO TUNING PANEL","SET",kcFlowItem.actorCPT,1))
 preflightCPTProc:addItem(kcSimpleProcedureItem:new("CALL PREFLIGHT CHECKLIST"))
 
+-- old checklist
+-- =============== BEFORE START CHECKLIST ==============
+-- FLIGHT DECK PREPARATION. . . . . . . . . . . . . . . COMPLETED
+-- LIGHT TEST . . . . . . . . . . . . . . . . . . . . . CHECKED
+-- OXYGEN & INTERPHONE . . . . . . . . . . . . . . . . .CHECKED
+-- YAW DAMPER. . . . . . . . . . . . . . . . . . . . . .ON
+-- NAVIGATION TRANSFER AND DISPLAY SWITCHES . . . . . . AUTO & NORMAL
+-- FUEL . . . . . . . . . . . . . . . . . . . . . . . . _____KGS & PUMPS ON
+-- GALLEY POWER . . . . . . . . . . . . . . . . . . . . ON
+-- EMERGENCY EXIT LIGHTS. . . . . . . . . . . . . . . . ARMED
+-- PASSENGER SIGNS. . . . . . . . . . . . . . . . . . . SET
+-- WINDOW HEAT . . . . . . . . . . . . . . . . . . . . .ON
+-- HYDRAULICS . . . . . . . . . . . . . . . . . . . . . NORMAL
+-- AIR COND & PRESS. . . . . . . .......................___ PACK(S), BLEEDS ON, SET
+-- AUTOPILOTS . . . . . . . . . . . . . . . . . . . . . DISENGAGED
+-- INSTRUMENTS . . . . . . . . . . . . . . . . . . . . .X-CHECKED
+-- AUTOBRAKE. . . . . . . . . . . . . . . . . . . . . . RTO
+-- SPEED BRAKE . . . . . . . . . . . . . . . . . . . . .DOWN DETENT
+-- PARKING BRAKE . . . . . . . . . . . . . . . . . . . .SET
+-- STABILIZER TRIM CUTOUT SWITCHES. . . . . . . . . . ..NORMAL
+-- WHEEL WELL FIRE WARNING . . . . . . . . . . . . . . .CHECKED
+-- RADIOS, RADAR, TRANSPONDER & HUD . . . . . . . . . . SET
+-- RUDDER & AILERON TRIM . . . . . . . . . . . . . . . .FREE & ZERO
+-- PAPERS. . . . . . . . . . . . . . . . . . . . . . . .ABOARD
+-- FMC/CDU. . . . . . . . . . . . . . . . . . . . . . . SET
+-- N1 & IAS BUGS. . . . . . . . . . . . . . . . . . . . SET
+
+
 -- ============== PREFLIGHT CHECKLIST (PM) ============= OK
 -- OXYGEN..............................TESTED, 100% (PF)
 -- NAVIGATION & DISPLAY SWITCHES........NORMAL,AUTO (PF)
@@ -890,6 +918,13 @@ beforeStartProc:addItem(kcProcedureItem:new("  RUDDER TRIM","0 UNITS (%3.2f)|sys
 	function () return sysControls.rudderTrimSwitch:getStatus() == 0 end,
 	function () sysControls.rudderTrimSwitch:setValue(0) end))
 beforeStartProc:addItem(kcSimpleProcedureItem:new("Call for Before Start Checklist"))
+
+
+-- – – – – – – – – – – CLEARED FOR START – – – – – – – – –
+-- MOBILE PHONES. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .OFF
+-- DOORS . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .CLOSED
+-- AIR CONDITIONING PACKS . . . . . . . . . . . . . . . . . . . . . . . .OFF
+-- ANTICOLLISION LIGHT . . . . . . . . . . . . . . . . . . . . . . . . . . . . .ON
 
 -- ============ BEFORE START CHECKLIST (F/O) ============
 -- FLIGHT DECK DOOR...............CLOSED AND LOCKED (CPT)
@@ -1041,6 +1076,15 @@ beforeTaxiProc:addItem(kcProcedureItem:new("Recall","CHECK",kcFlowItem.actorBOTH
 beforeTaxiProc:addItem(kcSimpleProcedureItem:new("  Verify annunciators illuminate and then extinguish."))
 beforeTaxiProc:addItem(kcSimpleProcedureItem:new("Call BEFORE TAXI CHECKLIST"))
 
+-- AFTER START
+-- ELECTRICAL . . . . . . . . . . . . . . . . . . . . . . . .GENERATORS ON
+-- PROBE HEAT . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .ON
+-- ANTI–ICE . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .AS REQUIRED
+-- AIR COND & PRESS . . . . . . . . . . . . . . . . . . . . . . . . PACKS ON
+-- ISOLATION VALVE . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .AUTO
+-- APU . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .AS REQUIRED
+-- START LEVERS . . . . . . . . . . . . . . . . . . . . . . . . . .IDLE DETENT
+
 -- ============ BEFORE TAXI CHECKLIST (F/O) ============
 -- GENERATORS...................................ON (CPT)
 -- PROBE HEAT...................................ON (CPT)
@@ -1077,6 +1121,17 @@ beforeTaxiChkl:addItem(kcChecklistItem:new("ENGINE START LEVERS","IDLE DETENT",k
 beforeTaxiChkl:addItem(kcChecklistItem:new("FLIGHT CONTROLS","CHECKED",kcChecklistItem.actorCPT,1))
 beforeTaxiChkl:addItem(kcChecklistItem:new("GROUND EQUIPMENT","CLEAR",kcChecklistItem.actorBOTH,1))
 beforeTaxiChkl:addItem(kcSimpleChecklistItem:new("Next BEFORE TAKEOFF CHECKLIST"))
+
+-- BEFORE TAKEOFF
+-- RECALL . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .CHECKED
+-- FLIGHT CONTROLS. . . . . . . . . . . . . . . . . . . . . . . . . .CHECKED
+-- FLAPS . . . . . . . . . . . . . . . . . . . . . . . . . . . _____, GREEN LIGHT
+-- STABILIZER TRIM . . . . . . . . . . . . . . . . . . . . . . . . . _____UNITS
+-- CABIN DOOR . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .LOCKED
+-- TAKEOFF BRIEFING . . . . . . . . . . . . . . . . . . . . . . . .REVIEWED
+-- – – – – – – – – – CLEARED FOR TAKEOFF – – – – – – – –
+-- ENGINE START SWITCHES. . . . . . . . . . . . . . . . . . . . . . . . . .ON
+-- TRANSPONDER . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .ON
 
 -- ============ BEFORE TAKEOFF CHECKLIST (F/O) ============
 -- GENERATORS...................................ON (CPT)
@@ -1136,6 +1191,11 @@ local takeoffClimbProc = kcProcedure:new("TAKEOFF & INITIAL CLIMB")
 	-- [14] = {["activity"] = "CMD A", ["wait"] = 1, ["interactive"] = 1, ["actor"] = "CPT:", ["validated"] = 0, ["chkl_color"] = color_white, ["end"] = 0,
 	-- [15] = {["activity"] = "SETTING CMD A", ["wait"] = 1, ["interactive"] = 0, ["actor"] = "CPT:", ["validated"] = 0, ["chkl_color"] = color_white, ["end"] = 0,
 
+-- AFTER TAKEOFF
+-- AIR COND & PRESS. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .SET
+-- ENGINE START SWITCHES. . . . . . . . . . . . . . . . . . . . . . . . .OFF
+-- LANDING GEAR. . . . . . . . . . . . . . . . . . . . . . . . . . . . .UP & OFF
+-- FLAPS . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . UP, NO LIGHTS
 
 -- ============ AFTER TAKEOFF CHECKLIST (PM) ============
 -- TAKEOFF BRIEFING.......................REVIEWED (PM)
@@ -1196,6 +1256,13 @@ local descentProc = kcProcedure:new("DESCENT PROCEDURE")
 -- Call “DESCENT CHECKLIST.”Do the DESCENT checklist.
 -- ======= Descent checklist =======
 
+
+-- DESCENT – APPROACH
+-- ANTI–ICE. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .AS REQUIRED
+-- AIR COND & PRESS. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .SET
+-- ALTIMETER & INSTRUMENTS . . . . . . . . SET & X–CHECKED
+-- N1 & IAS BUGS. . . . . . . . . . . . . . . . . . . . . . . .CHECKED & SET
+
 local descentChkl = kcChecklist:new("DESCENT CHECKLIST (PM)")
 descentChkl:addItem(kcChecklistItem:new("TAKEOFF BRIEFING","REVIEWED",kcChecklistItem.actorPM,nil))
 descentChkl:addItem(kcChecklistItem:new("PRESSURISATION","LAND ALT___",kcChecklistItem.actorPM,nil))
@@ -1211,6 +1278,12 @@ approachChkl:addItem(kcChecklistItem:new("ALTIMETERS","QNH ___",kcChecklistItem.
 approachChkl:addItem(kcChecklistItem:new("NAV AIDS","SET",kcChecklistItem.actorPM,nil))
 
 -- ======= Landing checklist =======
+-- LANDING
+-- ENGINE START SWITCHES. . . . . . . . . . . . . . . . . . . . . . . . .ON
+-- RECALL . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . CHECKED
+-- SPEED BRAKE . . . . . . . . . . . . . . . . . . .ARMED,GREEN LIGHT
+-- LANDING GEAR. . . . . . . . . . . . . . . . . . . . . . .DOWN, 3 GREEN
+-- FLAPS . . . . . . . . . . . . . . . . . . . . . . . . . . _____, GREEN LIGHT
 
 local landingChkl = kcChecklist:new("LANDING CHECKLIST (PM)")
 landingChkl:addItem(kcChecklistItem:new("CABIN","SECURE",kcChecklistItem.actorPF,nil))
@@ -1292,6 +1365,27 @@ local shutdownProc = kcProcedure:new("SHUTDOWN PROCEDURE")
 
 
 -- ======= Shutdown checklist =======
+-- SHUTDOWN
+-- FUEL . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .PUMPS OFF
+-- GALLEY POWER . . . . . . . . . . . . . . . . . . . . . . . .AS REQUIRED
+-- ELECTRICAL . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .ON_____
+-- FASTEN BELTS. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .OFF
+-- WINDOW HEAT . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .OFF
+-- PROBE HEAT . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .OFF
+-- ANTI–ICE . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .OFF
+-- ELECTRIC HYDRAULIC PUMPS . . . . . . . . . . . . . . . . . . . . .OFF
+-- AIR COND . . . . . . . . . . . . . . . . . . . ___ PACK(S), BLEEDS ON
+-- EXTERIOR LIGHTS . . . . . . . . . . . . . . . . . . . . . .AS REQUIRED
+-- ANTICOLLISION LIGHT . . . . . . . . . . . . . . . . . . . . . . . . . . .OFF
+-- ENGINE START SWITCHES . . . . . . . . . . . . . . . . . . . . . . . .OFF
+-- AUTOBRAKE . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .OFF
+-- SPEED BRAKE . . . . . . . . . . . . . . . . . . . . . . . . . DOWN DETENT
+-- FLAPS . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . UP, NO LIGHTS
+-- PARKING BRAKE . . . . . . . . . . . . . . . . . . . . . . . .AS REQUIRED
+-- START LEVERS . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . CUTOFF
+-- WEATHER RADAR . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .OFF
+-- TRANSPONDER . . . . . . . . . . . . . . . . . . . . . . . . .AS REQUIRED
+-- MOBILE PHONES. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .ON
 
 local shutdownChkl = kcChecklist:new("SHUTDOWN CHECKLIST (F/O)")
 shutdownChkl:addItem(kcChecklistItem:new("HYDRAULIC PANEL","SET",kcChecklistItem.actorCPT,nil))
@@ -1312,6 +1406,13 @@ local secureProc = kcProcedure:new("SECURE PROCEDURE")
 -- Air conditioning PACK switches....OFF F/O
 
 -- ======= Secure checklist =======
+
+-- SECURE
+-- IRS MODE SELECTORS . . . . . . . . . . . . . . . . . . . . . . . . . . .OFF
+-- EMERGENCY EXIT LIGHTS. . . . . . . . . . . . . . . . . . . . . . . . .OFF
+-- AIR CONDITIONING PACKS . . . . . . . . . . . . . . . . . . . . . . .OFF
+-- APU/GROUND POWER . . . . . . . . . . . . . . . . . . . . . . . . . . . .OFF
+-- BATTERY. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .OFF
 
 local secureChkl = kcChecklist:new("SECURE CHECKLIST (F/O)")
 secureChkl:addItem(kcChecklistItem:new("EFBs (if installed)","SHUT DOWN",kcChecklistItem.actorCPT))

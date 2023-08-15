@@ -298,12 +298,6 @@ electricalPowerUpProc:addItem(ProcedureItem:new("PARKING BRAKE","SET",FlowItem.a
 	function () sysGeneral.parkBrakeSwitch:actuate(modeOn) end))
 
 -- ============ PRELIMINARY PREFLIGHT PROCEDURES =========
-
--- ==== IRS Alignment
--- IRS MODE SELECTORS............................OFF (CPT)
--- IRS MODE SELECTORS.......................THEN NAV (CPT)
---   Verify ON DC lights illuminate then extinguish
---   Verify ALIGN lights are illuminated     
    
 -- ==== Verify quantities
 -- OXYGEN PRESSURE...........................CHECKED (F/O)
@@ -325,27 +319,17 @@ electricalPowerUpProc:addItem(ProcedureItem:new("PARKING BRAKE","SET",FlowItem.a
 -- ELECTRICAL POWER UP......................COMPLETE (F/O)
 -- FLIGHT DATA RECORDER SWITCH..................AUTO (F/O)
 -- MACH OVERSPEED TEST.......................PERFORM (F/O)
+
+-- ==== IRS Alignment
+-- IRS MODE SELECTORS............................OFF (CPT)
+-- IRS MODE SELECTORS.......................THEN NAV (CPT)
+--   Verify ON DC lights illuminate then extinguish
+--   Verify ALIGN lights are illuminated  
 -- =======================================================
 
 local prelPreflightProc = Procedure:new("PREL PREFLIGHT PROCEDURE","preliminary pre flight","I will do the walk around now")
 prelPreflightProc:setFlightPhase(2)
 
-prelPreflightProc:addItem(SimpleProcedureItem:new("==== IRS Alignment"))
-prelPreflightProc:addItem(IndirectProcedureItem:new("IRS MODE SELECTORS","OFF",FlowItem.actorCPT,0,"irs_mode_initial_off",
-	function () return sysGeneral.irsUnitGroup:getStatus() == modeOff end,
-	function () sysGeneral.irsUnitGroup:actuate(sysGeneral.irsUnitOFF) end))
-prelPreflightProc:addItem(IndirectProcedureItem:new("IRS MODE SELECTORS","ALIGN",FlowItem.actorCPT,0,"irs_mode_align",
-	function () return sysGeneral.irsUnitGroup:getStatus() == sysGeneral.irsUnitALIGN*2 end,
-	function () sysGeneral.irsUnitGroup:actuate(sysGeneral.irsUnitALIGN) end))
-prelPreflightProc:addItem(SimpleProcedureItem:new("  Verify ON DC lights illuminate then extinguish"))
-prelPreflightProc:addItem(IndirectProcedureItem:new("  IRS LEFT ALIGN LIGHT","ILLUMINATES",FlowItem.actorCPT,0,"irs_left_align",
-	function () return sysGeneral.irs1Align:getStatus() > 0 end))
-prelPreflightProc:addItem(IndirectProcedureItem:new("  IRS RIGHT ALIGN LIGHT","ILLUMINATES",FlowItem.actorCPT,0,"irs_right_align",
-	function () return sysGeneral.irs2Align:getStatus() > 0 end))
-prelPreflightProc:addItem(IndirectProcedureItem:new("IRS MODE SELECTORS","THEN NAV",FlowItem.actorCPT,0,"irs_mode_nav_again",
-	function () return sysGeneral.irsUnitGroup:getStatus() == sysGeneral.irsUnitNAV*2 end,
-	function () sysGeneral.irsUnitGroup:actuate(sysGeneral.irsUnitNAV) end))
-	
 prelPreflightProc:addItem(SimpleProcedureItem:new("==== Verify quantities"))
 prelPreflightProc:addItem(ProcedureItem:new("OXYGEN PRESSURE","CHECKED",FlowItem.actorFO,0,true))
 prelPreflightProc:addItem(ProcedureItem:new("HYDRAULIC QUANTITY A & B","CHECKED",FlowItem.actorFO,0,
@@ -423,6 +407,23 @@ prelPreflightProc:addItem(ProcedureItem:new("FLIGHT DATA RECORDER SWITCH","GUARD
 		sysGeneral.fdrSwitch:actuate(modeOn) 
 		sysGeneral.fdrCover:actuate(modeOff) 
 	end))
+
+prelPreflightProc:addItem(SimpleProcedureItem:new("==== IRS Alignment"))
+prelPreflightProc:addItem(IndirectProcedureItem:new("IRS MODE SELECTORS","OFF",FlowItem.actorCPT,0,"irs_mode_initial_off",
+	function () return sysGeneral.irsUnitGroup:getStatus() == modeOff end,
+	function () sysGeneral.irsUnitGroup:actuate(sysGeneral.irsUnitOFF) end))
+prelPreflightProc:addItem(IndirectProcedureItem:new("IRS MODE SELECTORS","ALIGN",FlowItem.actorCPT,0,"irs_mode_align",
+	function () return sysGeneral.irsUnitGroup:getStatus() == sysGeneral.irsUnitALIGN*2 end,
+	function () sysGeneral.irsUnitGroup:actuate(sysGeneral.irsUnitALIGN) end))
+prelPreflightProc:addItem(SimpleProcedureItem:new("  Verify ON DC lights illuminate then extinguish"))
+prelPreflightProc:addItem(IndirectProcedureItem:new("  IRS LEFT ALIGN LIGHT","ILLUMINATES",FlowItem.actorCPT,0,"irs_left_align",
+	function () return sysGeneral.irs1Align:getStatus() > 0 end))
+prelPreflightProc:addItem(IndirectProcedureItem:new("  IRS RIGHT ALIGN LIGHT","ILLUMINATES",FlowItem.actorCPT,0,"irs_right_align",
+	function () return sysGeneral.irs2Align:getStatus() > 0 end))
+prelPreflightProc:addItem(IndirectProcedureItem:new("IRS MODE SELECTORS","THEN NAV",FlowItem.actorCPT,0,"irs_mode_nav_again",
+	function () return sysGeneral.irsUnitGroup:getStatus() == sysGeneral.irsUnitNAV*2 end,
+	function () sysGeneral.irsUnitGroup:actuate(sysGeneral.irsUnitNAV) end))
+	
 
 -- ==================== CDU Preflight ====================
 -- ==== INITIAL DATA (CPT)                              
@@ -2023,6 +2024,7 @@ gearUpProc:addItem(IndirectProcedureItem:new("GEAR","UP",FlowItem.actorPM,0,"gea
 -- flaps schedule
 local flapsUpProc = Procedure:new("RETRACT FLAPS","")
 flapsUpProc:setFlightPhase(8)
+flapsUpProc:addItem(SimpleProcedureItem:new("Retract Flaps when Speed reached"))
 flapsUpProc:addItem(HoldProcedureItem:new("FLAPS 10","COMMAND",FlowItem.actorCPT,nil,
  	function () return sysControls.flapsSwitch:getStatus() < 0.5 end))
 flapsUpProc:addItem(ProcedureItem:new("FLAPS 10","SET",FlowItem.actorPNF,0,true,

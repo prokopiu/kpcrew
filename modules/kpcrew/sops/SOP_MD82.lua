@@ -1327,13 +1327,13 @@ backgroundFlow:addItem(BackgroundProcedureItem:new("","","SYS",0,
 -- ============  =============
 -- add the checklists and procedures to the active sop
 -- activeSOP:addProcedure(testProc)
-activeSOP:addProcedure(afterStartChkl)
 activeSOP:addProcedure(electricalPowerUpProc)
 activeSOP:addProcedure(preflightProc)
 activeSOP:addProcedure(preStartProc)
 activeSOP:addProcedure(preStartChecklist)
 activeSOP:addProcedure(beforeStartProc)
 activeSOP:addProcedure(pushstartProc)
+activeSOP:addProcedure(afterStartChkl)
 
 -- =========== States ===========
 activeSOP:addState(turnAroundProc)

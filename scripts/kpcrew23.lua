@@ -608,3 +608,10 @@ create_command("kp/crew/openmaster", "KPCrew Open Master Window","kc_ctrl_wnd_st
 create_command("kp/crew/briefwindow", "KPCrew Toggle Briefing Window","kc_wnd_brief_action=1","","")
 
 add_macro("KPCrew Toggle Control Window", "kc_ctrl_wnd_state = 1 kc_ctrl_wnd_off=false local xpos = kc_scrn_width - 755 float_wnd_set_geometry(kc_ctrl_wnd, xpos, 46, kc_scrn_width, 1)")
+
+	-- function startSequence()
+				-- show_Automatic_sequence_start = true
+				-- SGES_Automatic_sequence_start_flight_time_sec = SGES_total_flight_time_sec
+				-- initial_pax_start = true
+	-- end
+	-- create_command("sges/sequence/start", "Start SGES Sequence","startSequence()","","")

@@ -65,6 +65,9 @@ kc_speeds_vmo2		= 350		-- Maximum Operating Speed (Above 8,000 ft) Vmo 350 KIAS
 kc_speeds_vmo3		= 0.935		-- Maximum Mach Number Vmo 0.935 Mach
 kc_speeds_vle		= 210		-- Maximum Gear Operating Speed Vle 210 KIAS
 kc_speeds_vlo		= 210		-- Maximum Gear Extended Speed Vlo 210 KIAS
+kc_speeds_vfl5		= 250		-- Maximum extension speed for flaps 
+kc_speeds_vfl15		= 250
+kc_speeds_vfl35		= 185	
 
 kc_show_load_button = true
 kc_show_cost_index 	= false

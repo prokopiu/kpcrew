@@ -36,6 +36,63 @@ kc_MFL1				=  4112  -- max fuel in tank left
 kc_MFL2				= 13385  -- max fuel in tank center
 kc_MFL3				=  4112  -- max fuel in tank right
 
+-- Operating speeds
+kc_speeds_vs0		= 115		-- Stall Speed, Landing Configuration Vso 115 KIAS
+kc_speeds_vs1		= 136		-- Stall Speed, Clean Vs1 136 KIAS
+kc_speeds_vs		= 140		-- Minimum Controllable Speed Vs 140 KIAS
+kc_speeds_vx		= 270		-- Best Angle of Climb Vx 270 KIAS
+kc_speeds_vy		= 300		-- Best Rate of Climb Vy 300 KIAS
+kc_speeds_vfe		= 180		-- Maximum flaps Extended Speed Vfe 180 KIAS
+kc_speeds_vmo1		= 270		-- Maximum Operating Speed (Sea Level to 8,000 ft) Vmo 270 KIAS
+kc_speeds_vmo2		= 350		-- Maximum Operating Speed (Above 8,000 ft) Vmo 350 KIAS
+kc_speeds_vmo3		= 0.935		-- Maximum Mach Number Vmo 0.935 Mach
+kc_speeds_vle		= 210		-- Maximum Gear Operating Speed Vle 210 KIAS
+kc_speeds_vlo		= 210		-- Maximum Gear Extended Speed Vlo 210 KIAS
+kc_speeds_vfl1		= 230		-- Maximum extension speed for flaps 
+kc_speeds_vfl5		= 230
+kc_speeds_vfl10		= 210	
+kc_speeds_vfl15		= 190	
+kc_speeds_vfl20		= 170	
+-- kc_speeds_vfl30		= vref+5
+-- kc_speeds_vfl40		= vref+5	
+
+-- http://www.b737.org.uk/vspeedcalc2.htm
+-- VSpeed calculation B737-800
+-- V2 is approximately take-off weight - 20. (very rough)
+-- To get V1 we can remember a certain table.
+-- Starting with 65t the diff between V1 and V2 is 10kts,
+--               60t                           11kts,
+--               55t                           12kts,
+--               50t                           13kts,
+--               45t                           15kts,
+--               40t                           17kts.
+-- The diff between V1 and Vr is just 2 kts up to landing weight of 55t. 
+-- Above landing weight this diff is 4kts
+-- rough calculation: V1 is about 10 kts less than V2 and Vr is about 2 kts more than V1 generally.
+-- VRef: 
+-- Ref. Weight. is 40t. and a standard correction of minus 1 up to max landing weight. Above max landing weight it is 3kts.
+-- 
+-- Vref for 40t for flaps 30 is 40 x 3 = 120 -1 = 119kts.
+--   "   "   "   "    "   40 is Vref 30 - 3 = 116kts.
+-- 
+-- Next just half the difference between Actual and ref weight. and then add back to ref weight. x 3 = V - 1 = Vref for that weight.
+-- 
+-- Example: Actual weight. 50t which is 10t more than ref weight.
+-- 10/2 = 5 + 40 = 45 x 3 = 135 -1 = 134. Same as QRH/FMC.
+-- 
+-- Vref for flaps 40 for 50t is Vref 30 - 4 = 130kts.
+-- (Diff between Vref 30 and 40 is 3kts below 50t. 50t and above, it is 4kts.)
+-- (Diff between Vref 30 and Vref 15 is about 15 kts.)
+-- 
+-- The above rule of thumb has no error and it is as good as your QRH speeds for flaps 30 and 40 up to landing weight of 55t. Above this weight standard correction of 1 kts is increased to 3kts)
+-- 
+-- To make the above calculation easy, like John's method we need to remember only ref speed of 120 kts. Just half the difference of weight between actual and the ref and multiply by 3. Add this to 120 and we have Vref + 1 kts for flaps 30.
+-- 
+-- Example: Actual landing weight is 50t. so difference is 10t. Half of that is 5. 5x3 = 15. 120+15 = 135 - 1 = 134kts. I leave to the pilot whether he would like to remember 119 or 120 as the reference speed for the convenience.
+-- 
+-- Another example: Act land weight is 49.4t diff is 9.4. Half of that is 4.7. It is then multiplied by 3. (4x3=12)+(.7x3=2.1) = 14.1 + 119 = 133kts.
+
+
 kc_show_load_button = true
 kc_show_cost_index 	= true
 

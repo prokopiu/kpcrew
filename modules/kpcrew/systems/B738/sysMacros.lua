@@ -12,6 +12,49 @@ local sysMacros = {
 	alt_arm = 0
 }
 
+-- preflight events app 30 minutes
+function kc_bck_preflight_events()
+-- 	if SGES installed then
+-- 		command_once("Simple_Ground_Equipment_and_Services/Window/Show")
+-- 	end
+
+-- +25 minutes
+-- Connect jetways (default scenery) or stair out, Door 1L open, cargo doors open, set chocks
+-- if counter == 25 and done counter ~= 25 then
+	if get("laminar/B738/fms/chock_status") ~= 1 then
+		command_once("laminar/B738/toggle_switch/chock")
+	end
+
+-- end
+-- +24 run Electrical power up if not yet done
+
+-- +23 FO starte pre-peflight
+
+-- +21 Minuten FO starts walkaround, at night turn on wheel well lights
+
+-- +18 Minutes Boarding ask start 
+
+-- +14 minuten FO from walk around starts preflight
+
+-- +10 preflight checklist
+
+-- +8 departure briefing
+
+-- +7 Load sheet
+
+-- +6 Start APU?
+
+-- +5 CPT arm authothrottle, set v2 in MCP, arm lnav/vnav
+
+-- +3 cargo doors closed
+
+-- +2 permission to powr hyd
+
+-- +1 boading complete Before start procedure
+
+-- + 0 , wheel chocks remove all carts removed when APU running
+end
+
 -- cold & dark
 function kc_macro_state_cold_and_dark()
 	kc_macro_ext_doors_stand()

@@ -22,6 +22,8 @@ APP_apu_list = "APU delayed start|APU|GPU"
 -- Reverse Thrust
 APP_rev_thrust_list = "NONE|MINIMUM|FULL"
 
+-- http://www.b737.org.uk/pilotnotes.htm#General
+
 function kc_get_total_fuel()
 	if activePrefSet:get("general:weight_kgs") then
 		return get("laminar/B738/fuel/total_tank_kgs")
