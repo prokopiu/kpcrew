@@ -1,9 +1,9 @@
--- MD82 airplane 
+-- DFLT airplane 
 -- Hydraulic system functionality
 
 -- @classmod sysHydraulic
 -- @author Kosta Prokopiu
--- @copyright 2023 Kosta Prokopiu
+-- @copyright 2022 Kosta Prokopiu
 local sysHydraulic = {
 }
 
@@ -16,13 +16,12 @@ local CustomAnnunciator 	= require "kpcrew.systems.CustomAnnunciator"
 local TwoStateToggleSwitch	= require "kpcrew.systems.TwoStateToggleSwitch"
 local MultiStateCmdSwitch 	= require "kpcrew.systems.MultiStateCmdSwitch"
 local InopSwitch 			= require "kpcrew.systems.InopSwitch"
-local KeepPressedSwitchCmd	= require "kpcrew.systems.KeepPressedSwitchCmd"
 
-local drefHydPressure1 = "sim/cockpit2/hydraulics/indicators/hydraulic_pressure_1"
-local drefHydPressure2 = "sim/cockpit2/hydraulics/indicators/hydraulic_pressure_2"
+local drefHydPressure1 		= "sim/cockpit2/hydraulics/indicators/hydraulic_pressure_1"
+local drefHydPressure2 		= "sim/cockpit2/hydraulics/indicators/hydraulic_pressure_2"
 
--- Aux Hyd Pump
-sysHydraulic.auxHydPump = TwoStateDrefSwitch:new("auxhydpmp","sim/cockpit2/switches/electric_hydraulic_pump_on",0)
+-- HYD Electric Pump
+sysHydraulic.elecHydPumpGroup = TwoStateDrefSwitch:new("hydpump","sim/cockpit2/switches/electric_hydraulic_pump_on",0)
 
 -- LOW HYDRAULIC annunciator
 sysHydraulic.hydraulicLowAnc = CustomAnnunciator:new("hydrauliclow",

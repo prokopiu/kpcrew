@@ -54,7 +54,8 @@ sysGeneral.GearSwitch 		= TwoStateCmdSwitch:new("gear","sim/cockpit2/controls/ge
 	"sim/flight_controls/landing_gear_down","sim/flight_controls/landing_gear_up","nocommand")
 
 -- Doors
-sysGeneral.doorL1			= TwoStateToggleSwitch:new("doorl1",drefSlider,0,"sim/operation/slider_01")
+sysGeneral.doorL1			= TwoStateToggleSwitch:new("doorl1","sim/cockpit2/switches/door_open",-1,
+	"sim/flight_controls/door_toggle_1")
 sysGeneral.doorGroup = SwitchGroup:new("doors")
 sysGeneral.doorGroup:addSwitch(sysGeneral.doorL1)
 

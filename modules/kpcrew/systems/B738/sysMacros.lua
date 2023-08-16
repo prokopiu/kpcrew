@@ -5,7 +5,55 @@
 -- @author Kosta Prokopiu
 -- @copyright 2022 Kosta Prokopiu
 local sysMacros = {
+	spd_mode = 0,
+	alt_mode = 0,
+	hdg_mode = 0,
+	hdg_arm = 0,
+	alt_arm = 0
 }
+
+-- preflight events app 30 minutes
+function kc_bck_preflight_events()
+-- 	if SGES installed then
+-- 		command_once("Simple_Ground_Equipment_and_Services/Window/Show")
+-- 	end
+
+-- +25 minutes
+-- Connect jetways (default scenery) or stair out, Door 1L open, cargo doors open, set chocks
+-- if counter == 25 and done counter ~= 25 then
+	if get("laminar/B738/fms/chock_status") ~= 1 then
+		command_once("laminar/B738/toggle_switch/chock")
+	end
+
+-- end
+-- +24 run Electrical power up if not yet done
+
+-- +23 FO starte pre-peflight
+
+-- +21 Minuten FO starts walkaround, at night turn on wheel well lights
+
+-- +18 Minutes Boarding ask start 
+
+-- +14 minuten FO from walk around starts preflight
+
+-- +10 preflight checklist
+
+-- +8 departure briefing
+
+-- +7 Load sheet
+
+-- +6 Start APU?
+
+-- +5 CPT arm authothrottle, set v2 in MCP, arm lnav/vnav
+
+-- +3 cargo doors closed
+
+-- +2 permission to powr hyd
+
+-- +1 boading complete Before start procedure
+
+-- + 0 , wheel chocks remove all carts removed when APU running
+end
 
 -- cold & dark
 function kc_macro_state_cold_and_dark()
@@ -192,7 +240,6 @@ function kc_macro_state_turnaround()
 
 	kc_macro_efis_initial()
 
-	kc_wnd_brief_action=1  -- open briefing window
 end
 
 -- external lights all off
@@ -681,18 +728,21 @@ end
 
 -- B738 Lower DU modes
 function kc_macro_b738_lowerdu_off()
-	set("laminar/B738/systems/lowerDU_page",0)
-	set("laminar/B738/systems/lowerDU_page2",0)
+	if get("laminar/B738/systems/lowerDU_page2") > 0 then
+		command_once("laminar/B738/LDU_control/push_button/MFD_SYS")
+	end
 end
 
 function kc_macro_b738_lowerdu_sys()
-	set("laminar/B738/systems/lowerDU_page",0)
-	set("laminar/B738/systems/lowerDU_page2",1)
+	if get("laminar/B738/systems/lowerDU_page2") == 0 then
+		command_once("laminar/B738/LDU_control/push_button/MFD_SYS")
+	end
 end
 
 function kc_macro_b738_lowerdu_eng()
-	set("laminar/B738/systems/lowerDU_page",1)
-	set("laminar/B738/systems/lowerDU_page2",0)
+	if get("laminar/B738/systems/lowerDU_page") == 0 then
+		command_once("laminar/B738/LDU_control/push_button/MFD_ENG")
+	end
 end
 
 -- set the autobrake value depending on the briefing setting
@@ -1063,10 +1113,96 @@ end
 -- wait for descending through trans lvl then execute items
 function kc_bck_transition_level(trigger)
 	if get("sim/cockpit2/gauges/indicators/altitude_ft_pilot") < activeBriefings:get("arrival:translvl")*100 then
-		kc_speakNoText(0,"transition level")
 		kc_macro_at_trans_lvl()
 		kc_procvar_set(trigger,false)
+		kc_speakNoText(0,"transition level                  ready for approach checklist")
 	end
+end
+
+-- after takeoff FO steps
+function kc_bck_after_takeoff_items(trigger)
+	if sysControls.flapsSwitch:getStatus() == 0 then
+		command_once("laminar/B738/knob/autobrake_off")
+		command_once("laminar/B738/push_button/gear_off")
+		sysEngines.engStarterGroup:actuate(1)
+		kc_speakNoText(0,"ready for after takeoff checklist")
+	end
+end
+
+-- fma callouts from captain's PFD
+function kc_bck_fma_callouts(trigger)
+	local hdgmode = get("laminar/B738/autopilot/pfd_hdg_mode")
+	if sysMacros.hdg_mode ~= hdgmode then
+		if 		hdgmode == 1 then kc_speakNoText(0,"Heading select") 
+		elseif 	hdgmode == 2 then kc_speakNoText(0,"V O R lock captured") 
+		elseif 	hdgmode == 3 then kc_speakNoText(0,"L naff active") 
+		elseif 	hdgmode == 4 then kc_speakNoText(0,"rollout") 
+		elseif 	hdgmode == 5 then kc_speakNoText(0,"F A C") 
+		elseif 	hdgmode == 6 then kc_speakNoText(0,"back course active") 
+		end
+		sysMacros.hdg_mode = hdgmode
+		return
+	end
+
+	local hdgarm = get("laminar/B738/autopilot/pfd_hdg_mode_arm")
+	if sysMacros.hdg_arm ~= hdgarm then
+		if 		hdgarm == 1 then kc_speakNoText(0,"V O R lock armed") 
+		elseif 	hdgarm == 2 then kc_speakNoText(0,"rollout armed") 
+		elseif 	hdgarm == 3 then kc_speakNoText(0,"L naff armed") 
+		elseif 	hdgarm == 4 then kc_speakNoText(0,"f a c  armed") 
+		elseif 	hdgarm == 5 then kc_speakNoText(0,"L naff v o r armed") 
+		elseif 	hdgarm == 6 then kc_speakNoText(0,"L naff r o l armed") 
+		elseif 	hdgarm == 7 then kc_speakNoText(0,"L naff f a c armed") 
+		end
+		sysMacros.hdg_arm = hdgarm
+		return
+	end
+
+	local altmode = get("laminar/B738/autopilot/pfd_alt_mode")
+	if sysMacros.alt_mode ~= altmode then
+		if 		altmode == 1 then kc_speakNoText(0,"vertical speed active") 
+		elseif 	altmode == 2 then kc_speakNoText(0,"m c p speed") 
+		elseif 	altmode == 3 then kc_speakNoText(0,"altitude acquired") 
+		elseif 	altmode == 4 then kc_speakNoText(0,"altitude hold") 
+		elseif 	altmode == 5 then kc_speakNoText(0,"glide slope captured") 
+		elseif 	altmode == 6 then kc_speakNoText(0,"flare active") 
+		elseif 	altmode == 7 then kc_speakNoText(0,"glide path captured") 
+		elseif 	altmode == 8 then kc_speakNoText(0,"v naff speed") 
+		elseif 	altmode == 9 then kc_speakNoText(0,"v naff path") 
+		elseif 	altmode == 10 then kc_speakNoText(0,"v naff alt") 
+		elseif 	altmode == 11 then kc_speakNoText(0,"tow gah") 
+		end
+		sysMacros.alt_mode = altmode
+		return
+	end
+	
+	local altarm = get("laminar/B738/autopilot/pfd_alt_mode_arm")
+	if sysMacros.alt_arm ~= altarm then
+		if 		altarm == 1 then kc_speakNoText(0,"glide slope armed") 
+		elseif 	altarm == 2 then kc_speakNoText(0,"vertical speed armed") 
+		elseif 	altarm == 6 then kc_speakNoText(0,"glide slope vertical speed armed") 
+		elseif 	altarm == 3 then kc_speakNoText(0,"flare armed") 
+		elseif 	altarm == 4 then kc_speakNoText(0,"glide path armed") 
+		elseif 	altarm == 5 then kc_speakNoText(0,"v naff armed") 
+		end
+		sysMacros.alt_arm = altarm
+		return
+	end
+
+	local spdmode = get("laminar/B738/autopilot/pfd_spd_mode")
+	if sysMacros.spd_mode ~= spdmode then
+		if 		spdmode == 1 then kc_speakNoText(0,"auto throttle arm") 
+		elseif 	spdmode == 2 then kc_speakNoText(0,"n 1") 
+		elseif 	spdmode == 3 then kc_speakNoText(0,"m c p speed") 
+		elseif 	spdmode == 4 then kc_speakNoText(0,"f m c speed") 
+		elseif 	spdmode == 5 then kc_speakNoText(0,"go around") 
+		elseif 	spdmode == 6 then kc_speakNoText(0,"throttle hold") 
+		elseif 	spdmode == 7 then kc_speakNoText(0,"retard") 
+		end
+		sysMacros.spd_mode = spdmode
+		return
+	end
+
 end
 
 return sysMacros

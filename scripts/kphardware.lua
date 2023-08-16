@@ -6,7 +6,7 @@
 require "kpcrew.genutils"
 require "kpcrew.systems.activities"
 
-local KPH_VERSION = "2.3-alpha7"
+local KPH_VERSION = "2.3-alpha8"
 
 -- disable windows by changing from true to false
 local show_mcp_panel = false
@@ -31,12 +31,14 @@ if PLANE_ICAO == "B738" then
 	else
 		kh_acf_icao = "B738" -- Zibo Mod and variants
 	end
--- elseif PLANE_ICAO == "A320" and PLANE_TAILNUMBER == "A320" then
-	-- kc_acf_icao = "A20N"
 end
+-- if PLANE_ICAO == "A320" and PLANE_TAILNUMBER == "A320" then
+	-- kc_acf_icao = "A20N"
+-- end
 -- if PLANE_ICAO == "A359" then
 	-- kh_acf_icao = "A359"
 -- end
+-- XP12 Citation X
 if PLANE_ICAO == "C750" and PLANE_TAILNUMBER == "N750XP" then
 	kh_acf_icao = "C750"
 end
@@ -49,9 +51,10 @@ end
 -- if PLANE_ICAO == "E135" or PLANE_ICAO == "E140" or PLANE_ICAO == "E145" or PLANE_ICAO == "E45X" then
 	-- kh_acf_icao = "ERJF"
 -- end
--- if PLANE_ICAO == "MD82" then
-	-- kh_acf_icao = "MD82"
--- end
+-- Laminar MD-82
+if PLANE_ICAO == "MD82" and PLANE_TAILNUMBER == "N552AA" then
+	kh_acf_icao = "MD82"
+end
 -- if PLANE_ICAO == "B744" then
 	-- kh_acf_icao = "B744"
 -- end
@@ -433,18 +436,19 @@ local start_y_pos = 0
 
 kh_mcp_wnd = nil
 kh_mcp_start_pos = 0
-local mcp_window_height = 46 
+local mcp_window_height = 46
 local mcp_window_width = 25
 
 function kh_init_mcp_window()
 	if kh_mcp_wnd == 0 or kh_mcp_wnd == nil then	
-		start_y_pos = start_y_pos + mcp_window_height
 		kh_mcp_start_pos = start_y_pos
+		start_y_pos = start_y_pos + mcp_window_height
 		kh_mcp_wnd = float_wnd_create(mcp_window_width, mcp_window_height, 2, true)
 		float_wnd_set_title(kh_mcp_wnd, "")
-		float_wnd_set_position(kh_mcp_wnd, 0, kh_scrn_height - start_y_pos)
+		float_wnd_set_position(kh_mcp_wnd, 0, kh_mcp_start_pos) --kh_scrn_height - start_y_pos)
 		float_wnd_set_imgui_builder(kh_mcp_wnd, "kh_mcp_builder")
 		float_wnd_set_onclose(kh_mcp_wnd, "kh_close_mcp_window")
+		kh_mcp_start_pos = start_y_pos
 	end
 end
 
@@ -489,13 +493,14 @@ local light_window_width = 25
 
 function kh_init_light_window()
 	if kh_light_wnd == 0 or kh_light_wnd == nil then	
-		start_y_pos = start_y_pos + light_window_height
 		kh_light_start_pos = start_y_pos
+		start_y_pos = start_y_pos + light_window_height
 		kh_light_wnd = float_wnd_create(light_window_width, light_window_height, 2, true)
 		float_wnd_set_title(kh_light_wnd, "")
-		float_wnd_set_position(kh_light_wnd, 0, kh_scrn_height - start_y_pos)
+		float_wnd_set_position(kh_light_wnd, 0, kh_light_start_pos) --kh_scrn_height - start_y_pos)
 		float_wnd_set_imgui_builder(kh_light_wnd, "kh_light_builder")
 		float_wnd_set_onclose(kh_light_wnd, "kh_close_light_window")
+		kh_light_start_pos = start_y_pos
 	end
 end
 
@@ -540,13 +545,14 @@ local radio_window_width = 25
 
 function kh_init_radio_window()
 	if kh_radio_wnd == 0 or kh_radio_wnd == nil then	
-		start_y_pos = start_y_pos + radio_window_height
 		kh_radio_start_pos = start_y_pos
+		start_y_pos = start_y_pos + radio_window_height
 		kh_radio_wnd = float_wnd_create(radio_window_width, radio_window_height, 2, true)
 		float_wnd_set_title(kh_radio_wnd, "")
-		float_wnd_set_position(kh_radio_wnd, 0, kh_scrn_height - start_y_pos)
+		float_wnd_set_position(kh_radio_wnd, 0, kh_radio_start_pos)
 		float_wnd_set_imgui_builder(kh_radio_wnd, "kh_radio_builder")
 		float_wnd_set_onclose(kh_radio_wnd, "kh_close_radio_window")
+		kh_radio_start_pos = start_y_pos
 	end
 end
 
@@ -591,13 +597,14 @@ local efis_window_width = 25
 
 function kh_init_efis_window()
 	if kh_efis_wnd == 0 or kh_efis_wnd == nil then	
-		start_y_pos = start_y_pos + efis_window_height
 		kh_efis_start_pos = start_y_pos
+		start_y_pos = start_y_pos + efis_window_height
 		kh_efis_wnd = float_wnd_create(efis_window_width, efis_window_height, 2, true)
 		float_wnd_set_title(kh_efis_wnd, "")
-		float_wnd_set_position(kh_efis_wnd, 0, kh_scrn_height - start_y_pos)
+		float_wnd_set_position(kh_efis_wnd, 0, kh_efis_start_pos) --kh_scrn_height - start_y_pos)
 		float_wnd_set_imgui_builder(kh_efis_wnd, "kh_efis_builder")
 		float_wnd_set_onclose(kh_efis_wnd, "kh_close_efis_window")
+		kh_efis_start_pos = start_y_pos
 	end
 end
 

@@ -79,4 +79,15 @@ function kcHoldProcedureItem:getStateColor()
 	return statecolors[self.state + 1]
 end
 
+-- get the current state of this checklist item
+-- @treturn int get state id
+function kcHoldProcedureItem:getState()
+	if type(self.skipFunc) == 'function' then
+		if self.skipFunc() then
+			return self.SKIP
+		end
+	end
+    return self.state
+end
+
 return kcHoldProcedureItem

@@ -228,10 +228,13 @@ function kc_arr_brief_general()
 	local briefing = ""
 -- [W] eather highlites
 	briefing = briefing .. "Our destination today is " .. activeBriefings:get("flight:destinationIcao") .. "\n"
-	briefing = briefing .. "The weather report is winds " .. activeBriefings:get("arrival:atisWind") .. "; visibility " .. activeBriefings:get("arrival:atisVisibility") .. 
-		" km; precipitation " .. kc_split(kc_WX_Precipitation_list,"|")[activeBriefings:get("arrival:atisPrecipit")] .. 
-		"; clouds " .. kc_split(kc_WX_Cloud_list,"|")[activeBriefings:get("arrival:atisClouds")] .. 
-		"; the temperatures are " .. activeBriefings:get("arrival:atisTemps") .. "; QNH " .. activeBriefings:get("arrival:atisQNH").."\n\n" 
+
+    briefing = briefing .. "We have ATIS information " .. activeBriefings:get("arrival:atisInfo") .. " The weather is " .. activeBriefings:get("information:destMetar") .. "\n\n"
+
+	-- briefing = briefing .. "The weather report is winds " .. activeBriefings:get("arrival:atisWind") .. "; visibility " .. activeBriefings:get("arrival:atisVisibility") .. 
+		-- " km; precipitation " .. kc_split(kc_WX_Precipitation_list,"|")[activeBriefings:get("arrival:atisPrecipit")] -- .. 
+--		"; clouds " .. kc_split(kc_WX_Cloud_list,"|")[activeBriefings:get("arrival:atisClouds")] .. 
+--		"; the temperatures are " .. activeBriefings:get("arrival:atisTemps") .. "; QNH " .. activeBriefings:get("arrival:atisQNH").."\n\n" 
 
 -- [A] ircraft
     briefing = briefing .. "Our current weight is " .. string.format("%6.6i %s",kc_get_gross_weight(),wunit) .. 
@@ -259,9 +262,9 @@ function kc_arr_brief_route()
 			briefing = briefing .. "ATC vectors".."\n"
 		end
 	briefing = briefing .. "The MSA in our arrival sector is " .. activeBriefings:get("arrival:msa") .. " and the transition level today FL " .. activeBriefings:get("arrival:translvl").."\n"
-	briefing = briefing .. "After the arrival we can expect an " .. kc_split(APP_apptype_list,"|")[activeBriefings:get("arrival:appType")] .. " approach".."\n"
-	briefing = briefing .. "Runway assigned is " .. activeBriefings:get("arrival:rwy") .. " and the condition is " .. kc_split(kc_APP_rwystate_list,"|")[activeBriefings:get("arrival:rwyCond")].."\n"
-	briefing = briefing .. "Altitude at the FAF is " .. activeBriefings:get("arrival:fafAltitude") .. ", " .. (activePrefSet:get("aircraft:efis_mins_dh")==true and "DH" or "DA") .." will be " .. activeBriefings:get("arrival:decision").."\n"
+	briefing = briefing .. "After the arrival we can expect an " .. kc_split(APP_apptype_list,"|")[activeBriefings:get("approach:appType")] .. " approach".."\n"
+	briefing = briefing .. "Runway assigned is " .. activeBriefings:get("approach:rwy") .. " and the condition is " .. kc_split(kc_APP_rwystate_list,"|")[activeBriefings:get("approach:rwyCond")].."\n"
+	briefing = briefing .. "Altitude at the FAF is " .. activeBriefings:get("approach:fafAltitude") .. ", " .. (activePrefSet:get("aircraft:efis_mins_dh")==true and "DH" or "DA") .." will be " .. activeBriefings:get("approach:decision").."\n"
 	briefing = briefing .. "Airport elevation is " .. activeBriefings:get("arrival:aptElevation").." ft \n"
 	briefing = briefing .. "We are going to use landing flaps " .. kc_split(kc_LandingFlaps,"|")[activeBriefings:get("approach:flaps")] .. " and Autobrake " .. kc_split(kc_LandingAutoBrake,"|")[activeBriefings:get("approach:autobrake")].."\n"
 	briefing = briefing .. "Packs are set " .. kc_split(kc_LandingPacks,"|")[activeBriefings:get("approach:packs")] .. " and Anti Ice " .. kc_split(kc_LandingAntiice,"|")[activeBriefings:get("approach:antiice")].."\n"

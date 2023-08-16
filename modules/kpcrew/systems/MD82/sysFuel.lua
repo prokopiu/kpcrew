@@ -1,28 +1,31 @@
--- DFLT airplane 
+-- MD81 airplane 
 -- Fuel related functionality
 
+-- @classmod sysFuel
+-- @author Kosta Prokopiu
+-- @copyright 2022 Kosta Prokopiu
 local sysFuel = {
 }
 
-local TwoStateDrefSwitch = require "kpcrew.systems.TwoStateDrefSwitch"
-local TwoStateCmdSwitch = require "kpcrew.systems.TwoStateCmdSwitch"
-local TwoStateCustomSwitch = require "kpcrew.systems.TwoStateCustomSwitch"
-local SwitchGroup  = require "kpcrew.systems.SwitchGroup"
-local SimpleAnnunciator = require "kpcrew.systems.SimpleAnnunciator"
-local CustomAnnunciator = require "kpcrew.systems.CustomAnnunciator"
-local TwoStateToggleSwitch = require "kpcrew.systems.TwoStateToggleSwitch"
-local MultiStateCmdSwitch = require "kpcrew.systems.MultiStateCmdSwitch"
-local InopSwitch = require "kpcrew.systems.InopSwitch"
+local TwoStateDrefSwitch 	= require "kpcrew.systems.TwoStateDrefSwitch"
+local TwoStateCmdSwitch	 	= require "kpcrew.systems.TwoStateCmdSwitch"
+local TwoStateCustomSwitch 	= require "kpcrew.systems.TwoStateCustomSwitch"
+local SwitchGroup  			= require "kpcrew.systems.SwitchGroup"
+local SimpleAnnunciator 	= require "kpcrew.systems.SimpleAnnunciator"
+local CustomAnnunciator 	= require "kpcrew.systems.CustomAnnunciator"
+local TwoStateToggleSwitch	= require "kpcrew.systems.TwoStateToggleSwitch"
+local MultiStateCmdSwitch 	= require "kpcrew.systems.MultiStateCmdSwitch"
+local InopSwitch 			= require "kpcrew.systems.InopSwitch"
 
-local drefFuelPressLow = "sim/cockpit2/annunciators/fuel_pressure_low"
+local drefFuelPressLow 		= "sim/cockpit2/annunciators/fuel_pressure_low"
 
 -- fuel pumps
-sysFuel.fuelPumpLeftAft = TwoStateCmdSwitch:new ("fuelpumpleftaft","sim/cockpit2/fuel/fuel_tank_pump_on",0,"sim/fuel/fuel_pump_1_on","sim/fuel/fuel_pump_1_off","sim/fuel/fuel_pump_1_tog")
-sysFuel.fuelPumpLeftFwd = TwoStateCmdSwitch:new ("fuelpumpleftfwd","sim/cockpit2/fuel/fuel_tank_pump_on",1,"sim/fuel/fuel_pump_2_on","sim/fuel/fuel_pump_2_off","sim/fuel/fuel_pump_2_tog")
-sysFuel.fuelPumpRightAft = TwoStateCmdSwitch:new("fuelpumprightaft","sim/cockpit2/fuel/fuel_tank_pump_on",2,"sim/fuel/fuel_pump_3_on","sim/fuel/fuel_pump_3_off","sim/fuel/fuel_pump_3_tog")
-sysFuel.fuelPumpRightFwd = TwoStateCmdSwitch:new("fuelpumprightfwd","sim/cockpit2/fuel/fuel_tank_pump_on",3,"sim/fuel/fuel_pump_4_on","sim/fuel/fuel_pump_4_off","sim/fuel/fuel_pump_4_tog")
-sysFuel.fuelPumpCtrLeft = TwoStateCmdSwitch:new ("fuelpumpctrleft","sim/cockpit2/fuel/fuel_tank_pump_on",4,"sim/fuel/fuel_pump_5_on","sim/fuel/fuel_pump_5_off","sim/fuel/fuel_pump_5_tog")
-sysFuel.fuelPumpCtrRight = TwoStateCmdSwitch:new("fuelpumpctrright","sim/cockpit2/fuel/fuel_tank_pump_on",5,"sim/fuel/fuel_pump_6_on","sim/fuel/fuel_pump_6_off","sim/fuel/fuel_pump_6_tog")
+sysFuel.fuelPumpLeftAft 	= TwoStateDrefSwitch:new("fuelpumpleftaft","sim/cockpit2/fuel/fuel_tank_pump_on",1)
+sysFuel.fuelPumpLeftFwd 	= TwoStateDrefSwitch:new("fuelpumpleftfwd","sim/cockpit2/fuel/fuel_tank_pump_on",1)
+sysFuel.fuelPumpRightAft 	= TwoStateDrefSwitch:new("fuelpumprightaft","sim/cockpit2/fuel/fuel_tank_pump_on",2)
+sysFuel.fuelPumpRightFwd 	= TwoStateDrefSwitch:new("fuelpumprightfwd","sim/cockpit2/fuel/fuel_tank_pump_on",2)
+sysFuel.fuelPumpCtrLeft 	= TwoStateDrefSwitch:new("fuelpumpctrleft","sim/cockpit2/fuel/fuel_tank_pump_on",-1)
+sysFuel.fuelPumpCtrRight 	= TwoStateDrefSwitch:new("fuelpumpctrright","sim/cockpit2/fuel/fuel_tank_pump_on",-1)
 
 sysFuel.fuelPumpGroup = SwitchGroup:new("fuelpumpgroup")
 sysFuel.fuelPumpGroup:addSwitch(sysFuel.fuelPumpLeftAft)
@@ -46,6 +49,12 @@ function ()
 	else
 		return 0
 	end
+end)
+
+-- AUX FUEL PUMP ANC (do not use)
+sysFuel.auxFuelPumpsAnc = CustomAnnunciator:new("auxfuel",
+function ()
+	return 0
 end)
 
 return sysFuel

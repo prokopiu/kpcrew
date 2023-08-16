@@ -31,20 +31,7 @@ sysLights.positionSwitch = TwoStateCmdSwitch:new("position","sim/cockpit2/switch
 sysLights.strobesSwitch = TwoStateCmdSwitch:new("strobes","sim/cockpit2/switches/strobe_lights_on",0,"sim/lights/strobe_lights_on","sim/lights/strobe_lights_off","sim/lights/strobe_lights_toggle")
 
 -- Taxi/Nose Lights, single onoff command driven
-sysLights.taxiSwitch = TwoStateCustomSwitch:new("taxi","sim/cockpit2/switches/taxi_light_on",0,
-function () 
-	set("sim/cockpit2/switches/taxi_light_on",2)
-end,
-function () 
-	set_array("sim/cockpit2/switches/taxi_light_on",0)
-end,
-function () 
-	if get("sim/cockpit2/switches/taxi_light_on") > 0 then
-		set("sim/cockpit2/switches/taxi_light_on",0)
-	else
-		set("sim/cockpit2/switches/taxi_light_on",2)
-	end
-end)
+sysLights.taxiSwitch = TwoStateDrefSwitch:new("taxi","sim/cockpit2/switches/taxi_light_on",0)
 
 -- Landing Lights, single onoff command driven
 sysLights.llLeftSwitch = TwoStateCustomSwitch:new("llleft",drefLandingLights,1,
@@ -60,14 +47,21 @@ function ()
 	else
 		set_array(drefLandingLights,1,1)
 	end
+end,
+function () 
+	if get(drefLandingLights,1) == 1 then
+		return 1
+	else
+		return 0
+	end
 end)
 
 sysLights.llRightSwitch = TwoStateCustomSwitch:new("llright",drefLandingLights,2,
 function () 
-	set(drefLandingLights,2,1)
+	set_array(drefLandingLights,2,1)
 end,
 function () 
-	set(drefLandingLights,2,-1)
+	set_array(drefLandingLights,2,-1)
 end,
 function () 
 	if get(drefLandingLights,2) >= 0 then
@@ -75,14 +69,21 @@ function ()
 	else
 		set_array(drefLandingLights,2,1)
 	end
+end,
+function () 
+	if get(drefLandingLights,2) == 1 then
+		return 1
+	else
+		return 0
+	end
 end)
 
 sysLights.landLightGroup = SwitchGroup:new("landinglights")
-sysLights.landLightGroup:addSwitch(sysLights.llLeftSwitch)
 sysLights.landLightGroup:addSwitch(sysLights.llRightSwitch)
+sysLights.landLightGroup:addSwitch(sysLights.llLeftSwitch)
 
 -- Logo Light
-sysLights.logoSwitch = TwoStateToggleSwitch:new("logo",drefGenericLights,0,"sim/lights/generic_01_light_tog")
+sysLights.logoSwitch = TwoStateToggleSwitch:new("logo",drefGenericLights,-1,"sim/lights/generic_01_light_tog")
 
 -- RWY Turnoff Lights (2)
 sysLights.rwyLeftSwitch = TwoStateDrefSwitch:new("rwyleft",drefGenericLights,1)
@@ -172,7 +173,7 @@ function ()
 end)
 
 -- Instrument Light(s) status
-sysLights.instrumentAnc = SimpleAnnunciator:new("instrumentlights", "sim/cockpit2/switches/instrument_brightness_ratio")
+sysLights.instrumentAnc = SimpleAnnunciator:new("instrumentlights", "sim/cockpit2/switches/instrument_brightness_ratio",-1)
 
 -- ===== UI related functions =====
 
@@ -201,7 +202,7 @@ function sysLights:render(ypos,height)
 		imgui.Button("L", 17, 25)
 		if imgui.IsItemActive() then 
 			kh_light_wnd_state = 1
-			float_wnd_set_geometry(kh_light_wnd, 0, ypos, 815, ypos-height)
+			float_wnd_set_geometry(kh_light_wnd, 0, ypos, 780, ypos-height)
 		end
 	end
 
@@ -218,7 +219,7 @@ function sysLights:render(ypos,height)
 	kc_imgui_toggle_button_mcp("POS",sysLights.positionSwitch,10,42,25)
 	kc_imgui_toggle_button_mcp("BEAC",sysLights.beaconSwitch,10,42,25)
 	kc_imgui_toggle_button_mcp("WING",sysLights.wingSwitch,10,42,25)
-	kc_imgui_toggle_button_mcp("WHL",sysLights.wheelSwitch,10,42,25)
+	-- kc_imgui_toggle_button_mcp("WHL",sysLights.wheelSwitch,10,42,25)
 	kc_imgui_label_mcp("|",10)
 	kc_imgui_toggle_button_mcp("DOME",sysLights.domeLightSwitch,10,42,25)
 	kc_imgui_toggle_button_mcp("INSTR",sysLights.instrLightGroup,10,45,25)

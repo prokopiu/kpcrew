@@ -135,6 +135,7 @@ function kc_macro_state_turnaround()
 	command_end("laminar/CitX/APU/starter_switch_up")
 	command_once("laminar/CitX/APU/gen_switch_up") 
 	command_once("laminar/CitX/APU/gen_switch_up") 
+	kc_wnd_brief_action=1  -- open briefing window
 end
 
 -- external lights all off

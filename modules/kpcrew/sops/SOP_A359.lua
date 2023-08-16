@@ -436,125 +436,35 @@ testProc:addItem(SimpleProcedureItem:new("=== Batteries on"))
 -- HOLDING PATTERN AS REQUIRED.................CHECK
 -- =======================================================
 
----PRECISION APPROACH
---INITIAL APPROACH
--- SEATBELTS.ON.											1-sim/12/switch.=.1
--- APPROACH PHASE.CHECK
--- POSITIONING MONITOR.CHECK
--- MANAGED SPEED.CHECK
--- SPEED BRAKES AS REQUIRED.CHECK
---FINAL APPROACH
--- APP PB FCU.SELECT.										AirbusFBW/APPRilluminated.=.1
--- AP.ON.													1-sim/misc/AP1status.=.1.or.1-sim/misc/AP2status.=.1
--- FMA.CHECK
--- !!.check that FMS displays the approach capability
--- FLAPS 1.SELECT.											sim/flightmodel2/wing/flap2_deg[3].>.9
--- TCAS MODE TA/RA.SET.										1-sim/surv/TCASmode.=.1
--- LOC CAPTURE.MONITOR
--- G/S CAPTURE.MONITOR
--- FLAPS 2.SELECT.											sim/flightmodel2/wing/flap2_deg[3].>.14
--- GEAR LEVER.DOWN.											sim/cockpit/switches/gear_handle_status.=.1
--- AUTOBRAKE.CONFIRM
--- GROUND SPOILERS.ARM.										sim/cockpit2/controls/speedbrake_ratio.<.0
--- LANDING LIGHTS.ON.										1-sim/10/switch.=.1
--- FLAPS 3.SELECT.											sim/flightmodel2/wing/flap2_deg[3].>.19
--- ECAM WHEEL PAGE.SELECT.									1-sim/ind/ecamMode.=.3
--- ECAM WHEEL PAGE.CHECK
--- FLAPS FULL.SELECT.										sim/flightmodel2/wing/flap2_deg[3].>.30
--- TABLE.STOWED.											1-sim/computer.=.0
--- FLIGHT PARAMETERS.CHECK
-
----NON-PRECISION APPROACH WITH FLS
---INITIAL APPROACH
--- SEATBELTS.ON.											1-sim/12/switch.=.1
--- APPROACH PHASE.CHECK
--- POSITIONING MONITOR.CHECK
--- MANAGED SPEED.CHECK
--- SPEED BRAKES AS REQUIRED.CHECK
--- RNP AS REQUIRED.CHECK
--- FLS CAPABILITY.CHECK
--- VOR(ADF) NEEDLES AS REQUIRED.CHECK
---FINAL APPROACH
--- ?.the preferred technique for flying an NPA approach with 
--- ?.the FLS function is to fly a decelerated approach by 
--- ?.using:
--- !!.the AP and FD
--- !!.F-LOC, LOC, or LOC B/C
--- !!.F-G/S
--- !!.the A/THR in SPEED mode
--- !!.the managed speed target
--- APP PB FCU.SELECT.SELECT.								AirbusFBW/APPRilluminated.=.1
--- FLYING REFERENCE.TRK-FPA.CHECK
--- FLS CAPABILITY.CHECK
--- FLAPS 1.SELECT.											sim/flightmodel2/wing/flap2_deg[3].>.9
--- TCAS MODE TA/RA.SET.										1-sim/surv/TCASmode.=.1
--- F-LOC, LOC, or LOC B/C.MONITOR
--- F-G/S CAPTURE.CHECK
--- FPA MODE AS REQUIRED.CHECK
--- F-G/S MODE ENGAGED.CHECK
--- FLAPS 2.SELECT.											sim/flightmodel2/wing/flap2_deg[3].>.14
--- GEAR LEVER.DOWN.											sim/cockpit/switches/gear_handle_status.=.1
--- AUTOBRAKE.CONFIRM
--- GROUND SPOILERS.ARM.										sim/cockpit2/controls/speedbrake_ratio.<.0
--- LANDING LIGHTS.ON.										1-sim/10/switch.=.1
--- FLAPS 3.SELECT.											sim/flightmodel2/wing/flap2_deg[3].>.19
--- ECAM WHEEL PAGE.SELECT.									1-sim/ind/ecamMode.=.3
--- ECAM WHEEL PAGE.CHECK
--- FLAPS FULL.SELECT.										sim/flightmodel2/wing/flap2_deg[3].>.30
--- TABLE.STOWED.											1-sim/computer.=.0
--- FLIGHT PARAMETERS.CHECK
-
----NON-PRECISION APPROACH WITHOUT FLS
---INITIAL APPROACH
--- SEATBELTS.ON.1-sim/12/switch.=.1
--- APPROACH PHASE.CHECK
--- POSITIONING MONITOR.CHECK
--- MANAGED SPEED.CHECK
--- SPEED BRAKES AS REQUIRED.CHECK
---FINAL APPROACH
--- ?.the preferred technique for flying an NPA approach  
--- ?.without the FLS function is to fly a decelerated 
--- ?.approach by using:
--- !!.the AP and FD
--- !!.the A/THR in SPEED mode
--- !!.the managed speed target
--- GPS PRIMARY ON POSITION AVAIL.CHECK
--- RNMP FOR APPROACH.CHECK
--- LOC PB.SELECT.											1-sim/146/button.=.1
--- FLAPS 1.SELECT.											sim/flightmodel2/wing/flap2_deg[3].>.9
--- TCAS MODE TA/RA.SET.										1-sim/surv/TCASmode.=.1
--- FPA SET.CHECK
--- FLAPS 2.SELECT.											sim/flightmodel2/wing/flap2_deg[3].>.14
--- GEAR LEVER.DOWN.											sim/cockpit/switches/gear_handle_status.=.1
--- AUTOBRAKE.CONFIRM
--- GROUND SPOILERS.ARM.										sim/cockpit2/controls/speedbrake_ratio.<.0
--- LANDING LIGHTS.ON.										1-sim/10/switch.=.1
--- FLAPS 3.SELECT.											sim/flightmodel2/wing/flap2_deg[3].>.19
--- ECAM WHEEL PAGE.SELECT.									1-sim/ind/ecamMode.=.2
--- ECAM WHEEL PAGE.CHECK
--- FLAPS FULL.SELECT.										sim/flightmodel2/wing/flap2_deg[3].>.30
--- TABLE.STOWED.											1-sim/computer.=.0
--- FLIGHT PARAMETERS.CHECK
-
----VISUAL APPROACH
---VISUAL APPROACH
--- ?.perform the approach on a nominal 3 deg glideslope 
--- ?.using visual references
--- ?.the approach should be stabilized by 500ft above airfield
--- ?.elevations on the correct approach path, in the landing 
--- ?.configuration at VAPP
--- ACTIVATE APPR ON FMS.CHECK
--- FD PB.OFF.												sim/cockpit/autopilot/autopilot_mode.=.0
--- TRK-FPA PB SELECTED.CHECK
--- A/THR.ON.												sim/cockpit2/autopilot/autothrottle_enabled.=.1
--- FLAPS 1.SELECT.											sim/flightmodel2/wing/flap2_deg[3].>.9
--- TCAS MODE TA/RA.SET.										1-sim/surv/TCASmode.=.1
--- FPA SET.CHECK
--- FLAPS 2.SELECT.											sim/flightmodel2/wing/flap2_deg[3].>.14
--- GEAR LEVER.DOWN.											sim/cockpit/switches/gear_handle_status.=.1
--- AUTOBRAKE.CONFIRM
--- GROUND SPOILERS.ARM.										sim/cockpit2/controls/speedbrake_ratio.<.0
--- LANDING LIGHTS.ON.										1-sim/10/switch.=.1
+-- ======================= APPROACH =======================
+-- === INITIAL APPROACH
+-- EXTERIOR LIGHTS SET.........................CHECK
+-- SEATBELTS......................................ON		.1-sim/12/switch.=.1
+-- APPROACH PHASE..............................CHECK
+-- POSITIONING MONITOR.........................CHECK
+-- MANAGED SPEED...............................CHECK
+-- SPEED BRAKES AS REQUIRED....................CHECK
+-- === FINAL APPROACH
+-- APP PB FCU.................................SELECT		AirbusFBW/APPRilluminated.=.1
+-- AP.............................................ON		1-sim/misc/AP1status.=.1.or.1-sim/misc/AP2status.=.1
+-- FMA.........................................CHECK
+--   Check that FMS displays the approach capability
+-- FLAPS 1....................................SELECT		sim/flightmodel2/wing/flap2_deg[3].>.9
+-- TCAS MODE TA/RA...............................SET		1-sim/surv/TCASmode.=.1
+-- LOC CAPTURE...............................MONITOR
+-- G/S CAPTURE...............................MONITOR
+-- FLAPS 2....................................SELECT		sim/flightmodel2/wing/flap2_deg[3].>.14
+-- GEAR LEVER...................................DOWN		sim/cockpit/switches/gear_handle_status.=.1
+-- AUTOBRAKE.................................CONFIRM
+-- GROUND SPOILERS...............................ARM		sim/cockpit2/controls/speedbrake_ratio.<.0
+-- LANDING LIGHTS.................................ON		1-sim/10/switch.=.1
+-- FLAPS 3....................................SELECT		sim/flightmodel2/wing/flap2_deg[3].>.19
+-- ECAM WHEEL PAGE............................SELECT		1-sim/ind/ecamMode.=.3
+-- ECAM WHEEL PAGE.............................CHECK
+-- FLAPS FULL.................................SELECT		sim/flightmodel2/wing/flap2_deg[3].>.30
+-- TABLE......................................STOWED		1-sim/computer.=.0
+-- FLIGHT PARAMETERS...........................CHECK
+-- =======================================================
 
 -- ======================= LANDING =======================
 -- === MANUAL
@@ -578,6 +488,7 @@ testProc:addItem(SimpleProcedureItem:new("=== Batteries on"))
 -- REV..........................................STOW		.sim/flightmodel/position/groundspeed.<.10.and.1-sim/R/reverser.=.0
 -- AUTOBRAKE DISARMED..........................CHECK
 -- AP.....................................DISCONNECT		.1-sim/misc/AP1status.=.0.or.1-sim/misc/AP2status.=.0
+-- =======================================================
 
 -- ====================== GO AROUND ======================
 -- THRUST LEVER TOGA.............................SET		.1-sim/R/throttle.=.1.and.1-sim/L/throttle.=.1

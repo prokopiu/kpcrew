@@ -1,9 +1,9 @@
--- MD82 airplane 
+-- DFLT airplane 
 -- Flight Controls functionality
 
 -- @classmod sysControls
 -- @author Kosta Prokopiu
--- @copyright 2023 Kosta Prokopiu
+-- @copyright 2022 Kosta Prokopiu
 local sysControls = {
 	trimCenter 	= 2,
 	trimLeft 	= 1,
@@ -30,7 +30,7 @@ local InopSwitch 			= require "kpcrew.systems.InopSwitch"
 
 --------- Switches
 
--- Flaps 
+-- ** Flaps 
 sysControls.flapsSwitch 	= TwoStateCustomSwitch:new("flaps","sim/cockpit2/controls/flap_ratio",0,
 	function () 
 		command_once("sim/flight_controls/flaps_down")
@@ -43,7 +43,7 @@ sysControls.flapsSwitch 	= TwoStateCustomSwitch:new("flaps","sim/cockpit2/contro
 	end
 )
 
--- Pitch Trim
+-- ** Pitch Trim
 sysControls.pitchTrimSwitch = TwoStateCustomSwitch:new("pitchtrim","sim/cockpit2/controls/elevator_trim",0,
 	function () 
 		command_once("sim/flight_controls/pitch_trim_down")
@@ -110,12 +110,10 @@ sysControls.rudderTrimSwitch = TwoStateCustomSwitch:new("ruddertrim","sim/cockpi
 sysControls.rudderReset = TwoStateToggleSwitch:new("rudderreset","sim/cockpit2/controls/rudder_trim",0,
 	"sim/flight_controls/rudder_trim_center")
 
+-- YAW Damper
 sysControls.yawDamper = TwoStateToggleSwitch:new("yawdamper","sim/cockpit2/switches/yaw_damper_on",0,
 	"sim/systems/yaw_damper_toggle")
 
-sysControls.speedBrake = TwoStateDrefSwitch:new("speedbrake","sim/cockpit2/controls/speedbrake_ratio",0)
-
 --------- Annunciators
-
 
 return sysControls
