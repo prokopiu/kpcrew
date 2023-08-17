@@ -1972,7 +1972,7 @@ runwayEntryProc:addItem(ProcedureItem:new("WEATHER RADAR","ON",FlowItem.actorCPT
 -- FASTEN BELTS SWITCH.........................OFF   (PM)
 -- ======================================================
 
-local takeoffProc = Procedure:new("TAKEOFF","takeoff")
+local takeoffProc = Procedure:new("TAKEOFF & INITIAL CLIMB","takeoff")
 takeoffProc:setFlightPhase(8)
 takeoffProc:addItem(ProcedureItem:new("EXTERNAL LIGHTS","SET",FlowItem.actorFO,0,true,
 	function () 
