@@ -45,7 +45,7 @@ sysElectric.dcPowerSwitch 	= TwoStateDrefSwitch:new("dcpower","ixeg/733/electric
 sysElectric.acPowerSwitch 	= TwoStateDrefSwitch:new("acpower","ixeg/733/electrical/elec_ac_display_sel_act",0)
 
 -- BATTERY Switch
-sysElectric.batterySwitch 	= TwoStateDrefSwitch:new("batter1","sim/cockpit2/electrical/battery_on",0)
+sysElectric.batterySwitch 	= TwoStateDrefSwitch:new("batter1","ixeg/733/electrical/elec_batt_on_act",0)
 sysElectric.batteryCover 	= TwoStateDrefSwitch:new("batt1cvr","ixeg/733/electrical/batt_pwr_guard",0)
 
 -- ** HARDWARE BATTERY Switch

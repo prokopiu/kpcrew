@@ -1,9 +1,9 @@
--- B738 airplane 
+-- B733 IXEG B737 PRO 
 -- Engine related functionality
 
 -- @classmod sysEngines
 -- @author Kosta Prokopiu
--- @copyright 2022 Kosta Prokopiu
+-- @copyright 2023 Kosta Prokopiu
 local sysEngines = {
 }
 
@@ -20,24 +20,24 @@ local KeepPressedSwitchCmd	= require "kpcrew.systems.KeepPressedSwitchCmd"
 
 --------- Switch datarefs common
 
-local drefStartLever1		= "laminar/B738/engine/mixture_ratio1"
-local drefStartLever2		= "laminar/B738/engine/mixture_ratio2"
-local drefIgnitionSelector	= "laminar/B738/toggle_switch/eng_start_source"
+local drefStartLever1		= "ixeg/733/fuel/fuel_start_lever1_act"
+local drefStartLever2		= "ixeg/733/fuel/fuel_start_lever1_act"
+local drefIgnitionSelector	= "ixeg/733/engine/ign_select_act"
 
 --------- Annunciator datarefs common
 
 local drefReverserState		= "sim/cockpit2/annunciators/reverser_on"
-local drefThrustLever1		= "laminar/B738/engine/thrust1_leveler"
-local drefThrustLever2		= "laminar/B738/engine/thrust2_leveler"
+local drefThrustLever1		= "ixeg/733/engine/eng1_thro_angle"
+local drefThrustLever2		= "ixeg/733/engine/eng2_thro_angle"
 local drefReverseLever1		= "laminar/B738/flt_ctrls/reverse_lever1"
 local drefReverseLever2		= "laminar/B738/flt_ctrls/reverse_lever2"
-local drefEngine1Starter 	= "laminar/B738/air/engine1/starter_valve"
-local drefEngine2Starter 	= "laminar/B738/air/engine2/starter_valve"
-local drefEngine1Oil 	 	= "laminar/B738/engine/eng1_oil_press"
-local drefEngine2Oil 	 	= "laminar/B738/engine/eng2_oil_press"
-local drefEngine1Fire 	 	= "laminar/B738/annunciator/engine1_fire"
-local drefEngine2Fire 	 	= "laminar/B738/annunciator/engine2_fire"
-local drefAPUFire 		 	= "laminar/B738/annunciator/apu_fire"
+local drefEngine1Starter 	= "ixeg/733/engine/eng1_start_act"
+local drefEngine2Starter 	= "ixeg/733/engine/eng2_start_act"
+local drefEngine1Oil 	 	= "ixeg/733/ecam/eng1_oilp_needle_ind"
+local drefEngine2Oil 	 	= "ixeg/733/ecam/eng2_oilp_needle_ind"
+local drefEngine1Fire 	 	= "ixeg/733/firewarning/fire_eng1_fire_ann"
+local drefEngine2Fire 	 	= "ixeg/733/firewarning/fire_eng2_fire_ann"
+local drefAPUFire 		 	= "ixeg/733/firewarning/fire_apu_fire_ann"
 
 --------- Switch commands common
 
@@ -101,27 +101,22 @@ sysEngines.reverserGroup:addSwitch(sysEngines.reverser3)
 sysEngines.reverserGroup:addSwitch(sysEngines.reverser4)
 
 -- engine start levers (fuel)
-sysEngines.startLever1 		= TwoStateCmdSwitch:new("",drefStartLever1,0,
-	cmdStartLever1On,cmdStartLever1Off,cmdStartLever1Tgl)
-sysEngines.startLever2 		= TwoStateCmdSwitch:new("",drefStartLever2,0,
-	cmdStartLever2On,cmdStartLever2Off,cmdStartLever2Tgl)
+sysEngines.startLever1 		= TwoStateDrefSwitch:new("",drefStartLever1,0)
+sysEngines.startLever2 		= TwoStateDrefSwitch:new("",drefStartLever2,0)
 sysEngines.startLeverGroup 	= SwitchGroup:new("startLevers")
 sysEngines.startLeverGroup:addSwitch(sysEngines.startLever1)
 sysEngines.startLeverGroup:addSwitch(sysEngines.startLever2)
 
 -- IGN select
-sysEngines.ignSelectSwitch 	= MultiStateCmdSwitch:new("",drefIgnitionSelector,0,
-	cmdIgnSelectorUp,cmdIgnSelectorDown,-1,1,false)
+sysEngines.ignSelectSwitch 	= TwoStateDrefSwitch:new("",drefIgnitionSelector,0)
 
 -- OVHT Test
 sysEngines.ovhtFireTestSwitch = KeepPressedSwitchCmd:new("OVHTtest","laminar/B738/toggle_switch/fire_test",0,
 	"laminar/B738/toggle_switch/fire_test_rgt")
 
 -- STARTER Switches
-sysEngines.engStart1Switch 	= MultiStateCmdSwitch:new("","laminar/B738/engine/starter1_pos",0,
-	"laminar/B738/knob/eng1_start_left","laminar/B738/knob/eng1_start_right",0,3,true)
-sysEngines.engStart2Switch 	= MultiStateCmdSwitch:new("","laminar/B738/engine/starter2_pos",0,
-	"laminar/B738/knob/eng2_start_left","laminar/B738/knob/eng2_start_right",0,3,true)
+sysEngines.engStart1Switch 	= TwoStateDrefSwitch:new("",drefEngine1Starter,0)
+sysEngines.engStart2Switch 	= TwoStateDrefSwitch:new("",drefEngine2Starter,0)
 sysEngines.engStarterGroup 	= SwitchGroup:new("engstarters")
 sysEngines.engStarterGroup:addSwitch(sysEngines.engStart1Switch)
 sysEngines.engStarterGroup:addSwitch(sysEngines.engStart2Switch)

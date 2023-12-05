@@ -1,10 +1,10 @@
--- B738 airplane Zibo Mod
+-- B733 IXEG B737 Plus
 -- aircraft lights specific functionality
 -- ** default element for kphardware - must be in all classes of this system
 
 -- @classmod sysLights
 -- @author Kosta Prokopiu
--- @copyright 2022 Kosta Prokopiu
+-- @copyright 2023 Kosta Prokopiu
 local sysLights = {
 }
 
@@ -18,41 +18,32 @@ local TwoStateToggleSwitch	= require "kpcrew.systems.TwoStateToggleSwitch"
 local MultiStateCmdSwitch 	= require "kpcrew.systems.MultiStateCmdSwitch"
 local InopSwitch 			= require "kpcrew.systems.InopSwitch"
 
-local drefLLRetLeft 		= "laminar/B738/switch/land_lights_ret_left_pos"
-local drefLLRetRight 		= "laminar/B738/switch/land_lights_ret_right_pos"
-local drefLLLeft 			= "laminar/B738/switch/land_lights_left_pos"
-local drefLLRight 			= "laminar/B738/switch/land_lights_right_pos"
-local drefRWYLeft 			= "laminar/B738/toggle_switch/rwy_light_left"
-local drefRWYRight 			= "laminar/B738/toggle_switch/rwy_light_right"
-local drefPanelBright 		= "laminar/B738/electric/panel_brightness"
-local drefGenericLights 	= "laminar/B738/electric/generic_brightness"
+local drefLLRetLeft 		= "ixeg/733/lighting/r_inboard_ll_act"
+local drefLLRetRight 		= "ixeg/733/lighting/l_inboard_ll_act"
+local drefLLLeft 			= "ixeg/733/lighting/r_outboard_ll_act"
+local drefLLRight 			= "ixeg/733/lighting/l_outboard_ll_act"
+local drefRWYLeft 			= "ixeg/733/lighting/l_rwy_turnoff_act"
+local drefRWYRight 			= "ixeg/733/lighting/r_rwy_turnoff_act"
+local drefPanelBright 		= "sim/cockpit2/electrical/instrument_brightness_ratio"
+local drefGenericLights 	= "sim/cockpit2/switches/generic_lights_switch"
 
 -- ** Beacons or Anticollision Lights, single, onoff, command driven
-sysLights.beaconSwitch 		= TwoStateCmdSwitch:new("beacon","sim/cockpit/electrical/beacon_lights_on",0,
-	"sim/lights/beacon_lights_on","sim/lights/beacon_lights_off","sim/lights/beacon_lights_toggle")
+sysLights.beaconSwitch 		= TwoStateDrefSwitch:new("beacon","ixeg/733/lighting/anti_col_lt_act",0)
 
 -- ** Position Lights, single onoff command driven
-sysLights.positionSwitch 	= TwoStateCmdSwitch:new("position","laminar/B738/toggle_switch/position_light_pos",0,
-	"laminar/B738/toggle_switch/position_light_steady","laminar/B738/toggle_switch/position_light_off","nocommand")
+sysLights.positionSwitch 	= TwoStateDrefSwitch:new("position","ixeg/733/lighting/position_lt_act",0)
 
 -- ** Strobe Lights, single onoff command driven
-sysLights.strobesSwitch 	= TwoStateCmdSwitch:new("strobes","laminar/B738/toggle_switch/position_light_pos",0,
-	"laminar/B738/toggle_switch/position_light_strobe","laminar/B738/toggle_switch/position_light_off","nocommand")
+sysLights.strobesSwitch 	= TwoStateDrefSwitch:new("strobes","ixeg/733/lighting/strobe_lt_act",0)
 
 -- ** Taxi/Nose Lights, single onoff command driven
-sysLights.taxiSwitch 		= TwoStateCmdSwitch:new("taxi","laminar/B738/toggle_switch/taxi_light_brightness_pos",0,
-	"laminar/B738/toggle_switch/taxi_light_brightness_on","laminar/B738/toggle_switch/taxi_light_brightness_off",
-	"laminar/B738/toggle_switch/taxi_light_brigh_toggle")
+sysLights.taxiSwitch 		= TwoStateDrefSwitch:new("taxi","ixeg/733/lighting/taxi_lt_act",0)
 
 -- ** Landing Lights, single onoff command driven
-sysLights.llRetLeftSwitch 	= TwoStateCmdSwitch:new("llretleft",drefLLRetLeft,0,
-	"laminar/B738/switch/land_lights_ret_left_on","laminar/B738/switch/land_lights_ret_left_off","nocommand")
-sysLights.llRetRightSwitch 	= TwoStateCmdSwitch:new("llretright",drefLLRetRight,0,
-	"laminar/B738/switch/land_lights_ret_right_on","laminar/B738/switch/land_lights_ret_right_off","nocommand")
-sysLights.llLeftSwitch 		= TwoStateCmdSwitch:new("llleft",drefLLLeft,0,
-	"laminar/B738/switch/land_lights_left_on","laminar/B738/switch/land_lights_left_off","nocommand")
-sysLights.llRightSwitch 	= TwoStateCmdSwitch:new("llright",drefLLRight,0,
-	"laminar/B738/switch/land_lights_right_on","laminar/B738/switch/land_lights_right_off","nocommand")
+sysLights.llRetLeftSwitch 	= TwoStateDrefSwitch:new("llretleft",drefLLRetLeft,0)
+sysLights.llRetRightSwitch 	= TwoStateDrefSwitch:new("llretright",drefLLRetRight,0)
+sysLights.llLeftSwitch 		= TwoStateDrefSwitch:new("llleft",drefLLLeft,0)
+sysLights.llRightSwitch 	= TwoStateDrefSwitch:new("llright",drefLLRight,0)
 sysLights.landLightGroup 	= SwitchGroup:new("landinglights")
 sysLights.landLightGroup:addSwitch(sysLights.llRetLeftSwitch)
 sysLights.landLightGroup:addSwitch(sysLights.llRetRightSwitch)
@@ -60,37 +51,33 @@ sysLights.landLightGroup:addSwitch(sysLights.llLeftSwitch)
 sysLights.landLightGroup:addSwitch(sysLights.llRightSwitch)
 
 -- ** Logo Light
-sysLights.logoSwitch 		= TwoStateCmdSwitch:new("logo","laminar/B738/toggle_switch/logo_light",0,
-	"laminar/B738/switch/logo_light_on","laminar/B738/switch/logo_light_off","laminar/B738/switch/logo_light_toggle")
+sysLights.logoSwitch 		= TwoStateDrefSwitch:new("logo","ixeg/733/lighting/logo_lt_act",0)
 
 -- ** RWY Turnoff Lights (2)
-sysLights.rwyLeftSwitch 	= TwoStateCmdSwitch:new("rwyleft",drefRWYLeft,0,
-	"laminar/B738/switch/rwy_light_left_on","laminar/B738/switch/rwy_light_left_off","laminar/B738/switch/rwy_light_left_toggle")
-sysLights.rwyRightSwitch 	= TwoStateCmdSwitch:new("rwyright",drefRWYRight,0,
-	"laminar/B738/switch/rwy_light_right_on","laminar/B738/switch/rwy_light_right_off","laminar/B738/switch/rwy_light_right_toggle")
+sysLights.rwyLeftSwitch 	= TwoStateDrefSwitch:new("rwyleft",drefRWYLeft,0)
+sysLights.rwyRightSwitch 	= TwoStateDrefSwitch:new("rwyright",drefRWYRight,0)
 sysLights.rwyLightGroup 	= SwitchGroup:new("runwaylights")
 sysLights.rwyLightGroup:addSwitch(sysLights.rwyLeftSwitch)
 sysLights.rwyLightGroup:addSwitch(sysLights.rwyRightSwitch)
 
 -- ** Wing Lights
-sysLights.wingSwitch 		= TwoStateCmdSwitch:new("wing","laminar/B738/toggle_switch/wing_light",0,
-	"laminar/B738/switch/wing_light_on","laminar/B738/switch/wing_light_off","laminar/B738/switch/wing_light_toggle")
+sysLights.wingSwitch 		= TwoStateDrefSwitch:new("wing","ixeg/733/lighting/wing_lt_act",0)
 
 -- ** Wheel well Lights
-sysLights.wheelSwitch 		= TwoStateDrefSwitch:new("wheel","laminar/B738/toggle_switch/wheel_light",0)
+sysLights.wheelSwitch 		= TwoStateDrefSwitch:new("wheel","ixeg/733/lighting/wheel_well_lt_act",0)
 
 -- ** Dome Light
-sysLights.domeLightSwitch 	= MultiStateCmdSwitch:new("dome","laminar/B738/toggle_switch/cockpit_dome_pos",0,
-	"laminar/B738/toggle_switch/cockpit_dome_dn","laminar/B738/toggle_switch/cockpit_dome_up",-1,1,true)
+sysLights.domeLightSwitch 	= TwoStateDrefSwitch:new("dome","ixeg/733/misc/dome_light_act",0)
 
 -- ** Instrument Lights
-sysLights.instr1Light		= TwoStateDrefSwitch:new("instr1",drefPanelBright,-1)
-sysLights.instr2Light		= TwoStateDrefSwitch:new("instr2",drefPanelBright,1)
-sysLights.instr3Light		= TwoStateDrefSwitch:new("instr3",drefPanelBright,2)
-sysLights.instr4Light		= TwoStateDrefSwitch:new("instr4",drefPanelBright,3)
-sysLights.instr5Light		= TwoStateDrefSwitch:new("instr5",drefGenericLights,6)
-sysLights.instr6Light		= TwoStateDrefSwitch:new("instr6",drefGenericLights,7)
-sysLights.instr7Light		= TwoStateDrefSwitch:new("instr7",drefGenericLights,8)
+sysLights.instr1Light		= TwoStateDrefSwitch:new("instr1","ixeg/733/rheostats/light_afds_act",0)
+sysLights.instr2Light		= TwoStateDrefSwitch:new("instr2","ixeg/733/rheostats/light_breakers_act",0)
+sysLights.instr3Light		= TwoStateDrefSwitch:new("instr3","ixeg/733/rheostats/light_overhead_act",0)
+sysLights.instr4Light		= TwoStateDrefSwitch:new("instr4","ixeg/733/rheostats/light_pedpanel_act",0)
+sysLights.instr5Light		= TwoStateDrefSwitch:new("instr5","ixeg/733/rheostats/light_pedflood_act",0)
+sysLights.instr6Light		= TwoStateDrefSwitch:new("instr6",drefGenericLights,-1)
+sysLights.instr7Light		= TwoStateDrefSwitch:new("instr7",drefGenericLights,1)
+sysLights.instr8Light		= TwoStateDrefSwitch:new("instr8",drefGenericLights,2)
 sysLights.instrLightGroup 	= SwitchGroup:new("instrumentlights")
 sysLights.instrLightGroup:addSwitch(sysLights.instr1Light)
 sysLights.instrLightGroup:addSwitch(sysLights.instr2Light)
@@ -99,6 +86,7 @@ sysLights.instrLightGroup:addSwitch(sysLights.instr4Light)
 sysLights.instrLightGroup:addSwitch(sysLights.instr5Light)
 sysLights.instrLightGroup:addSwitch(sysLights.instr6Light)
 sysLights.instrLightGroup:addSwitch(sysLights.instr7Light)
+sysLights.instrLightGroup:addSwitch(sysLights.instr8Light)
 -- sysLights.instrLightGroup:actuate(modeOff)
 
 --------- Annunciators
@@ -116,7 +104,7 @@ end)
 sysLights.beaconAnc 		= SimpleAnnunciator:new("beaconlights","sim/cockpit/electrical/beacon_lights_on",0)
 
 -- ** Position Light(s) status
-sysLights.positionAnc 		= SimpleAnnunciator:new("positionlights","laminar/B738/toggle_switch/position_light_pos",0)
+sysLights.positionAnc 		= SimpleAnnunciator:new("positionlights","ixeg/733/lighting/position_lt_act",0)
 
 -- ** Strobe Light(s) status
 sysLights.strobesAnc 		= SimpleAnnunciator:new("strobelights","sim/cockpit2/switches/navigation_lights_on",0)
@@ -124,7 +112,7 @@ sysLights.strobesAnc 		= SimpleAnnunciator:new("strobelights","sim/cockpit2/swit
 -- ** Taxi Light(s) status
 sysLights.taxiAnc 			= CustomAnnunciator:new("taxilights",
 function () 
-	if get("laminar/B738/toggle_switch/taxi_light_brightness_pos") > 0 then
+	if get("ixeg/733/lighting/taxi_lt_act") > 0 then
 		return 1
 	else
 		return 0
@@ -132,7 +120,7 @@ function ()
 end)
 
 -- ** Logo Light(s) status
-sysLights.logoAnc 			= SimpleAnnunciator:new("logolights","laminar/B738/toggle_switch/logo_light",0)
+sysLights.logoAnc 			= SimpleAnnunciator:new("logolights","ixeg/733/lighting/logo_lt_act",0)
 
 -- ** Runway turnoff lights
 sysLights.runwayAnc 		= CustomAnnunciator:new("runwaylights",
@@ -153,7 +141,7 @@ sysLights.wheelAnc 			= SimpleAnnunciator:new("wheellights",drefGenericLights,5)
 -- ** Dome Light(s) status
 sysLights.domeAnc 			= CustomAnnunciator:new("domelights",
 function () 
-	if get( "laminar/B738/toggle_switch/cockpit_dome_pos",0) ~= 0 then
+	if get( "ixeg/733/misc/dome_light_act",0) ~= 0 then
 		return 1
 	else
 		return 0
@@ -163,7 +151,7 @@ end)
 -- ** Instrument Light(s) status
 sysLights.instrumentAnc 	= CustomAnnunciator:new("instrumentlights",
 function () 
-	if get(drefPanelBright,0) > 0 or get(drefPanelBright,1) > 0  or get(drefPanelBright,2) > 0  or get(drefPanelBright,3) > 0 or get(drefGenericLights,6) > 0  or get(drefGenericLights,7) > 0  or get(drefGenericLights,8) > 0 then
+	if get(drefPanelBright,0) > 0 or get(drefPanelBright,1) > 0  or get(drefPanelBright,2) > 0  or get("ixeg/733/rheostats/light_afds_act",0) > 0 or get("ixeg/733/rheostats/light_breakers_act",0) > 0  or get("ixeg/733/rheostats/light_overhead_act",0) > 0 or get("ixeg/733/rheostats/light_pedpanel_act",0) > 0  or get("ixeg/733/rheostats/light_pedflood_act",0) > 0 then
 		return 1
 	else
 		return 0
@@ -194,11 +182,6 @@ function sysLights:render(ypos, height)
 	end
 
 	local xsize = 935
-	if get("laminar/B738/kill_led_lights") ~= 1 then
-		xsize = 815
-	else
-		xsize = 935
-	end
 
 	if kh_light_wnd_state == 0 then
 		imgui.Button("L", 17, 25)
@@ -210,10 +193,8 @@ function sysLights:render(ypos, height)
 
 	kc_imgui_label_mcp("LIGHTS:",10)
 	kc_imgui_label_mcp("LAND:",10)
-	if get("laminar/B738/kill_led_lights") == 1 then
-		kc_imgui_toggle_button_mcp("LEFT R",sysLights.llRetLeftSwitch,10,53,25)
-		kc_imgui_toggle_button_mcp("RIGHT R",sysLights.llRetRightSwitch,10,53,25)
-	end
+	kc_imgui_toggle_button_mcp("LEFT R",sysLights.llRetLeftSwitch,10,53,25)
+	kc_imgui_toggle_button_mcp("RIGHT R",sysLights.llRetRightSwitch,10,53,25)
 	kc_imgui_toggle_button_mcp("LEFT",sysLights.llLeftSwitch,10,42,25)
 	kc_imgui_toggle_button_mcp("RIGHT",sysLights.llRightSwitch,10,42,25)
 	kc_imgui_simple_button_mcp("ALL",sysLights.landLightGroup,10,42,25)

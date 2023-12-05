@@ -1125,6 +1125,7 @@ function kc_bck_after_takeoff_items(trigger)
 		command_once("laminar/B738/knob/autobrake_off")
 		command_once("laminar/B738/push_button/gear_off")
 		sysEngines.engStarterGroup:actuate(1)
+		kc_procvar_set(trigger,false)
 		kc_speakNoText(0,"ready for after takeoff checklist")
 	end
 end

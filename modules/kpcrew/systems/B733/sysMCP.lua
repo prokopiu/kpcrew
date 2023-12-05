@@ -17,23 +17,21 @@ local TwoStateToggleSwitch	= require "kpcrew.systems.TwoStateToggleSwitch"
 local MultiStateCmdSwitch 	= require "kpcrew.systems.MultiStateCmdSwitch"
 local InopSwitch 			= require "kpcrew.systems.InopSwitch"
 
-local drefVORLocLight 		= "laminar/B738/autopilot/vorloc_status"
-local drefLNAVLight			= "laminar/B738/autopilot/lnav_status"
-local drefSPDLight 			= "laminar/B738/autopilot/speed_mode"
-local drefN1Light 			= "laminar/B738/autopilot/n1_status"
-local drefVSLight 			= "laminar/B738/autopilot/vs_status"
-local drefLVLCHGLight 		= "laminar/B738/autopilot/lvl_chg_status"
-local drefVNAVLight 		= "laminar/B738/autopilot/vnav_status1"
-local drefAPStatusLight 	= "laminar/B738/autopilot/cmd_a_status"
-local drefCMDBLight 		= "laminar/B738/autopilot/cmd_b_status"
+local drefVORLocLight 		= "ixeg/733/MCP/mcp_vor_loc_ann"
+local drefLNAVLight			= "ixeg/733/MCP/mcp_lnav_ann"
+local drefSPDLight 			= "ixeg/733/MCP/mcp_speed_ann"
+local drefN1Light 			= "ixeg/733/MCP/mcp_n1_ann"
+local drefVSLight 			= "ixeg/733/MCP/mcp_vs_ann"
+local drefLVLCHGLight 		= "ixeg/733/MCP/mcp_level_change_ann"
+local drefVNAVLight 		= "ixeg/733/MCP/mcp_vnav_ann"
+local drefAPStatusLight 	= "ixeg/733/MCP/mcp_a_comm_ann"
+local drefCMDBLight 		= "ixeg/733/MCP/mcp_b_comm_ann"
 
 --------- Switches
 
 -- Flight Directors
-sysMCP.fdirPilotSwitch 		= TwoStateToggleSwitch:new("fdirpilot","laminar/B738/autopilot/flight_director_pos",0,
-	"laminar/B738/autopilot/flight_director_toggle")
-sysMCP.fdirCoPilotSwitch 	= TwoStateToggleSwitch:new("fdircopilot","laminar/B738/autopilot/flight_director_fo_pos",0,
-	"laminar/B738/autopilot/flight_director_fo_toggle")
+sysMCP.fdirPilotSwitch 		= TwoStateDrefSwitch:new("fdirpilot","ixeg/733/mcp/fd_master_cp",0)
+sysMCP.fdirCoPilotSwitch 	= TwoStateDrefSwitch:new("fdircopilot","ixeg/733/MCP/mcp_cplt_fd_act",0)
 sysMCP.fdirGroup 			= SwitchGroup:new("fdirs")
 sysMCP.fdirGroup:addSwitch(sysMCP.fdirPilotSwitch)
 sysMCP.fdirGroup:addSwitch(sysMCP.fdirCoPilotSwitch)
@@ -192,7 +190,7 @@ sysMCP.displayControlSwitch = MultiStateCmdSwitch:new("dispctrl","laminar/B738/t
 -- Flight Directors annunciator
 sysMCP.fdirAnc 				= CustomAnnunciator:new("fdiranc",
 function ()
-	if get("laminar/B738/autopilot/flight_director_pos") > 0 or get("laminar/B738/autopilot/flight_director_fo_pos") > 0 then
+	if get("ixeg/733/MCP/mcp_cplt_fd_act") > 0 or get("ixeg/733/MCP/mcp_plt_fd_act") > 0 then
 		return 1
 	else
 		return 0
@@ -200,7 +198,7 @@ function ()
 end)
 
 -- HDG Select/mode annunciator
-sysMCP.hdgAnc 				= SimpleAnnunciator:new("hdganc","laminar/B738/autopilot/hdg_sel_status",0)
+sysMCP.hdgAnc 				= SimpleAnnunciator:new("hdganc","ixeg/733/MCP/mcp_hdg_ann",0)
 
 -- NAV mode annunciator
 sysMCP.navAnc 				= CustomAnnunciator:new("navanc",
@@ -213,7 +211,7 @@ function ()
 end)
 
 -- APR Select/mode annunciator
-sysMCP.aprAnc 				= SimpleAnnunciator:new("apranc","laminar/B738/autopilot/app_status",0)
+sysMCP.aprAnc 				= SimpleAnnunciator:new("apranc","ixeg/733/MCP/mcp_app_ann",0)
 
 -- SPD mode annunciator
 sysMCP.spdAnc 				= CustomAnnunciator:new("spdanc",
@@ -236,7 +234,7 @@ function ()
 end)
 
 -- ALT mode annunciator
-sysMCP.altAnc 				= SimpleAnnunciator:new("altanc","laminar/B738/autopilot/alt_hld_status",0)
+sysMCP.altAnc 				= SimpleAnnunciator:new("altanc","ixeg/733/MCP/mcp_alt_hold_ann",0)
 
 -- A/P mode annunciator
 sysMCP.apAnc 				= CustomAnnunciator:new("autopilotanc",

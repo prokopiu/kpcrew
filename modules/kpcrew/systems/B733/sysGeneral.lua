@@ -1,9 +1,9 @@
--- B738 airplane 
+-- B733 IXEG 737 PRO
 -- aircraft general systems
 
 -- @classmod sysGeneral
 -- @author Kosta Prokopiu
--- @copyright 2022 Kosta Prokopiu
+-- @copyright 2023 Kosta Prokopiu
 local sysGeneral = {
 	irsUnitMin 		= 0,
 	irsUnitMax 		= 3,
@@ -33,7 +33,7 @@ local KeepPressedSwitchCmd	= require "kpcrew.systems.KeepPressedSwitchCmd"
 
 local drefSlider 			= "sim/cockpit2/switches/custom_slider_on"
 local drefParkbrake			= "sim/cockpit2/controls/parking_brake_ratio"
-local drefGearLever			= "sim/cockpit/switches/gear_handle_status"
+local drefGearLever			= "ixeg/733/gear/gear_handle_act"
 local drefBaroLeft			= "laminar/B738/EFIS/baro_sel_in_hg_pilot"
 local drefBaroRight 		= "laminar/B738/EFIS/baro_sel_in_hg_copilot"
 local drefBaroStby	 		= "laminar/B738/knobs/standby_alt_baro"
@@ -64,10 +64,10 @@ local cmdBaroStbyStd 		= "laminar/B738/toggle_switch/standby_alt_baro_std"
 
 -- Parking Brake
 sysGeneral.parkBrakeSwitch 	= TwoStateToggleSwitch:new("parkbrake","sim/cockpit2/controls/parking_brake_ratio",0,
-	"laminar/B738/push_button/park_brake_on_off")
+	"sim/flight_controls/brakes_toggle_max")
 
 -- Landing Gear
-sysGeneral.GearSwitch 		= TwoStateCustomSwitch:new("gear","laminar/B738/controls/gear_handle_down",0,
+sysGeneral.GearSwitch 		= TwoStateCustomSwitch:new("gear",drefGearLever,0,
 function () command_once("sim/flight_controls/landing_gear_down") end,
 function () command_once("sim/flight_controls/landing_gear_up") end,
 function () command_once("laminar/B738/push_button/gear_off") end)
@@ -84,8 +84,7 @@ sysGeneral.doorR1			= TwoStateCmdSwitch:new("doorr1","ixeg/733/misc/front_servic
 sysGeneral.doorR2			= TwoStateCmdSwitch:new("doorr2","ixeg/733/misc/rear_service_door_ratio",0,
 	"ixeg/733/open_aft_service_door","ixeg/733/close_aft_service_door")
 sysGeneral.doorFCargo		= TwoStateDrefSwitch:new("doorfcargo","ixeg/733/misc/cargo_door_for",0)
-sysGeneral.doorACargo 		= TwoStateCmdSwitch:new("dooracrago","ixeg/733/misc/cargo_door_aft",0,
-	"laminar/B738/door/aft_cargo_toggle")
+sysGeneral.doorACargo 		= TwoStateDrefSwitch:new("dooracrago","ixeg/733/misc/cargo_door_aft",0)
 sysGeneral.doorGroup 		= SwitchGroup:new("doors")
 sysGeneral.doorGroup:addSwitch(sysGeneral.doorL1)
 sysGeneral.doorGroup:addSwitch(sysGeneral.doorL2)
@@ -144,33 +143,25 @@ sysGeneral.baroGroup:addSwitch(sysGeneral.baroStandby)
 --- systems not used by kphardware
 
 -- IRS
-sysGeneral.irsUnit1Switch = MultiStateCmdSwitch:new("irsunit1","laminar/B738/toggle_switch/irs_left",0,
-	"laminar/B738/toggle_switch/irs_L_left","laminar/B738/toggle_switch/irs_L_right",0,3,true)
-sysGeneral.irsUnit2Switch = MultiStateCmdSwitch:new("irsunit2","laminar/B738/toggle_switch/irs_right",0,
-	"laminar/B738/toggle_switch/irs_R_left","laminar/B738/toggle_switch/irs_R_right",0,3,true)
-sysGeneral.irsUnit3Switch = InopSwitch:new("irsunit3")
+sysGeneral.irsUnit1Switch = TwoStateDrefSwitch:new("irsunit1","ixeg/733/irs/irs_left_mode_act",0)
+sysGeneral.irsUnit2Switch = TwoStateDrefSwitch:new("irsunit2","ixeg/733/irs/irs_right_mode_act",0)
 
 sysGeneral.irsUnitGroup = SwitchGroup:new("irsunits")
 sysGeneral.irsUnitGroup:addSwitch(sysGeneral.irsUnit1Switch)
 sysGeneral.irsUnitGroup:addSwitch(sysGeneral.irsUnit2Switch)
--- sysGeneral.irsUnitGroup:addSwitch(sysGeneral.irsUnit3Switch)
 
 -- Wipers
 
-sysGeneral.wiperLeftSwitch = MultiStateCmdSwitch:new("","laminar/B738/switches/left_wiper_pos",0,
-	"laminar/B738/knob/left_wiper_dn","laminar/B738/knob/left_wiper_up",0,3,true)
-sysGeneral.wiperRightSwitch = MultiStateCmdSwitch:new("","laminar/B738/switches/right_wiper_pos",0,
-	"laminar/B738/knob/right_wiper_dn","laminar/B738/knob/right_wiper_up",0,3,true)
+sysGeneral.wiperLeftSwitch = TwoStateDrefSwitch:new("","ixeg/733/wiper/wiper_speed_act",0)
+sysGeneral.wiperRightSwitch = InopSwitch:new("wiperRight")
 
 sysGeneral.wiperGroup = SwitchGroup:new("wipers")
 sysGeneral.wiperGroup:addSwitch(sysGeneral.wiperLeftSwitch)
 sysGeneral.wiperGroup:addSwitch(sysGeneral.wiperRightSwitch)
 
 -- Emergency Exit Lights
-sysGeneral.emerExitLightsSwitch = MultiStateCmdSwitch:new("","laminar/B738/toggle_switch/emer_exit_lights",0,
-	"laminar/B738/toggle_switch/emer_exit_lights_up","laminar/B738/toggle_switch/emer_exit_lights_dn",0,2,true)
-sysGeneral.emerExitLightsCover = TwoStateToggleSwitch:new("","laminar/B738/button_switch/cover_position",9,
-	"laminar/B738/button_switch_cover09")
+sysGeneral.emerExitLightsSwitch = TwoStateDrefSwitch:new("","ixeg/733/lighting/emer_exit_lts_act",0)
+sysGeneral.emerExitLightsCover = TwoStateDrefSwitch:new("","ixeg/733/electrical/emer_lights_guard",0)
 
 -- FDR recorder
 sysGeneral.fdrSwitch = TwoStateToggleSwitch:new("","laminar/B738/switches/fdr_pos",0,
@@ -193,10 +184,8 @@ sysGeneral.equipCoolSupply = TwoStateToggleSwitch:new("","laminar/B738/toggle_sw
 	"laminar/B738/toggle_switch/eq_cool_supply")
 
 -- Passenger lights
-sysGeneral.noSmokingSwitch = MultiStateCmdSwitch:new("","laminar/B738/toggle_switch/no_smoking_pos",0,
-	"laminar/B738/toggle_switch/no_smoking_dn","laminar/B738/toggle_switch/no_smoking_up",0,2,false)
-sysGeneral.seatBeltSwitch = MultiStateCmdSwitch:new("","laminar/B738/toggle_switch/seatbelt_sign_pos",0,
-	"laminar/B738/toggle_switch/seatbelt_sign_dn","laminar/B738/toggle_switch/seatbelt_sign_up",0,2,false)
+sysGeneral.noSmokingSwitch = TwoStateDrefSwitch:new("","ixeg/733/misc/smoking_act",0)
+sysGeneral.seatBeltSwitch = TwoStateDrefSwitch:new("","ixeg/733/misc/seatbelt_act",0)
 
 -- DISPLAY UNITS
 sysGeneral.displayUnitsFO = MultiStateCmdSwitch:new("","laminar/B738/toggle_switch/main_pnl_du_fo",0,
@@ -227,8 +216,7 @@ sysGeneral.terrainInhibitCover 	= TwoStateToggleSwitch:new("","laminar/B738/togg
 	"laminar/B738/toggle_switch/gpws_terr_cover")
 
 -- Autobrake
-sysGeneral.autobrake = MultiStateCmdSwitch:new("","laminar/B738/autobrake/autobrake_pos",0,
-	"laminar/B738/knob/autobrake_dn","laminar/B738/knob/autobrake_up",0,5,true)
+sysGeneral.autobrake = TwoStateDrefSwitch:new("","ixeg/733/hydraulics/hyd_auto_brake_act",0)
 
 -- Lights Test
 sysGeneral.lightTest = TwoStateCmdSwitch:new("","laminar/B738/toggle_switch/bright_test",0,
@@ -261,12 +249,12 @@ function ()
 end)
 
 -- Gear Lights for annunciators
-sysGeneral.gearLeftGreenAnc = SimpleAnnunciator:new("gear", "laminar/B738/annunciator/left_gear_safe", 0)
-sysGeneral.gearRightGreenAnc = SimpleAnnunciator:new("gear", "laminar/B738/annunciator/right_gear_safe", 0)
-sysGeneral.gearNodeGreenAnc = SimpleAnnunciator:new("gear", "laminar/B738/annunciator/nose_gear_safe", 0)
-sysGeneral.gearLeftRedAnc = SimpleAnnunciator:new("gear", "laminar/B738/annunciator/left_gear_transit", 0)
-sysGeneral.gearRightRedAnc = SimpleAnnunciator:new("gear", "laminar/B738/annunciator/right_gear_transit", 0)
-sysGeneral.gearNodeRedAnc = SimpleAnnunciator:new("gear", "laminar/B738/annunciator/nose_gear_transit", 0)
+sysGeneral.gearLeftGreenAnc = SimpleAnnunciator:new("gear", "ixeg/733/gear/gear_left_green_ann", 0)
+sysGeneral.gearRightGreenAnc = SimpleAnnunciator:new("gear", "ixeg/733/gear/gear_right_green_ann", 0)
+sysGeneral.gearNodeGreenAnc = SimpleAnnunciator:new("gear", "ixeg/733/gear/gear_nose_green_ann", 0)
+sysGeneral.gearLeftRedAnc = SimpleAnnunciator:new("gear", "ixeg/733/gear/gear_left_red_ann", 0)
+sysGeneral.gearRightRedAnc = SimpleAnnunciator:new("gear", "ixeg/733/gear/gear_right_red_ann", 0)
+sysGeneral.gearNodeRedAnc = SimpleAnnunciator:new("gear", "ixeg/733/gear/gear_nose_red_ann", 0)
 
 -- light on when gears extended else 0
 sysGeneral.gearLightsAnc = CustomAnnunciator:new("gearlights", 
@@ -294,21 +282,21 @@ function ()
 end)
 
 -- Master Caution
-sysGeneral.masterCautionAnc = SimpleAnnunciator:new("mastercaution", "laminar/B738/annunciator/master_caution_light", 0)
+sysGeneral.masterCautionAnc = SimpleAnnunciator:new("mastercaution", "ixeg/733/bleedair/caution_master_ann", 0)
 
 -- Master Warning
 sysGeneral.masterWarningAnc = SimpleAnnunciator:new("masterwarning", "sim/cockpit2/annunciators/master_warning", 0)
 
 -- Fire Warning
-sysGeneral.fireWarningAnc = SimpleAnnunciator:new("firewarning", "laminar/B738/push_button/fire_bell_cutout1",0)
+sysGeneral.fireWarningAnc = SimpleAnnunciator:new("firewarning", "ixeg/733/firewarning/fire_warning_ann",0)
 
 -- Door annunciators
-sysGeneral.doorL1Anc = SimpleAnnunciator:new("doorl1","737u/doors/L1",0)
-sysGeneral.doorL2Anc = SimpleAnnunciator:new("doorl2","737u/doors/L2",0)
-sysGeneral.doorR1Anc = SimpleAnnunciator:new("doorr1","737u/doors/R1",0)
-sysGeneral.doorR2Anc = SimpleAnnunciator:new("doorr2","737u/doors/R2",0)
-sysGeneral.doorFCargoAnc = SimpleAnnunciator:new("doorfcargo","737u/doors/Fwd_Cargo",0)
-sysGeneral.doorACargoAnc = SimpleAnnunciator:new("dooracrago","737u/doors/aft_Cargo",0)
+sysGeneral.doorL1Anc = SimpleAnnunciator:new("doorl1","ixeg/733/misc/front_passenger_door_ratio",0)
+sysGeneral.doorL2Anc = SimpleAnnunciator:new("doorl2","ixeg/733/misc/rear_passenger_door_ratio",0)
+sysGeneral.doorR1Anc = SimpleAnnunciator:new("doorr1","ixeg/733/misc/front_service_door_ratio",0)
+sysGeneral.doorR2Anc = SimpleAnnunciator:new("doorr2","ixeg/733/misc/rear_service_door_ratio",0)
+sysGeneral.doorFCargoAnc = SimpleAnnunciator:new("doorfcargo","ixeg/733/misc/cargo_door_for",0)
+sysGeneral.doorACargoAnc = SimpleAnnunciator:new("dooracrago","ixeg/733/misc/cargo_door_aft",0)
 
 sysGeneral.doorsAnc = CustomAnnunciator:new("doors", 
 function () 
@@ -325,10 +313,10 @@ function ()
 	end
 end)
 
-sysGeneral.irs1Align = SimpleAnnunciator:new("","laminar/B738/annunciator/irs_align_left",0)
-sysGeneral.irs2Align = SimpleAnnunciator:new("","laminar/B738/annunciator/irs_align_right",0)
-sysGeneral.irs1OnDC = SimpleAnnunciator:new("","laminar/B738/annunciator/irs_on_dc_left",0)
-sysGeneral.irs2OnDC = SimpleAnnunciator:new("","laminar/B738/annunciator/irs_on_dc_right",0)
+sysGeneral.irs1Align = SimpleAnnunciator:new("","ixeg/733/irs/irs1_align_ann",0)
+sysGeneral.irs2Align = SimpleAnnunciator:new("","ixeg/733/irs/irs2_align_ann",0)
+sysGeneral.irs1OnDC = SimpleAnnunciator:new("","ixeg/733/irs/irs1_ondc_ann",0)
+sysGeneral.irs2OnDC = SimpleAnnunciator:new("","ixeg/733/irs/irs2_ondc_ann",0)
 
 sysGeneral.annunciators = CustomAnnunciator:new("annunc",
 function () 

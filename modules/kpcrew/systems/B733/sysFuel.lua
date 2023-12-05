@@ -1,9 +1,9 @@
--- B738 airplane 
+-- B733 IXEG B737 PRO 
 -- Fuel related functionality
 
 -- @classmod sysFuel
 -- @author Kosta Prokopiu
--- @copyright 2022 Kosta Prokopiu
+-- @copyright 2023 Kosta Prokopiu
 local sysFuel = {
 }
 
@@ -17,19 +17,19 @@ local TwoStateToggleSwitch	= require "kpcrew.systems.TwoStateToggleSwitch"
 local MultiStateCmdSwitch 	= require "kpcrew.systems.MultiStateCmdSwitch"
 local InopSwitch 			= require "kpcrew.systems.InopSwitch"
 
-local drefFuelPressC1 		= "laminar/B738/annunciator/low_fuel_press_c1"
-local drefFuelPressC2 		= "laminar/B738/annunciator/low_fuel_press_c2"
-local drefFuelPressL1 		= "laminar/B738/annunciator/low_fuel_press_l1"
-local drefFuelPressL2 		= "laminar/B738/annunciator/low_fuel_press_l2"
-local drefFuelPressR1 		= "laminar/B738/annunciator/low_fuel_press_r1"
-local drefFuelPressR2 		= "laminar/B738/annunciator/low_fuel_press_r2"
+local drefFuelPressC1 		= "ixeg/733/fuel/fuel_ctr_left_lowp_ann"
+local drefFuelPressC2 		= "ixeg/733/fuel/fuel_ctr_right_lowp_ann"
+local drefFuelPressL1 		= "ixeg/733/fuel/fuel_1_aft_lowp_ann"
+local drefFuelPressL2 		= "ixeg/733/fuel/fuel_1_fwd_lowp_ann"
+local drefFuelPressR1 		= "ixeg/733/fuel/fuel_2_aft_lowp_ann"
+local drefFuelPressR2 		= "ixeg/733/fuel/fuel_2_fwd_lowp_ann"
 
-sysFuel.fuelPumpLeftAft 	= TwoStateDrefSwitch:new ("fuelpumpleftaft","laminar/B738/fuel/fuel_tank_pos_lft1",0)
-sysFuel.fuelPumpLeftFwd 	= TwoStateDrefSwitch:new ("fuelpumpleftfwd","laminar/B738/fuel/fuel_tank_pos_lft2",0)
-sysFuel.fuelPumpRightAft 	= TwoStateDrefSwitch:new("fuelpumprightaft","laminar/B738/fuel/fuel_tank_pos_rgt1",0)
-sysFuel.fuelPumpRightFwd 	= TwoStateDrefSwitch:new("fuelpumprightfwd","laminar/B738/fuel/fuel_tank_pos_rgt2",0)
-sysFuel.fuelPumpCtrLeft 	= TwoStateDrefSwitch:new ("fuelpumpctrleft","laminar/B738/fuel/fuel_tank_pos_ctr1",0)
-sysFuel.fuelPumpCtrRight 	= TwoStateDrefSwitch:new("fuelpumpctrright","laminar/B738/fuel/fuel_tank_pos_ctr2",0)
+sysFuel.fuelPumpLeftAft 	= TwoStateDrefSwitch:new ("fuelpumpleftaft","ixeg/733/fuel/fuel_1_aft_act",0)
+sysFuel.fuelPumpLeftFwd 	= TwoStateDrefSwitch:new ("fuelpumpleftfwd","ixeg/733/fuel/fuel_1_fwd_act",0)
+sysFuel.fuelPumpRightAft 	= TwoStateDrefSwitch:new("fuelpumprightaft","ixeg/733/fuel/fuel_2_aft_act",0)
+sysFuel.fuelPumpRightFwd 	= TwoStateDrefSwitch:new("fuelpumprightfwd","ixeg/733/fuel/fuel_2_fwd_act",0)
+sysFuel.fuelPumpCtrLeft 	= TwoStateDrefSwitch:new ("fuelpumpctrleft","ixeg/733/fuel/fuel_ctr_left_act",0)
+sysFuel.fuelPumpCtrRight 	= TwoStateDrefSwitch:new("fuelpumpctrright","ixeg/733/fuel/fuel_ctr_right_act",0)
 sysFuel.allFuelPumpGroup 	= SwitchGroup:new("fuelpumpgroup")
 sysFuel.allFuelPumpGroup:addSwitch(sysFuel.fuelPumpLeftAft)
 sysFuel.allFuelPumpGroup:addSwitch(sysFuel.fuelPumpLeftFwd)
@@ -48,8 +48,7 @@ sysFuel.wingFuelPumpGroup:addSwitch(sysFuel.fuelPumpLeftFwd)
 sysFuel.wingFuelPumpGroup:addSwitch(sysFuel.fuelPumpRightAft)
 sysFuel.wingFuelPumpGroup:addSwitch(sysFuel.fuelPumpRightFwd)
 
-sysFuel.crossFeed 			= TwoStateCmdSwitch:new("crossfeed","laminar/B738/knobs/cross_feed_pos",0,
-	"laminar/B738/toggle_switch/crossfeed_valve_on","laminar/B738/toggle_switch/crossfeed_valve_off")
+sysFuel.crossFeed 			= TwoStateDrefSwitch:new("crossfeed","ixeg/733/fuel/fuel_xfeed_act",0)
 
 -- FUEL PRESSURE LOW annunciator
 sysFuel.fuelLowAnc 			= CustomAnnunciator:new("fuellow",
@@ -83,17 +82,15 @@ sysFuel.allTanksKgs 		= SimpleAnnunciator:new("","laminar/B738/fuel/total_tank_k
 
 sysFuel.valveAnns 			= CustomAnnunciator:new("",
 function () 
-	if get("laminar/B738/annunciator/eng1_valve_closed") + 
-		get("laminar/B738/annunciator/eng2_valve_closed") + 
-		get("laminar/B738/annunciator/spar1_valve_closed") + 
-		get("laminar/B738/annunciator/spar2_valve_closed") > 0 then
+	if get("ixeg/733/fuel/fuel_valve1_closed_ann") + 
+		get("ixeg/733/fuel/fuel_valve2_closed_ann") > 0 then
 		return 1
 	else
 		return 0
 	end
 end)
 
-sysFuel.xfeedVlvAnn 		= SimpleAnnunciator:new("","laminar/B738/annunciator/crossfeed",0)
+sysFuel.xfeedVlvAnn 		= SimpleAnnunciator:new("","ixeg/733/fuel/fuel_xfeed_open_ann",0)
 
 -- AUX FUEL PUMP ANC (do not use)
 sysFuel.auxFuelPumpsAnc = CustomAnnunciator:new("auxfuel",

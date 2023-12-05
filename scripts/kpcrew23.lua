@@ -36,6 +36,8 @@ elseif PLANE_ICAO == "C750" and PLANE_TAILNUMBER == "N750XP" then
 	-- kc_acf_icao = "MD11"
 -- elseif PLANE_ICAO == "B732" then
 	-- kc_acf_icao = "B732"
+elseif PLANE_ICAO == "B733" then
+	kc_acf_icao = "B733"
 -- elseif PLANE_ICAO == "A320" and PLANE_TAILNUMBER == "A320" then
 	-- kc_acf_icao = "A20N"
 -- Laminar MD-82
@@ -59,6 +61,7 @@ kcFlowExecutor			= require("kpcrew.FlowExecutor")
 activeBckVars:set("general:simversion",kc_simversion)
 
 kc_ctrl_wnd_off = true
+kc_procvar_initialize_bool("waitformaster", false) 
 
 -- stop if pre-reqs are not met
 if not SUPPORTS_FLOATING_WINDOWS then

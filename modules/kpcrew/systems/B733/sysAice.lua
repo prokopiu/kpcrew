@@ -1,9 +1,9 @@
--- B738 airplane 
+-- B733 Airplane IXEG B733 PRO
 -- Anti Ice functionality
 
 -- @classmod sysAice
 -- @author Kosta Prokopiu
--- @copyright 2022 Kosta Prokopiu
+-- @copyright 2023 Kosta Prokopiu
 local sysAice = {
 }
 
@@ -17,22 +17,14 @@ local TwoStateToggleSwitch	= require "kpcrew.systems.TwoStateToggleSwitch"
 local MultiStateCmdSwitch 	= require "kpcrew.systems.MultiStateCmdSwitch"
 local InopSwitch 			= require "kpcrew.systems.InopSwitch"
 
-local drefAiceWingLeft 		= "laminar/B738/annunciator/wing_ice_on_L"
-local drefAiceWingRight 	= "laminar/B738/annunciator/wing_ice_on_R"
-local drefAiceEng1 			= "laminar/B738/annunciator/cowl_ice_on_0"
-local drefAiceEng2 			= "laminar/B738/annunciator/cowl_ice_on_1"
 
 -- ===== Switches
 
 -- Window Heat
-sysAice.windowHeatLeftSide 	= TwoStateToggleSwitch:new("wheatleftside","laminar/B738/ice/window_heat_l_side_pos",0,
-	"laminar/B738/toggle_switch/window_heat_l_side")
-sysAice.windowHeatLeftFwd 	= TwoStateToggleSwitch:new("wheatleftfwd","laminar/B738/ice/window_heat_l_fwd_pos",0,
-	"laminar/B738/toggle_switch/window_heat_l_fwd")
-sysAice.windowHeatRightSide = TwoStateToggleSwitch:new("wheatrightside","laminar/B738/ice/window_heat_r_side_pos",0,
-	"laminar/B738/toggle_switch/window_heat_r_side")
-sysAice.windowHeatRightFwd 	= TwoStateToggleSwitch:new("wheatrightfwd","laminar/B738/ice/window_heat_r_fwd_pos",0,
-	"laminar/B738/toggle_switch/window_heat_r_fwd")
+sysAice.windowHeatLeftSide 	= TwoStateDrefSwitch:new("wheatleftside","ixeg/733/antiice/ai_winheat_l_side_act",0)
+sysAice.windowHeatLeftFwd 	= TwoStateDrefSwitch:new("wheatleftfwd","ixeg/733/antiice/ai_winheat_l_fwd_act",0)
+sysAice.windowHeatRightSide = TwoStateDrefSwitch:new("wheatrightside","ixeg/733/antiice/ai_winheat_r_fwd_act",0)
+sysAice.windowHeatRightFwd 	= TwoStateDrefSwitch:new("wheatrightfwd","ixeg/733/antiice/ai_winheat_r_side_act",0)
 sysAice.windowHeatGroup 	= SwitchGroup:new("windowheat")
 sysAice.windowHeatGroup:addSwitch(sysAice.windowHeatLeftSide)
 sysAice.windowHeatGroup:addSwitch(sysAice.windowHeatLeftFwd)
@@ -40,23 +32,18 @@ sysAice.windowHeatGroup:addSwitch(sysAice.windowHeatRightSide)
 sysAice.windowHeatGroup:addSwitch(sysAice.windowHeatRightFwd) 
 
 -- Probe heat
-sysAice.probeHeatASwitch 	= TwoStateToggleSwitch:new("probeheat1","laminar/B738/toggle_switch/capt_probes_pos",0,
-	"laminar/B738/toggle_switch/capt_probes_pos")
-sysAice.probeHeatBSwitch 	= TwoStateToggleSwitch:new("probeheat2","laminar/B738/toggle_switch/fo_probes_pos",0,
-	"laminar/B738/toggle_switch/fo_probes_pos")
+sysAice.probeHeatASwitch 	= TwoStateDrefSwitch:new("probeheat1","ixeg/733/antiice/ai_pitot_a_act",0)
+sysAice.probeHeatBSwitch 	= TwoStateDrefSwitch:new("probeheat2","ixeg/733/antiice/ai_pitot_b_act",0)
 sysAice.probeHeatGroup 		= SwitchGroup:new("probeHeat")
 sysAice.probeHeatGroup:addSwitch(sysAice.probeHeatASwitch)
 sysAice.probeHeatGroup:addSwitch(sysAice.probeHeatBSwitch)
 
 -- Wing anti ice
-sysAice.wingAntiIce 		= TwoStateToggleSwitch:new("wingaice","laminar/B738/ice/wing_heat_pos",0,
-	"laminar/B738/toggle_switch/wing_heat")
+sysAice.wingAntiIce 		= TwoStateDrefSwitch:new("wingaice","ixeg/733/antiice/ai_wing_anti_ice_act",0)
 
 -- ENG anti ice
-sysAice.engAntiIce1 		= TwoStateToggleSwitch:new("eng1aice","laminar/B738/ice/eng1_heat_pos",0,
-	"laminar/B738/toggle_switch/eng1_heat")
-sysAice.engAntiIce2 		= TwoStateToggleSwitch:new("eng2aice","laminar/B738/ice/eng2_heat_pos",0,
-	"laminar/B738/toggle_switch/eng2_heat")
+sysAice.engAntiIce1 		= TwoStateDrefSwitch:new("eng1aice","ixeg/733/antiice/ai_eng1_act",0)
+sysAice.engAntiIce2 		= TwoStateDrefSwitch:new("eng2aice","ixeg/733/antiice/ai_eng2_act",0)
 sysAice.engAntiIceGroup 	= SwitchGroup:new("engantiice")
 sysAice.engAntiIceGroup:addSwitch(sysAice.engAntiIce1)
 sysAice.engAntiIceGroup:addSwitch(sysAice.engAntiIce2)
@@ -66,7 +53,7 @@ sysAice.engAntiIceGroup:addSwitch(sysAice.engAntiIce2)
 -- ** ANTI ICE annunciator
 sysAice.antiiceAnc 			= CustomAnnunciator:new("antiice",
 function ()
-	if get(drefAiceWingLeft) > 0 or get(drefAiceWingRight) > 0 or get(drefAiceEng1) > 0 or get(drefAiceEng2) > 0 then
+	if get("ixeg/733/antiice/ai_wingv1_open_ann",0) > 0 or get("ixeg/733/antiice/ai_wingv2_open_ann",0) > 0 or get("ixeg/733/antiice/ai_cowlv1_open_ann",0) > 0 or get("ixeg/733/antiice/ai_cowlv2_open_ann",0) > 0 then
 		return 1
 	else
 		return 0

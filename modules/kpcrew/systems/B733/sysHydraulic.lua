@@ -1,9 +1,9 @@
--- B738 airplane 
+-- B733 IXEG B737 PRO 
 -- Hydraulic system functionality
 
 -- @classmod sysHydraulic
 -- @author Kosta Prokopiu
--- @copyright 2022 Kosta Prokopiu
+-- @copyright 2023 Kosta Prokopiu
 local sysHydraulic = {
 }
 
@@ -17,25 +17,21 @@ local TwoStateToggleSwitch	= require "kpcrew.systems.TwoStateToggleSwitch"
 local MultiStateCmdSwitch 	= require "kpcrew.systems.MultiStateCmdSwitch"
 local InopSwitch 			= require "kpcrew.systems.InopSwitch"
 
-local drefElHydPressure1 	= "laminar/B738/annunciator/hyd_el_press_a"
-local drefElHydPressure2 	= "laminar/B738/annunciator/hyd_el_press_b"
-local drefHydPressure1 		= "laminar/B738/annunciator/hyd_press_a"
-local drefHydPressure2 		= "laminar/B738/annunciator/hyd_press_b"
+local drefElHydPressure1 	= "ixeg/733/hydraulics/hyd_elec1_lowpress_ann"
+local drefElHydPressure2 	= "ixeg/733/hydraulics/hyd_elec2_lowpress_ann"
+local drefHydPressure1 		= "ixeg/733/hydraulics/hyd_eng1_lowpress_ann"
+local drefHydPressure2 		= "ixeg/733/hydraulics/hyd_eng2_lowpress_ann"
 
 -- ===== Switches
 
-sysHydraulic.elecHydPump1 	= TwoStateToggleSwitch:new("","laminar/B738/toggle_switch/electric_hydro_pumps1_pos",0,
-	"laminar/B738/toggle_switch/electric_hydro_pumps1")
-sysHydraulic.elecHydPump2 	= TwoStateToggleSwitch:new("","laminar/B738/toggle_switch/electric_hydro_pumps2_pos",0,
-	"laminar/B738/toggle_switch/electric_hydro_pumps2")
+sysHydraulic.elecHydPump1 	= TwoStateDrefSwitch:new("","ixeg/733/hydraulics/hyd_elec1_act",0)
+sysHydraulic.elecHydPump2 	= TwoStateDrefSwitch:new("","ixeg/733/hydraulics/hyd_elec2_act",0)
 sysHydraulic.elecHydPumpGroup = SwitchGroup:new("elechydpumps")
 sysHydraulic.elecHydPumpGroup:addSwitch(sysHydraulic.elecHydPump1)
 sysHydraulic.elecHydPumpGroup:addSwitch(sysHydraulic.elecHydPump2)
 
-sysHydraulic.engHydPump1 	= TwoStateToggleSwitch:new("","laminar/B738/toggle_switch/hydro_pumps1_pos",0,
-	"laminar/B738/toggle_switch/hydro_pumps1")
-sysHydraulic.engHydPump2 	= TwoStateToggleSwitch:new("","laminar/B738/toggle_switch/hydro_pumps2_pos",0,
-	"laminar/B738/toggle_switch/hydro_pumps2")
+sysHydraulic.engHydPump1 	= TwoStateToggleSwitch:new("","ixeg/733/hydraulics/hyd_eng1_act",0)
+sysHydraulic.engHydPump2 	= TwoStateToggleSwitch:new("","ixeg/733/hydraulics/hyd_eng2_act",0)
 sysHydraulic.engHydPumpGroup = SwitchGroup:new("enghydpumps")
 sysHydraulic.engHydPumpGroup:addSwitch(sysHydraulic.engHydPump1)
 sysHydraulic.engHydPumpGroup:addSwitch(sysHydraulic.engHydPump2)

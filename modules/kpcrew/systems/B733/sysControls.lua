@@ -1,9 +1,9 @@
--- B738 airplane 
+-- B733 IXEG 737 PRO 
 -- Flight Controls functionality
 
 -- @classmod sysControls
 -- @author Kosta Prokopiu
--- @copyright 2022 Kosta Prokopiu
+-- @copyright 2023 Kosta Prokopiu
 local sysControls = {
 	trimCenter 	= 2,
 	trimLeft 	= 1,
@@ -112,47 +112,35 @@ sysControls.rudderReset 	= TwoStateToggleSwitch:new("rudderreset","sim/cockpit2/
 	"sim/flight_controls/rudder_trim_center")
 
 -- Yaw damper
-sysControls.yawDamper 		= TwoStateToggleSwitch:new("yawdamper","laminar/B738/toggle_switch/yaw_dumper_pos",0,
-	"laminar/B738/toggle_switch/yaw_dumper")
+sysControls.yawDamper 		= TwoStateDrefSwitch:new("yawdamper","ixeg/733/hydraulics/yaw_damper_act",0)
 
 -- flaps ctrl
-sysControls.altFlaps 		= TwoStateToggleSwitch:new("altflaps","laminar/B738/toggle_switch/alt_flaps_pos",0,
-	"laminar/B738/toggle_switch/alt_flaps")
-sysControls.altFlapsCover 	= TwoStateToggleSwitch:new("altflapscover","laminar/B738/switches/alt_flaps_cover_pos",0,
-	"laminar/B738/toggle_switch/alt_flaps_cover")
-sysControls.altFlapsCtrl 	= MultiStateCmdSwitch:new("altflapsctrl","laminar/B738/toggle_switch/alt_flaps_ctrl",0,
-	"laminar/B738/toggle_switch/alt_flaps_ctrl_dn","laminar/B738/toggle_switch/alt_flaps_ctrl_up",-1,1,false)
+sysControls.altFlaps 		= InopSwitch:new("altflaps")
+sysControls.altFlapsCover 	= TwoStateDrefSwitch:new("altflapscover","ixeg/733/hydraulics/alt_flaps_guard",0)
+sysControls.altFlapsCtrl 	= InopSwitch:new("altflapsctrl")
 
 -- flight controls
-sysControls.fltCtrlASwitch 	= MultiStateCmdSwitch:new("fltctrl1","laminar/B738/switches/flt_ctr_A_pos",0,
-	"laminar/B738/toggle_switch/flt_ctr_A_dn","laminar/B738/toggle_switch/flt_ctr_A_up",-1,1,true)
-sysControls.fltCtrlBSwitch 	= MultiStateCmdSwitch:new("fltctrl2","laminar/B738/switches/flt_ctr_B_pos",0,
-	"laminar/B738/toggle_switch/flt_ctr_B_dn","laminar/B738/toggle_switch/flt_ctr_B_up",-1,1,true)
+sysControls.fltCtrlASwitch 	= InopSwitch:new("fltctrl1")
+sysControls.fltCtrlBSwitch 	= InopSwitch:new("fltctrl2")
 sysControls.fltCtrlSwitches = SwitchGroup:new("fltCtrlSwitches")
 sysControls.fltCtrlSwitches:addSwitch(sysControls.fltCtrlASwitch) 
 sysControls.fltCtrlSwitches:addSwitch(sysControls.fltCtrlBSwitch) 
 
-sysControls.fltCtrlACover 	= TwoStateToggleSwitch:new("fltctrl1cvr","laminar/B738/switches/flt_ctr_A_cover_pos",0,
-	"laminar/B738/toggle_switch/flt_ctr_A_cover")
-sysControls.fltCtrlBCover 	= TwoStateToggleSwitch:new("fltctrl2cvr","laminar/B738/switches/flt_ctr_B_cover_pos",0,
-	"laminar/B738/toggle_switch/flt_ctr_B_cover")
+sysControls.fltCtrlACover 	= TwoStateToggleSwitch:new("fltctrl1cvr","ixeg/733/hydraulics/flt_control_A_guard",0)
+sysControls.fltCtrlBCover 	= TwoStateToggleSwitch:new("fltctrl2cvr","ixeg/733/hydraulics/flt_control_B_guard",0)
 sysControls.fltCtrlCovers 	= SwitchGroup:new("fltCtrlCovers")
 sysControls.fltCtrlCovers:addSwitch(sysControls.fltCtrlACover) 
 sysControls.fltCtrlCovers:addSwitch(sysControls.fltCtrlBCover) 
 
 -- Spoilers
-sysControls.spoilerASwitch 	= TwoStateToggleSwitch:new("spoilera","laminar/B738/switches/spoiler_A_pos",0,
-	"laminar/B738/toggle_switch/spoiler_A")
-sysControls.spoilerBSwitch 	= TwoStateToggleSwitch:new("spoilerb","laminar/B738/switches/spoiler_B_pos",0,
-	"laminar/B738/toggle_switch/spoiler_B")
+sysControls.spoilerASwitch 	= InopSwitch:new("spoilera")
+sysControls.spoilerBSwitch 	= InopSwitch:new("spoilerb")
 sysControls.spoilerSwitches = SwitchGroup:new("spoilerSwitches")
 sysControls.spoilerSwitches:addSwitch(sysControls.spoilerASwitch) 
 sysControls.spoilerSwitches:addSwitch(sysControls.spoilerBSwitch) 
 
-sysControls.spoilerACover 	= TwoStateToggleSwitch:new("spoilercvr1","laminar/B738/switches/spoiler_A_cover_pos",0,
-	"laminar/B738/toggle_switch/spoiler_A_cover")
-sysControls.spoilerBCover 	= TwoStateToggleSwitch:new("spoilercvr2","laminar/B738/switches/spoiler_B_cover_pos",0,
-	"laminar/B738/toggle_switch/spoiler_B_cover")
+sysControls.spoilerACover 	= TwoStateDrefSwitch:new("spoilercvr1","ixeg/733/hydraulics/spoiler_A_guard",0)
+sysControls.spoilerBCover 	= TwoStateDrefSwitch:new("spoilercvr2","ixeg/733/hydraulics/spoiler_B_guard",0)
 sysControls.spoilerCovers 	= SwitchGroup:new("spoilerCovers")
 sysControls.spoilerCovers:addSwitch(sysControls.spoilerACover) 
 sysControls.spoilerCovers:addSwitch(sysControls.spoilerBCover) 

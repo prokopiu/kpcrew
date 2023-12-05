@@ -1,9 +1,9 @@
--- B738 airplane 
+-- B733 IXEG B737 Plus
 -- Radio functionality
 
 -- @classmod sysRadios
 -- @author Kosta Prokopiu
--- @copyright 2022 Kosta Prokopiu
+-- @copyright 2023 Kosta Prokopiu
 local sysRadios = {
 	xpdrTest 	= 0,
 	xpdrStby 	= 1,
