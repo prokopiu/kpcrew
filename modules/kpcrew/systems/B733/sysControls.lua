@@ -31,7 +31,7 @@ local InopSwitch 			= require "kpcrew.systems.InopSwitch"
 --------- Switches
 
 -- Flaps 
-sysControls.flapsSwitch 	= TwoStateCustomSwitch:new("flaps","laminar/B738/flt_ctrls/flap_lever",0,
+sysControls.flapsSwitch 	= TwoStateCustomSwitch:new("flaps","ixeg/733/hydraulics/hyd_flap_lever_act",0,
 	function () 
 		command_once("sim/flight_controls/flaps_down")
 	end,

@@ -320,18 +320,18 @@ sysGeneral.irs2OnDC = SimpleAnnunciator:new("","ixeg/733/irs/irs2_ondc_ann",0)
 
 sysGeneral.annunciators = CustomAnnunciator:new("annunc",
 function () 
-	local sum = get("laminar/B738/annunciator/six_pack_air_cond") +
-				get("laminar/B738/annunciator/six_pack_apu") + 
-				get("laminar/B738/annunciator/six_pack_doors") + 
-				get("laminar/B738/annunciator/six_pack_elec") + 
-				get("laminar/B738/annunciator/six_pack_eng") + 
-				get("laminar/B738/annunciator/six_pack_fire") + 
-				get("laminar/B738/annunciator/six_pack_flt_cont") + 
-				get("laminar/B738/annunciator/six_pack_fuel") + 
-				get("laminar/B738/annunciator/six_pack_hyd") + 
-				get("laminar/B738/annunciator/six_pack_ice") + 
-				get("laminar/B738/annunciator/six_pack_irs") + 
-				get("laminar/B738/annunciator/six_pack_overhead")
+	local sum = get("ixeg/733/caution/caution_aircond_ann") +
+				get("ixeg/733/caution/caution_apu_ann") + 
+				get("ixeg/733/caution/caution_doors_ann") + 
+				get("ixeg/733/caution/caution_elec_ann") + 
+				get("ixeg/733/caution/caution_eng_ann") + 
+				get("ixeg/733/caution/caution_ovhtdet_ann") + 
+				get("ixeg/733/caution/caution_fltcont_ann") + 
+				get("ixeg/733/caution/caution_fuel_ann") + 
+				get("ixeg/733/caution/caution_hyd_ann") + 
+				get("ixeg/733/caution/caution_antiice_ann") + 
+				get("ixeg/733/caution/caution_irs_ann") + 
+				get("ixeg/733/caution/caution_overhead_ann")
 	if sum > 0 then 
 		return 1
 	else

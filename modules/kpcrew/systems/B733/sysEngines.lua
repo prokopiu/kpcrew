@@ -111,8 +111,7 @@ sysEngines.startLeverGroup:addSwitch(sysEngines.startLever2)
 sysEngines.ignSelectSwitch 	= TwoStateDrefSwitch:new("",drefIgnitionSelector,0)
 
 -- OVHT Test
-sysEngines.ovhtFireTestSwitch = KeepPressedSwitchCmd:new("OVHTtest","laminar/B738/toggle_switch/fire_test",0,
-	"laminar/B738/toggle_switch/fire_test_rgt")
+sysEngines.ovhtFireTestSwitch = TwoStateDrefSwitch:new("OVHTtest","ixeg/733/firewarning/fire_ovht_test_act",0)
 
 -- STARTER Switches
 sysEngines.engStart1Switch 	= TwoStateDrefSwitch:new("",drefEngine1Starter,0)

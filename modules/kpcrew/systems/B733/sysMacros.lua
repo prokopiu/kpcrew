@@ -782,18 +782,18 @@ function kc_bck_b738_toc_test(trigger)
 	end
 end
 
--- B738 OVHT fire test
-function kc_bck_b738_ovht_test(trigger)
+-- B733 OVHT fire test
+function kc_bck_b733_ovht_test(trigger)
 	local delayvar = trigger .. "delay"
 	if kc_procvar_exists(delayvar) == false then
 		kc_procvar_initialize_count(delayvar,-1)
 	end
 	if kc_procvar_get(delayvar) == -1 then
 		kc_procvar_set(delayvar,0)
-		sysEngines.ovhtFireTestSwitch:repeatOn()
+		sysEngines.ovhtFireTestSwitch:actuate(1)
 	else
 		if kc_procvar_get(delayvar) <= 0 then
-			sysEngines.ovhtFireTestSwitch:repeatOff()
+			sysEngines.ovhtFireTestSwitch:actuate(0)
 			kc_procvar_set(trigger,false)
 			kc_procvar_set(delayvar,-1)
 		else
@@ -1022,24 +1022,14 @@ function kc_bck_b738_tcas_test(trigger)
 	end
 end
 
--- B738 APU START
-function kc_bck_b738_apustart(trigger)
+-- B733 APU START
+function kc_bck_b733_apustart(trigger)
 	local delayvar = trigger .. "delay"
-	if kc_procvar_exists(delayvar) == false then
-		kc_procvar_initialize_count(delayvar,-1)
-	end
-	if kc_procvar_get(delayvar) == -1 then
-		kc_procvar_set(delayvar,1)
-		command_once("laminar/B738/spring_toggle_switch/APU_start_pos_dn")
-		command_begin("laminar/B738/spring_toggle_switch/APU_start_pos_dn")
+	if get("ixeg/733/apu/apu_egt_ind") < 8 then
+		set("ixeg/733/apu/apu_start_switch_act",1)
 	else
-		if kc_procvar_get(delayvar) <= 0 then
-			command_end("laminar/B738/spring_toggle_switch/APU_start_pos_dn")
-			kc_procvar_set(trigger,false)
-			kc_procvar_set(delayvar,-1)
-		else
-			kc_procvar_set(delayvar,kc_procvar_get(delayvar)-1)
-		end
+		set("ixeg/733/apu/apu_start_switch_act",0)
+		kc_procvar_set(trigger,false)
 	end
 end
 

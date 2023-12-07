@@ -68,6 +68,9 @@ sysElectric.gpuSwitch 		= TwoStateDrefSwitch:new("GPU","ixeg/733/electrical/elec
 -- APU Bus Switches
 sysElectric.apuGenBus1 		= TwoStateDrefSwitch:new("apubus1","ixeg/733/electrical/elec_apu_gen1_onoff_act",0)
 sysElectric.apuGenBus2 		= TwoStateDrefSwitch:new("apubus2","ixeg/733/electrical/elec_apu_gen2_onoff_act",0)
+sysElectric.apuGenSwitches	= SwitchGroup:new("apugenswitches")
+sysElectric.apuGenSwitches:addSwitch(sysElectric.apuGenBus1)
+sysElectric.apuGenSwitches:addSwitch(sysElectric.apuGenBus2)
 
 -- GEN drive shaft
 sysElectric.genDrive1Switch = TwoStateDrefSwitch:new("drive1","ixeg/733/electrical/elec_gen1_disc_act",0)
@@ -116,7 +119,9 @@ sysElectric.avionicsSwitchGroup:addSwitch(sysElectric.avionics2Bus)
 sysElectric.lowVoltageAnc 	= SimpleAnnunciator:new("lowvoltage","sim/cockpit2/annunciators/low_voltage",0)
 
 -- APU RUNNING annunciator
-sysElectric.apuRunningAnc 	= SimpleAnnunciator:new("apurunning","sim/cockpit2/electrical/APU_running",0)
+sysElectric.apuRunningAnc 	= CustomAnnunciator:new("apurunning",function (self) 
+	if get("ixeg/733/apu/apu_egt_ind") > 90 then return 1 else return 0 end 
+end)
 
 -- GPU AVAILABLE annunciator
 sysElectric.gpuAvailAnc 	= CustomAnnunciator:new("gpuavail",function (self) 
@@ -137,7 +142,7 @@ sysElectric.transferBus2 	= InopSwitch:new("trbus2","",0)
 sysElectric.sourceOff1 		= InopSwitch:new("srcoff1","",0)
 sysElectric.sourceOff2 		= InopSwitch:new("srcoff2","",0)
 
-sysElectric.stbyPwrOff 		= SimpleAnnunciator:new("stbypwroff","ixeg/733/electrical/elec_stby_power_act",0)
+sysElectric.stbyPwrOff 		= SimpleAnnunciator:new("stbypwroff","ixeg/733/electrical/stdby_power_off_ann",0)
 
 sysElectric.gen1off 		= SimpleAnnunciator:new("gen1off","ixeg/733/electrical/elec_gen1_onoff_act",0)
 sysElectric.gen2off 		= SimpleAnnunciator:new("gen2off","ixeg/733/electrical/elec_gen2_onoff_act",1)
