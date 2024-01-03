@@ -54,16 +54,13 @@ kcSopFlightPhase = { [1] = "Cold & Dark", 	[2] = "Prel Preflight", [3] = "Prefli
 
 activeSOP = SOP:new("Zibo Mod SOP")
 
-local testProc = Checklist:new("TEST","","")
-testProc:addItem(IndirectChecklistItem:new("FUEL","TESTED 100 #exchange|PERC|percent",FlowItem.actorFO,0,"oxygentestedcpt",
-	function () return get("laminar/B738/push_button/oxy_test_cpt_pos") == 1 end))
-testProc:addItem(ChecklistItem:new("WINDOW HEAT","ON",FlowItem.actorFO,0,
+local testProc = Procedure:new("TEST","","")
+testProc:addItem(ProcedureItem:new("TEST","TESTED",FlowItem.actorFO,1,
+	function () return true end,
 	function () 
-			return sysMCP.vhfNavSwitch:getStatus() == 0 and 
-			sysMCP.irsNavSwitch:getStatus() == 0 and 
-			sysMCP.fmcNavSwitch:getStatus() == 0 and 
-			sysMCP.displaySourceSwitch:getStatus() == 0 and 
-			sysMCP.displayControlSwitch:getStatus() == 0 
+		show_windoz()
+		show_Automatic_sequence_start = true
+		SGES_Automatic_sequence_start_flight_time_sec = SGES_total_flight_time_sec
 	end))
 
 -- ============ Electrical Power Up Procedure ============
@@ -132,7 +129,12 @@ electricalPowerUpProc:addItem(ProcedureItem:new("CIRCUIT BREAKERS (P6 PANEL)","C
 electricalPowerUpProc:addItem(ProcedureItem:new("CIRCUIT BREAKERS (CONTROL,P18 PANEL)","CHECK ALL IN",FlowItem.actorFO,0,true))
 electricalPowerUpProc:addItem(ProcedureItem:new("DC POWER SWITCH","BAT",FlowItem.actorFO,0,
 	function () return sysElectric.dcPowerSwitch:getStatus() == sysElectric.dcPwrBAT end,
-	function () sysElectric.dcPowerSwitch:actuate(sysElectric.dcPwrBAT) end))
+	function () 
+		sysElectric.dcPowerSwitch:actuate(sysElectric.dcPwrBAT) 
+		if activePrefSet:get("general:sges") == true then
+			kc_macro_start_sges_sequence()
+		end
+	end))
 electricalPowerUpProc:addItem(IndirectProcedureItem:new("BATTERY VOLTAGE","CHECK MIN 24V",FlowItem.actorFO,0,"bat24v",
 	function () return get("laminar/B738/dc_volt_value") > 23 end))
 electricalPowerUpProc:addItem(ProcedureItem:new("BATTERY SWITCH","GUARD CLOSED",FlowItem.actorFO,0,
@@ -2635,6 +2637,9 @@ coldAndDarkProc:setFlightPhase(1)
 coldAndDarkProc:addItem(ProcedureItem:new("OVERHEAD TOP","SET","SYS",0,true,
 	function () 
 		kc_macro_state_cold_and_dark()
+		if activePrefSet:get("general:sges") == true then
+			kc_macro_start_sges_sequence()
+		end
 		getActiveSOP():setActiveFlowIndex(1)
 	end))
 	
@@ -2644,6 +2649,9 @@ turnAroundProc:setFlightPhase(18)
 turnAroundProc:addItem(ProcedureItem:new("OVERHEAD TOP","SET","SYS",0,true,
 	function () 
 		kc_macro_state_turnaround()
+		if activePrefSet:get("general:sges") == true then
+			kc_macro_start_sges_sequence()
+		end
 	end))
 turnAroundProc:addItem(ProcedureItem:new("GPU","ON BUS","SYS",0,true,
 	function () 
