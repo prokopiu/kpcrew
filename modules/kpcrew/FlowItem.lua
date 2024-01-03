@@ -23,6 +23,8 @@ local kcFlowItem = {
 	actorLHS 			= "LHS",	-- left hand seat (you)
 	actorRHS 			= "RHS",	-- right hand seat (virtual)
 	actorFE				= "FE",		-- flight engineer on some aircraft (virtual)
+	actorCM1			= "CM1",	-- Crew Management 1 = Captain
+	actorCM2			= "CM2",	-- Crew Management 2 = FO
 	actorALL 			= "ALL",
 	actorNONE 			= "",
 
@@ -73,9 +75,9 @@ function kcFlowItem:getClassName()
 end
 
 -- return true if the actor for the item is the sim pilot
--- @treturn boolean true = is the user's role as CPT,PF,LHS
+-- @treturn boolean true = is the user's role as CPT,PF,LHS, CM1
 function kcFlowItem:isUserRole()
-	local userroles = {	self.actorPF, self.actorCPT, self.actorLHS, self.actorBOTH }
+	local userroles = {	self.actorPF, self.actorCPT, self.actorLHS, self.actorBOTH, self.actorCM1 }
 	return kc_hasValue(userroles, self.actor)
 end	
 	
