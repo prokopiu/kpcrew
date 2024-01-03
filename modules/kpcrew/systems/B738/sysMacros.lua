@@ -15,7 +15,8 @@ local sysMacros = {
 -- preflight events app 30 minutes
 function kc_bck_preflight_events()
 -- 	if SGES installed then
--- 		command_once("Simple_Ground_Equipment_and_Services/Window/Show")
+ 	command_once("Simple_Ground_Equipment_and_Services/Window/Show")
+	command_once("sges/sequence/start")
 -- 	end
 
 -- +25 minutes
@@ -240,6 +241,13 @@ function kc_macro_state_turnaround()
 
 	kc_macro_efis_initial()
 
+end
+
+-- start SGES start sequence
+function kc_macro_start_sges_sequence()
+		-- show_windoz()
+		show_Automatic_sequence_start = true
+		SGES_Automatic_sequence_start_flight_time_sec = SGES_total_flight_time_sec
 end
 
 -- external lights all off

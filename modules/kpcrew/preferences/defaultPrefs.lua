@@ -1,13 +1,15 @@
 activePrefSet = kcPreferenceSet:new("PREFERENCES")
 
 kc_assistance_levels = "No assistance|Guided|Some automation|Fully automatic"
+kc_weight_units = "KGS|LBS"
+kc_baro_units = "HPA|IN"
 
 local generalGroup = kcPreferenceGroup:new("general","GENERAL PREFERENCES")
 generalGroup:setInitialOpen(true)
 -- generalGroup:add(kcPreference:new("test",1,kcPreference.typeInfo,"TEST|"))
 generalGroup:add(kcPreference:new("assistance",1,kcPreference.typeList,"Assistance Level|" .. kc_assistance_levels))
-generalGroup:add(kcPreference:new("weight_kgs",true,kcPreference.typeToggle,"Weight Units|KGS|LBS"))
-generalGroup:add(kcPreference:new("baro_mode_hpa",true,kcPreference.typeToggle,"EFIS Default Baro Mode (Both)|HPA|IN"))
+generalGroup:add(kcPreference:new("weight_kgs",true,kcPreference.typeToggle,"Weight Units|" .. kc_weight_units))
+generalGroup:add(kcPreference:new("baro_mode_hpa",true,kcPreference.typeToggle,"EFIS Default Baro Mode (Both)|" .. kc_baro_units))
 generalGroup:add(kcPreference:new("def_trans_alt",5000,kcPreference.typeInt,"Default Transition Altitude (ft)|100"))
 generalGroup:add(kcPreference:new("def_trans_lvl",50,kcPreference.typeInt,"Default Transition Level (FL)|10"))
 generalGroup:add(kcPreference:new("flowAutoOpen",false,kcPreference.typeToggle,"Flow window on start|Open flows|Do not open flows"))
@@ -17,6 +19,7 @@ generalGroup:add(kcPreference:new("xpdrusa",false,kcPreference.typeToggle,"Trans
 generalGroup:add(kcPreference:new("simbriefuser"," ",kcPreference.typeText,"SIMBRIEF Username|"))
 generalGroup:add(kcPreference:new("vatsimMetar",false,kcPreference.typeToggle,"VATSIM METAR|Load ON|Load OFF"))
 generalGroup:add(kcPreference:new("betterPushback",false,kcPreference.typeToggle,"BetterPushback|Use|Don't use"))
+generalGroup:add(kcPreference:new("sges",false,kcPreference.typeToggle,"Simple Ground Services|Use GSES|Don't use SGES"))
 
 
 activePrefSet:addGroup(generalGroup)

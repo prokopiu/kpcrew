@@ -61,12 +61,13 @@ testProc:addItem(ChecklistItem:new("APU","ON",FlowItem.actorFO,3,
 			kc_procvar_set("apustart",true)
 	end))
 
-
 -- ============ Electrical Power Up Procedure ===========
 -- == Initial checks
--- ==== DC Electric Power
--- DC METER SWITCH..........................BAT BUS (F/O)
--- AC METER SWITCH..........................APU GEN (F/O)
+-- PARKING BRAKE................................SET (F/O)
+-- ENGINE START LEVERS.......................CUTOFF (F/O)
+-- FLAP LEVER....................................UP (F/O)
+-- DC POWER SELECTOR........................BAT BUS (F/O)
+-- AC POWER SELECTOR........................APU GEN (F/O)
 -- BATTERY VOLTAGE..........................MIN 24V (F/O)
 -- BATTERY SWITCH......................GUARD CLOSED (F/O)
 -- STANDBY POWER SWITCH................GUARD CLOSED (F/O)
@@ -97,6 +98,7 @@ testProc:addItem(ChecklistItem:new("APU","ON",FlowItem.actorFO,3,
 -- SOURCE OFF LIGHTS.............CHECK EXTINGUISHED (F/O)
 -- STANDBY POWER.................................ON (F/O)
 --   STANDBY PWR LIGHT...........CHECK EXTINGUISHED (F/O)          
+-- ======================================================
 
 local electricalPowerUpProc = Procedure:new("ELECTRICAL POWER UP (F/O)","performing ELECTRICAL POWER UP")
 electricalPowerUpProc:setFlightPhase(1)
@@ -108,6 +110,7 @@ electricalPowerUpProc:addItem(ProcedureItem:new("ENGINE START LEVERS","CUTOFF",F
 	function () return sysEngines.startLever1:getStatus() == 0 and sysEngines.startLever2:getStatus() == 0 end))
 electricalPowerUpProc:addItem(IndirectProcedureItem:new("FLAP LEVER","UP",FlowItem.actorFO,0,"initial_flap_lever",
 	function () return sysControls.flapsSwitch:getStatus() == 0 end))
+	
 electricalPowerUpProc:addItem(SimpleProcedureItem:new("==== DC Electric Power"))
 electricalPowerUpProc:addItem(ProcedureItem:new("DC POWER SELECTOR","BAT BUS",FlowItem.actorFO,1,
 	function () return sysElectric.dcPowerSwitch:getStatus() == sysElectric.dcPwrBBUS end,
@@ -121,7 +124,6 @@ electricalPowerUpProc:addItem(ProcedureItem:new("BATTERY SWITCH","ON",FlowItem.a
 electricalPowerUpProc:addItem(ProcedureItem:new("BATTERY SWITCH","GUARD CLOSED",FlowItem.actorFO,1,
 	function () return sysElectric.batteryCover:getStatus() == 0 end,
 	function () sysElectric.batteryCover:actuate(0) end))
-
 electricalPowerUpProc:addItem(IndirectProcedureItem:new("BATTERY VOLTAGE","MIN 24V",FlowItem.actorFO,1,"bat24v",
 	function () return sysElectric.batt1Volt:getStatus() > 23 end))
 electricalPowerUpProc:addItem(ProcedureItem:new("STANDBY POWER SWITCH","GUARD CLOSED",FlowItem.actorFO,1,
@@ -200,6 +202,39 @@ electricalPowerUpProc:addItem(ProcedureItem:new("STANDBY POWER","ON",FlowItem.ac
 electricalPowerUpProc:addItem(ProcedureItem:new("   STANDBY #exchange|PWR|POWER# LIGHT","CHECK EXTINGUISHED",FlowItem.actorFO,1,
 	function () return sysElectric.stbyPwrOff:getStatus() == 0 end))
 electricalPowerUpProc:addItem(SimpleProcedureItem:new("Next: Preliminary Preflight Procedure"))
+
+
+-- Cockpit Preparation
+-- sw_item:Throttle|IDLE:sim/cockpit2/engine/actuators/throttle_ratio_all:0.06|0.09
+-- sw_item:Left pack|OFF:ixeg/733/bleedair/bleedair_lpack_act:0
+-- sw_item:Right pack|OFF:ixeg/733/bleedair/bleedair_rpack_act:0
+-- sw_item:All Bleeds|OFF:(ixeg/733/bleedair/bleedair_apu_act:0)&&(ixeg/733/bleedair/bleedair_eng1_act:0)&&(ixeg/733/bleedair/bleedair_eng2_act:0)
+-- sw_item:All Fuel Pumps|OFF:(ixeg/733/fuel/fuel_1_aft_act:0)&&(ixeg/733/fuel/fuel_2_aft_act:0)&&(ixeg/733/fuel/fuel_1_fwd_act:0)&&(ixeg/733/fuel/fuel_2_fwd_act:0)&&(ixeg/733/fuel/fuel_ctr_left_act:0)&&(ixeg/733/fuel/fuel_ctr_right_act:0)
+-- sw_item:Spoilers|RETRACTED:sim/cockpit2/controls/speedbrake_ratio:0
+-- sw_item:Flaps|UP:sim/cockpit2/controls/flap_ratio:0.0
+-- sw_item:Stab Trims|NORMAL & LOCKS:(ixeg/733/hydraulics/stab_trim_ovrd_act:0)&&(ixeg/733/hydraulics/stab_trim_ovrd_guard:0)
+-- sw_item:Weather Radar|OFF:ixeg/733/wxr/wxr_onoff_act:0
+-- sw_item:Panel Light Bright on Overhead|FULL:ixeg/733/rheostats/light_overhead_act:1
+-- sw_item:All Panel Lights Bright Left and Right Side|FULL:(ixeg/733/lighting/light_main_pilot_side:>0.2)&&(ixeg/733/lighting/light_main_background:>0.2)&&(ixeg/733/lighting/light_afds_flood:>0.2)&&(ixeg/733/lighting/light_main_copilot_side:>0.2)
+-- sw_item:All Flood and Panel Lights Bright Lower Pedestal|FULL:(ixeg/733/lighting/light_pedflood:>1)&&(ixeg/733/lighting/light_pedpanel:>0.2)
+-- sw_item:All Extrenal Lights|OFF:(ixeg/733/lighting/wheel_well_lt_act:0)&&(ixeg/733/lighting/wing_lt_act:0)&&(ixeg/733/lighting/anti_col_lt_act:0)&&(ixeg/733/lighting/position_lt_act:0)&&(ixeg/733/lighting/strobe_lt_act:0)&&(ixeg/733/lighting/logo_lt_act:0)&&(ixeg/733/lighting/taxi_lt_act:0)&&(ixeg/733/lighting/r_rwy_turnoff_act:0)&&(ixeg/733/lighting/l_rwy_turnoff_act:0)&&(sim/cockpit2/switches/landing_lights_switch[2]:0)&&(sim/cockpit2/switches/landing_lights_switch[3]:0)&&(sim/cockpit2/switches/landing_lights_switch[4]:0)&&(sim/cockpit2/switches/landing_lights_switch{5}:0)
+-- sw_item:Position light|ON:ixeg/733/lighting/position_lt_act:1
+-- sw_item:Logo wing & wheel lights|AS NEEDED
+-- sw_item:Oxygen|CHECK:ixeg/733/pressurization/pilots_oxy_test_act:1
+-- sw_item:IRS selector|NAV:(ixeg/733/irs/irs_left_mode_act:2)&&(ixeg/733/irs/irs_right_mode_act:2)
+-- sw_itemvoid:Verify that the ON DC lights illuminate then extinguish
+-- sw_itemvoid:Verify that the ALIGN lights are illuminated
+-- sw_item:stall warning test 1|CHECK:ixeg/733/airspeed/stallwarn_test_01_act:1
+-- sw_item:stall warning test 2|CHECK:ixeg/733/airspeed/stallwarn_test_02_act:1
+-- sw_item:match airspedd warning 1|CHECK:ixeg/733/airspeed/clacker_test_01_act:1
+-- sw_item:match airspedd warning 2|CHECK:ixeg/733/airspeed/clacker_test_02_act:1
+-- sw_item:Flight Controls A and B guard|CLOSED:(ixeg/733/hydraulics/flt_control_A_guard:0)&&(ixeg/733/hydraulics/flt_control_B_guard:0)
+-- sw_item:Spoiler A and B guard|CLOSED(ixeg/733/hydraulics/spoiler_A_guard:0)&&(ixeg/733/hydraulics/spoiler_B_guard:0)
+-- sw_item:Alternate Flaps guard|CLOSED:ixeg/733/hydraulics/alt_flaps_guard:0
+-- sw_item:Yaw damper|ON:ixeg/733/hydraulics/yaw_damper_act:1
+-- sw_item:All intrumental transfer Switches Audio EFI IRS|NORMAL:ixeg/733/misc/audio_obs_act:0
+
+
 
 -- ============ Preliminary Preflight Procedures ========
 -- EMERGENCY EXIT LIGHT.........ARM/ON GUARD CLOSED (F/O)
@@ -1470,7 +1505,7 @@ electricalPowerUpProc:addItem(SimpleProcedureItem:new("Next: Preliminary Preflig
 
 -- ============  =============
 -- add the checklists and procedures to the active sop
-activeSOP:addProcedure(testProc)
+-- activeSOP:addProcedure(testProc)
 activeSOP:addProcedure(electricalPowerUpProc)
 
 
