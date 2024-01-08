@@ -55,12 +55,56 @@ kcSopFlightPhase = { [1] = "Cold & Dark", 	[2] = "Prel Preflight", [3] = "Prefli
 activeSOP = SOP:new("Zibo Mod SOP")
 
 local testProc = Procedure:new("TEST","","")
-testProc:addItem(ProcedureItem:new("TEST","TESTED",FlowItem.actorFO,1,
-	function () return true end,
+testProc:setFlightPhase(1)
+testProc:addItem(ProcedureItem:new("LIGHTS","ALL ON",FlowItem.actorFO,5,false,
 	function () 
-		show_windoz()
-		show_Automatic_sequence_start = true
-		SGES_Automatic_sequence_start_flight_time_sec = SGES_total_flight_time_sec
+	  kc_macro_lights_all_on()
+	end))
+testProc:addItem(ProcedureItem:new("LIGHTS","COLD&DARK",FlowItem.actorFO,5,true,
+	function () 
+	  kc_macro_lights_cold_dark()
+	end))
+testProc:addItem(ProcedureItem:new("LIGHTS","PREFLIGHT",FlowItem.actorFO,5,true,
+	function () 
+	  kc_macro_lights_preflight()
+	  sysLights.domeLightSwitch:actuate(0)
+	end))
+testProc:addItem(ProcedureItem:new("LIGHTS","BEFORE START",FlowItem.actorFO,5,true,
+	function () 
+	  kc_macro_lights_before_start()
+	  
+	end))
+testProc:addItem(ProcedureItem:new("LIGHTS","BEFORE TAXI",FlowItem.actorFO,5,true,
+	function () 
+	  kc_macro_lights_before_taxi()
+	end))
+testProc:addItem(ProcedureItem:new("LIGHTS","TAKEOFF",FlowItem.actorFO,5,true,
+	function () 
+	  kc_macro_lights_for_takeoff()
+	end))
+testProc:addItem(ProcedureItem:new("LIGHTS","CLMB 10K",FlowItem.actorFO,5,true,
+	function () 
+	  kc_macro_lights_climb_10k()
+	end))
+testProc:addItem(ProcedureItem:new("LIGHTS","DESC 10K",FlowItem.actorFO,5,true,
+	function () 
+	  kc_macro_lights_descend_10k()
+	end))
+testProc:addItem(ProcedureItem:new("LIGHTS","APPROACH",FlowItem.actorFO,5,true,
+	function () 
+	  kc_macro_lights_approach()
+	end))
+testProc:addItem(ProcedureItem:new("LIGHTS","CLEANUP",FlowItem.actorFO,5,true,
+	function () 
+	  kc_macro_lights_cleanup()
+	end))
+testProc:addItem(ProcedureItem:new("LIGHTS","ARRIVE PARKING",FlowItem.actorFO,5,true,
+	function () 
+	  kc_macro_lights_arrive_parking()
+	end))
+testProc:addItem(ProcedureItem:new("LIGHTS","SHUTDOWN",FlowItem.actorFO,5,true,
+	function () 
+	  kc_macro_lights_after_shutdown()
 	end))
 
 -- ============ Electrical Power Up Procedure ============
@@ -2761,7 +2805,7 @@ backgroundFlow:addItem(BackgroundProcedureItem:new("","","SYS",0,
 
 -- ============  =============
 -- add the checklists and procedures to the active sop
--- activeSOP:addProcedure(testProc)
+activeSOP:addProcedure(testProc)
 activeSOP:addProcedure(electricalPowerUpProc)
 activeSOP:addProcedure(prelPreflightProc)
 activeSOP:addProcedure(cduPreflightProc)
