@@ -48,7 +48,8 @@ kcSopFlightPhase = { [1] = "Cold & Dark", 	[2] = "Prel Preflight", [3] = "Prefli
 					 [5] = "After Start", 	[6] = "Taxi to Runway", [7] = "Before Takeoff", [8] = "Takeoff",
 					 [9] = "Climb", 		[10] = "Enroute", 		[11] = "Descent", 		[12] = "Arrival", 
 					 [13] = "Approach", 	[14] = "Landing", 		[15] = "Turnoff", 		[16] = "Taxi to Stand", 
-					 [17] = "Shutdown", 	[18] = "Turnaround",	[19] = "Flightplanning", [0] = "" }
+					 [17] = "Shutdown", 	[18] = "Turnaround",	[19] = "Flightplanning", [20] = "Go Around", [0] = "" }
+					 
 
 -- Set up SOP =========================================================================
 
@@ -56,14 +57,57 @@ activeSOP = SOP:new("Default Aircraft SOP")
 
 local testProc = Procedure:new("TEST","","")
 testProc:setFlightPhase(1)
-testProc:addItem(ProcedureItem:new("BATTERY SWITCH","ON",FlowItem.actorFO,0,true,
+testProc:addItem(ProcedureItem:new("LIGHTS","ALL ON",FlowItem.actorFO,5,false,
 	function () 
-		command_end("sim/ignition/engage_starter_1")
-		command_end("sim/starters/engage_start_run_1")
-		command_end("sim/starters/engage_starter_1")
+	  kc_macro_lights_all_on()
+	end))
+testProc:addItem(ProcedureItem:new("LIGHTS","COLD&DARK",FlowItem.actorFO,5,true,
+	function () 
+	  kc_macro_lights_cold_dark()
+	end))
+testProc:addItem(ProcedureItem:new("LIGHTS","PREFLIGHT",FlowItem.actorFO,5,true,
+	function () 
+	  kc_macro_lights_preflight()
+	  sysLights.domeLightSwitch:actuate(0)
+	end))
+testProc:addItem(ProcedureItem:new("LIGHTS","BEFORE START",FlowItem.actorFO,5,true,
+	function () 
+	  kc_macro_lights_before_start()
+	  
+	end))
+testProc:addItem(ProcedureItem:new("LIGHTS","BEFORE TAXI",FlowItem.actorFO,5,true,
+	function () 
+	  kc_macro_lights_before_taxi()
+	end))
+testProc:addItem(ProcedureItem:new("LIGHTS","TAKEOFF",FlowItem.actorFO,5,true,
+	function () 
+	  kc_macro_lights_for_takeoff()
+	end))
+testProc:addItem(ProcedureItem:new("LIGHTS","CLMB 10K",FlowItem.actorFO,5,true,
+	function () 
+	  kc_macro_lights_climb_10k()
+	end))
+testProc:addItem(ProcedureItem:new("LIGHTS","DESC 10K",FlowItem.actorFO,5,true,
+	function () 
+	  kc_macro_lights_descend_10k()
+	end))
+testProc:addItem(ProcedureItem:new("LIGHTS","APPROACH",FlowItem.actorFO,5,true,
+	function () 
+	  kc_macro_lights_approach()
+	end))
+testProc:addItem(ProcedureItem:new("LIGHTS","CLEANUP",FlowItem.actorFO,5,true,
+	function () 
+	  kc_macro_lights_cleanup()
+	end))
+testProc:addItem(ProcedureItem:new("LIGHTS","ARRIVE PARKING",FlowItem.actorFO,5,true,
+	function () 
+	  kc_macro_lights_arrive_parking()
+	end))
+testProc:addItem(ProcedureItem:new("LIGHTS","SHUTDOWN",FlowItem.actorFO,5,true,
+	function () 
+	  kc_macro_lights_after_shutdown()
 	end))
 
-	
 -- ============ Electrical Power Up Procedure ============
 -- All paper work on board and checked
 -- M E L and Technical Logbook checked
@@ -97,24 +141,20 @@ testProc:addItem(ProcedureItem:new("BATTERY SWITCH","ON",FlowItem.actorFO,0,true
 local electricalPowerUpProc = Procedure:new("ELECTRICAL POWER UP","performing ELECTRICAL POWER UP","Power up finished")
 electricalPowerUpProc:setFlightPhase(1)
 electricalPowerUpProc:addItem(SimpleProcedureItem:new("All paper work on board and checked"))
-electricalPowerUpProc:addItem(SimpleProcedureItem:new("M E L and Technical Logbook checked"))
 
 electricalPowerUpProc:addItem(SimpleProcedureItem:new("== Initial Checks"))
 electricalPowerUpProc:addItem(SimpleProcedureItem:new("==== DC Electric Power"))
 electricalPowerUpProc:addItem(IndirectProcedureItem:new("BATTERY VOLTAGE","CHECK MIN 24V",FlowItem.actorFO,0,"bat24v",
-	function () return get("sim/flightmodel/engine/ENGN_bat_volt",0) > 23 end))
+	function () return sysElectric.batt1Vold.getStatus() >= 24 end))
 electricalPowerUpProc:addItem(ProcedureItem:new("BATTERY SWITCH","ON",FlowItem.actorFO,0,
-	function () return sysElectric.batterySwitch:getStatus() == modeOn end,
+	function () return sysElectric.batterySwitch:getStatus() == 1 end,
 	function () 
-		sysElectric.batterySwitch:actuate(modeOff) 
-		if kc_is_daylight() then		
-			sysLights.domeLightSwitch:actuate(0)
-			sysLights.instrLightGroup:actuate(0)
-		else
-			sysLights.domeLightSwitch:actuate(1)
-			sysLights.instrLightGroup:actuate(1)
-		end
-		sysLights.instr3Light:actuate(1)
+		sysElectric.batterySwitch:actuate(1) 
+		kc_macro_lights_preflight()
+	end))
+electricalPowerUpProc:addItem(ProcedureItem:new("EXTERNAL & INTERNAL LIGHTS","AS NEEDED",FlowItem.actorFO,0,true,
+	function () 
+		kc_macro_lights_preflight()
 	end))
 
 electricalPowerUpProc:addItem(SimpleProcedureItem:new("==== Hydraulic System"))
@@ -272,6 +312,25 @@ prelPreflightProc:addItem(ProcedureItem:new("ELECTRIC HYDRAULIC PUMPS SWITCHES",
 -- =======================================================
 
 
+-- ======== STATES =============
+
+-- ================= Cold & Dark State ==================
+local coldAndDarkProc = State:new("COLD AND DARK","securing the aircraft","")
+coldAndDarkProc:setFlightPhase(1)
+coldAndDarkProc:addItem(ProcedureItem:new("COLD & DARK","SET","SYS",0,true,
+	function () 
+		kc_macro_state_cold_and_dark()
+		getActiveSOP():setActiveFlowIndex(1)
+	end))
+	
+-- ================= Turn Around State ==================
+local turnAroundProc = State:new("AIRCRAFT TURN AROUND","setting up the aircraft","aircraft configured for turn around")
+turnAroundProc:setFlightPhase(18)
+turnAroundProc:addItem(ProcedureItem:new("TURNAROUND","SET","SYS",0,true,
+	function () 
+		kc_macro_state_turnaround()
+	end))
+
 -- ============  =============
 -- add the checklists and procedures to the active sop
 local nopeProc = Procedure:new("NO PROCEDURES AVAILABLE")
@@ -279,6 +338,10 @@ local nopeProc = Procedure:new("NO PROCEDURES AVAILABLE")
 activeSOP:addProcedure(testProc)
 activeSOP:addProcedure(electricalPowerUpProc)
 activeSOP:addProcedure(prelPreflightProc)
+
+-- =========== States ===========
+activeSOP:addState(turnAroundProc)
+activeSOP:addState(coldAndDarkProc)
 
 -- ============= Background Flow ==============
 local backgroundFlow = Background:new("","","")
