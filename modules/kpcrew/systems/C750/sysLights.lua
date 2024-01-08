@@ -4,7 +4,7 @@
 
 -- @classmod sysLights
 -- @author Kosta Prokopiu
--- @copyright 2022 Kosta Prokopiu
+-- @copyright 2024 Kosta Prokopiu
 local sysLights = {
 }
 
@@ -18,8 +18,10 @@ local TwoStateToggleSwitch	= require "kpcrew.systems.TwoStateToggleSwitch"
 local MultiStateCmdSwitch 	= require "kpcrew.systems.MultiStateCmdSwitch"
 local InopSwitch 			= require "kpcrew.systems.InopSwitch"
 
-
------------ Switches
+local drefLandingLights 	= "sim/cockpit2/switches/landing_lights_switch"	
+local drefGenericLights 	= "sim/cockpit2/switches/generic_lights_switch"
+local drefInstrLights 		= "sim/cockpit2/switches/instrument_brightness_ratio"
+local drefPanelLights 		= "sim/cockpit2/switches/panel_brightness_ratio"
 
 -- Beacons or Anticollision Lights, single, onoff, command driven
 sysLights.beaconSwitch 		= TwoStateCustomSwitch:new("beacon","laminar/CitX/lights/gnd_rec_anti_coll",0,
@@ -42,9 +44,15 @@ sysLights.beaconSwitch 		= TwoStateCustomSwitch:new("beacon","laminar/CitX/light
 	end	
 )
 
+-- Beacons or Anticollision Light(s) status
+sysLights.beaconAnc 		= SimpleAnnunciator:new("beaconlights","sim/cockpit/electrical/beacon_lights_on",0)
+
 -- Position Lights, single onoff command driven
 sysLights.positionSwitch 	= TwoStateToggleSwitch:new("position","laminar/CitX/lights/navigation",0,
 	"laminar/CitX/lights/cmd_navigation_toggle")
+
+-- Position Light(s) status
+sysLights.positionAnc 		= SimpleAnnunciator:new("positionlights","laminar/CitX/lights/navigation",0)
 
 -- Strobe Lights, single onoff command driven
 sysLights.strobesSwitch 	= TwoStateCustomSwitch:new("strobes","sim/cockpit2/switches/strobe_lights_on",0,
@@ -69,9 +77,15 @@ sysLights.strobesSwitch 	= TwoStateCustomSwitch:new("strobes","sim/cockpit2/swit
 	end
 )
 
+-- Strobe Light(s) status
+sysLights.strobesAnc 		= SimpleAnnunciator:new("strobelights","sim/cockpit2/switches/strobe_lights_on",0)
+
 -- Taxi/Nose Lights, single onoff command driven
 sysLights.taxiSwitch 		= TwoStateToggleSwitch:new("taxi","laminar/CitX/lights/taxi",0,
 	"laminar/CitX/lights/cmd_taxi_toggle")
+
+-- Taxi Light(s) status
+sysLights.taxiAnc 			= SimpleAnnunciator:new("strobelights","sim/cockpit2/switches/taxi_light_on",0)
 
 -- Landing Lights, single onoff command driven
 sysLights.llLeftSwitch 		= TwoStateToggleSwitch:new("llleft","laminar/CitX/lights/landing_left",0,
@@ -82,25 +96,112 @@ sysLights.landLightGroup 	= SwitchGroup:new("landinglights")
 sysLights.landLightGroup:addSwitch(sysLights.llLeftSwitch)
 sysLights.landLightGroup:addSwitch(sysLights.llRightSwitch)
 
+-- annunciator to mark any landing lights on
+sysLights.landingAnc 		= CustomAnnunciator:new("landinglights",
+function () 
+	if get("laminar/CitX/lights/landing_left") > 0 or get("laminar/CitX/lights/landing_right") > 0 then
+		return 1
+	else
+		return 0
+	end
+end)
+
 -- Logo Light
 sysLights.logoSwitch 		= TwoStateToggleSwitch:new("logo","laminar/CitX/lights/tail_flood",0,
 	"laminar/CitX/lights/cmd_tail_flood_toggle")
 
+-- Logo Light(s) status
+sysLights.logoAnc 			= SimpleAnnunciator:new("logolights","sim/cockpit2/switches/generic_lights_switch",0)
+
 -- RWY Turnoff Lights (2)
-sysLights.rwyLeftSwitch 	= InopSwitch:new("rwyleft")
-sysLights.rwyRightSwitch 	= InopSwitch:new("rwyright")
+sysLights.rwyLeftSwitch 	= TwoStateDrefSwitch:new("rwyleft",drefGenericLights,1)
+sysLights.rwyRightSwitch 	= TwoStateDrefSwitch:new("rwyright",drefGenericLights,2)
 sysLights.rwyLightGroup 	= SwitchGroup:new("runwaylights")
 sysLights.rwyLightGroup:addSwitch(sysLights.rwyLeftSwitch)
--- sysLights.rwyLightGroup:addSwitch(sysLights.rwyRightSwitch)
+sysLights.rwyLightGroup:addSwitch(sysLights.rwyRightSwitch)
+
+-- runway turnoff lights
+sysLights.runwayAnc 		= CustomAnnunciator:new("runwaylights",
+function () 
+	if get(drefGenericLights,1) > 0 or get(drefGenericLights,2) > 0 then
+		return 1
+	else
+		return 0
+	end
+end)
 
 -- Wing Lights
 sysLights.wingSwitch 		= InopSwitch:new("wing")
 
+-- Wing Light(s) status
+sysLights.wingAnc 			= InopSwitch:new("winglights")
+
 -- Wheel well Lights
 sysLights.wheelSwitch 		= InopSwitch:new("wheel")
 
+-- Wheel well Light(s) status
+sysLights.wheelAnc 			= InopSwitch:new("wheellights")
+
 -- Dome Light
 sysLights.domeLightSwitch 	= TwoStateDrefSwitch:new("dome","sim/cockpit/electrical/cockpit_lights",0)
+sysLights.panel1Light		= TwoStateDrefSwitch:new("","sim/cockpit2/switches/panel_brightness_ratio",-1)
+sysLights.panel2Light		= TwoStateDrefSwitch:new("","sim/cockpit2/switches/panel_brightness_ratio",1)
+sysLights.panel3Light		= TwoStateDrefSwitch:new("","sim/cockpit2/switches/panel_brightness_ratio",2)
+sysLights.panel4Light		= TwoStateDrefSwitch:new("","sim/cockpit2/switches/panel_brightness_ratio",3)
+sysLights.domeLightGroup 	= SwitchGroup:new("dome and panel")
+sysLights.domeLightGroup:addSwitch(sysLights.panel1Light)
+sysLights.domeLightGroup:addSwitch(sysLights.panel2Light)
+sysLights.domeLightGroup:addSwitch(sysLights.panel3Light)
+sysLights.domeLightGroup:addSwitch(sysLights.panel4Light)
+sysLights.rwyLightGroup:addSwitch(sysLights.domeLightSwitch)
+
+-- Dome Light(s) status
+sysLights.domeAnc 			= CustomAnnunciator:new("domelights",
+function () 
+	if get( "sim/cockpit/electrical/cockpit_lights",0) ~= 0 then
+		return 1
+	else
+		return 0
+	end
+end)
+
+-- Instrument Lights
+sysLights.instr1Light		= TwoStateDrefSwitch:new("","sim/cockpit2/switches/instrument_brightness_ratio",-1)
+sysLights.instr2Light		= TwoStateDrefSwitch:new("","sim/cockpit2/switches/instrument_brightness_ratio",1)
+sysLights.instr3Light		= TwoStateDrefSwitch:new("","sim/cockpit2/switches/instrument_brightness_ratio",2)
+sysLights.instr4Light		= TwoStateDrefSwitch:new("","sim/cockpit2/switches/instrument_brightness_ratio",3)
+sysLights.instr5Light		= TwoStateCustomSwitch:new("instr","laminar/CitX/lights/right_knob",0,
+	function () 
+		set("laminar/CitX/lights/right_knob",1)
+		set("laminar/CitX/lights/left_knob",1)
+		set("sim/cockpit2/switches/instrument_brightness_ratio",1)
+	end,
+	function () 
+		set("laminar/CitX/lights/right_knob",0)
+		set("laminar/CitX/lights/left_knob",0)
+		set("sim/cockpit2/switches/instrument_brightness_ratio",0)
+	end,
+	function () 
+		if get("laminar/CitX/lights/right_knob") == 1 then
+			set("laminar/CitX/lights/right_knob",0)
+			set("laminar/CitX/lights/left_knob",0)
+			set("sim/cockpit2/switches/instrument_brightness_ratio",0)
+		else
+			set("laminar/CitX/lights/left_knob",1)
+			set("laminar/CitX/lights/right_knob",1)
+			set("sim/cockpit2/switches/instrument_brightness_ratio",1)
+		end
+	end
+)
+sysLights.instrLightGroup 	= SwitchGroup:new("instrumentlights")
+sysLights.instrLightGroup:addSwitch(sysLights.instr1Light)
+sysLights.instrLightGroup:addSwitch(sysLights.instr2Light)
+sysLights.instrLightGroup:addSwitch(sysLights.instr3Light)
+sysLights.instrLightGroup:addSwitch(sysLights.instr4Light)
+sysLights.instrLightGroup:addSwitch(sysLights.instr5Light)
+
+-- Instrument Light(s) status
+sysLights.instrumentAnc = SimpleAnnunciator:new("instrumentlights", "sim/cockpit2/switches/instrument_brightness_ratio",0)
 
 -- Display Brightness
 sysLights.disp1Light		= TwoStateDrefSwitch:new("","sim/cockpit2/switches/instrument_brightness_ratio",7)
@@ -115,89 +216,6 @@ sysLights.dispLightGroup:addSwitch(sysLights.disp3Light)
 sysLights.dispLightGroup:addSwitch(sysLights.disp4Light)
 sysLights.dispLightGroup:addSwitch(sysLights.disp5Light)
 
--- Panel Lights
-sysLights.panel1Light		= TwoStateDrefSwitch:new("","sim/cockpit2/switches/panel_brightness_ratio",-1)
-sysLights.panel2Light		= TwoStateDrefSwitch:new("","sim/cockpit2/switches/panel_brightness_ratio",1)
-sysLights.panel3Light		= TwoStateDrefSwitch:new("","sim/cockpit2/switches/panel_brightness_ratio",2)
-sysLights.panel4Light		= TwoStateDrefSwitch:new("","sim/cockpit2/switches/panel_brightness_ratio",3)
-sysLights.domeLightGroup 	= SwitchGroup:new("panellights")
-sysLights.domeLightGroup:addSwitch(sysLights.panel1Light)
-sysLights.domeLightGroup:addSwitch(sysLights.panel2Light)
-sysLights.domeLightGroup:addSwitch(sysLights.panel3Light)
-sysLights.domeLightGroup:addSwitch(sysLights.panel4Light)
-
-sysLights.instr1Light		= TwoStateDrefSwitch:new("","sim/cockpit2/switches/instrument_brightness_ratio",-1)
-sysLights.instr2Light		= TwoStateDrefSwitch:new("","sim/cockpit2/switches/instrument_brightness_ratio",1)
-sysLights.instr3Light		= TwoStateDrefSwitch:new("","sim/cockpit2/switches/instrument_brightness_ratio",2)
-sysLights.instr4Light		= TwoStateDrefSwitch:new("","sim/cockpit2/switches/instrument_brightness_ratio",3)
--- sysLights.instr5Light		= TwoStateDrefSwitch:new("","sim/cockpit2/switches/instrument_brightness_ratio",11)
--- sysLights.instr6Light		= TwoStateDrefSwitch:new("","sim/cockpit2/switches/instrument_brightness_ratio",1)
--- sysLights.instr7Light		= TwoStateDrefSwitch:new("","sim/cockpit2/switches/panel_brightness_ratio",1)
--- sysLights.instr8Light		= TwoStateDrefSwitch:new("","sim/cockpit2/switches/panel_brightness_ratio",2)
--- sysLights.instr9Light		= TwoStateDrefSwitch:new("","sim/cockpit2/switches/panel_brightness_ratio",3)
-sysLights.instrLightGroup 	= SwitchGroup:new("instrumentlights")
-sysLights.instrLightGroup:addSwitch(sysLights.instr1Light)
-sysLights.instrLightGroup:addSwitch(sysLights.instr2Light)
-sysLights.instrLightGroup:addSwitch(sysLights.instr3Light)
-sysLights.instrLightGroup:addSwitch(sysLights.instr4Light)
--- sysLights.instrLightGroup:addSwitch(sysLights.instr5Light)
--- sysLights.instrLightGroup:addSwitch(sysLights.instr6Light)
--- sysLights.instrLightGroup:addSwitch(sysLights.instr7Light)
--- sysLights.instrLightGroup:addSwitch(sysLights.instr8Light)
--- sysLights.instrLightGroup:addSwitch(sysLights.instr9Light)
--- sysLights.instrLightGroup:actuate(0)
-
-sysLights.cabinLight 		= TwoStateToggleSwitch:new("cabinlight","laminar/CitX/lights/cabin_master",0,
-	"laminar/CitX/lights/cmd_cabin_master_toggle")
-
-
---------- Annunciators
--- annunciator to mark any landing lights on
-sysLights.landingAnc 		= CustomAnnunciator:new("landinglights",
-function () 
-	if get("laminar/CitX/lights/landing_left") > 0 or get("laminar/CitX/lights/landing_right") > 0 then
-		return 1
-	else
-		return 0
-	end
-end)
-
--- Beacons or Anticollision Light(s) status
-sysLights.beaconAnc 		= SimpleAnnunciator:new("beaconlights","sim/cockpit/electrical/beacon_lights_on",0)
-
--- Position Light(s) status
-sysLights.positionAnc 		= SimpleAnnunciator:new("positionlights","laminar/CitX/lights/navigation",0)
-
--- Strobe Light(s) status
-sysLights.strobesAnc 		= SimpleAnnunciator:new("strobelights","sim/cockpit2/switches/strobe_lights_on",0)
-
--- Taxi Light(s) status
-sysLights.taxiAnc 			= SimpleAnnunciator:new("strobelights","sim/cockpit2/switches/taxi_light_on",0)
-
--- Logo Light(s) status
-sysLights.logoAnc 			= SimpleAnnunciator:new("logolights","sim/cockpit2/switches/generic_lights_switch",0)
-
--- runway turnoff lights
-sysLights.runwayAnc 		= InopSwitch:new("runwaylights")
-
--- Wing Light(s) status
-sysLights.wingAnc 			= InopSwitch:new("winglights")
-
--- Wheel well Light(s) status
-sysLights.wheelAnc 			= InopSwitch:new("wheellights")
-
--- Dome Light(s) status
-sysLights.domeAnc 			= CustomAnnunciator:new("domelights",
-function () 
-	if get("sim/cockpit/electrical/cockpit_lights") ~= 0 then
-		return 1
-	else
-		return 0
-	end
-end)
-
--- Instrument Light(s) status
-sysLights.instrumentAnc = SimpleAnnunciator:new("instrumentlights", "sim/cockpit2/switches/instrument_brightness_ratio",-1)
 
 -- ===== UI related functions =====
 

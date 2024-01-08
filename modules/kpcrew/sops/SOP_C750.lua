@@ -54,6 +54,59 @@ kcSopFlightPhase = { [1] = "Cold & Dark", 	[2] = "Prel Preflight", [3] = "Prefli
 
 activeSOP = SOP:new("Laminar Citation X SOP")
 
+local testProc = Procedure:new("TEST","","")
+testProc:setFlightPhase(1)
+testProc:addItem(ProcedureItem:new("LIGHTS","ALL ON",FlowItem.actorFO,5,false,
+	function () 
+	  kc_macro_lights_all_on()
+	end))
+testProc:addItem(ProcedureItem:new("LIGHTS","COLD&DARK",FlowItem.actorFO,5,true,
+	function () 
+	  kc_macro_lights_cold_dark()
+	end))
+testProc:addItem(ProcedureItem:new("LIGHTS","PREFLIGHT",FlowItem.actorFO,5,true,
+	function () 
+	  kc_macro_lights_preflight()
+	  sysLights.domeLightSwitch:actuate(0)
+	end))
+testProc:addItem(ProcedureItem:new("LIGHTS","BEFORE START",FlowItem.actorFO,5,true,
+	function () 
+	  kc_macro_lights_before_start()
+	  
+	end))
+testProc:addItem(ProcedureItem:new("LIGHTS","BEFORE TAXI",FlowItem.actorFO,5,true,
+	function () 
+	  kc_macro_lights_before_taxi()
+	end))
+testProc:addItem(ProcedureItem:new("LIGHTS","TAKEOFF",FlowItem.actorFO,5,true,
+	function () 
+	  kc_macro_lights_for_takeoff()
+	end))
+testProc:addItem(ProcedureItem:new("LIGHTS","CLMB 10K",FlowItem.actorFO,5,true,
+	function () 
+	  kc_macro_lights_climb_10k()
+	end))
+testProc:addItem(ProcedureItem:new("LIGHTS","DESC 10K",FlowItem.actorFO,5,true,
+	function () 
+	  kc_macro_lights_descend_10k()
+	end))
+testProc:addItem(ProcedureItem:new("LIGHTS","APPROACH",FlowItem.actorFO,5,true,
+	function () 
+	  kc_macro_lights_approach()
+	end))
+testProc:addItem(ProcedureItem:new("LIGHTS","CLEANUP",FlowItem.actorFO,5,true,
+	function () 
+	  kc_macro_lights_cleanup()
+	end))
+testProc:addItem(ProcedureItem:new("LIGHTS","ARRIVE PARKING",FlowItem.actorFO,5,true,
+	function () 
+	  kc_macro_lights_arrive_parking()
+	end))
+testProc:addItem(ProcedureItem:new("LIGHTS","SHUTDOWN",FlowItem.actorFO,5,true,
+	function () 
+	  kc_macro_lights_after_shutdown()
+	end))
+
 -- ============ Electrical Power Up Procedure ============
 -- All paper work on board and checked
 -- Preflight Inspection completed
@@ -104,7 +157,7 @@ electricalPowerUpProc:addItem(ProcedureItem:new("PARKING BRAKE","SET",FlowItem.a
 	function () sysGeneral.parkBrakeSwitch:actuate(1) end))
 electricalPowerUpProc:addItem(ProcedureItem:new("PANEL LIGHTS","AS REQUIRED",FlowItem.actorFO,0,true,
 	function () 
-		kc_macro_int_lights_on()
+		kc_macro_lights_preflight()
 	end))
 electricalPowerUpProc:addItem(ProcedureItem:new("EMERG LT","ON",FlowItem.actorFO,0,
 	function () return get("laminar/CitX/lights/emerg_light_switch") > 0 end,
@@ -219,13 +272,6 @@ electricalPowerUpProc:addItem(ProcedureItem:new("#spell|APU# GEN","ON",FlowItem.
 	end))
 electricalPowerUpProc:addItem(IndirectProcedureItem:new("#spell|APU# AMPS","< 200 A",FlowItem.actorFO,0,"apubelow200",
 	function () return get("sim/cockpit/electrical/generator_apu_amps") < 200 end))
--- electricalPowerUpProc:addItem(ProcedureItem:new("CABIN POWER","ON",FlowItem.actorFO,0,
-	-- function () return get("laminar/CitX/lights/cabin_lights_on") == 1 end,
-	-- function () 
-		-- if get("laminar/CitX/lights/cabin_lights_on") == 0 then 
-			-- command_once("laminar/CitX/lights/cmd_cabin_master_toggle") 
-		-- end
-	-- end))
 
 
 electricalPowerUpProc:addItem(SimpleProcedureItem:new("== AVIONICS"))
@@ -511,7 +557,7 @@ preStartProc:addItem(IndirectProcedureItem:new("HYDRAULIC A PRESSURE","CHECK >20
 	function () return get("sim/cockpit2/hydraulics/indicators/hydraulic_pressure_1") > 2000 end))
 preStartProc:addItem(ProcedureItem:new("GND REC (BEACON)","ON",FlowItem.actorFO,0,
 	function () return sysLights.beaconSwitch:getStatus() > 0 end,
-	function () sysLights.beaconSwitch:actuate(1) end))
+	function () kc_macro_lights_before_start() end))
 preStartProc:addItem(ProcedureItem:new("PARKING BRAKE","SET",FlowItem.actorFO,0,
 	function () return sysGeneral.parkBrakeSwitch:getStatus() == 1 end,
 	function () sysGeneral.parkBrakeSwitch:actuate(1) end))
@@ -898,12 +944,12 @@ preTaxiProc:addItem(ProcedureItem:new("STABILIZER TRIM","IN GREEN BAND",FlowItem
 			return false
 		end
 	end))
-preTaxiProc:addItem(IndirectProcedureItem:new("INTERNAL LIGHTS","SET",FlowItem.actorFO,0,"pretaxiintlight",
+preTaxiProc:addItem(IndirectProcedureItem:new("INTERNAL & EXTERNAL LIGHTS","SET",FlowItem.actorFO,0,"pretaxiintlight",
 	function () return true end,
-	function () kc_macro_int_lights_taxi() end))
-preTaxiProc:addItem(ProcedureItem:new("TAXI LIGHT","ON",FlowItem.actorCPT,0,
-	function () return sysLights.taxiSwitch:getStatus() > 0 end,
-	function () sysLights.taxiSwitch:actuate(1) end))
+	function () kc_macro_lights_before_taxi() end))
+-- preTaxiProc:addItem(ProcedureItem:new("TAXI LIGHT","ON",FlowItem.actorCPT,0,
+	-- function () return sysLights.taxiSwitch:getStatus() > 0 end,
+	-- function () sysLights.taxiSwitch:actuate(1) end))
 preTaxiProc:addItem(ProcedureItem:new("PARKING BRAKE","RELEASE",FlowItem.actorFO,0,
 	function () return sysGeneral.parkBrakeSwitch:getStatus() == 0 end))
 
@@ -991,12 +1037,12 @@ beforeTakeoffProc:addItem(ProcedureItem:new("ANTISKID","NORM",FlowItem.actorFO,0
 
 local runwayEntryProc = Procedure:new("RUNWAY ENTRY","","")
 runwayEntryProc:setFlightPhase(7)
-runwayEntryProc:addItem(ProcedureItem:new("STROBE LIGHT","ON",FlowItem.actorFO,0,
+runwayEntryProc:addItem(ProcedureItem:new("EXTERNAL LIGHTS","SET",FlowItem.actorFO,0,
 	function () return sysLights.strobesSwitch:getStatus() == 1 end,
-	function () sysLights.strobesSwitch:actuate(1) end))
-runwayEntryProc:addItem(ProcedureItem:new("TAXI LIGHT","OFF",FlowItem.actorFO,0,
-	function () return sysLights.taxiSwitch:getStatus() == 0 end,
-	function () sysLights.taxiSwitch:actuate(0) end))
+	function () kc_macro_lights_for_takeoff() end))
+-- runwayEntryProc:addItem(ProcedureItem:new("TAXI LIGHT","OFF",FlowItem.actorFO,0,
+	-- function () return sysLights.taxiSwitch:getStatus() == 0 end,
+	-- function () sysLights.taxiSwitch:actuate(0) end))
 runwayEntryProc:addItem(ProcedureItem:new("TRANSPONDER","ATC ALT ON",FlowItem.actorFO,0,
 	function () return sysRadios.xpdrSwitch:getStatus() == 3 end,
 	function () 
@@ -1008,9 +1054,9 @@ runwayEntryProc:addItem(ProcedureItem:new("PACKS & BLEEDS","AS REQUIRED",FlowIte
 		kc_macro_packs_takeoff() 
 		kc_macro_bleeds_takeoff()
 	end))
-runwayEntryProc:addItem(ProcedureItem:new("LANDING LIGHT","ON",FlowItem.actorCPT,0,
-	function () return sysLights.landLightGroup:getStatus() > 0 end,
-	function () sysLights.landLightGroup:actuate(1) end))
+-- runwayEntryProc:addItem(ProcedureItem:new("LANDING LIGHT","ON",FlowItem.actorCPT,0,
+	-- function () return sysLights.landLightGroup:getStatus() > 0 end,
+	-- function () sysLights.landLightGroup:actuate(1) end))
 
 -- =========== TAKEOFF & INITIAL CLIMB (BOTH) ===========
 -- wx radar?
@@ -1234,7 +1280,7 @@ landingProc:addItem(ProcedureItem:new("ENG SYNC","OFF",FlowItem.actorPM,0,
 	end))
 landingProc:addItem(ProcedureItem:new("LANDING LIGHTS","ON",FlowItem.actorPF,0,
 	function () return sysLights.landLightGroup:getStatus() > 0 end,
-	function () kc_macro_ext_lights_land() end))
+	function () kc_macro_lights_approach() end))
 landingProc:addItem(ProcedureItem:new("COURSE NAV 1","SET %s|activeBriefings:get(\"approach:nav1Course\")",FlowItem.actorPF,0,
 	function() return math.ceil(sysMCP.crs1Selector:getStatus()) == activeBriefings:get("approach:nav1Course") end,
 	function() sysMCP.crs1Selector:setValue(activeBriefings:get("approach:nav1Course")) end))
@@ -1328,7 +1374,7 @@ afterLandingProc:addItem(ProcedureItem:new("FLAPS UP","SET",FlowItem.actorFO,0,t
 	function () sysControls.flapsSwitch:setValue(sysControls.flaps_pos[0]) end))
 afterLandingProc:addItem(ProcedureItem:new("EXTERNAL LIGHTS","AS REQUIRED",FlowItem.actorFO,0,
 	function () return sysLights.landLightGroup:getStatus() == 0 end,
-	function () kc_macro_ext_lights_rwyvacate() end))
+	function () kc_macro_lights_cleanup() end))
 afterLandingProc:addItem(ProcedureItem:new("STABILIZER ANTI-ICE","OFF",FlowItem.actorFO,0,
 	function () return sysAice.wingAntiIce:getStatus() == 0 end,
 	function () sysAice.wingAntiIce:actuate(0) end))
@@ -1392,7 +1438,7 @@ shutdownProc:addItem(ProcedureItem:new("TRANSPONDER","STBY",FlowItem.actorFO,0,
 	end))
 shutdownProc:addItem(ProcedureItem:new("TAXI LIGHT","OFF",FlowItem.actorFO,0,
 	function () return sysLights.taxiSwitch:getStatus() == 0 end,
-	function () kc_macro_ext_lights_stand() end))
+	function () kc_macro_lights_after_shutdown() end))
 shutdownProc:addItem(ProcedureItem:new("PARKING BRAKE","SET",FlowItem.actorFO,0,
 	function () return sysGeneral.parkBrakeSwitch:getStatus() == 1 end,
 	function () sysGeneral.parkBrakeSwitch:actuate(1) end))
@@ -1523,7 +1569,7 @@ shutdownProc:addItem(ProcedureItem:new("AUX PUMP A","OFF",FlowItem.actorFO,0,
 -- add the checklists and procedures to the active sop
 -- local nopeProc = Procedure:new("NO PROCEDURES AVAILABLE")
 
--- activeSOP:addProcedure(testProc)
+activeSOP:addProcedure(testProc)
 activeSOP:addProcedure(electricalPowerUpProc)
 activeSOP:addProcedure(preFlightProc)
 activeSOP:addProcedure(cduPreflightProc)
