@@ -16,6 +16,7 @@ local CustomAnnunciator 	= require "kpcrew.systems.CustomAnnunciator"
 local TwoStateToggleSwitch	= require "kpcrew.systems.TwoStateToggleSwitch"
 local MultiStateCmdSwitch 	= require "kpcrew.systems.MultiStateCmdSwitch"
 local InopSwitch 			= require "kpcrew.systems.InopSwitch"
+local KeepPressedSwitchCmd	= require "kpcrew.systems.KeepPressedSwitchCmd"
 
 local drefReverserState		= "sim/cockpit2/annunciators/reverser_on"
 local drefEngine1Starter 	= "sim/flightmodel2/engines/starter_is_running"
@@ -25,18 +26,31 @@ local drefEngine2Oil 		= "sim/cockpit/warnings/annunciators/oil_pressure_low"
 local drefEngine1Fire 		= "sim/cockpit2/annunciators/engine_fires"
 local drefEngine2Fire 		= "sim/cockpit2/annunciators/engine_fires"
 
+logMsg ("Engine DFLT")
+
 ----------- Switches
 
 -- Starter Switches
 sysEngines.engStart1Switch	= InopSwitch:new("starter1")
--- sysEngines.engStart2Switch	= InopSwitch:new("starter2")
--- sysEngines.engStart3Switch	= InopSwitch:new("starter3")
--- sysEngines.engStart4Switch	= InopSwitch:new("starter4")
+sysEngines.engStart2Switch	= InopSwitch:new("starter2")
+sysEngines.engStart3Switch	= InopSwitch:new("starter3")
+sysEngines.engStart4Switch	= InopSwitch:new("starter4")
 sysEngines.engStarterGroup 	= SwitchGroup:new("engstarters")
 sysEngines.engStarterGroup:addSwitch(sysEngines.engStart1Switch)
--- sysEngines.engStarterGroup:addSwitch(sysEngines.engStart2Switch)
--- sysEngines.engStarterGroup:addSwitch(sysEngines.engStart3Switch)
--- sysEngines.engStarterGroup:addSwitch(sysEngines.engStart4Switch)
+sysEngines.engStarterGroup:addSwitch(sysEngines.engStart2Switch)
+sysEngines.engStarterGroup:addSwitch(sysEngines.engStart3Switch)
+sysEngines.engStarterGroup:addSwitch(sysEngines.engStart4Switch)
+
+-- ** ENGINE STARTER annunciator
+sysEngines.engineStarterAnc = CustomAnnunciator:new("enginestarter",
+function ()
+	-- if get(drefEngine1Starter,0) > 0 and get(drefEngine2Starter,1) > 0 then
+		-- return 1
+	-- else
+		return 0
+	-- end
+end)
+
 
 -- Reversers
 sysEngines.reverser1 		= TwoStateCustomSwitch:new("reverse1",drefReverserState,-1,
@@ -164,15 +178,12 @@ function ()
 	end
 end)
 
--- ** ENGINE STARTER annunciator
-sysEngines.engineStarterAnc = CustomAnnunciator:new("enginestarter",
-function ()
-	if get(drefEngine1Starter,0) > 0 and get(drefEngine2Starter,1) > 0 then
-		return 1
-	else
-		return 0
-	end
-end)
+-- Oil Quantity
+sysEngines.oilqty1 = SimpleAnnunciator:new("oilqty1","sim/cockpit2/engine/indicators/oil_quantity_ratio",-1)
+sysEngines.oilqty2 = SimpleAnnunciator:new("oilqty2","sim/cockpit2/engine/indicators/oil_quantity_ratio",1)
+sysEngines.oilqty3 = SimpleAnnunciator:new("oilqty3","sim/cockpit2/engine/indicators/oil_quantity_ratio",2)
+sysEngines.oilqty4 = SimpleAnnunciator:new("oilqty4","sim/cockpit2/engine/indicators/oil_quantity_ratio",3)
+
 
 -- ** Reverse Thrust
 sysEngines.reverseAnc 		= CustomAnnunciator:new("enginestarter",

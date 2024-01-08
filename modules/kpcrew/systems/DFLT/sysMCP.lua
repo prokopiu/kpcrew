@@ -26,9 +26,13 @@ local drefVNAVLight 		= "sim/cockpit2/autopilot/fms_vnav"
 --------- Switches
 
 -- Flight Directors (DFLT only one supported)
-sysMCP.fdirPilotSwitch 		= TwoStateDrefSwitch:new("","sim/cockpit2/autopilot/flight_director_mode",0)
+sysMCP.fdirPilotSwitch 		= TwoStateDrefSwitch:new("fdir left","sim/cockpit2/autopilot/flight_director_mode",0)
+sysMCP.fdirCoPilotSwitch 	= InopSwitch:new("fdir right")
 sysMCP.fdirGroup 			= SwitchGroup:new("fdirs")
 sysMCP.fdirGroup:addSwitch(sysMCP.fdirPilotSwitch)
+sysMCP.fdirGroup:addSwitch(sysMCP.fdirCoPilotSwitch)
+-- Flight Directors annunciator
+sysMCP.fdirAnc 				= SimpleAnnunciator:new("fdiranc","sim/cockpit2/autopilot/flight_director_mode",0)
 
 -- HDG SEL
 sysMCP.hdgselSwitch 		= TwoStateToggleSwitch:new("hdgsel","sim/cockpit2/autopilot/heading_mode",-1,
@@ -136,8 +140,6 @@ sysMCP.displayControlSwitch = InopSwitch:new("dispctrl")
 
 ------- Annunciators
 
--- Flight Directors annunciator
-sysMCP.fdirAnc 				= SimpleAnnunciator:new("fdiranc","sim/cockpit2/autopilot/flight_director_mode",0)
 
 -- HDG Select/mode annunciator
 sysMCP.hdgAnc 				= CustomAnnunciator:new("hdganc",
