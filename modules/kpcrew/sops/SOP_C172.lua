@@ -3,7 +3,7 @@
 -- @classmod SOP_C172
 -- @author Kosta Prokopiu
 -- @copyright 2022 Kosta Prokopiu
-local SOP_C172 = {
+local SOP_DFLT = {
 }
 
 -- SOP related imports
@@ -19,9 +19,13 @@ local IndirectChecklistItem = require "kpcrew.checklists.IndirectChecklistItem"
 local ManualChecklistItem 	= require "kpcrew.checklists.ManualChecklistItem"
 
 local Procedure 			= require "kpcrew.procedures.Procedure"
+local State		 			= require "kpcrew.procedures.State"
+local Background 			= require "kpcrew.procedures.Background"
 local ProcedureItem 		= require "kpcrew.procedures.ProcedureItem"
 local SimpleProcedureItem 	= require "kpcrew.procedures.SimpleProcedureItem"
 local IndirectProcedureItem = require "kpcrew.procedures.IndirectProcedureItem"
+local BackgroundProcedureItem = require "kpcrew.procedures.BackgroundProcedureItem"
+local HoldProcedureItem 	= require "kpcrew.procedures.HoldProcedureItem"
 
 sysLights 					= require("kpcrew.systems." .. kc_acf_icao .. ".sysLights")
 sysGeneral 					= require("kpcrew.systems." .. kc_acf_icao .. ".sysGeneral")	
@@ -36,6 +40,7 @@ sysMCP 						= require("kpcrew.systems." .. kc_acf_icao .. ".sysMCP")
 sysEFIS 					= require("kpcrew.systems." .. kc_acf_icao .. ".sysEFIS")	
 sysFMC 						= require("kpcrew.systems." .. kc_acf_icao .. ".sysFMC")	
 sysRadios					= require("kpcrew.systems." .. kc_acf_icao .. ".sysRadios")	
+sysMacros					= require("kpcrew.systems." .. kc_acf_icao .. ".sysMacros")	
 
 require("kpcrew.briefings.briefings_" .. kc_acf_icao)
 
@@ -43,11 +48,19 @@ kcSopFlightPhase = { [1] = "Cold & Dark", 	[2] = "Prel Preflight", [3] = "Prefli
 					 [5] = "After Start", 	[6] = "Taxi to Runway", [7] = "Before Takeoff", [8] = "Takeoff",
 					 [9] = "Climb", 		[10] = "Enroute", 		[11] = "Descent", 		[12] = "Arrival", 
 					 [13] = "Approach", 	[14] = "Landing", 		[15] = "Turnoff", 		[16] = "Taxi to Stand", 
-					 [17] = "Shutdown", 	[18] = "Turnaround",	[19] = "Flightplanning", [0] = "" }
+					 [17] = "Shutdown", 	[18] = "Turnaround",	[19] = "Flightplanning", [20] = "Go Around", [0] = "" }
+					 
 
 -- Set up SOP =========================================================================
 
 activeSOP = SOP:new("Laminar Cessna 172SP Skyhawk (REP)")
+
+local testProc = Procedure:new("TEST","","")
+testProc:setFlightPhase(1)
+testProc:addItem(ProcedureItem:new("BATTERY SWITCH","ON",FlowItem.actorFO,0,true,
+	function () 
+		kc_macro_state_cold_and_dark()
+	end))
 
 -- OPERATION Data
 -- Max Altitude..........14.000 ft
@@ -67,13 +80,14 @@ activeSOP = SOP:new("Laminar Cessna 172SP Skyhawk (REP)")
 
 
 -- INTERIOR INSPECTION
--- HOBBS/TACH TIMES ................................... RECORD
--- Control Lock ................................................ REMOVE
+-- HOBBS/TACH TIMES ................................... RECORD sim/cockpit2/clock_timer/hobbs_time_hours
+-- Control Lock ................................................ REMOVE - does not exist
 -- A.R.0.W. Documents ..................................... VERIFY ENGi NE START
--- Fuel Selector ................... MOVE: LEFT/RIGHT/ BOTH
--- ALT/BAT MasterSwitch ......... BATTERY SIDE UP/ON
--- Fuel Quantity lndicators .. CHECK Working/ Quantity
--- Turn Coordinator ........................................ NO FLAG
+
+-- Fuel Selector ................... MOVE: LEFT/RIGHT/ BOTH  sim/cockpit/engine/fuel_tank_selector 1=left 2=both 3=right
+-- ALT/BAT MasterSwitch ......... BATTERY SIDE UP/ON 		sysElectric.battSwitch
+-- Fuel Quantity lndicators .. CHECK Working/ Quantity  sim/cockpit2/fuel/fuel_level_indicated_left sim/cockpit2/fuel/fuel_level_indicated_right >0
+-- Turn Coordinator ........................................ NO FLAG   sim/cockpit/gyros/gyr_flag [2]
 -- Flaps ................. ................................ .............. DOWN 
 -- Lights ................................ ALL ON, VERIFY Working,
 -- THEN All SWITCHES OFF
@@ -511,28 +525,50 @@ activeSOP = SOP:new("Laminar Cessna 172SP Skyhawk (REP)")
 -- sw_itemvoid: =================
 
 
+-- ======== STATES =============
 
-
-
-
-local engineStartProc = Procedure:new("ENGINE START","","")
-engineStartProc:setFlightPhase(1)
--- engineStartProc:addItem(SimpleProcedureItem:new("All paper work on board and checked"))
--- engineStartProc:addItem(ProcedureItem:new("FUEL PUMPS","ALL OFF",FlowItem.actorFO,0,
-	-- function () return sysFuel.fuelPumpGroup:getStatus() == 0 end,
-	-- function () sysFuel.fuelPumpGroup:actuate(modeOff) end,
-	-- function () return activePrefSet:get("aircraft:powerup_apu") end))
-
+-- ================= Cold & Dark State ==================
+local coldAndDarkProc = State:new("COLD AND DARK","securing the aircraft","")
+coldAndDarkProc:setFlightPhase(1)
+coldAndDarkProc:addItem(ProcedureItem:new("COLD & DARK","SET","SYS",0,true,
+	function () 
+		kc_macro_state_cold_and_dark()
+		getActiveSOP():setActiveFlowIndex(1)
+	end))
+	
+-- ================= Turn Around State ==================
+local turnAroundProc = State:new("AIRCRAFT TURN AROUND","setting up the aircraft","aircraft configured for turn around")
+turnAroundProc:setFlightPhase(18)
+turnAroundProc:addItem(ProcedureItem:new("TURNAROUND","SET","SYS",0,true,
+	function () 
+		kc_macro_state_turnaround()
+	end))
 
 -- ============  =============
 -- add the checklists and procedures to the active sop
 local nopeProc = Procedure:new("NO PROCEDURES AVAILABLE")
 
-activeSOP:addProcedure(nopeProc)
--- activeSOP:addProcedure(prelPreflightProc)
+activeSOP:addProcedure(testProc)
+
+-- =========== States ===========
+activeSOP:addState(turnAroundProc)
+activeSOP:addState(coldAndDarkProc)
+
+-- ============= Background Flow ==============
+local backgroundFlow = Background:new("","","")
+
+backgroundFlow:addItem(BackgroundProcedureItem:new("","","SYS",0,
+	function () 
+		return
+	end))
+
+-- ==== Background Flow ====
+activeSOP:addBackground(backgroundFlow)
+
+kc_procvar_initialize_bool("waitformaster", false) 
 
 function getActiveSOP()
 	return activeSOP
 end
 
-return SOP_DFLT
+return SOP_C172
