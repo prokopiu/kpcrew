@@ -2,6 +2,7 @@
 	*** KPCREW 2.3
 	Virtual copilot for X-PLane 11/12
 	Kosta Prokopiu, July 2023
+	Changed January 2024
 --]]
 
 require "kpcrew.genutils"
@@ -30,6 +31,13 @@ if PLANE_ICAO == "B738" then
 -- XP12 Citation X
 elseif PLANE_ICAO == "C750" and PLANE_TAILNUMBER == "N750XP" then
 	kc_acf_icao = "C750"
+-- elseif PLANE_ICAO == "C172" and PLANE_TAILNUMBER ~= "OK-AFL" then
+	-- kc_acf_icao = "C172"
+-- XP12 A330-300 Laminar
+elseif PLANE_ICAO == "A333" then
+	kc_acf_icao = "A333"
+-- elseif PLANE_ICAO == "C172" and PLANE_TAILNUMBER == "OK-AFL" then
+	-- kc_acf_icao = "C17D"
 -- elseif PLANE_ICAO == "A306" then
 	-- kc_acf_icao = "A306"
 -- elseif PLANE_ICAO == "MD11" then
@@ -611,10 +619,3 @@ create_command("kp/crew/openmaster", "KPCrew Open Master Window","kc_ctrl_wnd_st
 create_command("kp/crew/briefwindow", "KPCrew Toggle Briefing Window","kc_wnd_brief_action=1","","")
 
 add_macro("KPCrew Toggle Control Window", "kc_ctrl_wnd_state = 1 kc_ctrl_wnd_off=false local xpos = kc_scrn_width - 755 float_wnd_set_geometry(kc_ctrl_wnd, xpos, 46, kc_scrn_width, 1)")
-
-	-- function startSequence()
-				-- show_Automatic_sequence_start = true
-				-- SGES_Automatic_sequence_start_flight_time_sec = SGES_total_flight_time_sec
-				-- initial_pax_start = true
-	-- end
-	-- create_command("sges/sequence/start", "Start SGES Sequence","startSequence()","","")

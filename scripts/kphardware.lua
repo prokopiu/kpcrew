@@ -32,6 +32,9 @@ if PLANE_ICAO == "B738" then
 		kh_acf_icao = "B738" -- Zibo Mod and variants
 	end
 end
+if PLANE_ICAO == "A333" then
+	kh_acf_icao = "A333"
+end
 -- if PLANE_ICAO == "A320" and PLANE_TAILNUMBER == "A320" then
 	-- kc_acf_icao = "A20N"
 -- end
