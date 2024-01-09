@@ -3,7 +3,7 @@
 
 -- @classmod sysMacros
 -- @author Kosta Prokopiu
--- @copyright 2024 Kosta Prokopiu
+-- @copyright 2022 Kosta Prokopiu
 local sysMacros = {
 }
 
@@ -303,71 +303,6 @@ function kc_macro_lights_all_on()
 	sysLights.instrLightGroup:actuate(1)
 end
 
--- ====================================== Door related functions
-function kc_macro_doors_preflight()
-	sysGeneral.doorL1:actuate(1)
-	sysGeneral.doorL2:actuate(0)
-	sysGeneral.doorR1:actuate(0)
-	sysGeneral.doorR2:actuate(0)
-	sysGeneral.doorFCargo:actuate(1)
-	sysGeneral.doorACargo:actuate(1)
-	sysGeneral.cockpitDoor:actuate(1)
-end
-
-function kc_macro_doors_before_start()
-	sysGeneral.doorL1:actuate(0)
-	sysGeneral.doorL2:actuate(0)
-	sysGeneral.doorR1:actuate(0)
-	sysGeneral.doorR2:actuate(0)
-	sysGeneral.doorFCargo:actuate(0)
-	sysGeneral.doorACargo:actuate(0)
-	sysGeneral.cockpitDoor:actuate(0)
-end
-
-function kc_macro_doors_after_shutdown()
-	sysGeneral.doorL1:actuate(1)
-	sysGeneral.doorL2:actuate(0)
-	sysGeneral.doorR1:actuate(0)
-	sysGeneral.doorR2:actuate(0)
-	sysGeneral.doorFCargo:actuate(1)
-	sysGeneral.doorACargo:actuate(1)
-	sysGeneral.cockpitDoor:actuate(1)
-end
-
-function kc_macro_doors_cold_dark()
-	sysGeneral.doorL1:actuate(0)
-	sysGeneral.doorL2:actuate(0)
-	sysGeneral.doorR1:actuate(0)
-	sysGeneral.doorR2:actuate(0)
-	sysGeneral.doorFCargo:actuate(0)
-	sysGeneral.doorACargo:actuate(0)
-	sysGeneral.cockpitDoor:actuate(1)
-end
-
-function kc_macro_doors_all_open()
-	sysGeneral.doorL1:actuate(1)
-	sysGeneral.doorL2:actuate(1)
-	sysGeneral.doorR1:actuate(1)
-	sysGeneral.doorR2:actuate(1)
-	sysGeneral.doorFCargo:actuate(1)
-	sysGeneral.doorACargo:actuate(1)
-	sysGeneral.cockpitDoor:actuate(1)
-end
-
-function kc_macro_doors_all_closed()
-	sysGeneral.doorL1:actuate(0)
-	sysGeneral.doorL2:actuate(0)
-	sysGeneral.doorR1:actuate(0)
-	sysGeneral.doorR2:actuate(0)
-	sysGeneral.doorFCargo:actuate(0)
-	sysGeneral.doorACargo:actuate(0)
-	sysGeneral.cockpitDoor:actuate(1)
-end
-
--- ====================================== Electric system related functions
--- ============== Battery
--- ============== APU
--- ============== GPU/EXT PWR
 
 return sysMacros
 

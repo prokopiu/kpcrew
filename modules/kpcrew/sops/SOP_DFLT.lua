@@ -57,56 +57,81 @@ activeSOP = SOP:new("Default Aircraft SOP")
 
 local testProc = Procedure:new("TEST","","")
 testProc:setFlightPhase(1)
-testProc:addItem(ProcedureItem:new("LIGHTS","ALL ON",FlowItem.actorFO,5,false,
+testProc:addItem(ProcedureItem:new("DOORS","ALL OPEN",FlowItem.actorFO,5,false,
 	function () 
-	  kc_macro_lights_all_on()
+	  kc_macro_doors_all_open()
 	end))
-testProc:addItem(ProcedureItem:new("LIGHTS","COLD&DARK",FlowItem.actorFO,5,true,
+testProc:addItem(ProcedureItem:new("DOORS","ALL CLOSED",FlowItem.actorFO,5,false,
 	function () 
-	  kc_macro_lights_cold_dark()
+	  kc_macro_doors_all_closed()
 	end))
-testProc:addItem(ProcedureItem:new("LIGHTS","PREFLIGHT",FlowItem.actorFO,5,true,
+testProc:addItem(ProcedureItem:new("DOORS","PREFLIGHT",FlowItem.actorFO,5,false,
 	function () 
-	  kc_macro_lights_preflight()
-	  sysLights.domeLightSwitch:actuate(0)
+	  kc_macro_doors_preflight()
 	end))
-testProc:addItem(ProcedureItem:new("LIGHTS","BEFORE START",FlowItem.actorFO,5,true,
+testProc:addItem(ProcedureItem:new("DOORS","BEFORE START",FlowItem.actorFO,5,false,
 	function () 
-	  kc_macro_lights_before_start()
+	  kc_macro_doors_before_start()
+	end))
+testProc:addItem(ProcedureItem:new("DOORS","SHUTDOWN",FlowItem.actorFO,5,false,
+	function () 
+	  kc_macro_doors_after_shutdown()
+	end))
+testProc:addItem(ProcedureItem:new("DOORS","C&D",FlowItem.actorFO,5,false,
+	function () 
+	  kc_macro_doors_cold_dark()
+	end))
+
+-- testProc:addItem(ProcedureItem:new("LIGHTS","ALL ON",FlowItem.actorFO,5,false,
+	-- function () 
+	  -- kc_macro_lights_all_on()
+	-- end))
+-- testProc:addItem(ProcedureItem:new("LIGHTS","COLD&DARK",FlowItem.actorFO,5,true,
+	-- function () 
+	  -- kc_macro_lights_cold_dark()
+	-- end))
+-- testProc:addItem(ProcedureItem:new("LIGHTS","PREFLIGHT",FlowItem.actorFO,5,true,
+	-- function () 
+	  -- kc_macro_lights_preflight()
+	  -- sysLights.domeLightSwitch:actuate(0)
+	-- end))
+-- testProc:addItem(ProcedureItem:new("LIGHTS","BEFORE START",FlowItem.actorFO,5,true,
+	-- function () 
+	  -- kc_macro_lights_before_start()
 	  
-	end))
-testProc:addItem(ProcedureItem:new("LIGHTS","BEFORE TAXI",FlowItem.actorFO,5,true,
-	function () 
-	  kc_macro_lights_before_taxi()
-	end))
-testProc:addItem(ProcedureItem:new("LIGHTS","TAKEOFF",FlowItem.actorFO,5,true,
-	function () 
-	  kc_macro_lights_for_takeoff()
-	end))
-testProc:addItem(ProcedureItem:new("LIGHTS","CLMB 10K",FlowItem.actorFO,5,true,
-	function () 
-	  kc_macro_lights_climb_10k()
-	end))
-testProc:addItem(ProcedureItem:new("LIGHTS","DESC 10K",FlowItem.actorFO,5,true,
-	function () 
-	  kc_macro_lights_descend_10k()
-	end))
-testProc:addItem(ProcedureItem:new("LIGHTS","APPROACH",FlowItem.actorFO,5,true,
-	function () 
-	  kc_macro_lights_approach()
-	end))
-testProc:addItem(ProcedureItem:new("LIGHTS","CLEANUP",FlowItem.actorFO,5,true,
-	function () 
-	  kc_macro_lights_cleanup()
-	end))
-testProc:addItem(ProcedureItem:new("LIGHTS","ARRIVE PARKING",FlowItem.actorFO,5,true,
-	function () 
-	  kc_macro_lights_arrive_parking()
-	end))
-testProc:addItem(ProcedureItem:new("LIGHTS","SHUTDOWN",FlowItem.actorFO,5,true,
-	function () 
-	  kc_macro_lights_after_shutdown()
-	end))
+	-- end))
+-- testProc:addItem(ProcedureItem:new("LIGHTS","BEFORE TAXI",FlowItem.actorFO,5,true,
+	-- function () 
+	  -- kc_macro_lights_before_taxi()
+	-- end))
+-- testProc:addItem(ProcedureItem:new("LIGHTS","TAKEOFF",FlowItem.actorFO,5,true,
+	-- function () 
+	  -- kc_macro_lights_for_takeoff()
+	-- end))
+-- testProc:addItem(ProcedureItem:new("LIGHTS","CLMB 10K",FlowItem.actorFO,5,true,
+	-- function () 
+	  -- kc_macro_lights_climb_10k()
+	-- end))
+-- testProc:addItem(ProcedureItem:new("LIGHTS","DESC 10K",FlowItem.actorFO,5,true,
+	-- function () 
+	  -- kc_macro_lights_descend_10k()
+	-- end))
+-- testProc:addItem(ProcedureItem:new("LIGHTS","APPROACH",FlowItem.actorFO,5,true,
+	-- function () 
+	  -- kc_macro_lights_approach()
+	-- end))
+-- testProc:addItem(ProcedureItem:new("LIGHTS","CLEANUP",FlowItem.actorFO,5,true,
+	-- function () 
+	  -- kc_macro_lights_cleanup()
+	-- end))
+-- testProc:addItem(ProcedureItem:new("LIGHTS","ARRIVE PARKING",FlowItem.actorFO,5,true,
+	-- function () 
+	  -- kc_macro_lights_arrive_parking()
+	-- end))
+-- testProc:addItem(ProcedureItem:new("LIGHTS","SHUTDOWN",FlowItem.actorFO,5,true,
+	-- function () 
+	  -- kc_macro_lights_after_shutdown()
+	-- end))
 
 -- ============ Electrical Power Up Procedure ============
 -- All paper work on board and checked

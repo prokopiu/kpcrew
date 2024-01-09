@@ -11,7 +11,7 @@ require "kpcrew.systems.activities"
 local Flow = require "kpcrew.Flow"
 local FlowItem = require "kpcrew.FlowItem"
 
-kc_VERSION = "2.3-alpha8"
+kc_VERSION = "2.3-alpha9"
 kc_simversion = get("sim/version/xplane_internal_version")
 
 logMsg ( "FWL: ** Starting KPCrew version " .. kc_VERSION .." **" )
@@ -44,13 +44,13 @@ elseif PLANE_ICAO == "A333" then
 	-- kc_acf_icao = "MD11"
 -- elseif PLANE_ICAO == "B732" then
 	-- kc_acf_icao = "B732"
-elseif PLANE_ICAO == "B733" then
-	kc_acf_icao = "B733"
+-- elseif PLANE_ICAO == "B733" then
+	-- kc_acf_icao = "B733"
 -- elseif PLANE_ICAO == "A320" and PLANE_TAILNUMBER == "A320" then
 	-- kc_acf_icao = "A20N"
 -- Laminar MD-82
-elseif PLANE_ICAO == "MD82" and PLANE_TAILNUMBER == "N552AA" then
-	kc_acf_icao = "MD82"
+-- elseif PLANE_ICAO == "MD82" and PLANE_TAILNUMBER == "N552AA" then
+	-- kc_acf_icao = "MD82"
 end
 
 -- Aircraft Specific SOP/Checklist/Procedure Definitions

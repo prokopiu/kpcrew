@@ -71,8 +71,6 @@ sysGeneral.GearSwitch 		= TwoStateCustomSwitch:new("gear","laminar/B738/controls
 function () command_once("sim/flight_controls/landing_gear_down") end,
 function () command_once("sim/flight_controls/landing_gear_up") end,
 function () command_once("laminar/B738/push_button/gear_off") end)
--- ,
--- function () return get("laminar/B738/controls/gear_handle_down") end)
 
 -- Doors
 sysGeneral.doorL1			= TwoStateToggleSwitch:new("doorl1","737u/doors/L1",0,
@@ -87,6 +85,10 @@ sysGeneral.doorFCargo		= TwoStateToggleSwitch:new("doorfcargo","737u/doors/Fwd_C
 	"laminar/B738/door/fwd_cargo_toggle")
 sysGeneral.doorACargo 		= TwoStateToggleSwitch:new("dooracrago","737u/doors/aft_Cargo",0,
 	"laminar/B738/door/aft_cargo_toggle")
+sysGeneral.cockpitDoor 		= TwoStateToggleSwitch:new("","laminar/B738/door/flt_dk_door_ratio",0,
+	"laminar/B738/toggle_switch/flt_dk_door_open")
+sysGeneral.stairs 			= TwoStateToggleSwitch:new("","laminar/B738/airstairs_hide",0,
+	"laminar/B738/airstairs_toggle")
 sysGeneral.doorGroup 		= SwitchGroup:new("doors")
 sysGeneral.doorGroup:addSwitch(sysGeneral.doorL1)
 sysGeneral.doorGroup:addSwitch(sysGeneral.doorL2)
@@ -94,9 +96,8 @@ sysGeneral.doorGroup:addSwitch(sysGeneral.doorR1)
 sysGeneral.doorGroup:addSwitch(sysGeneral.doorR2)
 sysGeneral.doorGroup:addSwitch(sysGeneral.doorFCargo)
 sysGeneral.doorGroup:addSwitch(sysGeneral.doorACargo)
-
-sysGeneral.cockpitDoor 		= TwoStateToggleSwitch:new("","laminar/B738/door/flt_dk_door_ratio",0,
-	"laminar/B738/toggle_switch/flt_dk_door_open")
+sysGeneral.doorGroup:addSwitch(sysGeneral.cockpitDoor)
+sysGeneral.doorGroup:addSwitch(sysGeneral.stairs)
 
 -- Passenger Signs
 

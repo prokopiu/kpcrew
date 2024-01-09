@@ -60,7 +60,7 @@ end
 
 function kc_macro_state_cold_and_dark()
 	-- set aircraft to cold & dark
-	kc_macro_ext_doors_stand()
+	kc_macro_doors_cold_dark()
 
 	set("sim/private/controls/shadow/cockpit_near_adjust",0.09)
 	activeBckVars:set("general:timesOFF","==:==")
@@ -160,13 +160,13 @@ end
 function kc_macro_state_turnaround()
 	-- set aircraft into turnaround mode
 
-	kc_macro_ext_doors_stand()
+	kc_macro_doors_preflight()
 
 	set("sim/private/controls/shadow/cockpit_near_adjust",0.09)
 	sysElectric.batteryCover:actuate(modeOff)
 	sysElectric.batterySwitch:actuate(modeOn)
 
-	kc_macro_int_lights_on()
+	kc_macro_lights_preflight()
 
 	sysGeneral.fdrSwitch:actuate(modeOff) 
 	sysGeneral.fdrCover:actuate(modeOn)
@@ -223,8 +223,6 @@ function kc_macro_state_turnaround()
 	sysAir.landingAltitude:setValue(0)
 	command_once("laminar/B738/toggle_switch/air_valve_ctrl_left")
 	command_once("laminar/B738/toggle_switch/air_valve_ctrl_left")
-
-	kc_macro_ext_lights_stand()
 
 	activeBckVars:set("general:timesOFF","==:==")
 	activeBckVars:set("general:timesOUT","==:==")
@@ -556,186 +554,86 @@ function kc_macro_lights_all_on()
 	sysLights.instrLightGroup:actuate(1)
 end
 
--- =====================================================
--- external lights all off
-function kc_macro_ext_lights_off()
-	sysLights.landLightGroup:actuate(0)
-	sysLights.rwyLightGroup:actuate(0)
-	sysLights.taxiSwitch:actuate(0)
-	sysLights.positionSwitch:actuate(0)
-	sysLights.beaconSwitch:actuate(0)
-	sysLights.strobesSwitch:actuate(0)
-	sysLights.logoSwitch:actuate(0)
-	sysLights.wingSwitch:actuate(0)
--- B738
-	sysLights.wheelSwitch:actuate(0)
-end
-
--- external lights at the stand
-function kc_macro_ext_lights_stand()
-	sysLights.landLightGroup:actuate(0)
-	sysLights.rwyLightGroup:actuate(0)
-	sysLights.taxiSwitch:actuate(0)
-	sysLights.strobesSwitch:actuate(0)
-	sysLights.positionSwitch:actuate(1)
-	sysLights.beaconSwitch:actuate(0)
-	if kc_is_daylight() then		
-		sysLights.wingSwitch:actuate(0)
-		sysLights.wheelSwitch:actuate(0)
-		sysLights.logoSwitch:actuate(0)
-	else
-		sysLights.wingSwitch:actuate(1)
-		sysLights.wheelSwitch:actuate(1)
-		sysLights.logoSwitch:actuate(1)
-	end
-end
-
--- external lights runway entry
-function kc_macro_ext_lights_rwyentry()
-	sysLights.landLightGroup:actuate(0)
-	sysLights.llLeftSwitch:actuate(1)
-	sysLights.llRightSwitch:actuate(1)
-	sysLights.taxiSwitch:actuate(0)
-	sysLights.positionSwitch:actuate(1)
-	sysLights.strobesSwitch:actuate(1)
-	sysLights.beaconSwitch:actuate(1)
-	sysLights.wingSwitch:actuate(0)
-	sysLights.wheelSwitch:actuate(0)
-	if kc_is_daylight() then		
-		sysLights.rwyLightGroup:actuate(0)
-		sysLights.logoSwitch:actuate(0)
-	else
-		sysLights.rwyLightGroup:actuate(1)
-		sysLights.logoSwitch:actuate(1)
-	end
-end
-
--- external lights takeoff
-function kc_macro_ext_lights_takeoff()
-	sysLights.taxiSwitch:actuate(0)
-	sysLights.positionSwitch:actuate(1)
-	sysLights.strobesSwitch:actuate(1)
-	sysLights.beaconSwitch:actuate(1)
-	sysLights.wingSwitch:actuate(0)
-	sysLights.wheelSwitch:actuate(0)
-	if kc_is_daylight() then		
-		sysLights.rwyLightGroup:actuate(0)
-		sysLights.landLightGroup:actuate(0)
-		sysLights.llLeftSwitch:actuate(1)
-		sysLights.llRightSwitch:actuate(1)
-		sysLights.logoSwitch:actuate(0)
-	else
-		sysLights.rwyLightGroup:actuate(1)
-		sysLights.landLightGroup:actuate(1)
-		sysLights.logoSwitch:actuate(1)
-	end
-end
-
--- external lights above 10000
-function kc_macro_ext_lights_above10()
-	sysLights.rwyLightGroup:actuate(0)
-	sysLights.taxiSwitch:actuate(0)
-	sysLights.positionSwitch:actuate(1)
-	sysLights.strobesSwitch:actuate(1)
-	sysLights.beaconSwitch:actuate(1)
-	sysLights.wingSwitch:actuate(0)
-	sysLights.wheelSwitch:actuate(0)
-	sysLights.landLightGroup:actuate(0)
-	if kc_is_daylight() then		
-		sysLights.logoSwitch:actuate(0)
-	else
-		sysLights.logoSwitch:actuate(1)
-	end
-end
-
--- external lights below 10000
-function kc_macro_ext_lights_below10()
-	sysLights.taxiSwitch:actuate(0)
-	sysLights.positionSwitch:actuate(1)
-	sysLights.strobesSwitch:actuate(1)
-	sysLights.beaconSwitch:actuate(1)
-	sysLights.wingSwitch:actuate(0)
-	sysLights.wheelSwitch:actuate(0)
-	sysLights.rwyLightGroup:actuate(0)
-	sysLights.landLightGroup:actuate(1)
-	sysLights.llLeftSwitch:actuate(1)
-	sysLights.llRightSwitch:actuate(1)
-	if kc_is_daylight() then		
-		sysLights.logoSwitch:actuate(0)
-	else
-		sysLights.logoSwitch:actuate(1)
-	end
-end
-
--- external lights for landing
-function kc_macro_ext_lights_land()
-	sysLights.taxiSwitch:actuate(0)
-	sysLights.positionSwitch:actuate(1)
-	sysLights.strobesSwitch:actuate(1)
-	sysLights.beaconSwitch:actuate(1)
-	sysLights.wingSwitch:actuate(0)
-	sysLights.wheelSwitch:actuate(0)
-	sysLights.landLightGroup:actuate(1)
-	if kc_is_daylight() then		
-		sysLights.rwyLightGroup:actuate(0)
-		sysLights.logoSwitch:actuate(0)
-	else
-		sysLights.rwyLightGroup:actuate(1)
-		sysLights.logoSwitch:actuate(1)
-	end
-end
-
--- external lights runway vacated
-function kc_macro_ext_lights_rwyvacate()
-	sysLights.taxiSwitch:actuate(1)
-	sysLights.strobesSwitch:actuate(0)
-	sysLights.positionSwitch:actuate(1)
-	sysLights.beaconSwitch:actuate(1)
-	sysLights.wingSwitch:actuate(0)
-	sysLights.wheelSwitch:actuate(0)
-	sysLights.landLightGroup:actuate(0)
-	sysLights.rwyLightGroup:actuate(0)
-	if kc_is_daylight() then		
-		sysLights.logoSwitch:actuate(0)
-	else
-		sysLights.logoSwitch:actuate(1)
-	end
-end
-
--- internal lights all off
-function kc_macro_int_lights_off()
-	sysLights.domeLightSwitch:actuate(0)
-	sysLights.instrLightGroup:actuate(0)
-end
-
--- internal lights at stand
-function kc_macro_int_lights_on()
-	if kc_is_daylight() then		
-		sysLights.domeLightSwitch:actuate(0)
-		sysLights.instrLightGroup:actuate(0)
-	else
-		sysLights.domeLightSwitch:actuate(-1)
-		sysLights.instrLightGroup:actuate(0)
-	end
-end
-
--- doors all closed
-function kc_macro_ext_doors_closed()
-	if get("laminar/B738/airstairs_hide") == 0  then
-		command_once("laminar/B738/airstairs_toggle")
-	end
-	-- sysGeneral.doorGroup:actuate(0)
-	sysGeneral.doorL1:actuate(0)
-	sysGeneral.doorFCargo:actuate(0)
-	sysGeneral.doorACargo:actuate(0)
-end
-
--- doors at stand 
-function kc_macro_ext_doors_stand()
+-- ====================================== Door related functions
+function kc_macro_doors_preflight()
 	sysGeneral.doorL1:actuate(1)
+	sysGeneral.doorL2:actuate(0)
+	sysGeneral.doorR1:actuate(0)
+	sysGeneral.doorR2:actuate(0)
 	sysGeneral.doorFCargo:actuate(1)
 	sysGeneral.doorACargo:actuate(1)
+	sysGeneral.cockpitDoor:actuate(1)
+	if activeBriefings:get("taxi:gateStand") > 1 then
+		sysGeneral.stairs:actuate(0)
+	else
+		sysGeneral.stairs:actuate(1)
+	end
 end
+
+function kc_macro_doors_before_start()
+	sysGeneral.doorL1:actuate(0)
+	sysGeneral.doorL2:actuate(0)
+	sysGeneral.doorR1:actuate(0)
+	sysGeneral.doorR2:actuate(0)
+	sysGeneral.doorFCargo:actuate(0)
+	sysGeneral.doorACargo:actuate(0)
+	sysGeneral.cockpitDoor:actuate(0)
+	sysGeneral.stairs:actuate(1)
+end
+
+function kc_macro_doors_after_shutdown()
+	sysGeneral.doorL1:actuate(1)
+	sysGeneral.doorL2:actuate(0)
+	sysGeneral.doorR1:actuate(0)
+	sysGeneral.doorR2:actuate(0)
+	sysGeneral.doorFCargo:actuate(1)
+	sysGeneral.doorACargo:actuate(1)
+	sysGeneral.cockpitDoor:actuate(1)
+	if activeBriefings:get("approach:gateStand") > 1 then
+		sysGeneral.stairs:actuate(0)
+	else
+		sysGeneral.stairs:actuate(1)
+	end
+end
+
+function kc_macro_doors_cold_dark()
+	sysGeneral.doorL1:actuate(1)
+	sysGeneral.doorL2:actuate(0)
+	sysGeneral.doorR1:actuate(0)
+	sysGeneral.doorR2:actuate(0)
+	sysGeneral.doorFCargo:actuate(0)
+	sysGeneral.doorACargo:actuate(0)
+	sysGeneral.cockpitDoor:actuate(1)
+	if activeBriefings:get("taxi:gateStand") > 1 then
+		sysGeneral.stairs:actuate(0)
+	else
+		sysGeneral.stairs:actuate(1)
+	end
+end
+
+function kc_macro_doors_all_open()
+	sysGeneral.doorL1:actuate(1)
+	sysGeneral.doorL2:actuate(1)
+	sysGeneral.doorR1:actuate(1)
+	sysGeneral.doorR2:actuate(1)
+	sysGeneral.doorFCargo:actuate(1)
+	sysGeneral.doorACargo:actuate(1)
+	sysGeneral.cockpitDoor:actuate(1)
+	sysGeneral.stairs:actuate(0)
+end
+
+function kc_macro_doors_all_closed()
+	sysGeneral.doorL1:actuate(0)
+	sysGeneral.doorL2:actuate(0)
+	sysGeneral.doorR1:actuate(0)
+	sysGeneral.doorR2:actuate(0)
+	sysGeneral.doorFCargo:actuate(0)
+	sysGeneral.doorACargo:actuate(0)
+	sysGeneral.cockpitDoor:actuate(0)
+	sysGeneral.stairs:actuate(1)
+end
+
+-- =====================================================
 
 -- glareshield initial setup
 function kc_macro_glareshield_initial()
@@ -982,13 +880,13 @@ end
 
 -- 10000 feet activities up and down
 function kc_macro_above_10000_ft()
-	kc_macro_ext_lights_above10()
+	kc_macro_lights_climb_10k()
 	command_once("laminar/B738/toggle_switch/seatbelt_sign_up") 
 	command_once("laminar/B738/toggle_switch/seatbelt_sign_up") 
 end
 
 function kc_macro_below_10000_ft()
-	kc_macro_ext_lights_below10()
+	kc_macro_lights_descend_10k()
 	command_once("laminar/B738/toggle_switch/seatbelt_sign_up") 
 	command_once("laminar/B738/toggle_switch/seatbelt_sign_up") 
 	command_once("laminar/B738/toggle_switch/seatbelt_sign_dn") 

@@ -1,14 +1,12 @@
--- DFLT airplane (X-Plane default)
+-- DFLT airplane (X-Plane 11 default)
 -- aircraft lights specific functionality
 -- ** default element for kphardware - must be in all classes of this system
 
 -- @classmod sysLights
 -- @author Kosta Prokopiu
--- @copyright 2024 Kosta Prokopiu
+-- @copyright 2022 Kosta Prokopiu
 local sysLights = {
 }
-
-logMsg("Loading DFLT sysLights")
 
 local TwoStateDrefSwitch 	= require "kpcrew.systems.TwoStateDrefSwitch"
 local TwoStateCmdSwitch	 	= require "kpcrew.systems.TwoStateCmdSwitch"
@@ -106,11 +104,10 @@ sysLights.wheelSwitch 		= TwoStateDrefSwitch:new("wheel",drefGenericLights,5)
 sysLights.wheelAnc 			= SimpleAnnunciator:new("wheellights",drefGenericLights,5)
 
 -- Dome Light
-sysLights.domeLightSwitch 	= TwoStateDrefSwitch:new("dome","sim/cockpit/electrical/cockpit_lights",0)
-sysLights.domeLightSwitch2 	= InopSwitch:new("dome2")
+sysLights.domeLightSwitch 	= TwoStateDrefSwitch:new("wheel","sim/cockpit/electrical/cockpit_lights",0)
 sysLights.domeLightGroup 	= SwitchGroup:new("dome lights")
 sysLights.rwyLightGroup:addSwitch(sysLights.domeLightSwitch)
-sysLights.rwyLightGroup:addSwitch(sysLights.domeLightSwitch2)
+
 
 -- Dome Light(s) status
 sysLights.domeAnc 			= CustomAnnunciator:new("domelights",
