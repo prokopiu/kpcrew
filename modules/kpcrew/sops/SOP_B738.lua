@@ -56,29 +56,25 @@ activeSOP = SOP:new("Zibo Mod SOP")
 
 local testProc = Procedure:new("TEST","","")
 testProc:setFlightPhase(1)
-testProc:addItem(ProcedureItem:new("DOORS","ALL CLOSED",FlowItem.actorFO,10,false,
+testProc:addItem(ProcedureItem:new("MCP","C&D",FlowItem.actorFO,5,false,
 	function () 
-	  kc_macro_doors_all_closed()
+	  kc_macro_mcp_cold_dark()
 	end))
-testProc:addItem(ProcedureItem:new("DOORS","ALL OPEN",FlowItem.actorFO,10,false,
+testProc:addItem(ProcedureItem:new("MCP","PREFLIGHT",FlowItem.actorFO,5,false,
 	function () 
-	  kc_macro_doors_all_open()
+	  kc_macro_mcp_preflight()
 	end))
-testProc:addItem(ProcedureItem:new("DOORS","PREFLIGHT",FlowItem.actorFO,5,false,
+testProc:addItem(ProcedureItem:new("MCP","TAKEOFF",FlowItem.actorFO,5,false,
 	function () 
-	  kc_macro_doors_preflight()
+	  kc_macro_mcp_takeoff()
 	end))
-testProc:addItem(ProcedureItem:new("DOORS","BEFORE START",FlowItem.actorFO,5,false,
+testProc:addItem(ProcedureItem:new("MCP","GA",FlowItem.actorFO,5,false,
 	function () 
-	  kc_macro_doors_before_start()
+	  kc_macro_mcp_goaround()
 	end))
-testProc:addItem(ProcedureItem:new("DOORS","SHUTDOWN",FlowItem.actorFO,5,false,
+testProc:addItem(ProcedureItem:new("MCP","AFTER LAND",FlowItem.actorFO,5,false,
 	function () 
-	  kc_macro_doors_after_shutdown()
-	end))
-testProc:addItem(ProcedureItem:new("DOORS","C&D",FlowItem.actorFO,5,false,
-	function () 
-	  kc_macro_doors_cold_dark()
+	  kc_macro_mcp_after_landing()
 	end))
 	
 -- ============ Electrical Power Up Procedure ============
@@ -1487,7 +1483,7 @@ beforeStartChkl:addItem(ChecklistItem:new("MCP","V2 %i, HDG %i, ALT %i|activeBri
 			sysMCP.altSelector:getStatus() == activeBriefings:get("departure:initAlt") 
 	end,
 	function () 
-		kc_macro_glareshield_takeoff()
+		kc_macro_mcp_takeoff()
 	end))
 beforeStartChkl:addItem(ChecklistItem:new("TAKEOFF SPEEDS","V1 %i, VR %i, V2 %i|activeBriefings:get(\"takeoff:v1\")|activeBriefings:get(\"takeoff:vr\")|activeBriefings:get(\"takeoff:v2\")",FlowItem.actorPF,0,true))
 beforeStartChkl:addItem(ChecklistItem:new("CDU PREFLIGHT","COMPLETED",FlowItem.actorPF,0,true))
@@ -2575,7 +2571,7 @@ shutdownProc:addItem(ProcedureItem:new("MCP","RESET",FlowItem.actorFO,0,
 	function () return sysMCP.altSelector:getStatus() == activePrefSet:get("aircraft:mcp_def_alt") end,
 	function () 
 		kc_macro_b738_lowerdu_off()
-		kc_macro_glareshield_initial()
+		kc_macro_mcp_cold_dark()
 		-- stairs need a delay to be extended
 		if activeBriefings:get("taxi:gateStand") > 1 then
 			if get("laminar/B738/airstairs_hide") == 1  then

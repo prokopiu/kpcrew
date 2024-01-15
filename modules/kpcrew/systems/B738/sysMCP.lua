@@ -188,6 +188,9 @@ sysMCP.displaySourceSwitch 	= MultiStateCmdSwitch:new("dispsrc","laminar/B738/to
 sysMCP.displayControlSwitch = MultiStateCmdSwitch:new("dispctrl","laminar/B738/toggle_switch/dspl_ctrl_pnl",0,
 	"laminar/B738/toggle_switch/dspl_ctrl_pnl_left","laminar/B738/toggle_switch/dspl_ctrl_pnl_right",-1,1,true)
 
+-- YAW DAMPER
+sysMCP.yawDamper			= InopSwitch:new("yawdamper")
+
 ---------- Annunciators
 
 -- Flight Directors annunciator

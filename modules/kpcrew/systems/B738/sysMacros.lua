@@ -139,7 +139,7 @@ function kc_macro_state_cold_and_dark()
 	sysRadios.xpdrSwitch:actuate(sysRadios.xpdrStby)
 	sysGeneral.autobrake:actuate(1)
 
-	kc_macro_glareshield_initial()
+	kc_macro_mcp_cold_dark()
 	kc_macro_efis_initial()
 	kc_macro_b738_lowerdu_off()
 	
@@ -238,7 +238,7 @@ function kc_macro_state_turnaround()
 	sysRadios.xpdrSwitch:actuate(sysRadios.xpdrStby)
 	sysGeneral.autobrake:actuate(1)
 
-	kc_macro_glareshield_initial()
+	kc_macro_mcp_preflight()
 
 	kc_macro_efis_initial()
 
@@ -633,10 +633,9 @@ function kc_macro_doors_all_closed()
 	sysGeneral.stairs:actuate(1)
 end
 
--- =====================================================
+-- ====================================== A/P & Glareshield related functions
 
--- glareshield initial setup
-function kc_macro_glareshield_initial()
+function kc_macro_mcp_cold_dark()
 	sysMCP.fdirGroup:actuate(0)
 	sysMCP.athrSwitch:actuate(0)
 	sysMCP.crs1Selector:setValue(1)
@@ -646,11 +645,24 @@ function kc_macro_glareshield_initial()
 	sysMCP.altSelector:setValue(activePrefSet:get("aircraft:mcp_def_alt"))
 	sysMCP.vspSelector:setValue(0)
 	sysMCP.discAPSwitch:actuate(0)
+	sysMCP.yawDamper:actuate(0)
+	sysMCP.ap1Switch:actuate(0)
 	sysMCP.turnRateSelector:actuate(3)
 end
 
--- glareshield takeoff setup
-function kc_macro_glareshield_takeoff()
+
+function kc_macro_mcp_preflight()
+	sysMCP.fdirGroup:actuate(1)
+	sysMCP.athrSwitch:actuate(0)
+	sysMCP.yawDamper:actuate(0)
+	sysMCP.ap1Switch:actuate(0)
+	sysMCP.iasSelector:setValue(activeBriefings:get("takeoff:v2"))
+	sysMCP.hdgSelector:setValue(activeBriefings:get("departure:initHeading"))
+	sysMCP.altSelector:setValue(activeBriefings:get("departure:initAlt"))
+	sysMCP.turnRateSelector:actuate(3)
+end
+
+function kc_macro_mcp_takeoff()
 	sysMCP.fdirGroup:actuate(1)
 	sysMCP.athrSwitch:actuate(1)
 	sysMCP.iasSelector:setValue(activeBriefings:get("takeoff:v2"))
@@ -659,21 +671,37 @@ function kc_macro_glareshield_takeoff()
 	if activeBriefings:get("takeoff:apMode") == 1 then
 		sysMCP.lnavSwitch:actuate(1)
 		sysMCP.vnavSwitch:actuate(1)
+	else
+		sysMCP.hdgselSwitch:actuate(1)
 	end
 end
 
--- glareshield go around setup
-function kc_macro_glareshield_goaround()
+function kc_macro_mcp_goaround()
 	sysMCP.fdirGroup:actuate(1)
 	sysMCP.athrSwitch:actuate(1)
-	sysMCP.iasSelector:setValue(activeBriefings:get("takeoff:v2"))
-	sysMCP.hdgSelector:setValue(activeBriefings:get("departure:initHeading"))
-	sysMCP.altSelector:setValue(activeBriefings:get("departure:initAlt"))
+	sysMCP.iasSelector:setValue(activeBriefings:get("approach:gav2"))
+	sysMCP.hdgSelector:setValue(activeBriefings:get("approach:gaheading"))
+	sysMCP.altSelector:setValue(activeBriefings:get("approach:gaaltitude"))
 	if activeBriefings:get("takeoff:apMode") == 1 then
 		sysMCP.lnavSwitch:actuate(1)
 		sysMCP.vnavSwitch:actuate(1)
+	else
+		sysMCP.hdgselSwitch:actuate(1)
 	end
+	sysMCP.speedSwitch:actuate(1)
+	sysMCP.yawDamper:actuate(1)
 end
+
+function kc_macro_mcp_after_landing()
+	sysMCP.fdirPilotSwitch:actuate(0)
+	sysMCP.athrSwitch:actuate(0)
+	sysMCP.hdgselSwitch:actuate(0)
+	sysMCP.speedSwitch:actuate(0)
+	sysMCP.ap1Switch:actuate(0)
+	sysMCP.yawDamper:actuate(0)
+end
+
+-- =====================================================
 
 -- efis initial setup
 function kc_macro_efis_initial()

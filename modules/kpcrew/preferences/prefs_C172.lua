@@ -3,6 +3,7 @@
 -- @author Kosta Prokopiu
 -- @copyright 2023 Kosta Prokopiu
 local C172Group = kcPreferenceGroup:new("aircraft","C172 AIRCRAFT PREFERENCES")
+C172Group:add(kcPreference:new("mcp_def_spd",	100,	kcPreference.typeInt,	"MCP Initial Speed|5")) 
 C172Group:add(kcPreference:new("mcp_def_hdg",	001,	kcPreference.typeInt,	"MCP Initial Heading|1")) 
 C172Group:add(kcPreference:new("mcp_def_alt",	4500,	kcPreference.typeInt,	"MCP Initial Altitude|100")) 
 
