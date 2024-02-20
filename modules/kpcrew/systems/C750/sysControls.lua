@@ -15,7 +15,8 @@ local sysControls = {
 	trimUp 		= 0,
 	trimDown 	= 1,
 
-	flaps_pos = {[0] = 0, [1] = 0.25, [2] = 0.5, [3] = 0.75, [4] = 1}
+	flaps_pos = {[0] = 0, 	[1] = 0.25, [2] = 0.5, [3] = 0.75, [4] = 1},
+	flaps_spd = {[0] = 300, [1] = 250, 	[2] = 250, [3] = 210,  [4] = 185}
 }
 
 local TwoStateDrefSwitch 	= require "kpcrew.systems.TwoStateDrefSwitch"
