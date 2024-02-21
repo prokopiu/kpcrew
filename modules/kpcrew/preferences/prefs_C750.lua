@@ -11,6 +11,6 @@ C750Group:add(kcPreference:new("powerup_ext",	false,	kcPreference.typeToggle,"Po
 
 C750Group:add(kcPreference:new("has_apu",		true,	kcPreference.typeToggle,"Airplane APU|Has APU|Has no APU")) 
 C750Group:add(kcPreference:new("has_gpu",		true,	kcPreference.typeToggle,"Airplane GPU|Has GPU|Has no GPU")) 
-C750Group:add(kcPreference:new("powerup_apu",	false,	kcPreference.typeToggle,"Initial Power-Up|With APU|With GPU")) 
+C750Group:add(kcPreference:new("powerup_apu",	true,	kcPreference.typeToggle,"Initial Power-Up|With APU|With GPU")) 
 
 activePrefSet:addGroup(C750Group)

@@ -117,6 +117,7 @@ function kc_macro_state_cold_and_dark()
 	command_once("sim/flight_controls/door_open_1")
 end
 
+-- ========================================================
 function kc_macro_state_turnaround()
 	sysGeneral.parkBrakeSwitch:actuate(1)
 	set_array("sim/cockpit2/engine/actuators/mixture_ratio",0,0)
@@ -621,9 +622,6 @@ function kc_macro_lights_all_on()
 	sysLights.domeLightGroup:actuate(1)
 	sysLights.instrLightGroup:actuate(1)
 end
-
-
-
 
 -- =====================================================
 
