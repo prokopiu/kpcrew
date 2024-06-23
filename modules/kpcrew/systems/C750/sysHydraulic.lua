@@ -20,8 +20,10 @@ local InopSwitch 			= require "kpcrew.systems.InopSwitch"
 local drefHydPressure1 		= "sim/cockpit2/annunciators/hydraulic_pressure"
 
 -- HYD Electric Pumps
-sysHydraulic.elecHydPumpGroup = TwoStateToggleSwitch:new("hydpump","laminar/CitX/hydraulics/aux_pump",0,
+sysHydraulic.elecHydPumpA = TwoStateToggleSwitch:new("hydpump","laminar/CitX/hydraulics/aux_pump",0,
 	"laminar/CitX/hydraulics/cmd_aux_pump_toggle")
+sysHydraulic.elecHydPumpGroup = SwitchGroup:new("elechydpumps")
+sysHydraulic.elecHydPumpGroup:addSwitch(sysHydraulic.elecHydPumpA)
 
 -- HYD ENGINE Pumps
 

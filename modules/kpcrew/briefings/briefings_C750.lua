@@ -177,8 +177,15 @@ function kc_set_landing_details()
 	command_once("sim/FMS/next")
 	command_once("sim/FMS/next")
 	command_once("sim/FMS/next")
-	activeBriefings:set("approach:vref",string.sub(get("sim/cockpit2/radios/indicators/fms_cdu1_text_line2"),1,3)) 
-	activeBriefings:set("approach:vapp",string.sub(get("sim/cockpit2/radios/indicators/fms_cdu1_text_line4"),1,3))
+	local vrefline = get("sim/cockpit2/radios/indicators/fms_cdu1_text_line2")
+	print(vrefline)
+	if vrefline ~= "" then 
+		activeBriefings:set("approach:vref",string.sub(get("sim/cockpit2/radios/indicators/fms_cdu1_text_line2"),1,3))
+	end
+	local vappline = get("sim/cockpit2/radios/indicators/fms_cdu1_text_line4")
+	if vappline ~= "" then 
+		activeBriefings:set("approach:vapp",string.sub(get("sim/cockpit2/radios/indicators/fms_cdu1_text_line4"),1,3))
+	end
 end
 
 -- briefings to be more aircraft specific

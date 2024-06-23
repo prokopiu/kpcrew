@@ -119,6 +119,9 @@ end
 
 -- ========================================================
 function kc_macro_state_turnaround()
+	if activePrefSet:get("general:sges") == true then
+		kc_macro_start_sges_sequence()
+	end
 	sysGeneral.parkBrakeSwitch:actuate(1)
 	set_array("sim/cockpit2/engine/actuators/mixture_ratio",0,0)
 	set_array("sim/cockpit2/engine/actuators/mixture_ratio",1,0)
@@ -231,6 +234,95 @@ function kc_macro_state_turnaround()
 	command_end("laminar/CitX/ahrs/cmd_mode_pilot_dwn")
 	command_once("sim/flight_controls/door_open_1")
 	kc_wnd_brief_action=1  -- open briefing window
+end
+
+--  ==== LEFT
+-- LH & RH GEN SWITCHES..........................OFF (F/O)
+-- LH & RH FUEL BOOST SWITCHES..................NORM (F/O)
+-- LH & RH FADEC SWITCHES.....................NORMAL (F/O)
+-- LH & RH IGNITION SWITCHES.....................OFF (F/O) 
+-- CTR WING XFER LH & RH........................NORM (F/O)		
+-- PASSENGER OXYGEN.............................AUTO (F/O)
+-- RH AHRS DG...................................TEST (F/O) 
+-- RH AHRS DG....................................SLV (F/O) 
+-- RH AHRS SLEW..................................SLV (F/O)
+-- OXY PRESSURE........................IN GREEN AREA (CPT)		
+-- GRVTY XFLOW...................................OFF (F/O)		
+-- IGNITION SWITCHES............................NORM (F/O)
+
+function kc_macro_background_settings()
+	sysElectric.gen1Switch:actuate(0)
+	sysElectric.gen2Switch:actuate(0)
+	command_once("laminar/CitX/fuel/cmd_boost_left_dwn")
+	command_once("laminar/CitX/fuel/cmd_boost_left_dwn")
+	command_once("laminar/CitX/fuel/cmd_boost_right_dwn")
+	command_once("laminar/CitX/fuel/cmd_boost_right_dwn")
+	if get("laminar/CitX/engine/ignition_switch_left") > 0 then 
+		command_once("laminar/CitX/engine/cmd_ignition_switch_left_dwn")
+	elseif get("laminar/CitX/engine/ignition_switch_left") < 0 then 
+		command_once("laminar/CitX/engine/cmd_ignition_switch_left_up")
+	end
+	if get("laminar/CitX/engine/ignition_switch_right") > 0 then 
+		command_once("laminar/CitX/engine/cmd_ignition_switch_right_dwn")
+	elseif get("laminar/CitX/engine/ignition_switch_right") < 0 then 
+		command_once("laminar/CitX/engine/cmd_ignition_switch_right_up")
+	end
+	command_once("laminar/CitX/fuel/cmd_transfer_right_up")
+	command_once("laminar/CitX/fuel/cmd_transfer_right_up")
+	command_once("laminar/CitX/fuel/cmd_transfer_left_up")
+	command_once("laminar/CitX/fuel/cmd_transfer_left_up")
+	if get("laminar/CitX/oxygen/pass_oxy") == 0 then 
+		command_once("laminar/CitX/oxygen/cmd_pass_oxy_up")
+	elseif get("laminar/CitX/oxygen/pass_oxy") == 2 then 
+		command_once("laminar/CitX/oxygen/cmd_pass_oxy_dwn")
+	end
+	command_end("laminar/CitX/ahrs/cmd_mode_copilot_dwn")
+	sysFuel.crossFeed:actuate(0)
+	if get("laminar/CitX/fuel/gravity_flow") ~= 0 then 
+		command_once("laminar/CitX/fuel/cmd_gravity_flow_toggle")
+	end
+	command_once("laminar/CitX/engine/cmd_ignition_switch_left_dwn")
+	command_once("laminar/CitX/engine/cmd_ignition_switch_left_dwn")
+	command_once("laminar/CitX/engine/cmd_ignition_switch_right_dwn")
+	command_once("laminar/CitX/engine/cmd_ignition_switch_right_dwn")
+	command_once("laminar/CitX/autopilot/cmd_stby_mode")
+	if get("laminar/CitX/throttle/stow_emer_R") ~= 0 then
+		command_once("laminar/CitX/throttle/stow_emer_R_toggle")
+	end
+	if get("laminar/CitX/throttle/stow_emer_L") ~= 0 then
+		command_once("laminar/CitX/throttle/stow_emer_L_toggle")
+	end
+	if get("laminar/CitX/ice/wing_crossover") ~= 0 then
+		command_once("laminar/CitX/ice/cmd_wing_crossover_toggle")
+	end
+	if get("laminar/CitX/pressurization/cabin_dump") ~= 0 then
+		command_once("laminar/CitX/pressurization/cmd_cabin_dump_toggle")
+	end
+	if get("laminar/CitX/pressurization/safeguard_cabin_dump") ~= 0 then
+		command_once("laminar/CitX/pressurization/cmd_safeguard_cabin_dump_toggle")
+	end
+	if get("laminar/CitX/pressurization/iso_vlv") ~= 0 then
+		command_once("laminar/CitX/pressurization/cmd_iso_vlv_toggle")
+	end
+	if get("laminar/CitX/pressurization/safeguard_iso_vlv") ~= 0 then
+		command_once("laminar/CitX/pressurization/cmd_safeguard_iso_vlv_toggle")
+	end
+	sysAice.windowHeatGroup:actuate(1)
+	if get("laminar/CitX/engine/gnd_idle") ~= 0 then
+		command_once("laminar/CitX/engine/gnd_idle")
+	end
+	if get("laminar/CitX/engine/eng_sync") < 0 then
+		command_once("laminar/CitX/engine/cmd_eng_sync_up")
+	end
+	if get("laminar/CitX/engine/eng_sync") > 0 then
+		command_once("laminar/CitX/engine/cmd_eng_sync_dwn")
+	end
+	while get("laminar/CitX/controls/split_pull") ~= 0 do
+		command_once("laminar/CitX/controls/cmd_controls_split")
+	end
+	if activePrefSet:get("general:sges") == true then
+		kc_macro_start_sges_sequence()
+	end
 end
 
 -- ====================================== Lights related functions
@@ -864,6 +956,5 @@ function kc_bck_transition_level(trigger)
 		kc_procvar_set(trigger,false)
 	end
 end
-
 
 return sysMacros
