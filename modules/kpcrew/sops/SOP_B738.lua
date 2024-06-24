@@ -1385,7 +1385,7 @@ beforeStartProc:addItem(SimpleProcedureItem:new("Set required CDU DISPLAY"))
 beforeStartProc:addItem(SimpleProcedureItem:new("Check N1 BUGS"))
 beforeStartProc:addItem(ProcedureItem:new("IAS BUGS","SET",FlowItem.actorBOTH,0,
 	function () return sysFMC.noVSpeeds:getStatus() == 0 end,
-	function () kc_macro_glareshield_takeoff() end))
+	function () kc_macro_mcp_takeoff() end))
 beforeStartProc:addItem(SimpleProcedureItem:new("TAXI AND TAKEOFF BRIEFINGS - COMPLETE?"))
 beforeStartProc:addItem(SimpleProcedureItem:new("==== START CLEARANCE"))
 beforeStartProc:addItem(HoldProcedureItem:new("CLEARANCE TO PRESSURIZE HYDRAULIC SYSTEM","OBTAIN",FlowItem.actorCPT,1))
@@ -1572,6 +1572,8 @@ pushProc:addItem(ProcedureItem:new("SYSTEM A HYDRAULIC PUMP","ON",FlowItem.actor
 		kc_macro_hydraulic_on()
 	end))
 pushProc:addItem(HoldProcedureItem:new("CLEARANCE FROM GROUND CREW","RECEIVED",FlowItem.actorCPT,nil))
+
+
 
 local startProc = Procedure:new("ENGINE START","cleared to start engines")
 startProc:setFlightPhase(4)
@@ -2022,7 +2024,7 @@ takeoffProc:addItem(ProcedureItem:new("SET TAKEOFF THRUST","T/O MODE",FlowItem.a
 
 -- ====
 local gearUpProc = Procedure:new("GEAR UP","Gear up")
-gearUpProc:setFlightPhase(8)
+gearUpProc:setFlightPhase(-8)
 gearUpProc:addItem(IndirectProcedureItem:new("GEAR","UP",FlowItem.actorPM,0,"gear_up_to",
 	function () return sysGeneral.GearSwitch:getStatus() == 0 end,
 	function () 
@@ -2035,7 +2037,7 @@ gearUpProc:addItem(IndirectProcedureItem:new("GEAR","UP",FlowItem.actorPM,0,"gea
 
 -- flaps schedule
 local flapsUpProc = Procedure:new("RETRACT FLAPS","")
-flapsUpProc:setFlightPhase(8)
+flapsUpProc:setFlightPhase(-8)
 flapsUpProc:addItem(SimpleProcedureItem:new("Retract Flaps when Speed reached"))
 flapsUpProc:addItem(HoldProcedureItem:new("FLAPS 10","COMMAND",FlowItem.actorCPT,nil,
  	function () return sysControls.flapsSwitch:getStatus() < 0.5 end))
@@ -2245,7 +2247,7 @@ landingProc:addItem(ProcedureItem:new("EXTERNAL LIGHTS","SET",FlowItem.actorCPT,
 	function () kc_macro_lights_approach() end))
 
 local flaps1Proc = Procedure:new("FLAPS 1","","")
-flaps1Proc:setFlightPhase(13)
+flaps1Proc:setFlightPhase(-13)
 flaps1Proc:addItem(ProcedureItem:new("FLAPS 1","SET",FlowItem.actorPNF,0,true,
 	function () command_once("laminar/B738/push_button/flaps_1") kc_speakNoText(0,"speed check flaps 1") end))
 flaps1Proc:addItem(HoldProcedureItem:new("FLAPS 5","COMMAND",FlowItem.actorPF))
@@ -2253,14 +2255,14 @@ flaps1Proc:addItem(ProcedureItem:new("FLAPS 5","SET",FlowItem.actorPNF,0,true,
 	function () command_once("laminar/B738/push_button/flaps_5") kc_speakNoText(0,"speed check flaps 5") end))
 
 local gearDownProc = Procedure:new("GEAR DOWN - FLAPS 15","","")
-gearDownProc:setFlightPhase(13)
+gearDownProc:setFlightPhase(-13)
 gearDownProc:addItem(ProcedureItem:new("GEAR","DOWN",FlowItem.actorPNF,0,true,
 	function () sysGeneral.GearSwitch:actuate(modeOn) kc_speakNoText(0,"gear coming down") end))
 gearDownProc:addItem(ProcedureItem:new("FLAPS 15","SET",FlowItem.actorPNF,0,true,
 	function () command_once("laminar/B738/push_button/flaps_15") kc_speakNoText(0,"speed check flaps 15") end))
 
 local flaps30Proc = Procedure:new("COMMAND FLAPS 30 OR 40","","")
-flaps30Proc:setFlightPhase(13)
+flaps30Proc:setFlightPhase(-13)
 flaps30Proc:addItem(ProcedureItem:new("FLAPS 30","SET",FlowItem.actorPNF,0,true,
 	function () command_once("laminar/B738/push_button/flaps_30") kc_speakNoText(0,"speed check flaps 30") end,
 	function () return activeBriefings:get("approach:flaps") == 2 end))
@@ -2771,7 +2773,7 @@ backgroundFlow:addItem(BackgroundProcedureItem:new("","","SYS",0,
 
 -- ============  =============
 -- add the checklists and procedures to the active sop
-activeSOP:addProcedure(testProc)
+-- activeSOP:addProcedure(testProc)
 activeSOP:addProcedure(electricalPowerUpProc)
 activeSOP:addProcedure(prelPreflightProc)
 activeSOP:addProcedure(cduPreflightProc)
