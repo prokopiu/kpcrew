@@ -535,7 +535,7 @@ end
 
 -- get daylight 0=dark 1=bright
 function kc_is_daylight()
-	if get("sim/private/stats/skyc/sun_amb_b") < 0.02 then
+	if get("sim/private/stats/skyc/sun_amb_b") < 0.1 then
 		return false
 	else
 		return true
@@ -929,4 +929,15 @@ function kc_pushback_end()
 	if activePrefSet:get("general:betterPushback") == true then
 		command_once("BetterPushback/disconnect")
 	end
+end
+
+-- start SGES start sequence
+function kc_macro_start_sges_sequence()
+		-- show_windoz()
+		show_Automatic_sequence_start = true
+		SGES_Automatic_sequence_start_flight_time_sec = SGES_total_flight_time_sec
+end
+
+function kc_show_sges_window()
+	show_windoz()
 end
