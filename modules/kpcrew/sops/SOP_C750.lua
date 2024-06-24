@@ -935,7 +935,7 @@ preTaxiProc:addItem(IndirectProcedureItem:new("BRAKE CHECK","PERFORMED",FlowItem
 -- AP HEADING BUG...............................SET  (CPT)
 -- AP HDG MODE..................................SET  (CPT)
 -- AP VNAV......................................SET  (CPT)
--- AP MAC TRIM...................................ON  (CPT)
+-- AP MAC TRIM...................................ON  ----
 -- ENGINE ANTI-ICE......................AS REQUIRED  (F/O)
 -- STABILIZER ANTI-ICE..................AS REQUIRED  (F/O)
 -- WINDSHIELD HEAT LH & RH.......................ON  (F/O)
@@ -1101,7 +1101,7 @@ gearUpProc:addItem(IndirectProcedureItem:new("GEAR","UP",FlowItem.actorPM,0,"gea
 local flapsUpProc = Procedure:new("RETRACT FLAPS","")
 flapsUpProc:setFlightPhase(-8)
 flapsUpProc:addItem(SimpleProcedureItem:new("Retract Flaps when Speed reached"))
-flapsUpProc:addItem(HoldProcedureItem:new("FLAPS 5","COMMAND AT >190 KTS",FlowItem.actorPF,nil,
+flapsUpProc:addItem(HoldProcedureItem:new("FLAPS 5","COMMAND AT >200 KTS",FlowItem.actorPF,nil,
 	function () return activeBriefings:get("takeoff:flaps") < 3 end))
 flapsUpProc:addItem(ProcedureItem:new("FLAPS 5","SET",FlowItem.actorPM,0,true,
 	function () sysControls.flapsSwitch:setValue(sysControls.flaps_pos[2]) kc_speakNoText(0,"speed check flaps 5") end,
@@ -1140,12 +1140,9 @@ flapsUpProc:addItem(ProcedureItem:new("#spell|APU# SYSTEM MASTER","OFF",FlowItem
 -- =====================================================================================================================
 
 -- ================ AFTER TAKEOFF CHECK ==================
--- FLAPS............................SET AS REQUIRED  (PF)
--- TRANSPONDER..........................AS REQUIRED  (F/O)
--- STABILIZER TRIM........................SET GREEN  (CPT)
--- INTERNAL LIGHTS..............................SET  (F/O)
--- TAXI LIGHT....................................ON  (CPT)	
--- PARKING BRAKE...........................RELEASED  (CPT)
+-- FLAPS.........................................UP   (PM)
+-- CLB THRUST...................................SET   (PM)
+-- TAXI LIGHT...................................OFF   (PM)
 -- =======================================================
 
 local afterTakeoffCheck = Checklist:new("AFTER TAKEOFF CHECK","after takeoff check","")
@@ -1169,11 +1166,6 @@ afterTakeoffCheck:addItem(ChecklistItem:new("TAXI LIGHT","OFF",FlowItem.actorPM,
 -- KPCREW APPROACH BRIEFING................PERFORM   (PF)
 -- VREF...............................CHECK IN FMC   (PF)
 -- LANDING DATA...............VREF __, MINIMUMS __   (PF)
--- NAVIGATION RADIOS..........SET FOR THE APPROACH   (PF)
--- TRANSITION LEVEL DESCENT FORECAST...........SET   (PF)
--- FMC............................SET FOR APPROACH   (PF)
--- APPROACH BRIEFING.....................PERFORMED   (PF)
-
 -- PRESSURIZATION...............SET LAND ALT __ FT   (PM)
 -- ENGINE ANTI-ICE.....................AS REQUIRED   (PM)
 -- STABILIZER ANTI-ICE.................AS REQUIRED   (PM)
@@ -1307,13 +1299,13 @@ descentChecklist:addItem(ChecklistItem:new("SEAT BELT LTS","PASS SAFETY",FlowIte
 -- === GEAR DOWN
 -- LANDING GEAR........................DOWN 3 GREEN   (PM)
 
--- === FLAPS 5 (<250k)
+-- === FLAPS 5 (<250kt)
 -- FLAPS 5......................................SET
 
--- === FLAPS 15 (<210k)
+-- === FLAPS 15 (<210kt)
 -- FLAPS 15.....................................SET
 
--- === FLAPS FULL (<180k)
+-- === FLAPS FULL (<180kt)
 -- FLAPS FULL...................................SET
 -- GO AROUND ALTITUDE.......................... SET
 -- GO AROUND HEADING............................SET
@@ -1375,7 +1367,7 @@ gearDownProc:addItem(ProcedureItem:new("GREEN LANDING GEAR LIGHT","CHECK ILLUMIN
 
 -- =====================================================================================================================
 
-local flaps5Proc = Procedure:new("FLAPS 5 (<250k)","","")
+local flaps5Proc = Procedure:new("FLAPS 5 (<245 kts)","","")
 flaps5Proc:setFlightPhase(-13)
 flaps5Proc:addItem(ProcedureItem:new("FLAPS 5","SET",FlowItem.actorPNF,0,
 	function () return sysControls.flapsSwitch:getStatus() >= 0.5 end,
@@ -1383,7 +1375,7 @@ flaps5Proc:addItem(ProcedureItem:new("FLAPS 5","SET",FlowItem.actorPNF,0,
 
 -- =====================================================================================================================
 
-local flaps15Proc = Procedure:new("FLAPS 15 (<210k)","","")
+local flaps15Proc = Procedure:new("FLAPS 15 (<205 kts)","","")
 flaps15Proc:setFlightPhase(-13)
 flaps15Proc:addItem(ProcedureItem:new("FLAPS 15","SET",FlowItem.actorPNF,0,
 	function () return sysControls.flapsSwitch:getStatus() >= 0.75 end,
@@ -1391,7 +1383,7 @@ flaps15Proc:addItem(ProcedureItem:new("FLAPS 15","SET",FlowItem.actorPNF,0,
 
 -- =====================================================================================================================
 
-local flapsFullProc = Procedure:new("FLAPS Full (<180k)","","")
+local flapsFullProc = Procedure:new("FLAPS Full (<180 kts)","","")
 flapsFullProc:setFlightPhase(-13)
 flapsFullProc:addItem(ProcedureItem:new("FLAPS FULL","SET",FlowItem.actorPNF,0,
 	function () return sysControls.flapsSwitch:getStatus() == 1 end,
@@ -1449,7 +1441,7 @@ landingChecklist:addItem(ChecklistItem:new("AUTOPILOT","OFF",FlowItem.actorPF,0,
 -- CHRONO & ET................................STOP  (F/O)
 -- PITOT/STATIC...........................BOTH OFF  (F/O)
 -- FLAPS........................................UP  (F/O)
--- SPEED BRAKES.........................RETRACTED  (F/O)
+-- SPEED BRAKES..........................RETRACTED  (F/O)
 -- EXTERNAL LIGHTS.....................AS REQUIRED  (F/O)
 -- STABILIZER ANTI-ICE.........................OFF  (F/O)
 -- ENGINE ANTI-ICE.............................OFF  (F/O)

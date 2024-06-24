@@ -62,7 +62,7 @@ end
 
 function kcSOP:getPhaseString(phase)
 	if phase ~= nil and phase >= 0 then
-		return kcSopFlightPhase[phase]
+		return kcSopFlightPhase[math.abs(phase)]
 	end
 	return ""
 end
@@ -246,9 +246,6 @@ function kcSOP:render()
 			if state:getState() == Flow.FINISH then
 				color = color_green
 			end
-			-- if kc_indexOf(states,state) == self.activeFlowIndex then
-				-- color = 0xFF001F9F
-			-- end
 			imgui.PushStyleColor(imgui.constant.Col.Button, color)
 			imgui.PushStyleColor(imgui.constant.Col.ButtonActive, 0xFF001F9F)
 			imgui.PushStyleColor(imgui.constant.Col.ButtonHovered, 0xFF001F9F)
@@ -270,27 +267,29 @@ function kcSOP:render()
 	end
 	imgui.PopStyleColor()
 	for _, flow in ipairs(flows) do
-		if flow:getClassName() ~= "State" then
-			imgui.SetCursorPosY(imgui.GetCursorPosY() + 1)
-			local color = color_procedure
-			if flow:getClassName() == "Checklist" then	
-				color = color_checklist
+		if flow:getFlightPhase() >= 0 then
+			if flow:getClassName() ~= "State" then
+				imgui.SetCursorPosY(imgui.GetCursorPosY() + 1)
+				local color = color_procedure
+				if flow:getClassName() == "Checklist" then	
+					color = color_checklist
+				end
+				if flow:getState() == Flow.FINISH then
+					color = color_green
+				end
+				if kc_indexOf(flows,flow) == self.activeFlowIndex then
+					color = 0xFF001F9F
+				end
+				imgui.PushStyleColor(imgui.constant.Col.Button, color)
+				imgui.PushStyleColor(imgui.constant.Col.ButtonActive, 0xFF001F9F)
+				imgui.PushStyleColor(imgui.constant.Col.ButtonHovered, 0xFF004F9F)
+				if imgui.Button(flow:getName() .. " [" .. self:getPhaseString(math.abs(flow:getFlightPhase())) .. "]", self:getBtnWidth(), 18) then
+					self:setActiveFlowIndex(kc_indexOf(flows,flow))
+				end
+				imgui.PopStyleColor()
+				imgui.PopStyleColor()
+				imgui.PopStyleColor()
 			end
-			if flow:getState() == Flow.FINISH then
-				color = color_green
-			end
-			if kc_indexOf(flows,flow) == self.activeFlowIndex then
-				color = 0xFF001F9F
-			end
-			imgui.PushStyleColor(imgui.constant.Col.Button, color)
-			imgui.PushStyleColor(imgui.constant.Col.ButtonActive, 0xFF001F9F)
-			imgui.PushStyleColor(imgui.constant.Col.ButtonHovered, 0xFF004F9F)
-			if imgui.Button(flow:getName() .. " [" .. self:getPhaseString(flow:getFlightPhase()) .. "]", self:getBtnWidth(), 18) then
-				self:setActiveFlowIndex(kc_indexOf(flows,flow))
-			end
-			imgui.PopStyleColor()
-			imgui.PopStyleColor()
-			imgui.PopStyleColor()
 		end
 	end
     imgui.PopStyleColor()
@@ -306,7 +305,7 @@ function kcSOP:getBtnWidth()
 	local namelen = 0
 	local flows = self:getAllFlows()
 	for _, flow in ipairs(flows) do
-		local nrchars = string.len(flow:getName() .. " [" .. self:getPhaseString(flow:getFlightPhase()) .. "]")
+		local nrchars = string.len(flow:getName() .. " [" .. self:getPhaseString(math.abs(flow:getFlightPhase())) .. "]")
 		if nrchars > namelen then
 			namelen = nrchars
 		end
