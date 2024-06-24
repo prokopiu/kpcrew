@@ -43,23 +43,215 @@ local cmdBaroRightUp		= "sim/instruments/barometer_copilot_up"
 local cmdBaroStbyDown		= "sim/instruments/barometer_stby_down"
 local cmdBaroStbyUp			= "sim/instruments/barometer_stby_up"
 
---------- Actuator definitions
-
 -- Parking Brake
 sysGeneral.parkBrakeSwitch 	= TwoStateToggleSwitch:new("parkbrake","sim/cockpit2/controls/parking_brake_ratio",0,
 	"sim/flight_controls/brakes_toggle_max")
+
+sysGeneral.parkbrakeAnc 	= CustomAnnunciator:new("parkbrake",
+function ()
+	if get("sim/cockpit2/controls/parking_brake_ratio") > 0 then
+		return 1
+	else
+		return 0
+	end
+end)
 
 -- Landing Gear
 sysGeneral.GearSwitch 		= TwoStateCmdSwitch:new("gear","sim/cockpit2/controls/gear_handle_down",0,
 	"sim/flight_controls/landing_gear_down","sim/flight_controls/landing_gear_up","nocommand")
 
+-- Gear Lights for annunciators
+sysGeneral.gearLeftGreenAnc = SimpleAnnunciator:new("gear", "sim/flightmodel/movingparts/gear1def",0)
+sysGeneral.gearRightGreenAnc = SimpleAnnunciator:new("gear", "sim/flightmodel/movingparts/gear2def",0)
+sysGeneral.gearNodeGreenAnc = SimpleAnnunciator:new("gear", "sim/flightmodel/movingparts/gear3def",0)
+sysGeneral.gearLeftRedAnc 	= InopSwitch:new("gear")
+sysGeneral.gearRightRedAnc 	= InopSwitch:new("gear")
+sysGeneral.gearNodeRedAnc 	= InopSwitch:new("gear")
+
+-- light on when gears extended else 0
+sysGeneral.gearLightsAnc 	= CustomAnnunciator:new("gearlights", 
+function () 
+	local sum = sysGeneral.gearLeftGreenAnc:getStatus() +
+				sysGeneral.gearRightGreenAnc:getStatus() +
+				sysGeneral.gearNodeGreenAnc:getStatus()
+	if sum > 0 then 
+		return 1
+	else
+		return 0
+	end
+end)
+
 -- Doors
-sysGeneral.doorL1			= TwoStateToggleSwitch:new("doorl1",drefSlider,-1,"sim/operation/slider_01")
-sysGeneral.doorL2			= TwoStateToggleSwitch:new("doorl2",drefSlider,1,"sim/operation/slider_02")
-sysGeneral.doorR1			= TwoStateToggleSwitch:new("doorr1",drefSlider,2,"sim/operation/slider_03")
-sysGeneral.doorR2			= TwoStateToggleSwitch:new("doorr2",drefSlider,3,"sim/operation/slider_04")
-sysGeneral.doorFCargo 		= TwoStateToggleSwitch:new("doorfcargo",drefSlider,4,"sim/operation/slider_05")
-sysGeneral.doorACargo 		= TwoStateToggleSwitch:new("dooracrago",drefSlider,5,"sim/operation/slider_06")
+sysGeneral.doorL1			= TwoStateCustomSwitch:new("doorl1",drefSlider,-1,
+	function () 
+		command_once("sim/flight_controls/door_open_1")
+		if get(drefSlider,0) == 0 then
+		   command_once("sim/operation/slider_01")
+		end
+	end,
+	function () 
+		command_once("sim/flight_controls/door_close_1")
+		if get(drefSlider,0) ~= 0 then
+		   command_once("sim/operation/slider_01")
+		end
+	end,
+	function () 
+		if get("sim/cockpit2/switches/door_open",0) == 0 then
+			command_once("sim/flight_controls/door_open_1")
+		else
+			command_once("sim/flight_controls/door_close_1")
+		end
+		command_once("sim/operation/slider_01")
+	end,
+	function () 
+		if get("sim/cockpit2/switches/door_open",0) ~= 0 or get(drefSlider,0) ~= 0 then
+			return 1
+		else
+			return 0
+		end
+	end)
+sysGeneral.doorL2			= TwoStateCustomSwitch:new("doorl2",drefSlider,1,
+	function () 
+		command_once("sim/flight_controls/door_open_2")
+		if get(drefSlider,1) == 0 then
+		   command_once("sim/operation/slider_02")
+		end
+	end,
+	function () 
+		command_once("sim/flight_controls/door_close_2")
+		if get(drefSlider,1) ~= 0 then
+		   command_once("sim/operation/slider_02")
+		end
+	end,
+	function () 
+		if get("sim/cockpit2/switches/door_open",1) == 0 then
+			command_once("sim/flight_controls/door_open_1")
+		else
+			command_once("sim/flight_controls/door_close_1")
+		end
+		command_once("sim/operation/slider_02")
+	end,
+	function () 
+		if get("sim/cockpit2/switches/door_open",1) ~= 0 or get(drefSlider,1) ~= 0 then
+			return 1
+		else
+			return 0
+		end
+	end)
+sysGeneral.doorR1			= TwoStateCustomSwitch:new("doorr1",drefSlider,2,
+	function () 
+		command_once("sim/flight_controls/door_open_3")
+		if get(drefSlider,2) == 0 then
+		   command_once("sim/operation/slider_03")
+		end
+	end,
+	function () 
+		command_once("sim/flight_controls/door_close_3")
+		if get(drefSlider,2) ~= 0 then
+		   command_once("sim/operation/slider_03")
+		end
+	end,
+	function () 
+		if get("sim/cockpit2/switches/door_open",2) == 0 then
+			command_once("sim/flight_controls/door_open_3")
+		else
+			command_once("sim/flight_controls/door_close_3")
+		end
+		command_once("sim/operation/slider_03")
+	end,
+	function () 
+		if get("sim/cockpit2/switches/door_open",2) ~= 0 or get(drefSlider,2) ~= 0 then
+			return 1
+		else
+			return 0
+		end
+	end)
+sysGeneral.doorR2			= TwoStateCustomSwitch:new("doorr2",drefSlider,3,
+	function () 
+		command_once("sim/flight_controls/door_open_4")
+		if get(drefSlider,3) == 0 then
+		   command_once("sim/operation/slider_04")
+		end
+	end,
+	function () 
+		command_once("sim/flight_controls/door_close_4")
+		if get(drefSlider,3) ~= 0 then
+		   command_once("sim/operation/slider_04")
+		end
+	end,
+	function () 
+		if get("sim/cockpit2/switches/door_open",3) == 0 then
+			command_once("sim/flight_controls/door_open_4")
+		else
+			command_once("sim/flight_controls/door_close_4")
+		end
+		command_once("sim/operation/slider_04")
+	end,
+	function () 
+		if get("sim/cockpit2/switches/door_open",3) ~= 0 or get(drefSlider,3) ~= 0 then
+			return 1
+		else
+			return 0
+		end
+	end)
+sysGeneral.doorFCargo 		= TwoStateCustomSwitch:new("doorfcargo",drefSlider,4,
+	function () 
+		command_once("sim/flight_controls/door_open_5")
+		if get(drefSlider,4) == 0 then
+		   command_once("sim/operation/slider_05")
+		end
+	end,
+	function () 
+		command_once("sim/flight_controls/door_close_5")
+		if get(drefSlider,4) ~= 0 then
+		   command_once("sim/operation/slider_05")
+		end
+	end,
+	function () 
+		if get("sim/cockpit2/switches/door_open",4) == 0 then
+			command_once("sim/flight_controls/door_open_5")
+		else
+			command_once("sim/flight_controls/door_close_5")
+		end
+		command_once("sim/operation/slider_05")
+	end,
+	function () 
+		if get("sim/cockpit2/switches/door_open",4) ~= 0 or get(drefSlider,4) ~= 0 then
+			return 1
+		else
+			return 0
+		end
+	end)
+sysGeneral.doorACargo 		= TwoStateCustomSwitch:new("dooracargo",drefSlider,5,
+	function () 
+		command_once("sim/flight_controls/door_open_6")
+		if get(drefSlider,5) == 0 then
+		   command_once("sim/operation/slider_06")
+		end
+	end,
+	function () 
+		command_once("sim/flight_controls/door_close_6")
+		if get(drefSlider,5) ~= 0 then
+		   command_once("sim/operation/slider_06")
+		end
+	end,
+	function () 
+		if get("sim/cockpit2/switches/door_open",5) == 0 then
+			command_once("sim/flight_controls/door_open_6")
+		else
+			command_once("sim/flight_controls/door_close_6")
+		end
+		command_once("sim/operation/slider_06")
+	end,
+	function () 
+		if get("sim/cockpit2/switches/door_open",5) ~= 0 or get(drefSlider,5) ~= 0 then
+			return 1
+		else
+			return 0
+		end
+	end)
+sysGeneral.cockpitDoor 		= InopSwitch:new("cockpitdoor")
+
 sysGeneral.doorGroup = SwitchGroup:new("doors")
 sysGeneral.doorGroup:addSwitch(sysGeneral.doorL1)
 sysGeneral.doorGroup:addSwitch(sysGeneral.doorL2)
@@ -67,6 +259,37 @@ sysGeneral.doorGroup:addSwitch(sysGeneral.doorR1)
 sysGeneral.doorGroup:addSwitch(sysGeneral.doorR2)
 sysGeneral.doorGroup:addSwitch(sysGeneral.doorFCargo)
 sysGeneral.doorGroup:addSwitch(sysGeneral.doorACargo)
+sysGeneral.doorGroup:addSwitch(sysGeneral.cockpitDoor)
+
+-- Door annunciators
+sysGeneral.doorL1Anc 		= SimpleAnnunciator:new("doorl1",drefSlider,0)
+sysGeneral.doorL2Anc 		= SimpleAnnunciator:new("doorl2",drefSlider,1)
+sysGeneral.doorR1Anc 		= SimpleAnnunciator:new("doorr1",drefSlider,2)
+sysGeneral.doorR2Anc 		= SimpleAnnunciator:new("doorr2",drefSlider,3)
+sysGeneral.doorFCargoAnc 	= SimpleAnnunciator:new("doorfcargo",drefSlider,4)
+sysGeneral.doorACargoAnc 	= SimpleAnnunciator:new("dooracrago",drefSlider,5)
+
+sysGeneral.doorsAnc 		= CustomAnnunciator:new("doors", 
+function () 
+	local sum = sysGeneral.doorL1Anc:getStatus() +
+				sysGeneral.doorL2Anc:getStatus() +
+				sysGeneral.doorR1Anc:getStatus() +
+				sysGeneral.doorR2Anc:getStatus() +
+				sysGeneral.doorFCargoAnc:getStatus() +
+				sysGeneral.doorACargoAnc:getStatus()
+	if sum > 0 then 
+		return 1
+	else
+		return 0
+	end
+end)
+
+-- Wiper Switches
+sysGeneral.wiperLeft = TwoStateDrefSwitch:new("wiperleft","sim/cockpit2/switches/wiper_speed_switch",-1)
+sysGeneral.wiperRight = TwoStateDrefSwitch:new("wiperleft","sim/cockpit2/switches/wiper_speed_switch",1)
+sysGeneral.wiperGroup = SwitchGroup:new("wipers")
+sysGeneral.wiperGroup:addSwitch(sysGeneral.wiperLeft)
+sysGeneral.wiperGroup:addSwitch(sysGeneral.wiperRight)
 
 -- Baro standard toggle
 sysGeneral.barostdPilot 	= InopSwitch:new("barostdpilot")
@@ -107,41 +330,12 @@ sysGeneral.irsUnitGroup:addSwitch(sysGeneral.irsUnit1Switch)
 sysGeneral.irsUnitGroup:addSwitch(sysGeneral.irsUnit2Switch)
 sysGeneral.irsUnitGroup:addSwitch(sysGeneral.irsUnit3Switch)
 
--- Windshield Wipers
-sysGeneral.wiperSwitch = MultiStateCmdSwitch:new("wipers","sim/cockpit2/switches/wiper_speed",0,
-	"sim/systems/wipers_dn","sim/systems/wipers_up",0,3,false)
+
 
 ------------ Annunciators
--- park brake
-sysGeneral.parkbrakeAnc 	= CustomAnnunciator:new("parkbrake",
-function ()
-	if get("sim/cockpit2/controls/parking_brake_ratio") > 0 then
-		return 1
-	else
-		return 0
-	end
-end)
 
--- Gear Lights for annunciators
-sysGeneral.gearLeftGreenAnc = SimpleAnnunciator:new("gear", "sim/flightmodel/movingparts/gear1def",0)
-sysGeneral.gearRightGreenAnc = SimpleAnnunciator:new("gear", "sim/flightmodel/movingparts/gear2def",0)
-sysGeneral.gearNodeGreenAnc = SimpleAnnunciator:new("gear", "sim/flightmodel/movingparts/gear3def",0)
-sysGeneral.gearLeftRedAnc 	= InopSwitch:new("gear")
-sysGeneral.gearRightRedAnc 	= InopSwitch:new("gear")
-sysGeneral.gearNodeRedAnc 	= InopSwitch:new("gear")
 
--- light on when gears extended else 0
-sysGeneral.gearLightsAnc 	= CustomAnnunciator:new("gearlights", 
-function () 
-	local sum = sysGeneral.gearLeftGreenAnc:getStatus() +
-				sysGeneral.gearRightGreenAnc:getStatus() +
-				sysGeneral.gearNodeGreenAnc:getStatus()
-	if sum > 0 then 
-		return 1
-	else
-		return 0
-	end
-end)
+
 
 -- Master Caution
 sysGeneral.masterCautionAnc = SimpleAnnunciator:new("mastercaution", "sim/cockpit2/annunciators/master_caution",0)
@@ -149,28 +343,6 @@ sysGeneral.masterCautionAnc = SimpleAnnunciator:new("mastercaution", "sim/cockpi
 -- Master Warning
 sysGeneral.masterWarningAnc = SimpleAnnunciator:new("masterwarning", "sim/cockpit2/annunciators/master_warning",0)
 
--- Door annunciators
-sysGeneral.doorL1Anc 		= SimpleAnnunciator:new("doorl1",drefSlider,0)
-sysGeneral.doorL2Anc 		= SimpleAnnunciator:new("doorl2",drefSlider,1)
-sysGeneral.doorR1Anc 		= SimpleAnnunciator:new("doorr1",drefSlider,2)
-sysGeneral.doorR2Anc 		= SimpleAnnunciator:new("doorr2",drefSlider,3)
-sysGeneral.doorFCargoAnc 	= SimpleAnnunciator:new("doorfcargo",drefSlider,4)
-sysGeneral.doorACargoAnc 	= SimpleAnnunciator:new("dooracrago",drefSlider,5)
-
-sysGeneral.doorsAnc 		= CustomAnnunciator:new("doors", 
-function () 
-	local sum = sysGeneral.doorL1Anc:getStatus() +
-				sysGeneral.doorL2Anc:getStatus() +
-				sysGeneral.doorR1Anc:getStatus() +
-				sysGeneral.doorR2Anc:getStatus() +
-				sysGeneral.doorFCargoAnc:getStatus() +
-				sysGeneral.doorACargoAnc:getStatus()
-	if sum > 0 then 
-		return 1
-	else
-		return 0
-	end
-end)
 
 -- baro mbar/inhg
 sysGeneral.baroMbar 		= CustomAnnunciator:new("mbar",

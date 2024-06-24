@@ -54,18 +54,29 @@ kcSopFlightPhase = { [1] = "Cold & Dark", 	[2] = "Prel Preflight", [3] = "Prefli
 
 activeSOP = SOP:new("Zibo Mod SOP")
 
-local testProc = Checklist:new("TEST","","")
-testProc:addItem(IndirectChecklistItem:new("FUEL","TESTED 100 #exchange|PERC|percent",FlowItem.actorFO,0,"oxygentestedcpt",
-	function () return get("laminar/B738/push_button/oxy_test_cpt_pos") == 1 end))
-testProc:addItem(ChecklistItem:new("WINDOW HEAT","ON",FlowItem.actorFO,0,
+local testProc = Procedure:new("TEST","","")
+testProc:setFlightPhase(1)
+testProc:addItem(ProcedureItem:new("MCP","C&D",FlowItem.actorFO,5,false,
 	function () 
-			return sysMCP.vhfNavSwitch:getStatus() == 0 and 
-			sysMCP.irsNavSwitch:getStatus() == 0 and 
-			sysMCP.fmcNavSwitch:getStatus() == 0 and 
-			sysMCP.displaySourceSwitch:getStatus() == 0 and 
-			sysMCP.displayControlSwitch:getStatus() == 0 
+	  kc_macro_mcp_cold_dark()
 	end))
-
+testProc:addItem(ProcedureItem:new("MCP","PREFLIGHT",FlowItem.actorFO,5,false,
+	function () 
+	  kc_macro_mcp_preflight()
+	end))
+testProc:addItem(ProcedureItem:new("MCP","TAKEOFF",FlowItem.actorFO,5,false,
+	function () 
+	  kc_macro_mcp_takeoff()
+	end))
+testProc:addItem(ProcedureItem:new("MCP","GA",FlowItem.actorFO,5,false,
+	function () 
+	  kc_macro_mcp_goaround()
+	end))
+testProc:addItem(ProcedureItem:new("MCP","AFTER LAND",FlowItem.actorFO,5,false,
+	function () 
+	  kc_macro_mcp_after_landing()
+	end))
+	
 -- ============ Electrical Power Up Procedure ============
 -- All paper work on board and checked
 -- M E L and Technical Logbook checked
@@ -132,15 +143,19 @@ electricalPowerUpProc:addItem(ProcedureItem:new("CIRCUIT BREAKERS (P6 PANEL)","C
 electricalPowerUpProc:addItem(ProcedureItem:new("CIRCUIT BREAKERS (CONTROL,P18 PANEL)","CHECK ALL IN",FlowItem.actorFO,0,true))
 electricalPowerUpProc:addItem(ProcedureItem:new("DC POWER SWITCH","BAT",FlowItem.actorFO,0,
 	function () return sysElectric.dcPowerSwitch:getStatus() == sysElectric.dcPwrBAT end,
-	function () sysElectric.dcPowerSwitch:actuate(sysElectric.dcPwrBAT) end))
+	function () 
+		sysElectric.dcPowerSwitch:actuate(sysElectric.dcPwrBAT) 
+		if activePrefSet:get("general:sges") == true then
+			kc_macro_start_sges_sequence()
+		end
+	end))
 electricalPowerUpProc:addItem(IndirectProcedureItem:new("BATTERY VOLTAGE","CHECK MIN 24V",FlowItem.actorFO,0,"bat24v",
 	function () return get("laminar/B738/dc_volt_value") > 23 end))
 electricalPowerUpProc:addItem(ProcedureItem:new("BATTERY SWITCH","GUARD CLOSED",FlowItem.actorFO,0,
 	function () return sysElectric.batteryCover:getStatus() == 0 end,
 	function () 
-		kc_macro_ext_lights_off()
+		kc_macro_lights_preflight()
 		sysElectric.batteryCover:actuate(0) 
-		kc_macro_int_lights_on()
 	end))
 electricalPowerUpProc:addItem(ProcedureItem:new("STANDBY POWER SWITCH","GUARD CLOSED",FlowItem.actorFO,0,
 	function () return sysElectric.stbyPowerCover:getStatus() == 0 end,
@@ -878,7 +893,7 @@ preflightFOProc:addItem(ProcedureItem:new("PRESSURIZATION MODE SELECTOR","AUTO",
 
 preflightFOProc:addItem(SimpleProcedureItem:new("==== LIGHTING panel"))
 preflightFOProc:addItem(ProcedureItem:new("EXTERNAL LIGHTS","SET",FlowItem.actorFO,0,true,
-	function () kc_macro_ext_lights_stand() end))
+	function () kc_macro_lights_preflight() end))
 
 preflightFOProc:addItem(SimpleProcedureItem:new("==== ENGINE STARTERS"))
 preflightFOProc:addItem(ProcedureItem:new("IGNITION SELECT SWITCH","IGN L OR R",FlowItem.actorFO,0,
@@ -1359,22 +1374,19 @@ preflightChkl:addItem(ChecklistItem:new("ENGINE START LEVERS","CUTOFF",FlowItem.
 
 local beforeStartProc = Procedure:new("BEFORE START PROCEDURE","Before start items","ready for before start checklist")
 beforeStartProc:setFlightPhase(4)
-beforeStartProc:addItem(ProcedureItem:new("FLIGHT DECK DOOR","CLOSED AND LOCKED",FlowItem.actorFO,0,
-	function () return sysGeneral.cockpitDoor:getStatus() == 0 end,
-	function () sysGeneral.cockpitDoor:actuate(0) end))
-beforeStartProc:addItem(SimpleProcedureItem:new("Set required CDU DISPLAY"))
-beforeStartProc:addItem(SimpleProcedureItem:new("Check N1 BUGS"))
-beforeStartProc:addItem(ProcedureItem:new("IAS BUGS","SET",FlowItem.actorBOTH,0,
-	function () return sysFMC.noVSpeeds:getStatus() == 0 end,
-	function () kc_macro_glareshield_takeoff() end))
-beforeStartProc:addItem(SimpleProcedureItem:new("TAXI AND TAKEOFF BRIEFINGS - COMPLETE?"))
-beforeStartProc:addItem(ProcedureItem:new("EXTERIOR DOORS","VERIFY CLOSED",FlowItem.actorFO,0,true,
+beforeStartProc:addItem(ProcedureItem:new("ALL DOORS","VERIFY CLOSED",FlowItem.actorFO,0,true,
 	function () 
 		if get("laminar/B738/airstairs_hide") == 0  then
 			command_once("laminar/B738/airstairs_toggle")
 		end
-		kc_macro_ext_doors_closed()
+		kc_macro_doors_all_closed()
 	end))
+beforeStartProc:addItem(SimpleProcedureItem:new("Set required CDU DISPLAY"))
+beforeStartProc:addItem(SimpleProcedureItem:new("Check N1 BUGS"))
+beforeStartProc:addItem(ProcedureItem:new("IAS BUGS","SET",FlowItem.actorBOTH,0,
+	function () return sysFMC.noVSpeeds:getStatus() == 0 end,
+	function () kc_macro_mcp_takeoff() end))
+beforeStartProc:addItem(SimpleProcedureItem:new("TAXI AND TAKEOFF BRIEFINGS - COMPLETE?"))
 beforeStartProc:addItem(SimpleProcedureItem:new("==== START CLEARANCE"))
 beforeStartProc:addItem(HoldProcedureItem:new("CLEARANCE TO PRESSURIZE HYDRAULIC SYSTEM","OBTAIN",FlowItem.actorCPT,1))
 beforeStartProc:addItem(HoldProcedureItem:new("CLEARANCE TO START ENGINES","OBTAIN",FlowItem.actorCPT,1))
@@ -1471,7 +1483,7 @@ beforeStartChkl:addItem(ChecklistItem:new("MCP","V2 %i, HDG %i, ALT %i|activeBri
 			sysMCP.altSelector:getStatus() == activeBriefings:get("departure:initAlt") 
 	end,
 	function () 
-		kc_macro_glareshield_takeoff()
+		kc_macro_mcp_takeoff()
 	end))
 beforeStartChkl:addItem(ChecklistItem:new("TAKEOFF SPEEDS","V1 %i, VR %i, V2 %i|activeBriefings:get(\"takeoff:v1\")|activeBriefings:get(\"takeoff:vr\")|activeBriefings:get(\"takeoff:v2\")",FlowItem.actorPF,0,true))
 beforeStartChkl:addItem(ChecklistItem:new("CDU PREFLIGHT","COMPLETED",FlowItem.actorPF,0,true))
@@ -1560,6 +1572,8 @@ pushProc:addItem(ProcedureItem:new("SYSTEM A HYDRAULIC PUMP","ON",FlowItem.actor
 		kc_macro_hydraulic_on()
 	end))
 pushProc:addItem(HoldProcedureItem:new("CLEARANCE FROM GROUND CREW","RECEIVED",FlowItem.actorCPT,nil))
+
+
 
 local startProc = Procedure:new("ENGINE START","cleared to start engines")
 startProc:setFlightPhase(4)
@@ -1903,7 +1917,7 @@ local runwayEntryProc = Procedure:new("RUNWAY ENTRY PROCEDURE","runway entry","a
 runwayEntryProc:setFlightPhase(7)
 runwayEntryProc:addItem(ProcedureItem:new("EXTERNAL LIGHTS","SET",FlowItem.actorFO,0,true,
 	function () 
-		kc_macro_ext_lights_rwyentry() 
+		kc_macro_lights_for_takeoff() 
 		kc_macro_b738_lowerdu_off()
 		kc_procvar_set("fmacallouts",true) -- activate FMA callouts
 	end))
@@ -1972,11 +1986,11 @@ runwayEntryProc:addItem(ProcedureItem:new("WEATHER RADAR","ON",FlowItem.actorCPT
 -- FASTEN BELTS SWITCH.........................OFF   (PM)
 -- ======================================================
 
-local takeoffProc = Procedure:new("TAKEOFF","takeoff")
+local takeoffProc = Procedure:new("TAKEOFF & INITIAL CLIMB","takeoff")
 takeoffProc:setFlightPhase(8)
 takeoffProc:addItem(ProcedureItem:new("EXTERNAL LIGHTS","SET",FlowItem.actorFO,0,true,
 	function () 
-		kc_macro_ext_lights_takeoff() 
+		kc_macro_lights_for_takeoff() 
 		activeBckVars:set("general:timesOUT",kc_dispTimeHHMM(get("sim/time/zulu_time_sec")))
 	end))
 takeoffProc:addItem(ProcedureItem:new("A/P MODES","%s|kc_pref_split(kc_TakeoffApModes)[activeBriefings:get(\"takeoff:apMode\")]",FlowItem.actorPF,0,
@@ -1998,7 +2012,7 @@ takeoffProc:addItem(ProcedureItem:new("A/P MODES","%s|kc_pref_split(kc_TakeoffAp
 			sysMCP.lvlchgSwitch:actuate(1)
 		else
 		end
-		kc_macro_ext_doors_closed()
+		kc_macro_doors_all_closed()
 	end))
 takeoffProc:addItem(IndirectProcedureItem:new("THRUST SETTING","40% N1",FlowItem.actorPNF,0,"to40percent",
 	function () return get("laminar/B738/engine/indicators/N1_percent_1") > 40 end))
@@ -2010,7 +2024,7 @@ takeoffProc:addItem(ProcedureItem:new("SET TAKEOFF THRUST","T/O MODE",FlowItem.a
 
 -- ====
 local gearUpProc = Procedure:new("GEAR UP","Gear up")
-gearUpProc:setFlightPhase(8)
+gearUpProc:setFlightPhase(-8)
 gearUpProc:addItem(IndirectProcedureItem:new("GEAR","UP",FlowItem.actorPM,0,"gear_up_to",
 	function () return sysGeneral.GearSwitch:getStatus() == 0 end,
 	function () 
@@ -2023,7 +2037,7 @@ gearUpProc:addItem(IndirectProcedureItem:new("GEAR","UP",FlowItem.actorPM,0,"gea
 
 -- flaps schedule
 local flapsUpProc = Procedure:new("RETRACT FLAPS","")
-flapsUpProc:setFlightPhase(8)
+flapsUpProc:setFlightPhase(-8)
 flapsUpProc:addItem(SimpleProcedureItem:new("Retract Flaps when Speed reached"))
 flapsUpProc:addItem(HoldProcedureItem:new("FLAPS 10","COMMAND",FlowItem.actorCPT,nil,
  	function () return sysControls.flapsSwitch:getStatus() < 0.5 end))
@@ -2230,10 +2244,10 @@ landingProc:addItem(ProcedureItem:new("ENGINE ANTI-ICE SWITCHES","ON",FlowItem.a
 	function () sysAice.engAntiIceGroup:actuate(1) end,
 	function () return activeBriefings:get("approach:antiice") == 1 end))
 landingProc:addItem(ProcedureItem:new("EXTERNAL LIGHTS","SET",FlowItem.actorCPT,0,true,
-	function () kc_macro_ext_lights_land() end))
+	function () kc_macro_lights_approach() end))
 
 local flaps1Proc = Procedure:new("FLAPS 1","","")
-flaps1Proc:setFlightPhase(13)
+flaps1Proc:setFlightPhase(-13)
 flaps1Proc:addItem(ProcedureItem:new("FLAPS 1","SET",FlowItem.actorPNF,0,true,
 	function () command_once("laminar/B738/push_button/flaps_1") kc_speakNoText(0,"speed check flaps 1") end))
 flaps1Proc:addItem(HoldProcedureItem:new("FLAPS 5","COMMAND",FlowItem.actorPF))
@@ -2241,14 +2255,14 @@ flaps1Proc:addItem(ProcedureItem:new("FLAPS 5","SET",FlowItem.actorPNF,0,true,
 	function () command_once("laminar/B738/push_button/flaps_5") kc_speakNoText(0,"speed check flaps 5") end))
 
 local gearDownProc = Procedure:new("GEAR DOWN - FLAPS 15","","")
-gearDownProc:setFlightPhase(13)
+gearDownProc:setFlightPhase(-13)
 gearDownProc:addItem(ProcedureItem:new("GEAR","DOWN",FlowItem.actorPNF,0,true,
 	function () sysGeneral.GearSwitch:actuate(modeOn) kc_speakNoText(0,"gear coming down") end))
 gearDownProc:addItem(ProcedureItem:new("FLAPS 15","SET",FlowItem.actorPNF,0,true,
 	function () command_once("laminar/B738/push_button/flaps_15") kc_speakNoText(0,"speed check flaps 15") end))
 
 local flaps30Proc = Procedure:new("COMMAND FLAPS 30 OR 40","","")
-flaps30Proc:setFlightPhase(13)
+flaps30Proc:setFlightPhase(-13)
 flaps30Proc:addItem(ProcedureItem:new("FLAPS 30","SET",FlowItem.actorPNF,0,true,
 	function () command_once("laminar/B738/push_button/flaps_30") kc_speakNoText(0,"speed check flaps 30") end,
 	function () return activeBriefings:get("approach:flaps") == 2 end))
@@ -2404,7 +2418,7 @@ afterLandingProc:addItem(ProcedureItem:new("PROBE HEAT","OFF",FlowItem.actorFO,0
 	function () return sysAice.probeHeatGroup:getStatus() == 0 end,
 	function () sysAice.probeHeatGroup:actuate(0) end))
 afterLandingProc:addItem(ProcedureItem:new("EXTERNAL LIGHTS","SET",FlowItem.actorFO,0,true,
-	function () kc_macro_ext_lights_rwyvacate() end))
+	function () kc_macro_lights_cleanup() end))
 afterLandingProc:addItem(ProcedureItem:new("ENGINE START SWITCHES","OFF",FlowItem.actorFO,0,
 	function () return sysEngines.engStarterGroup:getStatus() == 2 end,
 	function () sysEngines.engStarterGroup:actuate(1) end))
@@ -2501,7 +2515,7 @@ shutdownProc:addItem(ProcedureItem:new("FASTEN BELTS SWITCH","OFF",FlowItem.acto
 		command_once("laminar/B738/toggle_switch/seatbelt_sign_up")
 	end))
 shutdownProc:addItem(ProcedureItem:new("EXTERNAL LIGHTS","SET",FlowItem.actorCPT,0,true,
-	function () kc_macro_ext_lights_stand() activeBckVars:set("general:timesON",kc_dispTimeHHMM(get("sim/time/zulu_time_sec"))) end))
+	function () kc_macro_lights_after_shutdown() activeBckVars:set("general:timesON",kc_dispTimeHHMM(get("sim/time/zulu_time_sec"))) end))
 shutdownProc:addItem(ProcedureItem:new("FUEL PUMPS","APU 1 PUMP ON, REST OFF",FlowItem.actorCPT,0,
 	function () return sysFuel.allFuelPumpGroup:getStatus() == 1 end,
 	function () kc_macro_fuelpumps_shutdown() end,
@@ -2554,12 +2568,12 @@ shutdownProc:addItem(ProcedureItem:new("TRANSPONDER","STBY",FlowItem.actorFO,0,
 	function () return sysRadios.xpdrSwitch:getStatus() == sysRadios.xpdrStby end,
 	function () sysRadios.xpdrSwitch:actuate(sysRadios.xpdrStby) end))
 shutdownProc:addItem(ProcedureItem:new("DOORS","OPEN",FlowItem.actorFO,0,true,
-	function () kc_macro_ext_doors_stand() end))
+	function () kc_macro_doors_after_shutdown() end))
 shutdownProc:addItem(ProcedureItem:new("MCP","RESET",FlowItem.actorFO,0,
 	function () return sysMCP.altSelector:getStatus() == activePrefSet:get("aircraft:mcp_def_alt") end,
 	function () 
 		kc_macro_b738_lowerdu_off()
-		kc_macro_glareshield_initial()
+		kc_macro_mcp_cold_dark()
 		-- stairs need a delay to be extended
 		if activeBriefings:get("taxi:gateStand") > 1 then
 			if get("laminar/B738/airstairs_hide") == 1  then
@@ -2635,6 +2649,9 @@ coldAndDarkProc:setFlightPhase(1)
 coldAndDarkProc:addItem(ProcedureItem:new("OVERHEAD TOP","SET","SYS",0,true,
 	function () 
 		kc_macro_state_cold_and_dark()
+		if activePrefSet:get("general:sges") == true then
+			kc_macro_start_sges_sequence()
+		end
 		getActiveSOP():setActiveFlowIndex(1)
 	end))
 	
@@ -2644,6 +2661,9 @@ turnAroundProc:setFlightPhase(18)
 turnAroundProc:addItem(ProcedureItem:new("OVERHEAD TOP","SET","SYS",0,true,
 	function () 
 		kc_macro_state_turnaround()
+		if activePrefSet:get("general:sges") == true then
+			kc_macro_start_sges_sequence()
+		end
 	end))
 turnAroundProc:addItem(ProcedureItem:new("GPU","ON BUS","SYS",0,true,
 	function () 

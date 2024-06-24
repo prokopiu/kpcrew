@@ -1,0 +1,2224 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+<!-- Product:               PMDG 737 NG3 for MSFS - CHECKLIST                                                   		 -->
+<!-- Interaction:           PMDG                                                                                         -->
+<!-- Checklist code:        Chris Makris                                                                            	 -->
+<!-- Last Revision:         12AUG2022                                                                      				 -->
+<!-- Copyright owner:       Precision Manuals Development Group                                                          -->
+<!-- Copyright:             This code is the sole property of Precision Manuals Development Group, Copyright (C) 2022    -->
+<!--                        Unauthorized duplication is prohibited by International Copyright Laws.                      -->
+<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+<SimBase.Document Type="Checklist" version="1,0">
+	<Checklist.Checklist>
+	<Step ChecklistStepId="PREFLIGHT_GATE">
+
+	<Page SubjectTT="Electrical Power UP For External Power">
+
+<!-- CIRCUIT BREAKERS (P6 PANEL)..........CHECK ALL IN (F/O) -->
+<!-- CIRCUIT BREAKERS (P18 PANEL).........CHECK ALL IN (F/O) -->
+<!-- DC POWER SWITCH...............................BAT (F/O) -->
+<!-- BATTERY VOLTAGE.....................CHECK MIN 24V (F/O) -->
+<!-- BATTERY SWITCH.......................GUARD CLOSED (F/O) -->
+<!-- STANDBY POWER SWITCH.................GUARD CLOSED (F/O) -->
+		<Checkpoint>
+			<CheckpointDesc SubjectTT="CIRCUIT BREAKERS (P6 PANEL) (F/O)"
+							ExpectationTT="CHECK ALL IN"/>
+		</Checkpoint>
+		<Checkpoint>
+			<CheckpointDesc SubjectTT="CIRCUIT BREAKERS (P18 PANEL) (F/O)"
+							ExpectationTT="CHECK ALL IN"/>
+		</Checkpoint>
+		<Checkpoint>
+			<CheckpointDesc SubjectTT="BATTERY SWITCH (F/O)"
+			ExpectationTT="GUARD CLOSED"/>
+			<Test>
+				<TestValue>
+					<Val Code="0 (L:switch_02_73X, number) =="/>
+				</TestValue>
+				<Action Copilot="True" Condition="TestValueFalse" Once="true" Code="201 (>K:ROTOR_BRAKE)"/>
+			</Test>
+			<Instrument Id="ngx_switch_02_a"/>
+		</Checkpoint>
+		<Checkpoint>
+			<CheckpointDesc SubjectTT="DC POWER SWITCH (F/O)"
+			ExpectationTT="BAT"/>
+		</Checkpoint>
+		<Checkpoint>
+			<CheckpointDesc SubjectTT="BATTERY VOLTAGE (F/O)" 
+			ExpectationTT="CHECK MIN 24V"/>
+		</Checkpoint>
+		<Checkpoint>
+			<CheckpointDesc SubjectTT="STANDBY POWER SWITCH (F/O)"
+				ExpectationTT="GUARD CLOSED"/>
+			<Test>
+				<TestValue>
+					<Val Code="(L:switch_11_73X, number) 0 =="/>
+				</TestValue>
+				<Action Copilot="True" Condition="TestValueFalse" Once="true" Code="1101 (>K:ROTOR_BRAKE)"/>
+			</Test>
+			<Instrument Id="ngx_switch_11_a"/>
+		</Checkpoint>
+
+<!-- ELECTRIC HYDRAULIC PUMPS SWITCHES.............OFF (F/O) -->
+<!-- ALTERNATE FLAPS MASTER SWITCH........GUARD CLOSED (F/O) -->
+<!-- FLAP LEVER.....................................UP (F/O) -->
+<!--  Ensure flap lever agrees with indicated flap position. -->
+
+		<Checkpoint>
+			<CheckpointDesc SubjectTT="ELECTRIC HYDRAULIC PUMP SWITCHES (F/O)"
+				ExpectationTT="OFF"/>
+			<Sequence SeqType="Unordered">
+				<Test>
+					<TestValue>
+						<Val Code="(L:switch_167_73X, number) 0 =="/>
+					</TestValue>
+					<Action Copilot="True" Condition="TestValueFalse" Once="true" Code="16702 (>K:ROTOR_BRAKE)"/>
+				</Test>
+				<Test>
+					<TestValue>
+						<Val Code="(L:switch_168_73X, number) 0 =="/>
+					</TestValue>
+					<Action Copilot="True" Condition="TestValueFalse" Once="true" Code="16802 (>K:ROTOR_BRAKE)"/>
+				</Test>
+			</Sequence>
+			<Instrument Id="ngx_switch_167_a"/>
+			<Instrument Id="ngx_switch_168_a"/>
+		</Checkpoint>
+		<Checkpoint>
+			<CheckpointDesc SubjectTT="ALTERNATE FLAPS MASTER SWITCH (F/O)"
+				ExpectationTT="GUARD CLOSED"/>
+			<Instrument Id="ngx_switch_74_a"/>
+			<Test>
+				<TestValue>
+					<Val Code="0 (L:switch_74_73X, number) =="/>
+				</TestValue>
+				<Action Copilot="True" Condition="TestValueFalse" Once="true" Code="7401 (>K:ROTOR_BRAKE)"/>
+			</Test>
+		</Checkpoint>
+		<Checkpoint>
+			<CheckpointDesc SubjectTT="FLAP LEVER"
+				ExpectationTT="UP confirm Flaps 0 indicated"/>
+			<Test>
+				<TestValue>
+					<Val Code="0 (L:switch_714_73X, number) =="/>
+				</TestValue>
+				<Action Copilot="True" Condition="TestValueFalse" Once="true" Code="71401 (>K:ROTOR_BRAKE)"/>
+			</Test>
+			<Instrument Id="ngx_switch_714_a"/>
+		</Checkpoint>
+
+<!-- WINDSHIELD WIPER SELECTORS...................PARK (F/O) -->
+<!-- LANDING GEAR LEVER...........................DOWN (F/O) -->
+<!--   GREEN LANDING GEAR LIGHT......CHECK ILLUMINATED (F/O) -->
+<!--   RED LANDING GEAR LIGHT.......CHECK EXTINGUISHED (F/O) -->
+<!-- TAKEOFF CONFIG WARNING.......................TEST (F/O) -->
+<!--   Move thrust levers full forward and back to idle. -->
+		<Checkpoint>
+			<CheckpointDesc SubjectTT="Windshield WIPER SELECTORS (F/O)"
+				ExpectationTT="PARK"/>
+			<Sequence SeqType="Unordered">
+				<Test>
+					<TestValue>
+						<Val Code="0 (L:switch_36_73X, number) =="/>
+					</TestValue>
+					<Action Copilot="True" Condition="TestValueFalse" Once="true" Code="0 (L:switch_36_73X) - 10 div s0
+:1
+l0 0 &gt; if{ 3607 (&gt;K:ROTOR_BRAKE) l0 -- s0 g1 }
+l0 0 &lt; if{ 3608 (&gt;K:ROTOR_BRAKE) l0 ++ s0 g1 }"/>
+				</Test>
+				<Test>
+					<TestValue>
+						<Val Code="0 (L:switch_109_73X, number) =="/>
+					</TestValue>
+					<Action Copilot="True" Condition="TestValueFalse" Once="true" Code="0 (L:switch_109_73X) - 10 div s0
+:1
+l0 0 &gt; if{ 10907 (&gt;K:ROTOR_BRAKE) l0 -- s0 g1 }
+l0 0 &lt; if{ 10908 (&gt;K:ROTOR_BRAKE) l0 ++ s0 g1 }"/>
+				</Test>
+			</Sequence>
+			<Instrument Id="ngx_switch_36_a"/>
+			<Instrument Id="ngx_switch_109_a"/>
+		</Checkpoint>
+		<Checkpoint>
+			<CheckpointDesc SubjectTT="LANDING GEAR LEVER (F/O)"
+							ExpectationTT="DOWN"/>
+			<Test>
+				<TestValue>
+					<Val Code="30 (L:switch_455_73X) - 10 div 0 &lt;"/>
+				</TestValue>
+				<Action Copilot="True" Condition="TestValueFalse" Once="true" Code="(>K:GEAR_DOWN)"/>
+			</Test>
+			<Instrument Id="ngx_switch_455_a"/>
+		</Checkpoint>
+		<Checkpoint>
+			<CheckpointDesc SubjectTT="LANDING GEAR GREEN LIGHTS (F/O)"
+							ExpectationTT="CHECK ILLUMINATED"/>
+			<Test>
+				<TestValue>
+					<Operator OpType="AND">
+						<Val Code="(L:switch_453_73X, number) 0 !="/> 
+						<Val Code="(L:switch_450_73X, number) 0 !="/> 
+						<Val Code="(L:switch_454_73X, number) 0 !="/>
+					</Operator>
+				</TestValue>
+			</Test>
+		</Checkpoint>
+		<Checkpoint>
+			<CheckpointDesc SubjectTT="LANDING GEAR RED LIGHTS (F/O)"
+							ExpectationTT="CHECK EXTINGUISHED"/>
+			<Test>
+				<TestValue>
+					<Operator OpType="AND">
+						<Val Code="(L:switch_451_73X, number) 0 =="/> 
+						<Val Code="(L:switch_449_73X, number) 0 =="/> 
+						<Val Code="(L:switch_452_73X, number) 0 =="/>
+					</Operator>
+				</TestValue>
+			</Test>
+		</Checkpoint>
+		<Checkpoint>
+			<CheckpointDesc SubjectTT="TAKEOFF CONFIG WARNING (F/O)"
+							ExpectationTT="TEST (thrust levers full forward and back to idle)"/>
+			<Test>
+				<TestValue>
+					<Val Code="(A:GENERAL ENG THROTTLE LEVER POSITION:1,Percent) 90 >"/>
+				</TestValue>
+			</Test>
+		</Checkpoint>
+
+<!-- GRD POWER AVAILABLE LIGHT...........ILLUMINATED (F/O) -->
+<!-- AC POWER SWITCH.............................GRD (F/O) -->
+<!-- GROUND POWER SWITCH..........................ON (F/O) -->
+		<Checkpoint>
+			<CheckpointDesc SubjectTT="GRD POWER AVAILABLE LIGHT (F/O)"
+							ExpectationTT="ILLUMINATED"/>
+			<Test>
+				<TestValue>
+					<Val Code="(L:switch_16_73X, number) 0 !="/>
+					<Action Copilot="True" Condition="TestValueFalse" Once="true" Code=""/>
+				</TestValue>
+			</Test>
+		</Checkpoint>
+		<Checkpoint>
+			<CheckpointDesc SubjectTT="AC POWER SWITCH (F/O)"
+							ExpectationTT="GRD"/>
+		</Checkpoint>
+		<Checkpoint>
+			<CheckpointDesc SubjectTT="GRD POWER SWITCH (F/O)"
+							ExpectationTT="ON"/>
+			<Test>
+				<TestValue>
+					<Val Code="(L:switch_20_73X, number) 0 =="/>
+				</TestValue>
+				<Action Copilot="True" Condition="TestValueFalse" Once="true" Code="1701 (>K:ROTOR_BRAKE)"/>
+			</Test>
+			<Instrument Id="ngx_switch_17_a"/>
+		</Checkpoint>
+
+<!-- TRANSFER BUS LIGHTS............CHECK EXTINGUISHED (F/O) -->
+<!-- SOURCE OFF LIGHTS..............CHECK EXTINGUISHED (F/O) -->
+<!-- STANDBY POWER..................................ON (F/O) -->
+<!--   STANDBY PWR LIGHT............CHECK EXTINGUISHED (F/O) -->
+<!-- POSITION LIGHTS................................ON (F/O) -->
+<!-- PARKING BRAKE.................................SET (F/O) -->
+<!-- WING & WHEEL WELL LIGHTS..............AS REQUIRED (F/O) -->
+		<Checkpoint>
+			<CheckpointDesc SubjectTT="TRANSFER BUS OFF LIGHTS (F/O)"
+							ExpectationTT="CHECK EXTINGUISHED"/>
+			<Test>
+				<TestValue>
+					<Operator OpType="AND">
+						<Val Code="(L:switch_20_73X, number) 0 =="/> 
+						<Val Code="(L:switch_21_73X, number) 0 =="/> 
+					</Operator>
+				</TestValue>
+			</Test>
+		</Checkpoint>
+		<Checkpoint>
+			<CheckpointDesc SubjectTT="SOURCE OFF LIGHTS (F/O)"
+							ExpectationTT="CHECK EXTINGUISHED"/>
+			<Test>
+				<TestValue>
+					<Operator OpType="AND">
+						<Val Code="(L:switch_22_73X, number) 0 =="/> 
+						<Val Code="(L:switch_23_73X, number) 0 =="/> 
+					</Operator>
+				</TestValue>
+			</Test>
+		</Checkpoint>
+		<Checkpoint>
+			<CheckpointDesc SubjectTT="STANDBY PWR OFF LIGHT (F/O)"
+							ExpectationTT="CHECK EXTINGUISHED"/>
+			<Test>
+				<TestValue>
+					<Val Code="(L:switch_08_73X, number) 0 =="/>
+				</TestValue>
+			</Test>
+		</Checkpoint>
+		<Checkpoint>
+			<CheckpointDesc SubjectTT="POSITION LIGHT SWITCH (F/O)"
+							ExpectationTT="ON"/>
+			<Test>
+				<TestValue>
+					<Val Code="100 (L:switch_123_73X,number) - 50 div 0 =="/>
+				</TestValue>
+				<Action Copilot="True" Condition="TestValueTrue" Once="true" Code="100 (L:switch_123_73X,number) - 50 div s0 
+:1 
+l0 0 &gt; if{ 12301 (&gt;K:ROTOR_BRAKE) l0 -- s0 g1 } 
+l0 0 &lt; if{ 12302 (&gt;K:ROTOR_BRAKE) l0 ++ s0 g1 }
+"/>
+			</Test>
+			<Instrument Id="ngx_switch_123_a"/>
+		</Checkpoint>
+		<Checkpoint>
+			<CheckpointDesc SubjectTT="PARKING BRAKE (F/O)"
+							ExpectationTT="SET"/>
+			<Test>
+				<TestValue>
+					<Val Code="0 (L:switch_693_73X, number) !="/>
+				</TestValue>
+				<Action Copilot="True" Condition="TestValueFalse" Once="true" Code="69302 (>K:ROTOR_BRAKE)"/>
+			</Test>
+			<Instrument Id="ngx_switch_693_a"/>
+		</Checkpoint>
+		<Checkpoint>
+			<CheckpointDesc SubjectTT="WING ILLUMINATION SWITCH (F/O)"
+							ExpectationTT="AS NEEDED"/>
+				<Action Copilot="True" Code="(E:Time of Day,enum) 3 == if{ 0 (L:switch_125_73X, number) == if{ 12501 (>K:ROTOR_BRAKE) } } els{ 1 (L:switch_125_73X, number) == if{ 12501 (>K:ROTOR_BRAKE) } }"/>
+			<Instrument Id="ngx_switch_125_a"/>
+		</Checkpoint>
+		<Checkpoint>
+			<CheckpointDesc SubjectTT="WHEEL WELL LIGHT SWITCH (F/O)"
+							ExpectationTT="AS NEEDED"/>
+				<Action Copilot="True" Code="(E:Time of Day,enum) 3 == if{ 0 (L:switch_126_73X, number) == if{ 12601 (>K:ROTOR_BRAKE) } } els{ 1 (L:switch_126_73X, number) == if{ 12601 (>K:ROTOR_BRAKE) } }"/>
+			<Instrument Id="ngx_switch_126_a"/>
+		</Checkpoint>
+
+	</Page>
+
+	<Page SubjectTT="Electrical Power UP For APU Power">
+
+<!-- CIRCUIT BREAKERS (P6 PANEL)..........CHECK ALL IN (F/O) -->
+<!-- CIRCUIT BREAKERS (P18 PANEL).........CHECK ALL IN (F/O) -->
+<!-- DC POWER SWITCH...............................BAT (F/O) -->
+<!-- BATTERY VOLTAGE.....................CHECK MIN 24V (F/O) -->
+<!-- BATTERY SWITCH.......................GUARD CLOSED (F/O) -->
+<!-- STANDBY POWER SWITCH.................GUARD CLOSED (F/O) -->
+		<Checkpoint>
+			<CheckpointDesc SubjectTT="CIRCUIT BREAKERS (P6 PANEL) (F/O)"
+							ExpectationTT="CHECK ALL IN"/>
+		</Checkpoint>
+		<Checkpoint>
+			<CheckpointDesc SubjectTT="CIRCUIT BREAKERS (P18 PANEL) (F/O)"
+							ExpectationTT="CHECK ALL IN"/>
+		</Checkpoint>
+		<Checkpoint>
+			<CheckpointDesc SubjectTT="BATTERY SWITCH (F/O)"
+			ExpectationTT="GUARD CLOSED"/>
+			<Test>
+				<TestValue>
+					<Val Code="0 (L:switch_02_73X, number) =="/>
+				</TestValue>
+				<Action Copilot="True" Condition="TestValueFalse" Once="true" Code="201 (>K:ROTOR_BRAKE)"/>
+			</Test>
+			<Instrument Id="ngx_switch_02_a"/>
+		</Checkpoint>
+		<Checkpoint>
+			<CheckpointDesc SubjectTT="DC POWER SWITCH (F/O)"
+			ExpectationTT="BAT"/>
+		</Checkpoint>
+		<Checkpoint>
+			<CheckpointDesc SubjectTT="BATTERY VOLTAGE (F/O)" 
+			ExpectationTT="CHECK MIN 24V"/>
+		</Checkpoint>
+		<Checkpoint>
+			<CheckpointDesc SubjectTT="STANDBY POWER SWITCH (F/O)"
+				ExpectationTT="GUARD CLOSED"/>
+			<Test>
+				<TestValue>
+					<Val Code="(L:switch_11_73X, number) 0 =="/>
+				</TestValue>
+				<Action Copilot="True" Condition="TestValueFalse" Once="true" Code="1101 (>K:ROTOR_BRAKE)"/>
+			</Test>
+			<Instrument Id="ngx_switch_11_a"/>
+		</Checkpoint>
+
+<!-- ELECTRIC HYDRAULIC PUMPS SWITCHES.............OFF (F/O) -->
+<!-- ALTERNATE FLAPS MASTER SWITCH........GUARD CLOSED (F/O) -->
+<!-- FLAP LEVER.....................................UP (F/O) -->
+<!--  Ensure flap lever agrees with indicated flap position. -->
+
+		<Checkpoint>
+			<CheckpointDesc SubjectTT="ELECTRIC HYDRAULIC PUMP SWITCHES (F/O)"
+				ExpectationTT="OFF"/>
+			<Sequence SeqType="Unordered">
+				<Test>
+					<TestValue>
+						<Val Code="(L:switch_167_73X, number) 0 =="/>
+					</TestValue>
+					<Action Copilot="True" Condition="TestValueFalse" Once="true" Code="16702 (>K:ROTOR_BRAKE)"/>
+				</Test>
+				<Test>
+					<TestValue>
+						<Val Code="(L:switch_168_73X, number) 0 =="/>
+					</TestValue>
+					<Action Copilot="True" Condition="TestValueFalse" Once="true" Code="16802 (>K:ROTOR_BRAKE)"/>
+				</Test>
+			</Sequence>
+			<Instrument Id="ngx_switch_167_a"/>
+			<Instrument Id="ngx_switch_168_a"/>
+		</Checkpoint>
+		<Checkpoint>
+			<CheckpointDesc SubjectTT="ALTERNATE FLAPS MASTER SWITCH (F/O)"
+				ExpectationTT="GUARD CLOSED"/>
+			<Instrument Id="ngx_switch_74_a"/>
+			<Test>
+				<TestValue>
+					<Val Code="0 (L:switch_74_73X, number) =="/>
+				</TestValue>
+				<Action Copilot="True" Condition="TestValueFalse" Once="true" Code="7401 (>K:ROTOR_BRAKE)"/>
+			</Test>
+		</Checkpoint>
+		<Checkpoint>
+			<CheckpointDesc SubjectTT="FLAP LEVER"
+				ExpectationTT="UP confirm Flaps 0 indicated"/>
+			<Test>
+				<TestValue>
+					<Val Code="0 (L:switch_714_73X, number) =="/>
+				</TestValue>
+				<Action Copilot="True" Condition="TestValueFalse" Once="true" Code="71401 (>K:ROTOR_BRAKE)"/>
+			</Test>
+			<Instrument Id="ngx_switch_714_a"/>
+		</Checkpoint>
+
+<!-- WINDSHIELD WIPER SELECTORS...................PARK (F/O) -->
+<!-- LANDING GEAR LEVER...........................DOWN (F/O) -->
+<!--   GREEN LANDING GEAR LIGHT......CHECK ILLUMINATED (F/O) -->
+<!--   RED LANDING GEAR LIGHT.......CHECK EXTINGUISHED (F/O) -->
+<!-- TAKEOFF CONFIG WARNING.......................TEST (F/O) -->
+<!--   Move thrust levers full forward and back to idle. -->
+		<Checkpoint>
+			<CheckpointDesc SubjectTT="Windshield WIPER SELECTORS (F/O)"
+				ExpectationTT="PARK"/>
+			<Sequence SeqType="Unordered">
+				<Test>
+					<TestValue>
+						<Val Code="0 (L:switch_36_73X, number) =="/>
+					</TestValue>
+					<Action Copilot="True" Condition="TestValueFalse" Once="true" Code="0 (L:switch_36_73X) - 10 div s0
+:1
+l0 0 &gt; if{ 3607 (&gt;K:ROTOR_BRAKE) l0 -- s0 g1 }
+l0 0 &lt; if{ 3608 (&gt;K:ROTOR_BRAKE) l0 ++ s0 g1 }"/>
+				</Test>
+				<Test>
+					<TestValue>
+						<Val Code="0 (L:switch_109_73X, number) =="/>
+					</TestValue>
+					<Action Copilot="True" Condition="TestValueFalse" Once="true" Code="0 (L:switch_109_73X) - 10 div s0
+:1
+l0 0 &gt; if{ 10907 (&gt;K:ROTOR_BRAKE) l0 -- s0 g1 }
+l0 0 &lt; if{ 10908 (&gt;K:ROTOR_BRAKE) l0 ++ s0 g1 }"/>
+				</Test>
+			</Sequence>
+			<Instrument Id="ngx_switch_36_a"/>
+			<Instrument Id="ngx_switch_109_a"/>
+		</Checkpoint>
+		<Checkpoint>
+			<CheckpointDesc SubjectTT="xLANDING GEAR LEVER (F/O)"
+							ExpectationTT="DOWN"/>
+			<Test>
+				<TestValue>
+					<Val Code="30 (L:switch_455_73X) - 10 div 0 &lt;"/>
+				</TestValue>
+				<Action Copilot="True" Condition="TestValueFalse" Once="true" Code="(>K:GEAR_DOWN)"/>
+			</Test>
+			<Instrument Id="ngx_switch_455_a"/>
+		</Checkpoint>
+		<Checkpoint>
+			<CheckpointDesc SubjectTT="LANDING GEAR GREEN LIGHTS (F/O)"
+							ExpectationTT="CHECK ILLUMINATED"/>
+			<Test>
+				<TestValue>
+					<Operator OpType="AND">
+						<Val Code="(L:switch_453_73X, number) 0 !="/> 
+						<Val Code="(L:switch_450_73X, number) 0 !="/> 
+						<Val Code="(L:switch_454_73X, number) 0 !="/>
+					</Operator>
+				</TestValue>
+			</Test>
+		</Checkpoint>
+		<Checkpoint>
+			<CheckpointDesc SubjectTT="LANDING GEAR RED LIGHTS (F/O)"
+							ExpectationTT="CHECK EXTINGUISHED"/>
+			<Test>
+				<TestValue>
+					<Operator OpType="AND">
+						<Val Code="(L:switch_451_73X, number) 0 =="/> 
+						<Val Code="(L:switch_449_73X, number) 0 =="/> 
+						<Val Code="(L:switch_452_73X, number) 0 =="/>
+					</Operator>
+				</TestValue>
+			</Test>
+		</Checkpoint>
+		<Checkpoint>
+			<CheckpointDesc SubjectTT="TAKEOFF CONFIG WARNING (F/O)"
+							ExpectationTT="TEST (thrust levers full forward and back to idle)"/>
+			<Test>
+				<TestValue>
+					<Val Code="(A:GENERAL ENG THROTTLE LEVER POSITION:1,Percent) 90 >"/>
+				</TestValue>
+			</Test>
+		</Checkpoint>
+
+<!-- ENGINES AND APU FIRE SWITCHES................IN (F/O) -->
+<!-- OVHT DET SWITCHES........................NORMAL (F/O) -->
+<!-- OVHT FIRE TEST SWITCH................HOLD RIGHT (F/O) -->
+<!-- MASTER FIRE WARN LIGHT.....................PUSH (F/O) -->
+<!-- ENGINES EXT TEST SWITCH..........TEST 1 TO LEFT (F/O) -->
+<!-- ENGINES EXT TEST SWITCH.........TEST 2 TO RIGHT (F/O) -->
+<!-- APU.......................................START (F/O) -->
+<!-- Hold APU switch in START position for 3-4 seconds. -->
+<!-- APU GEN OFF BUS LIGHT...............ILLUMINATED (F/O) -->
+<!-- AC POWER SWITCH.............................APU (F/O) -->
+<!-- APU GENERATOR BUS SWITCHES...................ON (F/O) -->
+<!-- LEFT FORWARD FUEL PUMP.......................ON (F/O) -->
+
+		<Checkpoint>
+			<CheckpointDesc SubjectTT="ENGINES AND APU FIRE SWITCHES (F/O)"
+				ExpectationTT="IN"/>
+			<Test>
+				<TestValue>
+					<Operator OpType="AND">
+						<Val Code="(L:switch_697_73X, number) 0 =="/> 
+						<Val Code="(L:switch_698_73X, number) 0 =="/> 
+						<Val Code="(L:switch_699_73X, number) 0 =="/>
+					</Operator>
+				</TestValue>
+			</Test>
+			<Instrument Id="ngx_switch_697_a"/>
+			<Instrument Id="ngx_switch_698_a"/>
+			<Instrument Id="ngx_switch_699_a"/>
+		</Checkpoint>
+		<Checkpoint>
+			<CheckpointDesc SubjectTT="OVERHEAT DETECTOR SWITCHES (F/O)"
+				ExpectationTT="NORMAL"/>
+			<Test>
+				<TestValue>
+					<Operator OpType="AND">
+						<Val Code="(L:switch_694_73X, number) 0 =="/> 
+						<Val Code="(L:switch_705_73X, number) 0 =="/> 
+					</Operator>
+				</TestValue>
+			</Test>
+			<Instrument Id="ngx_switch_694_a"/>
+			<Instrument Id="ngx_switch_705_a"/>
+		</Checkpoint>
+		<Checkpoint>
+			<CheckpointDesc SubjectTT="OVHT FIRE TEST SWITCH (F/O)"
+							ExpectationTT="HOLD FAULT/INOP"/>
+			<Instrument Id="ngx_switch_696_a"/>
+		</Checkpoint>
+		<Checkpoint>
+			<CheckpointDesc SubjectTT="MASTER FIRE WARNING LIGHT (F/O)"
+							ExpectationTT="PUSH"/>
+			<Test>
+				<TestValue>
+					<Val Code="(L:switch_4391_73X, number) 0 >"/>
+				</TestValue>
+			</Test>
+			<Instrument Id="ngx_switch_439_a"/>
+		</Checkpoint>
+		<Checkpoint>
+			<CheckpointDesc SubjectTT="ENGINES EXT TEST SWITCH (F/O)"
+							ExpectationTT="TEST 1 TO LEFT"/>
+			<Test>
+				<TestValue>
+					<Val Code="0 (L:switch_715_73X,number) - 50 div 0 =="/>
+				</TestValue>
+			</Test>
+			<Instrument Id="ngx_switch_715_a"/>
+		</Checkpoint>
+		<Checkpoint>
+			<CheckpointDesc SubjectTT="ENGINES EXT TEST SWITCH (F/O)"
+							ExpectationTT="TEST 2 TO RIGHT"/>
+			<Test>
+				<TestValue>
+					<Val Code="100 (L:switch_715_73X,number) - 50 0 =="/>
+				</TestValue>
+			</Test>
+			<Instrument Id="ngx_switch_715_a"/>
+		</Checkpoint>
+		<Checkpoint>
+			<CheckpointDesc SubjectTT="APU (F/O)"
+				ExpectationTT="START"/>
+			<Test>
+				<TestValue>
+					<Val Code="(L:switch_25_73X, number) 0 &gt;"/>
+				</TestValue>
+				<Action Copilot="True" Condition="TestValueFalse" SpecialAction="WaitUntilTestValueValidated" Code="50 (L:switch_118_73X) - 10 div == if{ 11801 (>K:ROTOR_BRAKE) } els{ 11801 (>K:ROTOR_BRAKE) 11801 (>K:ROTOR_BRAKE) }"/>
+			</Test>
+			<Instrument Id="ngx_switch_35_a"/>
+		</Checkpoint>
+		<Checkpoint>
+			<CheckpointDesc SubjectTT="APU GEN OFF BUS LIGHT (F/O)"
+							ExpectationTT="ILLUMINATED"/>
+			<Test>
+				<TestValue>
+					<Val Code="(L:switch_25_73X, number) 0 &gt;"/>
+				</TestValue>
+			</Test>
+			<Instrument Id="ngx_switch_715_a"/>
+		</Checkpoint>
+		<Checkpoint>
+			<CheckpointDesc SubjectTT="AC POWER SWITCH (F/O)"
+							ExpectationTT="APU"/>
+				<TestValue>
+					<Val Code="30 (L:switch_04_73X,number) - 10 div 0 =="/>
+				</TestValue>
+				<Action Copilot="True" Condition="TestValueFalse" Once="true" Code="30 (L:switch_04_73X,number) - 10 div s0 :1 l0 0 &gt; if{ 407 (>K:ROTOR_BRAKE) l0 -- s0 g1 } l0 0 &lt; if{ 408 (>K:ROTOR_BRAKE) l0 ++ s0 g1 }"/>
+			<Instrument Id="ngx_switch_04_a"/>
+		</Checkpoint>
+		<Checkpoint>
+			<CheckpointDesc SubjectTT="APU GENERATOR BUS SWITCHES (F/O)"
+							ExpectationTT="ON"/>
+			<Sequence SeqType="Unordered">
+				<Action Copilot="True" Once="true" Code="2801 (>K:ROTOR_BRAKE)"/>
+				<Action Copilot="True" Once="true" Code="2901 (>K:ROTOR_BRAKE)"/>
+			</Sequence>
+			<Instrument Id="ngx_switch_28_a"/>
+			<Instrument Id="ngx_switch_29_a"/>
+		</Checkpoint>
+		<Checkpoint>
+			<CheckpointDesc SubjectTT="LEFT FORWARD FUEL PUMP (F/O)"
+							ExpectationTT="ON"/>
+			<Action Copilot="True" Once="true" Code="0 (L:switch_38_73X, number) == if{ 3801 (>K:ROTOR_BRAKE) }"/>
+			<Instrument Id="ngx_switch_38_a"/>
+		</Checkpoint>
+
+<!-- TRANSFER BUS LIGHTS............CHECK EXTINGUISHED (F/O) -->
+<!-- SOURCE OFF LIGHTS..............CHECK EXTINGUISHED (F/O) -->
+<!-- STANDBY POWER..................................ON (F/O) -->
+<!--   STANDBY PWR LIGHT............CHECK EXTINGUISHED (F/O) -->
+<!-- POSITION LIGHTS................................ON (F/O) -->
+<!-- PARKING BRAKE.................................SET (F/O) -->
+<!-- WING & WHEEL WELL LIGHTS..............AS REQUIRED (F/O) -->
+		<Checkpoint>
+			<CheckpointDesc SubjectTT="TRANSFER BUS OFF LIGHTS (F/O)"
+							ExpectationTT="CHECK EXTINGUISHED"/>
+			<Test>
+				<TestValue>
+					<Operator OpType="AND">
+						<Val Code="(L:switch_20_73X, number) 0 =="/> 
+						<Val Code="(L:switch_21_73X, number) 0 =="/> 
+					</Operator>
+				</TestValue>
+			</Test>
+		</Checkpoint>
+		<Checkpoint>
+			<CheckpointDesc SubjectTT="SOURCE OFF LIGHTS (F/O)"
+							ExpectationTT="CHECK EXTINGUISHED"/>
+			<Test>
+				<TestValue>
+					<Operator OpType="AND">
+						<Val Code="(L:switch_22_73X, number) 0 =="/> 
+						<Val Code="(L:switch_23_73X, number) 0 =="/> 
+					</Operator>
+				</TestValue>
+			</Test>
+		</Checkpoint>
+		<Checkpoint>
+			<CheckpointDesc SubjectTT="STANDBY PWR OFF LIGHT (F/O)"
+							ExpectationTT="CHECK EXTINGUISHED"/>
+			<Test>
+				<TestValue>
+					<Val Code="(L:switch_08_73X, number) 0 =="/>
+				</TestValue>
+			</Test>
+		</Checkpoint>
+		<Checkpoint>
+			<CheckpointDesc SubjectTT="POSITION LIGHT SWITCH (F/O)"
+							ExpectationTT="ON"/>
+			<Test>
+				<TestValue>
+					<Val Code="100 (L:switch_123_73X,number) - 50 div 0 =="/>
+				</TestValue>
+				<Action Copilot="True" Condition="TestValueTrue" Once="true" Code="100 (L:switch_123_73X,number) - 50 div s0 
+:1 
+l0 0 &gt; if{ 12301 (&gt;K:ROTOR_BRAKE) l0 -- s0 g1 } 
+l0 0 &lt; if{ 12302 (&gt;K:ROTOR_BRAKE) l0 ++ s0 g1 }
+"/>
+			</Test>
+			<Instrument Id="ngx_switch_123_a"/>
+		</Checkpoint>
+		<Checkpoint>
+			<CheckpointDesc SubjectTT="PARKING BRAKE (F/O)"
+							ExpectationTT="SET"/>
+			<Test>
+				<TestValue>
+					<Val Code="0 (L:switch_693_73X, number) !="/>
+				</TestValue>
+				<Action Copilot="True" Condition="TestValueFalse" Once="true" Code="69302 (>K:ROTOR_BRAKE)"/>
+			</Test>
+			<Instrument Id="ngx_switch_693_a"/>
+		</Checkpoint>
+		<Checkpoint>
+			<CheckpointDesc SubjectTT="WING ILLUMINATION SWITCH (F/O)"
+							ExpectationTT="AS NEEDED"/>
+				<Action Copilot="True" Code="(E:Time of Day,enum) 3 == if{ 0 (L:switch_125_73X, number) == if{ 12501 (>K:ROTOR_BRAKE) } } els{ 1 (L:switch_125_73X, number) == if{ 12501 (>K:ROTOR_BRAKE) } }"/>
+			<Instrument Id="ngx_switch_125_a"/>
+		</Checkpoint>
+		<Checkpoint>
+			<CheckpointDesc SubjectTT="WHEEL WELL LIGHT SWITCH (F/O)"
+							ExpectationTT="AS NEEDED"/>
+				<Action Copilot="True" Code="(E:Time of Day,enum) 3 == if{ 0 (L:switch_126_73X, number) == if{ 12601 (>K:ROTOR_BRAKE) } } els{ 1 (L:switch_126_73X, number) == if{ 12601 (>K:ROTOR_BRAKE) } }"/>
+			<Instrument Id="ngx_switch_126_a"/>
+		</Checkpoint>
+
+	</Page>
+
+	<Page SubjectTT="Preliminary Preflight Procedure">
+<!-- ==== Verify quantities -->
+<!-- OXYGEN PRESSURE...........................CHECKED (F/O) -->
+<!-- HYDRAULIC QUANTITY A & B..................CHECKED (F/O) -->
+<!-- ENGINE OIL QUANTITY 1 & 2.................CHECKED (F/O) -->
+
+<!-- ==== Overhead -->
+<!-- VOICE RECORDER SWITCH........................AUTO (F/O) -->
+<!-- SERVICE INTERPHONE............................OFF (F/O) -->
+<!-- ====== Engine Panel -->
+<!-- EEC SWITCHES...................................ON (F/O) -->
+<!-- EEC GUARDS.................................CLOSED (F/O) -->
+<!-- EEC FAIL LIGHTS......................EXTINGUISHED (F/O) -->
+<!-- REVERSER FAIL LIGHTS.................EXTINGUISHED (F/O) -->
+<!-- ==== -->
+<!-- PASSENGER OXYGEN SWITCH......NORMAL, GUARD CLOSED (F/O) -->
+<!-- EMERGENCY EXIT LIGHT..........ARM/ON GUARD CLOSED (F/O) -->
+<!-- ATTENDENCE BUTTON...........................PRESS (F/O) -->
+<!-- ELECTRICAL POWER UP......................COMPLETE (F/O) -->
+<!-- FLIGHT DATA RECORDER SWITCH..................AUTO (F/O) -->
+<!-- MACH OVERSPEED TEST.......................PERFORM (F/O) -->
+
+<!-- ==== IRS Alignment -->
+<!-- IRS MODE SELECTORS............................OFF (CPT) -->
+<!-- IRS MODE SELECTORS.......................THEN NAV (CPT) -->
+  <!-- Verify ON DC lights illuminate then extinguish -->
+  <!-- Verify ALIGN lights are illuminated   -->
+
+		<Checkpoint>
+			<CheckpointDesc SubjectTT="OXYGEN PRESSURE (F/O)"
+							ExpectationTT="CHECK"/>
+			<Test>
+				<TestValue>
+					<Val Code="(L:switch_262_73X, number) 1200 &gt;"/>
+				</TestValue>
+			</Test>
+		</Checkpoint>
+		<Checkpoint>
+			<CheckpointDesc SubjectTT="HYDRAULIC QUANTITY A &amp; B (F/O)"
+							ExpectationTT="CHECK"/>
+		</Checkpoint>
+		<Checkpoint>
+			<CheckpointDesc SubjectTT="ENGINE OIL QUANTITY 1 &amp; 2 (F/O)"
+							ExpectationTT="CHECK"/>
+		</Checkpoint>
+
+
+
+
+  
+	<Checkpoint>
+ <CheckpointDesc SubjectTT="IRS mode selectors" ExpectationTT="OFF then NAV"/>
+  <Instrument Id="ngx_switch_255_a"/>
+  <Instrument Id="ngx_switch_256_a"/>
+  </Checkpoint>
+	<Checkpoint>
+  <CheckpointDesc SubjectTT="ON DC lights" ExpectationTT="On and then OFF"/>
+  </Checkpoint>
+	<Checkpoint>
+  <CheckpointDesc SubjectTT="ALIGN lights" ExpectationTT="Illuminated"/>
+  </Checkpoint>
+	<Checkpoint>
+  <CheckpointDesc SubjectTT="PSEU light" ExpectationTT="Verify extinguished"/>
+  </Checkpoint>
+	<Checkpoint>
+  <CheckpointDesc SubjectTT="GPS light" ExpectationTT="Verify extinguished"/>
+  </Checkpoint>
+	<Checkpoint>
+  <CheckpointDesc SubjectTT="SERVICE INTERPHONE switch" ExpectationTT="OFF"/>
+  <Instrument Id="ngx_switch_257_a"/>
+  </Checkpoint>
+	<Checkpoint>
+  <CheckpointDesc SubjectTT="REVERSER lights" ExpectationTT="extinguished"/>
+  </Checkpoint>
+	<Checkpoint>
+  <CheckpointDesc SubjectTT="ENGINE CONTROL lights" ExpectationTT="extinguished"/>
+  </Checkpoint>
+	<Checkpoint>
+  <CheckpointDesc SubjectTT="EEC switches" ExpectationTT="ON"/>
+  <Instrument Id="ngx_switch_267_a"/>
+  <Instrument Id="ngx_switch_270_a"/>
+  </Checkpoint>
+	<Checkpoint>
+  <CheckpointDesc SubjectTT="PASSENGER OXYGEN switch" ExpectationTT="Guard closed"/>
+  <Instrument Id="ngx_switch_265_a"/>
+  </Checkpoint>
+	<Checkpoint>
+  <CheckpointDesc SubjectTT="PASS OXY ON light" ExpectationTT="extinguished"/>
+  </Checkpoint>
+	<Checkpoint>
+  <CheckpointDesc SubjectTT="Landing gear indicator lights" ExpectationTT="Verify illuminated"/>
+  </Checkpoint>
+	<Checkpoint>
+  <CheckpointDesc SubjectTT="Flight recorder switch" ExpectationTT="Guard Closed"/>
+  <Instrument Id="ngx_switch_299_a"/>
+  </Checkpoint>
+    <Checkpoint>
+  <CheckpointDesc SubjectTT="Mach Airspeed Warning Test Switches" ExpectationTT="Push one at a time"/>
+  <Instrument Id="ngx_switch_301_a"/>
+  <Instrument Id="ngx_switch_302_a"/>
+  </Checkpoint>
+  	<Checkpoint>
+  <CheckpointDesc SubjectTT="Stall Warning Test Switches" ExpectationTT="Push one at a time"/>
+  <Instrument Id="ngx_switch_303_a"/>
+   <Instrument Id="ngx_switch_304_a"/>
+  </Checkpoint>
+    <Checkpoint>
+  <CheckpointDesc SubjectTT="Hydraulic quantity" ExpectationTT="Check"/>
+  </Checkpoint>
+	<Checkpoint>
+  <CheckpointDesc SubjectTT="engine oil quantity" ExpectationTT="Check"/>
+  </Checkpoint>
+  	<Checkpoint>
+  <CheckpointDesc SubjectTT="Manual gear extension access door" ExpectationTT="Closed"/>
+  <Instrument Id="ngx_switch_1020_a"/>
+  </Checkpoint>
+	<Checkpoint>
+  <CheckpointDesc SubjectTT="Parking Brake" ExpectationTT="As needed"/>
+  <Instrument Id="ngx_switch_693_a"/>
+  </Checkpoint>
+	<Checkpoint>
+  <CheckpointDesc SubjectTT="CDU Preflight Procedure" ExpectationTT="Complete"/>
+  </Checkpoint>
+  </Page>
+  <Page SubjectTT="Preflight Procedure Overhead">
+	<Checkpoint>
+ <CheckpointDesc SubjectTT="FLIGHT CONTROL switches" ExpectationTT="Guards Closed"/>
+  <Instrument Id="ngx_switch_79_a"/>
+  <Instrument Id="ngx_switch_81_a"/>
+  </Checkpoint>
+	<Checkpoint>
+ <CheckpointDesc SubjectTT="LOW PRESSURE lights" ExpectationTT="Illuminated"/>
+  </Checkpoint>
+	<Checkpoint>
+ <CheckpointDesc SubjectTT="Flight SPOILER switches" ExpectationTT="Guards Closed"/>
+  <Instrument Id="ngx_switch_66_a"/>
+  <Instrument Id="ngx_switch_68_a"/>
+  </Checkpoint>
+	<Checkpoint>
+ <CheckpointDesc SubjectTT="YAW DAMPER switch" ExpectationTT="ON"/>
+  <Instrument Id="ngx_switch_63_a"/>
+  </Checkpoint>
+	<Checkpoint>
+ <CheckpointDesc SubjectTT="YAW DAMPER light" ExpectationTT="OFF"/>
+  </Checkpoint>
+	<Checkpoint>
+ <CheckpointDesc SubjectTT="Standby hydraulic LOW QUANTITY light" ExpectationTT="OFF"/>
+  </Checkpoint>
+	<Checkpoint>
+ <CheckpointDesc SubjectTT="Standby hydraulic LOW PRESSURE light" ExpectationTT="OFF"/>
+  </Checkpoint>
+	<Checkpoint>
+ <CheckpointDesc SubjectTT="ALTERNATE FLAPS master switch" ExpectationTT="Guard Closed"/>
+  <Instrument Id="ngx_switch_74_a"/>
+  </Checkpoint>
+	<Checkpoint>
+ <CheckpointDesc SubjectTT="ALTERNATE FLAPS position switch" ExpectationTT="OFF"/>
+  <Instrument Id="ngx_switch_75_a"/>
+  </Checkpoint>
+	<Checkpoint>
+ <CheckpointDesc SubjectTT="FEEL DIFF PRESS light" ExpectationTT="OFF"/>
+  </Checkpoint>
+	<Checkpoint>
+ <CheckpointDesc SubjectTT="SPEED TRIM FAIL light" ExpectationTT="OFF"/>
+  </Checkpoint>
+	<Checkpoint>
+ <CheckpointDesc SubjectTT="MACH TRIM FAIL light" ExpectationTT="OFF"/>
+  </Checkpoint>
+	<Checkpoint>
+ <CheckpointDesc SubjectTT="AUTO SLAT FAIL light" ExpectationTT="OFF"/>
+  </Checkpoint>
+	<Checkpoint>
+ <CheckpointDesc SubjectTT="VHF NAV transfer switch" ExpectationTT="Normal"/>
+  <Instrument Id="ngx_switch_62_a"/>
+  </Checkpoint>
+	<Checkpoint>
+ <CheckpointDesc SubjectTT="FMC transfer switch" ExpectationTT="Normal"/>
+  <Instrument Id="ngx_switch_60_a"/>
+  </Checkpoint>
+    <Checkpoint>
+ <CheckpointDesc SubjectTT="IRS Transfer Switch" ExpectationTT="Normal"/>
+  <Instrument Id="ngx_switch_61_a"/>
+  </Checkpoint>
+	<Checkpoint>
+ <CheckpointDesc SubjectTT="SOURCE selector" ExpectationTT="Auto"/>
+  <Instrument Id="ngx_switch_58_a"/>
+  </Checkpoint>
+	<Checkpoint>
+ <CheckpointDesc SubjectTT="CONTROL PANEL select switch" ExpectationTT="Normal"/>
+  <Instrument Id="ngx_switch_59_a"/>
+  </Checkpoint>
+	<Checkpoint>
+ <CheckpointDesc SubjectTT="ENG VALVE CLOSED lights" ExpectationTT="illuminated dim"/>
+  </Checkpoint>
+	<Checkpoint>
+ <CheckpointDesc SubjectTT="SPAR VALVE CLOSED lights" ExpectationTT="illuminated dim"/>
+  </Checkpoint>
+	<Checkpoint>
+ <CheckpointDesc SubjectTT="FILTER BYPASS lights" ExpectationTT="OFF"/>
+  </Checkpoint>
+	<Checkpoint>
+ <CheckpointDesc SubjectTT="CROSSFEED selector" ExpectationTT="OFF"/>
+  <Instrument Id="ngx_switch_49_a"/>
+  </Checkpoint>
+	<Checkpoint>
+ <CheckpointDesc SubjectTT="VALVE OPEN light" ExpectationTT="OFF"/>
+  </Checkpoint>
+	<Checkpoint>
+ <CheckpointDesc SubjectTT="FUEL PUMP switches" ExpectationTT="OFF"/>
+  <Instrument Id="ngx_switch_45_a"/>
+  <Instrument Id="ngx_switch_46_a"/>
+  <Instrument Id="ngx_switch_37_a"/>
+  <Instrument Id="ngx_switch_38_a"/>
+  <Instrument Id="ngx_switch_39_a"/>
+  <Instrument Id="ngx_switch_40_a"/>
+  </Checkpoint>
+	<Checkpoint>
+ <CheckpointDesc SubjectTT="fuel pump LOW PRESSURE" ExpectationTT="ON"/>
+  </Checkpoint>
+	<Checkpoint>
+ <CheckpointDesc SubjectTT="BATTERY switch" ExpectationTT="Guard closed"/>
+  <Instrument Id="ngx_switch_02_a"/>
+  </Checkpoint>
+	<Checkpoint>
+ <CheckpointDesc SubjectTT="CAB/UTIL power switch" ExpectationTT="ON"/>
+  <Instrument Id="ngx_switch_05_a"/>
+  </Checkpoint>
+  	<Checkpoint>
+ <CheckpointDesc SubjectTT="IFE/PASS switch" ExpectationTT="ON"/>
+  <Instrument Id="ngx_switch_06_a"/>
+  </Checkpoint>
+    <Checkpoint>
+ <CheckpointDesc SubjectTT="STANDBY POWER switch" ExpectationTT="Guard closed"/>
+  <Instrument Id="ngx_switch_11_a"/>
+  </Checkpoint>
+	<Checkpoint>
+ <CheckpointDesc SubjectTT="Verify STANDBY PWR OFF BAT DISCHARGE TR UNIT and ELEC Lights" ExpectationTT="OFF"/>
+  </Checkpoint> 
+	<Checkpoint>
+ <CheckpointDesc SubjectTT="Generator drive DISCONNECT switches" ExpectationTT="Guards closed"/>
+  <Instrument Id="ngx_switch_13_a"/>
+  <Instrument Id="ngx_switch_15_a"/>
+  </Checkpoint>
+	<Checkpoint>
+ <CheckpointDesc SubjectTT="DRIVE lights" ExpectationTT="Illuminated"/>
+  </Checkpoint>
+	<Checkpoint>
+ <CheckpointDesc SubjectTT="BUS TRANSFER switch" ExpectationTT="Guard closed"/>
+  <Instrument Id="ngx_switch_19_a"/>
+  </Checkpoint>
+	<Checkpoint>
+ <CheckpointDesc SubjectTT="TRANSFER BUS OFF SOURCE OFF GEN OFF BUS lights" ExpectationTT="Illuminated"/>
+  </Checkpoint>
+	<Checkpoint>
+  <CheckpointDesc SubjectTT="Engines and APU Fire Switches" ExpectationTT="IN"/>
+  <Instrument Id="ngx_switch_697_a"/>
+  <Instrument Id="ngx_switch_698_a"/>
+  <Instrument Id="ngx_switch_699_a"/>
+  </Checkpoint>
+	<Checkpoint>
+  <CheckpointDesc SubjectTT="OVERHEAT DETECTOR switches" ExpectationTT="Normal"/>
+  <Instrument Id="ngx_switch_694_a"/>
+  <Instrument Id="ngx_switch_705_a"/>
+  </Checkpoint>
+	<Checkpoint>
+  <CheckpointDesc SubjectTT="Test Switch" ExpectationTT="Hold FAULT/INOP"/>
+  <Instrument Id="ngx_switch_696_a"/>
+  </Checkpoint>
+	<Checkpoint>
+  <CheckpointDesc SubjectTT="MASTER CAUTION" ExpectationTT="Illuminated"/>
+  <Instrument Id="ngx_switch_348_a"/>
+  <Instrument Id="ngx_switch_438_a"/>
+  </Checkpoint>
+	<Checkpoint>
+  <CheckpointDesc SubjectTT="OVHT/DET" ExpectationTT="Illuminated"/>
+  </Checkpoint>
+	<Checkpoint>
+  <CheckpointDesc SubjectTT="FAULT light" ExpectationTT="Illuminated"/>
+  </Checkpoint>
+	<Checkpoint>
+  <CheckpointDesc SubjectTT="APU DET INOP" ExpectationTT="Illuminated"/>
+  </Checkpoint>
+	<Checkpoint>
+  <CheckpointDesc SubjectTT="Test Switch" ExpectationTT="HOLD OVHT FIRE"/>
+  <Instrument Id="ngx_switch_696_a"/>
+  </Checkpoint>
+    <Checkpoint> 
+<CheckpointDesc SubjectTT="Fire Warning Bell" ExpectationTT="Sounding"/>
+  </Checkpoint>
+	<Checkpoint>
+  <CheckpointDesc SubjectTT="MASTER FIRE WARN lights" ExpectationTT="Illuminated"/>
+  <Instrument Id="ngx_switch_347_a"/>
+  <Instrument Id="ngx_switch_439_a"/>
+  </Checkpoint>
+	<Checkpoint>
+  <CheckpointDesc SubjectTT="MASTER CAUTION lights" ExpectationTT="Illuminated"/>
+  <Instrument Id="ngx_switch_348_a"/>
+  <Instrument Id="ngx_switch_438_a"/>
+  </Checkpoint>
+	<Checkpoint>
+  <CheckpointDesc SubjectTT="OVHT/DET annunciator" ExpectationTT="Illuminated"/>
+  </Checkpoint>
+	<Checkpoint>
+  <CheckpointDesc SubjectTT="Engines and APU Fire Switches" ExpectationTT="Illuminated"/>
+  <Instrument Id="ngx_switch_697_a"/>
+  <Instrument Id="ngx_switch_698_a"/>
+  <Instrument Id="ngx_switch_699_a"/>
+  </Checkpoint>
+	<Checkpoint>
+  <CheckpointDesc SubjectTT="ENG 1 AND 2 OVERHEAT" ExpectationTT="Illuminated"/>
+  </Checkpoint>
+	<Checkpoint>
+  <CheckpointDesc SubjectTT="Wheel Well Fire warning light" ExpectationTT="Illuminated"/>
+  </Checkpoint>  
+    <Checkpoint> 
+<CheckpointDesc SubjectTT="MASTER FIRE WARN light" ExpectationTT="Either Captain F/O push"/>
+  <Instrument Id="ngx_switch_347_a"/>
+  <Instrument Id="ngx_switch_439_a"/>
+  </Checkpoint>   
+    <Checkpoint>
+  <CheckpointDesc SubjectTT="MASTER FIRE WARN lights" ExpectationTT="extinguish"/>
+  <Instrument Id="ngx_switch_347_a"/>
+  <Instrument Id="ngx_switch_439_a"/>
+  </Checkpoint>
+    <Checkpoint> 
+<CheckpointDesc SubjectTT="Fire Warning Bell" ExpectationTT="Not sounding"/>
+  </Checkpoint>
+    <Checkpoint>
+  <CheckpointDesc SubjectTT="Engines and APU Fire Switches" ExpectationTT="Illuminated"/>
+  <Instrument Id="ngx_switch_697_a"/>
+  <Instrument Id="ngx_switch_698_a"/>
+  <Instrument Id="ngx_switch_699_a"/>
+  </Checkpoint>  
+ 	<Checkpoint>
+  <CheckpointDesc SubjectTT="ENG 1 AND 2 OVERHEAT" ExpectationTT="Illuminated"/>
+  </Checkpoint> 
+    <Checkpoint>
+  <CheckpointDesc SubjectTT="Wheel Well Fire warning light" ExpectationTT="Illuminated"/>
+  </Checkpoint>
+	<Checkpoint>
+  <CheckpointDesc SubjectTT="Test Switch" ExpectationTT="Release"/>
+  <Instrument Id="ngx_switch_696_a"/>
+  </Checkpoint>
+    <Checkpoint>
+  <CheckpointDesc SubjectTT="EXTINGUISHER TEST switch" ExpectationTT="Position 1 hold"/>
+  <Instrument Id="ngx_switch_715_a"/>
+  </Checkpoint>
+	<Checkpoint>
+  <CheckpointDesc SubjectTT="three green extinguisher test lights" ExpectationTT="Illuminated"/>
+  </Checkpoint>
+	<Checkpoint>
+  <CheckpointDesc SubjectTT="EXTINGUISHER TEST switch" ExpectationTT="Release"/>
+  <Instrument Id="ngx_switch_715_a"/>
+  </Checkpoint>
+	<Checkpoint>
+  <CheckpointDesc SubjectTT="three green extinguisher test lights" ExpectationTT="OFF"/>
+  </Checkpoint>
+	<Checkpoint>
+  <CheckpointDesc SubjectTT="EXTINGUISHER TEST switch" ExpectationTT="Position 2 hold"/>
+  <Instrument Id="ngx_switch_715_a"/>
+  </Checkpoint>
+	<Checkpoint>
+  <CheckpointDesc SubjectTT="three green extinguisher test lights" ExpectationTT="Illuminated"/>
+  </Checkpoint>
+	<Checkpoint>
+  <CheckpointDesc SubjectTT="EXTINGUISHER TEST switch" ExpectationTT="Release"/>
+  <Instrument Id="ngx_switch_715_a"/>
+  </Checkpoint>
+	<Checkpoint>
+  <CheckpointDesc SubjectTT="three green extinguisher test lights" ExpectationTT="OFF"/>
+  </Checkpoint>
+	<Checkpoint>
+  <CheckpointDesc SubjectTT="Suitable Fuel Pump" ExpectationTT="ON"/>
+  <Instrument Id="ngx_switch_45_a"/>
+  <Instrument Id="ngx_switch_38_a"/>
+  </Checkpoint>
+	<Checkpoint>
+  <CheckpointDesc SubjectTT="APU Switch" ExpectationTT="START"/>
+  <Instrument Id="ngx_switch_118_a"/>
+  </Checkpoint>
+	<Checkpoint>
+  <CheckpointDesc SubjectTT="APU GEN OFF BUS" ExpectationTT="Illuminated"/>
+  </Checkpoint>
+	<Checkpoint>
+  <CheckpointDesc SubjectTT="APU GENERATOR Bus Switches" ExpectationTT="ON"/>
+  <Instrument Id="ngx_switch_28_a"/>
+  <Instrument Id="ngx_switch_29_a"/>
+  </Checkpoint>
+	<Checkpoint>
+  <CheckpointDesc SubjectTT="SOURCE OFF lights" ExpectationTT="OFF"/>
+  </Checkpoint>
+	<Checkpoint>
+  <CheckpointDesc SubjectTT="TRANSFER BUS OFF lights" ExpectationTT="OFF"/>
+  </Checkpoint>
+	<Checkpoint>
+  <CheckpointDesc SubjectTT="STANDBY PWR OFF light" ExpectationTT="OFF"/>
+  </Checkpoint>
+	<Checkpoint>
+  <CheckpointDesc SubjectTT="APU MAINT light" ExpectationTT="OFF"/>
+  </Checkpoint>
+	<Checkpoint>
+  <CheckpointDesc SubjectTT="APU LOW OIL PRESSURE light" ExpectationTT="OFF"/>
+  </Checkpoint>
+	<Checkpoint>
+  <CheckpointDesc SubjectTT="APU FAULT light" ExpectationTT="OFF"/>
+  </Checkpoint>
+	<Checkpoint>
+  <CheckpointDesc SubjectTT="APU OVERSPEED light" ExpectationTT="OFF"/>
+  </Checkpoint>
+	<Checkpoint>
+ <CheckpointDesc SubjectTT="EQUIPMENT COOLING switches" ExpectationTT="NORM"/>
+  <Instrument Id="ngx_switch_96_a"/>
+  <Instrument Id="ngx_switch_97_a"/>
+  </Checkpoint>
+	<Checkpoint>
+ <CheckpointDesc SubjectTT="OFF lights" ExpectationTT="OFF"/>
+  </Checkpoint>
+	<Checkpoint>
+ <CheckpointDesc SubjectTT="EMERGENCY EXIT LIGHTS switch" ExpectationTT="Guard closed"/>
+  <Instrument Id="ngx_switch_101_a"/>
+  </Checkpoint>
+	<Checkpoint>
+ <CheckpointDesc SubjectTT="NOT ARMED light" ExpectationTT="OFF"/>
+  </Checkpoint>
+	<Checkpoint>
+ <CheckpointDesc SubjectTT="FASTEN BELTS switch" ExpectationTT="Auto or ON"/>
+  <Instrument Id="ngx_switch_104_a"/>
+  </Checkpoint>
+	<Checkpoint>
+ <CheckpointDesc SubjectTT="Windshield WIPER selectors" ExpectationTT="PARK"/>
+  <Instrument Id="ngx_switch_36_a"/>
+  <Instrument Id="ngx_switch_109_a"/>
+  </Checkpoint>
+	<Checkpoint>
+ <CheckpointDesc SubjectTT="WINDOW HEAT switches" ExpectationTT="ON"/>
+  <Instrument Id="ngx_switch_135_a"/>
+  <Instrument Id="ngx_switch_136_a"/>
+  <Instrument Id="ngx_switch_138_a"/>
+  <Instrument Id="ngx_switch_139_a"/>
+  </Checkpoint>
+	<Checkpoint>
+<CheckpointDesc SubjectTT="PROBE HEAT switches" ExpectationTT="OFF or Auto if equipped"/>
+  <Instrument Id="ngx_switch_140_a"/>
+  <Instrument Id="ngx_switch_141_a"/>
+  </Checkpoint>
+	<Checkpoint>
+ <CheckpointDesc SubjectTT="WING ANTI ICE switch" ExpectationTT="OFF"/>
+  <Instrument Id="ngx_switch_156_a"/>
+  </Checkpoint>
+	<Checkpoint>
+ <CheckpointDesc SubjectTT="ENGINE ANTI ICE switches" ExpectationTT="OFF"/>
+  <Instrument Id="ngx_switch_157_a"/>
+  <Instrument Id="ngx_switch_158_a"/>
+  </Checkpoint> 
+	<Checkpoint>
+ <CheckpointDesc SubjectTT="COWL ANTI ICE and COWL VALVE OPEN" ExpectationTT="OFF"/>
+  </Checkpoint> 
+	<Checkpoint>
+ <CheckpointDesc SubjectTT="ENGINE HYDRAULIC PUMPS switches" ExpectationTT="ON"/>
+  <Instrument Id="ngx_switch_165_a"/>
+  <Instrument Id="ngx_switch_166_a"/>
+  </Checkpoint> 
+	<Checkpoint>
+ <CheckpointDesc SubjectTT="LOW PRESSURE lights" ExpectationTT="Illuminated"/>
+  </Checkpoint> 
+	<Checkpoint>
+ <CheckpointDesc SubjectTT="ELECTRIC HYDRAULIC PUMPS switches" ExpectationTT="OFF"/>
+  <Instrument Id="ngx_switch_167_a"/>
+  <Instrument Id="ngx_switch_168_a"/>
+  </Checkpoint>   
+	<Checkpoint>
+ <CheckpointDesc SubjectTT="OVERHEAT AND LOW PRESSURE lights" ExpectationTT="OFF/Illuminated"/>
+  </Checkpoint>   
+	<Checkpoint>
+ <CheckpointDesc SubjectTT="AIR TEMPERATURE source selector" ExpectationTT="As needed"/>
+  <Instrument Id="ngx_switch_313_a"/>
+  </Checkpoint>  
+ 	<Checkpoint>
+ <CheckpointDesc SubjectTT="TRIM AIR switch" ExpectationTT="ON"/>
+  <Instrument Id="ngx_switch_311_a"/>
+  </Checkpoint> 
+	<Checkpoint>
+ <CheckpointDesc SubjectTT="ZONE TEMP lights" ExpectationTT="OFF"/>
+  </Checkpoint>
+  	<Checkpoint>
+ <CheckpointDesc SubjectTT="Temperature Selectors" ExpectationTT="As needed"/>
+   <Instrument Id="ngx_switch_191_a"/>
+   <Instrument Id="ngx_switch_192_a"/>
+   <Instrument Id="ngx_switch_307_a"/>
+  </Checkpoint>
+    <Checkpoint>
+ <CheckpointDesc SubjectTT="RAM DOOR Full Open Lights" ExpectationTT="Illuminated"/>
+  </Checkpoint>
+	<Checkpoint>
+ <CheckpointDesc SubjectTT="RECIRCULATION FAN switches" ExpectationTT="AUTO"/>
+  <Instrument Id="ngx_switch_196_a"/>
+  <Instrument Id="ngx_switch_872_a"/>
+  </Checkpoint>  
+    <Checkpoint>
+ <CheckpointDesc SubjectTT="Pack Switches" ExpectationTT="AUTO or High"/>
+  <Instrument Id="ngx_switch_200_a"/>
+  <Instrument Id="ngx_switch_201_a"/>
+  </Checkpoint> 
+    <Checkpoint>
+ <CheckpointDesc SubjectTT="Isolation Valve Switch" ExpectationTT="OPEN"/>
+  <Instrument Id="ngx_switch_202_a"/>
+  </Checkpoint> 
+    <Checkpoint>
+ <CheckpointDesc SubjectTT="Engine Bleed Switches" ExpectationTT="ON"/>
+  <Instrument Id="ngx_switch_210_a"/>
+  <Instrument Id="ngx_switch_212_a"/>
+  </Checkpoint> 
+    <Checkpoint>
+ <CheckpointDesc SubjectTT="APU Bleed Switch" ExpectationTT="1 Minute after APU start ON"/>
+  <Instrument Id="ngx_switch_211_a"/>
+  </Checkpoint>
+    <Checkpoint>
+ <CheckpointDesc SubjectTT="Dual Bleed Light" ExpectationTT="Illuminated"/>
+  </Checkpoint>   
+ 	<Checkpoint>
+ <CheckpointDesc SubjectTT="PACK TRIP OFF lights" ExpectationTT="OFF"/>
+  </Checkpoint>
+   	<Checkpoint>
+ <CheckpointDesc SubjectTT="Wing Body Overheat Lights" ExpectationTT="OFF"/>
+  </Checkpoint>
+   	<Checkpoint>
+ <CheckpointDesc SubjectTT="Bleed Trip Off Light" ExpectationTT="OFF"/>
+  </Checkpoint>
+  	<Checkpoint>
+ <CheckpointDesc SubjectTT="AUTO FAIL light AND OFF SCHED DESCENT Light" ExpectationTT="OFF"/>
+  </Checkpoint>  
+	<Checkpoint>
+ <CheckpointDesc SubjectTT="FLIGHT ALTITUDE" ExpectationTT="Set to Cruize Altitude"/>
+  <Instrument Id="ngx_switch_218_a"/>
+  </Checkpoint>    
+	<Checkpoint>
+ <CheckpointDesc SubjectTT="LANDING ALTITUDE" ExpectationTT="Set to Destinaton Field Altitude"/>
+  <Instrument Id="ngx_switch_220_a"/>
+  </Checkpoint>
+	<Checkpoint>
+ <CheckpointDesc SubjectTT="Pressurization Mode Selector" ExpectationTT="AUTO"/>
+  <Instrument Id="ngx_switch_223_a"/>
+  </Checkpoint>  
+	<Checkpoint>
+ <CheckpointDesc SubjectTT="ALTN light AND MANUAL light" ExpectationTT="OFF"/>
+  </Checkpoint>   
+	<Checkpoint>
+ <CheckpointDesc SubjectTT="LANDING light switches" ExpectationTT="Retract and OFF OR OFF if LED"/>
+  <Instrument Id="ngx_switch_111_a"/>
+  <Instrument Id="ngx_switch_112_a"/>
+  <Instrument Id="ngx_switch_113_a"/>
+  <Instrument Id="ngx_switch_114_a"/>
+  </Checkpoint>   
+	<Checkpoint>
+ <CheckpointDesc SubjectTT="RUNWAY TURNOFF light switches" ExpectationTT="OFF"/>
+  <Instrument Id="ngx_switch_115_a"/>
+  <Instrument Id="ngx_switch_116_a"/>
+  </Checkpoint> 
+	<Checkpoint>
+ <CheckpointDesc SubjectTT="TAXI light switch if Installed" ExpectationTT="OFF"/>
+  <Instrument Id="ngx_switch_117_a"/>
+  </Checkpoint> 
+	<Checkpoint>
+ <CheckpointDesc SubjectTT="Ignition select switch" ExpectationTT="IGN L or R"/>
+  <Instrument Id="ngx_switch_120_a"/>
+  </Checkpoint> 
+	<Checkpoint>
+ <CheckpointDesc SubjectTT="ENGINE START switches" ExpectationTT="OFF or AUTO"/>
+  <Instrument Id="ngx_switch_119_a"/>
+  <Instrument Id="ngx_switch_121_a"/>
+  </Checkpoint> 
+	<Checkpoint>
+ <CheckpointDesc SubjectTT="LOGO light switch" ExpectationTT="As needed"/>
+  <Instrument Id="ngx_switch_122_a"/>
+  </Checkpoint> 
+	<Checkpoint>
+ <CheckpointDesc SubjectTT="POSITION light switch" ExpectationTT="As needed"/>
+  <Instrument Id="ngx_switch_123_a"/>
+  </Checkpoint> 
+	<Checkpoint>
+ <CheckpointDesc SubjectTT="ANTI COLLISION light switch" ExpectationTT="OFF"/>
+  <Instrument Id="ngx_switch_124_a"/>
+  </Checkpoint> 
+	<Checkpoint>
+ <CheckpointDesc SubjectTT="WING illumination switch" ExpectationTT="As needed"/>
+  <Instrument Id="ngx_switch_125_a"/>
+  </Checkpoint> 
+	<Checkpoint>
+ <CheckpointDesc SubjectTT="WHEEL WELL light switch" ExpectationTT="As needed"/>
+  <Instrument Id="ngx_switch_126_a"/>
+  </Checkpoint>  
+</Page>  
+  <Page SubjectTT="Preflight Procedure MIP">
+	<Checkpoint>
+ <CheckpointDesc SubjectTT="MCP Courses" ExpectationTT="SET"/>
+  <Instrument Id="ngx_switch_376_a"/>
+  <Instrument Id="ngx_switch_409_a"/>
+  <Instrument Id="ngx_switch_376_a_hw"/>
+  <Instrument Id="ngx_switch_409_a_hw"/>
+  </Checkpoint>
+	<Checkpoint>
+ <CheckpointDesc SubjectTT="FLIGHT DIRECTOR switches" ExpectationTT="ON First the PF side"/>
+  <Instrument Id="ngx_switch_378_a"/>
+  <Instrument Id="ngx_switch_407_a"/>
+  <Instrument Id="ngx_switch_378_a_hw"/>
+  <Instrument Id="ngx_switch_407_a_hw"/>
+  </Checkpoint>
+	<Checkpoint>
+ <CheckpointDesc SubjectTT="MINIMUMS reference selector" ExpectationTT="Radio or Baro"/>
+  <Instrument Id="ngx_switch_356_a"/>
+  <Instrument Id="ngx_switch_412_a"/>
+  </Checkpoint>
+	<Checkpoint>
+ <CheckpointDesc SubjectTT="MINIMUMS selector" ExpectationTT="Set decision height or altitude reference"/>
+  <Instrument Id="ngx_switch_355_a"/>
+  <Instrument Id="ngx_switch_411_a"/>
+  </Checkpoint>
+	<Checkpoint>
+ <CheckpointDesc SubjectTT="FLIGHT PATH VECTOR switch" ExpectationTT="As Needed"/>
+  <Instrument Id="ngx_switch_363_a"/>
+  <Instrument Id="ngx_switch_419_a"/> 
+  </Checkpoint>
+	<Checkpoint>
+ <CheckpointDesc SubjectTT="METERS switch" ExpectationTT="As needed"/>
+  <Instrument Id="ngx_switch_364_a"/>
+  <Instrument Id="ngx_switch_420_a"/>
+  </Checkpoint>
+    <Checkpoint>
+ <CheckpointDesc SubjectTT="BAROMETRIC reference selector" ExpectationTT="IN or HPA"/>
+  <Instrument Id="ngx_switch_366_a"/>
+  <Instrument Id="ngx_switch_422_a"/>
+  <Instrument Id="ngx_switch_986_a"/>  
+  </Checkpoint>
+	<Checkpoint>
+ <CheckpointDesc SubjectTT="BAROMETRIC selector" ExpectationTT="Set local altimeter setting"/>
+  <Instrument Id="ngx_switch_365_a"/>
+  <Instrument Id="ngx_switch_421_a"/>
+  <Instrument Id="ngx_switch_492_a"/>
+  <Instrument Id="ngx_switch_991_a"/>   
+ </Checkpoint>
+	<Checkpoint>
+ <CheckpointDesc SubjectTT="VOR/ADF switches" ExpectationTT="As needed"/>
+  <Instrument Id="ngx_switch_358_a"/>
+  <Instrument Id="ngx_switch_368_a"/>
+  <Instrument Id="ngx_switch_414_a"/>
+  <Instrument Id="ngx_switch_424_a"/>   
+  </Checkpoint>
+	<Checkpoint>
+ <CheckpointDesc SubjectTT="Mode selector" ExpectationTT="MAP"/>
+  <Instrument Id="ngx_switch_359_a"/>
+  <Instrument Id="ngx_switch_415_a"/> 
+  </Checkpoint>
+    <Checkpoint>
+ <CheckpointDesc SubjectTT="CENTER switch" ExpectationTT="As needed"/>
+  <Instrument Id="ngx_switch_360_a"/>
+  <Instrument Id="ngx_switch_418_a"/>
+  </Checkpoint>
+	<Checkpoint>
+ <CheckpointDesc SubjectTT="Range selector" ExpectationTT="As needed"/>
+  <Instrument Id="ngx_switch_361_a"/>
+  <Instrument Id="ngx_switch_417_a"/> 
+  </Checkpoint>
+	<Checkpoint>
+ <CheckpointDesc SubjectTT="TRAFFIC switch" ExpectationTT="As needed"/>
+  <Instrument Id="ngx_switch_362_a"/>
+  <Instrument Id="ngx_switch_418_a"/>
+  </Checkpoint>
+	<Checkpoint>
+ <CheckpointDesc SubjectTT="WEATHER RADAR" ExpectationTT="OFF"/>
+  <Instrument Id="ngx_switch_369_a"/>
+  <Instrument Id="ngx_switch_425_a"/>
+  </Checkpoint>
+	<Checkpoint>
+ <CheckpointDesc SubjectTT="Map switches" ExpectationTT="As needed"/>
+  <Instrument Id="ngx_switch_370_a"/>
+  <Instrument Id="ngx_switch_371_a"/>
+  <Instrument Id="ngx_switch_372_a"/>
+  <Instrument Id="ngx_switch_373_a"/>
+  <Instrument Id="ngx_switch_374_a"/>
+  <Instrument Id="ngx_switch_375_a"/>
+  <Instrument Id="ngx_switch_426_a"/>
+  <Instrument Id="ngx_switch_427_a"/>
+  <Instrument Id="ngx_switch_428_a"/>
+  <Instrument Id="ngx_switch_429_a"/>
+  <Instrument Id="ngx_switch_430_a"/>
+  <Instrument Id="ngx_switch_431_a"/>			  
+  </Checkpoint>
+	<Checkpoint>
+ <CheckpointDesc SubjectTT="Oxygen" ExpectationTT="Test and Set"/>
+  </Checkpoint>
+	<Checkpoint>
+ <CheckpointDesc SubjectTT="ELECTRONIC FLIGHT BAG if Equipped" ExpectationTT="Set as Needed"/>
+  </Checkpoint>
+	<Checkpoint>
+ <CheckpointDesc SubjectTT="Clock" ExpectationTT="Set as Needed"/>
+  </Checkpoint>
+	<Checkpoint>
+ <CheckpointDesc SubjectTT="MAIN PANEL DISPLAY UNITS selector" ExpectationTT="NORM"/>
+  <Instrument Id="ngx_switch_335_a"/>
+  <Instrument Id="ngx_switch_440_a"/>
+  </Checkpoint>
+	<Checkpoint>
+ <CheckpointDesc SubjectTT="LOWER DISPLAY UNIT selector" ExpectationTT="NORM"/>
+  <Instrument Id="ngx_switch_336_a"/>
+  <Instrument Id="ngx_switch_441_a"/> 
+  </Checkpoint>
+	<Checkpoint>
+ <CheckpointDesc SubjectTT="TAKEOFF CONFIG light" ExpectationTT="OFF"/>
+  </Checkpoint>
+	<Checkpoint>
+ <CheckpointDesc SubjectTT="CABIN ALTITUDE light" ExpectationTT="OFF"/>
+  </Checkpoint>
+	<Checkpoint>
+ <CheckpointDesc SubjectTT="Disengage light TEST switch" ExpectationTT="Hold to 1"/>
+  <Instrument Id="ngx_switch_342_a"/>
+  <Instrument Id="ngx_switch_442_a"/>
+  </Checkpoint>
+	<Checkpoint>
+ <CheckpointDesc SubjectTT="A/P light AND A/T light FMC light" ExpectationTT="illuminated steady amber"/>
+  </Checkpoint>
+	<Checkpoint>
+ <CheckpointDesc SubjectTT="Disengage light TEST switch" ExpectationTT="Hold to 2"/>
+  <Instrument Id="ngx_switch_342_a"/>
+  <Instrument Id="ngx_switch_442_a"/>
+  </Checkpoint>
+	<Checkpoint>
+ <CheckpointDesc SubjectTT="A/P light AND A/T light" ExpectationTT="illuminated steady red"/>
+  </Checkpoint>
+	<Checkpoint>
+ <CheckpointDesc SubjectTT="FMC light" ExpectationTT="illuminated steady amber"/>
+  <Instrument Id=""/> 
+  </Checkpoint>
+	<Checkpoint>
+ <CheckpointDesc SubjectTT="FLAP INHIBIT switch" ExpectationTT="Guard closed"/>
+  <Instrument Id="ngx_switch_502_a"/>
+  </Checkpoint>
+	<Checkpoint>
+ <CheckpointDesc SubjectTT="GEAR INHIBIT switch" ExpectationTT="Guard closed"/>
+  <Instrument Id="ngx_switch_504_a"/>
+  </Checkpoint>
+	<Checkpoint>
+ <CheckpointDesc SubjectTT="TERRAIN INHIBIT switch" ExpectationTT="Guard closed"/>
+  <Instrument Id="ngx_switch_506_a"/>
+  </Checkpoint>
+	<Checkpoint>
+ <CheckpointDesc SubjectTT="INOP light" ExpectationTT="OFF"/>
+  </Checkpoint>
+	<Checkpoint>
+ <CheckpointDesc SubjectTT="LANDING GEAR lever" ExpectationTT="DN"/>
+  <Instrument Id="ngx_switch_455_a"/>
+  </Checkpoint>
+	<Checkpoint>
+ <CheckpointDesc SubjectTT="Landing Gear 3 Green Lights" ExpectationTT="Illuminated"/>
+  </Checkpoint>
+	<Checkpoint>
+ <CheckpointDesc SubjectTT="Landing Gear 3 Red Lights" ExpectationTT="OFF"/>
+  </Checkpoint>
+	<Checkpoint>
+ <CheckpointDesc SubjectTT="AUTO BRAKE select switch" ExpectationTT="RTO"/>
+  <Instrument Id="ngx_switch_460_a"/>
+  </Checkpoint>
+	<Checkpoint>
+ <CheckpointDesc SubjectTT="AUTO BRAKE DISARM light	" ExpectationTT="OFF"/>
+  </Checkpoint>
+	<Checkpoint>
+ <CheckpointDesc SubjectTT="ANTISKID INOP light" ExpectationTT="OFF"/>
+  </Checkpoint>
+	<Checkpoint>
+ <CheckpointDesc SubjectTT="N1 SET Selector" ExpectationTT="AUTO"/>
+  <Instrument Id="ngx_switch_466_a"/>
+  <Instrument Id="ngx_switch_467_a"/>
+  </Checkpoint>
+	<Checkpoint>
+ <CheckpointDesc SubjectTT="SPEED REFERENCE selector" ExpectationTT="AUTO"/>
+  <Instrument Id="ngx_switch_464_a"/>
+  <Instrument Id="ngx_switch_465_a"/>
+  </Checkpoint>
+	<Checkpoint>
+ <CheckpointDesc SubjectTT="Master LIGHTS TEST and DIM switch" ExpectationTT="TEST"/>
+  <Instrument Id="ngx_switch_346_a"/>
+  </Checkpoint>
+	<Checkpoint>
+ <CheckpointDesc SubjectTT="NOSE WHEEL STEERING switch" ExpectationTT="Guard closed"/>
+  <Instrument Id="ngx_switch_326_a"/>
+  </Checkpoint>
+	<Checkpoint>
+ <CheckpointDesc SubjectTT="STAB OUT OF TRIM Light" ExpectationTT="OFF"/>
+  </Checkpoint>
+	<Checkpoint>
+ <CheckpointDesc SubjectTT="Standby instruments" ExpectationTT="Set"/>
+  </Checkpoint>  
+</Page> 
+  <Page SubjectTT="Preflight Procedure Pedestal">
+	<Checkpoint>
+ <CheckpointDesc SubjectTT="SPEED BRAKE lever" ExpectationTT="DOWN Detent"/>
+  <Instrument Id="ngx_switch_679_a"/>
+  </Checkpoint>
+	<Checkpoint>
+ <CheckpointDesc SubjectTT="Reverse thrust levers" ExpectationTT="DOWN"/>
+  <Instrument Id="ngx_switch_680_a"/>
+  <Instrument Id="ngx_switch_681_a"/>
+  </Checkpoint>
+	<Checkpoint>
+ <CheckpointDesc SubjectTT="Forward thrust levers" ExpectationTT="Closed"/>
+  <Instrument Id="ngx_switch_683_a"/>
+  <Instrument Id="ngx_switch_686_a"/>
+  </Checkpoint>
+	<Checkpoint>
+ <CheckpointDesc SubjectTT="Flap Lever" ExpectationTT="UP confirm Flaps 0 indicated"/>
+  <Instrument Id="ngx_switch_714_a"/>
+  <Instrument Id="ngx_switch_458_a"/>
+  </Checkpoint>
+	<Checkpoint>
+ <CheckpointDesc SubjectTT="FLAP LOAD RELIEF Light" ExpectationTT="OFF"/>
+  </Checkpoint>
+	<Checkpoint>
+ <CheckpointDesc SubjectTT="Engine start levers" ExpectationTT="CUTOFF"/>
+  <Instrument Id="ngx_switch_688_a"/>
+  <Instrument Id="ngx_switch_689_a"/>
+  </Checkpoint>
+	<Checkpoint>
+ <CheckpointDesc SubjectTT="STABILIZER TRIM cutout switches" ExpectationTT="NORMAL"/>
+  <Instrument Id="ngx_switch_709_a"/>
+  <Instrument Id="ngx_switch_711_a"/>
+  </Checkpoint>
+	<Checkpoint>
+ <CheckpointDesc SubjectTT="CARGO FIRE panel Only on first flight of the day" ExpectationTT="Check"/>
+  </Checkpoint>
+	<Checkpoint>
+ <CheckpointDesc SubjectTT="DETECTOR SELECT switches" ExpectationTT="NORM"/>
+  <Instrument Id="ngx_switch_760_a"/>
+  <Instrument Id="ngx_switch_761_a"/>
+  </Checkpoint>
+	<Checkpoint>
+ <CheckpointDesc SubjectTT="TEST switch" ExpectationTT="PUSH"/>
+  <Instrument Id="ngx_switch_769_a"/>
+  </Checkpoint>
+  <Checkpoint>
+ <CheckpointDesc SubjectTT="Fire Warning Bell" ExpectationTT="Sounds"/>
+  </Checkpoint>
+ <Checkpoint>
+ <CheckpointDesc SubjectTT="FIRE WARN lights" ExpectationTT="Illuminated"/>
+  <Instrument Id="ngx_switch_347_a"/>
+  <Instrument Id="ngx_switch_439_a"/>
+  </Checkpoint>
+<Checkpoint>
+ <CheckpointDesc SubjectTT="FIRE WARN light" ExpectationTT="Either Captain or F/O Push"/>
+  <Instrument Id="ngx_switch_347_a"/>
+  <Instrument Id="ngx_switch_439_a"/>
+  </Checkpoint>
+<Checkpoint>
+ <CheckpointDesc SubjectTT="FIRE WARN lights" ExpectationTT="OFF"/>
+  <Instrument Id="ngx_switch_347_a"/>
+  <Instrument Id="ngx_switch_439_a"/>
+  </Checkpoint>
+    <Checkpoint>
+ <CheckpointDesc SubjectTT="Fire Warning Bell" ExpectationTT="Silent"/>
+  </Checkpoint>
+  <Checkpoint>
+ <CheckpointDesc SubjectTT="Green EXTINGUISHER test lights" ExpectationTT="Illuminated"/>
+  </Checkpoint>
+<Checkpoint>
+ <CheckpointDesc SubjectTT="FWD and AFT lights" ExpectationTT="Illuminated"/>
+  <Instrument Id="ngx_switch_763_a"/>
+  <Instrument Id="ngx_switch_764_a"/>
+  </Checkpoint>
+<Checkpoint>
+ <CheckpointDesc SubjectTT="DETECTOR FAULT light" ExpectationTT="Illuminated"/>
+  </Checkpoint>
+<Checkpoint>
+ <CheckpointDesc SubjectTT="DISCH light" ExpectationTT="Illuminated"/>
+  <Instrument Id="ngx_switch_767_a"/>
+  </Checkpoint>
+	<Checkpoint>
+ <CheckpointDesc SubjectTT="VHF communications radios" ExpectationTT="SET"/>
+  <Instrument Id="ngx_switch_726_a"/>
+  <Instrument Id="ngx_switch_727_a"/>
+  <Instrument Id="ngx_switch_842_a"/>
+  <Instrument Id="ngx_switch_843_a"/>
+  </Checkpoint>
+	<Checkpoint>
+ <CheckpointDesc SubjectTT="VHF NAVIGATION radios" ExpectationTT="Set for Departure"/>
+  <Instrument Id="ngx_switch_732_a"/>
+  <Instrument Id="ngx_switch_733_a"/>
+  <Instrument Id="ngx_switch_848_a"/>
+  <Instrument Id="ngx_switch_849_a"/>
+  </Checkpoint>
+	<Checkpoint>
+ <CheckpointDesc SubjectTT="Audio control panel" ExpectationTT="Set"/>
+ <Instrument Id="ngx_switch_850_a"/>
+ <Instrument Id="ngx_switch_851_a"/>
+ <Instrument Id="ngx_switch_881_a"/>
+ <Instrument Id="ngx_switch_882_a"/>
+ <Instrument Id="ngx_switch_883_a"/>
+ <Instrument Id="ngx_switch_852_a"/>
+ <Instrument Id="ngx_switch_853_a"/>
+ <Instrument Id="ngx_switch_854_a"/>
+ <Instrument Id="ngx_switch_855_a"/>
+ <Instrument Id="ngx_switch_856_a"/>
+ <Instrument Id="ngx_switch_857_a"/>
+ <Instrument Id="ngx_switch_858_a"/>
+ <Instrument Id="ngx_switch_884_a"/>
+ <Instrument Id="ngx_switch_859_a"/>
+ <Instrument Id="ngx_switch_860_a"/>
+ <Instrument Id="ngx_switch_861_a"/>
+ <Instrument Id="ngx_switch_862_a"/>
+ <Instrument Id="ngx_switch_863_a"/>
+ <Instrument Id="ngx_switch_864_a"/>
+ <Instrument Id="ngx_switch_865_a"/>
+ <Instrument Id="ngx_switch_866_a"/>
+ <Instrument Id="ngx_switch_867_a"/>
+ <Instrument Id="ngx_switch_868_a"/>
+ <Instrument Id="ngx_switch_869_a"/>
+ <Instrument Id="ngx_switch_870_a"/>
+ <Instrument Id="ngx_switch_871_a"/>
+ <Instrument Id="ngx_switch_734_a"/>
+ <Instrument Id="ngx_switch_735_a"/>
+ <Instrument Id="ngx_switch_877_a"/>
+ <Instrument Id="ngx_switch_878_a"/>
+ <Instrument Id="ngx_switch_879_a"/>
+ <Instrument Id="ngx_switch_736_a"/>
+ <Instrument Id="ngx_switch_737_a"/>
+ <Instrument Id="ngx_switch_738_a"/>
+ <Instrument Id="ngx_switch_739_a"/>
+ <Instrument Id="ngx_switch_740_a"/>
+ <Instrument Id="ngx_switch_741_a"/>
+ <Instrument Id="ngx_switch_742_a"/>
+ <Instrument Id="ngx_switch_880_a"/>
+ <Instrument Id="ngx_switch_743_a"/>
+ <Instrument Id="ngx_switch_744_a"/>
+ <Instrument Id="ngx_switch_745_a"/>
+ <Instrument Id="ngx_switch_746_a"/>
+ <Instrument Id="ngx_switch_747_a"/>
+ <Instrument Id="ngx_switch_748_a"/>
+ <Instrument Id="ngx_switch_749_a"/>
+ <Instrument Id="ngx_switch_750_a"/>
+ <Instrument Id="ngx_switch_751_a"/>
+ <Instrument Id="ngx_switch_752_a"/>
+ <Instrument Id="ngx_switch_753_a"/>
+ <Instrument Id="ngx_switch_754_a"/>
+ <Instrument Id="ngx_switch_755_a"/>
+  </Checkpoint>
+	<Checkpoint>
+ <CheckpointDesc SubjectTT="ADF radios" ExpectationTT="SET if needed"/>
+   <Instrument Id="ngx_switch_822_a"/>
+   <Instrument Id="ngx_switch_823_a"/> 
+   <Instrument Id="ngx_switch_824_a"/>
+  </Checkpoint> 
+	<Checkpoint>
+ <CheckpointDesc SubjectTT="WEATHER RADAR panel" ExpectationTT="Set"/>
+   <Instrument Id="ngx_switch_790_a"/>
+   <Instrument Id="ngx_switch_791_a"/>
+   <Instrument Id="ngx_switch_916_a"/>
+   <Instrument Id="ngx_switch_792_a"/>
+   <Instrument Id="ngx_switch_793_a"/>
+   <Instrument Id="ngx_switch_794_a"/>
+   <Instrument Id="ngx_switch_923_a"/>
+   <Instrument Id="ngx_switch_917_a"/>
+   <Instrument Id="ngx_switch_918_a"/>
+   <Instrument Id="ngx_switch_919_a"/>
+   <Instrument Id="ngx_switch_796_a"/>
+   <Instrument Id="ngx_switch_920_a"/>
+   <Instrument Id="ngx_switch_797_a"/>
+   <Instrument Id="ngx_switch_921_a"/>
+   <Instrument Id="ngx_switch_795_a"/>
+   <Instrument Id="ngx_switch_922_a"/>
+  </Checkpoint>  
+<Checkpoint>
+ <CheckpointDesc SubjectTT="Transponder panel" ExpectationTT="Set"/>
+  <Instrument Id="ngx_switch_804_a"/>
+  <Instrument Id="ngx_switch_805_a"/>
+  <Instrument Id="ngx_switch_807_a"/>
+  <Instrument Id="ngx_switch_808_a"/>    
+  <Instrument Id="ngx_switch_798_a"/>
+  <Instrument Id="ngx_switch_800_a"/>
+  <Instrument Id="ngx_switch_801_a"/>
+  <Instrument Id="ngx_switch_803_a"/>
+  <Instrument Id="ngx_switch_806_a"/>
+  </Checkpoint>  
+	<Checkpoint>
+ <CheckpointDesc SubjectTT="STABILIZER TRIM override switch" ExpectationTT="Guard Closed"/>
+  <Instrument Id="ngx_switch_831_a"/>
+  </Checkpoint>  
+ </Page>
+  <Page SubjectTT="Preflight Checklist">
+	<Checkpoint>
+ <CheckpointDesc SubjectTT="Oxygen" ExpectationTT="Tested 100%"/>
+  </Checkpoint>
+	<Checkpoint>
+ <CheckpointDesc SubjectTT="Navigation transfer and display switches" ExpectationTT="Normal, Auto"/>
+  </Checkpoint>
+	<Checkpoint>
+ <CheckpointDesc SubjectTT="Window Heat" ExpectationTT="ON"/>
+  </Checkpoint>
+	<Checkpoint>
+ <CheckpointDesc SubjectTT="Pressurization Mode Selector" ExpectationTT="AUTO"/>
+  </Checkpoint>
+	<Checkpoint>
+ <CheckpointDesc SubjectTT="Flight Instruments" ExpectationTT="Check Heading and Altimeter"/>
+  </Checkpoint>
+	<Checkpoint>
+ <CheckpointDesc SubjectTT="Parking Brake" ExpectationTT="Set"/>
+  </Checkpoint>
+	<Checkpoint>
+ <CheckpointDesc SubjectTT="Engine start levers" ExpectationTT="CUTOFF"/>
+  </Checkpoint>
+ </Page>
+  <Page SubjectTT="Before Start Procedure">
+<Checkpoint>
+ <CheckpointDesc SubjectTT="IAS/MACH selector" ExpectationTT="Set V2"/>
+  <Instrument Id="ngx_switch_384_a"/>
+  <Instrument Id="ngx_switch_384_a_hw"/>
+  </Checkpoint>
+<Checkpoint>
+ <CheckpointDesc SubjectTT="LNAV if Needed" ExpectationTT="ARM"/>
+  <Instrument Id="ngx_switch_397_a"/>
+  <Instrument Id="ngx_switch_397_a_hw"/>  
+  </Checkpoint>
+<Checkpoint>
+ <CheckpointDesc SubjectTT="VNAV if needed" ExpectationTT="ARM"/>
+  <Instrument Id="ngx_switch_386_a"/>
+  <Instrument Id="ngx_switch_386_a_hw"/>  
+  </Checkpoint>
+<Checkpoint>
+ <CheckpointDesc SubjectTT="Initial HDG" ExpectationTT="SET"/>
+  <Instrument Id="ngx_switch_390_a"/>
+  <Instrument Id="ngx_switch_390_a_hw"/>
+  </Checkpoint>
+<Checkpoint>
+ <CheckpointDesc SubjectTT="Initial Altitude" ExpectationTT="SET"/>
+  <Instrument Id="ngx_switch_400_a"/>
+  <Instrument Id="ngx_switch_400_a_hw"/>
+  </Checkpoint>
+	<Checkpoint>
+ <CheckpointDesc SubjectTT="Exterior doors" ExpectationTT="Closed"/>
+  </Checkpoint>
+	<Checkpoint>
+ <CheckpointDesc SubjectTT="Fuel panel" ExpectationTT="Set"/>
+  <Instrument Id="ngx_switch_37_a"/>
+  <Instrument Id="ngx_switch_38_a"/>
+  <Instrument Id="ngx_switch_39_a"/>
+  <Instrument Id="ngx_switch_40_a"/>
+  <Instrument Id="ngx_switch_45_a"/>
+  <Instrument Id="ngx_switch_46_a"/>
+  </Checkpoint>
+	<Checkpoint>
+ <CheckpointDesc SubjectTT="Electric HYDRAULIC PUMP switches" ExpectationTT="ON"/>
+  <Instrument Id="ngx_switch_167_a"/>
+  <Instrument Id="ngx_switch_168_a"/>
+  </Checkpoint> 
+	<Checkpoint>
+ <CheckpointDesc SubjectTT="ANTI COLLISION light switch" ExpectationTT="ON"/>
+  <Instrument Id="ngx_switch_124_a"/>
+  </Checkpoint>
+	<Checkpoint>
+ <CheckpointDesc SubjectTT="Trim" ExpectationTT="Set"/>
+  <Instrument Id="ngx_switch_678_a"/>
+  </Checkpoint>
+</Page>	
+  <Page SubjectTT="Before Start Checklist">
+	<Checkpoint>
+ <CheckpointDesc SubjectTT="Flight Deck Door" ExpectationTT="Closed and locked"/>
+    </Checkpoint>
+	<Checkpoint>
+ <CheckpointDesc SubjectTT="Fuel" ExpectationTT="Quantity Check Pumps ON"/>
+  </Checkpoint> 
+	<Checkpoint>
+ <CheckpointDesc SubjectTT="Passenger Signs" ExpectationTT="AUTO/ON"/>
+  </Checkpoint> 
+	<Checkpoint>
+ <CheckpointDesc SubjectTT="Windows" ExpectationTT="Locked"/>
+  </Checkpoint> 
+	<Checkpoint>
+ <CheckpointDesc SubjectTT="MCP" ExpectationTT="Read Speed, Heading and Altitude set"/>
+  </Checkpoint> 
+	<Checkpoint>
+ <CheckpointDesc SubjectTT="Takeoff Speeds" ExpectationTT="Check V1, Vr and V2"/>
+  </Checkpoint> 
+	<Checkpoint>
+ <CheckpointDesc SubjectTT="CDU Preflight" ExpectationTT="Complete"/>
+  </Checkpoint> 
+	<Checkpoint>
+ <CheckpointDesc SubjectTT="Rudder and aileron Trim" ExpectationTT="Free and 0"/>
+  </Checkpoint> 
+	<Checkpoint>
+ <CheckpointDesc SubjectTT="Taxi and Takeoff breifing" ExpectationTT="Completed"/>
+  </Checkpoint> 
+	<Checkpoint>
+ <CheckpointDesc SubjectTT="Anti collision light" ExpectationTT="ON"/>
+  </Checkpoint>   
+ </Page>
+  <Page SubjectTT="Engine Start">
+	<Checkpoint>
+ <CheckpointDesc SubjectTT="Air conditioning PACK switches" ExpectationTT="OFF"/>
+  <Instrument Id="ngx_switch_200_a"/>
+  <Instrument Id="ngx_switch_201_a"/>
+  </Checkpoint>
+	<Checkpoint>
+ <CheckpointDesc SubjectTT="ENGINE START switch for starting Engine" ExpectationTT="GRD"/>
+  <Instrument Id="ngx_switch_121_a"/>
+  <Instrument Id="ngx_switch_119_a"/>
+  </Checkpoint> 
+	<Checkpoint>
+ <CheckpointDesc SubjectTT="At 25%N2 Engine start lever" ExpectationTT="IDLE"/>
+  <Instrument Id="ngx_switch_688_a"/>
+  <Instrument Id="ngx_switch_689_a"/>
+  </Checkpoint> 
+</Page>
+</Step> 
+<Step ChecklistStepId="PREFLIGHT_TAXI_OUT">
+  <Page SubjectTT="Before Taxi Procedure">
+	<Checkpoint>
+ <CheckpointDesc SubjectTT="GENERATOR 1 and 2 switches" ExpectationTT="ON"/>
+  <Instrument Id="ngx_switch_27_a"/>
+  <Instrument Id="ngx_switch_30_a"/>
+  </Checkpoint>
+	<Checkpoint>
+ <CheckpointDesc SubjectTT="PROBE HEAT switches" ExpectationTT="ON"/>
+  <Instrument Id="ngx_switch_140_a"/>
+  <Instrument Id="ngx_switch_141_a"/>
+  </Checkpoint>
+	<Checkpoint>
+ <CheckpointDesc SubjectTT="WING ANTI ICE switch" ExpectationTT="As Needed"/>
+  <Instrument Id="ngx_switch_156_a"/>
+  </Checkpoint>
+	<Checkpoint>
+ <CheckpointDesc SubjectTT="ENGINE ANTI ICE switches" ExpectationTT="As Needed"/>
+  <Instrument Id="ngx_switch_157_a"/>
+  <Instrument Id="ngx_switch_158_a"/>
+  </Checkpoint>
+	<Checkpoint>
+ <CheckpointDesc SubjectTT="PACK switches" ExpectationTT="Auto"/>
+  <Instrument Id="ngx_switch_200_a"/>
+  <Instrument Id="ngx_switch_201_a"/>
+  </Checkpoint>
+	<Checkpoint>
+ <CheckpointDesc SubjectTT="ISOLATION VALVE switch" ExpectationTT="Auto"/>
+  <Instrument Id="ngx_switch_202_a"/>
+  </Checkpoint>
+	<Checkpoint>
+ <CheckpointDesc SubjectTT="APU BLEED air switch" ExpectationTT="OFF"/>
+  <Instrument Id="ngx_switch_211_a"/>
+  </Checkpoint>
+	<Checkpoint>
+ <CheckpointDesc SubjectTT="ENGINE START switches" ExpectationTT="CONT or AUTO"/>
+  <Instrument Id="ngx_switch_119_a"/>
+  <Instrument Id="ngx_switch_121_a"/>
+  </Checkpoint>
+	<Checkpoint>
+ <CheckpointDesc SubjectTT="Engine start levers" ExpectationTT="Idle Detent"/>
+  <Instrument Id="ngx_switch_688_a"/>
+  <Instrument Id="ngx_switch_689_a"/>
+  </Checkpoint>
+	<Checkpoint>
+ <CheckpointDesc SubjectTT="Flap Lever" ExpectationTT="TO Flaps"/>
+  <Instrument Id="ngx_switch_714_a"/>
+  </Checkpoint>
+	<Checkpoint>
+ <CheckpointDesc SubjectTT="Transponder" ExpectationTT="As needed"/>
+  <Instrument Id="ngx_switch_800_a"/>
+  </Checkpoint>
+	<Checkpoint>
+ <CheckpointDesc SubjectTT="Recall" ExpectationTT="Check"/>
+  </Checkpoint>  
+</Page>
+  <Page SubjectTT="Before Taxi Checklist">
+	<Checkpoint>
+ <CheckpointDesc SubjectTT="GENERATORS" ExpectationTT="ON"/>
+  </Checkpoint>
+	<Checkpoint>
+ <CheckpointDesc SubjectTT="Probe Heat" ExpectationTT="ON"/>
+  </Checkpoint>
+    <Checkpoint>
+ <CheckpointDesc SubjectTT="Anti Ice" ExpectationTT="As required"/>
+  </Checkpoint>
+    <Checkpoint>
+ <CheckpointDesc SubjectTT="Isolation Valve" ExpectationTT="AUTO"/>
+  </Checkpoint>
+    <Checkpoint>
+ <CheckpointDesc SubjectTT="Engine Start Switches" ExpectationTT="CONT or AUTO"/>
+  </Checkpoint>
+	<Checkpoint>
+ <CheckpointDesc SubjectTT="Recall" ExpectationTT="Checked"/>
+  </Checkpoint>
+    <Checkpoint>
+ <CheckpointDesc SubjectTT="Autobrake" ExpectationTT="RTO"/>
+  <Instrument Id="ngx_switch_460_a"/>
+  </Checkpoint>
+    <Checkpoint>
+ <CheckpointDesc SubjectTT="Engine Start Levers" ExpectationTT="IDLE Detent"/>
+  </Checkpoint>
+    <Checkpoint>
+ <CheckpointDesc SubjectTT="Flight Controls" ExpectationTT="Checked"/>
+  </Checkpoint>
+	<Checkpoint>
+ <CheckpointDesc SubjectTT="Ground Equipment" ExpectationTT="Clear"/>
+  </Checkpoint>
+</Page>
+</Step>
+<Step ChecklistStepId="FLIGHT_RUNWAY">
+<Page SubjectTT="Before Takeoff Checklist">
+	<Checkpoint>
+ <CheckpointDesc SubjectTT="Flaps" ExpectationTT="_, Green Light"/>
+  <Instrument Id="ngx_switch_456_a"/>
+  <Instrument Id="ngx_switch_458_a"/>
+  <Instrument Id="ngx_switch_714_a"/>
+  </Checkpoint>
+	<Checkpoint>
+ <CheckpointDesc SubjectTT="Stabilizer Trim" ExpectationTT="Check Units"/>
+  <Instrument Id="ngx_switch_690_a"/>
+  <Instrument Id="ngx_switch_661_a"/>
+  </Checkpoint>
+</Page>
+</Step>
+<Step ChecklistStepId="FLIGHT_CRUISE">
+<Page SubjectTT="After Takeoff Checklist">
+    <Checkpoint>
+ <CheckpointDesc SubjectTT="Engine Bleeds" ExpectationTT="ON"/>
+  <Instrument Id="ngx_switch_210_a"/>
+  <Instrument Id="ngx_switch_212_a"/>
+  </Checkpoint>
+    <Checkpoint>
+ <CheckpointDesc SubjectTT="Packs" ExpectationTT="Auto"/>
+  <Instrument Id="ngx_switch_200_a"/>
+  <Instrument Id="ngx_switch_201_a"/>
+  </Checkpoint>
+    <Checkpoint>
+ <CheckpointDesc SubjectTT="Landing Gear" ExpectationTT="UP and OFF"/>
+  <Instrument Id="ngx_switch_455_a"/>
+  </Checkpoint>
+	<Checkpoint>
+ <CheckpointDesc SubjectTT="Flaps" ExpectationTT="UP no lights"/>
+  <Instrument Id="ngx_switch_456_a"/>
+  <Instrument Id="ngx_switch_458_a"/>
+  <Instrument Id="ngx_switch_714_a"/>
+  </Checkpoint>
+</Page>
+</Step>
+<Step ChecklistStepId="FLIGHT_DESCENT">
+<Page SubjectTT="Descent Checklist">
+	<Checkpoint>
+ <CheckpointDesc SubjectTT="Pressurization" ExpectationTT="LAND ALT"/>
+  <Instrument Id="ngx_switch_220_a"/>
+  <Instrument Id="ngx_switch_219_a"/>
+  </Checkpoint>
+	<Checkpoint>
+ <CheckpointDesc SubjectTT="Recall" ExpectationTT="Checked"/>
+  </Checkpoint>
+    <Checkpoint>
+ <CheckpointDesc SubjectTT="Autobrake" ExpectationTT="As required"/>
+  <Instrument Id="ngx_switch_460_a"/>
+  </Checkpoint>
+	<Checkpoint>
+ <CheckpointDesc SubjectTT="Landing Data" ExpectationTT="VREF and Minimums"/>
+  </Checkpoint>
+    <Checkpoint>
+ <CheckpointDesc SubjectTT="Approach Breifing" ExpectationTT="Complete"/>
+  </Checkpoint>  
+</Page>
+</Step>
+<Step ChecklistStepId="LANDING_APPROACH">
+<Page SubjectTT="Approach Checklist">
+    <Checkpoint>
+ <CheckpointDesc SubjectTT="Altimeters" ExpectationTT="SET"/>
+  <Instrument Id="ngx_switch_365_a"/>
+  <Instrument Id="ngx_switch_366_a"/>
+  <Instrument Id="ngx_switch_421_a"/>
+  <Instrument Id="ngx_switch_422_a"/>
+  <Instrument Id="ngx_switch_492_a"/>
+  <Instrument Id="ngx_switch_986_a"/> 
+  <Instrument Id="ngx_switch_991_a"/>   
+  </Checkpoint>
+</Page>
+</Step>
+<Step ChecklistStepId="LANDING_TOUCHDOWN">
+<Page SubjectTT="Landing Checklist">
+    <Checkpoint>
+ <CheckpointDesc SubjectTT="Engine Start Switches" ExpectationTT="CONT or AUTO"/>
+  <Instrument Id="ngx_switch_119_a"/>
+  <Instrument Id="ngx_switch_121_a"/>
+  </Checkpoint>
+    <Checkpoint>
+ <CheckpointDesc SubjectTT="Speedbrake" ExpectationTT="Armed"/>
+  <Instrument Id="ngx_switch_679_a"/>
+  </Checkpoint>
+	<Checkpoint>
+ <CheckpointDesc SubjectTT="Landing Gear" ExpectationTT="Down Three Green"/>
+  <Instrument Id="ngx_switch_455_a"/>
+  <Instrument Id="ngx_switch_450_a"/>
+  <Instrument Id="ngx_switch_453_a"/>
+  <Instrument Id="ngx_switch_454_a"/>
+  </Checkpoint>
+	<Checkpoint>
+ <CheckpointDesc SubjectTT="Flaps" ExpectationTT="_ Green Light"/>
+  <Instrument Id="ngx_switch_456_a"/>
+  <Instrument Id="ngx_switch_458_a"/>
+  <Instrument Id="ngx_switch_714_a"/>  
+  </Checkpoint>
+  </Page>
+</Step>
+<Step ChecklistStepId="LANDING_TAXI_IN">
+<Page SubjectTT="After Landing Procedure">
+	<Checkpoint>
+ <CheckpointDesc SubjectTT="Speed Brake Lever" ExpectationTT="Down"/>
+  <Instrument Id="ngx_switch_679_a"/>
+  </Checkpoint>
+	<Checkpoint>
+ <CheckpointDesc SubjectTT="APU" ExpectationTT="As needed"/>
+  </Checkpoint>
+	<Checkpoint>
+ <CheckpointDesc SubjectTT="Probe Heat Switches" ExpectationTT="OFF or AUTO"/>
+  <Instrument Id="ngx_switch_140_a"/>
+  <Instrument Id="ngx_switch_141_a"/>
+  </Checkpoint>
+	<Checkpoint>
+ <CheckpointDesc SubjectTT="Exterrior Lights" ExpectationTT="As Required"/>
+  <Instrument Id="ngx_switch_111_a"/>
+  <Instrument Id="ngx_switch_112_a"/>
+  <Instrument Id="ngx_switch_113_a"/>
+  <Instrument Id="ngx_switch_114_a"/>
+  <Instrument Id="ngx_switch_115_a"/>
+  <Instrument Id="ngx_switch_116_a"/>
+  <Instrument Id="ngx_switch_117_a"/>
+  <Instrument Id="ngx_switch_122_a"/>
+  <Instrument Id="ngx_switch_123_a"/>
+  <Instrument Id="ngx_switch_124_a"/>
+  <Instrument Id="ngx_switch_125_a"/>
+  <Instrument Id="ngx_switch_126_a"/>
+  </Checkpoint>
+	<Checkpoint>
+ <CheckpointDesc SubjectTT="ENGINE START switches" ExpectationTT="OFF or AUTO"/>
+  <Instrument Id="ngx_switch_119_a"/>
+  <Instrument Id="ngx_switch_121_a"/>
+  </Checkpoint>
+	<Checkpoint>
+ <CheckpointDesc SubjectTT="WX Radar" ExpectationTT="OFF"/>
+  <Instrument Id="ngx_switch_369_a"/>
+  <Instrument Id="ngx_switch_425_a"/>
+  </Checkpoint>
+	<Checkpoint>
+ <CheckpointDesc SubjectTT="Auto Brake" ExpectationTT="OFF"/>
+  <Instrument Id="ngx_switch_460_a"/>
+  </Checkpoint>
+	<Checkpoint>
+ <CheckpointDesc SubjectTT="Flap Lever" ExpectationTT="0"/>
+  <Instrument Id="ngx_switch_714_a"/>
+  </Checkpoint>
+	<Checkpoint>
+ <CheckpointDesc SubjectTT="Transponder" ExpectationTT="As Required"/>
+  <Instrument Id="ngx_switch_800_a"/>
+  </Checkpoint>  
+</Page>
+</Step>
+<Step ChecklistStepId="LANDING_GATE">
+<Page SubjectTT="Shutdown Procedure">
+	<Checkpoint>
+ <CheckpointDesc SubjectTT="Parking Brake/Chocks" ExpectationTT="As Required"/>
+  <Instrument Id="ngx_switch_693_a"/>
+  </Checkpoint>
+	<Checkpoint>
+ <CheckpointDesc SubjectTT="if APU needed after APU start, APU GENERATOR OFF BUS" ExpectationTT="Illuminated"/>
+  </Checkpoint>
+	<Checkpoint>
+ <CheckpointDesc SubjectTT="APU GENERATOR bus switches" ExpectationTT="ON"/>
+  <Instrument Id="ngx_switch_28_a"/>
+  <Instrument Id="ngx_switch_29_a"/>
+  </Checkpoint>
+	<Checkpoint>
+ <CheckpointDesc SubjectTT="If External power needed GRD POWER AVAILABLE light" ExpectationTT="Illuminated"/>
+  </Checkpoint>
+	<Checkpoint>
+ <CheckpointDesc SubjectTT="GRD POWER switch" ExpectationTT="ON"/>
+  <Instrument Id="ngx_switch_17_a"/>
+  </Checkpoint>
+	<Checkpoint>
+ <CheckpointDesc SubjectTT="Engine start levers" ExpectationTT="CUTOFF"/>
+  <Instrument Id="ngx_switch_688_a"/>
+  <Instrument Id="ngx_switch_689_a"/>
+  </Checkpoint>
+	<Checkpoint>
+ <CheckpointDesc SubjectTT="FASTEN BELTS switch" ExpectationTT="OFF"/>
+  <Instrument Id="ngx_switch_104_a"/>
+  </Checkpoint>
+	<Checkpoint>
+ <CheckpointDesc SubjectTT="ANTI COLLISION light switch" ExpectationTT="OFF"/>
+  <Instrument Id="ngx_switch_124_a"/>
+  </Checkpoint>
+	<Checkpoint>
+ <CheckpointDesc SubjectTT="FUEL PUMP switches" ExpectationTT="OFF/As Required for APU"/>
+  <Instrument Id="ngx_switch_45_a"/>
+  <Instrument Id="ngx_switch_46_a"/>
+  <Instrument Id="ngx_switch_37_a"/>
+  <Instrument Id="ngx_switch_38_a"/>
+  <Instrument Id="ngx_switch_39_a"/>
+  <Instrument Id="ngx_switch_40_a"/>
+  </Checkpoint>
+<Checkpoint>
+ <CheckpointDesc SubjectTT="CAB/UTIL power switch" ExpectationTT="ON"/>
+  <Instrument Id="ngx_switch_05_a"/>
+  </Checkpoint>
+  	<Checkpoint>
+ <CheckpointDesc SubjectTT="IFE/PASS switch" ExpectationTT="ON"/>
+  <Instrument Id="ngx_switch_06_a"/>
+  </Checkpoint>
+	<Checkpoint>
+ <CheckpointDesc SubjectTT="WING ANTI ICE switch" ExpectationTT="OFF"/>
+  <Instrument Id="ngx_switch_156_a"/>
+  </Checkpoint>
+	<Checkpoint>
+ <CheckpointDesc SubjectTT="ENGINE ANTI ICE switches" ExpectationTT="OFF"/>
+  <Instrument Id="ngx_switch_157_a"/>
+  <Instrument Id="ngx_switch_158_a"/>
+  </Checkpoint>
+	<Checkpoint>
+ <CheckpointDesc SubjectTT="ENGINE HYDRAULIC PUMPS switches" ExpectationTT="ON"/>
+  <Instrument Id="ngx_switch_165_a"/>
+  <Instrument Id="ngx_switch_166_a"/>
+  </Checkpoint>
+	<Checkpoint>
+ <CheckpointDesc SubjectTT="ELECTRIC HYDRAULIC PUMPS switches" ExpectationTT="OFF"/>
+  <Instrument Id="ngx_switch_167_a"/>
+  <Instrument Id="ngx_switch_168_a"/>
+  </Checkpoint>
+	<Checkpoint>
+ <CheckpointDesc SubjectTT="RECIRCULATION FAN switch" ExpectationTT="As Needed"/>
+  <Instrument Id="ngx_switch_196_a"/>
+  <Instrument Id="ngx_switch_872_a"/>
+  </Checkpoint>
+	<Checkpoint>
+ <CheckpointDesc SubjectTT="ISOLATION VALVE switch" ExpectationTT="Open"/>
+  <Instrument Id="ngx_switch_202_a"/>
+  </Checkpoint>
+	<Checkpoint>
+ <CheckpointDesc SubjectTT="Engine BLEED air switches" ExpectationTT="ON"/>
+  <Instrument Id="ngx_switch_210_a"/>
+  <Instrument Id="ngx_switch_212_a"/>
+  </Checkpoint>
+	<Checkpoint>
+ <CheckpointDesc SubjectTT="APU BLEED air switch" ExpectationTT="ON"/>
+  <Instrument Id="ngx_switch_211_a"/>
+  </Checkpoint>
+	<Checkpoint>
+ <CheckpointDesc SubjectTT="Exterior lights switches" ExpectationTT="As needed"/>
+  <Instrument Id="ngx_switch_111_a"/>
+  <Instrument Id="ngx_switch_112_a"/>
+  <Instrument Id="ngx_switch_113_a"/>
+  <Instrument Id="ngx_switch_114_a"/>
+  <Instrument Id="ngx_switch_115_a"/>
+  <Instrument Id="ngx_switch_116_a"/>
+  <Instrument Id="ngx_switch_117_a"/>
+  <Instrument Id="ngx_switch_122_a"/>
+  <Instrument Id="ngx_switch_123_a"/>
+  <Instrument Id="ngx_switch_124_a"/>
+  <Instrument Id="ngx_switch_125_a"/>
+  <Instrument Id="ngx_switch_126_a"/>
+  </Checkpoint>
+	<Checkpoint>
+ <CheckpointDesc SubjectTT="FLIGHT DIRECTOR switches" ExpectationTT="OFF"/>
+  <Instrument Id="ngx_switch_378_a"/>
+  <Instrument Id="ngx_switch_407_a"/>
+  <Instrument Id="ngx_switch_378_a_hw"/>
+  <Instrument Id="ngx_switch_407_a_hw"/>
+  </Checkpoint> 
+	<Checkpoint>
+ <CheckpointDesc SubjectTT="Transponder mode selector" ExpectationTT="As needed"/>
+  <Instrument Id="ngx_switch_800_a"/>
+  </Checkpoint> 
+</Page>
+<Page SubjectTT="Shutdown Checklist">
+	<Checkpoint>
+ <CheckpointDesc SubjectTT="Fuel Pumps" ExpectationTT="OFF"/>
+  </Checkpoint>
+	<Checkpoint>
+ <CheckpointDesc SubjectTT="Probe Heat" ExpectationTT="OFF"/>
+  </Checkpoint>
+    <Checkpoint>
+ <CheckpointDesc SubjectTT="Hydraulic Panel" ExpectationTT="SET"/>
+  </Checkpoint>
+	<Checkpoint>
+ <CheckpointDesc SubjectTT="FLAPS" ExpectationTT="UP"/>
+  </Checkpoint>
+	<Checkpoint>
+ <CheckpointDesc SubjectTT="Parking Brake" ExpectationTT="As required"/>
+  </Checkpoint>
+	<Checkpoint>
+ <CheckpointDesc SubjectTT="Engine Start levers" ExpectationTT="CUTOFF"/>
+  </Checkpoint>
+	<Checkpoint>
+ <CheckpointDesc SubjectTT="Weather Radar" ExpectationTT="OFF"/>
+  </Checkpoint>
+</Page>
+<Page SubjectTT="Secure Procedure">
+	<Checkpoint>
+ <CheckpointDesc SubjectTT="IRS mode selectors" ExpectationTT="OFF"/>
+  <Instrument Id="ngx_switch_255_a"/>
+  <Instrument Id="ngx_switch_256_a"/>
+  </Checkpoint>
+	<Checkpoint>
+ <CheckpointDesc SubjectTT="EMERGENCY EXIT LIGHTS switch" ExpectationTT="OFF"/>
+  <Instrument Id="ngx_switch_100_a"/>
+  </Checkpoint> 
+	<Checkpoint>
+ <CheckpointDesc SubjectTT="WINDOW HEAT switches" ExpectationTT="OFF"/>
+  <Instrument Id="ngx_switch_135_a"/>
+  <Instrument Id="ngx_switch_136_a"/>
+  <Instrument Id="ngx_switch_138_a"/>
+  <Instrument Id="ngx_switch_139_a"/>  
+  </Checkpoint> 
+	<Checkpoint>
+ <CheckpointDesc SubjectTT="Air conditioning PACK switches" ExpectationTT="OFF"/>
+  <Instrument Id="ngx_switch_200_a"/>
+  <Instrument Id="ngx_switch_201_a"/>
+  </Checkpoint>   
+</Page>
+<Page SubjectTT="Secure Checklist">
+	<Checkpoint>
+ <CheckpointDesc SubjectTT="IRS" ExpectationTT="OFF"/>
+  </Checkpoint>
+	<Checkpoint>
+ <CheckpointDesc SubjectTT="Emergerncy Exit Lights" ExpectationTT="OFF"/>
+  </Checkpoint>
+	<Checkpoint>
+ <CheckpointDesc SubjectTT="Window Heat" ExpectationTT="OFF"/>
+  </Checkpoint>
+	<Checkpoint>
+ <CheckpointDesc SubjectTT="Packs" ExpectationTT="OFF"/>
+  </Checkpoint>
+</Page>
+<Page SubjectTT="Power Down Procedure">
+	<Checkpoint>
+ <CheckpointDesc SubjectTT="APU or Ground Power Switches" ExpectationTT="OFF"/>
+ <Instrument Id="ngx_switch_28_a"/>
+ <Instrument Id="ngx_switch_29_a"/>
+ <Instrument Id="ngx_switch_17_a"/>
+  </Checkpoint>
+  	<Checkpoint>
+ <CheckpointDesc SubjectTT="If APU was operational Wait" ExpectationTT="2 Minutes"/>
+  </Checkpoint>
+  	<Checkpoint>
+ <CheckpointDesc SubjectTT="Battery" ExpectationTT="OFF"/>
+ <Instrument Id="ngx_switch_01_a"/>
+  </Checkpoint>
+  </Page>
+</Step>
+	</Checklist.Checklist>
+</SimBase.Document>

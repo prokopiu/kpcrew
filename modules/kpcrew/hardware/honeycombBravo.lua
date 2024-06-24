@@ -76,46 +76,46 @@ end
 -- Honeycomb specific functionality
 
 -- mode rotary ALT-VS-HDG-CRS-IAS
-create_command("kp/xsp/bravo/mode_alt",	"Bravo AP Mode ALT",	"xsp_bravo_mode=1", "", "")
-create_command("kp/xsp/bravo/mode_vs",	"Bravo AP Mode VS",		"xsp_bravo_mode=2", "", "")
-create_command("kp/xsp/bravo/mode_hdg",	"Bravo AP Mode HDG",	"xsp_bravo_mode=3", "", "")
-create_command("kp/xsp/bravo/mode_crs",	"Bravo AP Mode CRS",	"xsp_bravo_mode=4", "", "")
-create_command("kp/xsp/bravo/mode_ias",	"Bravo AP Mode IAS",	"xsp_bravo_mode=5", "", "")
+-- create_command("kp/xsp/bravo/mode_alt",	"Bravo AP Mode ALT",	"xsp_bravo_mode=1", "", "")
+-- create_command("kp/xsp/bravo/mode_vs",	"Bravo AP Mode VS",		"xsp_bravo_mode=2", "", "")
+-- create_command("kp/xsp/bravo/mode_hdg",	"Bravo AP Mode HDG",	"xsp_bravo_mode=3", "", "")
+-- create_command("kp/xsp/bravo/mode_crs",	"Bravo AP Mode CRS",	"xsp_bravo_mode=4", "", "")
+-- create_command("kp/xsp/bravo/mode_ias",	"Bravo AP Mode IAS",	"xsp_bravo_mode=5", "", "")
 
 -- DECR-INCR Rotary
-create_command("kp/xsp/bravo/knob_up",	"Bravo AP Knob Up",		"xsp_bravo_knob_up()", "", "")
-create_command("kp/xsp/bravo/knob_dn",	"Bravo AP Knob Down",	"xsp_bravo_knob_dn()", "", "")
+-- create_command("kp/xsp/bravo/knob_up",	"Bravo AP Knob Up",		"xsp_bravo_knob_up()", "", "")
+-- create_command("kp/xsp/bravo/knob_dn",	"Bravo AP Knob Down",	"xsp_bravo_knob_dn()", "", "")
 
 -- AP MODE switches
-create_command("kp/xsp/bravo/button_hdg","Bravo HDG Button","sysMCP.hdgselSwitch:actuate(2)", "", "")
-create_command("kp/xsp/bravo/button_nav","Bravo NAV Button","sysMCP.vorlocSwitch:actuate(2)", "", "")
-create_command("kp/xsp/bravo/button_apr","Bravo APR Button","sysMCP.approachSwitch:actuate(2)", "", "")
-create_command("kp/xsp/bravo/button_rev","Bravo REV Button","sysMCP.backcourse:actuate(2)", "", "")
-create_command("kp/xsp/bravo/button_alt","Bravo ALT Button","sysMCP.altholdSwitch:actuate(2)", "", "")
-create_command("kp/xsp/bravo/button_vsp","Bravo VSP Button","sysMCP.vsSwitch:actuate(2)", "", "")
-create_command("kp/xsp/bravo/button_ias","Bravo IAS Button","sysMCP.speedSwitch:actuate(2)", "", "")
+-- create_command("kp/xsp/bravo/button_hdg","Bravo HDG Button","sysMCP.hdgselSwitch:actuate(2)", "", "")
+-- create_command("kp/xsp/bravo/button_nav","Bravo NAV Button","sysMCP.vorlocSwitch:actuate(2)", "", "")
+-- create_command("kp/xsp/bravo/button_apr","Bravo APR Button","sysMCP.approachSwitch:actuate(2)", "", "")
+-- create_command("kp/xsp/bravo/button_rev","Bravo REV Button","sysMCP.backcourse:actuate(2)", "", "")
+-- create_command("kp/xsp/bravo/button_alt","Bravo ALT Button","sysMCP.altholdSwitch:actuate(2)", "", "")
+-- create_command("kp/xsp/bravo/button_vsp","Bravo VSP Button","sysMCP.vsSwitch:actuate(2)", "", "")
+-- create_command("kp/xsp/bravo/button_ias","Bravo IAS Button","sysMCP.speedSwitch:actuate(2)", "", "")
 
 -- larger AUTO PILOT switch
-create_command("kp/xsp/bravo/button_ap", "Bravo Autopilot Button",	"sysMCP.ap1Switch:actuate(2)", "", "")
+-- create_command("kp/xsp/bravo/button_ap", "Bravo Autopilot Button",	"sysMCP.ap1Switch:actuate(2)", "", "")
 
-create_command("kp/xsp/bravo/toga_press", "Bravo Press Left TOGA", "sysMCP.togaPilotSwitch:actuate(modeToggle)","","")
+-- create_command("kp/xsp/bravo/toga_press", "Bravo Press Left TOGA", "sysMCP.togaPilotSwitch:actuate(modeToggle)","","")
 
 -- prepare for other switches
-create_command("kp/xsp/bravo/switch1_on","Bravo Switch 1 On","","","")
-create_command("kp/xsp/bravo/switch2_on","Bravo Switch 2 On","","","")
-create_command("kp/xsp/bravo/switch3_on","Bravo Switch 3 On","","","")
-create_command("kp/xsp/bravo/switch4_on","Bravo Switch 4 On","","","")
-create_command("kp/xsp/bravo/switch5_on","Bravo Switch 5 On","","","")
-create_command("kp/xsp/bravo/switch6_on","Bravo Switch 6 On","","","")
-create_command("kp/xsp/bravo/switch7_on","Bravo Switch 7 On","","","")
+-- create_command("kp/xsp/bravo/switch1_on","Bravo Switch 1 On","","","")
+-- create_command("kp/xsp/bravo/switch2_on","Bravo Switch 2 On","","","")
+-- create_command("kp/xsp/bravo/switch3_on","Bravo Switch 3 On","","","")
+-- create_command("kp/xsp/bravo/switch4_on","Bravo Switch 4 On","","","")
+-- create_command("kp/xsp/bravo/switch5_on","Bravo Switch 5 On","","","")
+-- create_command("kp/xsp/bravo/switch6_on","Bravo Switch 6 On","","","")
+-- create_command("kp/xsp/bravo/switch7_on","Bravo Switch 7 On","","","")
 
-create_command("kp/xsp/bravo/switch1_off","Bravo Switch 1 Off","","","")
-create_command("kp/xsp/bravo/switch2_off","Bravo Switch 2 Off","","","")
-create_command("kp/xsp/bravo/switch3_off","Bravo Switch 3 Off","","","")
-create_command("kp/xsp/bravo/switch4_off","Bravo Switch 4 Off","","","")
-create_command("kp/xsp/bravo/switch5_off","Bravo Switch 5 Off","","","")
-create_command("kp/xsp/bravo/switch6_off","Bravo Switch 6 Off","","","")
-create_command("kp/xsp/bravo/switch7_off","Bravo Switch 7 Off","","","")
+-- create_command("kp/xsp/bravo/switch1_off","Bravo Switch 1 Off","","","")
+-- create_command("kp/xsp/bravo/switch2_off","Bravo Switch 2 Off","","","")
+-- create_command("kp/xsp/bravo/switch3_off","Bravo Switch 3 Off","","","")
+-- create_command("kp/xsp/bravo/switch4_off","Bravo Switch 4 Off","","","")
+-- create_command("kp/xsp/bravo/switch5_off","Bravo Switch 5 Off","","","")
+-- create_command("kp/xsp/bravo/switch6_off","Bravo Switch 6 Off","","","")
+-- create_command("kp/xsp/bravo/switch7_off","Bravo Switch 7 Off","","","")
 
 -- Honeycomb Bravo Lights
 
@@ -283,4 +283,4 @@ function xsp_set_bravo_lights()
 
 end
 
-do_often("xsp_set_bravo_lights()")
+

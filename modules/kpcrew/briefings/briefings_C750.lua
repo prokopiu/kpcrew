@@ -29,7 +29,7 @@ APP_rev_thrust_list = "NONE|FULL"
 
 -- Weights (lb/kg)	Citation X, CE-750
 -- Max Ramp					36,400/16.510
--- Max Takeoff				31,400/14.242
+-- Max Takeoff				36,100/14.242
 -- Max Landing				31,800/14.424
 -- Zero Fuel				24,400/11.067
 -- BOW						22,100/10.024
@@ -41,17 +41,17 @@ APP_rev_thrust_list = "NONE|FULL"
 -- Avail Fuel Max Payload	12,000/5.443
 -- Avail Fuel Exec Payload	12,500/5.669
 
-kc_MaxRamp			= 16510 	-- Max Ramp weight
-kc_MTOW 			= 14242		-- Maximum Takeoff Weight
+kc_MaxRamp			= 17300 	-- Max Ramp weight
+kc_MTOW 			= 16510		-- Maximum Takeoff Weight
 kc_MLW  			= 14424		-- Maximum Landing Weight
-kc_MaxFuel 			= 5909		-- Maximum Fuel Capacity (lbs)
-kc_MZFW  			= 11067		-- Maximum Zero Fuel Weight
+kc_MaxFuel 			=  5865		-- Maximum Fuel Capacity (lbs)
+kc_MZFW  			= 11068		-- Maximum Zero Fuel Weight
 kc_DOW 				= 10024		-- Dry Operating Weight (aka OEW)
-kc_MaxPayload		= 1043		-- Maximum Payload
-kc_FFPH 			= 1315		-- Fuel Flow per hour
-kc_MFL1				= 1595		-- max fuel in tank left
-kc_MFL2				= 2719		-- max fuel in tank center
-kc_MFL3				= 1595		-- max fuel in tank right
+kc_MaxPayload		=  1043		-- Maximum Payload
+kc_FFPH 			=  1315		-- Fuel Flow per hour
+kc_MFL1				=  1595		-- max fuel in tank left
+kc_MFL2				=  2719		-- max fuel in tank center
+kc_MFL3				=  1595		-- max fuel in tank right
 
 -- Operating speeds
 kc_speeds_vs0		= 115		-- Stall Speed, Landing Configuration Vso 115 KIAS
@@ -66,7 +66,7 @@ kc_speeds_vmo3		= 0.935		-- Maximum Mach Number Vmo 0.935 Mach
 kc_speeds_vle		= 210		-- Maximum Gear Operating Speed Vle 210 KIAS
 kc_speeds_vlo		= 210		-- Maximum Gear Extended Speed Vlo 210 KIAS
 kc_speeds_vfl5		= 250		-- Maximum extension speed for flaps 
-kc_speeds_vfl15		= 250
+kc_speeds_vfl15		= 210
 kc_speeds_vfl35		= 185	
 
 kc_show_load_button = true
@@ -177,8 +177,15 @@ function kc_set_landing_details()
 	command_once("sim/FMS/next")
 	command_once("sim/FMS/next")
 	command_once("sim/FMS/next")
-	activeBriefings:set("approach:vref",string.sub(get("sim/cockpit2/radios/indicators/fms_cdu1_text_line2"),1,3)) 
-	activeBriefings:set("approach:vapp",string.sub(get("sim/cockpit2/radios/indicators/fms_cdu1_text_line4"),1,3))
+	local vrefline = get("sim/cockpit2/radios/indicators/fms_cdu1_text_line2")
+	print(vrefline)
+	if vrefline ~= "" then 
+		activeBriefings:set("approach:vref",string.sub(get("sim/cockpit2/radios/indicators/fms_cdu1_text_line2"),1,3))
+	end
+	local vappline = get("sim/cockpit2/radios/indicators/fms_cdu1_text_line4")
+	if vappline ~= "" then 
+		activeBriefings:set("approach:vapp",string.sub(get("sim/cockpit2/radios/indicators/fms_cdu1_text_line4"),1,3))
+	end
 end
 
 -- briefings to be more aircraft specific

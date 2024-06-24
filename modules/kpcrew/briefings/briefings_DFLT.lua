@@ -1,7 +1,7 @@
 -- Aircraft specific briefing values and functions - Default aircraft
 --
 -- @author Kosta Prokopiu
--- @copyright 2022 Kosta Prokopiu
+-- @copyright 2023 Kosta Prokopiu
 kc_acf_name 		= "X-Plane Default Aircraft"
 
 kc_TakeoffThrust 	= "RATED|DE-RATED|ASSUMED TEMPERATURE|RATED AND ASSUMED|DE-RATED AND ASSUMED"
@@ -28,17 +28,39 @@ APP_apu_list 		= "APU delayed start|APU|GPU"
 APP_rev_thrust_list = "NONE|MINIMUM|FULL"
 
 -- aircraft specs, weights in KG
-kc_DOW 				= 0  -- Dry Operating Weight (aka OEW)
-kc_MZFW  			= 0  -- Maximum Zero Fuel Weight
-kc_MaxFuel 			= 0  -- Maximum Fuel Capacity
-kc_MTOW 			= 0  -- Maximum Takeoff Weight
-kc_MLW  			= 0  -- Maximum Landing Weight
-kc_FFPH 			= 0  -- Fuel Flow per hour
-kc_MFL1				=  4204  -- max fuel in tank left
-kc_MFL2				=  9331  -- max fuel in tank center
-kc_MFL3				=  4204  -- max fuel in tank right
+kc_DOW 				= -1		-- Dry Operating Weight (aka OEW)
+kc_MZFW  			= -1		-- Maximum Zero Fuel Weight
+kc_MaxFuel 			= -1		-- Maximum Fuel Capacity
+kc_MaxPayld 		= -1		-- Maximum Payload to be set
+kc_MTOW 			= -1		-- Maximum Takeoff Weight
+kc_MLW  			= -1		-- Maximum Landing Weight
+kc_FFPH 			= -1		-- Fuel Flow per hour
+kc_MFL1				= 4204		-- max fuel in tank left
+kc_MFL2				= 9331		-- max fuel in tank center
+kc_MFL3				= 4204		-- max fuel in tank right
 
-kc_show_load_button = true
+-- Operating speeds
+kc_speeds_vs0		= 115		-- Stall Speed, Landing Configuration Vso 115 KIAS
+kc_speeds_vs1		= 136		-- Stall Speed, Clean Vs1 136 KIAS
+kc_speeds_vs		= 140		-- Minimum Controllable Speed Vs 140 KIAS
+kc_speeds_vx		= 270		-- Best Angle of Climb Vx 270 KIAS
+kc_speeds_vy		= 300		-- Best Rate of Climb Vy 300 KIAS
+kc_speeds_vfe		= 180		-- Maximum flaps Extended Speed Vfe 180 KIAS
+kc_speeds_vmo1		= 270		-- Maximum Operating Speed (Sea Level to 8,000 ft) Vmo 270 KIAS
+kc_speeds_vmo2		= 350		-- Maximum Operating Speed (Above 8,000 ft) Vmo 350 KIAS
+kc_speeds_vmo3		= 0.935		-- Maximum Mach Number Vmo 0.935 Mach
+kc_speeds_vle		= 210		-- Maximum Gear Operating Speed Vle 210 KIAS
+kc_speeds_vlo		= 210		-- Maximum Gear Extended Speed Vlo 210 KIAS
+kc_speeds_vfl1		= 230		-- Maximum extension speed for flaps 
+kc_speeds_vfl5		= 230
+kc_speeds_vfl10		= 210	
+kc_speeds_vfl15		= 190	
+kc_speeds_vfl20		= 170	
+
+-- Altitudes
+kc_max_altitude		= 40000 -- Max Altitude
+
+kc_show_load_button = false
 kc_show_cost_index 	= false
 
 function kc_get_DOW()

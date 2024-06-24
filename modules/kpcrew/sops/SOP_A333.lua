@@ -1,9 +1,9 @@
--- Standard Operating Procedure for Laminar A330
+-- Standard Operating Procedure for Laminar A330-300
 
--- @classmod SOP_A320
+-- @classmod SOP_A333
 -- @author Kosta Prokopiu
 -- @copyright 2023 Kosta Prokopiu
-local SOP_A320 = {
+local SOP_A333 = {
 }
 
 -- SOP related imports
@@ -19,9 +19,13 @@ local IndirectChecklistItem = require "kpcrew.checklists.IndirectChecklistItem"
 local ManualChecklistItem 	= require "kpcrew.checklists.ManualChecklistItem"
 
 local Procedure 			= require "kpcrew.procedures.Procedure"
+local State		 			= require "kpcrew.procedures.State"
+local Background 			= require "kpcrew.procedures.Background"
 local ProcedureItem 		= require "kpcrew.procedures.ProcedureItem"
 local SimpleProcedureItem 	= require "kpcrew.procedures.SimpleProcedureItem"
 local IndirectProcedureItem = require "kpcrew.procedures.IndirectProcedureItem"
+local BackgroundProcedureItem = require "kpcrew.procedures.BackgroundProcedureItem"
+local HoldProcedureItem 	= require "kpcrew.procedures.HoldProcedureItem"
 
 sysLights 					= require("kpcrew.systems." .. kc_acf_icao .. ".sysLights")
 sysGeneral 					= require("kpcrew.systems." .. kc_acf_icao .. ".sysGeneral")	
@@ -36,6 +40,7 @@ sysMCP 						= require("kpcrew.systems." .. kc_acf_icao .. ".sysMCP")
 sysEFIS 					= require("kpcrew.systems." .. kc_acf_icao .. ".sysEFIS")	
 sysFMC 						= require("kpcrew.systems." .. kc_acf_icao .. ".sysFMC")	
 sysRadios					= require("kpcrew.systems." .. kc_acf_icao .. ".sysRadios")	
+sysMacros					= require("kpcrew.systems." .. kc_acf_icao .. ".sysMacros")	
 
 require("kpcrew.briefings.briefings_" .. kc_acf_icao)
 
@@ -47,7 +52,63 @@ kcSopFlightPhase = { [1] = "Cold & Dark", 	[2] = "Prel Cockpit Prep", [3] = "Coc
 
 -- Set up SOP =========================================================================
 
-activeSOP = SOP:new("FlightFcator A320 SOP")
+activeSOP = SOP:new("Laminar A333 SOP")
+
+local testProc = Procedure:new("TEST","","")
+testProc:setFlightPhase(1)
+testProc:addItem(ProcedureItem:new("LIGHTS","ALL ON",FlowItem.actorFO,5,false,
+	function () 
+	  kc_macro_lights_all_on()
+	end))
+testProc:addItem(ProcedureItem:new("LIGHTS","COLD&DARK",FlowItem.actorFO,5,true,
+	function () 
+	  kc_macro_lights_cold_dark()
+	end))
+testProc:addItem(ProcedureItem:new("LIGHTS","PREFLIGHT",FlowItem.actorFO,5,true,
+	function () 
+	  kc_macro_lights_preflight()
+	  sysLights.domeLightSwitch:actuate(0)
+	end))
+testProc:addItem(ProcedureItem:new("LIGHTS","BEFORE START",FlowItem.actorFO,5,true,
+	function () 
+	  kc_macro_lights_before_start()
+	  
+	end))
+testProc:addItem(ProcedureItem:new("LIGHTS","BEFORE TAXI",FlowItem.actorFO,5,true,
+	function () 
+	  kc_macro_lights_before_taxi()
+	end))
+testProc:addItem(ProcedureItem:new("LIGHTS","TAKEOFF",FlowItem.actorFO,5,true,
+	function () 
+	  kc_macro_lights_for_takeoff()
+	end))
+testProc:addItem(ProcedureItem:new("LIGHTS","CLMB 10K",FlowItem.actorFO,5,true,
+	function () 
+	  kc_macro_lights_climb_10k()
+	end))
+testProc:addItem(ProcedureItem:new("LIGHTS","DESC 10K",FlowItem.actorFO,5,true,
+	function () 
+	  kc_macro_lights_descend_10k()
+	end))
+testProc:addItem(ProcedureItem:new("LIGHTS","APPROACH",FlowItem.actorFO,5,true,
+	function () 
+	  kc_macro_lights_approach()
+	end))
+testProc:addItem(ProcedureItem:new("LIGHTS","CLEANUP",FlowItem.actorFO,5,true,
+	function () 
+	  kc_macro_lights_cleanup()
+	end))
+testProc:addItem(ProcedureItem:new("LIGHTS","ARRIVE PARKING",FlowItem.actorFO,5,true,
+	function () 
+	  kc_macro_lights_arrive_parking()
+	end))
+testProc:addItem(ProcedureItem:new("LIGHTS","SHUTDOWN",FlowItem.actorFO,5,true,
+	function () 
+	  kc_macro_lights_after_shutdown()
+	end))
+
+	
+
 
 -- ============ PRELIMINARY COCKPIT PREP (PM) ============
 -- ==== AIRCRAFT SETUP
@@ -121,35 +182,34 @@ prelCockpitPrep:setFlightPhase(2)
 prelCockpitPrep:setResize(false)
 prelCockpitPrep:addItem(SimpleProcedureItem:new("==== AIRCRAFT SETUP"))
 prelCockpitPrep:addItem(ProcedureItem:new("ENGINE MASTERS 1 & 2","OFF",FlowItem.actorPM,1,
-	function () return sysEngines.engMstrGroup:getStatus() == 0 end,
-	function () sysEngines.engMstrGroup:actuate(0) end))
+	function () return sysEngines.engStarterGroup:getStatus() == 0 end,
+	function () sysEngines.engStarterGroup:actuate(0) end))
 prelCockpitPrep:addItem(ProcedureItem:new("ENGINE MODE SELECTOR","NORM",FlowItem.actorPM,1,
 	function () return sysEngines.engModeSelector:getStatus() == sysEngines.engModeNorm end,
 	function () sysEngines.engModeSelector:setValue(sysEngines.engModeNorm) end))
 prelCockpitPrep:addItem(ProcedureItem:new("WEATHER RADAR","OFF",FlowItem.actorPM,1,
-	function () return sysEFIS.wxrPilot:getStatus() == 0 end,
-	function () sysEFIS.wxrPilot:actuate(0) end))
+	function () return sysGeneral.wxRadar:getStatus() == 0 end,
+	function () sysGeneral.wxRadar:actuate(0) end))
 prelCockpitPrep:addItem(ProcedureItem:new("LANDING GEAR LEVER","DOWN",FlowItem.actorPM,1,
-	function () return sysGeneral.GearSwitch:getStatus() == modeOn end,
-	function () sysGeneral.GearSwitch:actuate(modeOn) end))
+	function () return sysGeneral.GearSwitch:getStatus() == 1 end,
+	function () sysGeneral.GearSwitch:actuate(1) end))
 prelCockpitPrep:addItem(ProcedureItem:new("BOTH WIPER SELECTORS","OFF",FlowItem.actorPM,1,
 	function () return sysGeneral.wiperGroup:getStatus() == sysGeneral.wiperPosOff end,
 	function () sysGeneral.wiperGroup:setValue(sysGeneral.wiperPosOff) end))
 
 prelCockpitPrep:addItem(SimpleProcedureItem:new("==== BATTERY CHECK & EXTERNAL POWER"))
 prelCockpitPrep:addItem(ProcedureItem:new("BAT 1 / BAT 2","CHECK BOTH ABOVE 25.5 V",FlowItem.actorPM,1,
-	function () return sysElectric.bat1Volt:getStatus() > 24 and sysElectric.bat2Volt:getStatus() > 24 end))
+	function () return sysElectric.bat1Volt:getStatus() > 25.5 and sysElectric.bat2Volt:getStatus() > 25.5 end))
 prelCockpitPrep:addItem(ProcedureItem:new("BAT 1 / BAT 2","ON",FlowItem.actorPM,1,
 	function () return sysElectric.batterySwitch:getStatus() == 1 and sysElectric.battery2Switch:getStatus() == 1 end,
-	function () sysElectric.batterySwitch:setValue(1) sysElectric.battery2Switch:setValue(1) end))
+	function () sysElectric.batterySwitch:actuate(1) 
+				sysElectric.battery2Switch:actuate(1) 
+	end))
 
 prelCockpitPrep:addItem(SimpleProcedureItem:new("==== Activate External Power",
 	function () return activePrefSet:get("aircraft:powerup_apu") == true end))
 prelCockpitPrep:addItem(ProcedureItem:new("EXT POWER","CONNECTED",FlowItem.actorPM,1,
-	function () return get("sim/custom/xap/elec/gpu_av") == 1 end,
-	function () sysElectric.gpuConnect:setValue(1) end,
-	function () return activePrefSet:get("aircraft:powerup_apu") == true end))
-prelCockpitPrep:addItem(SimpleProcedureItem:new("  Use Ground Handling CDU menu to turn EXT Power on",
+	function () return sysElectric.gpuAvailAnc:getStatus() == 1 end,nil,
 	function () return activePrefSet:get("aircraft:powerup_apu") == true end))
 prelCockpitPrep:addItem(ProcedureItem:new("EXT POWER","ON",FlowItem.actorPM,1,
 	function () return sysElectric.gpuSwitch:getStatus() == 1 end,
@@ -180,8 +240,10 @@ prelCockpitPrep:addItem(ProcedureItem:new("COCKPIT LIGHTS","AS REQUIRED",FlowIte
 	function () 
 		if kc_is_daylight() then		
 			sysLights.instrLightGroup:actuate(0)
+			sysLights.domeLightSwitch:actuate(0)
 		else
-			sysLights.instrLightGroup:actuate(1)
+			sysLights.instrLightGroup:actuate(0.5)
+			sysLights.domeLightSwitch:actuate(1)
 		end
 	end))
 
@@ -1156,22 +1218,66 @@ securingChkl:addItem(ChecklistItem:new("BATTERIES","OFF",FlowItem.actorPM,1,true
 
 -- ============  =============
 -- add the checklists and procedures to the active sop
+-- activeSOP:addProcedure(prelCockpitPrep)
+-- activeSOP:addProcedure(cockpitPrep)
+-- activeSOP:addProcedure(finalCockpitPrep)
+-- activeSOP:addProcedure(cockpitPrepChkl)
+-- activeSOP:addProcedure(beforePushStart)
+-- activeSOP:addProcedure(beforeStartChkl)
+-- activeSOP:addProcedure(afterStartChkl)
+-- activeSOP:addProcedure(lineUpChkl)
+-- activeSOP:addProcedure(approachChkl)
+-- activeSOP:addProcedure(landingChkl)
+-- activeSOP:addProcedure(afterLandingChkl)
+-- activeSOP:addProcedure(securingChkl)
+
+-- ======== STATES =============
+
+-- ================= Cold & Dark State ==================
+local coldAndDarkProc = State:new("COLD AND DARK","securing the aircraft","")
+coldAndDarkProc:setFlightPhase(1)
+coldAndDarkProc:addItem(ProcedureItem:new("COLD & DARK","SET","SYS",0,true,
+	function () 
+		kc_macro_state_cold_and_dark()
+		getActiveSOP():setActiveFlowIndex(1)
+	end))
+	
+-- ================= Turn Around State ==================
+local turnAroundProc = State:new("AIRCRAFT TURN AROUND","setting up the aircraft","aircraft configured for turn around")
+turnAroundProc:setFlightPhase(18)
+turnAroundProc:addItem(ProcedureItem:new("TURNAROUND","SET","SYS",0,true,
+	function () 
+		kc_macro_state_turnaround()
+		getActiveSOP():setActiveFlowIndex(1)
+	end))
+
+-- ============  =============
+-- add the checklists and procedures to the active sop
+local nopeProc = Procedure:new("NO PROCEDURES AVAILABLE")
+
+activeSOP:addProcedure(testProc)
 activeSOP:addProcedure(prelCockpitPrep)
-activeSOP:addProcedure(cockpitPrep)
-activeSOP:addProcedure(finalCockpitPrep)
-activeSOP:addProcedure(cockpitPrepChkl)
-activeSOP:addProcedure(beforePushStart)
-activeSOP:addProcedure(beforeStartChkl)
-activeSOP:addProcedure(afterStartChkl)
-activeSOP:addProcedure(lineUpChkl)
-activeSOP:addProcedure(approachChkl)
-activeSOP:addProcedure(landingChkl)
-activeSOP:addProcedure(afterLandingChkl)
-activeSOP:addProcedure(securingChkl)
+
+-- =========== States ===========
+activeSOP:addState(turnAroundProc)
+activeSOP:addState(coldAndDarkProc)
+
+-- ============= Background Flow ==============
+local backgroundFlow = Background:new("","","")
+
+backgroundFlow:addItem(BackgroundProcedureItem:new("","","SYS",0,
+	function () 
+		return
+	end))
+
+-- ==== Background Flow ====
+activeSOP:addBackground(backgroundFlow)
+
+kc_procvar_initialize_bool("waitformaster", false) 
 
 function getActiveSOP()
 	return activeSOP
 end
 
-return SOP_A320
+return SOP_A333
 
