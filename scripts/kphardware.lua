@@ -51,16 +51,16 @@ end
 -- if PLANE_ICAO == "B732" then
 	-- kh_acf_icao = "B732"
 -- end
-if PLANE_ICAO == "B733" then
-	kh_acf_icao = "B733"
-end
+-- if PLANE_ICAO == "B733" then
+	-- kh_acf_icao = "B733"
+-- end
 -- if PLANE_ICAO == "E135" or PLANE_ICAO == "E140" or PLANE_ICAO == "E145" or PLANE_ICAO == "E45X" then
 	-- kh_acf_icao = "ERJF"
 -- end
 -- Laminar MD-82
-if PLANE_ICAO == "MD82" and PLANE_TAILNUMBER == "N552AA" then
-	kh_acf_icao = "MD82"
-end
+-- if PLANE_ICAO == "MD82" and PLANE_TAILNUMBER == "N552AA" then
+	-- kh_acf_icao = "MD82"
+-- end
 -- if PLANE_ICAO == "B744" then
 	-- kh_acf_icao = "B744"
 -- end
@@ -292,6 +292,8 @@ create_command("kp/xsp/fuel/pumps_off",				"Fuel Pumps Off", "sysFuel.allFuelPum
 create_command("kp/xsp/fuel/pumps_tgl",				"Fuel Pumps Toggle", "sysFuel.allFuelPumpGroup:actuate(modeToggle)","","")
 
 -- ------------ A/P MCP functions
+create_command("kp/xsp/autopilot/both_fd_on",		"All FDs On", "sysMCP.fdirGroup:actuate(modeOn)", "", "")
+create_command("kp/xsp/autopilot/both_fd_off",		"All FDs Off", "sysMCP.fdirGroup:actuate(modeOff)", "", "")
 create_command("kp/xsp/autopilot/both_fd_tgl",		"All FDs Toggle", "sysMCP.fdirGroup:actuate(modeToggle)", "", "")
 create_command("kp/xsp/autopilot/bc_tgl",			"Toggle Reverse Appr", "sysMCP.backcourse:actuate(modeToggle)", "", "")
 create_command("kp/xsp/autopilot/ap_tgl",			"Toggle A/P 1", "sysMCP.ap1Switch:actuate(modeToggle)", "", "")
