@@ -332,8 +332,8 @@ electricalPowerUpProc:addItem(ProcedureItem:new("PARKING BRAKE","SET",FlowItem.a
 -- EMERGENCY EXIT LIGHT..........ARM/ON GUARD CLOSED (F/O)
 -- ATTENDENCE BUTTON...........................PRESS (F/O)
 -- ELECTRICAL POWER UP......................COMPLETE (F/O)
--- FLIGHT DATA RECORDER SWITCH..................AUTO (F/O)
 -- MACH OVERSPEED TEST.......................PERFORM (F/O)
+-- FLIGHT DATA RECORDER SWITCH..................AUTO (F/O)
 
 -- ==== IRS Alignment
 -- IRS MODE SELECTORS............................OFF (CPT)
@@ -2207,7 +2207,7 @@ approachChkl:addItem(ChecklistItem:new("#exchange|ALTIMETERS|approach checklist.
 -- GO AROUND ALTITUDE......................... SET   (PM)
 -- GO AROUND HEADING...........................SET   (PM)
 -- ======================================================
-
+-- https://www.flaps2approach.com/journal/737-landing-procedure
 local landingProc = Procedure:new("PREPARE LANDING","","")
 landingProc:setFlightPhase(13)
 landingProc:addItem(ProcedureItem:new("ENGINE START SWITCHES","CONT",FlowItem.actorPM,0,
