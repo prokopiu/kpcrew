@@ -1,7 +1,7 @@
 -- Aircraft specific preferences - Rotate MD-11
 --
 -- @author Kosta Prokopiu
--- @copyright 2022 Kosta Prokopiu
+-- @copyright 2024 Kosta Prokopiu
 local MD11Group = kcPreferenceGroup:new("aircraft","MD11 PREFERENCES")
 MD11Group:setInitialOpen(false)
 MD11Group:add(kcPreference:new("efis_mins_dh",	true,	kcPreference.typeToggle,	"EFIS MINS Mode|RADIO (DH)|BARO (DA)")) 

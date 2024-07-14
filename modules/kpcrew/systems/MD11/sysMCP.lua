@@ -1,29 +1,31 @@
--- DFLT airplane 
+-- Rotate MD-11
 -- MCP functionality
 
+-- @classmod sysMCP
+-- @author Kosta Prokopiu
+-- @copyright 2024 Kosta Prokopiu
 local sysMCP = {
 }
 
-local TwoStateDrefSwitch = require "kpcrew.systems.TwoStateDrefSwitch"
-local TwoStateCmdSwitch = require "kpcrew.systems.TwoStateCmdSwitch"
-local TwoStateCustomSwitch = require "kpcrew.systems.TwoStateCustomSwitch"
-local SwitchGroup  = require "kpcrew.systems.SwitchGroup"
-local SimpleAnnunciator = require "kpcrew.systems.SimpleAnnunciator"
-local CustomAnnunciator = require "kpcrew.systems.CustomAnnunciator"
-local TwoStateToggleSwitch = require "kpcrew.systems.TwoStateToggleSwitch"
-local MultiStateCmdSwitch = require "kpcrew.systems.MultiStateCmdSwitch"
-local InopSwitch = require "kpcrew.systems.InopSwitch"
+local TwoStateDrefSwitch 	= require "kpcrew.systems.TwoStateDrefSwitch"
+local TwoStateCmdSwitch	 	= require "kpcrew.systems.TwoStateCmdSwitch"
+local TwoStateCustomSwitch 	= require "kpcrew.systems.TwoStateCustomSwitch"
+local SwitchGroup  			= require "kpcrew.systems.SwitchGroup"
+local SimpleAnnunciator 	= require "kpcrew.systems.SimpleAnnunciator"
+local CustomAnnunciator 	= require "kpcrew.systems.CustomAnnunciator"
+local TwoStateToggleSwitch	= require "kpcrew.systems.TwoStateToggleSwitch"
+local MultiStateCmdSwitch 	= require "kpcrew.systems.MultiStateCmdSwitch"
+local InopSwitch 			= require "kpcrew.systems.InopSwitch"
 
 --------- Switches
 
 -- Flight Directors
-sysMCP.fdirPilotSwitch = InopSwitch:new("")
-
-sysMCP.fdirGroup = SwitchGroup:new("fdirs")
+sysMCP.fdirPilotSwitch 		= InopSwitch:new("")
+sysMCP.fdirGroup 			= SwitchGroup:new("fdirs")
 sysMCP.fdirGroup:addSwitch(sysMCP.fdirPilotSwitch)
 
 -- HDG SEL
-sysMCP.hdgselSwitch = TwoStateCustomSwitch:new("hdgsel","Rotate/aircraft/controls/fgs_hdg_mode_sel",0,
+sysMCP.hdgselSwitch 		= TwoStateCustomSwitch:new("hdgsel","Rotate/aircraft/controls/fgs_hdg_mode_sel",0,
 	function () 
 		command_once("Rotate/aircraft/controls_c/fgs_hdg_mode_sel_dn") 
 		set("Rotate/aircraft/controls/fgs_hdg_mode_sel",-1)
@@ -39,7 +41,7 @@ sysMCP.hdgselSwitch = TwoStateCustomSwitch:new("hdgsel","Rotate/aircraft/control
 )
 
 -- VORLOC
-sysMCP.vorlocSwitch = TwoStateCustomSwitch:new("vorloc","Rotate/aircraft/controls/fgs_nav",0,
+sysMCP.vorlocSwitch 		= TwoStateCustomSwitch:new("vorloc","Rotate/aircraft/controls/fgs_nav",0,
 	function () 
 		command_once("Rotate/aircraft/controls_c/fgs_nav") 
 		set("Rotate/aircraft/controls/fgs_nav",1)
@@ -55,7 +57,7 @@ sysMCP.vorlocSwitch = TwoStateCustomSwitch:new("vorloc","Rotate/aircraft/control
 )
 
 -- APPROACH
-sysMCP.approachSwitch = TwoStateCustomSwitch:new("appr","Rotate/aircraft/systems/afs_appr_engaged",0,
+sysMCP.approachSwitch 		= TwoStateCustomSwitch:new("appr","Rotate/aircraft/systems/afs_appr_engaged",0,
 	function () 
 		command_once("Rotate/aircraft/controls_c/fgs_appr_land") 
 		set("Rotate/aircraft/controls/fgs_appr_land",1)
@@ -71,7 +73,7 @@ sysMCP.approachSwitch = TwoStateCustomSwitch:new("appr","Rotate/aircraft/systems
 )
 
 -- ALTHOLD
-sysMCP.altholdSwitch = TwoStateCustomSwitch:new("appr","Rotate/aircraft/systems/afs_pitch_mode",0,
+sysMCP.altholdSwitch 		= TwoStateCustomSwitch:new("appr","Rotate/aircraft/systems/afs_pitch_mode",0,
 	function () 
 		command_once("Rotate/aircraft/controls_c/fgs_alt_mode_sel_dn") 
 		set("Rotate/aircraft/controls/fgs_alt_mode_sel",-1)
@@ -87,10 +89,10 @@ sysMCP.altholdSwitch = TwoStateCustomSwitch:new("appr","Rotate/aircraft/systems/
 )
 
 -- VS
-sysMCP.vsSwitch = InopSwitch:new("vs")
+sysMCP.vsSwitch 			= InopSwitch:new("vs")
 
 -- SPEED
-sysMCP.speedSwitch = TwoStateCustomSwitch:new("speed","Rotate/aircraft/systems/afs_at_engaged",0,
+sysMCP.speedSwitch 			= TwoStateCustomSwitch:new("speed","Rotate/aircraft/systems/afs_at_engaged",0,
 	function () 
 		command_once("Rotate/aircraft/controls_c/fgs_spd_sel_mode_dn") 
 		set("Rotate/aircraft/controls/fgs_spd_sel_mode",-1)
@@ -106,7 +108,7 @@ sysMCP.speedSwitch = TwoStateCustomSwitch:new("speed","Rotate/aircraft/systems/a
 )
 
 -- AUTOPILOT
-sysMCP.ap1Switch = TwoStateCustomSwitch:new("autoflight","Rotate/aircraft/controls/fgs_autoflight",0,
+sysMCP.ap1Switch 			= TwoStateCustomSwitch:new("autoflight","Rotate/aircraft/controls/fgs_autoflight",0,
 	function () 
 		command_once("Rotate/aircraft/controls_c/fgs_autoflight") 
 		set("Rotate/aircraft/controls/fgs_autoflight",1)
@@ -122,26 +124,25 @@ sysMCP.ap1Switch = TwoStateCustomSwitch:new("autoflight","Rotate/aircraft/contro
 )
 
 -- BACKCOURSE
-sysMCP.backcourse = InopSwitch:new("backcourse")
+sysMCP.backcourse 			= InopSwitch:new("backcourse")
 
 -- TOGA
-sysMCP.togaPilotSwitch = InopSwitch:new("togapilot")
+sysMCP.togaPilotSwitch 		= InopSwitch:new("togapilot")
 
 -- ATHR
-sysMCP.athrSwitch = InopSwitch:new("athr")
+sysMCP.athrSwitch 			= InopSwitch:new("athr")
 
 
 -- CRS 1&2
 
-sysMCP.crs1Selector = InopSwitch:new("crs1")
-sysMCP.crs2Selector = InopSwitch:new("crs2")
-
-sysMCP.crsSelectorGroup = SwitchGroup:new("crs")
+sysMCP.crs1Selector 		= InopSwitch:new("crs1")
+sysMCP.crs2Selector 		= InopSwitch:new("crs2")
+sysMCP.crsSelectorGroup 	= SwitchGroup:new("crs")
 sysMCP.crsSelectorGroup:addSwitch(sysMCP.crs1Selector)
 sysMCP.crsSelectorGroup:addSwitch(sysMCP.crs2Selector)
 
 -- N1 Boeing
-sysMCP.n1Switch = TwoStateCustomSwitch:new("FMS SPD","Rotate/aircraft/systems/afs_fms_spd_engaged",0,
+sysMCP.n1Switch 			= TwoStateCustomSwitch:new("FMS SPD","Rotate/aircraft/systems/afs_fms_spd_engaged",0,
 	function () 
 		command_once("Rotate/aircraft/controls_c/fgs_fms_spd") 
 		set("Rotate/aircraft/controls/fgs_fms_spd",1)
@@ -157,16 +158,16 @@ sysMCP.n1Switch = TwoStateCustomSwitch:new("FMS SPD","Rotate/aircraft/systems/af
 )
 
 -- IAS
-sysMCP.iasSelector = MultiStateCmdSwitch:new("ias","Rotate/aircraft/systems/gcp_spd_presel_ias",0,"Rotate/aircraft/controls_c/fgs_spd_sel_dn","Rotate/aircraft/controls_c/fgs_spd_sel_up")
+sysMCP.iasSelector 			= MultiStateCmdSwitch:new("ias","Rotate/aircraft/systems/gcp_spd_presel_ias",0,"Rotate/aircraft/controls_c/fgs_spd_sel_dn","Rotate/aircraft/controls_c/fgs_spd_sel_up")
 
 -- KTS/MACH C/O
-sysMCP.machSwitch = InopSwitch:new("mach")
+sysMCP.machSwitch 			= InopSwitch:new("mach")
 
 -- SPD INTV
-sysMCP.spdIntvSwitch = InopSwitch:new("spdintv")
+sysMCP.spdIntvSwitch 		= InopSwitch:new("spdintv")
 
 -- VNAV
-sysMCP.vnavSwitch = TwoStateCustomSwitch:new("PROFILE","Rotate/aircraft/systems/afs_prof_engaged",0,
+sysMCP.vnavSwitch 			= TwoStateCustomSwitch:new("PROFILE","Rotate/aircraft/systems/afs_prof_engaged",0,
 	function () 
 		command_once("Rotate/aircraft/controls_c/fgs_prof") 
 		set("Rotate/aircraft/controls/fgs_prof",1)
@@ -182,32 +183,35 @@ sysMCP.vnavSwitch = TwoStateCustomSwitch:new("PROFILE","Rotate/aircraft/systems/
 )
 
 -- LVL CHG
-sysMCP.lvlchgSwitch = InopSwitch:new("lvlchg")
+sysMCP.lvlchgSwitch 		= InopSwitch:new("lvlchg")
 
 -- HDG
-sysMCP.hdgSelector = MultiStateCmdSwitch:new("hdg","Rotate/aircraft/systems/gcp_hdg_presel_deg",0,"Rotate/aircraft/controls_c/fgs_hdg_sel_dn","Rotate/aircraft/controls_c/fgs_hdg_sel_up")
+sysMCP.hdgSelector 			= MultiStateCmdSwitch:new("hdg","Rotate/aircraft/systems/gcp_hdg_presel_deg",0,
+	"Rotate/aircraft/controls_c/fgs_hdg_sel_dn","Rotate/aircraft/controls_c/fgs_hdg_sel_up")
 
 -- TURNRATE
-sysMCP.turnRateSelector = InopSwitch:new("turnrate")
+sysMCP.turnRateSelector 	= InopSwitch:new("turnrate")
 
 -- LNAV
-sysMCP.lnavSwitch = InopSwitch:new("lnav")
+sysMCP.lnavSwitch 			= InopSwitch:new("lnav")
 
 -- ALT
-sysMCP.altSelector = MultiStateCmdSwitch:new("alt","Rotate/aircraft/systems/gcp_alt_presel_ft",0,"Rotate/aircraft/controls_c/fgs_alt_sel_dn","Rotate/aircraft/controls_c/fgs_alt_sel_up")
+sysMCP.altSelector 			= MultiStateCmdSwitch:new("alt","Rotate/aircraft/systems/gcp_alt_presel_ft",0,
+	"Rotate/aircraft/controls_c/fgs_alt_sel_dn","Rotate/aircraft/controls_c/fgs_alt_sel_up")
 
 -- ALT INTV
-sysMCP.altintvSwitch = InopSwitch:new("altintv")
+sysMCP.altintvSwitch 		= InopSwitch:new("altintv")
 
 -- VSP
-sysMCP.vspSelector = MultiStateCmdSwitch:new("vsp","Rotate/aircraft/systems/gcp_vs_sel_fpm",0,"Rotate/aircraft/controls_c/fgs_pitch_sel_up","Rotate/aircraft/controls_c/fgs_pitch_sel_dn")
+sysMCP.vspSelector 			= MultiStateCmdSwitch:new("vsp","Rotate/aircraft/systems/gcp_vs_sel_fpm",0,
+	"Rotate/aircraft/controls_c/fgs_pitch_sel_up","Rotate/aircraft/controls_c/fgs_pitch_sel_dn")
 
 -- CWS Boeing only
-sysMCP.cwsaSwitch = InopSwitch:new("cwsa")
-sysMCP.cwsbSwitch = InopSwitch:new("cwsb")
+sysMCP.cwsaSwitch 			= InopSwitch:new("cwsa")
+sysMCP.cwsbSwitch 			= InopSwitch:new("cwsb")
 
 -- A/P DISENGAGE
-sysMCP.discAPSwitch = TwoStateCustomSwitch:new("apdisc","Rotate/aircraft/systems/afs_ap_engaged",0,
+sysMCP.discAPSwitch 		= TwoStateCustomSwitch:new("apdisc","Rotate/aircraft/systems/afs_ap_engaged",0,
 	function () 
 		command_once("Rotate/aircraft/controls_c/ap_disc_l") 
 		set("Rotate/aircraft/controls/ap_disc_l",1)
@@ -222,7 +226,7 @@ sysMCP.discAPSwitch = TwoStateCustomSwitch:new("apdisc","Rotate/aircraft/systems
 	end
 )
 
-sysMCP.apDiscYoke = TwoStateCustomSwitch:new("apdisc","Rotate/aircraft/controls/ap_disc_l",0,
+sysMCP.apDiscYoke 			= TwoStateCustomSwitch:new("apdisc","Rotate/aircraft/controls/ap_disc_l",0,
 	function () 
 		command_once("Rotate/aircraft/controls_c/ap_disc_l") 
 		set("Rotate/aircraft/controls/ap_disc_l",1)
@@ -238,19 +242,19 @@ sysMCP.apDiscYoke = TwoStateCustomSwitch:new("apdisc","Rotate/aircraft/controls/
 )
 
 -- NAVIGATION SWITCHES
-sysMCP.vhfNavSwitch = InopSwitch:new("vhfnav")
-sysMCP.irsNavSwitch = InopSwitch:new("irsnav")
-sysMCP.fmcNavSwitch = InopSwitch:new("fmcnav")
-sysMCP.displaySourceSwitch = InopSwitch:new("dispsrc")
+sysMCP.vhfNavSwitch 		= InopSwitch:new("vhfnav")
+sysMCP.irsNavSwitch 		= InopSwitch:new("irsnav")
+sysMCP.fmcNavSwitch 		= InopSwitch:new("fmcnav")
+sysMCP.displaySourceSwitch 	= InopSwitch:new("dispsrc")
 sysMCP.displayControlSwitch = InopSwitch:new("dispctrl")
 
 ------- Annunciators
 
 -- Flight Directors annunciator
-sysMCP.fdirAnc = InopSwitch:new("fdiranc")
+sysMCP.fdirAnc 				= InopSwitch:new("fdiranc")
 
 -- HDG Select/mode annunciator
-sysMCP.hdgAnc = CustomAnnunciator:new("hdganc",
+sysMCP.hdgAnc 				= CustomAnnunciator:new("hdganc",
 function () 
 	if get("Rotate/aircraft/systems/afs_roll_mode") > 0 then
 		return 1
@@ -260,7 +264,7 @@ function ()
 end)
 
 -- NAV mode annunciator
-sysMCP.navAnc = CustomAnnunciator:new("navanc",
+sysMCP.navAnc 				= CustomAnnunciator:new("navanc",
 function () 
 	if get("Rotate/aircraft/systems/afs_roll_mode") == 1 then
 		return 1
@@ -271,7 +275,7 @@ end
 )
 
 -- APR Select/mode annunciator
-sysMCP.aprAnc = CustomAnnunciator:new("apranc",
+sysMCP.aprAnc 				= CustomAnnunciator:new("apranc",
 function () 
 	if get("Rotate/aircraft/systems/afs_appr_engaged") == 1 or get("Rotate/aircraft/systems/afs_land_engaged") == 1 or get("Rotate/aircraft/systems/afs_single_land_engaged") == 1 or get("Rotate/aircraft/systems/afs_dual_land_engaged") == 1 then
 		return 1
@@ -281,7 +285,7 @@ function ()
 end)
 
 -- SPD mode annunciator
-sysMCP.spdAnc = CustomAnnunciator:new("spdanc",
+sysMCP.spdAnc 				= CustomAnnunciator:new("spdanc",
 function () 
 	if get("Rotate/aircraft/systems/afs_fms_spd_engaged") == 1 or get("Rotate/aircraft/systems/afs_at_engaged") == 1 then
 		return 1
@@ -291,7 +295,7 @@ function ()
 end)
 
 -- Vertical mode annunciator
-sysMCP.vspAnc = CustomAnnunciator:new("vspanc",
+sysMCP.vspAnc 				= CustomAnnunciator:new("vspanc",
 function () 
 	if get("Rotate/aircraft/systems/afs_pitch_mode") == 4 then
 		return 1
@@ -301,7 +305,7 @@ function ()
 end)
 
 -- ALT mode annunciator
-sysMCP.altAnc = CustomAnnunciator:new("altanc",
+sysMCP.altAnc 				= CustomAnnunciator:new("altanc",
 function () 
 	if get("Rotate/aircraft/systems/afs_pitch_mode") == 5 then
 		return 1
@@ -311,7 +315,7 @@ function ()
 end)
 
 -- A/P mode annunciator
-sysMCP.apAnc = CustomAnnunciator:new("apanc",
+sysMCP.apAnc 				= CustomAnnunciator:new("apanc",
 function () 
 	if get("Rotate/aircraft/systems/afs_ap_engaged") == 1 then
 		return 1
@@ -321,7 +325,7 @@ function ()
 end)
 
 -- BC mode annunciator
-sysMCP.bcAnc = InopSwitch:new("bc")
+sysMCP.bcAnc 				= InopSwitch:new("bc")
 
 -- ===== UI related functions =====
 

@@ -40,8 +40,8 @@ elseif PLANE_ICAO == "A333" then
 	-- kc_acf_icao = "C17D"
 -- elseif PLANE_ICAO == "A306" then
 	-- kc_acf_icao = "A306"
--- elseif PLANE_ICAO == "MD11" then
-	-- kc_acf_icao = "MD11"
+elseif PLANE_ICAO == "MD11" then
+	kc_acf_icao = "MD11"
 -- elseif PLANE_ICAO == "B732" then
 	-- kc_acf_icao = "B732"
 -- elseif PLANE_ICAO == "B733" then

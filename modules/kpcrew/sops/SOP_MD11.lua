@@ -2,7 +2,7 @@
 
 -- @classmod SOP_MD11
 -- @author Kosta Prokopiu
--- @copyright 2022 Kosta Prokopiu
+-- @copyright 2024 Kosta Prokopiu
 local SOP_MD11 = {
 }
 
@@ -19,9 +19,13 @@ local IndirectChecklistItem = require "kpcrew.checklists.IndirectChecklistItem"
 local ManualChecklistItem 	= require "kpcrew.checklists.ManualChecklistItem"
 
 local Procedure 			= require "kpcrew.procedures.Procedure"
+local State		 			= require "kpcrew.procedures.State"
+local Background 			= require "kpcrew.procedures.Background"
 local ProcedureItem 		= require "kpcrew.procedures.ProcedureItem"
 local SimpleProcedureItem 	= require "kpcrew.procedures.SimpleProcedureItem"
 local IndirectProcedureItem = require "kpcrew.procedures.IndirectProcedureItem"
+local BackgroundProcedureItem = require "kpcrew.procedures.BackgroundProcedureItem"
+local HoldProcedureItem 	= require "kpcrew.procedures.HoldProcedureItem"
 
 sysLights 					= require("kpcrew.systems." .. kc_acf_icao .. ".sysLights")
 sysGeneral 					= require("kpcrew.systems." .. kc_acf_icao .. ".sysGeneral")	
@@ -36,6 +40,7 @@ sysMCP 						= require("kpcrew.systems." .. kc_acf_icao .. ".sysMCP")
 sysEFIS 					= require("kpcrew.systems." .. kc_acf_icao .. ".sysEFIS")	
 sysFMC 						= require("kpcrew.systems." .. kc_acf_icao .. ".sysFMC")	
 sysRadios					= require("kpcrew.systems." .. kc_acf_icao .. ".sysRadios")	
+sysMacros					= require("kpcrew.systems." .. kc_acf_icao .. ".sysMacros")	
 
 require("kpcrew.briefings.briefings_" .. kc_acf_icao)
 
@@ -43,13 +48,22 @@ kcSopFlightPhase = { [1] = "Cold & Dark", 	[2] = "Prel Preflight", [3] = "Prefli
 					 [5] = "After Start", 	[6] = "Taxi to Runway", [7] = "Before Takeoff", [8] = "Takeoff",
 					 [9] = "Climb", 		[10] = "Enroute", 		[11] = "Descent", 		[12] = "Arrival", 
 					 [13] = "Approach", 	[14] = "Landing", 		[15] = "Turnoff", 		[16] = "Taxi to Stand", 
-					 [17] = "Shutdown", 	[18] = "Turnaround",	[19] = "Flightplanning", [0] = "" }
+					 [17] = "Shutdown", 	[18] = "Turnaround",	[19] = "Flightplanning", [20] = "Go Around", [0] = " " }
 
 -- Set up SOP =========================================================================
 
-activeSOP = kcSOP:new("Rotate MD-11 SOP")
+activeSOP = SOP:new("Rotate MD-11 SOP")
 
--- ======== COCKPIT PREPARATION PROCEDURE 1 (F/O) ========
+local testProc = Procedure:new("TEST","","")
+testProc:setFlightPhase(0)
+-- testProc:addItem(ProcedureItem:new("MCP","C&D",FlowItem.actorFO,5,false,
+	-- function () 
+	  -- kc_macro_mcp_cold_dark()
+	-- end))
+
+-- ============== COCKPIT ENTRY & POWER UP ===============
+
+-- === Cockpit Entry
 -- WX RADAR SYS SWITCH...........................OFF (F/O)
 -- FUEL SWITCHES.................................OFF (F/O)
 -- PARKING BRAKE..................................ON (F/O)
@@ -59,6 +73,8 @@ activeSOP = kcSOP:new("Rotate MD-11 SOP")
 -- FUEL DUMP SWITCHES.............GUARDED & SAFETIED (F/O)
 -- MANF DRAIN SWITCH.........................GUARDED (F/O)
 -- EMER PWR SELECTOR.............................OFF (F/O)
+-- 
+-- === Power Up
 -- BATTERY SWITCH..................ON & GUARD CLOSED (F/O)
 -- If External Power used
 --   EXTERNAL ELECTRICAL POWER.............AVAILABLE (F/O)
@@ -71,105 +87,129 @@ activeSOP = kcSOP:new("Rotate MD-11 SOP")
 --   APU PWR SWITCH.............................PUSH (F/O)
 --   APU PWR ON LIGHT.......................BLINKING (F/O)
 --   APU PWR ON LIGHT............STEADY WHEN STARTED (F/O)
+--   APU AIR......................................ON (F/O)
 -- AC & DC OFF LIGHTS...................EXTINGUISHED (F/O)
 -- GEN ARM LIGHTS........................ILLUMINATED (F/O)
 -- ALL BUS OFF LIGHTS...................EXTINGUISHED (F/O)
--- APU AIR........................................ON (F/O)
+-- =======================================================	
+
+-- #########
+-- sw_checklist:COCKPIT ENTRY & POWER UP:COCKPIT ENTRY & POWER UP
+-- #########
+-- sw_itemvoid:::::::::::::::: Cockpit Entry ::
+-- sw_item_c:\white\WX RADAR SYS SWITCH|OFF:Rotate/aircraft/controls/wx_sys:1
+-- sw_item_c:\white\ENGINE FUEL SWITCHES|OFF:(Rotate/aircraft/controls/eng_fuel_1:0)&&(Rotate/aircraft/controls/eng_fuel_2:0)&&(Rotate/aircraft/controls/eng_fuel_3:0)
+-- sw_item_c:\white\PARKING BRAKE|ON:Rotate/aircraft/controls/park_brake:1
+-- sw_item_c:\white\SPOILER HANDLE|RETRACT DETEND:Rotate/aircraft/controls/speed_brake:0
+-- sw_item_c:\white\FLAPS/SLAT HANDLE|UP & RETRACTED:Rotate/aircraft/controls/flap_handle:0
+-- sw_item_c:\white\GEAR HANDLE|DOWN:Rotate/aircraft/controls/gear_handle:1
+-- sw_item_c:\white\FUEL DUMP SWITCH|GUARDED:Rotate/aircraft/controls/fuel_dump_stop_grd:0
+-- sw_item_c:\white\MANF DRAIN SWITCH|GUARDED:Rotate/aircraft/controls/fuel_manif_drain_grd:0
+-- sw_item_c:\white\EMER PWR SELECTOR|OFF:Rotate/aircraft/controls/emer_pwr:0
+-- sw_itemvoid:::::::::::::::: Power Up ::
+-- sw_item_c:\white\BATTERY SWITCH|ON & GUARD CLOSED:(Rotate/aircraft/systems/batt_sw_action:1)&&(Rotate/aircraft/controls/battery_grd:0)
+
+local cockpitEntryPowerUp = Procedure:new("COCKPIT ENTRY & POWER UP")
+cockpitEntryPowerUp:setFlightPhase(1)
+-- === Cockpit Entry
+cockpitEntryPowerUp:addItem(SimpleProcedureItem:new("=== Cockpit Entry"))
+cockpitEntryPowerUp:addItem(ProcedureItem:new("WX RADAR SYS SWITCH","OFF",FlowItem.actorFO,1,
+	function () return sysGeneral.wxSystemSwitch:getStatus() == 1 end,
+	function () sysGeneral.wxSystemSwitch:setValue(1) end))
+cockpitEntryPowerUp:addItem(ProcedureItem:new("ENGINE FUEL SWITCHES","OFF",FlowItem.actorFO,1,
+	function () return sysFuel.fuelLeverGroup:getStatus() == 0 end,
+	function () sysFuel.fuelLeverGroup:actuate(modeOff) end))
+cockpitEntryPowerUp:addItem(ProcedureItem:new("PARKING BRAKE","ON",FlowItem.actorFO,1,
+	function () return sysGeneral.parkBrakeSwitch:getStatus() == 1 end,
+	function () sysGeneral.parkBrakeSwitch:actuate(modeOn) end))
+cockpitEntryPowerUp:addItem(ProcedureItem:new("SPOILER HANDLE","RETRACT DETEND",FlowItem.actorFO,1,
+	function () return sysControls.speedBrake:getStatus() == 0 end,
+	function () sysControls.speedBrake:actuate(0) end))
+cockpitEntryPowerUp:addItem(ProcedureItem:new("FLAPS/SLAT HANDLE","UP",FlowItem.actorFO,1,
+	function () return sysControls.flapsSwitch:getStatus() == 0 end,
+	function () sysControls.flapsSwitch:setValue(0) end))
+cockpitEntryPowerUp:addItem(ProcedureItem:new("GEAR HANDLE","DOWN",FlowItem.actorFO,1,
+	function () return sysGeneral.GearSwitch:getStatus() == 1 end,
+	function () sysGeneral.GearSwitch:actuate(modeOn) end))
+cockpitEntryPowerUp:addItem(ProcedureItem:new("FUEL DUMP SWITCH","GUARDED",FlowItem.actorFO,1,
+	function () return sysFuel.fuelDumpGuard:getStatus() == 0 end,
+	function () sysFuel.fuelDumpGuard:actuate(modeOff) end))
+cockpitEntryPowerUp:addItem(ProcedureItem:new("MANF DRAIN SWITCH","GUARDED",FlowItem.actorFO,1,
+	function () return sysFuel.manifoldDrainGuard:getStatus() == 0 end,
+	function () sysFuel.manifoldDrainGuard:actuate(modeOff) end))
+cockpitEntryPowerUp:addItem(ProcedureItem:new("EMER PWR SELECTOR","OFF",FlowItem.actorFO,1,
+	function () return sysElectric.emerPwrSelector:getStatus() == 0 end,
+	function () sysElectric.emerPwrSelector:actuate(modeOff) end))
+
+cockpitEntryPowerUp:addItem(SimpleProcedureItem:new("=== Power Up"))
+cockpitEntryPowerUp:addItem(ProcedureItem:new("BATTERY SWITCH","ON & GUARD CLOSED",FlowItem.actorFO,7,
+	function () return sysElectric.batterySwitch:getStatus() == 1 and sysElectric.batteryGuard:getStatus() == 0 end,
+	function () sysElectric.batterySwitch:actuate(modeOn) sysElectric.batteryGuard:actuate(modeOff) end))
+cockpitEntryPowerUp:addItem(ProcedureItem:new("EXTERNAL ELECTRICAL POWER","AVAILABLE",FlowItem.actorFO,7,
+	function () return sysElectric.gpuAvailAnc:getStatus() == 1 end,
+	function () sysElectric.GPU:actuate(modeOn) end))
+cockpitEntryPowerUp:addItem(ProcedureItem:new("EXT PWR","PUSH",FlowItem.actorFO,1,
+	function () return sysElectric.extPWRSwitch:getStatus() == 1 end,
+	function () sysElectric.extPWRSwitch:actuate(modeOn)  end))
+cockpitEntryPowerUp:addItem(SimpleProcedureItem:new("If APU power used:",
+	function () return activePrefSet:get("aircraft:powerup_apu") == false end))
+cockpitEntryPowerUp:addItem(IndirectProcedureItem:new("  ENG/APU FIRE TEST","PUSH AND HOLD",FlowItem.actorFO,13,"eng_ext_test_1",
+	function () return get("Rotate/aircraft/controls/apu_fire_test") > 0 end,
+	function () command_begin("Rotate/aircraft/controls_c/apu_fire_test") end,
+	function () return activePrefSet:get("aircraft:powerup_apu") == false end))
+cockpitEntryPowerUp:addItem(IndirectProcedureItem:new("  ALL ENG FIRE HANDLE LIGHTS","ILLUMINATED",FlowItem.actorFO,1,"eng_ext_test_2",
+	function () return sysEngines.engFireLights:getStatus() > 0 end,
+	function () command_end("Rotate/aircraft/controls_c/apu_fire_test") end,
+	function () return activePrefSet:get("aircraft:powerup_apu") == false end))
+cockpitEntryPowerUp:addItem(IndirectProcedureItem:new("  APU FIRE HANDLE LIGHT","ILLUMINATED",FlowItem.actorFO,1,"apu_fire_test",
+	function () return sysEngines.apuFireLight:getStatus() > 0 end,nil,
+	function () return activePrefSet:get("aircraft:powerup_apu") == false end))
+cockpitEntryPowerUp:addItem(ProcedureItem:new("  APU PWR SWITCH","PUSH",FlowItem.actorFO,1,
+	function () return sysElectric.apuPwrSwitch:getStatus() > 0 end,
+	function () sysElectric.apuPwrSwitch:actuate(modeOn) end,
+	function () return activePrefSet:get("aircraft:powerup_apu") == false end))
+cockpitEntryPowerUp:addItem(SimpleProcedureItem:new("  APU PWR ON light blinking:",
+	function () return activePrefSet:get("aircraft:powerup_apu") == false end))
+cockpitEntryPowerUp:addItem(ProcedureItem:new("  APU POWER","AVAILABLE",FlowItem.actorFO,1,
+	function () return get("Rotate/aircraft/systems/elec_apu_avail") == 2 end,nil,
+	function () return activePrefSet:get("aircraft:powerup_apu") == false end))
+cockpitEntryPowerUp:addItem(ProcedureItem:new("APU AIR","ON",FlowItem.actorFO,1,
+	function () return sysAir.apuAir:getStatus() == 1 end,
+	function () sysAir.apuAir:actuate(modeOn) end,
+	function () return activePrefSet:get("aircraft:powerup_apu") == false end))
+
+cockpitEntryPowerUp:addItem(ProcedureItem:new("AC, DC OFF LIGHTS","EXTINGUISHED",FlowItem.actorFO,1,
+	function () return sysElectric.dcOffLights:getStatus() == 0 and sysElectric.acOffLights:getStatus() == 0 end))
+cockpitEntryPowerUp:addItem(ProcedureItem:new("GEN ARM LIGHTS","ILLUMINATED",FlowItem.actorFO,1,
+	function () return sysElectric.genArmLights:getStatus() > 0 end))
+cockpitEntryPowerUp:addItem(ProcedureItem:new("ALL BUS OFF LIGHTS","EXTINGUISHED",FlowItem.actorFO,1,
+	function () return sysElectric.acTies:getStatus() == 0 and sysElectric.dcTies:getStatus() == 0 end))
+	
+	
+	
+-- cockpitEntryPowerUp:addItem(ProcedureItem:new("TRIM AIR OFF ANNUNCIATOR","EXTINGUISHED",FlowItem.actorFO,1,
+	-- function () return sysAir.trimAirAnc:getStatus() == 0 end))
+-- cockpitEntryPowerUp:addItem(IndirectProcedureItem:new("ANNUN LT TEST","PERFORM",FlowItem.actorFO,1,"internal_lights_test",
+	-- function () return sysGeneral.ancLightTest:getStatus() > 0 end))
+-- cockpitEntryPowerUp:addItem(ProcedureItem:new("IRS NAV 1 SWITCH","ON",FlowItem.actorFO,1,
+	-- function () return sysGeneral.irsUnit1Switch:getStatus() == 1 end,
+	-- function () sysGeneral.irsUnit1Switch:actuate(modeOn) end))
+-- cockpitEntryPowerUp:addItem(ProcedureItem:new("IRS NAV 2 SWITCH","ON",FlowItem.actorFO,1,
+	-- function () return sysGeneral.irsUnit2Switch:getStatus() == 1 end,
+	-- function () sysGeneral.irsUnit2Switch:actuate(modeOn) end))
+-- cockpitEntryPowerUp:addItem(ProcedureItem:new("IRS NAV AUX SWITCH","ON",FlowItem.actorFO,1,
+	-- function () return sysGeneral.irsUnit3Switch:getStatus() == 1 end,
+	-- function () sysGeneral.irsUnit3Switch:actuate(modeOn) end))
+-- cockpitEntryPowerUp:addItem(IndirectProcedureItem:new("CARGO FIRE TEST","STARTED WITH IRS NAV",FlowItem.actorFO,1,"cargo_fire_test",
+	-- function () return sysGeneral.cargoFireTestAnc:getStatus() > 0 end))
+
+-- ======== COCKPIT PREPARATION PROCEDURE 1 (F/O) ========
 -- TRIM AIR OFF ANNUNCIATOR.............EXTINGUISHED (F/O)
 -- ANNUN LT TEST.............................PERFORM (F/O)
 -- IRS NAV 1 SWITCH..............................NAV (F/O)
 -- IRS NAV 2 SWITCH..............................NAV (F/O)
 -- IRS NAV AUX SWITCH............................NAV (F/O)
 -- CARGO FIRE TEST..............STARTED WITH IRS NAV (F/O)
-
-local cockpitPrepProcFO = kcProcedure:new("COCKPIT PREPARATION PROCEDURE 1 (F/O)")
-cockpitPrepProcFO:addItem(kcProcedureItem:new("WX RADAR SYS SWITCH","OFF",kcFlowItem.actorFO,1,
-	function () return sysGeneral.wxSystemSwitch:getStatus() == 1 end,
-	function () sysGeneral.wxSystemSwitch:setValue(1) end))
-cockpitPrepProcFO:addItem(kcProcedureItem:new("FUEL SWITCHES","OFF",kcFlowItem.actorFO,1,
-	function () return sysFuel.fuelLeverGroup:getStatus() == 0 end,
-	function () sysFuel.fuelLeverGroup:actuate(modeOff) end))
-cockpitPrepProcFO:addItem(kcProcedureItem:new("PARKING BRAKE","ON",kcFlowItem.actorFO,1,
-	function () return sysGeneral.parkBrakeSwitch:getStatus() == 1 end,
-	function () sysGeneral.parkBrakeSwitch:actuate(modeOn) end))
-cockpitPrepProcFO:addItem(kcProcedureItem:new("SPOILER HANDLE","RETRACT DETEND",kcFlowItem.actorFO,1,
-	function () return sysControls.speedBrake:getStatus() == 0 end,
-	function () sysControls.speedBrake:actuate(modeOff) end))
-cockpitPrepProcFO:addItem(kcProcedureItem:new("FLAPS/SLAT HANDLE","UP",kcFlowItem.actorFO,1,
-	function () return sysControls.flapsSwitch:getStatus() == 0 end,
-	function () sysControls.flapsSwitch:setValue(0) end))
-cockpitPrepProcFO:addItem(kcProcedureItem:new("GEAR HANDLE","DOWN",kcFlowItem.actorFO,1,
-	function () return sysGeneral.GearSwitch:getStatus() == 1 end,
-	function () sysGeneral.GearSwitch:actuate(modeOn) end))
-cockpitPrepProcFO:addItem(kcProcedureItem:new("FUEL DUMP SWITCH","GUARDED",kcFlowItem.actorFO,1,
-	function () return sysFuel.fuelDumpGuard:getStatus() == 0 end,
-	function () sysFuel.fuelDumpGuard:actuate(modeOff) end))
-cockpitPrepProcFO:addItem(kcProcedureItem:new("MANF DRAIN SWITCH","GUARDED",kcFlowItem.actorFO,1,
-	function () return sysFuel.manifoldDrainGuard:getStatus() == 0 end,
-	function () sysFuel.manifoldDrainGuard:actuate(modeOff) end))
-cockpitPrepProcFO:addItem(kcProcedureItem:new("EMER PWR SELECTOR","OFF",kcFlowItem.actorFO,1,
-	function () return sysElectric.emerPwrSelector:getStatus() == 0 end,
-	function () sysElectric.emerPwrSelector:actuate(modeOff) end))
-cockpitPrepProcFO:addItem(kcProcedureItem:new("BATTERY SWITCH","ON & GUARD CLOSED",kcFlowItem.actorFO,1,
-	function () return sysElectric.batterySwitch:getStatus() == 1 and sysElectric.batteryGuard:getStatus() == 0 end,
-	function () sysElectric.batterySwitch:actuate(modeOn) sysElectric.batteryGuard:actuate(modeOff) end))
-
-cockpitPrepProcFO:addItem(kcSimpleProcedureItem:new("If external power is needed:",
-	function () return activePrefSet:get("aircraft:powerup_apu") == true end))
-cockpitPrepProcFO:addItem(kcProcedureItem:new("  EXTERNAL ELECTRICAL POWER","AVAILABLE",kcFlowItem.actorFO,1,
-	function () return sysElectric.gpuAvailAnc:getStatus() == 1 end,
-	function () sysElectric.GPU:actuate(modeOn) end,
-	function () return activePrefSet:get("aircraft:powerup_apu") == true end))
-cockpitPrepProcFO:addItem(kcProcedureItem:new("  EXT PWR","PUSH",kcFlowItem.actorFO,1,
-	function () return sysElectric.extPWRSwitch:getStatus() == 1 end,
-	function () sysElectric.extPWRSwitch:actuate(modeOn)  end,
-	function () return activePrefSet:get("aircraft:powerup_apu") == true end))
-cockpitPrepProcFO:addItem(kcSimpleProcedureItem:new("If APU power used:",
-	function () return activePrefSet:get("aircraft:powerup_apu") == false end))
-cockpitPrepProcFO:addItem(kcIndirectProcedureItem:new("  ENG/APU FIRE TEST","PUSH AND HOLD",kcFlowItem.actorFO,1,"eng_ext_test_1",
-	function () return get("Rotate/aircraft/controls/apu_fire_test") > 0 end,nil,
-	function () return activePrefSet:get("aircraft:powerup_apu") == false end))
-cockpitPrepProcFO:addItem(kcIndirectProcedureItem:new("  ALL ENG FIRE HANDLE LIGHTS","ILLUMINATED",kcFlowItem.actorFO,1,"eng_ext_test_2",
-	function () return sysEngines.engFireLights:getStatus() > 0 end,nil,
-	function () return activePrefSet:get("aircraft:powerup_apu") == false end))
-cockpitPrepProcFO:addItem(kcIndirectProcedureItem:new("  APU FIRE HANDLE LIGHT","ILLUMINATED",kcFlowItem.actorFO,1,"apu_fire_test",
-	function () return sysEngines.apuFireLight:getStatus() > 0 end,nil,
-	function () return activePrefSet:get("aircraft:powerup_apu") == false end))
-cockpitPrepProcFO:addItem(kcProcedureItem:new("  APU PWR SWITCH","PUSH",kcFlowItem.actorFO,1,
-	function () return sysElectric.apuPwrSwitch:getStatus() > 0 end,
-	function () sysElectric.apuPwrSwitch:actuate(modeOn) end,
-	function () return activePrefSet:get("aircraft:powerup_apu") == false end))
-cockpitPrepProcFO:addItem(kcSimpleProcedureItem:new("  APU PWR ON light blinking:",
-	function () return activePrefSet:get("aircraft:powerup_apu") == false end))
-cockpitPrepProcFO:addItem(kcProcedureItem:new("  APU POWER","AVAILABLE",kcFlowItem.actorFO,1,
-	function () return get("Rotate/aircraft/systems/elec_apu_avail") == 2 end,nil,
-	function () return activePrefSet:get("aircraft:powerup_apu") == false end))
-
-cockpitPrepProcFO:addItem(kcProcedureItem:new("AC, DC OFF LIGHTS","EXTINGUISHED",kcFlowItem.actorFO,1,
-	function () return sysElectric.dcOffLights:getStatus() == 0 and sysElectric.acOffLights:getStatus() == 0 end))
-cockpitPrepProcFO:addItem(kcProcedureItem:new("GEN ARM LIGHTS","ILLUMINATED",kcFlowItem.actorFO,1,
-	function () return sysElectric.genArmLights:getStatus() > 0 end))
-cockpitPrepProcFO:addItem(kcProcedureItem:new("ALL BUS OFF LIGHTS","EXTINGUISHED",kcFlowItem.actorFO,1,
-	function () return sysElectric.acTies:getStatus() == 0 and sysElectric.dcTies:getStatus() == 0 end))
-cockpitPrepProcFO:addItem(kcProcedureItem:new("APU AIR","ON",kcFlowItem.actorFO,1,
-	function () return sysAir.apuAir:getStatus() == 1 end,
-	function () sysAir.apuAir:actuate(modeOn) end,
-	function () return activePrefSet:get("aircraft:powerup_apu") == false end))
-cockpitPrepProcFO:addItem(kcProcedureItem:new("TRIM AIR OFF ANNUNCIATOR","EXTINGUISHED",kcFlowItem.actorFO,1,
-	function () return sysAir.trimAirAnc:getStatus() == 0 end))
-cockpitPrepProcFO:addItem(kcIndirectProcedureItem:new("ANNUN LT TEST","PERFORM",kcFlowItem.actorFO,1,"internal_lights_test",
-	function () return sysGeneral.ancLightTest:getStatus() > 0 end))
-cockpitPrepProcFO:addItem(kcProcedureItem:new("IRS NAV 1 SWITCH","ON",kcFlowItem.actorFO,1,
-	function () return sysGeneral.irsUnit1Switch:getStatus() == 1 end,
-	function () sysGeneral.irsUnit1Switch:actuate(modeOn) end))
-cockpitPrepProcFO:addItem(kcProcedureItem:new("IRS NAV 2 SWITCH","ON",kcFlowItem.actorFO,1,
-	function () return sysGeneral.irsUnit2Switch:getStatus() == 1 end,
-	function () sysGeneral.irsUnit2Switch:actuate(modeOn) end))
-cockpitPrepProcFO:addItem(kcProcedureItem:new("IRS NAV AUX SWITCH","ON",kcFlowItem.actorFO,1,
-	function () return sysGeneral.irsUnit3Switch:getStatus() == 1 end,
-	function () sysGeneral.irsUnit3Switch:actuate(modeOn) end))
-cockpitPrepProcFO:addItem(kcIndirectProcedureItem:new("CARGO FIRE TEST","STARTED WITH IRS NAV",kcFlowItem.actorFO,1,"cargo_fire_test",
-	function () return sysGeneral.cargoFireTestAnc:getStatus() > 0 end))
 
 
 -- ======== COCKPIT PREPARATION PROCEDURE 2 (F/O) ========
@@ -230,74 +270,251 @@ cockpitPrepProcFO:addItem(kcIndirectProcedureItem:new("CARGO FIRE TEST","STARTED
 
 -- == Final cockpit prep (BOTH)
 
-local cockpitPrepProcFO2 = kcProcedure:new("COCKPIT PREPARATION PROCEDURE 2 (F/O)")
-cockpitPrepProcFO2:addItem(kcIndirectProcedureItem:new("VOICE RECODER","TEST",kcFlowItem.actorFO,1,"voice_recorder_test",
-	function () return sysGeneral.vrcTest:getStatus() > 0 end))
-cockpitPrepProcFO2:addItem(kcProcedureItem:new("ENG IGN OFF LIGHT","ILLUMINATED",kcFlowItem.actorFO,1,
-	function () return sysEngines.engIgnOffLight:getStatus() > 0 end))
-cockpitPrepProcFO2:addItem(kcSimpleProcedureItem:new("Before performing HYD PRESS TEST contact ground crew"))
-cockpitPrepProcFO2:addItem(kcIndirectProcedureItem:new("HYD PRESS TEST","PUSH",kcFlowItem.actorFO,1,"hyd_press_test",
-	function () return sysHydraulic.hydTestSwitch:getStatus() > 0 end))
-cockpitPrepProcFO2:addItem(kcProcedureItem:new("ENG GEN DRIVE SWITCHES","GUARDED",kcFlowItem.actorFO,1,
-	function () return sysElectric.engDriveGuards:getStatus() == 0 end,
-	function () sysElectric.engDriveGuards:actuate(modeOff) end))
-cockpitPrepProcFO2:addItem(kcProcedureItem:new("EMER PWR SELECTOR","ARM",kcFlowItem.actorFO,1,
-	function () return sysElectric.emerPwrSelector:getStatus() == 1 end,
-	function () sysElectric.emerPwrSelector:actuate(modeOn) end))
-cockpitPrepProcFO2:addItem(kcProcedureItem:new("EMER PWR ON LIGHT","OFF",kcFlowItem.actorFO,1,
-	function () return sysElectric.emerPwrOnLight:getStatus() == 0 end))
-cockpitPrepProcFO2:addItem(kcSimpleProcedureItem:new("  PWR ON light will estinguish after 15 sec"))
-cockpitPrepProcFO2:addItem(kcProcedureItem:new("AIR MASKS SWITCH","GUARDED",kcFlowItem.actorFO,1,
-	function () return sysAir.maskGuard:getStatus() == 0 end,
-	function () sysAir.maskGuard:actuate(modeOff) end))
-cockpitPrepProcFO2:addItem(kcProcedureItem:new("ALL FUEL PUMPS","OFF",kcFlowItem.actorFO,1,
-	function () return sysFuel.fuelPumpGroup:getStatus() == 3 end,nil,
-	function () return activePrefSet:get("aircraft:powerup_apu") == true end))
-cockpitPrepProcFO2:addItem(kcProcedureItem:new("FUEL PUMPS 1 & 3","OFF",kcFlowItem.actorFO,1,
-	function () return sysFuel.fuelPumpGroup:getStatus() == 2 end,nil,
-	function () return activePrefSet:get("aircraft:powerup_apu") == false end))
-cockpitPrepProcFO2:addItem(kcProcedureItem:new("EMER EXIT LIGHT SWITCH","ARM",kcFlowItem.actorFO,1,
-	function () return sysGeneral.emerExitSwitch:getStatus() == 1 end,
-	function () sysGeneral.emerExitSwitch:setValue(1) end))
-cockpitPrepProcFO2:addItem(kcProcedureItem:new("NO SMOKE SIGNS","ON",kcFlowItem.actorFO,1,
-	function () return sysGeneral.noSmokeSigns:getStatus() == 2 end,
-	function () sysGeneral.noSmokeSigns:setValue(2) end))
-cockpitPrepProcFO2:addItem(kcProcedureItem:new("SEAT BELTS SIGNS","AUTO",kcFlowItem.actorFO,1,
-	function () return sysGeneral.seatBeltSigns:getStatus() == 1 end,
-	function () sysGeneral.seatBeltSigns:setValue(1) end))
-cockpitPrepProcFO2:addItem(kcSimpleProcedureItem:new("Exterior Lights"))
-cockpitPrepProcFO2:addItem(kcProcedureItem:new("LANDING LIGHTS","RETRACTED",kcFlowItem.actorFO,1,
-	function () return sysLights.landLightGroup:getStatus() == 0 end,
-	function () sysLights.landLightGroup:actuate(modeOff) end))
-cockpitPrepProcFO2:addItem(kcProcedureItem:new("NOSE LIGHTS","OFF",kcFlowItem.actorFO,1,
-	function () return sysLights.taxiSwitch:getStatus() == 0 end,
-	function () sysLights.taxiSwitch:actuate(modeOff) end))
-cockpitPrepProcFO2:addItem(kcProcedureItem:new("RWY LIGHTS","OFF",kcFlowItem.actorFO,1,
-	function () return sysLights.rwyLightGroup:getStatus() == 0 end,
-	function () sysLights.rwyLightGroup:actuate(modeOff) end))
-cockpitPrepProcFO2:addItem(kcProcedureItem:new("NAV LIGHTS","OFF",kcFlowItem.actorFO,1,
-	function () return sysLights.positionSwitch:getStatus() == 0 end,
-	function () sysLights.positionSwitch:actuate(modeOff) end))
-cockpitPrepProcFO2:addItem(kcProcedureItem:new("LOGO LIGHTS","OFF",kcFlowItem.actorFO,1,
-	function () return sysLights.logoSwitch:getStatus() == 0 end,
-	function () sysLights.logoSwitch:actuate(modeOff) end,
-	function () return kc_is_daylight() == false end))
-cockpitPrepProcFO2:addItem(kcProcedureItem:new("LOGO LIGHTS","ON",kcFlowItem.actorFO,1,
-	function () return sysLights.logoSwitch:getStatus() == 1 end,
-	function () sysLights.logoSwitch:actuate(modeOn) end,
-	function () return kc_is_daylight() == true end))
-cockpitPrepProcFO2:addItem(kcProcedureItem:new("BEACON LIGHTS","OFF",kcFlowItem.actorFO,1,
-	function () return sysLights.beaconSwitch:getStatus() == 0 end,
-	function () sysLights.beaconSwitch:actuate(modeOff) end))
-cockpitPrepProcFO2:addItem(kcProcedureItem:new("H-INT LIGHTS","OFF",kcFlowItem.actorFO,1,
-	function () return sysLights.strobesSwitch:getStatus() == 0 end,
-	function () sysLights.strobesSwitch:actuate(modeOff) end))
+-- local cockpitEntryPowerUp2 = kcProcedure:new("COCKPIT PREPARATION PROCEDURE 2 (F/O)")
+-- cockpitEntryPowerUp2:addItem(IndirectProcedureItem:new("VOICE RECODER","TEST",FlowItem.actorFO,1,"voice_recorder_test",
+	-- function () return sysGeneral.vrcTest:getStatus() > 0 end))
+-- cockpitEntryPowerUp2:addItem(ProcedureItem:new("ENG IGN OFF LIGHT","ILLUMINATED",FlowItem.actorFO,1,
+	-- function () return sysEngines.engIgnOffLight:getStatus() > 0 end))
+-- cockpitEntryPowerUp2:addItem(SimpleProcedureItem:new("Before performing HYD PRESS TEST contact ground crew"))
+-- cockpitEntryPowerUp2:addItem(IndirectProcedureItem:new("HYD PRESS TEST","PUSH",FlowItem.actorFO,1,"hyd_press_test",
+	-- function () return sysHydraulic.hydTestSwitch:getStatus() > 0 end))
+-- cockpitEntryPowerUp2:addItem(ProcedureItem:new("ENG GEN DRIVE SWITCHES","GUARDED",FlowItem.actorFO,1,
+	-- function () return sysElectric.engDriveGuards:getStatus() == 0 end,
+	-- function () sysElectric.engDriveGuards:actuate(modeOff) end))
+-- cockpitEntryPowerUp2:addItem(ProcedureItem:new("EMER PWR SELECTOR","ARM",FlowItem.actorFO,1,
+	-- function () return sysElectric.emerPwrSelector:getStatus() == 1 end,
+	-- function () sysElectric.emerPwrSelector:actuate(modeOn) end))
+-- cockpitEntryPowerUp2:addItem(ProcedureItem:new("EMER PWR ON LIGHT","OFF",FlowItem.actorFO,1,
+	-- function () return sysElectric.emerPwrOnLight:getStatus() == 0 end))
+-- cockpitEntryPowerUp2:addItem(SimpleProcedureItem:new("  PWR ON light will estinguish after 15 sec"))
+-- cockpitEntryPowerUp2:addItem(ProcedureItem:new("AIR MASKS SWITCH","GUARDED",FlowItem.actorFO,1,
+	-- function () return sysAir.maskGuard:getStatus() == 0 end,
+	-- function () sysAir.maskGuard:actuate(modeOff) end))
+-- cockpitEntryPowerUp2:addItem(ProcedureItem:new("ALL FUEL PUMPS","OFF",FlowItem.actorFO,1,
+	-- function () return sysFuel.fuelPumpGroup:getStatus() == 3 end,nil,
+	-- function () return activePrefSet:get("aircraft:powerup_apu") == true end))
+-- cockpitEntryPowerUp2:addItem(ProcedureItem:new("FUEL PUMPS 1 & 3","OFF",FlowItem.actorFO,1,
+	-- function () return sysFuel.fuelPumpGroup:getStatus() == 2 end,nil,
+	-- function () return activePrefSet:get("aircraft:powerup_apu") == false end))
+-- cockpitEntryPowerUp2:addItem(ProcedureItem:new("EMER EXIT LIGHT SWITCH","ARM",FlowItem.actorFO,1,
+	-- function () return sysGeneral.emerExitSwitch:getStatus() == 1 end,
+	-- function () sysGeneral.emerExitSwitch:setValue(1) end))
+-- cockpitEntryPowerUp2:addItem(ProcedureItem:new("NO SMOKE SIGNS","ON",FlowItem.actorFO,1,
+	-- function () return sysGeneral.noSmokeSigns:getStatus() == 2 end,
+	-- function () sysGeneral.noSmokeSigns:setValue(2) end))
+-- cockpitEntryPowerUp2:addItem(ProcedureItem:new("SEAT BELTS SIGNS","AUTO",FlowItem.actorFO,1,
+	-- function () return sysGeneral.seatBeltSigns:getStatus() == 1 end,
+	-- function () sysGeneral.seatBeltSigns:setValue(1) end))
+-- cockpitEntryPowerUp2:addItem(SimpleProcedureItem:new("Exterior Lights"))
+-- cockpitEntryPowerUp2:addItem(ProcedureItem:new("LANDING LIGHTS","RETRACTED",FlowItem.actorFO,1,
+	-- function () return sysLights.landLightGroup:getStatus() == 0 end,
+	-- function () sysLights.landLightGroup:actuate(modeOff) end))
+-- cockpitEntryPowerUp2:addItem(ProcedureItem:new("NOSE LIGHTS","OFF",FlowItem.actorFO,1,
+	-- function () return sysLights.taxiSwitch:getStatus() == 0 end,
+	-- function () sysLights.taxiSwitch:actuate(modeOff) end))
+-- cockpitEntryPowerUp2:addItem(ProcedureItem:new("RWY LIGHTS","OFF",FlowItem.actorFO,1,
+	-- function () return sysLights.rwyLightGroup:getStatus() == 0 end,
+	-- function () sysLights.rwyLightGroup:actuate(modeOff) end))
+-- cockpitEntryPowerUp2:addItem(ProcedureItem:new("NAV LIGHTS","OFF",FlowItem.actorFO,1,
+	-- function () return sysLights.positionSwitch:getStatus() == 0 end,
+	-- function () sysLights.positionSwitch:actuate(modeOff) end))
+-- cockpitEntryPowerUp2:addItem(ProcedureItem:new("LOGO LIGHTS","OFF",FlowItem.actorFO,1,
+	-- function () return sysLights.logoSwitch:getStatus() == 0 end,
+	-- function () sysLights.logoSwitch:actuate(modeOff) end,
+	-- function () return kc_is_daylight() == false end))
+-- cockpitEntryPowerUp2:addItem(ProcedureItem:new("LOGO LIGHTS","ON",FlowItem.actorFO,1,
+	-- function () return sysLights.logoSwitch:getStatus() == 1 end,
+	-- function () sysLights.logoSwitch:actuate(modeOn) end,
+	-- function () return kc_is_daylight() == true end))
+-- cockpitEntryPowerUp2:addItem(ProcedureItem:new("BEACON LIGHTS","OFF",FlowItem.actorFO,1,
+	-- function () return sysLights.beaconSwitch:getStatus() == 0 end,
+	-- function () sysLights.beaconSwitch:actuate(modeOff) end))
+-- cockpitEntryPowerUp2:addItem(ProcedureItem:new("H-INT LIGHTS","OFF",FlowItem.actorFO,1,
+	-- function () return sysLights.strobesSwitch:getStatus() == 0 end,
+	-- function () sysLights.strobesSwitch:actuate(modeOff) end))
+
+-- BEFORE START Checklist
+ -- Aircraft log C Reviewed
+ -- Fuel quantity F
+ -- C
+ -- ________
+ -- Released with _____
+ -- *Oxygen CF
+ -- IRS C
+ -- Altimeters CF ________
+ -- Status page C Checked
+ -- *Takeoff warning C Checked
+ -- *Radar C Checked
+ -- _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+ -- >Custom forms F On board (if req)
+ -- Aux pump C On
+ -- Parking brake C Set/Released
+ -- Windows CF Closed & locked
+ -- Doors C Closed
+ -- Beacon C On
+ -- Ignition C A/B
+ -- Fuel Manual F 1, 2, 3 pumps On
+ -- F L/R aux trans Off
+ -- F Tail tnk trans Off
+
+
+ -- AFTER START Checklist
+ -- Anti-ice C Off/On
+ -- >APU/APU Air F Off
+ -- Hyd Manual F Aux pumps Off
+ -- F 1, 2, 3 L pumps Off
+ -- F 1, 2, 3 R pumps Ck Off
+
+
+ -- BEFORE TAKEOFF
+ -- Flaps F
+ -- C
+ -- ________
+ -- Checked
+ -- Spoilers F Armed
+ -- Flight controls CF Checked
+ -- Trim F
+ -- C
+ -- Zero, Zero, ______
+ -- Checked
+ -- Briefing C Complete
+ -- >Seat belts ALL Fastened
+ -- _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+ -- Hyd Manual F 1-3, 2-3 RPMs On
+ -- V Speeds CF Checked
+ -- Radar C Off/On
+ -- EAD CF Checked
+ -- FCP C ____ , ____
+ -- >Lights F On
+
+ -- AFTER TAKEOFF
+ -- >Gear PM Up & lights out
+ -- >Flaps & slats PM Up & retracted
+ -- >Spoilers PM Disarmed
+ -- >Auto brakes PM Off/Not installed
+ -- >Flap T. O. sel PM 15/0 deg Stop
+ -- >EAD PM Checked
+ -- Hyd Manual PM 1-3, 2-3 RMPs Off
+ -- Fuel Manual PM L/R aux trans Off/On
+ -- PM Tail tnk trans Off/On
+ -- PM Fill valves Off/Arm
+ -- PM Tnk 2 trans Off/On
+ -- _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+ -- Altimeters CF ______
+
+-- IN RANGE
+ -- Altimeters CF _______
+ -- >Windshld anti-ice PM On
+ -- >Seat belt sign PM On
+ -- >Wing&Rwy lights PM On
+ -- >Status page PM Checked
+ -- >Seat belts ALL Fastened
+ -- Hyd Manual PM 1-3, 2-3 RMPs On
+ -- Fuel Manual PM L/R aux trans Off
+ -- PM Tail tnk trans Off
+
+ -- APPROACH
+ -- Briefing C Complete
+ -- Altimeters CF _______
+ -- Minimums CF _______RA/BARO
+ -- Navaids PM Checked
+
+ -- BEFORE LANDING
+ -- >Lights PM As required
+ -- Spoilers PM
+ -- PF
+ -- Armed
+ -- Checked
+ -- Autobrakes PM _____/Not installed
+ -- Gear PM
+ -- PF
+ -- Down, In, $/3 Green
+ -- Checked
+ -- Flaps PM
+ -- PF
+ -- _______
+ -- Checked
+
+-- AFTER LANDING
+ -- >APU F Off/On
+ -- >Lights F As required
+ -- >Stab trim F 3/2 deg ANU
+ -- >Flaps & slats F Up & retracted
+ -- >Autobrakes F Off/Not installed
+ -- >Spoilers F Retracted
+ -- >Radar F Off
+ -- >Oxygen F Checked
+
+-- SHUT DOWN
+ -- >IRS C Off
+ -- >Emergency pwr C Off
+ -- >Anti-ice C Off
+ -- >Windshld anti-ice C Off
+ -- >Defog C Off
+ -- >Ignition override C Off
+ -- >Emergency lights C Off
+ -- >Seat belt sign C Off
+ -- >Beacon C Off
+ -- >Fuel levers C Off
+ -- >Status page C Off
+ -- >Hyd Manual C 1-3, 2-3 RMPs
+ -- >Fuel Manual C 1, 2, 3 Pumps Off
+ -- >Debrief C Complete/Deferred
+
+-- ======== STATES =============
+
+-- ================= Cold & Dark State ==================
+local coldAndDarkProc = State:new("COLD AND DARK","securing the aircraft","ready for secure checklist")
+coldAndDarkProc:setFlightPhase(1)
+coldAndDarkProc:addItem(ProcedureItem:new("OVERHEAD TOP","SET","SYS",0,true,
+	function () 
+		kc_macro_state_cold_and_dark()
+		if activePrefSet:get("general:sges") == true then
+			kc_macro_start_sges_sequence()
+		end
+		getActiveSOP():setActiveFlowIndex(1)
+	end))
 	
+-- ================= Turn Around State ==================
+local turnAroundProc = State:new("AIRCRAFT TURN AROUND","setting up the aircraft","aircraft configured for turn around")
+turnAroundProc:setFlightPhase(18)
+turnAroundProc:addItem(ProcedureItem:new("OVERHEAD TOP","SET","SYS",0,true,
+	function () 
+		-- kc_macro_state_turnaround()
+		-- if activePrefSet:get("general:sges") == true then
+			-- kc_macro_start_sges_sequence()
+		-- end
+	end))
+turnAroundProc:addItem(ProcedureItem:new("GPU","ON BUS","SYS",0,true,
+	function () 
+		-- command_once("laminar/B738/toggle_switch/gpu_dn")
+		-- electricalPowerUpProc:setState(Flow.FINISH)
+		-- prelPreflightProc:setState(Flow.FINISH)
+		-- getActiveSOP():setActiveFlowIndex(3)
+	end))
+
+-- ============= Background Flow ==============
+local backgroundFlow = Background:new("","","")
+
+-- kc_procvar_initialize_bool("toctest", false) -- B738 takeoff config test
+
+backgroundFlow:addItem(BackgroundProcedureItem:new("","","SYS",0,
+	function () 
+		-- if kc_procvar_get("toctest") == true then 
+			-- kc_bck_b738_toc_test("toctest")
+		-- end
+	end))
 
 -- ============  =============
 -- add the checklists and procedures to the active sop
--- activeSOP:addProcedure(cockpitPrepProcFO)
-activeSOP:addProcedure(cockpitPrepProcFO2)
+activeSOP:addProcedure(cockpitEntryPowerUp)
+
+-- =========== States ===========
+-- activeSOP:addState(turnAroundProc)
+activeSOP:addState(coldAndDarkProc)
+
+-- ==== Background Flow ====
+activeSOP:addBackground(backgroundFlow)
 
 function getActiveSOP()
 	return activeSOP

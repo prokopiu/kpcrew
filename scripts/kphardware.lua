@@ -45,9 +45,9 @@ end
 if PLANE_ICAO == "C750" and PLANE_TAILNUMBER == "N750XP" then
 	kh_acf_icao = "C750"
 end
--- if PLANE_ICAO == "MD11" then
-	-- kh_acf_icao = "MD11"
--- end
+if PLANE_ICAO == "MD11" then
+	kh_acf_icao = "MD11"
+end
 -- if PLANE_ICAO == "B732" then
 	-- kh_acf_icao = "B732"
 -- end
