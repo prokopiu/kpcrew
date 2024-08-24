@@ -51,10 +51,11 @@ activeSOP = SOP:new("FlightFactor A320 SOP")
 
 -- ============ PRELIMINARY COCKPIT PREP (PM) ============
 -- ==== AIRCRAFT SETUP
+-- PARK BRAKE..SET
 -- ENGINE MASTERS 1 & 2.........................OFF   (PM)
 -- ENGINE MODE SELECTOR........................NORM   (PM)
--- WEATHER RADAR................................OFF   (PM)
 -- LANDING GEAR LEVER..........................DOWN   (PM)
+-- WEATHER RADAR................................OFF   (PM)
 -- BOTH WIPER SELECTORS.........................OFF   (PM)
 
 -- ==== BATTERY CHECK & EXTERNAL POWER

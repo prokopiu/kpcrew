@@ -64,6 +64,9 @@ testProc:setFlightPhase(0)
 -- ============== COCKPIT ENTRY & POWER UP ===============
 
 -- === Cockpit Entry
+-- All paper work on board and checked
+-- M E L and Technical Logbook checked
+-- CIRCUIT BREAKERS.....................CHECK ALL IN (F/O)
 -- WX RADAR SYS SWITCH...........................OFF (F/O)
 -- FUEL SWITCHES.................................OFF (F/O)
 -- PARKING BRAKE..................................ON (F/O)
@@ -76,10 +79,10 @@ testProc:setFlightPhase(0)
 -- 
 -- === Power Up
 -- BATTERY SWITCH..................ON & GUARD CLOSED (F/O)
--- If External Power used
---   EXTERNAL ELECTRICAL POWER.............AVAILABLE (F/O)
---   EXT PWR....................................PUSH (F/O)
---   EXT PWR ON LIGHT..............CHECK ILLUMINATED (F/O)
+-- EXTERNAL ELECTRICAL POWER...............AVAILABLE (F/O)
+-- EXT PWR......................................PUSH (F/O)
+-- EXT PWR ON LIGHT................CHECK ILLUMINATED (F/O)
+--
 -- If APU Power used
 --   ENG/APU FIRE TEST..........................PUSH (F/O)
 --   ALL ENG FIRE HANDLE LIGHTS..........ILLUMINATED (F/O)
@@ -97,6 +100,9 @@ testProc:setFlightPhase(0)
 -- sw_checklist:COCKPIT ENTRY & POWER UP:COCKPIT ENTRY & POWER UP
 -- #########
 -- sw_itemvoid:::::::::::::::: Cockpit Entry ::
+-- sw_itemvoid:All paper work on board and checked
+-- sw_itemvoid:M E L and Technical Logbook checked
+-- sw_item_c:\white\CIRCUIT BREAKERS|CHECK ALL IN:1:1
 -- sw_item_c:\white\WX RADAR SYS SWITCH|OFF:Rotate/aircraft/controls/wx_sys:1
 -- sw_item_c:\white\ENGINE FUEL SWITCHES|OFF:(Rotate/aircraft/controls/eng_fuel_1:0)&&(Rotate/aircraft/controls/eng_fuel_2:0)&&(Rotate/aircraft/controls/eng_fuel_3:0)
 -- sw_item_c:\white\PARKING BRAKE|ON:Rotate/aircraft/controls/park_brake:1
@@ -108,20 +114,36 @@ testProc:setFlightPhase(0)
 -- sw_item_c:\white\EMER PWR SELECTOR|OFF:Rotate/aircraft/controls/emer_pwr:0
 -- sw_itemvoid:::::::::::::::: Power Up ::
 -- sw_item_c:\white\BATTERY SWITCH|ON & GUARD CLOSED:(Rotate/aircraft/systems/batt_sw_action:1)&&(Rotate/aircraft/controls/battery_grd:0)
+-- sw_item_c:\white\EXTERNAL ELECTRICAL POWER|AVAILABLE:Rotate/aircraft/systems/elec_ext_avail:1
+-- sw_item_c:\white\EXT PWR|PUSH:Rotate/aircraft/systems/elec_ext_pwr_on_lt:1
+-- sw_itemvoid:If APU power used
+-- sw_item_c:\white\  ENG/APU FIRE TEST|PUSH AND HOLD:Rotate/aircraft/controls/apu_fire_test:>0
+-- sw_item_c:\white\  ALL ENG FIRE HANDLE LIGHTS|ILLUMINATED:(Rotate/aircraft/systems/fire_eng_1_alert_lt:1) && (Rotate/aircraft/systems/fire_eng_2_alert_lt:1) && (Rotate/aircraft/systems/fire_eng_3_alert_lt:1)
+-- sw_item_c:\white\  APU FIRE HANDLE LIGHT|ILLUMINATED:Rotate/aircraft/systems/fire_apu_alert_lt:>0
+-- sw_item_c:\white\  APU PWR SWITCH|PUSHRotate/aircraft/systems/elec_apu_on_lt:>0
+-- sw_itemvoid:  .. APU PWR ON light blinking
+-- sw_item_c:\white\  APU POWER|AVAILABLE:Rotate/aircraft/systems/elec_apu_avail:2
+-- sw_item_c:\white\APU AIR|ON:Rotate/aircraft/systems/air_apu_on_lt:>0
+-- sw_item_c:\white\AC & DC OFF LIGHTS|EXTINGUISHED:(Rotate/aircraft/systems/elec_dc_1_off_lt:0) && (Rotate/aircraft/systems/elec_dc_2_off_lt:0) && (Rotate/aircraft/systems/elec_dc_3_off_lt:0) && (Rotate/aircraft/systems/elec_emer_dc_l_off_lt:0) && (Rotate/aircraft/systems/elec_emer_dc_r_off_lt:0) && (Rotate/aircraft/systems/elec_dc_gs_off_lt:0)
+-- sw_item_c:\white\GEN ARM LIGHTS|ILLUMINATED:(Rotate/aircraft/systems/elec_gen2_lt:1) && (Rotate/aircraft/systems/elec_gen1_lt:1) && (Rotate/aircraft/systems/elec_gen3_lt:1)
+-- sw_item_c:\white\ALL BUS OFF LIGHTS|EXTINGUISHED:(Rotate/aircraft/systems/elec_ac_1_off_lt:0) && (Rotate/aircraft/systems/elec_ac_2_off_lt:0) && (Rotate/aircraft/systems/elec_ac_3_off_lt:0)
 
 local cockpitEntryPowerUp = Procedure:new("COCKPIT ENTRY & POWER UP")
 cockpitEntryPowerUp:setFlightPhase(1)
--- === Cockpit Entry
+
 cockpitEntryPowerUp:addItem(SimpleProcedureItem:new("=== Cockpit Entry"))
+cockpitEntryPowerUp:addItem(SimpleProcedureItem:new("All paper work on board and checked"))
+cockpitEntryPowerUp:addItem(SimpleProcedureItem:new("M E L and Technical Logbook checked"))
+cockpitEntryPowerUp:addItem(ProcedureItem:new("CIRCUIT BREAKERS","CHECK ALL IN",FlowItem.actorFO,0,true))
 cockpitEntryPowerUp:addItem(ProcedureItem:new("WX RADAR SYS SWITCH","OFF",FlowItem.actorFO,1,
 	function () return sysGeneral.wxSystemSwitch:getStatus() == 1 end,
 	function () sysGeneral.wxSystemSwitch:setValue(1) end))
 cockpitEntryPowerUp:addItem(ProcedureItem:new("ENGINE FUEL SWITCHES","OFF",FlowItem.actorFO,1,
 	function () return sysFuel.fuelLeverGroup:getStatus() == 0 end,
-	function () sysFuel.fuelLeverGroup:actuate(modeOff) end))
+	function () sysFuel.fuelLeverGroup:actuate(0) end))
 cockpitEntryPowerUp:addItem(ProcedureItem:new("PARKING BRAKE","ON",FlowItem.actorFO,1,
 	function () return sysGeneral.parkBrakeSwitch:getStatus() == 1 end,
-	function () sysGeneral.parkBrakeSwitch:actuate(modeOn) end))
+	function () sysGeneral.parkBrakeSwitch:actuate(1) end))
 cockpitEntryPowerUp:addItem(ProcedureItem:new("SPOILER HANDLE","RETRACT DETEND",FlowItem.actorFO,1,
 	function () return sysControls.speedBrake:getStatus() == 0 end,
 	function () sysControls.speedBrake:actuate(0) end))
@@ -130,27 +152,27 @@ cockpitEntryPowerUp:addItem(ProcedureItem:new("FLAPS/SLAT HANDLE","UP",FlowItem.
 	function () sysControls.flapsSwitch:setValue(0) end))
 cockpitEntryPowerUp:addItem(ProcedureItem:new("GEAR HANDLE","DOWN",FlowItem.actorFO,1,
 	function () return sysGeneral.GearSwitch:getStatus() == 1 end,
-	function () sysGeneral.GearSwitch:actuate(modeOn) end))
+	function () sysGeneral.GearSwitch:actuate(1) end))
 cockpitEntryPowerUp:addItem(ProcedureItem:new("FUEL DUMP SWITCH","GUARDED",FlowItem.actorFO,1,
 	function () return sysFuel.fuelDumpGuard:getStatus() == 0 end,
-	function () sysFuel.fuelDumpGuard:actuate(modeOff) end))
+	function () sysFuel.fuelDumpGuard:actuate(0) end))
 cockpitEntryPowerUp:addItem(ProcedureItem:new("MANF DRAIN SWITCH","GUARDED",FlowItem.actorFO,1,
 	function () return sysFuel.manifoldDrainGuard:getStatus() == 0 end,
-	function () sysFuel.manifoldDrainGuard:actuate(modeOff) end))
+	function () sysFuel.manifoldDrainGuard:actuate(0) end))
 cockpitEntryPowerUp:addItem(ProcedureItem:new("EMER PWR SELECTOR","OFF",FlowItem.actorFO,1,
 	function () return sysElectric.emerPwrSelector:getStatus() == 0 end,
-	function () sysElectric.emerPwrSelector:actuate(modeOff) end))
+	function () sysElectric.emerPwrSelector:actuate(0) end))
 
 cockpitEntryPowerUp:addItem(SimpleProcedureItem:new("=== Power Up"))
 cockpitEntryPowerUp:addItem(ProcedureItem:new("BATTERY SWITCH","ON & GUARD CLOSED",FlowItem.actorFO,7,
 	function () return sysElectric.batterySwitch:getStatus() == 1 and sysElectric.batteryGuard:getStatus() == 0 end,
-	function () sysElectric.batterySwitch:actuate(modeOn) sysElectric.batteryGuard:actuate(modeOff) end))
+	function () sysElectric.batterySwitch:actuate(1) sysElectric.batteryGuard:actuate(0) end))
 cockpitEntryPowerUp:addItem(ProcedureItem:new("EXTERNAL ELECTRICAL POWER","AVAILABLE",FlowItem.actorFO,7,
 	function () return sysElectric.gpuAvailAnc:getStatus() == 1 end,
-	function () sysElectric.GPU:actuate(modeOn) end))
+	function () sysElectric.GPU:actuate(1) end))
 cockpitEntryPowerUp:addItem(ProcedureItem:new("EXT PWR","PUSH",FlowItem.actorFO,1,
 	function () return sysElectric.extPWRSwitch:getStatus() == 1 end,
-	function () sysElectric.extPWRSwitch:actuate(modeOn)  end))
+	function () sysElectric.extPWRSwitch:actuate(1)  end))
 cockpitEntryPowerUp:addItem(SimpleProcedureItem:new("If APU power used:",
 	function () return activePrefSet:get("aircraft:powerup_apu") == false end))
 cockpitEntryPowerUp:addItem(IndirectProcedureItem:new("  ENG/APU FIRE TEST","PUSH AND HOLD",FlowItem.actorFO,13,"eng_ext_test_1",
@@ -166,7 +188,7 @@ cockpitEntryPowerUp:addItem(IndirectProcedureItem:new("  APU FIRE HANDLE LIGHT",
 	function () return activePrefSet:get("aircraft:powerup_apu") == false end))
 cockpitEntryPowerUp:addItem(ProcedureItem:new("  APU PWR SWITCH","PUSH",FlowItem.actorFO,1,
 	function () return sysElectric.apuPwrSwitch:getStatus() > 0 end,
-	function () sysElectric.apuPwrSwitch:actuate(modeOn) end,
+	function () sysElectric.apuPwrSwitch:actuate(1) end,
 	function () return activePrefSet:get("aircraft:powerup_apu") == false end))
 cockpitEntryPowerUp:addItem(SimpleProcedureItem:new("  APU PWR ON light blinking:",
 	function () return activePrefSet:get("aircraft:powerup_apu") == false end))
@@ -175,7 +197,7 @@ cockpitEntryPowerUp:addItem(ProcedureItem:new("  APU POWER","AVAILABLE",FlowItem
 	function () return activePrefSet:get("aircraft:powerup_apu") == false end))
 cockpitEntryPowerUp:addItem(ProcedureItem:new("APU AIR","ON",FlowItem.actorFO,1,
 	function () return sysAir.apuAir:getStatus() == 1 end,
-	function () sysAir.apuAir:actuate(modeOn) end,
+	function () sysAir.apuAir:actuate(1) end,
 	function () return activePrefSet:get("aircraft:powerup_apu") == false end))
 
 cockpitEntryPowerUp:addItem(ProcedureItem:new("AC, DC OFF LIGHTS","EXTINGUISHED",FlowItem.actorFO,1,

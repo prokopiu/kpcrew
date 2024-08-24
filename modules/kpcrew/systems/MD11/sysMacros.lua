@@ -26,14 +26,14 @@ function kc_macro_state_cold_and_dark()
 	sysElectric.emerPwrSelector:actuate(0)
 
 	kc_macro_lights_cold_dark()
-	-- kc_macro_doors_cold_dark()
+	kc_macro_doors_cold_dark()
 	-- kc_macro_mcp_cold_dark()
 end
 
 function kc_macro_state_turnaround()
 	logMsg("kc_macro_state_turnaround")
-	-- kc_macro_lights_preflight()
-	-- kc_macro_doors_preflight()
+	kc_macro_lights_preflight()
+	kc_macro_doors_preflight()
 	-- kc_macro_mcp_cold_dark()
 end
 

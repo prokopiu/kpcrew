@@ -5,7 +5,7 @@
 kc_acf_name 		= "Rotate MD-11"
 
 kc_TakeoffThrust 	= "RATED|DE-RATED|ASSUMED TEMPERATURE|RATED AND ASSUMED|DE-RATED AND ASSUMED"
-kc_TakeoffFlaps 	= "1|2|3|4|5"
+kc_TakeoffFlaps 	= "10|15|20|25"
 kc_TakeoffAntiice 	= "NOT REQUIRED|ENGINE ONLY|ENGINE AND WING"
 kc_TakeoffPacks 	= "ON|AUTO|OFF"
 kc_TakeoffBleeds 	= "OFF|ON|UNDER PRESSURIZED"
@@ -26,16 +26,16 @@ kc_MELIssues 		= "no M E L issues|M E L issues"
 -- FUEL FLOW PER HOUR:      5300 KG -   LBS
 -- DRY OPERATING WEIGHT   128808 KG - 283975 LBS
 
-kc_DOW 				= 128808  -- Dry Operating Weight (aka OEW)
-kc_MZFW  			= 204706  -- Maximum Zero Fuel Weight
-kc_MaxFuel 			= 117353  -- Maximum Fuel Capacity
-kc_MaxPayld 		=  75898  -- Maximum Payload to be set     *********************************************
-kc_MTOW 			= 280320  -- Maximum Takeoff Weight
-kc_MLW  			= 199580  -- Maximum Landing Weight
-kc_FFPH 			=   5300  -- Average Fuel Flow per hour
-kc_MFL1				=  18471  -- max fuel in tank left
-kc_MFL2				=  79230  -- max fuel in tank center
-kc_MFL3				=  18471  -- max fuel in tank right
+kc_DOW 				= 128808  	-- Dry Operating Weight (aka OEW)
+kc_MZFW  			= 204706  	-- Maximum Zero Fuel Weight
+kc_MaxFuel 			= 117353  	-- Maximum Fuel Capacity
+kc_MaxPayld 		=  75898  	-- Maximum Payload to be set     *********************************************
+kc_MTOW 			= 280320  	-- Maximum Takeoff Weight
+kc_MLW  			= 199580  	-- Maximum Landing Weight
+kc_FFPH 			=   5300  	-- Average Fuel Flow per hour
+kc_MFL1				=  18471  	-- max fuel in tank left
+kc_MFL2				=  79230  	-- max fuel in tank center
+kc_MFL3				=  18471  	-- max fuel in tank right
 
 kc_speeds_vs0		= 115		-- Stall Speed, Landing Configuration Vso 115 KIAS
 kc_speeds_vs1		= 136		-- Stall Speed, Clean Vs1 136 KIAS
@@ -46,15 +46,15 @@ kc_speeds_vfe		= 180		-- Maximum flaps Extended Speed Vfe 180 KIAS
 kc_speeds_vmo1		= 270		-- Maximum Operating Speed (Sea Level to 8,000 ft) Vmo 270 KIAS
 kc_speeds_vmo2		= 350		-- Maximum Operating Speed (Above 8,000 ft) Vmo 350 KIAS
 kc_speeds_vmo3		= 0.935		-- Maximum Mach Number Vmo 0.935 Mach
-kc_speeds_vle		= 210		-- Maximum Gear Operating Speed Vle 210 KIAS
-kc_speeds_vlo		= 210		-- Maximum Gear Extended Speed Vlo 210 KIAS
-kc_speeds_vfl1		= 230		-- Maximum extension speed for flaps 
-kc_speeds_vfl5		= 230
-kc_speeds_vfl10		= 210	
-kc_speeds_vfl15		= 190	
-kc_speeds_vfl20		= 170	
--- kc_speeds_vfl30		= vref+5
--- kc_speeds_vfl40		= vref+5
+kc_speeds_vle		= 230		-- Maximum Gear Operating Speed Vle 210 KIAS
+kc_speeds_vlo		= 260		-- Maximum Gear Extended Speed Vlo 210 KIAS
+
+kc_speeds_vfl15		= 255		-- Maximum extension speed for flaps 
+kc_speeds_vfl20		= 240
+kc_speeds_vfl25		= 220	
+kc_speeds_vfl28		= 210	
+kc_speeds_vfl35		= 190	
+kc_speeds_vfl50		= 175
 
 kc_show_load_button = true
 kc_show_cost_index 	= true

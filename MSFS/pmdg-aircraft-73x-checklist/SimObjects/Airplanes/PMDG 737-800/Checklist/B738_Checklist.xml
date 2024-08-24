@@ -7,6 +7,7 @@
 <!-- Copyright owner:       Precision Manuals Development Group                                                          -->
 <!-- Copyright:             This code is the sole property of Precision Manuals Development Group, Copyright (C) 2022    -->
 <!--                        Unauthorized duplication is prohibited by International Copyright Laws.                      -->
+<!-- Updated by K. Prokopiu 06.2024 for automation                                                                       -->
 <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
 <SimBase.Document Type="Checklist" version="1,0">
 	<Checklist.Checklist>
@@ -156,9 +157,9 @@ l0 0 &lt; if{ 10908 (&gt;K:ROTOR_BRAKE) l0 ++ s0 g1 }"/>
 			<Test>
 				<TestValue>
 					<Operator OpType="AND">
-						<Val Code="(L:switch_453_73X, number) 0 !="/> 
-						<Val Code="(L:switch_450_73X, number) 0 !="/> 
-						<Val Code="(L:switch_454_73X, number) 0 !="/>
+						<Val Code=" (L:switch_453_73X, number) 0 !="/> 
+						<Val Code=" (L:switch_450_73X, number) 0 !="/> 
+						<Val Code=" (L:switch_454_73X, number) 0 !="/>
 					</Operator>
 				</TestValue>
 			</Test>
@@ -208,7 +209,7 @@ l0 0 &lt; if{ 10908 (&gt;K:ROTOR_BRAKE) l0 ++ s0 g1 }"/>
 							ExpectationTT="ON"/>
 			<Test>
 				<TestValue>
-					<Val Code="(L:switch_20_73X, number) 0 =="/>
+					<Val Code="(L:switch_17_73X, number) 0 =="/>
 				</TestValue>
 				<Action Copilot="True" Condition="TestValueFalse" Once="true" Code="1701 (>K:ROTOR_BRAKE)"/>
 			</Test>
@@ -716,10 +717,12 @@ l0 0 &lt; if{ 12302 (&gt;K:ROTOR_BRAKE) l0 ++ s0 g1 }
 		<Checkpoint>
 			<CheckpointDesc SubjectTT="HYDRAULIC QUANTITY A &amp; B (F/O)"
 							ExpectationTT="CHECK"/>
+			<Action Copilot="True" Once="true" Code="true"/>
 		</Checkpoint>
 		<Checkpoint>
 			<CheckpointDesc SubjectTT="ENGINE OIL QUANTITY 1 &amp; 2 (F/O)"
 							ExpectationTT="CHECK"/>
+			<Action Copilot="True" Once="true" Code="true"/>
 		</Checkpoint>
 
 

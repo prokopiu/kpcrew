@@ -1575,7 +1575,7 @@ pushProc:addItem(HoldProcedureItem:new("CLEARANCE FROM GROUND CREW","RECEIVED",F
 
 
 
-local startProc = Procedure:new("ENGINE START","cleared to start engines")
+local startProc = Procedure:new("ENGINE START","")
 startProc:setFlightPhase(4)
 startProc:addItem(ProcedureItem:new("START SEQUENCE","%s then %s|activeBriefings:get(\"taxi:startSequence\") == 1 and \"2\" or \"1\"|activeBriefings:get(\"taxi:startSequence\") == 1 and \"1\" or \"2\"",FlowItem.actorCPT,1,true,
 	function () 
@@ -1778,7 +1778,11 @@ beforeTaxiProc:addItem(ProcedureItem:new("ENGINE START SWITCHES","CONT",FlowItem
 beforeTaxiProc:addItem(HoldProcedureItem:new("SET TAKEOFF FLAPS","ANNOUNCE",FlowItem.actorCPT))
 beforeTaxiProc:addItem(ProcedureItem:new("FLAP LEVER","SET TAKEOFF FLAPS %s|kc_pref_split(kc_TakeoffFlaps)[activeBriefings:get(\"takeoff:flaps\")]",FlowItem.actorFO,0,
 	function () return sysControls.flapsSwitch:getStatus() == sysControls.flaps_pos[activeBriefings:get("takeoff:flaps")] end,
-	function () sysControls.flapsSwitch:setValue(sysControls.flaps_pos[activeBriefings:get("takeoff:flaps")]) end)) 
+	function () 
+		sysControls.flapsSwitch:setValue(sysControls.flaps_pos[activeBriefings:get("takeoff:flaps")]) 
+		kc_speakNoText(0,"takeoff flaps are set")
+		kc_macro_b738_lowerdu_sys() 
+	end)) 
 beforeTaxiProc:addItem(ProcedureItem:new("LE FLAPS EXT GREEN LIGHT","ILLUMINATED",FlowItem.actorFO,0,
 	function () return get("laminar/B738/annunciator/slats_extend") > 0 end))
 
@@ -1789,7 +1793,7 @@ beforeTaxiProc:addItem(IndirectProcedureItem:new("FLIGHT CONTROLS CHECK","ELEVAT
 beforeTaxiProc:addItem(IndirectProcedureItem:new("FLIGHT CONTROLS CHECK","RUDDER",FlowItem.actorBOTH,0,"fccheck",
 	function () return get("sim/flightmodel2/wing/rudder1_deg") > 18 end,
 	function () 
-		kc_macro_b738_lowerdu_sys()
+		kc_macro_b738_lowerdu_off()
 	end))
 beforeTaxiProc:addItem(ProcedureItem:new("RECALL","CHECK",FlowItem.actorFO,0,
 	function() return sysGeneral.annunciators:getStatus() == 0 end,
@@ -1872,12 +1876,12 @@ beforeTaxiChkl:addItem(ChecklistItem:new("ENGINE START LEVERS","IDLE DETENT",Flo
 beforeTaxiChkl:addItem(IndirectChecklistItem:new("FLIGHT CONTROLS","CHECKED",FlowItem.actorCPT,0,"fccheck",
 	function () return get("sim/flightmodel2/wing/rudder1_deg") > 18 end,
 	function () 
+		kc_macro_b738_lowerdu_off()
 		kc_macro_b738_lowerdu_sys() 
 	end))
 beforeTaxiChkl:addItem(ChecklistItem:new("GROUND EQUIPMENT","CLEAR",FlowItem.actorBOTH,0,true,
 	function () 
 		kc_macro_b738_lowerdu_off()
-		sysLights.taxiSwitch:actuate(1) 
 	end))
 
 
@@ -1885,7 +1889,10 @@ local TaxiProc = Procedure:new("BEGIN TAXI","","")
 TaxiProc:setFlightPhase(5)
 TaxiProc:addItem(HoldProcedureItem:new("CLEAR LEFT","",FlowItem.actorCPT))
 TaxiProc:addItem(ProcedureItem:new("CLEAR RIGHT","",FlowItem.actorFO,0,true,
-	function () kc_speakNoText(0,"clear right") end))
+	function () 
+		kc_speakNoText(0,"clear right") 
+		sysLights.taxiSwitch:actuate(1) 
+	end))
 
 
 -- =========== BEFORE TAKEOFF CHECKLIST (F/O) ============
@@ -2050,10 +2057,10 @@ flapsUpProc:addItem(ProcedureItem:new("FLAPS 5","SET",FlowItem.actorPNF,0,true,
 	function () command_once("laminar/B738/push_button/flaps_5") kc_speakNoText(0,"speed check flaps 5") end,
 	function () return sysControls.flapsSwitch:getStatus() < 0.375 end))
 flapsUpProc:addItem(HoldProcedureItem:new("FLAPS 1","COMMAND",FlowItem.actorPF,nil,
-	function () return sysControls.flapsSwitch:getStatus() < 0.125 end))
+	function () return sysControls.flapsSwitch:getStatus() < 0.250 end))
 flapsUpProc:addItem(ProcedureItem:new("FLAPS 1","SET",FlowItem.actorPNF,0,true,
 	function () command_once("laminar/B738/push_button/flaps_1") kc_speakNoText(0,"speed check flaps 1") end,
-	function () return sysControls.flapsSwitch:getStatus() < 0.125 end))
+	function () return sysControls.flapsSwitch:getStatus() < 0.250 end))
 flapsUpProc:addItem(HoldProcedureItem:new("FLAPS UP","COMMAND",FlowItem.actorPF))
 flapsUpProc:addItem(ProcedureItem:new("FLAPS UP","SET",FlowItem.actorPNF,0,true,
 	function () command_once("laminar/B738/push_button/flaps_0") kc_speakNoText(0,"speed check flaps up") end))
@@ -2516,14 +2523,17 @@ shutdownProc:addItem(ProcedureItem:new("FASTEN BELTS SWITCH","OFF",FlowItem.acto
 	end))
 shutdownProc:addItem(ProcedureItem:new("EXTERNAL LIGHTS","SET",FlowItem.actorCPT,0,true,
 	function () kc_macro_lights_after_shutdown() activeBckVars:set("general:timesON",kc_dispTimeHHMM(get("sim/time/zulu_time_sec"))) end))
+	
 shutdownProc:addItem(ProcedureItem:new("FUEL PUMPS","APU 1 PUMP ON, REST OFF",FlowItem.actorCPT,0,
 	function () return sysFuel.allFuelPumpGroup:getStatus() == 1 end,
 	function () kc_macro_fuelpumps_shutdown() end,
 	function () return activeBriefings:get("approach:powerAtGate") == 1 end))
+	
 shutdownProc:addItem(ProcedureItem:new("FUEL PUMPS","ALL OFF",FlowItem.actorFO,0,
 	function () return sysFuel.allFuelPumpGroup:getStatus() == 0 end,
 	function () kc_macro_fuelpumps_shutdown() end,
-	function () return activeBriefings:get("approach:powerAtGate") == 2 end))
+	function () return activeBriefings:get("approach:powerAtGate") ~= 1 end))
+	
 shutdownProc:addItem(ProcedureItem:new("CAB/UTIL POWER SWITCH","ON",FlowItem.actorCPT,0,
 	function () return sysElectric.cabUtilPwr:getStatus() == modeOn end,
 	function () sysElectric.cabUtilPwr:actuate(modeOn) end))
@@ -2673,6 +2683,21 @@ turnAroundProc:addItem(ProcedureItem:new("GPU","ON BUS","SYS",0,true,
 		getActiveSOP():setActiveFlowIndex(3)
 	end))
 
+-- === Recover Takeoff modes
+local recoverTakeoff = State:new("Recover Takeoff","","")
+recoverTakeoff:setFlightPhase(8)
+recoverTakeoff:addItem(ProcedureItem:new("Recover","SET","SYS",0,true,
+	function () 
+		kc_procvar_set("fmacallouts",true) -- activate FMA callouts
+		sysRadios.xpdrSwitch:actuate(sysRadios.xpdrTARA)
+		sysRadios.xpdrCode:actuate(activeBriefings:get("departure:squawk"))
+		kc_procvar_set("above10k",true) -- background 10.000 ft activities
+		kc_procvar_set("attransalt",true) -- background transition altitude activities
+		kc_procvar_set("aftertakeoff",true) -- fo cleans up when flaps are in
+
+	end))
+
+
 -- ============= Background Flow ==============
 local backgroundFlow = Background:new("","","")
 
@@ -2808,6 +2833,7 @@ activeSOP:addChecklist(secureChkl)
 -- =========== States ===========
 activeSOP:addState(turnAroundProc)
 activeSOP:addState(coldAndDarkProc)
+activeSOP:addState(recoverTakeoff)
 
 -- ==== Background Flow ====
 activeSOP:addBackground(backgroundFlow)
