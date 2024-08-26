@@ -1511,26 +1511,6 @@ beforeStartChkl:addItem(ChecklistItem:new("ANTI-COLLISION LIGHT SWITCH","ON",Flo
 -- SYSTEM A HYDRAULIC PUMPS......................ON  (F/O)
 -- =======================================================
 
--- ================= ENGINE START (BOTH) =================
--- START FIRST ENGINE.............STARTING ENGINE _  (CPT)
--- ENGINE START SWITCH........START SWITCH _ TO GRD  (CPT)
---   Verify that the N2 RPM increases.
---   When N1 rotation is seen and N2 is at 25%,
---   ENGINE START LEVER................LEVER _ IDLE  (CPT)
---   When starter switch jumps back call STARTER CUTOUT
--- START SECOND ENGINE............STARTING ENGINE _  (CPT)
--- ENGINE START SWITCH........START SWITCH _ TO GRD  (CPT)
---   Verify that the N2 RPM increases.
---   When N1 rotation is seen and N2 is at 25%,
---   ENGINE START LEVER................LEVER _ IDLE  (CPT)
---   When starter switch jumps back call STARTER CUTOUT
--- PARKING BRAKE................................SET  (F/O)
---   When instructed by ground crew after pushback/towing
--- When pushback/towing complete
---   TOW BAR DISCONNECTED....................VERIFY  (CPT)
---   LOCKOUT PIN REMOVED.....................VERIFY  (CPT)
--- =======================================================
-
 -- XPDR TO ALT OFF?
 
 local pushProc = Procedure:new("PUSHBACK","")
@@ -1543,12 +1523,14 @@ pushProc:addItem(IndirectProcedureItem:new("PARKING BRAKE","SET",FlowItem.actorC
 		activeBckVars:set("general:timesOFF",kc_dispTimeHHMM(get("sim/time/zulu_time_sec"))) 
 		sysLights.domeLightSwitch:actuate(0)
 		kc_macro_b738_lowerdu_eng()
-		if activeBriefings:get("taxi:gateStand") <= 2 then
-			kc_pushback_plan()
-		end
 	end))
 pushProc:addItem(HoldProcedureItem:new("PUSHBACK SERVICE","ENGAGE",FlowItem.actorCPT,nil,
-	function () return activeBriefings:get("taxi:gateStand") > 2 end))
+	function () return activeBriefings:get("taxi:gateStand") > 2 end,
+	function ()
+		if activeBriefings:get("taxi:gateStand") <= 2 then
+			kc_pushback_call()
+		end
+	end))
 pushProc:addItem(SimpleProcedureItem:new("Engine Start may be done during pushback or towing",
 	function () return activeBriefings:get("taxi:gateStand") > 2 end))
 pushProc:addItem(ProcedureItem:new("COMMUNICATION WITH GROUND","ESTABLISH",FlowItem.actorCPT,2,true,
@@ -1573,7 +1555,25 @@ pushProc:addItem(ProcedureItem:new("SYSTEM A HYDRAULIC PUMP","ON",FlowItem.actor
 	end))
 pushProc:addItem(HoldProcedureItem:new("CLEARANCE FROM GROUND CREW","RECEIVED",FlowItem.actorCPT,nil))
 
-
+-- ================= ENGINE START (BOTH) =================
+-- START FIRST ENGINE.............STARTING ENGINE _  (CPT)
+-- ENGINE START SWITCH........START SWITCH _ TO GRD  (CPT)
+--   Verify that the N2 RPM increases.
+--   When N1 rotation is seen and N2 is at 25%,
+--   ENGINE START LEVER................LEVER _ IDLE  (CPT)
+--   When starter switch jumps back call STARTER CUTOUT
+-- START SECOND ENGINE............STARTING ENGINE _  (CPT)
+-- ENGINE START SWITCH........START SWITCH _ TO GRD  (CPT)
+--   Verify that the N2 RPM increases.
+--   When N1 rotation is seen and N2 is at 25%,
+--   ENGINE START LEVER................LEVER _ IDLE  (CPT)
+--   When starter switch jumps back call STARTER CUTOUT
+-- PARKING BRAKE................................SET  (F/O)
+--   When instructed by ground crew after pushback/towing
+-- When pushback/towing complete
+--   TOW BAR DISCONNECTED....................VERIFY  (CPT)
+--   LOCKOUT PIN REMOVED.....................VERIFY  (CPT)
+-- =======================================================
 
 local startProc = Procedure:new("ENGINE START","")
 startProc:setFlightPhase(4)

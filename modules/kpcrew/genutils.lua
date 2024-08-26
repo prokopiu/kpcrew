@@ -921,7 +921,7 @@ end
 
 function kc_pushback_call()
 	if activePrefSet:get("general:betterPushback") == true then
-		command_once("BetterPushback/connect_first")
+		command_once("BetterPushback/start")
 	end
 end
 
