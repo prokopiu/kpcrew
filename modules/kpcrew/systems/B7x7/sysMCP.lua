@@ -1,4 +1,4 @@
--- DFLT airplane 
+-- B7x7 airplane 
 -- MCP functionality
 
 -- @classmod sysMCP
@@ -56,8 +56,8 @@ sysMCP.vsSwitch 			= TwoStateToggleSwitch:new("vs",drefVSLight,0,"sim/autopilot/
 sysMCP.speedSwitch 			= TwoStateToggleSwitch:new("speed",drefSPDLight,0,"sim/autopilot/autothrottle_toggle")
 
 -- AUTOPILOT
-sysMCP.ap1Switch 			= TwoStateToggleSwitch:new("autopilot1","sim/cockpit2/autopilot/servos_on",0,
-	"sim/autopilot/servos_toggle")
+sysMCP.ap1Switch 			= TwoStateCmdSwitch:new("autopilot1","1-sim/AP/cmd_L_Button",0,
+	"1-sim/AP/cmd_L_Button","1-sim/AP/cmd_L_Button")
 
 -- BACKCOURSE
 sysMCP.backcourse 			= InopSwitch:new("backcourse")
@@ -84,8 +84,8 @@ sysMCP.crsSelectorGroup:addSwitch(sysMCP.crs2Selector)
 sysMCP.n1Switch 			= InopSwitch:new("n1")
 
 -- IAS
-sysMCP.iasSelector 			= MultiStateCmdSwitch:new("ias","sim/cockpit/autopilot/airspeed",0,
-	"sim/autopilot/airspeed_down","sim/autopilot/airspeed_up",100,340,false)
+sysMCP.iasSelector 			= MultiStateCmdSwitch:new("ias","1-sim/AP/machInKIAS",0,
+	"1-sim/comm/AP/spdDN","1-sim/comm/AP/spdUP",100,340,false)
 
 -- KTS/MACH C/O
 sysMCP.machSwitch 			= InopSwitch:new("mach")
@@ -100,8 +100,19 @@ sysMCP.vnavSwitch 			= TwoStateToggleSwitch:new("vnav",drefVNAVLight,0,"sim/auto
 sysMCP.lvlchgSwitch 		= InopSwitch:new("lvlchg")
 
 -- HDG
-sysMCP.hdgSelector 			= MultiStateCmdSwitch:new("hdg","sim/cockpit2/autopilot/heading_dial_deg_mag_pilot",0,
-	"sim/autopilot/heading_down","sim/autopilot/heading_up",0,359,false)
+sysMCP.hdgSelector 			= TwoStateCustomSwitch:new("hdg","757Avionics/ap/hdg_act",0,
+	function () 
+		local lalt = get("757Avionics/ap/hdg_act")
+		set("757Avionics/ap/hdg_act",lalt+1)
+	end,
+	function () 
+		local lalt = get("757Avionics/ap/hdg_act")
+		set("757Avionics/ap/hdg_act",lalt-1)
+	end,
+	function () 
+		return
+	end
+)
 
 -- TURNRATE
 sysMCP.turnRateSelector 	= InopSwitch:new("turnrate")
@@ -110,8 +121,22 @@ sysMCP.turnRateSelector 	= InopSwitch:new("turnrate")
 sysMCP.lnavSwitch 			= InopSwitch:new("lnav")
 
 -- ALT
-sysMCP.altSelector 			= MultiStateCmdSwitch:new("alt","sim/cockpit2/autopilot/altitude_dial_ft",0,
-	"sim/autopilot/altitude_down","sim/autopilot/altitude_up",0,50000,false)
+sysMCP.altSelector 			= TwoStateCustomSwitch:new("alt","757Avionics/ap/alt_act",0,
+	function () 
+		local lalt = get("757Avionics/ap/alt_act")
+		set("757Avionics/ap/alt_act",lalt+100)
+	end,
+	function () 
+		local lalt = get("757Avionics/ap/alt_act")
+		set("757Avionics/ap/alt_act",lalt-100)
+	end,
+	function () 
+		return
+	end,
+	function () 
+		return 
+	end
+)
 
 -- ALT INTV
 sysMCP.altintvSwitch 		= InopSwitch:new("altintv")
@@ -126,10 +151,10 @@ sysMCP.cwsaSwitch 			= TwoStateToggleSwitch:new("cwsa","sim/cockpit2/autopilot/s
 sysMCP.cwsbSwitch 			= InopSwitch:new("cwsb")
 
 -- A/P DISENGAGE
-sysMCP.discAPSwitch 		= TwoStateToggleSwitch:new("apdisc","sim/cockpit2/annunciators/autopilot_disconnect",0,
-	"sim/autopilot/disconnect")
-sysMCP.apDiscYoke 			= TwoStateToggleSwitch:new("discapyoke","sim/cockpit2/annunciators/autopilot_disconnect",0,
-	"sim/autopilot/disconnect")
+sysMCP.discAPSwitch 		= TwoStateToggleSwitch:new("apdisc","757Avionics/ap/ap_mode",0,
+	"1-sim/comm/AP/ap_disc")
+sysMCP.apDiscYoke 			= TwoStateCmdSwitch:new("discapyoke","757Avionics/ap/ap_mode",0,
+	"1-sim/comm/AP/ap_disc","1-sim/comm/AP/ap_disc")
 
 -- NAVIGATION SWITCHES
 sysMCP.vhfNavSwitch 		= InopSwitch:new("vhfnav")

@@ -1,9 +1,9 @@
--- Base SOP for FlightFactor B757
+-- Base SOP for FlightFactor B757 & B767
 
--- @classmod SOP_DFLT
+-- @classmod SOP_B7x7
 -- @author Kosta Prokopiu
--- @copyright 2022 Kosta Prokopiu
-local SOP_DFLT = {
+-- @copyright 2024 Kosta Prokopiu
+local SOP_B7x7 = {
 }
 
 -- SOP related imports
@@ -48,11 +48,11 @@ kcSopFlightPhase = { [1] = "Cold & Dark", 	[2] = "Prel Preflight", [3] = "Prefli
 					 [5] = "After Start", 	[6] = "Taxi to Runway", [7] = "Before Takeoff", [8] = "Takeoff",
 					 [9] = "Climb", 		[10] = "Enroute", 		[11] = "Descent", 		[12] = "Arrival", 
 					 [13] = "Approach", 	[14] = "Landing", 		[15] = "Turnoff", 		[16] = "Taxi to Stand", 
-					 [17] = "Shutdown", 	[18] = "Turnaround",	[19] = "Flightplanning", [0] = "" }
+					 [17] = "Shutdown", 	[18] = "Turnaround",	[19] = "Flightplanning", [20] = "Go Around", [0] = " " }
 
 -- Set up SOP =========================================================================
 
-activeSOP = SOP:new("Default Aircraft SOP")
+activeSOP = SOP:new("FlightFactor B757/B767")
 
 local testProc = Procedure:new("TEST","","")
 testProc:setFlightPhase(1)
@@ -72,20 +72,20 @@ testProc:addItem(ProcedureItem:new("BATTERY SWITCH","ON",FlowItem.actorFO,0,true
 -- DC Electric Power
 -- BATTERY VOLTAGE...........................MIN 24V (F/O)
 -- BATTERY SWITCH.................................ON (F/O)
-
--- Hydraulic System
--- ELECTRIC HYDRAULIC PUMP.......................OFF (F/O)
--- FLAP LEVER....................................SET (F/O)
---   Set the flap lever to agree with the flap position.
-
--- Other
--- WINDSHIELD WIPER SELECTORS...................PARK (F/O)
+-- STANDBY POWER SELECTOR.......................AUTO (F/O)
 -- LANDING GEAR LEVER...........................DOWN (F/O)
---   GREEN LANDING GEAR LIGHT......CHECK ILLUMINATED (F/O)
+-- GREEN LANDING GEAR LIGHT........CHECK ILLUMINATED (F/O)
+-- ALTERNATE FLAPS SELECTOR.....................NORM (F/O)
+--  Verify APU BAT DISCH & MAIN BAT DISCH lights illuminated
+-- BUS TIE SWITCHES.............................AUTO (F/O)
+
+-- HYDRAULIC ELECTRIC PUMP SWITCHES..............OFF (F/O)
+-- HYDRAULIC DEMAND PUMP BUTTONS.................OFF (F/O)
+-- WINDSHIELD WIPER SELECTORS...................PARK (F/O)
 
 -- ==== Activate External Power
---   GROUND POWER..........................CONNECTED (F/O)
---     Ensure that GPU is on Bus
+--   Use EFB to turn Ground Power on.
+--   GROUND POWER SWITCH..........................ON (F/O)
 
 -- ==== Activate APU 
 --   APU.......................................START (F/O)
@@ -94,24 +94,79 @@ testProc:addItem(ProcedureItem:new("BATTERY SWITCH","ON",FlowItem.actorFO,0,true
 --     Bring APU power on bus
 -- =======================================================
 
--- addList(list, {'AMPLIFIED'}) --tested
--- addList(list, {'AMPLIFIED','POWER-UP'})
--- addItem(list['AMPLIFIED']['POWER-UP'], createItemWithCondition('Battery switch','ON', globalProperty('anim/14/button'), 1, CH_EQUAL, CH_DEFAULT))
--- addItem(list['AMPLIFIED']['POWER-UP'], createItemWithCondition('Standby Power selector','AUTO', globalProperty('1-sim/electrical/stbyPowerSelector'), 1, CH_EQUAL, CH_DEFAULT), 'Verify APU BAT DISCH and MAIN BAT DISCH lights illuminated and standby bus OFF light extinguishes', CH_BELOW)
--- addItem(list['AMPLIFIED']['POWER-UP'], createItemWithCondition('Landing Gear Lever','DN', globalProperty('1-sim/cockpit/switches/gear_handle'), 1, CH_EQUAL, CH_DEFAULT))
--- addItem(list['AMPLIFIED']['POWER-UP'], createItemWithCondition('Alt Flaps selector','NORM', globalProperty('1-sim/gauges'), 0, CH_EQUAL, CH_DEFAULT))
--- addItem(list['AMPLIFIED']['POWER-UP'], createCheckItem('Electrical Power', 'ESTABLISH'))
--- addItem(list['AMPLIFIED']['POWER-UP'], createItemWithDoubleCondition('Bus Tie switches', 'AUTO', globalProperty('anim/17/button'),1, CH_EQUAL, globalProperty('anim/18/button'), 1, CH_EQUAL, CH_CONTACT_AND, CH_DEFAULT))
+local electricalPowerUpProc = Procedure:new("ELECTRICAL POWER UP","performing ELECTRICAL POWER UP","Power up finished")
+electricalPowerUpProc:setFlightPhase(1)
+
+electricalPowerUpProc:addItem(SimpleProcedureItem:new("All paper work on board and checked"))
+electricalPowerUpProc:addItem(SimpleProcedureItem:new("M E L and Technical Logbook checked"))
+
+electricalPowerUpProc:addItem(SimpleProcedureItem:new("== DC Electric Power"))
+electricalPowerUpProc:addItem(ProcedureItem:new("BATTERY VOLTAGE, MIN 24V","CHECKED",FlowItem.actorFO,0,
+	function () return get("sim/cockpit2/electrical/battery_voltage_actual_volts") > 23 end))
+electricalPowerUpProc:addItem(ProcedureItem:new("BATTERY SWITCH, ON","SET",FlowItem.actorFO,0,
+	function () return get("anim/14/button") == 1 end,
+	function () set("anim/14/button",1) end))
+electricalPowerUpProc:addItem(ProcedureItem:new("STANDBY POWER SELECTOR, AUTO","SET",FlowItem.actorFO,0,
+	function () return get("1-sim/electrical/stbyPowerSelector") == 1 end,
+	function () set("1-sim/electrical/stbyPowerSelector",1) end))
+electricalPowerUpProc:addItem(ProcedureItem:new("LANDING GEAR LEVER, DOWN","CHECKED",FlowItem.actorFO,0,
+	function () return get("1-sim/cockpit/switches/gear_handle") == 1 end,
+	function () set("1-sim/cockpit/switches/gear_handle",1) end))
+-- electricalPowerUpProc:addItem(ProcedureItem:new("ALTERNATE FLAPS SELECTOR, NORM","CHECKED",FlowItem.actorFO,0,
+	-- function () return get("1-sim/gauges/flapsALTNswitcher") == 0 end,
+	-- function () set("1-sim/gauges/flapsALTNswitcher",1) end))
+electricalPowerUpProc:addItem(SimpleProcedureItem:new(" Verify APU BAT DISCH & MAIN BAT DISCH lights illuminated"))
+electricalPowerUpProc:addItem(ProcedureItem:new("BUS TIE SWITCHES, AUTO","CHECKED",FlowItem.actorFO,0,
+	function () return get("anim/17/button") == 1 and get("anim/18/button") == 1 end,
+	function () 
+		set("anim/17/button",1)
+		set("anim/18/button",1)
+	end))
+electricalPowerUpProc:addItem(ProcedureItem:new("HYDRAULIC ELECTRIC PUMP SWITCHES, OFF","CHECKED",FlowItem.actorFO,0,
+	function () return get("anim/9/button") == 0 and get("anim/10/button") == 0 end,
+	function () 
+		set("anim/9/button",0)
+		set("anim/10/button",0)
+	end))
+electricalPowerUpProc:addItem(ProcedureItem:new("HYDRAULIC DEMAND PUMP BUTTONS, OFF", "CHECKED",FlowItem.actorFO,0,
+	function () return get("1-sim/hyd/elecSwitchLeft") == 0 and get("1-sim/hyd/elecSwitchRight") == 0 and get("1-sim/hyd/airSwitch") == 0 end,
+	function () 
+		set("1-sim/hyd/elecSwitchLeft",0)
+		set("1-sim/hyd/elecSwitchRight",0)
+		set("1-sim/hyd/airSwitch",0)
+	end))
+
+electricalPowerUpProc:addItem(SimpleProcedureItem:new(":::::::::::::::: Activate External Power ::",
+	function () return activePrefSet:get("aircraft:powerup_apu") == true end))
+electricalPowerUpProc:addItem(SimpleProcedureItem:new("Use EFB to turn Ground Power on.",
+	function () return activePrefSet:get("aircraft:powerup_apu") == true end))
+electricalPowerUpProc:addItem(ProcedureItem:new("GROUND POWER SWITCH","ON",FlowItem.actorFO,0,
+	function () return get("params/gpu") == 1 end,
+	function () set("params/gpu",1) end,
+	function () return activePrefSet:get("aircraft:powerup_apu") == true end))
+
 -- addItem(list['AMPLIFIED']['POWER-UP'], createIfItem('APU Generator','ON', globalProperty('params/gpu'), 1, CH_EQUAL, globalProperty('params/gpu'), 1, CH_EQUAL, globalProperty('anim/15/button'), 1, CH_EQUAL, CH_DEFAULT), 'Skip if external power is available', CH_BELOW)
 -- addItem(list['AMPLIFIED']['POWER-UP'], createIfItem('APU selector','START', globalProperty('params/gpu'), 1, CH_EQUAL, globalProperty('anim/16/button'), 1, CH_EQUAL, globalProperty('1-sim/engine/APUStartSelector'), 2, CH_EQUAL, CH_DEFAULT), 'Use EXT PWR switch instead if available. Position the APU selector back to the ON position, do not allow the APU Selector to spring back to the ON position', CH_BELOW)
 
--- addList(list, {'AMPLIFIED','PRELIMINARY PREFLIGHT'})
--- addItem(list['AMPLIFIED']['PRELIMINARY PREFLIGHT'], createTextItem('The Preliminary Preflight Procedure assumes that the Electrical Power Up supplementary procedure is complete'))
--- addItem(list['AMPLIFIED']['PRELIMINARY PREFLIGHT'], createItemWithCondition('L IRS mode selector','NAV', globalProperty('1-sim/irs/1/modeSel'), 2, CH_EQUAL, CH_DEFAULT))
--- addItem(list['AMPLIFIED']['PRELIMINARY PREFLIGHT'], createItemWithCondition('C IRS mode selector','NAV', globalProperty('1-sim/irs/2/modeSel'), 2, CH_EQUAL, CH_DEFAULT))
--- addItem(list['AMPLIFIED']['PRELIMINARY PREFLIGHT'], createItemWithCondition('R IRS mode selector','NAV', globalProperty('1-sim/irs/3/modeSel'), 2, CH_EQUAL, CH_DEFAULT), 'Verify that the ON DC lights illuminate then extinguish [next] Verify that the ALIGN lights are illuminated', CH_BELOW)
+-- ================ PRELIMINARY PREFLIGHT ================
+
+local prelPreflightProc = Procedure:new("PREL PREFLIGHT PROCEDURE","preliminary pre flight","I will do the walk around now")
+prelPreflightProc:setFlightPhase(2)
+prelPreflightProc:addItem(SimpleProcedureItem:new("Electrical Power Up procedure to be completed first"))
+
+prelPreflightProc:addItem(ProcedureItem:new("L IRS mode selector","NAV",FlowItem.actorFO,0,
+	function () return get("1-sim/irs/1/modeSel") == 2 end,
+	function () set("1-sim/irs/1/modeSel",2) end))
+prelPreflightProc:addItem(ProcedureItem:new("C IRS mode selector","NAV",FlowItem.actorFO,0,
+	function () return get("1-sim/irs/2/modeSel") == 2 end,
+	function () set("1-sim/irs/2/modeSel",2) end))
+prelPreflightProc:addItem(ProcedureItem:new("R IRS mode selector","NAV",FlowItem.actorFO,0,
+	function () return get("1-sim/irs/3/modeSel") == 2 end,
+	function () set("1-sim/irs/3/modeSel",2) end))
+-- Verify that the ON DC lights illuminate then extinguish [next] Verify that the ALIGN lights are illuminated', CH_BELOW)
 -- addItem(list['AMPLIFIED']['PRELIMINARY PREFLIGHT'], createCheckItem('STATUS display', 'CHECK'), 'Verify that only expected messages are shown', CH_BELOW)
 -- addItem(list['AMPLIFIED']['PRELIMINARY PREFLIGHT'], createCheckItem('Verify quantities', 'CHECK'), 'Oxygen pressure. Hydraulic quantity, Engine oil quantity.', CH_BELOW)
+
 
 -- addList(list, {'AMPLIFIED','CDU PREFLIGHT'})
 -- addItem(list['AMPLIFIED']['CDU PREFLIGHT'], createTextItem("Enter data in all the boxed items on the following CDU pages, enter data in the dashed items or modify small font items that are listed in this procedure, enter or modify other items at pilot's discretion."))
@@ -134,119 +189,367 @@ testProc:addItem(ProcedureItem:new("BATTERY SWITCH","ON",FlowItem.actorFO,0,true
 -- addItem(list['AMPLIFIED']['CDU PREFLIGHT'], createTextItem("TAKEOFF REF page:", CH_BLUE))
 -- addItem(list['AMPLIFIED']['CDU PREFLIGHT'], createCheckItem('Takeoff V speeds', 'SET'))
 
+local preflightFOProc = Procedure:new("PREFLIGHT PROCEDURE","I have returned from the walk around, starting preflight setup","preflight setup finished")
+preflightFOProc:setResize(false)
+preflightFOProc:setFlightPhase(3)
 
--- addList(list, {'AMPLIFIED','PREFLIGHT CONTROLLING'}) --tested
--- addItem(list['AMPLIFIED']['PREFLIGHT CONTROLLING'], createItemWithDoubleCondition('YAW DAMPER switches', 'ON', globalProperty('anim/1/button'),1, CH_EQUAL, globalProperty('anim/2/button'), 1, CH_EQUAL, CH_CONTACT_AND, CH_DEFAULT), 'The INOP lights stay illuminated until IRS alignment is complete', CH_BELOW)
--- addItem(list['AMPLIFIED']['PREFLIGHT CONTROLLING'], createItemWithDoubleCondition('EEC switches', 'ON', globalProperty('anim/3/button'),1, CH_EQUAL, globalProperty('anim/4/button'), 1, CH_EQUAL, CH_CONTACT_AND, CH_DEFAULT))
--- addItem(list['AMPLIFIED']['PREFLIGHT CONTROLLING'], createTextItem("Hydraulic panel", CH_BLUE))
--- addItem(list['AMPLIFIED']['PREFLIGHT CONTROLLING'], createCheckItem('SYS PRESS lights', 'CHECK'), 'Verify lights are illuminated', CH_BELOW)
--- addItem(list['AMPLIFIED']['PREFLIGHT CONTROLLING'], createItemWithDoubleCondition('Left and Right ENGINE pump switches', 'ON', globalProperty('anim/8/button'),1, CH_EQUAL, globalProperty('anim/11/button'), 1, CH_EQUAL, CH_CONTACT_AND, CH_DEFAULT), 'Verify that the PRESS lights are illuminated', CH_BELOW)
--- addItem(list['AMPLIFIED']['PREFLIGHT CONTROLLING'], createItemWithDoubleCondition('L R ELECTRIC pumps', 'OFF', globalProperty('anim/12/button'),0, CH_EQUAL, globalProperty('anim/13/button'), 0, CH_EQUAL, CH_CONTACT_AND, CH_DEFAULT))
--- addItem(list['AMPLIFIED']['PREFLIGHT CONTROLLING'], createItemWithDoubleCondition('C1 C2 ELECTRIC pumps', 'OFF', globalProperty('anim/9/button'),0, CH_EQUAL, globalProperty('anim/10/button'), 0, CH_EQUAL, CH_CONTACT_AND, CH_DEFAULT), 'Verify that the PRESS lights are illuminated', CH_BELOW)
--- addItem(list['AMPLIFIED']['PREFLIGHT CONTROLLING'], createItemWithCondition('ELT switch','ARMED', globalProperty('1-sim/elt/mode'), 1, CH_EQUAL, CH_DEFAULT), 'Verify that the ON light is extinguished', CH_BELOW)
--- addItem(list['AMPLIFIED']['PREFLIGHT CONTROLLING'], createTextItem("Electrical panel", CH_BLUE))
--- addItem(list['AMPLIFIED']['PREFLIGHT CONTROLLING'], createItemWithCondition('BATTERY switch','ON', globalProperty('anim/14/button'), 1, CH_EQUAL, CH_DEFAULT))
--- addItem(list['AMPLIFIED']['PREFLIGHT CONTROLLING'], createItemWithCondition('STANDBY POWER selector','AUTO', globalProperty('1-sim/electrical/stbyPowerSelector'), 1, CH_EQUAL, CH_DEFAULT), 'Verify that the standby power bus OFF light is  extinguished', CH_BELOW)
--- addItem(list['AMPLIFIED']['PREFLIGHT CONTROLLING'], createItemWithCondition('APU GENERATOR switch','ON', globalProperty('anim/15/button'), 1, CH_EQUAL, CH_DEFAULT))
--- addItem(list['AMPLIFIED']['PREFLIGHT CONTROLLING'], createItemWithDoubleCondition('BUS TIE switches', 'AUTO', globalProperty('anim/17/button'),1, CH_EQUAL, globalProperty('anim/18/button'), 1, CH_EQUAL, CH_CONTACT_AND, CH_DEFAULT), 'Verify that the AC BUS OFF lights are extinguished', CH_BELOW)
--- addItem(list['AMPLIFIED']['PREFLIGHT CONTROLLING'], createItemWithDoubleCondition('UTILITY BUS switches', 'ON', globalProperty('anim/20/button'),1, CH_EQUAL, globalProperty('anim/21/button'), 1, CH_EQUAL, CH_CONTACT_AND, CH_DEFAULT), 'Verify that the OFF lights are extinguished', CH_BELOW)
--- addItem(list['AMPLIFIED']['PREFLIGHT CONTROLLING'], createItemWithDoubleCondition('GENERATOR CONTROL switches', 'ON', globalProperty('anim/22/button'),1, CH_EQUAL, globalProperty('anim/25/button'), 1, CH_EQUAL, CH_CONTACT_AND, CH_DEFAULT), 'Verify that the OFF lights are illuminated [next] Verify that the DRIVE lights are illuminated', CH_BELOW)
--- addItem(list['AMPLIFIED']['PREFLIGHT CONTROLLING'], createIfItem('APU selector','START', globalProperty('sim/cockpit2/electrical/APU_N1_percent'), 30, CH_LESS, globalProperty('1-sim/engine/APUStartSelector'), 2, CH_EQUAL, globalProperty('1-sim/engine/APUStartSelector'), 1, CH_EQUAL, CH_DEFAULT), 'Do not allow the APU selector to spring back to the [next] ON position [next] Verify that the RUN light is illuminated', CH_BELOW)
--- addItem(list['AMPLIFIED']['PREFLIGHT CONTROLLING'], createTextItem("Lighting panel", CH_BLUE))
--- addItem(list['AMPLIFIED']['PREFLIGHT CONTROLLING'], createItemWithDoubleCondition('RUNWAY TURNOFF light switches', 'OFF', globalProperty('1-sim/lights/runwayL/switch'),0, CH_EQUAL, globalProperty('1-sim/lights/runwayR/switch'), 0, CH_EQUAL, CH_CONTACT_AND, CH_DEFAULT))
--- addItem(list['AMPLIFIED']['PREFLIGHT CONTROLLING'], createItemWithCondition('EMERGENCY LIGHTS switch','GUARDED', globalProperty('1-sim/emer/lightsCover'), 0, CH_EQUAL, CH_DEFAULT))
--- addItem(list['AMPLIFIED']['PREFLIGHT CONTROLLING'], createItemWithCondition('EMERGENCY LIGHTS switch','ARMED', globalProperty('1-sim/emer/lights'), 1, CH_EQUAL, CH_DEFAULT), 'Verify that the UNARMED light is extinguished [next] Note: Do not push the PASSENGER OXYGEN switch, the switch causes deployment of the passenger oxygen masks', CH_BELOW)
--- addItem(list['AMPLIFIED']['PREFLIGHT CONTROLLING'], createCheckItem('PASSENGER OXYGEN ON light', 'CHECK'), 'Verify extinguished', CH_BELOW)
+
+preflightFOProc:addItem(ProcedureItem:new("YAW DAMPER SWITCHES","ON",FlowItem.actorFO,0,
+	function () return get("anim/1/button") == 1 and get("anim/2/button") == 1 end,
+	function () 
+		set("anim/1/button",1) 
+		set("anim/2/button",1)
+	end))
+preflightFOProc:addItem(ProcedureItem:new("EEC SWITCHES","ON",FlowItem.actorFO,0,
+	function () return get("anim/3/button") == 1 and get("anim/4/button") == 1 end,
+	function () 
+		set("anim/3/button",1) 
+		set("anim/4/button",1)
+	end))
+
+preflightFOProc:addItem(SimpleProcedureItem:new("Hydraulic panel"))
+
+-- preflightFOProc:addItem(ProcedureItem:new("SYS PRESS LIGHTS","CHECK"),FlowItem.actorFO,0,
+ -- 'Verify lights are illuminated', CH_BELOW)
+
+preflightFOProc:addItem(ProcedureItem:new("L & R ENGINE PUMP SWITCHES","ON",FlowItem.actorFO,0,
+	function () return get("anim/8/button") == 1 and get("anim/11/button") == 1 end,
+	function () 
+		set("anim/8/button",1) 
+		set("anim/11/button",1)
+	end))
+preflightFOProc:addItem(ProcedureItem:new("L & R ELECTRIC PUMPS","OFF",FlowItem.actorFO,0,
+	function () return get("anim/12/button") == 0 and get("anim/13/button") == 0 end,
+	function () 
+		set("anim/12/button",0) 
+		set("anim/13/button",0)
+	end))
+preflightFOProc:addItem(ProcedureItem:new("C1 C2 ELECTRIC PUMPS","OFF",FlowItem.actorFO,0,
+	function () return get("anim/9/button") == 0 and get("anim/10/button") == 0 end,
+	function () 
+		set("anim/9/button",0) 
+		set("anim/10/button",0)
+	end))
+preflightFOProc:addItem(ProcedureItem:new("ELT SWITCH","ARMED",FlowItem.actorFO,0,
+	function () return get("1-sim/elt/mode") == 1 end,
+	function () set("1-sim/elt/mode",1) end))
+
+preflightFOProc:addItem(SimpleProcedureItem:new("Electrical panel"))
+preflightFOProc:addItem(ProcedureItem:new("BATTERY SWITCH","ON",FlowItem.actorFO,0,
+	function () return get("anim/14/button") == 1 end,
+	function () set("anim/14/button",1) end))
+preflightFOProc:addItem(ProcedureItem:new("STANDBY POWER SELECTOR","AUTO",FlowItem.actorFO,0,
+	function () return get("1-sim/electrical/stbyPowerSelector") == 1 end,
+	function () set("1-sim/electrical/stbyPowerSelector",1) end))
+preflightFOProc:addItem(ProcedureItem:new("APU GENERATOR SWITCH","ON",FlowItem.actorFO,0,
+	function () return get("anim/15/button") == 1 end,
+	function () set("anim/15/button",1) end))
+preflightFOProc:addItem(ProcedureItem:new("BUS TIE SWITCHES","AUTO",FlowItem.actorFO,0,
+	function () return get("anim/17/button") == 1 and get("anim/18/button") == 1 end,
+	function () 
+		set("anim/17/button",1) 
+		set("anim/18/button",1)
+	end))
+preflightFOProc:addItem(ProcedureItem:new("UTILITY BUS SWITCHES","ON",FlowItem.actorFO,0,
+	function () return get("anim/20/button") == 1 and get("anim/21/button") == 1 end,
+	function () 
+		set("anim/20/button",1) 
+		set("anim/21/button",1)
+	end))
+preflightFOProc:addItem(ProcedureItem:new("GENERATOR CONTROL SWITCHES","ON",FlowItem.actorFO,0,
+	function () return get("anim/22/button") == 1 and get("anim/25/button") == 1 end,
+	function () 
+		set("anim/22/button",1) 
+		set("anim/25/button",1)
+	end))
+
+-- preflightFOProc:addItem(ProcedureItem:new("APU selector","START",FlowItem.actorFO,0,
+ -- globalProperty('sim/cockpit2/electrical/APU_N1_percent'), 30, CH_LESS, globalProperty('1-sim/engine/APUStartSelector'), 2, CH_EQUAL, globalProperty('1-sim/engine/APUStartSelector'), 1, CH_EQUAL, CH_DEFAULT), 
+ -- 'Do not allow the APU selector to spring back to the [next] ON position [next] Verify that the RUN light is illuminated', CH_BELOW)
+
+preflightFOProc:addItem(SimpleProcedureItem:new("Lighting panel"))
+preflightFOProc:addItem(ProcedureItem:new("RUNWAY TURNOFF LIGHT SWITCHES","OFF",FlowItem.actorFO,0,
+	function () return get("1-sim/lights/runwayL/switch") == 0 and get("1-sim/lights/runwayR/switch") == 0 end,
+	function () 
+		set("1-sim/lights/runwayL/switch",0) 
+		set("1-sim/lights/runwayR/switch",0)
+	end))
+preflightFOProc:addItem(ProcedureItem:new("EMERGENCY LIGHTS SWITCH","GUARDED",FlowItem.actorFO,0,
+	function () return get("1-sim/emer/lightsCover") == 0 end,
+	function () set("1-sim/emer/lightsCover",0) end))
+preflightFOProc:addItem(ProcedureItem:new("EMERGENCY LIGHTS SWITCH","ARMED",FlowItem.actorFO,0,
+	function () return get("1-sim/emer/lights") == 1 end,
+	function () set("1-sim/emer/lights",1) end))
+
+-- preflightFOProc:addItem(ProcedureItem:new("PASSENGER OXYGEN ON LIGHT","EXTINGUISHED"
+-- ), 'Verify extinguished', CH_BELOW)
 -- addItem(list['AMPLIFIED']['PREFLIGHT CONTROLLING'], createTextItem("WARNING: Do not push the RAM AIR TURBINE switch, The switch causes deployment of the ram air turbine"))
--- addItem(list['AMPLIFIED']['PREFLIGHT CONTROLLING'], createCheckItem('Ram air turbine UNLKD light', 'VERIFY'))
--- addItem(list['AMPLIFIED']['PREFLIGHT CONTROLLING'], createTextItem("Engine control panel", CH_BLUE))
--- addItem(list['AMPLIFIED']['PREFLIGHT CONTROLLING'], createItemWithDoubleCondition('Engine limiter buttons', 'ON', globalProperty('anim/30/button'),1, CH_EQUAL, globalProperty('anim/31/button'), 1, CH_EQUAL, CH_CONTACT_AND, CH_DEFAULT))
--- addItem(list['AMPLIFIED']['PREFLIGHT CONTROLLING'], createItemWithDoubleCondition('Engine start selectors', 'AUTO', globalProperty('1-sim/engine/leftStartSelector'),1, CH_EQUAL, globalProperty('1-sim/engine/rightStartSelector'), 1, CH_EQUAL, CH_CONTACT_AND, CH_DEFAULT))
--- addItem(list['AMPLIFIED']['PREFLIGHT CONTROLLING'], createTextItem("FUEL panel", CH_BLUE))
--- addItem(list['AMPLIFIED']['PREFLIGHT CONTROLLING'], createItemWithDoubleCondition('CROSSFEED switches', 'OFF', globalProperty('anim/33/button'),0, CH_EQUAL, globalProperty('anim/36/button'), 0, CH_EQUAL, CH_CONTACT_AND, CH_DEFAULT), 'Verify that the VALVE lights are extinguished', CH_BELOW)
--- addItem(list['AMPLIFIED']['PREFLIGHT CONTROLLING'], createItemWithDoubleCondition('L FUEL PUMP switches', 'OFF', globalProperty('anim/32/button'),0, CH_EQUAL, globalProperty('anim/32/button'), 0, CH_EQUAL, CH_CONTACT_AND, CH_DEFAULT))
--- addItem(list['AMPLIFIED']['PREFLIGHT CONTROLLING'], createItemWithDoubleCondition('R FUEL PUMP switches', 'OFF', globalProperty('anim/34/button'),0, CH_EQUAL, globalProperty('anim/37/button'), 0, CH_EQUAL, CH_CONTACT_AND, CH_DEFAULT))
--- addItem(list['AMPLIFIED']['PREFLIGHT CONTROLLING'], createItemWithDoubleCondition('C FUEL PUMP switches', 'OFF', globalProperty('anim/38/button'),0, CH_EQUAL, globalProperty('anim/39/button'), 0, CH_EQUAL, CH_CONTACT_AND, CH_DEFAULT), 'Verify that the left forward pump PRESS light is extinguished if the APU is on or is illuminated if the APU is off, Verify that the other left and right pump PRESS lights are illuminated [next] Verify that both center pump PRESS lights are extinguished', CH_BELOW)
--- addItem(list['AMPLIFIED']['PREFLIGHT CONTROLLING'], createTextItem("ANTI ICE panel", CH_BLUE))
--- addItem(list['AMPLIFIED']['PREFLIGHT CONTROLLING'], createItemWithCondition('WING anti ice switch','OFF', globalProperty('anim/40/button'), 0, CH_EQUAL, CH_DEFAULT))
--- addItem(list['AMPLIFIED']['PREFLIGHT CONTROLLING'], createItemWithDoubleCondition('ENGINE anti ice switches', 'OFF', globalProperty('anim/41/button'),0, CH_EQUAL, globalProperty('anim/42/button'), 0, CH_EQUAL, CH_CONTACT_AND, CH_DEFAULT))
--- addItem(list['AMPLIFIED']['PREFLIGHT CONTROLLING'], createItemWithCondition('WIPER selector','OFF', globalProperty('anim/rhotery/10'), 0, CH_EQUAL, CH_DEFAULT))
--- addItem(list['AMPLIFIED']['PREFLIGHT CONTROLLING'], createTextItem("Lighting panel", CH_BLUE))
--- addItem(list['AMPLIFIED']['PREFLIGHT CONTROLLING'], createItemWithCondition('POSITION light switch','ON', globalProperty('anim/43/button'), 1, CH_EQUAL, CH_DEFAULT))
--- addItem(list['AMPLIFIED']['PREFLIGHT CONTROLLING'], createItemWithDoubleCondition('ANTI COLLISION light switches', 'OFF', globalProperty('anim/44/button'),0, CH_EQUAL, globalProperty('anim/45/button'), 0, CH_EQUAL, CH_CONTACT_AND, CH_DEFAULT))
--- addItem(list['AMPLIFIED']['PREFLIGHT CONTROLLING'], createCheckItem('WING light switch', 'AS NEEDED'))
--- addItem(list['AMPLIFIED']['PREFLIGHT CONTROLLING'], createItemWithDoubleCondition('L R LANDING light switches', 'OFF', globalProperty('1-sim/lights/landingL/switch'),0, CH_EQUAL, globalProperty('1-sim/lights/landingR/switch'), 0, CH_EQUAL, CH_CONTACT_AND, CH_DEFAULT))
--- addItem(list['AMPLIFIED']['PREFLIGHT CONTROLLING'], createItemWithCondition('N LANDING light switches','OFF', globalProperty('1-sim/lights/landingN/switch'), 0, CH_EQUAL, CH_DEFAULT))
--- addItem(list['AMPLIFIED']['PREFLIGHT CONTROLLING'], createItemWithDoubleCondition('L WINDOW HEAT switches', 'ON', globalProperty('anim/47/button'),1, CH_EQUAL, globalProperty('anim/48/button'),1, CH_EQUAL, CH_CONTACT_AND, CH_DEFAULT))
--- addItem(list['AMPLIFIED']['PREFLIGHT CONTROLLING'], createItemWithDoubleCondition('R WINDOW HEAT switches', 'ON', globalProperty('anim/49/button'),1, CH_EQUAL, globalProperty('anim/50/button'), 1, CH_EQUAL, CH_CONTACT_AND, CH_DEFAULT), 'Verify that the INOP lights are extinguished', CH_BELOW)
--- addItem(list['AMPLIFIED']['PREFLIGHT CONTROLLING'], createTextItem("Passenger signs panel", CH_BLUE))
--- addItem(list['AMPLIFIED']['PREFLIGHT CONTROLLING'], createItemWithCondition('NO SMOKING selector','AUTO', globalProperty('sim/cockpit/switches/no_smoking'), 1, CH_EQUAL, CH_DEFAULT))
--- addItem(list['AMPLIFIED']['PREFLIGHT CONTROLLING'], createItemWithCondition('SEATBELTS selector','AUTO', globalProperty('sim/cockpit/switches/fasten_seat_belts'), 1, CH_EQUAL, CH_DEFAULT))
--- addItem(list['AMPLIFIED']['PREFLIGHT CONTROLLING'], createTextItem("Cabin Altitude panel", CH_BLUE))
--- addItem(list['AMPLIFIED']['PREFLIGHT CONTROLLING'], createCheckItem('AUTO RATE control', 'SET'))
--- addItem(list['AMPLIFIED']['PREFLIGHT CONTROLLING'], createCheckItem('LANDING ALT selector', 'SET'), 'Destination airport elevation', CH_BELOW)
--- addItem(list['AMPLIFIED']['PREFLIGHT CONTROLLING'], createItemWithCondition('MODE SELECTOR','AUTO', globalProperty('1-sim/press/modeSelector'), 2, CH_LESS, CH_DEFAULT))
--- addItem(list['AMPLIFIED']['PREFLIGHT CONTROLLING'], createItemWithCondition('ALTN EQUIP COOLING switch','OFF', globalProperty('anim/51/button'), 0, CH_EQUAL, CH_DEFAULT))
--- addItem(list['AMPLIFIED']['PREFLIGHT CONTROLLING'], createTextItem("Air conditioning panel", CH_BLUE))
--- addItem(list['AMPLIFIED']['PREFLIGHT CONTROLLING'], createItemWithCondition('FWD CABIN temperature controls','AUTO', globalProperty('1-sim/cond/fwdTempControl'), 0.50, CH_EQUAL, CH_DEFAULT))
--- addItem(list['AMPLIFIED']['PREFLIGHT CONTROLLING'], createItemWithCondition('AFT CABIN temperature controls','AUTO', globalProperty('1-sim/cond/aftTempControl'), 0.50, CH_EQUAL, CH_DEFAULT))
--- addItem(list['AMPLIFIED']['PREFLIGHT CONTROLLING'], createItemWithCondition('FLIGHT DECK CABIN temperature controls','AUTO', globalProperty('1-sim/cond/fltdkTempControl'), 0.50, CH_EQUAL, CH_DEFAULT), 'The INOP lights stay illuminated until the trim air switch is ON', CH_BELOW)
--- addItem(list['AMPLIFIED']['PREFLIGHT CONTROLLING'], createItemWithCondition('TRIM AIR switch','ON', globalProperty('anim/54/button'), 1, CH_EQUAL, CH_DEFAULT))
--- addItem(list['AMPLIFIED']['PREFLIGHT CONTROLLING'], createItemWithDoubleCondition('RECIRCULATION FAN switches', 'ON', globalProperty('anim/55/button'),1, CH_EQUAL, globalProperty('anim/56/button'), 1, CH_EQUAL, CH_CONTACT_AND, CH_DEFAULT), 'Verify that the INOP lights are extinguished.', CH_BELOW)
--- addItem(list['AMPLIFIED']['PREFLIGHT CONTROLLING'], createItemWithDoubleCondition('PACK CONTROL selectors', 'AUTO', globalProperty('1-sim/cond/leftPackSelector'),1, CH_EQUAL, globalProperty('1-sim/cond/rightPackSelector'), 1, CH_EQUAL, CH_CONTACT_AND, CH_DEFAULT), 'The PACK OFF lights stay illuminated until bleed air or external air is supplied', CH_BELOW)
--- addItem(list['AMPLIFIED']['PREFLIGHT CONTROLLING'], createTextItem("Bleed air panel", CH_BLUE))
--- addItem(list['AMPLIFIED']['PREFLIGHT CONTROLLING'], createItemWithCondition('ISOLATION switch','ON', globalProperty('anim/59/button'), 1, CH_EQUAL, CH_DEFAULT), 'Verify that the VALVE light is extinguished', CH_BELOW)
--- addItem(list['AMPLIFIED']['PREFLIGHT CONTROLLING'], createItemWithDoubleCondition('ENGINE bleed air switches', 'ON', globalProperty('anim/60/button'),1, CH_EQUAL, globalProperty('anim/62/button'), 1, CH_EQUAL, CH_CONTACT_AND, CH_DEFAULT), 'Verify that the OFF lights are illuminated', CH_BELOW)
--- addItem(list['AMPLIFIED']['PREFLIGHT CONTROLLING'], createItemWithCondition('APU bleed air switch','ON', globalProperty('anim/61/button'), 1, CH_EQUAL, CH_DEFAULT), 'Verify that the VALVE light is extinguished', CH_BELOW)
--- addItem(list['AMPLIFIED']['PREFLIGHT CONTROLLING'], createIfItem('FLIGHT DIRECTOR switch','ON', globalProperty('params/constrol'), 0, CH_EQUAL, globalProperty('1-sim/AP/fd1Switcher'), 0, CH_EQUAL, globalProperty('1-sim/AP/fd2Switcher'), 0, CH_EQUAL, CH_DEFAULT))
--- addItem(list['AMPLIFIED']['PREFLIGHT CONTROLLING'], createIfItem('VOR/DME switch','AUTO', globalProperty('params/constrol'), 0, CH_EQUAL, globalProperty('anim/78/button'), 1, CH_EQUAL, globalProperty('anim/79/button'), 1, CH_EQUAL, CH_DEFAULT))
--- addItem(list['AMPLIFIED']['PREFLIGHT CONTROLLING'], createIfItem('Oxygen','TEST', globalProperty('params/constrol'), 0, CH_EQUAL, globalProperty('misc/oxyTest'), 1, CH_EQUAL, globalProperty('misc/oxyTest/622'), 1, CH_EQUAL, CH_DEFAULT), 'Select the status display [next] Oxygen mask stowed and doors closed', CH_BELOW)
--- addItem(list['AMPLIFIED']['PREFLIGHT CONTROLLING'], createCheckItem('Crew oxygen pressure', 'CHECK'), 'Check EICAS', CH_BELOW)
--- addItem(list['AMPLIFIED']['PREFLIGHT CONTROLLING'], createTextItem("Instrument source select panel", CH_BLUE))
--- addItem(list['AMPLIFIED']['PREFLIGHT CONTROLLING'], createIfItem('NAVIGATION instrument source selector','SET', globalProperty('params/constrol'), 1, CH_EQUAL, globalProperty('1-sim/gauges/navSel_right'), 1, CH_EQUAL, globalProperty('1-sim/gauges/navSel_left'), 1, CH_EQUAL, CH_DEFAULT))
--- addItem(list['AMPLIFIED']['PREFLIGHT CONTROLLING'], createIfItem('FLIGHT DIRECTOR source selector','SET', globalProperty('params/constrol'), 1, CH_EQUAL, globalProperty('1-sim/gauges/flightDirSel_right'), 0, CH_EQUAL, globalProperty('1-sim/gauges/flightDirSel_left'), 0, CH_EQUAL, CH_DEFAULT))
--- addItem(list['AMPLIFIED']['PREFLIGHT CONTROLLING'], createIfItem('ELECTRONIC FLIGHT INSTRUMENT button','OFF', globalProperty('params/constrol'), 1, CH_EQUAL, globalProperty('anim/76/button'), 0, CH_EQUAL, globalProperty('anim/67/button'), 0, CH_EQUAL, CH_DEFAULT))
--- addItem(list['AMPLIFIED']['PREFLIGHT CONTROLLING'], createIfItem('INERTIAL REFERENCE SYSTEM button','OFF', globalProperty('params/constrol'), 1, CH_EQUAL, globalProperty('anim/77/button'), 0, CH_EQUAL, globalProperty('anim/68/button'), 0, CH_EQUAL, CH_DEFAULT))
--- addItem(list['AMPLIFIED']['PREFLIGHT CONTROLLING'], createIfItem('AIR DATA source button','OFF', globalProperty('params/constrol'), 1, CH_EQUAL, globalProperty('1-sim/gauges/airdataAltnClick_right'), 0, CH_EQUAL, globalProperty('1-sim/gauges/airdataAltnClick_left'), 0, CH_EQUAL, CH_DEFAULT))
--- addItem(list['AMPLIFIED']['PREFLIGHT CONTROLLING'], createCheckItem('Flight instruments', 'CHECK'), 'Set the altimeter [next] Verify that the flight instrument indications are correct', CH_BELOW)
--- addItem(list['AMPLIFIED']['PREFLIGHT CONTROLLING'], createTextItem("Verify that only these flags are shown:"), "TCAS expected RDMI flags", CH_BELOW)
--- addItem(list['AMPLIFIED']['PREFLIGHT CONTROLLING'], createTextItem("Verify that the flight mode annunciations are correct:"), "autothrottle mode is blank [next] roll mode is TO [next] pitch mode is TO [next] AFDS status is FD", CH_BELOW)
--- addItem(list['AMPLIFIED']['PREFLIGHT CONTROLLING'], createCheckItem('AUTOLAND STATUS annunciator', 'CHECK'), 'Verify that the indications are blank', CH_BELOW)
--- addItem(list['AMPLIFIED']['PREFLIGHT CONTROLLING'], createTextItem("Landing gear panel", CH_BLUE))
--- addItem(list['AMPLIFIED']['PREFLIGHT CONTROLLING'], createItemWithCondition('Landing gear lever','DN', globalProperty('1-sim/cockpit/switches/gear_handle'), 1, CH_EQUAL, CH_DEFAULT))
--- addItem(list['AMPLIFIED']['PREFLIGHT CONTROLLING'], createItemWithCondition('ALTERNATE GEAR switch','GUARDED', globalProperty('1-sim/gauges/altnGearCover'), 0, CH_EQUAL, CH_DEFAULT))
--- addItem(list['AMPLIFIED']['PREFLIGHT CONTROLLING'], createItemWithCondition('GPWS FLAP OVERRIDE switch','OFF', globalProperty('anim/72/button'), 0, CH_EQUAL, CH_DEFAULT))
--- addItem(list['AMPLIFIED']['PREFLIGHT CONTROLLING'], createItemWithCondition('GPWS GEAR OVERRIDE switch','OFF', globalProperty('anim/74/button'), 0, CH_EQUAL, CH_DEFAULT))
--- addItem(list['AMPLIFIED']['PREFLIGHT CONTROLLING'], createItemWithCondition('GPWS TERR OVERRIDE switch','OFF', globalProperty('anim/75/button'), 0, CH_EQUAL, CH_DEFAULT))
--- addItem(list['AMPLIFIED']['PREFLIGHT CONTROLLING'], createItemWithCondition('HEADING REFERENCE switch','NORM', globalProperty('1-sim/gauges/hdgRefSwitcher'), 1, CH_EQUAL, CH_DEFAULT))
--- addItem(list['AMPLIFIED']['PREFLIGHT CONTROLLING'], createTextItem("Alternate flaps panel", CH_BLUE))
--- addItem(list['AMPLIFIED']['PREFLIGHT CONTROLLING'], createItemWithCondition('ALTERNATE FLAPS selector','NORM', globalProperty('1-sim/gauges/flapsALTNswitcher'), 0, CH_EQUAL, CH_DEFAULT))
--- addItem(list['AMPLIFIED']['PREFLIGHT CONTROLLING'], createItemWithDoubleCondition('Alternate flaps switches','OFF', globalProperty('anim/70/button'), 0, CH_EQUAL, globalProperty('anim/71/button'), 0, CH_EQUAL, CH_CONTACT_AND, CH_DEFAULT)) --check conditions
--- addItem(list['AMPLIFIED']['PREFLIGHT CONTROLLING'], createTextItem("EICAS display", CH_BLUE))
--- addItem(list['AMPLIFIED']['PREFLIGHT CONTROLLING'], createCheckItem('Upper EICAS display', 'CHECK'), 'Verify that the primary engine indications show existing conditions [next] Verify that no exceedance is shown', CH_BELOW)
--- addItem(list['AMPLIFIED']['PREFLIGHT CONTROLLING'], createCheckItem('Secondary ENGINE indications', 'CHECK'), 'Verify that the secondary engine indications show existing conditions [next] Verify that no exceedance is shown', CH_BELOW) --OK
--- addItem(list['AMPLIFIED']['PREFLIGHT CONTROLLING'], createItemWithCondition('STATUS display','SELECT', globalProperty('1-sim/eicas/StatusFlag'), 1, CH_EQUAL, CH_DEFAULT))
--- addItem(list['AMPLIFIED']['PREFLIGHT CONTROLLING'], createItemWithCondition('COMPUTER selector','AUTO', globalProperty('1-sim/eicas/compSelector'), 1, CH_EQUAL, CH_DEFAULT))
--- addItem(list['AMPLIFIED']['PREFLIGHT CONTROLLING'], createItemWithCondition('THRUST REFERENCE selector','BOTH', globalProperty('1-sim/eicas/thrustRefSetRotary'), 1, CH_EQUAL, CH_DEFAULT), 'Verify that the TO mode is shown', CH_BELOW)
--- addItem(list['AMPLIFIED']['PREFLIGHT CONTROLLING'], createTextItem("EFIS control panel", CH_BLUE))
+-- preflightFOProc:addItem(ProcedureItem:new("RAM AIR TURBINE UNLKD LIGHT","EXTINGUISHED"
+-- ))
+
+preflightFOProc:addItem(SimpleProcedureItem:new("Engine control panel"))
+preflightFOProc:addItem(ProcedureItem:new("ENGINE LIMITER BUTTONS","ON",FlowItem.actorFO,0,
+	function () return get("anim/30/button") == 1 and get("anim/31/button") == 1 end,
+	function () 
+		set("anim/30/button",1) 
+		set("anim/31/button",1)
+	end))
+preflightFOProc:addItem(ProcedureItem:new("ENGINE START SELECTORS","AUTO",FlowItem.actorFO,0,
+	function () return get("1-sim/engine/leftStartSelector") == 1 and get("1-sim/engine/rightStartSelector") == 1 end,
+	function () 
+		set("1-sim/engine/leftStartSelector",1) 
+		set("1-sim/engine/rightStartSelector",1)
+	end))
+
+preflightFOProc:addItem(SimpleProcedureItem:new("FUEL panel"))
+preflightFOProc:addItem(ProcedureItem:new("CROSSFEED switches","OFF",FlowItem.actorFO,0,
+	function () return get("anim/33/button") == 0 and get("anim/36/button") == 0 end,
+	function () 
+		set("anim/33/button",0) 
+		set("anim/36/button",0)
+	end))
+preflightFOProc:addItem(ProcedureItem:new("L FUEL PUMP SWITCHES","OFF",FlowItem.actorFO,0,
+	function () return get("anim/32/button") == 0 and get("anim/32/button") == 0 end,
+	function () 
+		set("anim/32/button",0) 
+		set("anim/32/button",0)
+	end))
+preflightFOProc:addItem(ProcedureItem:new("R FUEL PUMP SWITCHES","OFF",FlowItem.actorFO,0,
+	function () return get("anim/34/button") == 0 and get("anim/37/button") == 0 end,
+	function () 
+		set("anim/34/button",0) 
+		set("anim/37/button",0)
+	end))
+preflightFOProc:addItem(ProcedureItem:new("C FUEL PUMP SWITCHES","OFF",FlowItem.actorFO,0,
+	function () return get("anim/38/button") == 0 and get("anim/39/button") == 0 end,
+	function () 
+		set("anim/38/button",0) 
+		set("anim/39/button",0)
+	end))
+-- 'Verify that the left forward pump PRESS light is extinguished if the APU is on or is illuminated if the APU is off, Verify that the other left and right pump PRESS lights are illuminated [next] Verify that both center pump PRESS lights are extinguished', CH_BELOW)
+
+preflightFOProc:addItem(SimpleProcedureItem:new("ANTI ICE panel"))
+preflightFOProc:addItem(ProcedureItem:new("WING ANTI ICE SWITCH","OFF",FlowItem.actorFO,0,
+	function () return get("anim/40/button") == 0 end,
+	function () set("anim/40/button",0) end))
+preflightFOProc:addItem(ProcedureItem:new("ENGINE ANTI ICE SWITCHES","OFF",FlowItem.actorFO,0,
+	function () return get("anim/41/button") == 0 and get("anim/42/button") == 0 end,
+	function () 
+		set("anim/41/button",0) 
+		set("anim/42/button",0)
+	end))
+preflightFOProc:addItem(ProcedureItem:new("WIPER SELECTOR","OFF",FlowItem.actorFO,0,
+	function () return get("anim/rhotery/10") == 0 end,
+	function () set("anim/rhotery/10",0) end))
+
+preflightFOProc:addItem(SimpleProcedureItem:new("Lighting panel"))
+preflightFOProc:addItem(ProcedureItem:new("POSITION LIGHT SWITCH","ON",FlowItem.actorFO,0,
+	function () return get("anim/43/button") == 1 end,
+	function () set("anim/43/button",1) end))
+preflightFOProc:addItem(ProcedureItem:new("ANTI COLLISION LIGHT SWITCHES","OFF",FlowItem.actorFO,0,
+	function () return get("anim/44/button") == 0 and get("anim/45/button") == 0 end,
+	function () 
+		set("anim/44/button",0) 
+		set("anim/45/button",0)
+	end))
+-- preflightFOProc:addItem(ProcedureItem:new("WING LIGHT SWITCH","AS NEEDED"))
+preflightFOProc:addItem(ProcedureItem:new("L R LANDING LIGHT SWITCHES","OFF",FlowItem.actorFO,0,
+	function () return get("1-sim/lights/landingL/switch") == 0 and get("1-sim/lights/landingR/switch") == 0 end,
+	function () 
+		set("1-sim/lights/landingL/switch",0) 
+		set("1-sim/lights/landingR/switch",0)
+	end))
+preflightFOProc:addItem(ProcedureItem:new("N LANDING LIGHT SWITCHES","OFF",FlowItem.actorFO,0,
+	function () return get("1-sim/lights/landingN/switch") == 0 end,
+	function () set("1-sim/lights/landingN/switch",0) end))
+preflightFOProc:addItem(ProcedureItem:new("L WINDOW HEAT SWITCHES","ON",FlowItem.actorFO,0,
+	function () return get("anim/47/button") == 1 and get("anim/48/button") == 1 end,
+	function () 
+		set("anim/47/button",1) 
+		set("anim/48/button",1)
+	end))
+preflightFOProc:addItem(ProcedureItem:new("R WINDOW HEAT SWITCHES","ON",FlowItem.actorFO,0,
+	function () return get("anim/49/button") == 1 and get("anim/50/button") == 1 end,
+	function () 
+		set("anim/49/button",1) 
+		set("anim/50/button",1)
+	end))
+
+preflightFOProc:addItem(SimpleProcedureItem:new("Passenger signs panel"))
+preflightFOProc:addItem(ProcedureItem:new("NO SMOKING SELECTOR","AUTO",FlowItem.actorFO,0,
+	function () return get("sim/cockpit/switches/no_smoking") == 1 end,
+	function () set("sim/cockpit/switches/no_smoking",1) end))
+preflightFOProc:addItem(ProcedureItem:new("SEATBELTS SELECTOR","AUTO",FlowItem.actorFO,0,
+	function () return get("sim/cockpit/switches/fasten_seat_belts") == 1 end,
+	function () set("sim/cockpit/switches/fasten_seat_belts",1) end))
+
+preflightFOProc:addItem(SimpleProcedureItem:new("Cabin Altitude panel"))
+-- preflightFOProc:addItem(ProcedureItem:new("AUTO RATE CONTROL","SET"))
+-- preflightFOProc:addItem(ProcedureItem:new("LANDING ALT SELECTOR","SET"), 'Destination airport elevation', CH_BELOW)
+preflightFOProc:addItem(ProcedureItem:new("MODE SELECTOR","AUTO",FlowItem.actorFO,0,
+	function () return get("1-sim/press/modeSelector") == 2 end,
+	function () set("1-sim/press/modeSelector",2) end))
+preflightFOProc:addItem(ProcedureItem:new("ALTN EQUIP COOLING SWITCH","OFF",FlowItem.actorFO,0,
+	function () return get("anim/51/button") == 0 end,
+	function () set("anim/51/button",0) end))
+
+preflightFOProc:addItem(SimpleProcedureItem:new("Air conditioning panel"))
+preflightFOProc:addItem(ProcedureItem:new("FWD CABIN TEMPERATURE CONTROLS","AUTO",FlowItem.actorFO,0,
+	function () return get("1-sim/cond/fwdTempControl") == 0.5 end,
+	function () set("1-sim/cond/fwdTempControl",0.5) end))
+preflightFOProc:addItem(ProcedureItem:new("AFT CABIN TEMPERATURE CONTROLS","AUTO",FlowItem.actorFO,0,
+	function () return get("1-sim/cond/aftTempControl") == 0.5 end,
+	function () set("1-sim/cond/aftTempControl",0.5) end))
+preflightFOProc:addItem(ProcedureItem:new("FLIGHT DECK CABIN TEMPERATURE CONTROLS","AUTO",FlowItem.actorFO,0,
+	function () return get("1-sim/cond/fltdkTempControl") == 0.5 end,
+	function () set("1-sim/cond/fltdkTempControl",0.5) end))
+preflightFOProc:addItem(ProcedureItem:new("TRIM AIR SWITCH","ON",FlowItem.actorFO,0,
+	function () return get("anim/54/button") == 1 end,
+	function () set("anim/54/button",1) end))
+preflightFOProc:addItem(ProcedureItem:new("RECIRCULATION FAN SWITCHES","ON",FlowItem.actorFO,0,
+	function () return get("anim/55/button") == 1 and get("anim/56/button") == 1 end,
+	function () 
+		set("anim/55/button",1) 
+		set("anim/56/button",1)
+	end))
+preflightFOProc:addItem(ProcedureItem:new("PACK CONTROL SELECTORS","AUTO",FlowItem.actorFO,0,
+	function () return get("1-sim/cond/leftPackSelector") == 1 and get("1-sim/cond/rightPackSelector") == 1 end,
+	function () 
+		set("1-sim/cond/leftPackSelector",1) 
+		set("1-sim/cond/rightPackSelector",1)
+	end))
+
+preflightFOProc:addItem(SimpleProcedureItem:new("Bleed air panel"))
+preflightFOProc:addItem(ProcedureItem:new("ISOLATION SWITCH","ON",FlowItem.actorFO,0,
+	function () return get("anim/59/button") == 1 end,
+	function () set("anim/59/button",1) end))
+preflightFOProc:addItem(ProcedureItem:new("ENGINE BLEED AIR SWITCHES","ON",FlowItem.actorFO,0,
+	function () return get("anim/60/button") == 1 and get("anim/62/button") == 1 end,
+	function () 
+		set("anim/60/button",1) 
+		set("anim/62/button",1)
+	end))
+preflightFOProc:addItem(ProcedureItem:new("APU BLEED AIR SWITCH","ON",FlowItem.actorFO,0,
+	function () return get("anim/61/button") == 1 end,
+	function () set("anim/61/button",1) end))
+-- preflightFOProc:addItem(ProcedureItem:new("FLIGHT DIRECTOR SWITCH","ON",FlowItem.actorFO,0,
+ -- globalProperty('params/constrol'), 0, CH_EQUAL, globalProperty('1-sim/AP/fd1Switcher'), 0, CH_EQUAL, globalProperty('1-sim/AP/fd2Switcher'), 0, CH_EQUAL, CH_DEFAULT))
+preflightFOProc:addItem(ProcedureItem:new("VOR/DME SWITCH","AUTO",FlowItem.actorFO,0,
+	function () return get("anim/78/button") == 1 and get("anim/79/button") == 1 end,
+	function () 
+		set("anim/78/button",1) 
+		set("anim/79/button",1)
+	end))
+-- preflightFOProc:addItem(ProcedureItem:new("OXYGEN","TEST",FlowItem.actorFO,0,
+ -- globalProperty('params/constrol'), 0, CH_EQUAL, globalProperty('misc/oxyTest'), 1, CH_EQUAL, globalProperty('misc/oxyTest/622'), 1, CH_EQUAL, CH_DEFAULT), 'Select the status display [next] Oxygen mask stowed and doors closed', CH_BELOW)
+-- preflightFOProc:addItem(ProcedureItem:new("CREW OXYGEN PRESSURE","CHECK"),
+ -- 'Check EICAS', CH_BELOW)
+
+preflightFOProc:addItem(SimpleProcedureItem:new("Instrument source select panel"))
+-- preflightFOProc:addItem(ProcedureItem:new("NAVIGATION INSTRUMENT SOURCE SELECTOR","SET",FlowItem.actorFO,0,
+ -- globalProperty('params/constrol'), 1, CH_EQUAL, globalProperty('1-sim/gauges/navSel_right'), 1, CH_EQUAL, globalProperty('1-sim/gauges/navSel_left'), 1, CH_EQUAL, CH_DEFAULT))
+-- preflightFOProc:addItem(ProcedureItem:new("FLIGHT DIRECTOR SOURCE SELECTOR","SET",FlowItem.actorFO,0,
+ -- globalProperty('params/constrol'), 1, CH_EQUAL, globalProperty('1-sim/gauges/flightDirSel_right'), 0, CH_EQUAL, globalProperty('1-sim/gauges/flightDirSel_left'), 0, CH_EQUAL, CH_DEFAULT))
+preflightFOProc:addItem(ProcedureItem:new("ELECTRONIC FLIGHT INSTRUMENT BUTTON","OFF",FlowItem.actorFO,0,
+	function () return get("anim/76/button") == 0 and get("anim/67/button") == 0 end,
+	function () 
+		set("anim/76/button",0) 
+		set("anim/67/button",0)
+	end))
+preflightFOProc:addItem(ProcedureItem:new("INERTIAL REFERENCE SYSTEM BUTTON","OFF",FlowItem.actorFO,0,
+	function () return get("anim/77/button") == 0 and get("anim/68/button") == 0 end,
+	function () 
+		set("anim/77/button",0) 
+		set("anim/68/button",0)
+	end))
+-- preflightFOProc:addItem(ProcedureItem:new("AIR DATA SOURCE BUTTON","OFF",FlowItem.actorFO,0,
+ -- globalProperty('params/constrol'), 1, CH_EQUAL, globalProperty('1-sim/gauges/airdataAltnClick_right'), 0, CH_EQUAL, globalProperty('1-sim/gauges/airdataAltnClick_left'), 0, CH_EQUAL, CH_DEFAULT))
+-- preflightFOProc:addItem(ProcedureItem:new("FLIGHT INSTRUMENTS","CHECK",FlowItem.actorFO,0,
+-- ), 'Set the altimeter [next] Verify that the flight instrument indications are correct', CH_BELOW)
+-- preflightFOProc:addItem(ProcedureItem:new("Verify that only these flags are shown:"), "TCAS expected RDMI flags", CH_BELOW)
+-- preflightFOProc:addItem(ProcedureItem:new("Verify that the flight mode annunciations are correct:"), "autothrottle mode is blank [next] roll mode is TO [next] pitch mode is TO [next] AFDS status is FD", CH_BELOW)
+-- preflightFOProc:addItem(ProcedureItem:new("AUTOLAND STATUS ANNUNCIATOR', 'CHECK'),
+ -- 'Verify that the indications are blank', CH_BELOW)
+
+preflightFOProc:addItem(SimpleProcedureItem:new("Landing gear panel"))
+preflightFOProc:addItem(ProcedureItem:new("LANDING GEAR LEVER","DOWN",FlowItem.actorFO,0,
+	function () return get("1-sim/cockpit/switches/gear_handle") == 1 end,
+	function () set("1-sim/cockpit/switches/gear_handle",1) end))
+preflightFOProc:addItem(ProcedureItem:new("ALTERNATE GEAR SWITCH","GUARDED",FlowItem.actorFO,0,
+	function () return get("1-sim/gauges/altnGearCover") == 0 end,
+	function () set("1-sim/gauges/altnGearCover",0) end))
+preflightFOProc:addItem(ProcedureItem:new("GPWS FLAP OVERRIDE SWITCH","OFF",FlowItem.actorFO,0,
+	function () return get("anim/72/button") == 0 end,
+	function () set("anim/72/button",0) end))
+preflightFOProc:addItem(ProcedureItem:new("GPWS GEAR OVERRIDE SWITCH","OFF",FlowItem.actorFO,0,
+	function () return get("anim/74/button") == 0 end,
+	function () set("anim/74/button",0) end))
+preflightFOProc:addItem(ProcedureItem:new("GPWS TERR OVERRIDE SWITCH","OFF",FlowItem.actorFO,0,
+	function () return get("anim/75/button") == 0 end,
+	function () set("anim/75/button",0) end))
+preflightFOProc:addItem(ProcedureItem:new("HEADING REFERENCE SWITCH","NORM",FlowItem.actorFO,0,
+	function () return get("1-sim/gauges/hdgRefSwitcher") == 1 end,
+	function () set("1-sim/gauges/hdgRefSwitcher",1) end))
+
+preflightFOProc:addItem(SimpleProcedureItem:new("Alternate flaps panel"))
+preflightFOProc:addItem(ProcedureItem:new("ALTERNATE FLAPS SELECTOR","NORM",FlowItem.actorFO,0,
+	function () return get("1-sim/gauges/flapsALTNswitcher") == 0 end,
+	function () set("1-sim/gauges/flapsALTNswitcher",0) end))
+preflightFOProc:addItem(ProcedureItem:new("ALTERNATE FLAPS SWITCHES","OFF",FlowItem.actorFO,0,
+	function () return get("anim/70/button") == 0 and get("anim/71/button") == 0 end,
+	function () 
+		set("anim/70/button",0) 
+		set("anim/71/button",0)
+	end))
+
+preflightFOProc:addItem(SimpleProcedureItem:new("EICAS display"))
+-- preflightFOProc:addItem(ProcedureItem:new("UPPER EICAS DISPLAY","CHECK"),
+ -- 'Verify that the primary engine indications show existing conditions [next] Verify that no exceedance is shown', CH_BELOW)
+-- preflightFOProc:addItem(ProcedureItem:new("SECONDARY ENGINE INDICATIONS","CHECK"),
+ -- 'Verify that the secondary engine indications show existing conditions [next] Verify that no exceedance is shown', CH_BELOW) --OK
+preflightFOProc:addItem(ProcedureItem:new("STATUS DISPLAY","SELECT",FlowItem.actorFO,0,
+	function () return get("1-sim/eicas/StatusFlag") == 1 end,
+	function () set("1-sim/eicas/StatusFlag",1) end))
+preflightFOProc:addItem(ProcedureItem:new("COMPUTER SELECTOR","AUTO",FlowItem.actorFO,0,
+	function () return get("1-sim/eicas/compSelector") == 1 end,
+	function () set("1-sim/eicas/compSelector",1) end))
+preflightFOProc:addItem(ProcedureItem:new("THRUST REFERENCE SELECTOR","BOTH",FlowItem.actorFO,0,
+	function () return get("1-sim/eicas/thrustRefSetRotary") == 1 end,
+	function () set("1-sim/eicas/thrustRefSetRotary",1) end))
+
+preflightFOProc:addItem(SimpleProcedureItem:new("EFIS control panel"))
 -- addItem(list['AMPLIFIED']['PREFLIGHT CONTROLLING'], createCheckItem('Decision height selector', 'CHECK'))
 -- addItem(list['AMPLIFIED']['PREFLIGHT CONTROLLING'], createCheckItem('TERRAIN switch', 'CHECK'))
 -- addItem(list['AMPLIFIED']['PREFLIGHT CONTROLLING'], createCheckItem('HSI RANGE selector', 'CHECK'))
 -- addItem(list['AMPLIFIED']['PREFLIGHT CONTROLLING'], createCheckItem('HSI TRAFFIC switch', 'CHECK'))
 -- addItem(list['AMPLIFIED']['PREFLIGHT CONTROLLING'], createCheckItem('HSI mode selector', 'CHECK'))
 -- addItem(list['AMPLIFIED']['PREFLIGHT CONTROLLING'], createCheckItem('HSI CENTER switch', 'CHECK'))
--- addItem(list['AMPLIFIED']['PREFLIGHT CONTROLLING'], createIfItem('WXR RADAR switch','OFF', globalProperty('params/constrol'), 0, CH_EQUAL, globalProperty('1-sim/ndpanel/1/hsiWxr'), 0, CH_EQUAL, globalProperty('1-sim/ndpanel/2/hsiWxr'), 0, CH_EQUAL, CH_DEFAULT), 'Verify that weather radar indications are not shown on the HSI', CH_BELOW)
+-- preflightFOProc:addItem(ProcedureItem:new("WXR RADAR SWITCH","OFF",FlowItem.actorFO,0,
+ -- globalProperty('params/constrol'), 0, CH_EQUAL, globalProperty('1-sim/ndpanel/1/hsiWxr'), 0, CH_EQUAL, globalProperty('1-sim/ndpanel/2/hsiWxr'), 0, CH_EQUAL, CH_DEFAULT), 'Verify that weather radar indications are not shown on the HSI', CH_BELOW)
 -- addItem(list['AMPLIFIED']['PREFLIGHT CONTROLLING'], createCheckItem('Left VHF communications panel', 'CHECK'))
 -- addItem(list['AMPLIFIED']['PREFLIGHT CONTROLLING'], createCheckItem('ADF panel', 'CHECK'))
 -- addItem(list['AMPLIFIED']['PREFLIGHT CONTROLLING'], createCheckItem('Engine fire panel', 'CHECK'), 'Verify that the ENG BTL 1 DISCH and ENG BTL 2 DISCH lights are extinguished', CH_BELOW)
--- addItem(list['AMPLIFIED']['PREFLIGHT CONTROLLING'], createCheckItem('Engine fire switches', 'IN', globalProperty('1-sim/fire/right/EngExtHandle'), 0, CH_EQUAL, CH_DEFAULT), 'Verify that the LEFT and RIGHT lights are extinguished', CH_BELOW)
+preflightFOProc:addItem(ProcedureItem:new("ENGINE FIRE SWITCHES","IN",FlowItem.actorFO,0,
+	function () return get("1-sim/fire/right/EngExtHandle") == 0 end,
+	function () set("1-sim/fire/right/EngExtHandle",0) end))
 -- addItem(list['AMPLIFIED']['PREFLIGHT CONTROLLING'], createCheckItem('Transponder panel', 'CHECK'))
 -- addItem(list['AMPLIFIED']['PREFLIGHT CONTROLLING'], createCheckItem('ILS panel', 'CHECK'))
--- addItem(list['AMPLIFIED']['PREFLIGHT CONTROLLING'], createTextItem("Cargo Fire panel", CH_BLUE))
--- addItem(list['AMPLIFIED']['PREFLIGHT CONTROLLING'], createItemWithDoubleCondition('CARGO FIRE ARM switches','OFF', globalProperty('anim/63/button'), 0, CH_EQUAL, globalProperty('anim/64/button'), 0, CH_EQUAL, CH_CONTACT_AND, CH_DEFAULT),'Verify that the FWD and AFT lights are extinguished [next] Verify that the DISCH lights are extinguished', CH_BELOW )
--- addItem(list['AMPLIFIED']['PREFLIGHT CONTROLLING'], createTextItem("APU fire panel", CH_BLUE))
--- addItem(list['AMPLIFIED']['PREFLIGHT CONTROLLING'], createCheckItem('APU fire switch', 'IN', globalProperty('1-sim/fire/apu/EngExtHandle'), 0, CH_EQUAL, CH_DEFAULT), 'Verify that the APU light is extinguished', CH_BELOW)
+
+preflightFOProc:addItem(SimpleProcedureItem:new("Cargo Fire panel"))
+preflightFOProc:addItem(ProcedureItem:new("CARGO FIRE ARM SWITCHES","OFF",FlowItem.actorFO,0,
+	function () return get("anim/63/button") == 0 and get("anim/64/button") == 0 end,
+	function () 
+		set("anim/63/button",0) 
+		set("anim/64/button",0)
+	end))
+
+preflightFOProc:addItem(SimpleProcedureItem:new("APU fire panel"))
+preflightFOProc:addItem(ProcedureItem:new("APU FIRE SWITCH","IN",FlowItem.actorFO,0,
+	function () return get("1-sim/fire/apu/EngExtHandle") == 0 end,
+	function () set("1-sim/fire/apu/EngExtHandle",0) end))
 -- addItem(list['AMPLIFIED']['PREFLIGHT CONTROLLING'], createCheckItem('Right VHF communications panel', 'CHECK'))
+
+
 
 -- ============ PREFLIGHT ============
 -- addItem(list['NORMAL']['PREFLIGHT'], createIfItem('Oxygen','TEST', globalProperty('params/constrol'), 0, CH_EQUAL, globalProperty('misc/oxyTest'), 1, CH_EQUAL, globalProperty('misc/oxyTest/622'), 1, CH_EQUAL, CH_DEFAULT))
@@ -277,7 +580,7 @@ testProc:addItem(ProcedureItem:new("BATTERY SWITCH","ON",FlowItem.actorFO,0,true
 -- addItem(list['AMPLIFIED']['BEFORE START PROCEDURE'], createItemWithDoubleCondition('LEFT FUEL PUMP switches','ON', globalProperty('anim/32/button'), 1, CH_EQUAL, globalProperty('anim/35/button'), 1, CH_EQUAL, CH_CONTACT_AND, CH_DEFAULT))
 -- addItem(list['AMPLIFIED']['BEFORE START PROCEDURE'], createItemWithDoubleCondition('RIGHT FUEL PUMP switches','ON', globalProperty('anim/34/button'), 1, CH_EQUAL, globalProperty('anim/37/button'), 1, CH_EQUAL, CH_CONTACT_AND, CH_DEFAULT), 'Verify that the PRESS lights are extinguished', CH_BELOW)
 -- addItem(list['AMPLIFIED']['BEFORE START PROCEDURE'], createTextItem('If there is fuel in the center tank:'))
-addItem(list['AMPLIFIED']['BEFORE START PROCEDURE'], createIfItem('L CENTER FUEL PUMP switches','AS REQUIRED', globalPropertyfae('sim/flightmodel/weight/m_fuel', 2), 545, CH_LARGER, globalProperty('anim/38/button'), 1, CH_EQUAL, globalProperty('anim/38/button'), 1, CH_EQUAL, CH_DEFAULT))
+-- addItem(list['AMPLIFIED']['BEFORE START PROCEDURE'], createIfItem('L CENTER FUEL PUMP switches','AS REQUIRED', globalPropertyfae('sim/flightmodel/weight/m_fuel', 2), 545, CH_LARGER, globalProperty('anim/38/button'), 1, CH_EQUAL, globalProperty('anim/38/button'), 1, CH_EQUAL, CH_DEFAULT))
 -- addItem(list['AMPLIFIED']['BEFORE START PROCEDURE'], createIfItem('R CENTER FUEL PUMP switches','AS REQUIRED', globalPropertyfae('sim/flightmodel/weight/m_fuel', 1), 545, CH_LARGER, globalProperty('anim/39/button'), 1, CH_EQUAL, globalProperty('anim/39/button'), 1, CH_EQUAL, CH_DEFAULT), 'Verify both PRESS lights are illuminated and CTR L FUEL PUMP and CTR R FUEL PUMP messages are shown', CH_BELOW)
 -- addItem(list['AMPLIFIED']['BEFORE START PROCEDURE'], createItemWithCondition('RED ANTI COLLISION light switch','ON', globalProperty('anim/44/button'), 1, CH_EQUAL, CH_DEFAULT))
 -- addItem(list['AMPLIFIED']['BEFORE START PROCEDURE'], createItemWithCondition('RECALL switch','PUSH', globalProperty('1-sim/gauges/caution_recall'), 1, CH_EQUAL, CH_DEFAULT), 'Verify that only the expected alert messages are shown', CH_BELOW)
@@ -456,31 +759,82 @@ addItem(list['AMPLIFIED']['BEFORE START PROCEDURE'], createIfItem('L CENTER FUEL
 
 
 
+-- ======== STATES =============
 
--- ============  =============
--- add the checklists and procedures to the active sop
-local nopeProc = Procedure:new("NO PROCEDURES AVAILABLE")
+-- ================= Cold & Dark State ==================
+local coldAndDarkProc = State:new("COLD AND DARK","securing the aircraft","ready for secure checklist")
+coldAndDarkProc:setFlightPhase(1)
+-- coldAndDarkProc:addItem(ProcedureItem:new("OVERHEAD TOP","SET","SYS",0,true,
+	-- function () 
+		-- kc_macro_state_cold_and_dark()
+		-- if activePrefSet:get("general:sges") == true then
+			-- kc_macro_start_sges_sequence()
+		-- end
+		-- getActiveSOP():setActiveFlowIndex(1)
+	-- end))
+	
+-- ================= Turn Around State ==================
+local turnAroundProc = State:new("AIRCRAFT TURN AROUND","setting up the aircraft","aircraft configured for turn around")
+turnAroundProc:setFlightPhase(18)
+-- turnAroundProc:addItem(ProcedureItem:new("OVERHEAD TOP","SET","SYS",0,true,
+	-- function () 
+		-- kc_macro_state_turnaround()
+		-- if activePrefSet:get("general:sges") == true then
+			-- kc_macro_start_sges_sequence()
+		-- end
+	-- end))
+-- turnAroundProc:addItem(ProcedureItem:new("GPU","ON BUS","SYS",0,true,
+	-- function () 
+		-- command_once("laminar/B738/toggle_switch/gpu_dn")
+		-- electricalPowerUpProc:setState(Flow.FINISH)
+		-- prelPreflightProc:setState(Flow.FINISH)
+		-- getActiveSOP():setActiveFlowIndex(3)
+	-- end))
 
-activeSOP:addProcedure(testProc)
--- activeSOP:addProcedure(electricalPowerUpProc)
--- activeSOP:addProcedure(prelPreflightProc)
+-- === Recover Takeoff modes
+local recoverTakeoff = State:new("Recover Takeoff","","")
+recoverTakeoff:setFlightPhase(8)
+-- recoverTakeoff:addItem(ProcedureItem:new("Recover","SET","SYS",0,true,
+	-- function () 
+		-- kc_procvar_set("fmacallouts",true) -- activate FMA callouts
+		-- sysRadios.xpdrSwitch:actuate(sysRadios.xpdrTARA)
+		-- sysRadios.xpdrCode:actuate(activeBriefings:get("departure:squawk"))
+		-- kc_procvar_set("above10k",true) -- background 10.000 ft activities
+		-- kc_procvar_set("attransalt",true) -- background transition altitude activities
+		-- kc_procvar_set("aftertakeoff",true) -- fo cleans up when flaps are in
+
+	-- end))
 
 -- ============= Background Flow ==============
 local backgroundFlow = Background:new("","","")
 
+-- kc_procvar_initialize_bool("toctest", false) -- B738 takeoff config test
+
 backgroundFlow:addItem(BackgroundProcedureItem:new("","","SYS",0,
 	function () 
-		return
+		-- if kc_procvar_get("toctest") == true then 
+			-- kc_bck_b738_toc_test("toctest")
+		-- end
 	end))
+	
+
 
 -- ==== Background Flow ====
 activeSOP:addBackground(backgroundFlow)
 
-kc_procvar_initialize_bool("waitformaster", false) 
+-- ============  =============
+-- add the checklists and procedures to the active sop
+activeSOP:addProcedure(electricalPowerUpProc)
+activeSOP:addProcedure(prelPreflightProc)
+activeSOP:addProcedure(preflightFOProc)
+
+-- =========== States ===========
+-- activeSOP:addState(turnAroundProc)
+-- activeSOP:addState(coldAndDarkProc)
+-- activeSOP:addState(recoverTakeoff)
 
 function getActiveSOP()
 	return activeSOP
 end
 
-
-return SOP_DFLT
+return SOP_B7x7
