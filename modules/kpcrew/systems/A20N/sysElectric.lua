@@ -1,4 +1,4 @@
--- A20N JarDesign airplane 
+-- DFLT  airplane 
 -- Electric system functionality
 
 -- @classmod sysElectric
@@ -18,49 +18,85 @@ local MultiStateCmdSwitch 	= require "kpcrew.systems.MultiStateCmdSwitch"
 local InopSwitch 			= require "kpcrew.systems.InopSwitch"
 local KeepPressedSwitchCmd	= require "kpcrew.systems.KeepPressedSwitchCmd"
 
+logMsg ("Electric DFLT")
+
+--------- Batteries
 
 -- ** BATTERY Switches
-sysElectric.batterySwitch 	= TwoStateDrefSwitch:new("battery1","sim/custom/xap/elec/bat1_on",0)
-sysElectric.battery2Switch 	= TwoStateCmdSwitch:new("battery2","sim/custom/xap/elec/bat2_on",0)
+sysElectric.batterySwitch 	= TwoStateCmdSwitch:new("battery1","sim/cockpit2/electrical/battery_on",0,
+	"sim/electrical/battery_1_on","sim/electrical/battery_1_off","sim/electrical/battery_1_toggle")
+sysElectric.battery2Switch 	= TwoStateCmdSwitch:new("battery2","sim/cockpit2/electrical/battery_on",1,
+	"sim/electrical/battery_2_on","sim/electrical/battery_2_off","sim/electrical/battery_2_toggle")
+sysElectric.batteryGroup 	= SwitchGroup:new("battery switches")
+sysElectric.batteryGroup:addSwitch(batterySwitch)
+sysElectric.batteryGroup:addSwitch(battery2Switch)
 
--- GPU
-sysElectric.gpuConnect = TwoStateDrefSwitch:new("gpuconnect","sim/custom/xap/elec/gpu_here",0)
-sysElectric.gpuSwitch = TwoStateDrefSwitch:new("gpuswitch","sim/custom/xap/elec/gpu_on",0)
+-- ** HARDWARE BATTERY Switch
+sysElectric.battery1HwSwitch 	= TwoStateCmdSwitch:new("battery1","sim/cockpit2/electrical/battery_on",0,
+	"sim/electrical/battery_1_on","sim/electrical/battery_1_off","sim/electrical/battery_1_toggle")
+sysElectric.battery2HwSwitch 	= TwoStateCmdSwitch:new("battery2","sim/cockpit2/electrical/battery_on",1,
+	"sim/electrical/battery_2_on","sim/electrical/battery_2_off","sim/electrical/battery_2_toggle")
+sysElectric.batteryHwGroup 	= SwitchGroup:new("battery hardware")
+sysElectric.batteryHwGroup:addSwitch(battery1HwSwitch)
+sysElectric.batteryHwGroup:addSwitch(battery2HwSwitch)
 
--- APU
-sysElectric.apuMaster = TwoStateDrefSwitch:new("apumstr","sim/cockpit/engine/APU_switch",0)
-sysElectric.apuStarter = TwoStateDrefSwitch:new("apustarter","sim/custom/xap/apu/start_pb",0)
+sysElectric.batt1Volt 		= SimpleAnnunciator:new("BATT1 Voltage","sim/cockpit2/electrical/battery_voltage_actual_volts",-1)
+sysElectric.batt2Volt 		= SimpleAnnunciator:new("BATT2 Voltage","sim/cockpit2/electrical/battery_voltage_actual_volts",1)
+sysElectric.batt1Amp 		= SimpleAnnunciator:new("BATT1 Amps","sim/cockpit2/electrical/battery_amps",-1)
+sysElectric.batt2Amp 		= SimpleAnnunciator:new("BATT2 Amps","sim/cockpit2/electrical/battery_amps",1)
+
+-- Ground Power
+sysElectric.gpuSwitch 		= TwoStateCmdSwitch:new("GPU","sim/cockpit/electrical/gpu_on",0,
+	"sim/electrical/GPU_on","sim/electrical/GPU_off","sim/electrical/GPU_toggle")
+
+-- APU Bus Switches
+sysElectric.apuGenBus1 		= InopSwitch:new("apubus1")
+
+-- GEN Switches
+sysElectric.gen1Switch 		= TwoStateCmdSwitch:new("gen1","sim/cockpit/electrical/generator_on",-1,
+	"sim/electrical/generator_1_on","sim/electrical/generator_1_off","sim/electrical/generator_1_toggle")
+sysElectric.gen2Switch 		= TwoStateCmdSwitch:new("gen2","sim/cockpit/electrical/generator_on",1,
+	"sim/electrical/generator_2_on","sim/electrical/generator_2_off","sim/electrical/generator_2_toggle")
+-- sysElectric.gen3Switch 		= InopSwitch:new("gen3")
+-- sysElectric.gen4Switch 		= InopSwitch:new("gen4")
+sysElectric.genSwitchGroup 	= SwitchGroup:new("genswitches")
+sysElectric.genSwitchGroup:addSwitch(sysElectric.gen1Switch)
+sysElectric.genSwitchGroup:addSwitch(sysElectric.gen2Switch)
+-- sysElectric.genSwitchGroup:addSwitch(sysElectric.gen3Switch)
+-- sysElectric.genSwitchGroup:addSwitch(sysElectric.gen4Switch)
+
+-- ** ALTERNATOR Switches to help when aircraft do not work with the switches
+sysElectric.alternator1Switch 		= TwoStateCmdSwitch:new("gen1","sim/cockpit/electrical/generator_on",-1,
+	"sim/electrical/generator_1_on","sim/electrical/generator_1_off","sim/electrical/generator_1_toggle")
+sysElectric.alternator2Switch 		= TwoStateCmdSwitch:new("gen2","sim/cockpit/electrical/generator_on",1,
+	"sim/electrical/generator_2_on","sim/electrical/generator_2_off","sim/electrical/generator_2_toggle")
+sysElectric.alternatorSwitchGroup 	= SwitchGroup:new("altswitches")
+sysElectric.alternatorSwitchGroup:addSwitch(sysElectric.alternator1Switch)
+sysElectric.alternatorSwitchGroup:addSwitch(sysElectric.alternator2Switch)
+
+-- ** Avionics Buses
+sysElectric.avionics1Bus		= TwoStateCmdSwitch:new("aviobus1","sim/cockpit2/switches/avionics_power_on",0,
+	"sim/systems/avionics_on","sim/systems/avionics_off","sim/systems/avionics_toggle")
+sysElectric.avionics2Bus		= InopSwitch:new("aviobus2")
+sysElectric.avionicsSwitchGroup 	= SwitchGroup:new("altswitches")
+sysElectric.avionicsSwitchGroup:addSwitch(sysElectric.avionics1Bus)
+sysElectric.avionicsSwitchGroup:addSwitch(sysElectric.avionics2Bus)
+
+-- APU Starter
+sysElectric.apuStartSwitch 	= KeepPressedSwitchCmd:new("apu","sim/cockpit2/electrical/APU_running",0,"sim/electrical/APU_start")
+
+--------- Annunciators
 
 -- LOW VOLTAGE annunciator
-sysElectric.lowVoltageAnc = SimpleAnnunciator:new("lowvoltage","sim/cockpit2/annunciators/low_voltage",0)
+sysElectric.lowVoltageAnc 	= SimpleAnnunciator:new("lowvoltage","sim/cockpit2/annunciators/low_voltage",0)
 
 -- APU RUNNING annunciator
-sysElectric.apuRunningAnc = SimpleAnnunciator:new("apurunning","sim/cockpit2/electrical/APU_running",0)
+sysElectric.apuRunningAnc 	= SimpleAnnunciator:new("apurunning","sim/cockpit2/electrical/APU_running",0)
 
--- BAT Voltages
-sysElectric.bat1Volt = SimpleAnnunciator:new("bat1volt","sim/custom/xap/elec/bat1_ind_volt",0)
-sysElectric.bat2Volt = SimpleAnnunciator:new("bat2volt","sim/custom/xap/elec/bat2_ind_volt",0)
+sysElectric.apuGenBusOff = SimpleAnnunciator:new("","sim/cockpit/electrical/generator_apu_on",0)
+sysElectric.gpuOnBus = SimpleAnnunciator:new("","sim/cockpit/electrical/gpu_on",0)
 
--- Electric white lights check
-sysElectric.elecWhiteLights = CustomAnnunciator:new ("elecWhite",
-function ()
-	local onesum = 
-		get("sim/custom/xap/elec/lft_gen_on") +
-		get("sim/custom/xap/elec/rgh_gen_on") +
-		get("sim/custom/xap/elec/apu_gen_on") +
-		get("sim/custom/xap/elec/galley") +
-		get("sim/custom/xap/elec/commrc") +
-		get("sim/custom/xap/elec/bat2_on") +
-		get("sim/custom/xap/elec/bat1_on")
+-- Electric bus values
 
-	local nullsum =
-		get("sim/custom/xap/elec/acess_alt") +
-		get("sim/custom/xap/elec/bus_tie")
-		
-	if onesum == 7 and nullsum == 0 then
-		return 0
-	else
-		return 1
-	end
-end)
+
 return sysElectric

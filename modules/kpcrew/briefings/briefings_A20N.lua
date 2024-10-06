@@ -1,19 +1,19 @@
--- Aircraft specific briefing values and functions - JarDesign A20N
+-- Aircraft specific briefing values and functions - ToLiss A20N/A21N
 --
 -- @author Kosta Prokopiu
--- @copyright 2022 Kosta Prokopiu
-kc_acf_name = "JarDesign A320neo"
+-- @copyright 2024 Kosta Prokopiu
+kc_acf_name = "ToLiss A20N/A21N"
 
 kc_TakeoffThrust 	= "RATED|DE-RATED|ASSUMED TEMPERATURE|RATED AND ASSUMED|DE-RATED AND ASSUMED"
-kc_TakeoffFlaps 	= "1|2"
+kc_TakeoffFlaps 	= "1|2|3"
 kc_TakeoffAntiice 	= "NOT REQUIRED|ENGINE ONLY|ENGINE AND WING"
-kc_TakeoffPacks 	= "ON|AUTO|OFF"
-kc_TakeoffBleeds 	= "OFF|ON|UNDER PRESSURIZED"
-kc_TakeoffApModes 	= "LNAV/VNAV|HDG/FLCH"
+kc_TakeoffPacks 	= "ON|OFF"
+kc_TakeoffBleeds 	= "OFF|ON"
+kc_TakeoffApModes 	= "MANAGED|HDG/VS"
 kc_apptypes 		= "ILS CAT 1|ILS CAT 2 OR 3|VOR|NDB|RNAV|VISUAL|TOUCH AND GO|CIRCLING"
-kc_LandingFlaps 	= "3|4"
+kc_LandingFlaps 	= "2|3|4"
 kc_LandingAutoBrake = "OFF|LO|MED|MAX"
-kc_LandingPacks 	= "OFF|ON|UNDER PRESSURIZED"
+kc_LandingPacks 	= "OFF|ON"
 kc_LandingAntiice 	= "NOT REQUIRED|ENGINE ONLY|ENGINE AND WING"
 kc_StartSequence 	= "2 THEN 1|1 THEN 2"
 kc_MELIssues 		= "no M E L issues|some M E L issues"
@@ -25,21 +25,9 @@ kc_MELIssues 		= "no M E L issues|some M E L issues"
 -- MAX LANDING WEIGHT:		66000 KG - 171961 LBS
 -- MAX FUEL CAPACITY:		18740 KG -  41315 LBS
 -- FUEL FLOW PER HOUR:		 1352 KG -   2980 LBS
-
-kc_DOW 				= 41000  -- Dry Operating Weight (aka OEW)
-kc_MZFW  			= 63000  -- Maximum Zero Fuel Weight
-kc_MaxFuel 			= 18740  -- Maximum Fuel Capacity
-kc_MaxPayld 		= 22000  -- Maximum Payload to be set
-kc_MTOW 			= 78000  -- Maximum Takeoff Weight
-kc_MLW  			= 66000  -- Maximum Landing Weight
-kc_FFPH 			=  1352  -- Fuel Flow per hour
-kc_MFL1				=   850  -- max fuel in tank left aux
-kc_MFL2				=  5530  -- max fuel in tank left
-kc_MFL3				=  5960  -- max fuel in tank center
-kc_MFL4				=  5530  -- max fuel in tank right
-kc_MFL5				=   850  -- max fuel in tank right aux
-
-kc_show_load_button = true
+if PLANE_ICAO == "A321" then	kc_DOW 				= 47780  -- Dry Operating Weight (aka OWE)	kc_MZFW  			= 73800  -- Maximum Zero Fuel Weight	kc_MaxFuel 			= 31322  -- Maximum Fuel Capacity	kc_MaxPayld 		= 28400  -- Maximum Payload to be set     *********************************************	kc_MTOW 			= 93000  -- Maximum Takeoff Weight	kc_MLW  			= 77800  -- Maximum Landing Weight	kc_FFPH 			=  2187  -- Average Fuel Flow per hour	kc_MFL1				=  6114  -- max fuel in tank left	kc_MFL2				= 19093  -- max fuel in tank center	kc_MFL3				=  6114  -- max fuel in tank rightend
+-- if PLANE_ICAO == "A20N" then	-- kc_DOW 				= 41510  -- Dry Operating Weight (aka OEW)	-- kc_MZFW  			= 62732  -- Maximum Zero Fuel Weight	-- kc_MaxFuel 			= 21611  -- Maximum Fuel Capacity	-- kc_MaxPayld 		= 22000  -- Maximum Payload to be set     *********************************************	-- kc_MTOW 			= 79016  -- Maximum Takeoff Weight	-- kc_MLW  			= 66361  -- Maximum Landing Weight	-- kc_FFPH 			=  2187  -- Average Fuel Flow per hour	-- kc_MFL1				=  4112  -- max fuel in tank left	-- kc_MFL2				= 13385  -- max fuel in tank center	-- kc_MFL3				=  4112  -- max fuel in tank right-- end 
+kc_show_load_button = false
 kc_show_cost_index 	= true
 
 -- full list of approach types can be overwritten by aircraft
@@ -101,17 +89,17 @@ end
 
 function kc_get_total_fuel()
 	if activePrefSet:get("general:weight_kgs") then
-		return get("jd/fuel/m_total")
+		return get("sim/flightmodel/weight/m_fuel_total")
 	else
-		return get("jd/fuel/m_total")*2.20462262
+		return get("sim/flightmodel/weight/m_fuel_total")*2.20462262
 	end
 end
 
 function kc_get_gross_weight()
 	if activePrefSet:get("general:weight_kgs") then
-		return get("jd/weight/m_total")
+		return get("sim/flightmodel/weight/m_total")
 	else
-		return get("jd/weight/m_total")*2.20462262
+		return get("sim/flightmodel/weight/m_total")*2.20462262
 	end	
 end
 
@@ -120,30 +108,30 @@ function kc_get_zfw()
 end
 
 function kc_set_payload()
-	local fgoal = activeBriefings:get("flight:takeoffFuel")
+	-- local fgoal = activeBriefings:get("flight:takeoffFuel")
 	
-	if fgoal < kc_MFL2+kc_MFL4 then
-		set("sim/custom/xap/fuel/t0",0)
-		set("sim/custom/xap/fuel/t1",fgoal / 2)
-		set("sim/custom/xap/fuel/t2",0)
-		set("sim/custom/xap/fuel/t3",fgoal / 2)
-		set("sim/custom/xap/fuel/t4",0)
-	end
-	if fgoal > kc_MFL2+kc_MFL4 then
-		set("sim/custom/xap/fuel/t0",0)
-		set("sim/custom/xap/fuel/t1",kc_MFL2)
-		set("sim/custom/xap/fuel/t2",fgoal-kc_MFL2-kc_MFL4)
-		set("sim/custom/xap/fuel/t3",kc_MFL4)
-		set("sim/custom/xap/fuel/t4",0)
-	end
-	if fgoal > kc_MaxFuel-2*kc_MFL1 then
-		set("sim/custom/xap/fuel/t0",(kc_MaxFuel-fgoal)/2)
-		set("sim/custom/xap/fuel/t1",kc_MFL2)
-		set("sim/custom/xap/fuel/t2",kc_MFL3)
-		set("sim/custom/xap/fuel/t3",kc_MFL4)
-		set("sim/custom/xap/fuel/t4",(kc_MaxFuel-fgoal)/2)
-	end
-	set("sim/aircraft/weight/acf_m_fuel_tot",fgoal)
+	-- if fgoal < kc_MFL2+kc_MFL4 then
+		-- set("sim/custom/xap/fuel/t0",0)
+		-- set("sim/custom/xap/fuel/t1",fgoal / 2)
+		-- set("sim/custom/xap/fuel/t2",0)
+		-- set("sim/custom/xap/fuel/t3",fgoal / 2)
+		-- set("sim/custom/xap/fuel/t4",0)
+	-- end
+	-- if fgoal > kc_MFL2+kc_MFL4 then
+		-- set("sim/custom/xap/fuel/t0",0)
+		-- set("sim/custom/xap/fuel/t1",kc_MFL2)
+		-- set("sim/custom/xap/fuel/t2",fgoal-kc_MFL2-kc_MFL4)
+		-- set("sim/custom/xap/fuel/t3",kc_MFL4)
+		-- set("sim/custom/xap/fuel/t4",0)
+	-- end
+	-- if fgoal > kc_MaxFuel-2*kc_MFL1 then
+		-- set("sim/custom/xap/fuel/t0",(kc_MaxFuel-fgoal)/2)
+		-- set("sim/custom/xap/fuel/t1",kc_MFL2)
+		-- set("sim/custom/xap/fuel/t2",kc_MFL3)
+		-- set("sim/custom/xap/fuel/t3",kc_MFL4)
+		-- set("sim/custom/xap/fuel/t4",(kc_MaxFuel-fgoal)/2)
+	-- end
+	-- set("sim/aircraft/weight/acf_m_fuel_tot",fgoal)
 end
 
 -- briefings to be more aircraft specific

@@ -1,4 +1,4 @@
--- Aircraft specific preferences - JarDesign A20N
+-- Aircraft specific preferences - Toliss A20N
 --
 -- @author Kosta Prokopiu
 -- @copyright 2022 Kosta Prokopiu

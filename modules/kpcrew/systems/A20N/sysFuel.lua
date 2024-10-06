@@ -1,4 +1,4 @@
--- A20N JarDesign airplane 
+-- DFLT airplane 
 -- Fuel related functionality
 
 -- @classmod sysFuel
@@ -16,33 +16,43 @@ local CustomAnnunciator 	= require "kpcrew.systems.CustomAnnunciator"
 local TwoStateToggleSwitch	= require "kpcrew.systems.TwoStateToggleSwitch"
 local MultiStateCmdSwitch 	= require "kpcrew.systems.MultiStateCmdSwitch"
 local InopSwitch 			= require "kpcrew.systems.InopSwitch"
-
+local KeepPressedSwitchCmd	= require "kpcrew.systems.KeepPressedSwitchCmd"
 
 local drefFuelPressLow 		= "sim/cockpit2/annunciators/fuel_pressure_low"
 
--- Fuel Panel
-sysFuel.fuelPumpT11	= TwoStateDrefSwitch:new ("fuelpumpt11","sim/custom/xap/fuel/t1_pump1",0)
-sysFuel.fuelPumpT12	= TwoStateDrefSwitch:new ("fuelpumpt12","sim/custom/xap/fuel/t1_pump2",0)
-sysFuel.fuelPumpT21	= TwoStateDrefSwitch:new ("fuelpumpt21","sim/custom/xap/fuel/t2_pump1",0)
-sysFuel.fuelPumpT22	= TwoStateDrefSwitch:new ("fuelpumpt22","sim/custom/xap/fuel/t2_pump2",0)
-sysFuel.fuelPumpT31	= TwoStateDrefSwitch:new ("fuelpumpt31","sim/custom/xap/fuel/t3_pump1",0)
-sysFuel.fuelPumpT32	= TwoStateDrefSwitch:new ("fuelpumpt32","sim/custom/xap/fuel/t3_pump2",0)
-sysFuel.fuelPumpGroup = SwitchGroup:new("fuelpumpgroup")
-sysFuel.fuelPumpGroup:addSwitch(sysFuel.fuelPumpT11)
-sysFuel.fuelPumpGroup:addSwitch(sysFuel.fuelPumpT12)
-sysFuel.fuelPumpGroup:addSwitch(sysFuel.fuelPumpT21)
-sysFuel.fuelPumpGroup:addSwitch(sysFuel.fuelPumpT22)
-sysFuel.fuelPumpGroup:addSwitch(sysFuel.fuelPumpT31)
-sysFuel.fuelPumpGroup:addSwitch(sysFuel.fuelPumpT32)
--- XFEED
-sysFuel.crossFeed = TwoStateDrefSwitch:new("crossfeed","sim/custom/xap/fuel/xfeed",0)
--- MODE select
-sysFuel.fuelMode = TwoStateDrefSwitch:new("fuelmode","sim/custom/xap/fuel/cent_mode",0)
+---------- Switches
+
+-- Fuel pumps
+sysFuel.fuelPumpLeftAft 	= TwoStateCmdSwitch:new ("fuelpumpleftaft","sim/cockpit/engine/fuel_pump_on",-1,
+	"sim/fuel/fuel_pump_1_on","sim/fuel/fuel_pump_1_off","sim/fuel/fuel_pump_1_tog")
+sysFuel.fuelPumpRightAft 	= TwoStateCmdSwitch:new("fuelpumprightaft","sim/cockpit/engine/fuel_pump_on",1,
+	"sim/fuel/fuel_pump_2_on","sim/fuel/fuel_pump_2_off","sim/fuel/fuel_pump_2_tog")
+sysFuel.fuelPumpCtrLeft 	= InopSwitch:new ("fuelpumpctrleft","sim/cockpit/engine/fuel_pump_on",2,
+	"sim/fuel/fuel_pump_3_on","sim/fuel/fuel_pump_3_off","sim/fuel/fuel_pump_3_tog")
+sysFuel.allFuelPumpGroup 		= SwitchGroup:new("fuelpumpgroup")
+sysFuel.allFuelPumpGroup:addSwitch(sysFuel.fuelPumpLeftAft)
+sysFuel.allFuelPumpGroup:addSwitch(sysFuel.fuelPumpRightAft)
+sysFuel.allFuelPumpGroup:addSwitch(sysFuel.fuelPumpCtrLeft)
+
+sysFuel.crossFeed = TwoStateCmdSwitch:new("crossfeed","sim/cockpit2/fuel/auto_crossfeed",0,
+	"sim/fuel/auto_crossfeed_on_open","sim/fuel/auto_crossfeed_off")
+
+------------ Annunciators
 
 -- FUEL PRESSURE LOW annunciator
 sysFuel.fuelLowAnc = CustomAnnunciator:new("fuellow",
 function ()
 	if get(drefFuelPressLow,0) > 0 or get(drefFuelPressLow,1) > 0 or get(drefFuelPressLow,2) > 0 or get(drefFuelPressLow,3) > 0 then
+		return 1
+	else
+		return 0
+	end
+end)
+
+-- AUX FUEL PUMP ANC
+sysFuel.auxFuelPumpsAnc = CustomAnnunciator:new("auxfuel",
+function ()
+	if sysFuel.allFuelPumpGroup:getStatus() > 0 then 
 		return 1
 	else
 		return 0
