@@ -34,6 +34,8 @@ kc_WX_Cloud_list 		= "NO|FEW|SCATTERED|BROKEN|OVERCAST"
 
 -- load aircraft specific briefing values and functions
 require("kpcrew.briefings.briefings_" .. kc_acf_icao)
+require("kpcrew.metargen")
+
 local http 				= require("socket.http")
 local metar 			= require("kpcrew.metar")
 local xml2lua 			= require("kpcrew.xml2lua")
@@ -53,7 +55,6 @@ function kc_download_simbrief()
 	-- user must have set his simbrief userid/name in preferences
 	if activePrefSet:get("general:simbriefuser") ~= nil and activePrefSet:get("general:simbriefuser") ~= " " then
 		local webResponse, webStatus = http.request("http://www.simbrief.com/api/xml.fetcher.php?username=" .. activePrefSet:get("general:simbriefuser"))
-		logMsg(webResponse)
 		if webStatus == 200 then
 			local f = io.open(SCRIPT_DIRECTORY .. "..\\Modules\\kpcrew_prefs\\simbrief.xml", "w+")
 			f:write(webResponse)
@@ -163,55 +164,46 @@ function ()
 		kc_metar_read = kc_metar_read - 1
 		return kc_metar_local
 	else
-		if activePrefSet:get("general:vatsimMetar") == true then
-			local response, status = http.request(activeBckVars:get("general:vatsimUrl") .. activeBriefings:get("flight:originIcao"))
-			kc_metar_read = 1800 * 5
-			kc_metar_local = response
+		if get("sim/weather/region/weather_source") ~= 0 then
+		-- if activePrefSet:get("general:vatsimMetar") == true then
+			kc_metar_local = kp_get_airport_metar(activeBriefings:get("flight:originIcao"))
 			local m = metar.new(activeBriefings:get("flight:originIcao"))
 			kc_metardata_local = m:get_metar_data(kc_metar_local)
-			local response, status = http.request(activeBckVars:get("general:vatsimUrl") .. activeBriefings:get("flight:destinationIcao"))
-			kc_metar_dest = response
+			kc_metar_dest = kp_get_airport_metar(activeBriefings:get("flight:destinationIcao"))
 			local m = metar.new(activeBriefings:get("flight:destinationIcao"))
 			kc_metardata_dest = m:get_metar_data(kc_metar_dest)
-			local response, status = http.request(activeBckVars:get("general:vatsimUrl") .. activeBriefings:get("flight:alternateIcao"))
-			kc_metar_altn = response
+			kc_metar_altn = kp_get_airport_metar(activeBriefings:get("flight:alternateIcao"))
 			return kc_metar_local
 		else
-			kc_metar_local = kc_buildAtisString(activeBriefings:get("flight:originIcao"))
-			-- local m = metar.new(activeBriefings:get("flight:originIcao"))
-			-- kc_metardata_local = m:get_metar_data(kc_metar_local)
-			-- kc_metar_local = "EDDM 990520Z AUTO 32001KT CAVOK 12/11 Q1018 NOSIG"
-			-- local m = metar.new(activeBriefings:get("flight:originIcao"))
+			kc_metar_local = kp_create_airport_metar(activeBriefings:get("flight:originIcao"))
 			local m = metar.new(activeBriefings:get("flight:originIcao"))
 			kc_metardata_local = m:get_metar_data(kc_metar_local)
-			if get("sim/weather/has_real_weather_bool") == 1 then 
-				kc_metar_dest = "--NO METAR--"
-			else
-				kc_metar_dest = kc_buildAtisString(activeBriefings:get("flight:destinationIcao"))
-			end
-			local m = metar.new(activeBriefings:get("flight:destinationIcao"))
-			kc_metardata_dest = m:get_metar_data(kc_metar_dest)
-			if get("sim/weather/has_real_weather_bool") == 1 then 
-				kc_metar_altn = "--NO METAR--"
-			else
-				kc_metar_altn = kc_buildAtisString(activeBriefings:get("flight:alternateIcao"))
-			end
+			kc_metardata_dest = m:get_metar_data(kc_metar_local)
+			-- kc_metar_dest = kp_create_airport_metar(activeBriefings:get("flight:originIcao"))
+			-- local m = metar.new(activeBriefings:get("flight:destinationIcao"))
+			-- kc_metardata_dest = m:get_metar_data(kc_metar_dest)
+
+			kc_metar_dest = "--NO METAR--"
+			kc_metar_altn = "--NO METAR--"
 			return kc_metar_local
 		end
 	end
 end,
 kcPreference.typeInfo,"Local METAR|"))
+
 information:add(kcPreference:new("destMetar",
 function () 
 	return kc_metar_dest
 end,
 kcPreference.typeInfo,"Destination METAR|"))
+
 information:add(kcPreference:new("altnMetar",
 function () 
 	return kc_metar_altn
 end,
 kcPreference.typeInfo,"Alternate METAR|"))
-information:add(kcPreference:new("metarbutton",0,kcPreference.typeExecButton,"Reload METAR|Load METAR|kc_metar_read = 0"))
+
+-- information:add(kcPreference:new("metarbutton",0,kcPreference.typeExecButton,"Reload METAR|Load METAR|kc_metar_read = 0"))
 
 information:add(kcPreference:new("FlightTimes",
 function () 
