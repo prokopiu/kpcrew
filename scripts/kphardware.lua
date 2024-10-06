@@ -35,8 +35,11 @@ end
 if PLANE_ICAO == "A333" then
 	kh_acf_icao = "A333"
 end
--- if PLANE_ICAO == "A320" and PLANE_TAILNUMBER == "A320" then
-	-- kc_acf_icao = "A20N"
+-- if (PLANE_ICAO == "A321" and PLANE_TAILNUMBER == "C-GTLU") then
+		-- kc_acf_icao = "A20N"
+-- end
+-- if (PLANE_ICAO == "A20N" and PLANE_TAILNUMBER == "C-GTLT") then
+		-- kc_acf_icao = "A20N"
 -- end
 -- if PLANE_ICAO == "A359" then
 	-- kh_acf_icao = "A359"
@@ -57,6 +60,15 @@ end
 -- if PLANE_ICAO == "E135" or PLANE_ICAO == "E140" or PLANE_ICAO == "E145" or PLANE_ICAO == "E45X" then
 	-- kh_acf_icao = "ERJF"
 -- end
+if PLANE_ICAO == "B762" or PLANE_ICAO == "B763" or PLANE_ICAO == "B764" then
+	kh_acf_icao = "B7x7"
+end
+if PLANE_ICAO == "B772" then
+	kh_acf_icao = "B777"
+end
+if PLANE_ICAO == "A321" and PLANE_TAILNUMBER == "C-GTLU" then
+	kh_acf_icao = "A20N"
+end
 -- Laminar MD-82
 -- if PLANE_ICAO == "MD82" and PLANE_TAILNUMBER == "N552AA" then
 	-- kh_acf_icao = "MD82"
@@ -420,7 +432,7 @@ create_command("kp/xsp/bravo/button_vsp","Bravo VSP Button","sysMCP.vsSwitch:act
 create_command("kp/xsp/bravo/button_ias","Bravo IAS Button","sysMCP.speedSwitch:actuate(2)", "", "")
 
 -- larger AUTO PILOT switch
-create_command("kp/xsp/bravo/button_ap", "Bravo Autopilot Button",	"sysMCP.ap1Switch:actuate(2)", "", "")
+create_command("kp/xsp/bravo/button_ap", "Bravo Autopilot Button",	"sysMCP.ap1Switch:actuate(1)", "", "")
 
 create_command("kp/xsp/bravo/toga_press", "Bravo Press Left TOGA", "sysMCP.togaPilotSwitch:actuate(modeToggle)","","")
 
@@ -577,7 +589,7 @@ function xsp_set_light_drefs()
 	xsp_gear_status[0] 		= sysGeneral.gearLightsAnc:getStatus()
 
 	-- FLIGHT DIRECTOR annunciator
-	xsp_mcp_fdir[0] 		= sysMCP.fdirAnc:getStatus()
+	-- xsp_mcp_fdir[0] 		= sysMCP.fdirAnc:getStatus()
 	
 	---------- Lights -----------
 	

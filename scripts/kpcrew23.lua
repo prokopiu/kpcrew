@@ -7,6 +7,7 @@
 
 require "kpcrew.genutils"
 require "kpcrew.systems.activities"
+require "kpcrew.metargen"
 
 local Flow = require "kpcrew.Flow"
 local FlowItem = require "kpcrew.FlowItem"
@@ -40,13 +41,19 @@ elseif PLANE_ICAO == "A333" then
 	-- kc_acf_icao = "C17D"
 -- elseif PLANE_ICAO == "A306" then
 	-- kc_acf_icao = "A306"
+elseif PLANE_ICAO == "B762" or PLANE_ICAO == "B763" or PLANE_ICAO == "B764" then
+	kc_acf_icao = "B7x7"
 elseif PLANE_ICAO == "MD11" then
 	kc_acf_icao = "MD11"
 -- elseif PLANE_ICAO == "B732" then
 	-- kc_acf_icao = "B732"
 -- elseif PLANE_ICAO == "B733" then
 	-- kc_acf_icao = "B733"
--- elseif PLANE_ICAO == "A320" and PLANE_TAILNUMBER == "A320" then
+elseif PLANE_ICAO == "A321" then
+	kc_acf_icao = "A20N"
+-- elseif PLANE_ICAO == "A319" and PLANE_TAILNUMBER == "C-GTLS" then
+	-- kc_acf_icao = "A319"
+-- elseif PLANE_ICAO == "A20N" and PLANE_TAILNUMBER == "C-GTLT" then
 	-- kc_acf_icao = "A20N"
 -- Laminar MD-82
 -- elseif PLANE_ICAO == "MD82" and PLANE_TAILNUMBER == "N552AA" then
