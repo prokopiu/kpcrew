@@ -5,6 +5,19 @@
 activeBriefings = kcPreferenceSet:new("BRIEFINGS")
 activeBriefings:setFilename("briefings")
 
+if kc_show_cost_index == nil then
+	kc_show_cost_index 	= true
+end
+if kc_show_load_button == nil then
+	kc_show_load_button = true
+end
+if kc_show_fmc_buttons == nil then
+	kc_show_fmc_buttons = true
+end
+if kc_show_arr_atis_button == nil then
+	kc_show_arr_atis_button = true
+end
+
 -- departure procedure types
 kc_DEP_proctype_list 	= "SID|VECTORS|TRACKING"
 -- Noise Abatement departure Procedure
@@ -392,7 +405,10 @@ takeoff:add(kcPreference:new("v1",0,kcPreference.typeInt,"*V1|1"))
 takeoff:add(kcPreference:new("vr",0,kcPreference.typeInt,"*VR|1"))
 takeoff:add(kcPreference:new("v2",0,kcPreference.typeInt,"*V2|1"))
 takeoff:add(kcPreference:new("apMode",1,kcPreference.typeList,"*Autopilot Modes|" .. kc_TakeoffApModes))
+
+if kc_show_fmc_buttons then
 takeoff:add(kcPreference:new("fmctobutton",0,kcPreference.typeExecButton,"Load FMS Takeoff Data|Load FMC Data|kc_set_takeoff_details()"))
+end
 
 -- =================== ARRIVAL ==================
 local arrival = kcPreferenceGroup:new("arrival","ARRIVAL ATIS")
@@ -406,7 +422,10 @@ arrival:add(kcPreference:new("atisClouds","",kcPreference.typeText,"ATIS Clouds|
 arrival:add(kcPreference:new("atisTemps","",kcPreference.typeText,"ATIS Temp/Dewpoint|"))
 arrival:add(kcPreference:new("atisQNH","",kcPreference.typeText,"*ATIS QNH|"))
 arrival:add(kcPreference:new("atisVcond","",kcPreference.typeText,"ATIS Trends|"))
-arrival:add(kcPreference:new("metarldg",0,kcPreference.typeExecButton,"METAR|Load Arrival METAR|kc_fill_ldg_metar()"))
+
+if kc_show_arr_atis_button then
+	arrival:add(kcPreference:new("metarldg",0,kcPreference.typeExecButton,"METAR|Load Arrival METAR|kc_fill_ldg_metar()"))
+end
 
 local arrival1 = kcPreferenceGroup:new("arrival","ARRIVAL DATA")
 -- arrival1:add(kcPreference:new("appFrequency",122.800,kcPreference.typeCOMFreq,"Approach Frequency|"))
@@ -443,7 +462,10 @@ approach1:add(kcPreference:new("autobrake",1,kcPreference.typeList,"*Autobrake|"
 approach1:add(kcPreference:new("packs",1,kcPreference.typeList,"*Packs|" .. kc_LandingPacks))
 approach1:add(kcPreference:new("antiice",1,kcPreference.typeList,"*Anti Ice|" .. kc_LandingAntiice))
 approach1:add(kcPreference:new("reversethrust",1,kcPreference.typeList,"Reverse Thrust|" .. APP_rev_thrust_list))
+
+if kc_show_fmc_buttons then
 approach1:add(kcPreference:new("fmcldgbutton",0,kcPreference.typeExecButton,"Load FMS Landing Data|Load FMC Landing Data|kc_set_landing_details()"))
+end
 
 local approach2 = kcPreferenceGroup:new("approach","APPROACH GROUND")
 -- approach2:add(kcPreference:new("gndFrequency2",122.800,kcPreference.typeCOMFreq,"Ground Frequency|"))
@@ -492,7 +514,7 @@ activeBriefings:addGroup(taxi)
 activeBriefings:addGroup(departure)
 activeBriefings:addGroup(departure1)
 activeBriefings:addGroup(departure2)
-activeBriefings:addGroup(departure3)
+-- activeBriefings:addGroup(departure3)
 activeBriefings:addGroup(takeoff)
 activeBriefings:addGroup(depBriefing)
 activeBriefings:addGroup(arrival)

@@ -21,7 +21,7 @@ local FlowItem 			= require "kpcrew.FlowItem"
 -- @tparam string challengeText is the left hand text 
 -- @tparam string responseText is specific state of the item
 -- @tparam string actor is the actor for the item; see list below
--- @tparam function reference  skipFunc if true will skip the item and not diaply in list
+-- @tparam function reference  skipFunc if true will skip the item and not disply in list
 function kcHoldProcedureItem:new(challengeText,responseText,actor,actionFunc,skipFunc)
     kcHoldProcedureItem.__index = kcHoldProcedureItem
     setmetatable(kcHoldProcedureItem, {

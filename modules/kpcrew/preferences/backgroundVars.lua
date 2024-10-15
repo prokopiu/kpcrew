@@ -1,7 +1,7 @@
 -- backgrond variables for use by KPCrew internally
 --
 -- @author Kosta Prokopiu
--- @copyright 2022 Kosta Prokopiu
+-- @copyright 2024 Kosta Prokopiu
 activeBckVars = kcPreferenceSet:new("BackgroundVars")
 
 local group1 = kcPreferenceGroup:new("general","General Variables")
@@ -11,7 +11,7 @@ group1:add(kcPreference:new("timesOUT",			"==:==",	kcPreference.typeText,	"Actua
 group1:add(kcPreference:new("timesOFF",			"==:==",	kcPreference.typeText,	"Actual Time off block|00:00"))
 group1:add(kcPreference:new("timesIN",			"==:==",	kcPreference.typeText,	"Actual Time in|00:00"))
 group1:add(kcPreference:new("timesON",			"==:==",	kcPreference.typeText,	"Actual Time on blocks|00:00"))
-group1:add(kcPreference:new("vatsimUrl",		"http://metar.vatsim.net/metar.php?id=",	kcPreference.typeText,	"VATSIM METAR|"))
+group1:add(kcPreference:new("vatsimUrl","http://metar.vatsim.net/",kcPreference.typeText,"VATSIM METAR|"))
 
 
 local group2 = kcPreferenceGroup:new("ui","UI Settings")
