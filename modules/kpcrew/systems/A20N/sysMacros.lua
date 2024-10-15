@@ -22,60 +22,74 @@ function kc_macro_state_cold_and_dark()
 	-- set aircraft to cold & dark
 	kc_macro_doors_cold_dark()
 
-	command_once("toliss_airbus/engcommands/Master1Off")
-	command_once("toliss_airbus/engcommands/Master2Off")
-	command_once("toliss_airbus/engcommands/EngineModeSwitchToNorm")
+	set("AirbusFBW/Chocks",1)
+	command_once("toliss_airbus/park_brake_release")
+
+	set("AirbusFBW/EnableExternalPower",0)
+	set("AirbusFBW/RMP1Switch",0)
+	set("AirbusFBW/RMP2Switch",0)
+	set("AirbusFBW/RMP3Switch",0)
+	set("sim/cockpit/radios/com2_freq_hz",12150)
+	set("AirbusFBW/XPDRSystem",1)
+	set("AirbusFBW/XPDRPower",0)
+	set("AirbusFBW/XPDR4",2)
+	set("AirbusFBW/XPDR3",0)
+	set("AirbusFBW/XPDR2",0)
+	set("AirbusFBW/XPDR1",0)
+
+	command_once("toliss_airbus/adirucommands/ADIRU1SwitchDown")
+	command_once("toliss_airbus/adirucommands/ADIRU1SwitchDown")
+	command_once("toliss_airbus/adirucommands/ADIRU2SwitchDown")
+	command_once("toliss_airbus/adirucommands/ADIRU2SwitchDown")
+	command_once("toliss_airbus/adirucommands/ADIRU3SwitchDown")
+	command_once("toliss_airbus/adirucommands/ADIRU3SwitchDown")
+
 	if (get("AirbusFBW/WXPowerSwitch") == 0) then
 		command_once("toliss_airbus/WXRadarSwitchRight")
 	end
 	if (get("AirbusFBW/WXPowerSwitch") == 2) then
 		command_once("toliss_airbus/WXRadarSwitchLeft")
 	end
+	
+	set("AirbusFBW/XBleedSwitch",0)
+
+	set("sim/cockpit2/controls/speedbrake_ratio",0)
+	set("sim/cockpit2/controls/flap_ratio",0)
+
+-- yellow elec pump off
+
+	command_once("toliss_airbus/engcommands/Master1Off")
+	command_once("toliss_airbus/engcommands/Master2Off")
+	command_once("toliss_airbus/engcommands/EngineModeSwitchToNorm")
 	command_once("sim/flight_controls/landing_gear_down")
 	set("AirbusFBW/LeftWiperSwitch",0) 
 	set("AirbusFBW/RightWiperSwitch",0)
-	command_once("toliss_airbus/eleccommands/Bat1Off")
-	command_once("toliss_airbus/eleccommands/Bat2Off")
 	
-	command_once("toliss_airbus/eleccommands/ExtPowOff")
-	set("AirbusFBW/EnableExternalPower",0)
-	set("AirbusFBW/RMP1Switch",0)
-	set("AirbusFBW/RMP2Switch",0)
-	set("AirbusFBW/RMP3Switch",0)
-	set("sim/cockpit/radios/com2_freq_hz",12150)
-	set("sim/cockpit2/controls/flap_ratio",0)
-	set("sim/cockpit2/controls/speedbrake_ratio",0)
-	set("AirbusFBW/Chocks",1)
-	command_once("toliss_airbus/park_brake_set")
+
 	set("AirbusFBW/CrewOxySwitch",0)
 	set("AirbusFBW/CvrGndCtrl",0)
+
 	set_array("AirbusFBW/GPWSSwitchArray",0,1)
 	set_array("AirbusFBW/GPWSSwitchArray",1,1)
 	set_array("AirbusFBW/GPWSSwitchArray",2,1)
 	set_array("AirbusFBW/GPWSSwitchArray",3,0)
 	set_array("AirbusFBW/GPWSSwitchArray",4,1)
-	command_once("toliss_airbus/adirucommands/ADIRU1SwitchDown")
-	command_once("toliss_airbus/adirucommands/ADIRU1SwitchDown")
-	command_once("toliss_airbus/adirucommands/ADIRU2SwitchDown")
-	command_once("toliss_airbus/adirucommands/ADIRU2SwitchDown")
-	command_once("toliss_airbus/adirucommands/ADIRU3SwitchDown")
-	command_once("toliss_airbus/adirucommands/ADIRU3SwitchDown")
+
 	set_array("AirbusFBW/OHPLightSwitches",11,0)
 	set_array("AirbusFBW/OHPLightSwitches",12,0)
 	set_array("AirbusFBW/OHPLightSwitches",10,0)
 
-	set("AirbusFBW/APUMaster",0)
-	set("AirbusFBW/APUStarter",0)
-	set("AirbusFBW/XBleedSwitch",0)
 	set("AirbusFBW/EconFlowSel",1)
 	command_once("toliss_airbus/antiicecommands/WingOff")
 	command_once("toliss_airbus/antiicecommands/ENG1Off")
 	command_once("toliss_airbus/antiicecommands/ENG2Off")
+
 	set("AirbusFBW/ProbeHeatSwitch",0)
 	set("AirbusFBW/LandElev",-3)
 	set("AirbusFBW/APUBleedSwitch",0)
 	set("AirbusFBW/XBleedSwitch",1)
 	set("AirbusFBW/EconFlowSel",1)
+
 	set_array("AirbusFBW/ElecOHPArray",8,1)
 	set_array("AirbusFBW/ElecOHPArray",9,1)
 	set_array("AirbusFBW/ElecOHPArray",5,1)
@@ -97,11 +111,17 @@ function kc_macro_state_cold_and_dark()
 	set_array("AirbusFBW/HydOHPArray",1,1)
 	set_array("AirbusFBW/HydOHPArray",2,1)
 	set_array("AirbusFBW/HydOHPArray",3,0)
+
 	set("AirbusFBW/NWSnAntiSkid",1)
 	set("AirbusFBW/WXSwitchPWS",0)
 	set("ckpt/gravityGearOn/anim",0) 
-	set("AirbusFBW/XPDRSystem",1)
-	set("AirbusFBW/XPDRPower",0)
+	set("AirbusFBW/CockpitTemp",22)
+	set("AirbusFBW/FwdCabinTemp",22)
+	set("AirbusFBW/AftCabinTemp",22)
+		set("AirbusFBW/BlowerSwitch",0)
+		set("AirbusFBW/ExtractSwitch",0)
+		set("AirbusFBW/CabinFanSwitch",1)
+
 	
 	activeBckVars:set("general:timesOFF","==:==")
 	activeBckVars:set("general:timesOUT","==:==")
@@ -109,7 +129,14 @@ function kc_macro_state_cold_and_dark()
 	activeBckVars:set("general:timesON","==:==")
 
 	kc_macro_lights_cold_dark()
-	kc_macro_mcp_cold_dark()
+	-- kc_macro_mcp_cold_dark()
+	kc_macro_aircond_all_white_off()
+	
+	set("AirbusFBW/APUMaster",0)
+	set("AirbusFBW/APUStarter",0)
+	command_once("toliss_airbus/eleccommands/ExtPowOff")
+	command_once("toliss_airbus/eleccommands/Bat1Off")
+	command_once("toliss_airbus/eleccommands/Bat2Off")
 
 end
 
@@ -157,9 +184,9 @@ function kc_macro_state_turnaround()
 
 	kc_macro_lights_preflight()
 
-	set("AirbusFBW/APUMaster",1)
-	set("AirbusFBW/APUStarter",1)
-	set("AirbusFBW/XBleedSwitch",1)
+	-- set("AirbusFBW/APUMaster",1)
+	-- set("AirbusFBW/APUStarter",1)
+	set("AirbusFBW/XBleedSwitch",0)
 	set("AirbusFBW/EconFlowSel",1)
 
 	set("AirbusFBW/CrewOxySwitch",1)
@@ -176,7 +203,9 @@ function kc_macro_state_turnaround()
 	command_once("toliss_airbus/antiicecommands/WingOff")
 	command_once("toliss_airbus/antiicecommands/ENG1Off")
 	command_once("toliss_airbus/antiicecommands/ENG2Off")
+
 	set("AirbusFBW/ProbeHeatSwitch",0)
+
 	set("AirbusFBW/LandElev",-3)
 	set("AirbusFBW/APUBleedSwitch",1)
 	set("AirbusFBW/XBleedSwitch",1)
@@ -208,12 +237,94 @@ function kc_macro_state_turnaround()
 	set("AirbusFBW/XPDRSystem",1)
 	set("AirbusFBW/XPDRPower",0)
 	set("AirbusFBW/FwdCargoTemp",15.5)
+	set("AirbusFBW/CockpitTemp",22)
+	set("AirbusFBW/FwdCabinTemp",22)
+	set("AirbusFBW/AftCabinTemp",22)
+		set("AirbusFBW/BlowerSwitch",0)
+		set("AirbusFBW/ExtractSwitch",0)
+		set("AirbusFBW/CabinFanSwitch",1)
+	set_array("AirbusFBW/HydOHPArray",3,1)
+	
+	kc_macro_aircond_all_white_off()
+	kc_macro_elec_all_white_off()		
+	kc_macro_fuel_all_white_off()
 	
 	activeBckVars:set("general:timesOFF","==:==")
 	activeBckVars:set("general:timesOUT","==:==")
 	activeBckVars:set("general:timesIN","==:==")
 	activeBckVars:set("general:timesON","==:==")
 
+end
+
+function kc_aircond_has_white_lights()
+	return 
+		get("AirbusFBW/Pack1Switch") == 0 or
+		get("AirbusFBW/Pack2Switch") == 0 or
+		get("AirbusFBW/HotAirSwitch") == 0 or
+		get("AirbusFBW/ENG1BleedSwitch") == 0 or
+		get("AirbusFBW/ENG2BleedSwitch") == 0 or
+		get("AirbusFBW/RamAirSwitch") == 1
+end
+
+function kc_macro_aircond_all_white_off()
+	set("AirbusFBW/Pack1Switch",1)
+	set("AirbusFBW/Pack2Switch",1)
+	set("AirbusFBW/HotAirSwitch",1)
+	set("AirbusFBW/ENG1BleedSwitch",1)
+	set("AirbusFBW/ENG2BleedSwitch",1)
+	set("AirbusFBW/RamAirSwitch",0)
+end
+
+function kc_elec_has_lights_on()
+	return 
+		get("AirbusFBW/ElecOHPArray",0) == 0 or
+		get("AirbusFBW/ElecOHPArray",1) == 0 or
+		get("AirbusFBW/ElecOHPArray",2) == 0 or
+		get("AirbusFBW/ElecOHPArray",4) == 0 or
+		get("AirbusFBW/ElecOHPArray",5) == 0 or
+		get("AirbusFBW/ElecOHPArray",6) == 0 or
+		get("AirbusFBW/ElecOHPArray",7) == 1 or
+		get("AirbusFBW/ElecOHPArray",8) == 0 or
+		get("AirbusFBW/ElecOHPArray",9) == 0 
+end
+
+function kc_macro_elec_all_white_off()
+	set_array("AirbusFBW/ElecOHPArray",0,1)
+	set_array("AirbusFBW/ElecOHPArray",1,1)
+	set_array("AirbusFBW/ElecOHPArray",2,1)
+	set_array("AirbusFBW/ElecOHPArray",4,1)
+	set_array("AirbusFBW/ElecOHPArray",5,1)
+	set_array("AirbusFBW/ElecOHPArray",6,1)
+	set_array("AirbusFBW/ElecOHPArray",7,0)
+	set_array("AirbusFBW/ElecOHPArray",8,1)
+	set_array("AirbusFBW/ElecOHPArray",9,1)
+end
+
+function kc_fuel_all_white_off()
+	return
+	get("AirbusFBW/FuelOHPArray",0) == 0 or
+	get("AirbusFBW/FuelOHPArray",1) == 0 or
+	get("AirbusFBW/FuelOHPArray",2) == 0 or
+	get("AirbusFBW/FuelOHPArray",3) == 0 or
+	get("AirbusFBW/FuelOHPArray",4) == 0 or
+	get("AirbusFBW/FuelOHPArray",5) == 0 or
+	get("AirbusFBW/FuelOHPArray",6) == 0 or
+	get("AirbusFBW/FuelOHPArray",7) == 1 or
+	get("AirbusFBW/FuelOHPArray",8) == 0 or
+	get("AirbusFBW/FuelOHPArray",9) == 0
+end
+
+function kc_macro_fuel_all_white_off()
+	set_array("AirbusFBW/FuelOHPArray",0,1)
+	set_array("AirbusFBW/FuelOHPArray",1,1)
+	set_array("AirbusFBW/FuelOHPArray",2,1)
+	set_array("AirbusFBW/FuelOHPArray",3,1)
+	set_array("AirbusFBW/FuelOHPArray",4,1)
+	set_array("AirbusFBW/FuelOHPArray",5,1)
+	set_array("AirbusFBW/FuelOHPArray",6,1)
+	set_array("AirbusFBW/FuelOHPArray",7,0)
+	set_array("AirbusFBW/FuelOHPArray",8,1)
+	set_array("AirbusFBW/FuelOHPArray",9,0)
 end
 
 -- start SGES start sequence
@@ -525,7 +636,7 @@ function kc_macro_mcp_cold_dark()
 		command_once("AirbusFBW/ATHRbutton")
 	end
 	set("sim/cockpit/autopilot/airspeed",activePrefSet:get("aircraft:mcp_def_spd"))
-	set("sim/cockpit/autopilot/airspeed",activePrefSet:get("aircraft:mcp_def_hdg"))
+	set("sim/cockpit/autopilot/heading_mag",activePrefSet:get("aircraft:mcp_def_hdg"))
 	set("sim/cockpit/autopilot/altitude",activePrefSet:get("aircraft:mcp_def_alt"))
 	set("sim/cockpit2/autopilot/vvi_dial_fpm",0)
 	set("AirbusFBW/AP1Engage",0)
@@ -539,26 +650,30 @@ function kc_macro_mcp_preflight()
 		command_once("AirbusFBW/ATHRbutton")
 	end
 	set("sim/cockpit/autopilot/airspeed",activeBriefings:get("takeoff:v2"))
-	set("sim/cockpit/autopilot/airspeed",activeBriefings:get("departure:initHeading"))
+	set("sim/cockpit/autopilot/heading_mag",activeBriefings:get("departure:initHeading"))
 	set("sim/cockpit/autopilot/altitude",activeBriefings:get("departure:initAlt"))
 end
 
 function kc_macro_mcp_takeoff()
 	set("AirbusFBW/FD1Engage",1)
 	set("sim/cockpit/autopilot/airspeed",activeBriefings:get("takeoff:v2"))
-	set("sim/cockpit/autopilot/airspeed",activeBriefings:get("departure:initHeading"))
+	set("sim/cockpit/autopilot/heading_mag",activeBriefings:get("departure:initHeading"))
 	set("sim/cockpit/autopilot/altitude",activeBriefings:get("departure:initAlt"))
 end
 
 function kc_macro_mcp_goaround()
 	set("AirbusFBW/FD1Engage",1)
 	set("sim/cockpit/autopilot/airspeed",activeBriefings:get("approach:gav2"))
-	set("sim/cockpit/autopilot/airspeed",activeBriefings:get("approach:gaheading"))
+	set("sim/cockpit/autopilot/heading_mag",activeBriefings:get("approach:gaheading"))
 	set("sim/cockpit/autopilot/altitude",activeBriefings:get("approach:gaaltitude"))
 end
 
 function kc_macro_mcp_after_landing()
 	set("AirbusFBW/FD1Engage",0)
+	set("sim/cockpit/autopilot/airspeed",100)
+	set("sim/cockpit/autopilot/heading_mag",1)
+	set("sim/cockpit/autopilot/altitude",900)
+	set("AirbusFBW/ILSonCapt",0)
 end
 
 -- =====================================================
@@ -597,8 +712,9 @@ end
 
 -- test if all baros are set to local baro
 function kc_macro_test_local_baro()
-	return get("sim/cockpit2/gauges/actuators/barometer_setting_in_hg_pilot") == math.ceil(get("sim/weather/barometer_sealevel_inhg")*100)/100 and 
-		get("sim/cockpit2/gauges/actuators/barometer_setting_in_hg_copilot") == math.ceil(get("sim/weather/barometer_sealevel_inhg")*100)/100 
+	return true
+		-- math.ceil(get("sim/cockpit2/gauges/actuators/barometer_setting_in_hg_pilot")*100)/100 == math.ceil(get("sim/weather/barometer_sealevel_inhg")*100)/100 and 
+		-- math.ceil(get("sim/cockpit2/gauges/actuators/barometer_setting_in_hg_copilot")*100)/100 == math.ceil(get("sim/weather/barometer_sealevel_inhg")*100)/100 
 end
 
 -- set baros to briefng
@@ -774,46 +890,19 @@ end
 function kc_macro_at_trans_lvl()
 	set("AirbusFBW/BaroStdCapt",0)
 	set("AirbusFBW/BaroStdFO",0)
-	if activeBriefings:get("arrival:atisQNH") ~= "" then
-		if activePrefSet:get("general:baro_mode_hpa") then
-			return 	get("sim/cockpit2/gauges/actuators/barometer_setting_in_hg_pilot") == tonumber(activeBriefings:get("arrival:atisQNH")) * 0.02952999 and 
-					get("sim/cockpit2/gauges/actuators/barometer_setting_in_hg_copilot") == tonumber(activeBriefings:get("arrival:atisQNH")) * 0.02952999
-		else
-			return 	get("sim/cockpit2/gauges/actuators/barometer_setting_in_hg_pilot") == tonumber(activeBriefings:get("arrival:atisQNH")) and 
-					get("sim/cockpit2/gauges/actuators/barometer_setting_in_hg_copilot") == tonumber(activeBriefings:get("arrival:atisQNH"))
-		end
-	end
-	if activeBriefings:get("arrival:atisQNH") ~= "" then
-		if activePrefSet:get("general:baro_mode_hpa") then
-			set("sim/cockpit2/gauges/actuators/barometer_setting_in_hg_pilot", tonumber(activeBriefings:get("arrival:atisQNH")) * 0.02952999)
-			set("sim/cockpit2/gauges/actuators/barometer_setting_in_hg_copilot", tonumber(activeBriefings:get("arrival:atisQNH")) * 0.02952999) 
-		else
-			set("sim/cockpit2/gauges/actuators/barometer_setting_in_hg_pilot", tonumber(activeBriefings:get("arrival:atisQNH")))
-			set("sim/cockpit2/gauges/actuators/barometer_setting_in_hg_copilot", tonumber(activeBriefings:get("arrival:atisQNH")))
-		end
-	end
+	kc_macro_set_briefed_baro()
 end
 
 -- bck callouts when needed
 
--- B738 takeoff config test
-function kc_bck_b738_toc_test(trigger)
-	local delayvar = trigger .. "delay"
-	if kc_procvar_exists(delayvar) == false then
-		kc_procvar_initialize_count(delayvar,-1)
-	end
-	if kc_procvar_get(delayvar) == -1 then
-		kc_procvar_set(delayvar,0)
-		set_array("sim/cockpit2/engine/actuators/throttle_ratio",0,1) 
-		set_array("sim/cockpit2/engine/actuators/throttle_ratio",1,1)
-	else
-		if kc_procvar_get(delayvar) <= 0 then
-			set_array("sim/cockpit2/engine/actuators/throttle_ratio",0,0) 
-			set_array("sim/cockpit2/engine/actuators/throttle_ratio",1,0) 
-			kc_procvar_set(trigger,false)
-			kc_procvar_set(delayvar,-1)
-		else
-			kc_procvar_set(delayvar,kc_procvar_get(delayvar)-1)
+function kc_macro_set_autobrake()
+	if activeBriefings:get("approach:autobrake") > 1 then
+		if activeBriefings:get("approach:autobrake") == 2 then
+			command_once("AirbusFBW/AbrkLo")
+		elseif activeBriefings:get("approach:autobrake") == 3 then
+			command_once("AirbusFBW/AbrkMed")
+		elseif activeBriefings:get("approach:autobrake") == 4 then
+			command_once("AirbusFBW/AbrkMax")
 		end
 	end
 end
@@ -860,6 +949,7 @@ function kc_bck_after_takeoff_items(trigger)
 		kc_procvar_set(trigger,false)
 		kc_speakNoText(0,"ready for after takeoff checklist")
 	end
+	set("AirbusFBW/APUMaster",0)
 end
 
 return sysMacros

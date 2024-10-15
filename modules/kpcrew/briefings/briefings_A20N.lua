@@ -5,13 +5,13 @@
 kc_acf_name = "ToLiss A20N/A21N"
 
 kc_TakeoffThrust 	= "RATED|DE-RATED|ASSUMED TEMPERATURE|RATED AND ASSUMED|DE-RATED AND ASSUMED"
-kc_TakeoffFlaps 	= "1|2|3"
+kc_TakeoffFlaps 	= "0|1+F|2|3"
 kc_TakeoffAntiice 	= "NOT REQUIRED|ENGINE ONLY|ENGINE AND WING"
 kc_TakeoffPacks 	= "ON|OFF"
 kc_TakeoffBleeds 	= "OFF|ON"
 kc_TakeoffApModes 	= "MANAGED|HDG/VS"
 kc_apptypes 		= "ILS CAT 1|ILS CAT 2 OR 3|VOR|NDB|RNAV|VISUAL|TOUCH AND GO|CIRCLING"
-kc_LandingFlaps 	= "2|3|4"
+kc_LandingFlaps 	= "2|3|FULL"
 kc_LandingAutoBrake = "OFF|LO|MED|MAX"
 kc_LandingPacks 	= "OFF|ON"
 kc_LandingAntiice 	= "NOT REQUIRED|ENGINE ONLY|ENGINE AND WING"
@@ -28,7 +28,7 @@ kc_MELIssues 		= "no M E L issues|some M E L issues"
 if PLANE_ICAO == "A321" then	kc_DOW 				= 47780  -- Dry Operating Weight (aka OWE)	kc_MZFW  			= 73800  -- Maximum Zero Fuel Weight	kc_MaxFuel 			= 31322  -- Maximum Fuel Capacity	kc_MaxPayld 		= 28400  -- Maximum Payload to be set     *********************************************	kc_MTOW 			= 93000  -- Maximum Takeoff Weight	kc_MLW  			= 77800  -- Maximum Landing Weight	kc_FFPH 			=  2187  -- Average Fuel Flow per hour	kc_MFL1				=  6114  -- max fuel in tank left	kc_MFL2				= 19093  -- max fuel in tank center	kc_MFL3				=  6114  -- max fuel in tank rightend
 -- if PLANE_ICAO == "A20N" then	-- kc_DOW 				= 41510  -- Dry Operating Weight (aka OEW)	-- kc_MZFW  			= 62732  -- Maximum Zero Fuel Weight	-- kc_MaxFuel 			= 21611  -- Maximum Fuel Capacity	-- kc_MaxPayld 		= 22000  -- Maximum Payload to be set     *********************************************	-- kc_MTOW 			= 79016  -- Maximum Takeoff Weight	-- kc_MLW  			= 66361  -- Maximum Landing Weight	-- kc_FFPH 			=  2187  -- Average Fuel Flow per hour	-- kc_MFL1				=  4112  -- max fuel in tank left	-- kc_MFL2				= 13385  -- max fuel in tank center	-- kc_MFL3				=  4112  -- max fuel in tank right-- end 
 kc_show_load_button = false
-kc_show_cost_index 	= true
+kc_show_cost_index 	= truekc_show_fmc_buttons = falsekc_show_arr_atis_button = false
 
 -- full list of approach types can be overwritten by aircraft
 APP_apptype_list 	= "ILS CAT 1|ILS CAT 2 OR 3|VOR|NDB|RNAV|VISUAL|TOUCH AND GO|CIRCLING"
