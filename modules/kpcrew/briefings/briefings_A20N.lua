@@ -25,10 +25,10 @@ kc_MELIssues 		= "no M E L issues|some M E L issues"
 -- MAX LANDING WEIGHT:		66000 KG - 171961 LBS
 -- MAX FUEL CAPACITY:		18740 KG -  41315 LBS
 -- FUEL FLOW PER HOUR:		 1352 KG -   2980 LBS
-if PLANE_ICAO == "A321" then	kc_DOW 				= 47780  -- Dry Operating Weight (aka OWE)	kc_MZFW  			= 73800  -- Maximum Zero Fuel Weight	kc_MaxFuel 			= 31322  -- Maximum Fuel Capacity	kc_MaxPayld 		= 28400  -- Maximum Payload to be set     *********************************************	kc_MTOW 			= 93000  -- Maximum Takeoff Weight	kc_MLW  			= 77800  -- Maximum Landing Weight	kc_FFPH 			=  2187  -- Average Fuel Flow per hour	kc_MFL1				=  6114  -- max fuel in tank left	kc_MFL2				= 19093  -- max fuel in tank center	kc_MFL3				=  6114  -- max fuel in tank rightend
+if PLANE_ICAO == "A321" then	kc_DOW 				= 47780  -- Dry Operating Weight (aka OWE)	kc_MZFW  			= 73800  -- Maximum Zero Fuel Weight	kc_MaxFuel 			= 31322  -- Maximum Fuel Capacity	kc_MaxPayld 		= 28400  -- Maximum Payload to be set     *********************************************	kc_MTOW 			= 93000  -- Maximum Takeoff Weight	kc_MLW  			= 77800  -- Maximum Landing Weight	kc_FFPH 			=  2187  -- Average Fuel Flow per hour	kc_MFL1				=  6114  -- max fuel in tank left	kc_MFL2				= 19093  -- max fuel in tank center	kc_MFL3				=  6114  -- max fuel in tank rightendif PLANE_ICAO == "A339" then	kc_DOW 				= 47780  -- Dry Operating Weight (aka OWE)	kc_MZFW  			= 73800  -- Maximum Zero Fuel Weight	kc_MaxFuel 			= 31322  -- Maximum Fuel Capacity	kc_MaxPayld 		= 28400  -- Maximum Payload to be set     *********************************************	kc_MTOW 			= 93000  -- Maximum Takeoff Weight	kc_MLW  			= 77800  -- Maximum Landing Weight	kc_FFPH 			=  2187  -- Average Fuel Flow per hour	kc_MFL1				=  6114  -- max fuel in tank left	kc_MFL2				= 19093  -- max fuel in tank center	kc_MFL3				=  6114  -- max fuel in tank rightend
 -- if PLANE_ICAO == "A20N" then	-- kc_DOW 				= 41510  -- Dry Operating Weight (aka OEW)	-- kc_MZFW  			= 62732  -- Maximum Zero Fuel Weight	-- kc_MaxFuel 			= 21611  -- Maximum Fuel Capacity	-- kc_MaxPayld 		= 22000  -- Maximum Payload to be set     *********************************************	-- kc_MTOW 			= 79016  -- Maximum Takeoff Weight	-- kc_MLW  			= 66361  -- Maximum Landing Weight	-- kc_FFPH 			=  2187  -- Average Fuel Flow per hour	-- kc_MFL1				=  4112  -- max fuel in tank left	-- kc_MFL2				= 13385  -- max fuel in tank center	-- kc_MFL3				=  4112  -- max fuel in tank right-- end 
 kc_show_load_button = false
-kc_show_cost_index 	= truekc_show_fmc_buttons = falsekc_show_arr_atis_button = false
+kc_show_cost_index 	= truekc_show_fmc_buttons = falsekc_show_arr_atis_button = falsekc_type_airbus = true
 
 -- full list of approach types can be overwritten by aircraft
 APP_apptype_list 	= "ILS CAT 1|ILS CAT 2 OR 3|VOR|NDB|RNAV|VISUAL|TOUCH AND GO|CIRCLING"
@@ -148,7 +148,7 @@ function kc_dep_brief_flight()
     briefing = briefing .. "<NOTAMs highlites if there are any may also include VATSIM/IVAO details etc>" .. "\n\n"
 
 -- [N] oise abatement proc
-	briefing = briefing .. "This will be a standard takeoff, noise abatement procedure " .. kc_split(kc_DEP_nadp_list,"|")[activeBriefings:get("departure:depNADP")] .. ".\n\n"
+	-- briefing = briefing .. "This will be a standard takeoff, noise abatement procedure " .. kc_split(kc_DEP_nadp_list,"|")[activeBriefings:get("departure:depNADP")] .. ".\n\n"
 
 -- [A] utomation AFDS LNAV/VNAV or other
 	
@@ -190,12 +190,11 @@ function kc_dep_brief_departure()
 	briefing = briefing .. xdep 
 	briefing = briefing .. "We will take off from runway " .. activeBriefings:get("departure:rwy")  .. ". Runway conditions are " .. kc_split(kc_DEP_rwystate_list,"|")[activeBriefings:get("departure:rwyCond")] .. ".\n"
 	briefing = briefing .. "Initial altitude will be " .. activeBriefings:get("departure:initAlt") .. " ft. Today's cruise altitude will be FL " .. activeBriefings:get("flight:cruiseLevel") .. ".\n" 
-	briefing = briefing .. "Transition altitude is " .. activeBriefings:get("departure:transalt") .. " the initial heading is " .. activeBriefings:get("departure:initHeading") .. ".\n"
-	briefing = briefing .. "We will use Flaps " .. kc_split(kc_TakeoffFlaps,"|")[activeBriefings:get("takeoff:flaps")] .. " for takeoff.\n"
+	-- briefing = briefing .. "Transition altitude is " .. activeBriefings:get("departure:transalt") .. " the initial heading is " .. activeBriefings:get("departure:initHeading") .. ".\n"	briefing = briefing .. "Transition altitude is " .. activeBriefings:get("departure:transalt") .. ".\n"	briefing = briefing .. "We will use Flaps " .. kc_split(kc_TakeoffFlaps,"|")[activeBriefings:get("takeoff:flaps")] .. " for takeoff.\n"
 	briefing = briefing .. "Our take off thrust is " .. kc_split(kc_TakeoffThrust,"|")[activeBriefings:get("takeoff:thrust")] .. " Anti Ice is " .. kc_split(kc_TakeoffAntiice,"|")[activeBriefings:get("takeoff:antiice")] .. ",bleeds will be " .. kc_split(kc_TakeoffBleeds,"|")[activeBriefings:get("takeoff:bleeds")] .. ".\n"
 	briefing = briefing .. "Minimum Safe Altitude along our initial route is ".. activeBriefings:get("takeoff:msa") .. "ft.\n"
 	briefing = briefing .. "In case of forced return we are ".. kc_split(kc_DEP_forced_return,"|")[activeBriefings:get("takeoff:forcedReturn")] .. ".\n"
-	briefing = briefing .. "The takeoff speeds are set. V1 is ".. activeBriefings:get("takeoff:v1") .. ", Vr is " .. activeBriefings:get("takeoff:vr") .. " and V2 today " .. activeBriefings:get("takeoff:v2") .. ".\n"
+	-- briefing = briefing .. "The takeoff speeds are set. V1 is ".. activeBriefings:get("takeoff:v1") .. ", Vr is " .. activeBriefings:get("takeoff:vr") .. " and V2 today " .. activeBriefings:get("takeoff:v2") .. ".\n"
 	briefing = briefing .. "<Brief the departure procedure from CDU and charts>" .. "\n\n"
 
 	return briefing
@@ -226,21 +225,21 @@ function kc_arr_brief_general()
 	local briefing = ""
 -- [W] eather highlites
 	briefing = briefing .. "Our destination today is " .. activeBriefings:get("flight:destinationIcao") .. "\n"
-	briefing = briefing .. "The weather report is winds " .. activeBriefings:get("arrival:atisWind") .. "; visibility " .. activeBriefings:get("arrival:atisVisibility") .. 
-		" km; precipitation " .. kc_split(kc_WX_Precipitation_list,"|")[activeBriefings:get("arrival:atisPrecipit")] .. 
-		"; clouds " .. kc_split(kc_WX_Cloud_list,"|")[activeBriefings:get("arrival:atisClouds")] .. 
-		"; the temperatures are " .. activeBriefings:get("arrival:atisTemps") .. "; QNH " .. activeBriefings:get("arrival:atisQNH").."\n\n" 
+	-- briefing = briefing .. "The weather report is winds " .. activeBriefings:get("arrival:atisWind") .. "; visibility " .. activeBriefings:get("arrival:atisVisibility") .. 
+		-- " km; precipitation " .. kc_split(kc_WX_Precipitation_list,"|")[activeBriefings:get("arrival:atisPrecipit")] .. 
+		-- "; clouds " .. kc_split(kc_WX_Cloud_list,"|")[activeBriefings:get("arrival:atisClouds")] .. 
+		-- "; the temperatures are " .. activeBriefings:get("arrival:atisTemps") .. "; QNH " .. activeBriefings:get("arrival:atisQNH").."\n\n" 
 
 -- [A] ircraft
     briefing = briefing .. "Our current weight is " .. string.format("%6.6i %s",kc_get_gross_weight(),wunit) .. 
 		" and fuel remaining " .. string.format("%6.6i %s",kc_get_total_fuel(),wunit) .. "\n"
-    briefing = briefing .. "Vref for our approach is " .. activeBriefings:get("approach:vref") .. " kts and Vapp " .. activeBriefings:get("approach:vapp") ..  " kts\n\n"
+    -- briefing = briefing .. "Vref for our approach is " .. activeBriefings:get("approach:vref") .. " kts and Vapp " .. activeBriefings:get("approach:vapp") ..  " kts\n\n"
 
 -- [N] otams - highlite 
     briefing = briefing .. "NOTAMs highlites if there are any <may also include VATSIM/IVAO details etc" .. "\n\n"
 
 -- [N] oise abatement proc
-	briefing = briefing .. "Special noise abatement considerations: " .. kc_split(kc_APP_na_list,"|")[activeBriefings:get("arrival:arrNADP")] .. "\n\n"
+	-- briefing = briefing .. "Special noise abatement considerations: " .. kc_split(kc_APP_na_list,"|")[activeBriefings:get("arrival:arrNADP")] .. "\n\n"
 
 -- [A] utomation AFDS LNAV/VNAV or other
 
@@ -257,13 +256,12 @@ function kc_arr_brief_route()
 			briefing = briefing .. "ATC vectors".."\n"
 		end
 	briefing = briefing .. "The MSA in our arrival sector is " .. activeBriefings:get("arrival:msa") .. " and the transition level today FL " .. activeBriefings:get("arrival:translvl").."\n"
-	briefing = briefing .. "After the arrival we can expect an " .. kc_split(APP_apptype_list,"|")[activeBriefings:get("arrival:appType")] .. " approach".."\n"
-	briefing = briefing .. "Runway assigned is " .. activeBriefings:get("arrival:rwy") .. " and the condition is " .. kc_split(kc_APP_rwystate_list,"|")[activeBriefings:get("arrival:rwyCond")].."\n"
+	-- briefing = briefing .. "After the arrival we can expect an " .. kc_split(kc_apptypes,"|")[activeBriefings:get("arrival:appType")] .. " approach".."\n"	briefing = briefing .. "After the arrival we can expect an " .. "\n"	-- briefing = briefing .. "Runway assigned is " .. activeBriefings:get("arrival:rwy") .. " and the condition is " .. kc_split(kc_APP_rwystate_list,"|")[activeBriefings:get("arrival:rwyCond")].."\n"
 	briefing = briefing .. "Altitude at the FAF is " .. activeBriefings:get("arrival:fafAltitude") .. ", " .. (activePrefSet:get("aircraft:efis_mins_dh")==true and "DH" or "DA") .." will be " .. activeBriefings:get("arrival:decision").."\n"
-	briefing = briefing .. "Airport elevation is " .. activeBriefings:get("arrival:aptElevation").." ft \n"
-	briefing = briefing .. "We are going to use landing flaps " .. kc_split(kc_LandingFlaps,"|")[activeBriefings:get("approach:flaps")] .. " and Autobrake " .. kc_split(kc_LandingAutoBrake,"|")[activeBriefings:get("approach:autobrake")].."\n"
-	briefing = briefing .. "Packs are set " .. kc_split(kc_LandingPacks,"|")[activeBriefings:get("approach:packs")] .. " and Anti Ice " .. kc_split(kc_LandingAntiice,"|")[activeBriefings:get("approach:antiice")].."\n"
-	briefing = briefing .. kc_split(APP_rev_thrust_list,"|")[activeBriefings:get("approach:reversethrust")] .. " reverse thrust applied" .. "\n"
+	-- briefing = briefing .. "Airport elevation is " .. activeBriefings:get("arrival:aptElevation").." ft \n"
+	-- briefing = briefing .. "We are going to use landing flaps " .. kc_split(kc_LandingFlaps,"|")[activeBriefings:get("approach:flaps")] .. " and Autobrake " .. kc_split(kc_LandingAutoBrake,"|")[activeBriefings:get("approach:autobrake")].."\n"
+	-- briefing = briefing .. "Packs are set " .. kc_split(kc_LandingPacks,"|")[activeBriefings:get("approach:packs")] .. " and Anti Ice " .. kc_split(kc_LandingAntiice,"|")[activeBriefings:get("approach:antiice")].."\n"
+	-- briefing = briefing .. kc_split(APP_rev_thrust_list,"|")[activeBriefings:get("approach:reversethrust")] .. " reverse thrust applied" .. "\n"
 	briefing = briefing .. "<Brief the arrival procedure from CDU and charts" .. "\n\n"
 
 	return briefing

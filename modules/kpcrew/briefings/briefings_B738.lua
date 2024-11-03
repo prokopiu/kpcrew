@@ -95,6 +95,9 @@ kc_speeds_vfl20		= 170
 
 kc_show_load_button = true
 kc_show_cost_index 	= true
+kc_show_fmc_buttons = true
+kc_show_arr_atis_button = false
+kc_type_airbus = false
 
 -- full list of approach types can be overwritten by aircraft
 APP_apptype_list 	= "ILS CAT 1|ILS CAT 2 OR 3|VOR|NDB|RNAV|VISUAL|TOUCH AND GO|CIRCLING"

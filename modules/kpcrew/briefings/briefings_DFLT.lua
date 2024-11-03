@@ -62,6 +62,9 @@ kc_max_altitude		= 40000 -- Max Altitude
 
 kc_show_load_button = false
 kc_show_cost_index 	= false
+kc_show_fmc_buttons = false
+kc_show_arr_atis_button = false
+kc_type_airbus = false
 
 function kc_get_DOW()
 	if activePrefSet:get("general:weight_kgs") then
