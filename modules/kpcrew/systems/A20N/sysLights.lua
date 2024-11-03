@@ -69,7 +69,7 @@ sysLights.wingSwitch = InopSwitch:new("wing")
 sysLights.wheelSwitch = InopSwitch:new("wheel")
 
 -- Dome Light
-sysLights.domeLightSwitch = TwoStateDrefSwitch:new("wheel","ckpt/oh/domeLight/anim",0)
+sysLights.domeLightSwitch = InopSwitch:new("wheel","ckpt/oh/domeLight/anim",0)
 
 -- Instrument Lights
 sysLights.instr1Light = TwoStateDrefSwitch:new("instr1","AirbusFBW/OHPBrightnessLevel",0)
@@ -131,7 +131,7 @@ sysLights.wingAnc = InopSwitch:new("winglights",drefGenericLights, 3)
 sysLights.wheelAnc = InopSwitch:new("wheellights",drefGenericLights,5)
 
 -- Dome Light(s) status
-sysLights.domeAnc = CustomAnnunciator:new("domelights",
+sysLights.domeAnc = InopSwitch:new("domelights",
 function () 
 	if get("ckpt/oh/domeLight/anim") ~= 0 then
 		return 1

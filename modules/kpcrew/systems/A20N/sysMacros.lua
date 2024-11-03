@@ -243,7 +243,7 @@ function kc_macro_state_turnaround()
 		set("AirbusFBW/BlowerSwitch",0)
 		set("AirbusFBW/ExtractSwitch",0)
 		set("AirbusFBW/CabinFanSwitch",1)
-	set_array("AirbusFBW/HydOHPArray",3,1)
+	-- set_array("AirbusFBW/HydOHPArray",3,1)
 	
 	kc_macro_aircond_all_white_off()
 	kc_macro_elec_all_white_off()		
@@ -439,6 +439,10 @@ function kc_macro_lights_before_taxi()
 	command_once("toliss_airbus/lightcommands/TurnoffLightOn")
 	command_once("toliss_airbus/lightcommands/DomeLightDown")
 	command_once("toliss_airbus/lightcommands/DomeLightDown")
+	set("AirbusFBW/PedestalFloodBrightnessLevel",0.0)
+	set("AirbusFBW/PanelFloodBrightnessLevel",0.3)
+	set("AirbusFBW/OHPBrightnessLevel",0.5)
+
 end
 
 function kc_macro_lights_for_takeoff()
@@ -649,15 +653,15 @@ function kc_macro_mcp_preflight()
 	if get("AirbusFBW/ATHRmode") == 1 then
 		command_once("AirbusFBW/ATHRbutton")
 	end
-	set("sim/cockpit/autopilot/airspeed",activeBriefings:get("takeoff:v2"))
-	set("sim/cockpit/autopilot/heading_mag",activeBriefings:get("departure:initHeading"))
+	-- set("sim/cockpit/autopilot/airspeed",activeBriefings:get("takeoff:v2"))
+	-- set("sim/cockpit/autopilot/heading_mag",activeBriefings:get("departure:initHeading"))
 	set("sim/cockpit/autopilot/altitude",activeBriefings:get("departure:initAlt"))
 end
 
 function kc_macro_mcp_takeoff()
 	set("AirbusFBW/FD1Engage",1)
-	set("sim/cockpit/autopilot/airspeed",activeBriefings:get("takeoff:v2"))
-	set("sim/cockpit/autopilot/heading_mag",activeBriefings:get("departure:initHeading"))
+	-- set("sim/cockpit/autopilot/airspeed",activeBriefings:get("takeoff:v2"))
+	-- set("sim/cockpit/autopilot/heading_mag",activeBriefings:get("departure:initHeading"))
 	set("sim/cockpit/autopilot/altitude",activeBriefings:get("departure:initAlt"))
 end
 
@@ -939,7 +943,7 @@ function kc_bck_transition_level(trigger)
 	if get("sim/cockpit2/gauges/indicators/altitude_ft_pilot") < activeBriefings:get("arrival:translvl")*100 then
 		kc_macro_at_trans_lvl()
 		kc_procvar_set(trigger,false)
-		kc_speakNoText(0,"transition level                  ready for approach checklist")
+		-- kc_speakNoText(0,"transition level                   for approach checklist")
 	end
 end
 
