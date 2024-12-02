@@ -508,31 +508,6 @@ beforePushStart:addItem(IndirectProcedureItem:new("PARKING BRAKE","SET",FlowItem
 beforePushStart:addItem(ProcedureItem:new("CHOCKS","OFF",FlowItem.actorPM,0,
 	function () return get("AirbusFBW/Chocks") == 0 end,
 	function () set("AirbusFBW/Chocks",0) end))
-beforePushStart:addItem(ProcedureItem:new("APU MASTER PB","PRESS",FlowItem.actorPM,5,
-	function () return get("AirbusFBW/APUMaster") == 1 end,
-	function () set("AirbusFBW/APUMaster",1) end))
-beforePushStart:addItem(SimpleProcedureItem:new("  After master switch, wait 3s"))
-beforePushStart:addItem(IndirectProcedureItem:new("APU START PB","PRESS",FlowItem.actorPM,50,"apustart1",
-	function () return get("AirbusFBW/APUStarter") > 0 end,
-	function () set("AirbusFBW/APUStarter",1) end))
-beforePushStart:addItem(ProcedureItem:new("APU BLEED","ON",FlowItem.actorPF,0,
-	function () return get("AirbusFBW/APUBleedSwitch") == 1 end,
-	function () set("AirbusFBW/APUBleedSwitch",1) end))
-beforePushStart:addItem(HoldProcedureItem:new("EXT POWER","OFF & DISCONNECT",FlowItem.actorCPT,0))
-beforePushStart:addItem(HoldProcedureItem:new("PUSHBACK TRUCK","REQUESTED",FlowItem.actorCPT,0))
-beforePushStart:addItem(HoldProcedureItem:new("PUSH / START CLEARANCE","OBTAIN",FlowItem.actorPF,0,true,nil))
-beforePushStart:addItem(ProcedureItem:new("BEACON","ON",FlowItem.actorPF,0,true,
-	function () kc_macro_lights_before_start() end))
-beforePushStart:addItem(ProcedureItem:new("A/SKID & N/W STRG SWITCH","ON",FlowItem.actorPF,0,
-	function () return get("AirbusFBW/NWSnAntiSkid") == 1 end,
-	function () 
-		set("AirbusFBW/NWSnAntiSkid",1) 
-	end))
--- beforePushStart:addItem(ProcedureItem:new("YELLOW ELEC PUMP","TURN ON",FlowItem.actorPM,0,
-	-- function () return get("AirbusFBW/HydYElecMode") > 0 end,
-	-- function () 
-		-- set_array("AirbusFBW/HydOHPArray",3,1)
-	-- end))
 beforePushStart:addItem(ProcedureItem:new("EXTERNAL DOORS","CLOSED",FlowItem.actorFO,0,
 	function () return true end,
 	function () command_once("toliss_airbus/door_commands/all_to_mode_close") end))
@@ -550,6 +525,31 @@ beforePushStart:addItem(ProcedureItem:new("WINDOWS / DOORS","CHECKED CLOSED",Flo
 		set("ckpt/doorLock",1)
 		set("ckpt/door",0)
 	end))
+beforePushStart:addItem(HoldProcedureItem:new("PUSHBACK TRUCK","REQUESTED",FlowItem.actorCPT,0))
+beforePushStart:addItem(HoldProcedureItem:new("PUSH / START CLEARANCE","OBTAIN",FlowItem.actorPF,0,true,nil))
+beforePushStart:addItem(ProcedureItem:new("APU MASTER PB","PRESS",FlowItem.actorPM,5,
+	function () return get("AirbusFBW/APUMaster") == 1 end,
+	function () set("AirbusFBW/APUMaster",1) end))
+beforePushStart:addItem(SimpleProcedureItem:new("  After master switch, wait 3s"))
+beforePushStart:addItem(IndirectProcedureItem:new("APU START PB","PRESS",FlowItem.actorPM,50,"apustart1",
+	function () return get("AirbusFBW/APUStarter") > 0 end,
+	function () set("AirbusFBW/APUStarter",1) end))
+beforePushStart:addItem(ProcedureItem:new("APU BLEED","ON",FlowItem.actorPF,0,
+	function () return get("AirbusFBW/APUBleedSwitch") == 1 end,
+	function () set("AirbusFBW/APUBleedSwitch",1) end))
+beforePushStart:addItem(HoldProcedureItem:new("EXT POWER","OFF & DISCONNECT",FlowItem.actorCPT,0))
+beforePushStart:addItem(ProcedureItem:new("BEACON","ON",FlowItem.actorPF,0,true,
+	function () kc_macro_lights_before_start() end))
+beforePushStart:addItem(ProcedureItem:new("A/SKID & N/W STRG SWITCH","ON",FlowItem.actorPF,0,
+	function () return get("AirbusFBW/NWSnAntiSkid") == 1 end,
+	function () 
+		set("AirbusFBW/NWSnAntiSkid",1) 
+	end))
+-- beforePushStart:addItem(ProcedureItem:new("YELLOW ELEC PUMP","TURN ON",FlowItem.actorPM,0,
+	-- function () return get("AirbusFBW/HydYElecMode") > 0 end,
+	-- function () 
+		-- set_array("AirbusFBW/HydOHPArray",3,1)
+	-- end))
 beforePushStart:addItem(ProcedureItem:new("THRUST LEVERS","CHECK IDLE",FlowItem.actorPF,0,
 	function () return get("toliss_airbus/joystick/throttle/rawLeverPos",0) == 0 and get("toliss_airbus/joystick/throttle/rawLeverPos",1) == 0 end))
 beforePushStart:addItem(ProcedureItem:new("ACCU PRESS INDICATOR","CHECK GREEN BAND",FlowItem.actorPM,0,
@@ -1366,15 +1366,11 @@ activeSOP:addBackground(backgroundFlow)
 activeSOP:addProcedure(prelCockpitPrep)
 activeSOP:addProcedure(cduPreflightProc)
 activeSOP:addProcedure(cockpitPrep)
--- activeSOP:addProcedure(cockpitPrepChkl)
 activeSOP:addProcedure(beforePushStart)
--- activeSOP:addProcedure(beforeStartChkl)
 activeSOP:addProcedure(pushProc)
 activeSOP:addProcedure(pushstartProc)
 activeSOP:addProcedure(afterStartProc)
--- activeSOP:addProcedure(afterStartChkl)
 activeSOP:addProcedure(beforeTaxiProc)
--- activeSOP:addProcedure(taxiChkl)
 activeSOP:addProcedure(TaxiProc)
 activeSOP:addProcedure(beforeTakeoffProc)
 activeSOP:addProcedure(takeoffProc)
@@ -1398,360 +1394,3 @@ function getActiveSOP()
 end
 
 return SOP_A20N
-
--- cockpitPrep:addItem(ProcedureItem:new("GPWS","NO WHITE LIGHTS",FlowItem.actorPF,1,
-	-- function () return 
-		-- get("AirbusFBW/GPWSSwitchArray",0) == 1 and 
-		-- get("AirbusFBW/GPWSSwitchArray",1) == 1 and 
-		-- get("AirbusFBW/GPWSSwitchArray",2) == 1 and 
-		-- get("AirbusFBW/GPWSSwitchArray",3) == 0 and 
-		-- get("AirbusFBW/GPWSSwitchArray",4) == 1 
-	-- end,
-	-- function () 
-		-- set_array("AirbusFBW/GPWSSwitchArray",0,1)
-		-- set_array("AirbusFBW/GPWSSwitchArray",1,1)
-		-- set_array("AirbusFBW/GPWSSwitchArray",2,1)
-		-- set_array("AirbusFBW/GPWSSwitchArray",3,0)
-		-- set_array("AirbusFBW/GPWSSwitchArray",4,1)
-	-- end))
--- cockpitPrep:addItem(SimpleProcedureItem:new("  Switch one at a time waiting for the BAT light"))
--- cockpitPrep:addItem(SimpleProcedureItem:new("  to go off before switching the next one on."))
--- cockpitPrep:addItem(HoldProcedureItem:new("ANNUNCIATOR LIGHT","TEST",FlowItem.actorCPT,1,nil))
--- cockpitPrep:addItem(ProcedureItem:new("HI FLOW SELECTOR","NORM",FlowItem.actorPF,1,
-	-- function () return get("AirbusFBW/EconFlowSel") == 1 end,
-	-- function () set("AirbusFBW/EconFlowSel",1) end))
--- cockpitPrep:addItem(SimpleProcedureItem:new("==== Audio & Radio"))
--- cockpitPrep:addItem(ProcedureItem:new("THIRD AUDIO CONTROL PANEL","PA KNOB – RECEPT",FlowItem.actorPF,1,true,nil))
--- cockpitPrep:addItem(SimpleProcedureItem:new("  - This allows cabin attendant announcements to"))
--- cockpitPrep:addItem(SimpleProcedureItem:new("    be recorded on the CVR."))
--- cockpitPrep:addItem(SimpleProcedureItem:new("  - Set volume at or above medium range."))
--- cockpitPrep:addItem(ProcedureItem:new("STANDBY INSTR (ISIS)","CHECK",FlowItem.actorPF,1,true,nil))
--- cockpitPrep:addItem(SimpleProcedureItem:new("  Indications normal – no flags / Set QNH"))
--- cockpitPrep:addItem(ProcedureItem:new("CLOCK","CHECK/SET","CHECK",FlowItem.actorPF,1,true,nil))
--- cockpitPrep:addItem(SimpleProcedureItem:new("  Check time is UTC, switch to GPS"))
--- cockpitPrep:addItem(ProcedureItem:new("RADIO MANAGEMENT PANEL","ON AND SET",FlowItem.actorPF,1,
-	-- function () return sysRadios.com1OnOff:getStatus() > 0 end,
-	-- function () sysRadios.com1OnOff:setValue(1) end))
--- cockpitPrep:addItem(ProcedureItem:new("AUDIO CONTROL PANEL","AS REQUIRED",FlowItem.actorPF,1,true,nil))
--- cockpitPrep:addItem(ProcedureItem:new("COCKPIT DOOR","NORMAL",FlowItem.actorPF,1,
-	-- function () return sysGeneral.cockpitLock:getStatus() == 0 end,
-	-- function () sysGeneral.cockpitLock:setValue(0) sysGeneral.cockpitDoor:setValue(1) end))
--- SWITCHING PANEL...........................NORMAL   (PF)
-
--- =========== DEPARTURE BRIEFING ========
--- == AIRCRAFT
-	-- FMS
-	-- ➢ DATA Page
-		-- ▪ Type and Model
-		-- ▪ APD & Nav Database Date
-	-- ➢ FMS INIT- B Pag
-		-- ▪ Block Fuel (FOB on EWD)
-		-- ▪ Estimated TOW
-		-- ▪ Extra Time / Fuel at Destination
-	-- ➢ PERF TAKEOFF Pag
-		-- ▪ TO RWY
-		-- ▪ TO CONF
-		-- ▪ Flex / TOGA
-		-- ▪ V1, VR, V2
-		-- ▪ Transition Altitude
-		-- ▪ Thrust Reduction / ACC Altitude
-	-- ➢ F-PLN & PROG Page
-		-- ▪ Route Waypoints
-		-- ▪ Time, Distance and Fuel
-		-- ▪ Strategy in secondary flight plan
--- == WEATHER
-	-- • Weather reports and applicable procedures
-	-- • Applicable NOTAMS and procedures
--- == STARTUP & TAXI
-	-- • ATC Procedures (push and start procedures)
-	-- • A/C Procedures (engine start etc.)
-	-- • Routing to the anticipated runway
--- == RUNWAY
-	-- • Dimensions (Length, Width, Stopway)
-	-- • Surface Condition
-	-- • Lighting
-	-- • Packs / Anti ice – On/Off Takeoff
--- == DEPARTURE
-	-- • Normal SID – Routing and Constraints
-	-- • Engine Out SID – Routing and Constraint
-	-- • Navigation Frequencies to be used (RAD NAV)
-	-- • MSA
--- == SPECIAL PROCEDURES
-	-- • NADP
-	-- • Weather
-	-- • Terrain
-	-- • Failures (Communication etc.)
-
--- == Emergency Briefing
--- This will be a left hand seat takeoff.
--- Failure Before 100 Knots or V1
-	-- • For any failure before 100 knots or V1, clearly CALL OUT THE MALFUNCTION and I will call STOP or GO.
-	-- • If the call is STOP, I will apply the REJECTED TAKEOFF PROCEDURE and bring the aeroplane to a complete stop.
-	-- • I will set the PARKING BRAKE and call “ATTENTION CREW AT STATION”.
-	-- • You will monitor REV GREEN and DECEL and silence any AURAL WARNING and inform ATC.
-	-- • Thereafter you will carry out ECAM actions on my command.
-	-- • IF EVACUATION is required, we will carry out the “Emergency Evacuation Checklist”.
-	
--- Failure After V1
-	-- • For any failure after V1, takeoff will be continued and NO ACTION BEFORE 400 feet AGL EXCEPT silencing of any AURAL WARNING and GEAR UP.
-	-- • Reaching 400 feet AGL, ECAM actions on my command.
-	-- • For engine failure / damage / fire, when ENGINE IS SECURED: Stop ECAM, level off, accelerate and cleanup.
-	-- • If ENGINE IS NOT SECURED: Continue climbing until engine is secured, but not above EO maximum acceleration altitude.
-	-- • At GREEN DOT OPEN CLB, select MCT.
-	-- • Resume ECAM, complete AFTER T/O C/L and check the STATUS.
-	-- • FLY (a) EO Routing (b) SID (c) Radar Vectors (c) Immediate Turn Back.
-
--- REJECTED TAKEOFF: 
-	-- Before 100 knots (Less serious. Abort is at Captain’s discretion depending on the circumstances)
-	-- Any ECAM Warning / Caution. 
-	-- Between 100 knots & V1 (More Serious. Be go minded except for a few situations, as mentioned below)
-	-- Failures with ECAM
-		-- Left Hand Items
-			-- Side Stick Fault
-		-- Right Hand Items
-			-- Thrust Lever Fault
-		-- Engine Items
-			-- Fire
-			-- Failure
-			-- Reverser Unlocked or Fault.
-	-- Failures without ECAM
-		-- Sudden loss of thrust.
-		-- Any major failure.
-		-- If aeroplane is unsafe to fly due any reason.
-		-- Tire failure within 20 knots of V1: Unless debris from tire causes noticeable engine parameter fluctuation, takeoff, reduce fuel load & land with full RWY length available.
-	-- Weather
-		-- Windshear.
-	-- Note: Exceeding EGT red line or nose gear vibration should not result in an abort above 100 knots *
-
-
--- ==================== TAXI CHECKLIST ===================
--- FLIGHT CONTROLS..........................CHECKED (BOTH)
--- FLAP SETTINGS...........................CONF ___ (BOTH)
--- RADAR & PRED W/S.......................ON & AUTO   (PF)
--- ENG MODE.................IGNITION|NORM (on A320)   (PF)
--- ECAM MEMO.............................TO NO BLUE   (PF)
---   - AUTO BRK MAX
---   - SIGNS ON
---   - CABIN READY
---   - SPLRS ARM
---   - FLAPS TO
---   - TO CONFIG NORM
--- =======================================================
-
--- local taxiChkl = Checklist:new("TAXI CHECKLIST","","TAXI CHECKLIST completed")
--- taxiChkl:setFlightPhase(6)
--- taxiChkl:addItem(ChecklistItem:new("FLIGHT CONTROLS","CHECKED",FlowItem.actorBOTH,1,true,nil))
--- taxiChkl:addItem(ChecklistItem:new("FLAP SETTINGS","CONF ___",FlowItem.actorBOTH,1,true,nil))
--- taxiChkl:addItem(ChecklistItem:new("RADAR & PRED W/S","ON & AUTO",FlowItem.actorPF,1,
-	-- function () return get("AirbusFBW/WXPowerSwitch") ~= 1 and get("AirbusFBW/WXSwitchPWS") == 2 end))
--- taxiChkl:addItem(ChecklistItem:new("ENG MODE","IGNITION|NORM",FlowItem.actorPF,1,
-	-- function () return get("AirbusFBW/ENGModeSwitch") < 2 end))
--- taxiChkl:addItem(ChecklistItem:new("ECAM MEMO","TO - NO BLUE",FlowItem.actorPF,1,true,nil))
--- taxiChkl:addItem(SimpleChecklistItem:new("  - AUTO BRK MAX"))
--- taxiChkl:addItem(SimpleChecklistItem:new("  - SIGNS ON"))
--- taxiChkl:addItem(SimpleChecklistItem:new("  - CABIN READY"))
--- taxiChkl:addItem(SimpleChecklistItem:new("  - SPLRS ARM"))
--- taxiChkl:addItem(SimpleChecklistItem:new("  - FLAPS TO"))
--- taxiChkl:addItem(SimpleChecklistItem:new("  - TO CONFIG NORM"))
-
--- local TaxiProc = Procedure:new("BEGIN TAXI","","")
--- TaxiProc:setFlightPhase(5)
--- TaxiProc:addItem(HoldProcedureItem:new("CLEAR LEFT","",FlowItem.actorCPT))
--- TaxiProc:addItem(ProcedureItem:new("CLEAR RIGHT","",FlowItem.actorFO,0,true))
-
-
--- =============== BEFORE START CHECKLIST ================
--- PARKING BRAKE.................................ON   (PF)
--- T.O. SPEEDS & THRUST......................._____ (BOTH)
---   PF V1,VR,V2 & thrust setting FMS PERF
--- WINDOWS...................................CLOSED (BOTH)
--- BEACON........................................ON   (PF)
--- =======================================================
-
--- local beforeStartChkl = Checklist:new("BEFORE START CHECKLIST","","BEFORE START CHECKLIST completed")
--- beforeStartChkl:setFlightPhase(4)
--- beforeStartChkl:addItem(ChecklistItem:new("PARKING BRAKE","ON",FlowItem.actorPF,1,
-	-- function () return get("AirbusFBW/ParkBrake") == 1 end,
-	-- function () command_once("toliss_airbus/park_brake_set") end))
--- beforeStartChkl:addItem(ChecklistItem:new("T.O. SPEEDS & THRUST","____",FlowItem.actorPF,1,true,nil))
--- beforeStartChkl:addItem(SimpleChecklistItem:new("  PF V1,VR,V2 & thrust setting FMS PERF"))
--- beforeStartChkl:addItem(ChecklistItem:new("WINDOWS","CLOSED",FlowItem.actorBOTH,1,
-	-- function () return
-		-- get("AirbusFBW/CockpitWindowPosition",0) == 0 and
-		-- get("AirbusFBW/CockpitWindowPosition",1) == 0 
-	-- end,
-	-- function () 
-		-- set_array("AirbusFBW/CockpitWindowSwitchPosition",0,1)
-		-- set_array("AirbusFBW/CockpitWindowSwitchPosition",1,1)
-		-- command_once("AirbusFBW/CaptainWindowClose")
-		-- command_once("AirbusFBW/CopilotWindowClose")
-	-- end))
--- beforeStartChkl:addItem(ChecklistItem:new("BEACON","ON",FlowItem.actorPM,1,
-	-- function () return get("sim/cockpit2/switches/beacon_on") == 1 end,
-	-- function () command_once("toliss_airbus/lightcommands/BeaconOn") end))
-
--- ============ COCKPIT PREPARATION CHECKLIST ============
--- GEAR PINS & COVERS.......................REMOVED   (PF)
--- FUEL QUANTITY............................ ___ KG   (PF)
---   check FOB & distribution on FUEL SD page
--- SEAT BELT.....................................ON   (PF)
--- ADIRS........................................NAV   (PF)
--- BARO REF....................................____ (BOTH)
--- =======================================================
-
--- local cockpitPrepChkl = Checklist:new("COCKPIT PREPARATION CHECKLIST","","COCKPIT PREPARATION CHECKLIST completed")
--- cockpitPrepChkl:setFlightPhase(3)
--- cockpitPrepChkl:addItem(ChecklistItem:new("GEAR PINS & COVERS","REMOVED",FlowItem.actorPF,1,
-	-- function () return true end))
--- cockpitPrepChkl:addItem(ChecklistItem:new("FUEL","%i KG|get(\"sim/flightmodel/weight/m_fuel_total\")",FlowItem.actorPF,3,
-	-- function () return true end))
--- cockpitPrepChkl:addItem(SimpleChecklistItem:new("  check FOB & distribution on FUEL SD page"))
--- cockpitPrepChkl:addItem(ChecklistItem:new("SEAT BELT","ON",FlowItem.actorPF,1,
-	-- function () return get("AirbusFBW/SeatBeltSignsOn") == 1 end,
-	-- function () command_once("toliss_airbus/lightcommands/FSBSignOn") end))
--- cockpitPrepChkl:addItem(ChecklistItem:new("ADIRS","NAV",FlowItem.actorPF,1,
-	-- function () return 
-		-- get("AirbusFBW/ADIRUSwitchArray",0) == 1 and 
-		-- get("AirbusFBW/ADIRUSwitchArray",1) == 1 and 
-		-- get("AirbusFBW/ADIRUSwitchArray",2) == 1
-	-- end))
--- cockpitPrepChkl:addItem(ChecklistItem:new("BARO REF","%s|math.ceil(get(\"sim/weather/aircraft/qnh_pas\")/100)",FlowItem.actorBOTH,1,
-	-- function () 
-		-- return kc_macro_test_local_baro()
-	-- end,
-	-- function () 
-		-- kc_macro_set_local_baro()
-	-- end))
-
--- flaps schedule
--- local flapsUpProc = Procedure:new("RETRACT FLAPS","")
--- flapsUpProc:setFlightPhase(-8)
--- flapsUpProc:addItem(SimpleProcedureItem:new("Retract Flaps when Speed reached"))
--- flapsUpProc:addItem(HoldProcedureItem:new("FLAPS 2","COMMAND",FlowItem.actorCPT,nil,
- 	-- function () return sysControls.flapsSwitch:getStatus() < 0.75 end))
--- flapsUpProc:addItem(ProcedureItem:new("FLAPS 2","SET",FlowItem.actorPNF,0,true,
-	-- function () set("sim/cockpit2/controls/flap_ratio",0.5) kc_speakNoText(0,"speed check flaps 2") end,
-	-- function () return sysControls.flapsSwitch:getStatus() < 0.75 end))
--- flapsUpProc:addItem(HoldProcedureItem:new("FLAPS 1","COMMAND",FlowItem.actorPF,nil,
-	-- function () return sysControls.flapsSwitch:getStatus() < 0.5 end))
--- flapsUpProc:addItem(ProcedureItem:new("FLAPS 1","SET",FlowItem.actorPNF,0,true,
-	-- function () set("sim/cockpit2/controls/flap_ratio",0.25) kc_speakNoText(0,"speed check flaps 1") end,
-	-- function () return sysControls.flapsSwitch:getStatus() < 0.5 end))
--- flapsUpProc:addItem(HoldProcedureItem:new("FLAPS UP","COMMAND",FlowItem.actorPF))
--- flapsUpProc:addItem(ProcedureItem:new("FLAPS UP","SET",FlowItem.actorPNF,0,true,
-	-- function () set("sim/cockpit2/controls/flap_ratio",0) kc_speakNoText(0,"speed check flaps up") end))
-	
--- ================== APPROACH CHECKLIST =================
--- BARO REF....................................____ (BOTH)
--- SEAT BELTS....................................ON   (PM)
--- MINIMUM.....................................____   (PF)
--- AUTO BRAKE..................................____   (PF)
--- ENG MODE SEL................................____   (PF)
--- =======================================================
-
--- local approachChkl = Checklist:new("APPROACH CHECKLIST","","approach CHECKLIST completed")
--- approachChkl:setFlightPhase(12)
--- approachChkl:addItem(ChecklistItem:new("BARO REF","____",FlowItem.actorBOTH,1,true,nil))
--- approachChkl:addItem(ChecklistItem:new("SEAT BELTS","ON",FlowItem.actorPM,1,true,nil))
--- approachChkl:addItem(ChecklistItem:new("MINIMUM","____",FlowItem.actorPF,1,true,nil))
--- approachChkl:addItem(ChecklistItem:new("AUTO BRAKE","____",FlowItem.actorPF,1,true,nil))
--- approachChkl:addItem(ChecklistItem:new("ENG MODE SEL","____",FlowItem.actorPF,1,true,nil))
-
--- =============== LANDING PROCEDURE (PM) ================
--- LANDING LIGHTS................................ON   (PF)
--- APPROACH PHASE..........................ACTIVATE   (PF)
--- 3NM FROM FDP OR S-SPEED..................REACHED
--- FLAPS 1......................................SET   (PM)
--- 2000 FT AGL..............................REACHED
--- FLAPS 2......................................SET   (PM)
--- LANDING GEAR................................DOWN   (PM)
--- AUTO BRAKE...........................SET/CONFIRM   (PM)
--- RWY TURNOFF LIGHTS............................ON   (PM)
--- NODE LIGHTS...................................ON   (PM)
--- GROUND SPOILERS..............................ARM   (PM)
--- FLAPS 3......................................SET   (PM)
--- ECAM WHEEL PAGE............................CHECK   (PM)
--- GO AROUND ALTITUDE.......................... SET   (PM)
--- FLAPS FULL...................................SET   (PM)
--- LANDING MEMO.......................CHECK NO BLUE
--- CABIN REPORT.............................RECEIVE
--- A/THR..........................SPEED MODE OR OFF
--- WING ANTI-ICE................................OFF
--- =======================================================
-
--- ================== LANDING CHECKLIST ==================
--- ECAM MEMO..........................LDG - NO BLUE   (PM)
---   - LDG GEAR DN
---   - SIGNS ON
---   - CABIN READY
---   - SPLRS ARM
---   - FLAPS SET
--- =======================================================
-
--- local landingChkl = Checklist:new("LANDING CHECKLIST","","landing CHECKLIST completed")
--- landingChkl:setFlightPhase(14)
--- landingChkl:addItem(ChecklistItem:new("ECAM MEMO","LDG - NO BLUE",FlowItem.actorPM,1,true,nil))
--- landingChkl:addItem(SimpleChecklistItem:new("  - LDG GEAR DN"))
--- landingChkl:addItem(SimpleChecklistItem:new("  - SIGNS ON"))
--- landingChkl:addItem(SimpleChecklistItem:new("  - CABIN READY"))
--- landingChkl:addItem(SimpleChecklistItem:new("  - SPLRS ARM"))
--- landingChkl:addItem(SimpleChecklistItem:new("  - FLAPS SET"))
-
-
--- ================== PARKING CHECKLIST ==================
--- PARK BRK OR CHOCKS...........................SET   (PF)
--- ENGINES......................................OFF   (PF)
--- WING LIGHTS..................................OFF   (PF)
--- FUEL PUMPS...................................OFF   (PF)
--- =======================================================
-
--- local parkingChkl = Checklist:new("PARKING CHECKLIST","","parking CHECKLIST completed")
--- parkingChkl:setFlightPhase(17)
--- parkingChkl:addItem(ChecklistItem:new("PARK BRK OR CHOCKS","SET",FlowItem.actorPF,1,true,nil))
--- parkingChkl:addItem(ChecklistItem:new("ENGINES","OFF",FlowItem.actorPF,1,true,nil))
--- parkingChkl:addItem(ChecklistItem:new("WING LIGHTS","OFF",FlowItem.actorPF,1,true,nil))
--- parkingChkl:addItem(ChecklistItem:new("FUEL PUMPS","OFF",FlowItem.actorPF,1,true,nil))
-
--- =========== SECURING THE AIRCRAFT PROCEDURE ===========
--- PARKING BRAKE...........................CHECK ON   (PF)
--- ADIRS..................ALL IR MODE SELECTORS OFF   (PF)
--- OXYGEN CREW SUPPLY...........................OFF   (PM)
--- EXTERIOR LIGHTS..............................OFF   (PM)
--- MAINTENANCE BUS......................AS REQUIRED   (PM)
--- APU..................BLEED AND MASTER SWITCH OFF   (PM)
--- EMERGENCY EXIT LIGHTS AND SIGNS..............OFF   (PM)
--- EXTERNAL POWER.......................AS REQUIRED   (PM)
--- BATTERY................................1 & 2 OFF   (PM)
--- =======================================================
-
-
-
--- =========== SECURING THE AIRCRAFT CHECKLIST ===========
--- OXYGEN.......................................OFF   (PM)
--- EMER EXIT LIGHT..............................OFF   (PM)
--- EFB..........................................OFF   (PM)
--- BATTERIES....................................OFF   (PM)
--- =======================================================
-
--- local securingChkl = Checklist:new("SECURING THE AIRCRAFT CHECKLIST","","securing the aircraft CHECKLIST completed")
--- securingChkl:setFlightPhase(1)
--- securingChkl:addItem(ChecklistItem:new("OXYGEN","OFF",FlowItem.actorPM,1,true,nil))
--- securingChkl:addItem(ChecklistItem:new("EMERGENCY EXIT LIGHTS","OFF",FlowItem.actorPM,1,true,nil))
--- securingChkl:addItem(ChecklistItem:new("EFB","OFF",FlowItem.actorPM,1,true,nil))
--- securingChkl:addItem(ChecklistItem:new("BATTERIES","OFF",FlowItem.actorPM,1,true,nil))
-
--- ================= AFTER START CHECKLIST ===============
--- ANTI ICE.............................AS REQUIRED   (PF)
--- ECAM STATUS..............................CHECKED   (PF)
--- PITCH TRIM................................_% SET   (PF)
--- RUDDER TRIM..............................NEUTRAL   (PF)
--- =======================================================
-
--- local afterStartChkl = Checklist:new("AFTER START CHECKLIST","","AFTER START CHECKLIST completed")
--- afterStartChkl:setFlightPhase(5)
--- afterStartChkl:addItem(ChecklistItem:new("ANTI ICE","AS REQUIRED",FlowItem.actorPF,1,true,nil))
--- afterStartChkl:addItem(ChecklistItem:new("ECAM STATUS","CHECKED",FlowItem.actorPF,1,true,nil))
--- afterStartChkl:addItem(ChecklistItem:new("PITCH TRIM","%4.6f UNITS (%4.6f)|math.floor(get(\"AirbusFBW/PitchTrimPosition\")*100)/100|math.floor(activeBriefings:get(\"takeoff:elevatorTrim\")*100)/100",FlowItem.actorPF,1,
--- function () return math.floor(get("AirbusFBW/PitchTrimPosition")*100)/100 == math.floor(activeBriefings:get("takeoff:elevatorTrim")*100)/100 end))afterStartChkl:addItem(ChecklistItem:new("RUDDER TRIM","NEUTRAL",FlowItem.actorPF,1,
-	-- function () return get("AirbusFBW/YawTrimPosition") == 0 end,
-	-- function () command_once("sim/flight_controls/rudder_trim_center") end))
