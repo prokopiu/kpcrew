@@ -943,7 +943,7 @@ function kc_bck_transition_level(trigger)
 	if get("sim/cockpit2/gauges/indicators/altitude_ft_pilot") < activeBriefings:get("arrival:translvl")*100 then
 		kc_macro_at_trans_lvl()
 		kc_procvar_set(trigger,false)
-		-- kc_speakNoText(0,"transition level                   for approach checklist")
+		kc_speakNoText(0,"transition level")
 	end
 end
 
@@ -951,7 +951,7 @@ end
 function kc_bck_after_takeoff_items(trigger)
 	if get("sim/cockpit2/controls/flap_ratio") == 0 then
 		kc_procvar_set(trigger,false)
-		kc_speakNoText(0,"ready for after takeoff checklist")
+		-- kc_speakNoText(0,"ready for after takeoff checklist")
 	end
 	set("AirbusFBW/APUMaster",0)
 end
