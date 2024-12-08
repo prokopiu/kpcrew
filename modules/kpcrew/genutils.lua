@@ -941,3 +941,12 @@ end
 function kc_show_sges_window()
 	show_windoz()
 end
+
+-- find latest file in folder for XP12 weather
+function kb_get_latest_filename(folder)
+    local command = 'dir /a-d /o-d /tw /b "'.. folder ..'" 2>nul:'
+    local pipe = io.popen(command)
+    local filename = pipe:read()
+    pipe:close()
+    return filename
+end

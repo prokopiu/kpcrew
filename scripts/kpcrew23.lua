@@ -2,20 +2,24 @@
 	*** KPCREW 2.3
 	Virtual copilot for X-PLane 11/12
 	Kosta Prokopiu, July 2023
-	Changed January 2024
+	Changed December 2024
 --]]
 
 require "kpcrew.genutils"
 require "kpcrew.systems.activities"
-require "kpcrew.metargen"
+
 
 local Flow = require "kpcrew.Flow"
 local FlowItem = require "kpcrew.FlowItem"
 
-kc_VERSION = "2.3-alpha9"
+kc_VERSION = "2.3-alpha10"
 kc_simversion = get("sim/version/xplane_internal_version")
 
-logMsg ( "FWL: ** Starting KPCrew version " .. kc_VERSION .." **" )
+logMsg ( "FWL: ** Starting KPCrew version " .. kc_VERSION .. " on XP " .. kc_simversion .. " **" )
+
+if kc_simversion > 120000 then
+require "kpcrew.metargen"
+end 
 
 -- ====== Global variables =======
 kc_acf_icao = "DFLT" -- active addon aircraft ICAO code (DFLT when nothing found)

@@ -227,7 +227,7 @@ electricalPowerUpProc:addItem(ProcedureItem:new("OVHT DET SWITCH","NORMAL",FlowI
 	function () sysElectric.gpuSwitch:step(cmdUp) end,
 	function () 
 		return activePrefSet:get("aircraft:powerup_apu") == false or 
-		activeBriefings:get("flight:firstFlightDay") == false 
+		activeBriefings:get("flight:firstFlightDay") == 2 
 	end))
 electricalPowerUpProc:addItem(IndirectProcedureItem:new("#exchange|OVHT|Overheat# FIRE TEST SWITCH","HOLD RIGHT",FlowItem.actorFO,0,"ovht_fire_test",
 	function () return  sysEngines.ovhtFireTestSwitch:getStatus() > 0 end,
@@ -236,12 +236,12 @@ electricalPowerUpProc:addItem(IndirectProcedureItem:new("#exchange|OVHT|Overheat
 	end,
 	function () 
 		return activePrefSet:get("aircraft:powerup_apu") == false or 
-		activeBriefings:get("flight:firstFlightDay") == false 
+		activeBriefings:get("flight:firstFlightDay") == 2 
 	end))
 electricalPowerUpProc:addItem(ProcedureItem:new("MASTER FIRE WARN LIGHT","PUSH",FlowItem.actorFO,0,true,nil,
 	function () 
 		return activePrefSet:get("aircraft:powerup_apu") == false or 
-		activeBriefings:get("flight:firstFlightDay") == false 
+		activeBriefings:get("flight:firstFlightDay") == 2 
 	end))
 electricalPowerUpProc:addItem(IndirectProcedureItem:new("ENGINES #exchange|EXT|Extinguischer# TEST SWITCH","TEST 1 TO LEFT",FlowItem.actorFO,0,"eng_ext_test_1",
 	function () return get("laminar/B738/toggle_switch/extinguisher_circuit_test") < 0 end,
@@ -250,7 +250,7 @@ electricalPowerUpProc:addItem(IndirectProcedureItem:new("ENGINES #exchange|EXT|E
 	end,
 	function () 
 		return activePrefSet:get("aircraft:powerup_apu") == false or 
-		activeBriefings:get("flight:firstFlightDay") == false 
+		activeBriefings:get("flight:firstFlightDay") == 2 
 	end))
 electricalPowerUpProc:addItem(IndirectProcedureItem:new("ENGINES #exchange|EXT|Extinguischer# TEST SWITCH","TEST 2 TO RIGHT",FlowItem.actorFO,0,"eng_ext_test_2",
 	function () return get("laminar/B738/toggle_switch/extinguisher_circuit_test") > 0 end,
@@ -259,7 +259,7 @@ electricalPowerUpProc:addItem(IndirectProcedureItem:new("ENGINES #exchange|EXT|E
 	end,
 	function () 
 		return activePrefSet:get("aircraft:powerup_apu") == false or 
-		activeBriefings:get("flight:firstFlightDay") == false 
+		activeBriefings:get("flight:firstFlightDay") == 2 
 	end))
 electricalPowerUpProc:addItem(ProcedureItem:new("  #spell|APU#","START",FlowItem.actorFO,0,
 	function () return sysElectric.apuRunningAnc:getStatus() == modeOn end,
@@ -406,7 +406,7 @@ prelPreflightProc:addItem(IndirectProcedureItem:new("MACH OVERSPEED TEST 1","PER
 		kc_procvar_set("mach1test",true) -- background test
 	end,
 	function ()
-		return activeBriefings:get("flight:firstFlightDay") == false 
+		return activeBriefings:get("flight:firstFlightDay") == 2 
 	end))
 prelPreflightProc:addItem(IndirectProcedureItem:new("MACH OVERSPEED TEST 2","PERFORM",FlowItem.actorCPT,0,"mach_ovspd_test2",
 	function () return get("laminar/B738/push_button/mach_warn2_pos") == 1 end,
@@ -414,7 +414,7 @@ prelPreflightProc:addItem(IndirectProcedureItem:new("MACH OVERSPEED TEST 2","PER
 		kc_procvar_set("mach2test",true) -- background test
 	end,
 	function ()
-		return activeBriefings:get("flight:firstFlightDay") == false 
+		return activeBriefings:get("flight:firstFlightDay") == 2 
 	end))
 prelPreflightProc:addItem(ProcedureItem:new("FLIGHT DATA RECORDER SWITCH","GUARD CLOSED",FlowItem.actorCPT,0,
 	function () return  sysGeneral.fdrSwitch:getStatus() == modeOff and sysGeneral.fdrCover:getStatus() == modeOff end,
@@ -483,7 +483,7 @@ prelPreflightProc:addItem(IndirectProcedureItem:new("IRS MODE SELECTORS","THEN N
 local cduPreflightProc = Procedure:new("CDU PREFLIGHT BY CAPTAIN")
 cduPreflightProc:setFlightPhase(2)
 cduPreflightProc:addItem(ProcedureItem:new("KPCREW BRIEFING WINDOW","OPEN",FlowItem.actorFO,0,true,
-	function () kc_wnd_brief_action = 1 end))
+	function () command_once("kpbrief/window/open") end))
 cduPreflightProc:addItem(HoldProcedureItem:new("KPCREW DEPARTURE BRIEFING","FILLED OUT",FlowItem.actorCPT))
 cduPreflightProc:addItem(HoldProcedureItem:new("CDU PREFLIGHT","FINISHED",FlowItem.actorCPT))
 
@@ -756,7 +756,7 @@ preflightFOProc:addItem(SimpleProcedureItem:new("==== APU start if required",
 preflightFOProc:addItem(ProcedureItem:new("OVHT DET SWITCH","NORMAL",FlowItem.actorFO,0,true,nil,
 	function () 
 		return activePrefSet:get("aircraft:powerup_apu") == true or 
-		activeBriefings:get("flight:firstFlightDay") == false 
+		activeBriefings:get("flight:firstFlightDay") == 2 
 	end))
 preflightFOProc:addItem(IndirectProcedureItem:new("  #exchange|OVHT|Overheat# FIRE TEST SWITCH","HOLD RIGHT",FlowItem.actorFO,0,"ovht_fire_test",
 	function () return  sysEngines.ovhtFireTestSwitch:getStatus() > 0 end,
@@ -765,12 +765,12 @@ preflightFOProc:addItem(IndirectProcedureItem:new("  #exchange|OVHT|Overheat# FI
 	end,
 	function () 
 		return activePrefSet:get("aircraft:powerup_apu") == true or 
-		activeBriefings:get("flight:firstFlightDay") == false 
+		activeBriefings:get("flight:firstFlightDay") == 2 
 	end))
 preflightFOProc:addItem(ProcedureItem:new("MASTER FIRE WARN LIGHT","PUSH",FlowItem.actorFO,0,true,nil,
 	function () 
 		return activePrefSet:get("aircraft:powerup_apu") == true or 
-		activeBriefings:get("flight:firstFlightDay") == false 
+		activeBriefings:get("flight:firstFlightDay") == 2 
 	end))
 preflightFOProc:addItem(IndirectProcedureItem:new("ENGINES #exchange|EXT|Extinguischer# TEST SWITCH","TEST 1 TO LEFT",FlowItem.actorFO,0,"eng_ext_test_1",
 	function () return get("laminar/B738/toggle_switch/extinguisher_circuit_test") < 0 end,
@@ -779,7 +779,7 @@ preflightFOProc:addItem(IndirectProcedureItem:new("ENGINES #exchange|EXT|Extingu
 	end,
 	function () 
 		return activePrefSet:get("aircraft:powerup_apu") == true or 
-		activeBriefings:get("flight:firstFlightDay") == false 
+		activeBriefings:get("flight:firstFlightDay") == 2 
 	end))
 preflightFOProc:addItem(IndirectProcedureItem:new("ENGINES #exchange|EXT|Extinguischer# TEST SWITCH","TEST 2 TO RIGHT",FlowItem.actorFO,0,"eng_ext_test_2",
 	function () return get("laminar/B738/toggle_switch/extinguisher_circuit_test") > 0 end,
@@ -788,7 +788,7 @@ preflightFOProc:addItem(IndirectProcedureItem:new("ENGINES #exchange|EXT|Extingu
 	end,
 	function () 
 		return activePrefSet:get("aircraft:powerup_apu") == true or 
-		activeBriefings:get("flight:firstFlightDay") == false 
+		activeBriefings:get("flight:firstFlightDay") == 2 
 	end))
 preflightFOProc:addItem(ProcedureItem:new("#spell|APU# SWITCH","START",FlowItem.actorFO,0,
 	function () return sysElectric.apuRunningAnc:getStatus() == modeOn end,
@@ -903,12 +903,12 @@ preflightFOProc:addItem(ProcedureItem:new("ENGINE START SWITCHES","OFF",FlowItem
 	function () sysEngines.engStarterGroup:actuate(1) end)) 
 
 preflightFOProc:addItem(SimpleProcedureItem:new("==== MODE CONTROL panel"))
-preflightFOProc:addItem(ProcedureItem:new("COURSE NAV 2","SET %s|activeBriefings:get(\"departure:crs2\")",FlowItem.actorFO,0,
-	function() return math.ceil(sysMCP.crs2Selector:getStatus()) == activeBriefings:get("departure:crs2") end,
-	function() sysMCP.crs2Selector:setValue(activeBriefings:get("departure:crs2")) end))
-preflightFOProc:addItem(ProcedureItem:new("COURSE NAV 1","SET %s|activeBriefings:get(\"departure:crs1\")",FlowItem.actorCPT,0,
-	function() return math.ceil(sysMCP.crs1Selector:getStatus()) == activeBriefings:get("departure:crs1") end,
-	function() sysMCP.crs1Selector:setValue(activeBriefings:get("departure:crs1")) end))
+preflightFOProc:addItem(ProcedureItem:new("COURSE NAV 2","SET %s|activeBriefings:get(\"departure:nav1Course\")",FlowItem.actorFO,0,
+	function() return math.ceil(sysMCP.crs2Selector:getStatus()) == activeBriefings:get("departure:nav1Course") end,
+	function() sysMCP.crs2Selector:setValue(activeBriefings:get("departure:nav1Course")) end))
+preflightFOProc:addItem(ProcedureItem:new("COURSE NAV 1","SET %s|activeBriefings:get(\"departure:nav2Course\")",FlowItem.actorCPT,0,
+	function() return math.ceil(sysMCP.crs1Selector:getStatus()) == activeBriefings:get("departure:nav2Course") end,
+	function() sysMCP.crs1Selector:setValue(activeBriefings:get("departure:nav2Course")) end))
 preflightFOProc:addItem(ProcedureItem:new("FLIGHT DIRECTOR SWITCHES","ON, LEFT MASTER",FlowItem.actorCPT,0,
 	function () return sysMCP.fdirGroup:getStatus() == 2 and get("laminar/B738/autopilot/master_capt_status") == 1 end,
 	function () sysMCP.fdirGroup:actuate(1) end))
@@ -1085,11 +1085,11 @@ preflightFOProc:addItem(SimpleProcedureItem:new("==== FORWARD panel"))
 preflightFOProc:addItem(IndirectProcedureItem:new("LIGHTS TEST","ON",FlowItem.actorCPT,0,"internal_lights_test",
 	function () return sysGeneral.lightTest:getStatus() == 1 end,
 	function () command_once("laminar/B738/toggle_switch/bright_test_up") end,
-	function () return activeBriefings:get("flight:firstFlightDay") == false end))
+	function () return activeBriefings:get("flight:firstFlightDay") == 2 end))
 preflightFOProc:addItem(ProcedureItem:new("LIGHTS TEST","OFF",FlowItem.actorCPT,0,
 	function () return sysGeneral.lightTest:getStatus() == 0 end,
 	function () kc_speakNoText(0,"test all lights then turn test off") end,
-	function () return activeBriefings:get("flight:firstFlightDay") == false end))
+	function () return activeBriefings:get("flight:firstFlightDay") == 2 end))
 preflightFOProc:addItem(ProcedureItem:new("CLOCK","SET LOCAL TIME",FlowItem.actorFO,0,
 	function() return sysGeneral.clockDispModeFO:getStatus() == 3 end,
 	function () sysGeneral.clockDispModeFO:actuate(3) end))
@@ -1159,7 +1159,7 @@ preflightFOProc:addItem(IndirectProcedureItem:new("GPWS SYSTEM TEST","PERFORM",F
 		kc_procvar_set("gpwstest",true) -- background test
 	end,
 	function ()
-		return activeBriefings:get("flight:firstFlightDay") == false 
+		return activeBriefings:get("flight:firstFlightDay") == 2 
 	end))
 	
 preflightFOProc:addItem(SimpleProcedureItem:new("==== LANDING GEAR panel"))
@@ -1220,7 +1220,7 @@ preflightFOProc:addItem(IndirectProcedureItem:new("CARGO FIRE TEST","PERFORM",Fl
 		kc_procvar_set("cargofiretest",true) -- background test
 	end,
 	function () 
-		return activeBriefings:get("flight:firstFlightDay") == false 
+		return activeBriefings:get("flight:firstFlightDay") == 2 
 	end))
 preflightFOProc:addItem(IndirectProcedureItem:new("TCAS TEST (with aligend IRS)","PERFORM",FlowItem.actorFO,1,"tcas_fire_test",
 	function () return get("laminar/B738/knob/transponder_pos") == 0 end,
@@ -1228,7 +1228,7 @@ preflightFOProc:addItem(IndirectProcedureItem:new("TCAS TEST (with aligend IRS)"
 		kc_procvar_set("tcastest",true) -- background test
 	end,
 	function () 
-		return activeBriefings:get("flight:firstFlightDay") == false 
+		return activeBriefings:get("flight:firstFlightDay") == 2 
 	end))
 preflightFOProc:addItem(ProcedureItem:new("WEATHER RADAR PANEL","SET",FlowItem.actorCPT,0,true,nil))
 preflightFOProc:addItem(ProcedureItem:new("TRANSPONDER PANEL","SET",FlowItem.actorCPT,0,true,
@@ -1278,7 +1278,7 @@ preflightFOProc:addItem(IndirectProcedureItem:new("STALL WARNING TEST 1","PERFOR
 		kc_procvar_set("stall1test",true) -- background test
 	end,
 	function ()
-		return activeBriefings:get("flight:firstFlightDay") == false 
+		return activeBriefings:get("flight:firstFlightDay") == 2 
 	end))
 preflightFOProc:addItem(IndirectProcedureItem:new("STALL WARNING TEST 2","PERFORM",FlowItem.actorFO,0,"stall_warning_test",
 	function () return get("laminar/B738/push_button/stall_test2") == 1 end,
@@ -1286,7 +1286,7 @@ preflightFOProc:addItem(IndirectProcedureItem:new("STALL WARNING TEST 2","PERFOR
 		kc_procvar_set("stall2test",true) -- background test
 	end,
 	function ()
-		return activeBriefings:get("flight:firstFlightDay") == false 
+		return activeBriefings:get("flight:firstFlightDay") == 2 
 	end))
 preflightFOProc:addItem(SimpleProcedureItem:new("  Wait for 4 minutes AC power if stall warning not functioning"))
 
