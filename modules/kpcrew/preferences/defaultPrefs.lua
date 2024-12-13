@@ -18,13 +18,13 @@ generalGroup:add(kcPreference:new("flowAutoOpen",false,kcPreference.typeToggle,"
 generalGroup:add(kcPreference:new("flowAutoClose",false,kcPreference.typeToggle,"Flow window at end|Close flows|Do not close flows"))
 generalGroup:add(kcPreference:new("flowAutoJump",false,kcPreference.typeToggle,"On end of flow|Jump to next flow|Do not not jump"))
 
-generalGroup:add(kcPreference:new("xpdrusa",false,kcPreference.typeToggle,"Transponder|USA XPDR mode|EUR XPDR mode"))
+generalGroup:add(kcPreference:new("xpdrusa",true,kcPreference.typeToggle,"Transponder|USA XPDR mode|EUR XPDR mode"))
 
 generalGroup:add(kcPreference:new("simbriefuser"," ",kcPreference.typeText,"SIMBRIEF Username|"))
-generalGroup:add(kcPreference:new("vatsimMetar",false,kcPreference.typeToggle,"VATSIM METAR|Load ON|Load OFF"))
+generalGroup:add(kcPreference:new("askyMetar",false,kcPreference.typeToggle,"ASky METAR|Load ON|Load OFF"))
 
-generalGroup:add(kcPreference:new("betterPushback",false,kcPreference.typeToggle,"BetterPushback|Use BP|Don't use BP"))
-generalGroup:add(kcPreference:new("sges",false,kcPreference.typeToggle,"Simple Ground Services|Use GSES|Don't use SGES"))
+-- generalGroup:add(kcPreference:new("betterPushback",false,kcPreference.typeToggle,"BetterPushback|Use BP|Don't use BP"))
+-- generalGroup:add(kcPreference:new("sges",false,kcPreference.typeToggle,"Simple Ground Services|Use GSES|Don't use SGES"))
 
 
 activePrefSet:addGroup(generalGroup)

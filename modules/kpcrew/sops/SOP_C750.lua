@@ -351,8 +351,8 @@ preflightChkl:addItem(ChecklistItem:new("STANDBY POWER","ON",FlowItem.actorFO,0,
 
 local cduPreflightProc = Procedure:new("CDU PREFLIGHT BY CAPTAIN")
 cduPreflightProc:setFlightPhase(-2)
-cduPreflightProc:addItem(ProcedureItem:new("KPCREW BRIEFING WINDOW","OPEN",FlowItem.actorFO,0,true,
-	function () kc_wnd_brief_action = 1 end))
+-- cduPreflightProc:addItem(ProcedureItem:new("KPCREW BRIEFING WINDOW","OPEN",FlowItem.actorFO,0,true,
+	-- function () kc_wnd_brief_action = 1 end))
 cduPreflightProc:addItem(HoldProcedureItem:new("KPCREW DEPARTURE BRIEFING","FILLED OUT",FlowItem.actorCPT))
 cduPreflightProc:addItem(HoldProcedureItem:new("FMS SETUP","FINISHED",FlowItem.actorCPT))
 -- =====================================================================================================================
@@ -1182,8 +1182,8 @@ afterTakeoffCheck:addItem(ChecklistItem:new("TAXI LIGHT","OFF",FlowItem.actorPM,
 
 local descentProc = Procedure:new("DESCENT CHECK","","")
 descentProc:setFlightPhase(11)
-descentProc:addItem(ProcedureItem:new("KPCREW BRIEFING WINDOW","OPEN",FlowItem.actorFO,0,true,
-	function () kc_wnd_brief_action = 1 end))
+-- descentProc:addItem(ProcedureItem:new("KPCREW BRIEFING WINDOW","OPEN",FlowItem.actorFO,0,true,
+	-- function () kc_wnd_brief_action = 1 end))
 descentProc:addItem(HoldProcedureItem:new("KPCREW APPROACH BRIEFING","PERFORM",FlowItem.actorPF))
 
 descentProc:addItem(HoldProcedureItem:new("VREF","CHECK IN FMC",FlowItem.actorPF,nil))
@@ -1655,6 +1655,10 @@ shutdownProc:addItem(ProcedureItem:new("HYD PUMP A & B","OFF",FlowItem.actorFO,0
 shutdownProc:addItem(ProcedureItem:new("AUX PUMP A","OFF",FlowItem.actorFO,0,
 	function () return sysHydraulic.elecHydPumpGroup:getStatus() == 0 end,
 	function () sysHydraulic.elecHydPumpGroup:actuate(0) end))
+shutdownProc:addItem(ProcedureItem:new("DOOR","OPEN",FlowItem.actorFO,0,
+	function () return get("sim/cockpit2/switches/door_open") > 0 end,
+	function () command_once("sim/flight_controls/door_open_1") end))
+		
 
 
 

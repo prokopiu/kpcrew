@@ -145,9 +145,9 @@ electricalPowerUpProc:addItem(ProcedureItem:new("DC POWER SWITCH","BAT",FlowItem
 	function () return sysElectric.dcPowerSwitch:getStatus() == sysElectric.dcPwrBAT end,
 	function () 
 		sysElectric.dcPowerSwitch:actuate(sysElectric.dcPwrBAT) 
-		if activePrefSet:get("general:sges") == true then
-			kc_macro_start_sges_sequence()
-		end
+		-- if activePrefSet:get("general:sges") == true then
+			-- kc_macro_start_sges_sequence()
+		-- end
 	end))
 electricalPowerUpProc:addItem(IndirectProcedureItem:new("BATTERY VOLTAGE","CHECK MIN 24V",FlowItem.actorFO,0,"bat24v",
 	function () return get("laminar/B738/dc_volt_value") > 23 end))
@@ -2659,9 +2659,9 @@ coldAndDarkProc:setFlightPhase(1)
 coldAndDarkProc:addItem(ProcedureItem:new("OVERHEAD TOP","SET","SYS",0,true,
 	function () 
 		kc_macro_state_cold_and_dark()
-		if activePrefSet:get("general:sges") == true then
-			kc_macro_start_sges_sequence()
-		end
+		-- if activePrefSet:get("general:sges") == true then
+			-- kc_macro_start_sges_sequence()
+		-- end
 		getActiveSOP():setActiveFlowIndex(1)
 	end))
 	
@@ -2671,9 +2671,9 @@ turnAroundProc:setFlightPhase(18)
 turnAroundProc:addItem(ProcedureItem:new("OVERHEAD TOP","SET","SYS",0,true,
 	function () 
 		kc_macro_state_turnaround()
-		if activePrefSet:get("general:sges") == true then
-			kc_macro_start_sges_sequence()
-		end
+		-- if activePrefSet:get("general:sges") == true then
+			-- kc_macro_start_sges_sequence()
+		-- end
 	end))
 turnAroundProc:addItem(ProcedureItem:new("GPU","ON BUS","SYS",0,true,
 	function () 

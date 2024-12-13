@@ -55,6 +55,8 @@ elseif PLANE_ICAO == "MD11" then
 	-- kc_acf_icao = "B733"
 elseif PLANE_ICAO == "A321" then
 	kc_acf_icao = "A20N"
+elseif PLANE_ICAO == "A339" then
+	kc_acf_icao = "A20N"
 -- elseif PLANE_ICAO == "A319" and PLANE_TAILNUMBER == "C-GTLS" then
 	-- kc_acf_icao = "A319"
 -- elseif PLANE_ICAO == "A20N" and PLANE_TAILNUMBER == "C-GTLT" then
@@ -444,7 +446,8 @@ function kc_ctrl_builder()
 	imgui.PopStyleColor()
     imgui.SameLine()
 	if imgui.Button("BRIEF", 45, 25) then
-		kc_wnd_brief_action = 1
+		-- command_once("kpbrief/window/open")
+		-- kc_wnd_brief_action = 1
 	end
     imgui.SameLine()
 	if imgui.Button("PREF", 35, 25) then

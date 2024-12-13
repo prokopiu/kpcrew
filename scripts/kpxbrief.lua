@@ -9,8 +9,6 @@ require "kpcrew.genutils"
 kc_VERSION = "2.3-alpha10"
 kc_simversion = get("sim/version/xplane_internal_version")
 
-
-
 logMsg ( "FWL: ** Starting KPBrief version " .. kc_VERSION .. " on XP " .. kc_simversion .. " **" )
 
 -- ====== Global variables =======
@@ -106,8 +104,8 @@ local destatis = ""
 local altnmetar = ""
 local altnatis = ""
 
-local xml2lua = require("xml2lua")
-local handler = require("xmlhandler.tree")
+local xml2lua = require("kpcrew/xml2lua")
+local handler = require("kpcrew/xmlhandler.tree")
 
 -- load the XML from the Simbrief API
 function kb_load_simbrief_ofp()
@@ -182,14 +180,15 @@ function kb_load_simbrief_ofp()
 			activeBriefings:set("arrival:aptElevation",handler.root.OFP.destination.elevation)
 
 -- set the metars from x-plane as default
-			origmetar = kb_get_xp_metar(handler.root.OFP.origin.icao_code)
-			origatis = handler.root.OFP.origin.atis.message .. "\n" .. origmetar
-			
-			destmetar = kb_get_xp_metar(handler.root.OFP.destination.icao_code)
-			destatis = handler.root.OFP.destination.atis.message .. "\n" .. destmetar
-
-			altnmetar = kb_get_xp_metar(handler.root.OFP.alternate.icao_code)
-			-- altnatis = handler.root.OFP.alternate.atis.message .. "\n" .. altnmetar
+			if activePrefSet:get("general:askyMetar") then
+				origmetar = kb_get_asky_metar(handler.root.OFP.origin.icao_code)
+				destmetar = kb_get_asky_metar(handler.root.OFP.destination.icao_code)
+				altnmetar = kb_get_asky_metar(handler.root.OFP.alternate.icao_code)
+			else
+				origmetar = kb_get_xp_metar(handler.root.OFP.origin.icao_code)
+				destmetar = kb_get_xp_metar(handler.root.OFP.destination.icao_code)
+				altnmetar = kb_get_xp_metar(handler.root.OFP.alternate.icao_code)
+			end
 
         elseif result ~= 200 then
             logMsg("Error: Simbrief download failed: " .. result)
@@ -209,24 +208,56 @@ function kb_get_xp_metar(icao)
 	metarpath = "no"
 	
 	if kc_simversion > 120000 then
-		metarpath = kb_get_latest_filename(SYSTEM_DIRECTORY .. "Output\\real weather")
+		latestwxfile = kb_get_latest_filename(SYSTEM_DIRECTORY .. "Output\\real weather\\metar*")
+		metarpath = SYSTEM_DIRECTORY .. "Output\\real weather\\" .. latestwxfile
 	else
 		metarpath = SYSTEM_DIRECTORY .. "METAR.rwx"
 	end
 	
-	logMsg ("File: " .. metarpath)
+	-- logMsg ("File: " .. metarpath)
+
+    if not kc_file_exists(metarpath) then 
+		return "-- NO FILE --" 
+	end
+
+    local words = {}
+    --we read the lines
+    if icao then
+        for line in io.lines(metarpath) do
+            if line then
+                words[1] = line:match("(%w+)(.+)")
+                if words[1] == icao then
+                    wx = line
+                    break
+                end
+            end 
+        end 
+        if wx == nil then 
+			return "-- NO DATA -- "
+		end
+		return wx
+    else
+        return "-- NO ICAO --"
+    end
+end 
+
+
+-- pull the METAR from Active Sky's file 
+function kb_get_asky_metar(icao)
+
+    if not icao then 
+		return ""-- NO ICAO --" 
+	end
 	
-    -- if xp12Ckeck == nil then
-        -- filename = metar_file1
-    -- else
-        -- XP12wxFile = get_latest_file_name(Wxdir)
-        -- if XP12wxFile and ofp_file_exists(Wxdir..DIRSP..XP12wxFile) and string.match(' '..XP12wxFile..' ', '%Ametar%A') then
-            -- filename = Wxdir..DIRSP..XP12wxFile
-        -- else
-            -- return "Please update Your XP weather."
-            -- filename = XP12weatherFindWxFile(Wxdir)
-        -- end
-    -- end
+	metarpath = "no"
+	
+	if kc_simversion > 120000 then
+		metarpath = os.getenv("APPDATA") .. "\\HiFi\\AS_XPL12\\Weather\\current_wx_snapshot.txt"
+	else
+		metarpath = os.getenv("APPDATA") .. "\\HiFi\\AS_XPL\\Weather\\current_wx_snapshot.txt"
+	end
+	
+	-- logMsg ("File: " .. metarpath)
 
     if not kc_file_exists(metarpath) then 
 		return "-- NO DATA --" 
@@ -242,15 +273,15 @@ function kb_get_xp_metar(icao)
                     wx = line
                     break
                 end
-            end -- if line
-        end -- for line
-        if wx == nil 
-			then logMsg("-- NO DATA -- ") 
+            end 
+        end 
+        if wx == nil then 
+			return "-- NO DATA -- "
 		end
-		return wx
+		startindex, endindex = string.find(wx, ":"..icao, 7)
+		return string.sub(wx,7,startindex-2)
     else
-        -- return wrap(wx)
-        return wx
+        return "-- NO ICAO --"
     end
 end 
 
@@ -812,30 +843,42 @@ function kb_brief_builder(kb_brief_wnd, x, y)
     imgui.Separator()
 	
     imgui.PushStyleColor(imgui.constant.Col.Text, 0xFFCCCCCC)
-    imgui.TextUnformatted("Weather:")
+    imgui.TextUnformatted("METARS:")
 	imgui.PushStyleVar_2(imgui.constant.StyleVar.FramePadding, 3, 2);
-    if imgui.Button("ORIG METAR", 80, 20) then
-        origmetar = kb_get_xp_metar(activeBriefings:get("flight:originIcao"))
+    if imgui.Button(activeBriefings:get("flight:originIcao"), 80, 20) then
+		if activePrefSet:get("general:askyMetar") then
+			origmetar = kb_get_asky_metar(activeBriefings:get("flight:originIcao"))
+		else
+			origmetar = kb_get_xp_metar(activeBriefings:get("flight:originIcao"))
+		end
     end
 	imgui.PopStyleVar();
     imgui.SameLine()
     imgui.PushStyleColor(imgui.constant.Col.Text, 0xFF95C857)
-    imgui.TextUnformatted(origatis)
+    imgui.TextUnformatted(origmetar)
     imgui.PopStyleColor()
 
 	imgui.PushStyleVar_2(imgui.constant.StyleVar.FramePadding, 3, 2);
-    if imgui.Button("DEST METAR", 80, 20) then
-        destmetar = kb_get_xp_metar(activeBriefings:get("flight:destinationIcao"))
+    if imgui.Button(activeBriefings:get("flight:destinationIcao"), 80, 20) then
+		if activePrefSet:get("general:askyMetar") then
+			destmetar = kb_get_asky_metar(activeBriefings:get("flight:destinationIcao"))
+		else
+			destmetar = kb_get_xp_metar(activeBriefings:get("flight:destinationIcao"))
+		end
     end
 	imgui.PopStyleVar();
     imgui.SameLine()
     imgui.PushStyleColor(imgui.constant.Col.Text, 0xFF95C857)
-    imgui.TextUnformatted(destatis)
+    imgui.TextUnformatted(destmetar)
     imgui.PopStyleColor()
 
 	imgui.PushStyleVar_2(imgui.constant.StyleVar.FramePadding, 3, 2);
-    if imgui.Button("ALTN METAR", 80, 20) then
-        altnmetar = kb_get_xp_metar(activeBriefings:get("flight:alternateIcao"))
+    if imgui.Button(activeBriefings:get("flight:alternateIcao"), 80, 20) then
+		if activePrefSet:get("general:askyMetar") then
+			altnmetar = kb_get_asky_metar(activeBriefings:get("flight:alternateIcao"))
+		else
+			altnmetar = kb_get_xp_metar(activeBriefings:get("flight:alternateIcao"))
+		end
     end
 	imgui.PopStyleVar();
     imgui.SameLine()
