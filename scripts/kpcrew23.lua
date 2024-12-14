@@ -444,11 +444,12 @@ function kc_ctrl_builder()
 		getActiveSOP():getActiveFlow():reset()
 	end
 	imgui.PopStyleColor()
-    imgui.SameLine()
-	if imgui.Button("BRIEF", 45, 25) then
+    -- imgui.SameLine()
+	-- if imgui.Button("BRIEF", 45, 25) then
+		-- kb_brief_toggle_wnd()
 		-- command_once("kpbrief/window/open")
 		-- kc_wnd_brief_action = 1
-	end
+	-- end
     imgui.SameLine()
 	if imgui.Button("PREF", 35, 25) then
 		kc_wnd_pref_action = 1

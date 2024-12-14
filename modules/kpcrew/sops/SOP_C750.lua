@@ -1077,13 +1077,16 @@ runwayEntryProc:addItem(ProcedureItem:new("WEATHER RADAR","ON",FlowItem.actorFO,
 local takeoffClimbProc = Procedure:new("TAKEOFF & INITIAL CLIMB","")
 takeoffClimbProc:setFlightPhase(8)
 takeoffClimbProc:addItem(HoldProcedureItem:new("TAKEOFF","ANNOUNCE",FlowItem.actorPF))
-takeoffClimbProc:addItem(IndirectProcedureItem:new("THRUST SETTING","T/O",FlowItem.actorPM,0,"tomode",
-	function () return get("laminar/CitX/throttle/ratio_ALL") > 0.98 end,
+takeoffClimbProc:addItem(IndirectProcedureItem:new("THRUST SETTING","FAN% 80",FlowItem.actorPM,0,"tomode",
+	function () return get("laminar/CitX/throttle/ratio_ALL") > 0.79 end,
 	function () 
 		activeBckVars:set("general:timesOUT",kc_dispTimeHHMM(get("sim/time/zulu_time_sec"))) 
 		kc_procvar_set("above10k",true) -- background 10.000 ft activities
 		kc_procvar_set("attransalt",true) -- background transition altitude activities
 	end))
+
+-- takeoffClimbProc:addItem(IndirectProcedureItem:new("THRUST SETTING","T/O",FlowItem.actorPM,0,"tomode",
+	-- function () return get("laminar/CitX/throttle/ratio_ALL") > 0.98 end,
 
 -- =====================================================================================================================
 
@@ -1119,7 +1122,7 @@ flapsUpProc:addItem(ProcedureItem:new("A/P","ON",FlowItem.actorPNF,0,true,
 		sysMCP.ap1Switch:actuate(1) 
 	end))
 flapsUpProc:addItem(ProcedureItem:new("POWER LEVERS","SET CLIMB",FlowItem.actorPF,0,
-	function () return get("laminar/CitX/throttle/ratio_ALL") > .935 and get("laminar/CitX/throttle/ratio_ALL") < .96 end))
+	function () return get("laminar/CitX/throttle/ratio_ALL") > .7 and get("laminar/CitX/throttle/ratio_ALL") < .80 end))
 flapsUpProc:addItem(ProcedureItem:new("PACKS & BLEEDS","ON",FlowItem.actorPM,0,true,
 	function ()
 		kc_macro_packs_on() 
@@ -1156,7 +1159,7 @@ afterTakeoffCheck:addItem(ChecklistItem:new("FLAPS","UP",FlowItem.actorPM,0,
 	function () return sysControls.flapsSwitch:getStatus() == 0 end,
 	function () sysControls.flapsSwitch:setValue(sysControls.flaps_pos[0]) end))
 afterTakeoffCheck:addItem(ChecklistItem:new("CLB THRUST","SET",FlowItem.actorPM,0,
-	function () return get("laminar/CitX/throttle/ratio_ALL") > .935 and get("laminar/CitX/throttle/ratio_ALL") < .96 end))
+	function () return get("laminar/CitX/throttle/ratio_ALL") > .7 and get("laminar/CitX/throttle/ratio_ALL") < .8 end))
 afterTakeoffCheck:addItem(ChecklistItem:new("TAXI LIGHT","OFF",FlowItem.actorPM,0,
 	function () return sysLights.taxiSwitch:getStatus() == 0 end,
 	function () sysLights.taxiSwitch:actuate(0) end))
@@ -1356,16 +1359,6 @@ landingProc:addItem(ProcedureItem:new("LANDING LIGHTS","ON",FlowItem.actorPF,0,
 	function () kc_macro_lights_approach() end))
 
 -- =====================================================================================================================
-	
-local gearDownProc = Procedure:new("GEAR DOWN","","")
-gearDownProc:setFlightPhase(-13)
-gearDownProc:addItem(ProcedureItem:new("LANDING GEAR HANDLE","DOWN",FlowItem.actorPM,0,
-	function () return sysGeneral.GearSwitch:getStatus() == 1 end,
-	function () sysGeneral.GearSwitch:actuate(1) end))
-gearDownProc:addItem(ProcedureItem:new("GREEN LANDING GEAR LIGHT","CHECK ILLUMINATED",FlowItem.actorPM,0,
-	function () return sysGeneral.gearLightsAnc:getStatus() == 1 end))
-
--- =====================================================================================================================
 
 local flaps5Proc = Procedure:new("FLAPS 5 (<245 kts)","","")
 flaps5Proc:setFlightPhase(-13)
@@ -1380,6 +1373,16 @@ flaps15Proc:setFlightPhase(-13)
 flaps15Proc:addItem(ProcedureItem:new("FLAPS 15","SET",FlowItem.actorPNF,0,
 	function () return sysControls.flapsSwitch:getStatus() >= 0.75 end,
 	function () sysControls.flapsSwitch:setValue(sysControls.flaps_pos[3]) end))
+
+-- =====================================================================================================================
+	
+local gearDownProc = Procedure:new("GEAR DOWN","","")
+gearDownProc:setFlightPhase(-13)
+gearDownProc:addItem(ProcedureItem:new("LANDING GEAR HANDLE","DOWN",FlowItem.actorPM,0,
+	function () return sysGeneral.GearSwitch:getStatus() == 1 end,
+	function () sysGeneral.GearSwitch:actuate(1) end))
+gearDownProc:addItem(ProcedureItem:new("GREEN LANDING GEAR LIGHT","CHECK ILLUMINATED",FlowItem.actorPM,0,
+	function () return sysGeneral.gearLightsAnc:getStatus() == 1 end))
 
 -- =====================================================================================================================
 
@@ -1397,13 +1400,13 @@ flapsFullProc:addItem(ProcedureItem:new("GO AROUND HEADING","SET %s|activeBriefi
 
 -- =====================================================================================================================
 
-local APLandOffProc = Procedure:new("AUTOPILOT OFF","","")
-APLandOffProc:setFlightPhase(-13)
-APLandOffProc:addItem(HoldProcedureItem:new("AUTOPILOT","OFF",FlowItem.actorPF))
-APLandOffProc:addItem(ProcedureItem:new("AUTOPILOT","OFF",FlowItem.actorPNF,0,true,
-	function () 
-		sysMCP.ap1Switch:actuate(0) 
-	end))
+-- local APLandOffProc = Procedure:new("AUTOPILOT OFF","","")
+-- APLandOffProc:setFlightPhase(-13)
+-- APLandOffProc:addItem(HoldProcedureItem:new("AUTOPILOT","OFF",FlowItem.actorPF))
+-- APLandOffProc:addItem(ProcedureItem:new("AUTOPILOT","OFF",FlowItem.actorPNF,0,true,
+	-- function () 
+		-- sysMCP.ap1Switch:actuate(0) 
+	-- end))
 
 -- =====================================================================================================================
 
@@ -1415,22 +1418,19 @@ APLandOffProc:addItem(ProcedureItem:new("AUTOPILOT","OFF",FlowItem.actorPNF,0,tr
 -- ======================================================
 local landingChecklist = Checklist:new("FINAL DESCENT CHECKS","","")
 landingChecklist:setFlightPhase(13)
-landingChecklist:addItem(ChecklistItem:new("GEAR","DOWN 3 GREEN",FlowItem.actorPF,0,
+landingChecklist:addItem(ChecklistItem:new("GEAR","DOWN 3 GREEN",FlowItem.actorPM,0,
 	function () return sysGeneral.GearSwitch:getStatus() == 1 end,
 	function () 
 		sysGeneral.GearSwitch:actuate(1) 
 	end))
-landingChecklist:addItem(ChecklistItem:new("SPEED BRAKES","RETRACTED",FlowItem.actorPF,0,
+landingChecklist:addItem(ChecklistItem:new("SPEED BRAKES","RETRACTED",FlowItem.actorPM,0,
 	function () return get("sim/cockpit2/controls/speedbrake_ratio") == 0 end,
 	function () set("sim/cockpit2/controls/speedbrake_ratio",0) end))
-landingChecklist:addItem(ChecklistItem:new("FLAPS","35",FlowItem.actorPF,0,
+landingChecklist:addItem(ChecklistItem:new("FLAPS","35",FlowItem.actorPM,0,
 	function () return sysControls.flapsSwitch:getStatus() == 1 end,
 	function () sysControls.flapsSwitch:setValue(sysControls.flaps_pos[4]) end))
-landingChecklist:addItem(ChecklistItem:new("AUTOPILOT","OFF",FlowItem.actorPF,0,
-	function () return sysMCP.ap1Switch:getStatus() == 0 end,
-	function () 
-		sysMCP.ap1Switch:actuate(0) 
-	end))
+landingChecklist:addItem(ChecklistItem:new("AUTOPILOT","OFF",FlowItem.actorPM,0,
+	function () return get("sim/cockpit/warnings/annunciators/autopilot") == 0 end,nil))
 
 -- =====================================================================================================================
 
@@ -1711,7 +1711,7 @@ shutdownProc:addItem(ProcedureItem:new("DOOR","OPEN",FlowItem.actorFO,0,
 -- activeSOP:addProcedure(testProc)
 activeSOP:addProcedure(electricalPowerUpProc)
 activeSOP:addProcedure(preflightChkl)
-activeSOP:addProcedure(cduPreflightProc)
+-- activeSOP:addProcedure(cduPreflightProc)
 activeSOP:addProcedure(beforeStart)
 activeSOP:addProcedure(pushProc)
 activeSOP:addProcedure(preStartProc)
