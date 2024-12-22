@@ -1,9 +1,10 @@
--- A20N ToLiss
+-- A20N ToLiss Airbusse
 -- Flight Controls functionality
 
 -- @classmod sysControls
 -- @author Kosta Prokopiu
 -- @copyright 2024 Kosta Prokopiu
+
 local sysControls = {
 	trimCenter 	= 2,
 	trimLeft 	= 1,
@@ -56,6 +57,7 @@ sysControls.pitchTrimSwitch = TwoStateCustomSwitch:new("pitchtrim","sim/cockpit2
 		return
 	end
 )
+
 sysControls.pitchTrimDownRepeat = TwoStateCustomSwitch:new("pitchtrim","sim/cockpit2/controls/elevator_trim",0,
 	function () 
 		command_begin("sim/flight_controls/pitch_trim_down")
@@ -67,6 +69,7 @@ sysControls.pitchTrimDownRepeat = TwoStateCustomSwitch:new("pitchtrim","sim/cock
 		return
 	end
 )
+
 sysControls.pitchTrimUpRepeat = TwoStateCustomSwitch:new("pitchtrim","sim/cockpit2/controls/elevator_trim",0,
 	function () 
 		command_begin("sim/flight_controls/pitch_trim_up")

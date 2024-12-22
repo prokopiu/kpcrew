@@ -57,10 +57,12 @@ elseif PLANE_ICAO == "A321" then
 	kc_acf_icao = "A20N"
 elseif PLANE_ICAO == "A339" then
 	kc_acf_icao = "A20N"
--- elseif PLANE_ICAO == "A319" and PLANE_TAILNUMBER == "C-GTLS" then
-	-- kc_acf_icao = "A319"
--- elseif PLANE_ICAO == "A20N" and PLANE_TAILNUMBER == "C-GTLT" then
-	-- kc_acf_icao = "A20N"
+elseif PLANE_ICAO == "A319" and PLANE_TAILNUMBER == "C-GTLS" then
+	kc_acf_icao = "A20N"
+elseif PLANE_ICAO == "A20N" and PLANE_TAILNUMBER == "C-GTLT" then
+	kc_acf_icao = "A20N"
+elseif PLANE_ICAO == "A346" then
+	kc_acf_icao = "A20N"
 -- Laminar MD-82
 -- elseif PLANE_ICAO == "MD82" and PLANE_TAILNUMBER == "N552AA" then
 	-- kc_acf_icao = "MD82"

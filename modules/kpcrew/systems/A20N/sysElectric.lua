@@ -1,9 +1,10 @@
--- DFLT  airplane 
+-- ToLiss Airbusses
 -- Electric system functionality
 
 -- @classmod sysElectric
 -- @author Kosta Prokopiu
--- @copyright 2022 Kosta Prokopiu
+-- @copyright 2024 Kosta Prokopiu
+
 local sysElectric = {
 }
 
@@ -18,36 +19,34 @@ local MultiStateCmdSwitch 	= require "kpcrew.systems.MultiStateCmdSwitch"
 local InopSwitch 			= require "kpcrew.systems.InopSwitch"
 local KeepPressedSwitchCmd	= require "kpcrew.systems.KeepPressedSwitchCmd"
 
-logMsg ("Electric DFLT")
-
 --------- Batteries
 
 -- ** BATTERY Switches
-sysElectric.batterySwitch 	= TwoStateCmdSwitch:new("battery1","sim/cockpit2/electrical/battery_on",0,
-	"sim/electrical/battery_1_on","sim/electrical/battery_1_off","sim/electrical/battery_1_toggle")
-sysElectric.battery2Switch 	= TwoStateCmdSwitch:new("battery2","sim/cockpit2/electrical/battery_on",1,
-	"sim/electrical/battery_2_on","sim/electrical/battery_2_off","sim/electrical/battery_2_toggle")
+sysElectric.batterySwitch 	= TwoStateCmdSwitch:new("battery1","AirbusFBW/BatOHPArray",0,
+	"toliss_airbus/eleccommands/Bat1On","toliss_airbus/eleccommands/Bat1Off","toliss_airbus/eleccommands/Bat1Toggle")
+sysElectric.battery2Switch 	= TwoStateCmdSwitch:new("battery2","AirbusFBW/BatOHPArray",1,
+	"toliss_airbus/eleccommands/Bat2On","toliss_airbus/eleccommands/Bat2Off","toliss_airbus/eleccommands/Bat2Toggle")
 sysElectric.batteryGroup 	= SwitchGroup:new("battery switches")
-sysElectric.batteryGroup:addSwitch(batterySwitch)
-sysElectric.batteryGroup:addSwitch(battery2Switch)
+sysElectric.batteryGroup:addSwitch(sysElectric.batterySwitch)
+sysElectric.batteryGroup:addSwitch(sysElectric.battery2Switch)
 
 -- ** HARDWARE BATTERY Switch
-sysElectric.battery1HwSwitch 	= TwoStateCmdSwitch:new("battery1","sim/cockpit2/electrical/battery_on",0,
-	"sim/electrical/battery_1_on","sim/electrical/battery_1_off","sim/electrical/battery_1_toggle")
-sysElectric.battery2HwSwitch 	= TwoStateCmdSwitch:new("battery2","sim/cockpit2/electrical/battery_on",1,
-	"sim/electrical/battery_2_on","sim/electrical/battery_2_off","sim/electrical/battery_2_toggle")
+sysElectric.battery1HwSwitch 	= TwoStateCmdSwitch:new("battery1","AirbusFBW/BatOHPArray",0,
+	"toliss_airbus/eleccommands/Bat1On","toliss_airbus/eleccommands/Bat1Off","toliss_airbus/eleccommands/Bat1Toggle")
+sysElectric.battery2HwSwitch 	= TwoStateCmdSwitch:new("battery2","AirbusFBW/BatOHPArray",1,
+	"toliss_airbus/eleccommands/Bat2On","toliss_airbus/eleccommands/Bat2Off","toliss_airbus/eleccommands/Bat2Toggle")
 sysElectric.batteryHwGroup 	= SwitchGroup:new("battery hardware")
-sysElectric.batteryHwGroup:addSwitch(battery1HwSwitch)
-sysElectric.batteryHwGroup:addSwitch(battery2HwSwitch)
+sysElectric.batteryHwGroup:addSwitch(sysElectric.battery1HwSwitch)
+sysElectric.batteryHwGroup:addSwitch(sysElectric.battery2HwSwitch)
 
-sysElectric.batt1Volt 		= SimpleAnnunciator:new("BATT1 Voltage","sim/cockpit2/electrical/battery_voltage_actual_volts",-1)
-sysElectric.batt2Volt 		= SimpleAnnunciator:new("BATT2 Voltage","sim/cockpit2/electrical/battery_voltage_actual_volts",1)
+sysElectric.batt1Volt 		= SimpleAnnunciator:new("BATT1 Voltage","AirbusFBW/BatVolts",-1)
+sysElectric.batt2Volt 		= SimpleAnnunciator:new("BATT2 Voltage","AirbusFBW/BatVolts",1)
 sysElectric.batt1Amp 		= SimpleAnnunciator:new("BATT1 Amps","sim/cockpit2/electrical/battery_amps",-1)
 sysElectric.batt2Amp 		= SimpleAnnunciator:new("BATT2 Amps","sim/cockpit2/electrical/battery_amps",1)
 
 -- Ground Power
-sysElectric.gpuSwitch 		= TwoStateCmdSwitch:new("GPU","sim/cockpit/electrical/gpu_on",0,
-	"sim/electrical/GPU_on","sim/electrical/GPU_off","sim/electrical/GPU_toggle")
+sysElectric.gpuConnect 		= TwoStateDrefSwitch:new("GPU","AirbusFBW/EnableExternalPower",0)
+sysElectric.gpuSwitch 		= TwoStateCmdSwitch:new("GPU","AirbusFBW/ExtPowOHPArray",0)
 
 -- APU Bus Switches
 sysElectric.apuGenBus1 		= InopSwitch:new("apubus1")
@@ -94,7 +93,8 @@ sysElectric.lowVoltageAnc 	= SimpleAnnunciator:new("lowvoltage","sim/cockpit2/an
 sysElectric.apuRunningAnc 	= SimpleAnnunciator:new("apurunning","sim/cockpit2/electrical/APU_running",0)
 
 sysElectric.apuGenBusOff = SimpleAnnunciator:new("","sim/cockpit/electrical/generator_apu_on",0)
-sysElectric.gpuOnBus = SimpleAnnunciator:new("","sim/cockpit/electrical/gpu_on",0)
+
+sysElectric.gpuOnBus = SimpleAnnunciator:new("","AirbusFBW/ExtPowOHPArray",0)
 
 -- Electric bus values
 

@@ -535,7 +535,7 @@ end
 
 -- get daylight 0=dark 1=bright
 function kc_is_daylight()
-	if get("sim/private/stats/skyc/sun_amb_b") < 0.1 then
+	if get("sim/private/stats/skyc/sun_amb_b") < 0.12 then
 		return false
 	else
 		return true

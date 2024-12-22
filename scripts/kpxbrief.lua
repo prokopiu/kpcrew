@@ -45,6 +45,14 @@ elseif PLANE_ICAO == "C750" and PLANE_TAILNUMBER == "N750XP" then
 	-- kc_acf_icao = "B733"
 elseif PLANE_ICAO == "A321" then
 	kc_acf_icao = "A20N"
+elseif PLANE_ICAO == "A339" then
+	kc_acf_icao = "A20N"
+elseif PLANE_ICAO == "A319" and PLANE_TAILNUMBER == "C-GTLS" then
+	kc_acf_icao = "A20N"
+elseif PLANE_ICAO == "A20N" and PLANE_TAILNUMBER == "C-GTLT" then
+	kc_acf_icao = "A20N"
+elseif PLANE_ICAO == "A346" then
+	kc_acf_icao = "A20N"
 -- elseif PLANE_ICAO == "A319" and PLANE_TAILNUMBER == "C-GTLS" then
 	-- kc_acf_icao = "A319"
 -- elseif PLANE_ICAO == "A20N" and PLANE_TAILNUMBER == "C-GTLT" then
@@ -208,10 +216,9 @@ function kb_load_simbrief_ofp()
 				destmetar = kb_get_xp_metar(handler.root.OFP.destination.icao_code)
 				altnmetar = kb_get_xp_metar(handler.root.OFP.alternate.icao_code)
 			end
-			origatis = handler.root.OFP.origin.atis[1].message
-			logMsg(origatis)
-			destatis = handler.root.OFP.destination.atis.message
-			altnatis = handler.root.OFP.alternate.atis.message
+			-- origatis = handler.root.OFP.origin.atis[1].message
+			-- destatis = handler.root.OFP.destination.atis.message
+			-- altnatis = handler.root.OFP.alternate.atis.message
 
 			activeBriefings:set("flight:deptimezone",handler.root.OFP.times.orig_timezone)
 			activeBriefings:set("flight:arrtimezone",handler.root.OFP.times.dest_timezone)
@@ -397,7 +404,7 @@ function kb_brief_builder(kb_brief_wnd, x, y)
     imgui.TextUnformatted("Flight State:")
     imgui.SameLine()
     imgui.PushStyleColor(imgui.constant.Col.Text, 0xFF00FFFF)
-    imgui.TextUnformatted(kcSopFlightPhase[activeBckVars:get("general:flight_state")])
+    imgui.TextUnformatted(kcSopFlightPhase[math.abs(activeBckVars:get("general:flight_state"))])
     imgui.PopStyleColor()
 
     imgui.SameLine()
@@ -934,7 +941,7 @@ function kb_brief_builder(kb_brief_wnd, x, y)
 		imgui.EndTabItem()
 		end
 
-		if imgui.BeginTabItem("AIRPORT " .. activeBriefings:get("flight:originIcao")) then
+		if imgui.BeginTabItem("AIRPORT 1 " .. activeBriefings:get("flight:originIcao")) then
 
 			imgui.BeginChild("airporttab")
 
@@ -1090,27 +1097,6 @@ function kb_brief_builder(kb_brief_wnd, x, y)
 			if imgui.Button("C", 15*kb_font_scale, 20*kb_font_scale) then
 				activeBriefings:set("taxi:taxiRoute","") 
 			end
-
-			imgui.PushStyleVar_2(imgui.constant.StyleVar.FramePadding, 3, 2);
-			if imgui.Button("METAR", 70*kb_font_scale, 20*kb_font_scale) then
-				if activePrefSet:get("general:askyMetar") then
-					origmetar = kb_get_asky_metar(activeBriefings:get("flight:originIcao"))
-				else
-					origmetar = kb_get_xp_metar(activeBriefings:get("flight:originIcao"))
-				end
-			end
-			imgui.PopStyleVar();
-			imgui.SameLine()
-			imgui.PushStyleColor(imgui.constant.Col.Text, 0xFF95C857)
-			imgui.TextUnformatted(origmetar)
-			imgui.PopStyleColor()
-
-			imgui.PushStyleColor(imgui.constant.Col.Text, 0xFFCCCCCC)
-			imgui.TextUnformatted("ATIS:")
-			imgui.SameLine()
-			imgui.PushStyleColor(imgui.constant.Col.Text, 0xFF1b9af8)
-			imgui.TextUnformatted(origatis)
-			imgui.PopStyleColor()
 
 			imgui.Separator()
 
@@ -1568,7 +1554,19 @@ function kb_brief_builder(kb_brief_wnd, x, y)
 			imgui.PopItemWidth()
 			imgui.PopStyleVar();
 
-
+			imgui.PushStyleVar_2(imgui.constant.StyleVar.FramePadding, 3, 2);
+			if imgui.Button("METAR", 70*kb_font_scale, 20*kb_font_scale) then
+				if activePrefSet:get("general:askyMetar") then
+					origmetar = kb_get_asky_metar(activeBriefings:get("flight:originIcao"))
+				else
+					origmetar = kb_get_xp_metar(activeBriefings:get("flight:originIcao"))
+				end
+			end
+			imgui.PopStyleVar();
+			imgui.SameLine()
+			imgui.PushStyleColor(imgui.constant.Col.Text, 0xFF95C857)
+			imgui.TextUnformatted(origmetar)
+			imgui.PopStyleColor()
 
 			imgui.Separator()
 			imgui.EndChild()
@@ -1967,6 +1965,19 @@ function kb_brief_builder(kb_brief_wnd, x, y)
 			imgui.PopStyleVar();
 	
 
+			imgui.PushStyleVar_2(imgui.constant.StyleVar.FramePadding, 3, 2);
+			if imgui.Button(activeBriefings:get("flight:destinationIcao"), 80*kb_font_scale, 20*kb_font_scale) then
+				if activePrefSet:get("general:askyMetar") then
+					destmetar = kb_get_asky_metar(activeBriefings:get("flight:destinationIcao"))
+				else
+					destmetar = kb_get_xp_metar(activeBriefings:get("flight:destinationIcao"))
+				end
+			end
+			imgui.PopStyleVar();
+			imgui.SameLine()
+			imgui.PushStyleColor(imgui.constant.Col.Text, 0xFF95C857)
+			imgui.TextUnformatted(destmetar)
+			imgui.PopStyleColor()
 
 			imgui.Separator()
 
@@ -1975,7 +1986,7 @@ function kb_brief_builder(kb_brief_wnd, x, y)
 		imgui.EndTabItem()
 		end
 
-		if imgui.BeginTabItem("AIRPORT ".. activeBriefings:get("flight:destinationIcao")) then
+		if imgui.BeginTabItem("AIRPORT 2 ".. activeBriefings:get("flight:destinationIcao")) then
 
 			imgui.BeginChild("destapptab")
 

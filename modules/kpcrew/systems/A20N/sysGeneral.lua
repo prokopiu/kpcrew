@@ -1,9 +1,10 @@
--- DFLT airplane 
+-- ToLiss Airbusses
 -- aircraft general systems
 
 -- @classmod sysGeneral
 -- @author Kosta Prokopiu
--- @copyright 2022 Kosta Prokopiu
+-- @copyright 2024 Kosta Prokopiu
+
 local sysGeneral = {
 }
 
@@ -43,6 +44,13 @@ local cmdBaroRightUp		= "sim/instruments/barometer_copilot_up"
 local cmdBaroStbyDown		= "sim/instruments/barometer_stby_down"
 local cmdBaroStbyUp			= "sim/instruments/barometer_stby_up"
 
+--------- Command/dataref variance for larger Airbusses from ToLiss
+
+local drefLandingGear		= "ckpt/gearHandle"
+if PLANE_ICAO == "A339" or PLANE_ICAO == "A346" then
+	drefLandingGear = "AirbusFBW/GearLever"
+end
+	
 -- Parking Brake
 sysGeneral.parkBrakeSwitch 	= TwoStateToggleSwitch:new("parkbrake","sim/cockpit2/controls/parking_brake_ratio",0,
 	"sim/flight_controls/brakes_toggle_max")
