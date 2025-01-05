@@ -1,7 +1,8 @@
 -- Aircraft specific preferences - Laminar MD82
 --
 -- @author Kosta Prokopiu
--- @copyright 2023 Kosta Prokopiu
+-- @copyright 2024 Kosta Prokopiu
+
 local MD82Group = kcPreferenceGroup:new("aircraft","MD82 AIRCRAFT PREFERENCES")
 MD82Group:add(kcPreference:new("mcp_def_spd",	100,	kcPreference.typeInt,	"MCP Initial Speed|5")) 
 MD82Group:add(kcPreference:new("mcp_def_hdg",	001,	kcPreference.typeInt,	"MCP Initial Heading|1")) 

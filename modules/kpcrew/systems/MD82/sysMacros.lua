@@ -1,13 +1,19 @@
--- DFLT airplane 
--- macros
+-- MD82 airplane 
+-- Macros
 
 -- @classmod sysMacros
 -- @author Kosta Prokopiu
--- @copyright 2022 Kosta Prokopiu
+-- @copyright 2024 Kosta Prokopiu
+
 local sysMacros = {
 }
 
 function kc_macro_state_cold_and_dark()
+	command_once("sim/electrical/battery_1_off")
+	set_array("laminar/md82/safeguard",3,0)
+	kc_macro_ext_lights_off()
+	set("laminar/md82/electrical/voltmeter_source",0)
+
 	set("sim/cockpit2/controls/flap_ratio",0)
 	sysGeneral.doorGroup:actuate(0)
 	sysGeneral.doorL1:actuate(1)
