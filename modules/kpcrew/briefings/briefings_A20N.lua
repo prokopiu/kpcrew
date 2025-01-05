@@ -2,7 +2,7 @@
 --
 -- @author Kosta Prokopiu
 -- @copyright 2024 Kosta Prokopiu
-kc_acf_name = "ToLiss A20N/A21N"
+kc_acf_name 		= "ToLiss A20N/A21N"
 
 kc_TakeoffThrust 	= "RATED|DE-RATED|ASSUMED TEMPERATURE|RATED AND ASSUMED|DE-RATED AND ASSUMED"
 kc_TakeoffFlaps 	= "0|1+F|2|3"

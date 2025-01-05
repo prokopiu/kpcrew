@@ -4,6 +4,7 @@
 -- @classmod sysMacros
 -- @author Kosta Prokopiu
 -- @copyright 2024 Kosta Prokopiu
+
 local sysMacros = {
 	spd_mode = 0,
 	alt_mode = 0,
@@ -365,24 +366,10 @@ function kc_fuel_all_white_off()
 	return stdwhites and a346whites
 end
 
-function kc_macro_fuel_all_white_off()
-	-- set_array("AirbusFBW/FuelOHPArray",0,1)
-	-- set_array("AirbusFBW/FuelOHPArray",1,1)
-	-- set_array("AirbusFBW/FuelOHPArray",2,1)
-	-- set_array("AirbusFBW/FuelOHPArray",3,1)
-	-- set_array("AirbusFBW/FuelOHPArray",4,1)
-	-- set_array("AirbusFBW/FuelOHPArray",5,1)
-	-- set_array("AirbusFBW/FuelOHPArray",6,1)
-	-- set_array("AirbusFBW/FuelOHPArray",7,0)
-	-- set_array("AirbusFBW/FuelOHPArray",8,1)
-	-- set_array("AirbusFBW/FuelOHPArray",9,0)
-end
-
 -- start SGES start sequence
 function kc_macro_start_sges_sequence()
-		-- show_windoz()
-		show_Automatic_sequence_start = true
-		SGES_Automatic_sequence_start_flight_time_sec = SGES_total_flight_time_sec
+	show_Automatic_sequence_start = true
+	SGES_Automatic_sequence_start_flight_time_sec = SGES_total_flight_time_sec
 end
 
 -- ====================================== Lights related functions
@@ -807,7 +794,6 @@ end
 -- glareshield landing setup
 -- initialise IRS
 
-
 -- fuel pumps all off
 function kc_macro_fuelpumps_off()
 	set_array("AirbusFBW/FuelOHPArray",0,0)
@@ -1030,6 +1016,8 @@ end
 
 -- packs for engine start
 function kc_macro_packs_start()
+	set("AirbusFBW/Pack1Switch",0)
+	set("AirbusFBW/Pack2Switch",0)
 end
 
 -- packs for takeoff
@@ -1070,11 +1058,21 @@ function kc_macro_bleeds_takeoff()
 end
 
 -- check status of bleeds
-function kc_bleeds_on()
+function kc_bleeds_are_on()
 	local stdbleedstat = get("AirbusFBW/ENG1BleedSwitch") == 1 and get("AirbusFBW/ENG2BleedSwitch") == 1
 	local a346bleeds = true
 	if PLANE_ICAO == "A346" then
 		a346bleeds = get("AirbusFBW/ENG3BleedSwitch") == 1 and get("AirbusFBW/ENG4BleedSwitch") == 1
+	end
+	return stdbleedstat and a346bleeds
+end
+
+-- all bleeds off
+function kc_bleeds_are_off()
+	local stdbleedstat = get("AirbusFBW/ENG1BleedSwitch") == 0 and get("AirbusFBW/ENG2BleedSwitch") == 0
+	local a346bleeds = true
+	if PLANE_ICAO == "A346" then
+		a346bleeds = get("AirbusFBW/ENG3BleedSwitch") == 0 and get("AirbusFBW/ENG4BleedSwitch") == 0
 	end
 	return stdbleedstat and a346bleeds
 end
@@ -1160,7 +1158,7 @@ end
 
 -- wait for descending through trans lvl then execute items
 function kc_bck_transition_level(trigger)
-	if get("sim/cockpit2/gauges/indicators/altitude_ft_pilot") < activeBriefings:get("arrival:translvl")*100 then
+	if get("sim/cockpit2/gauges/indicators/altitude_ft_pilot") < activeBriefings:get("arrival:translvl") then
 		kc_macro_at_trans_lvl()
 		kc_procvar_set(trigger,false)
 		kc_speakNoText(0,"transition level")
