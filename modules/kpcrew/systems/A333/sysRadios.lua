@@ -3,9 +3,7 @@
 
 -- @classmod sysRadios
 -- @author Kosta Prokopiu
--- @copyright 2022 Kosta Prokopiu
-local sysRadios = {
-}
+-- @copyright 2024 Kosta Prokopiu
 
 local TwoStateDrefSwitch 	= require "kpcrew.systems.TwoStateDrefSwitch"
 local TwoStateCmdSwitch	 	= require "kpcrew.systems.TwoStateCmdSwitch"
@@ -18,6 +16,6 @@ local MultiStateCmdSwitch 	= require "kpcrew.systems.MultiStateCmdSwitch"
 local InopSwitch 			= require "kpcrew.systems.InopSwitch"
 local KeepPressedSwitchCmd	= require "kpcrew.systems.KeepPressedSwitchCmd"
 
-require "kpcrew.systems.DFLT.sysRadios"
+sysRadios = require("kpcrew.systems.DFLT.sysRadios")
 
 return sysRadios

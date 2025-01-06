@@ -1,14 +1,9 @@
 -- A333 airplane 
 -- Engine related functionality
 
--- @classmod sysEngines
+-- @classmod sysElectric
 -- @author Kosta Prokopiu
--- @copyright 2022 Kosta Prokopiu
-local sysEngines = {
-	engModeCrank 	= -1,
-	engModeNorm 	= 0,
-	engModeIgnStart	= 1
-}
+-- @copyright 2024 Kosta Prokopiu
 
 local TwoStateDrefSwitch 	= require "kpcrew.systems.TwoStateDrefSwitch"
 local TwoStateCmdSwitch	 	= require "kpcrew.systems.TwoStateCmdSwitch"
@@ -20,6 +15,14 @@ local TwoStateToggleSwitch	= require "kpcrew.systems.TwoStateToggleSwitch"
 local MultiStateCmdSwitch 	= require "kpcrew.systems.MultiStateCmdSwitch"
 local InopSwitch 			= require "kpcrew.systems.InopSwitch"
 local KeepPressedSwitchCmd	= require "kpcrew.systems.KeepPressedSwitchCmd"
+
+local sysEngines = {
+	engModeCrank 	= -1,
+	engModeNorm 	= 0,
+	engModeIgnStart	= 1
+}
+
+sysEngines = require("kpcrew.systems.DFLT.sysEngines")
 
 -- Starter Switches
 sysEngines.engStart1Switch	= TwoStateDrefSwitch:new("starter1","laminar/A333/switches/engine1_start_pos",0)
@@ -44,16 +47,6 @@ end)
 
 -- Airbus ENG MODE SELECTOR
 sysEngines.engModeSelector	= TwoStateDrefSwitch:new("engmodesel","sim/cockpit2/engine/actuators/eng_mode_selector",0)
-
--- ** OIL PRESSURE annunciator
-sysEngines.OilPressureAnc 	= CustomAnnunciator:new("oilpressure",
-function ()
-	-- if get(drefEngine1Oil,0) > 0 or get(drefEngine2Oil,1) > 0 then
-		-- return 1
-	-- else
-		return 0
-	-- end
-end)
 
 -- Oil Quantity
 sysEngines.oilqty1 = SimpleAnnunciator:new("oilqty1","sim/flightmodel/engine/ENGN_oil_quan",-1)

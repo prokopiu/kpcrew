@@ -1,12 +1,9 @@
 -- A333 airplane 
--- aircraft lights specific functionality
--- ** default element for kphardware - must be in all classes of this system
+-- Aircraft lights specific functionality
 
 -- @classmod sysLights
 -- @author Kosta Prokopiu
--- @copyright 2022 Kosta Prokopiu
-local sysLights = {
-}
+-- @copyright 2024 Kosta Prokopiu
 
 local TwoStateDrefSwitch 	= require "kpcrew.systems.TwoStateDrefSwitch"
 local TwoStateCmdSwitch	 	= require "kpcrew.systems.TwoStateCmdSwitch"
@@ -19,17 +16,12 @@ local MultiStateCmdSwitch 	= require "kpcrew.systems.MultiStateCmdSwitch"
 local InopSwitch 			= require "kpcrew.systems.InopSwitch"
 local KeepPressedSwitchCmd	= require "kpcrew.systems.KeepPressedSwitchCmd"
 
+sysLights = require("kpcrew.systems.DFLT.sysLights")
+
 local drefLandingLights 	= "sim/cockpit2/switches/landing_lights_switch"	
 local drefGenericLights 	= "sim/cockpit2/switches/generic_lights_switch"
 local drefInstrLights 		= "sim/cockpit2/switches/instrument_brightness_ratio"
 local drefPanelLights 		= "sim/cockpit2/switches/panel_brightness_ratio"
-
--- Beacons or Anticollision Lights, single, onoff, command driven
-sysLights.beaconSwitch 		= TwoStateCmdSwitch:new("beacon","sim/cockpit/electrical/beacon_lights_on",0,
-	"sim/lights/beacon_lights_on","sim/lights/beacon_lights_off","sim/lights/beacon_lights_toggle")
-
--- Beacons or Anticollision Light(s) status
-sysLights.beaconAnc 		= SimpleAnnunciator:new("beaconlights","sim/cockpit/electrical/beacon_lights_on",0)
 
 -- Position Lights, single onoff command driven
 sysLights.positionSwitch 	= TwoStateCmdSwitch:new("position","laminar/a333/switches/nav_pos",0,
@@ -93,18 +85,6 @@ function ()
 	end
 end)
 
--- Wing Lights
-sysLights.wingSwitch 		= TwoStateDrefSwitch:new("wing",drefGenericLights,3)
-
--- Wing Light(s) status
-sysLights.wingAnc 			= SimpleAnnunciator:new("winglights",drefGenericLights, 3)
-
--- Wheel well Lights
-sysLights.wheelSwitch 		= TwoStateDrefSwitch:new("wheel",drefGenericLights,5)
-
--- Wheel well Light(s) status
-sysLights.wheelAnc 			= SimpleAnnunciator:new("wheellights",drefGenericLights,5)
-
 -- Dome Light
 sysLights.domeLightSwitch 	= TwoStateCmdSwitch:new("dome","laminar/a333/switches/dome_brightness",0,
 	"laminar/A333/toggle_switch/dome_bright_up","laminar/A333/toggle_switch/dome_bright_dn")
@@ -148,6 +128,5 @@ sysLights.instrLightGroup:addSwitch(sysLights.instr9Light)
 
 -- Instrument Light(s) status
 sysLights.instrumentAnc = SimpleAnnunciator:new("instrumentlights", "sim/cockpit2/switches/instrument_brightness_ratio",0)
-
 
 return sysLights

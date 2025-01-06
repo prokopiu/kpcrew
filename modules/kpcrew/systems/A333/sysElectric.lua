@@ -3,9 +3,7 @@
 
 -- @classmod sysElectric
 -- @author Kosta Prokopiu
--- @copyright 2022 Kosta Prokopiu
-local sysElectric = {
-}
+-- @copyright 2024 Kosta Prokopiu
 
 local TwoStateDrefSwitch 	= require "kpcrew.systems.TwoStateDrefSwitch"
 local TwoStateCmdSwitch	 	= require "kpcrew.systems.TwoStateCmdSwitch"
@@ -18,8 +16,7 @@ local MultiStateCmdSwitch 	= require "kpcrew.systems.MultiStateCmdSwitch"
 local InopSwitch 			= require "kpcrew.systems.InopSwitch"
 local KeepPressedSwitchCmd	= require "kpcrew.systems.KeepPressedSwitchCmd"
 
-logMsg ("Electric A333")
-require "kpcrew.systems.DFLT.sysElectric"
+sysElectric = require("kpcrew.systems.DFLT.sysElectric")
 
 --------- Batteries
 
@@ -36,8 +33,6 @@ sysElectric.batteryGroup:addSwitch(battery2Switch)
 sysElectric.batteryGroup:addSwitch(battery3Switch)
 
 -- BAT Voltages
-sysElectric.bat1Volt 		= SimpleAnnunciator:new("bat1volt","sim/cockpit2/electrical/battery_voltage_actual_volts",-1)
-sysElectric.bat2Volt 		= SimpleAnnunciator:new("bat2volt","sim/cockpit2/electrical/battery_voltage_actual_volts",1)
 sysElectric.batapuVolt 		= SimpleAnnunciator:new("apuvolt","sim/cockpit2/electrical/battery_voltage_actual_volts",2)
 
 -- GPU
@@ -48,8 +43,5 @@ sysElectric.gpuAvailAnc 	= SimpleAnnunciator:new("gpuavail","laminar/A333/status
 
 -- APU RUNNING annunciator
 sysElectric.apuRunningAnc 	= SimpleAnnunciator:new("apurunning","laminar/A333/annun/apu_avail",0)
-
--- LOW VOLTAGE annunciator
-sysElectric.lowVoltageAnc 	= SimpleAnnunciator:new("lowvoltage","sim/cockpit2/annunciators/low_voltage",0)
 
 return sysElectric

@@ -2,7 +2,8 @@
 
 -- @classmod SOP_A333
 -- @author Kosta Prokopiu
--- @copyright 2023 Kosta Prokopiu
+-- @copyright 2024 Kosta Prokopiu
+
 local SOP_A333 = {
 }
 
@@ -56,148 +57,64 @@ activeSOP = SOP:new("Laminar A333 SOP")
 
 local testProc = Procedure:new("TEST","","")
 testProc:setFlightPhase(1)
-testProc:addItem(ProcedureItem:new("LIGHTS","ALL ON",FlowItem.actorFO,5,false,
-	function () 
-	  kc_macro_lights_all_on()
-	end))
-testProc:addItem(ProcedureItem:new("LIGHTS","COLD&DARK",FlowItem.actorFO,5,true,
-	function () 
-	  kc_macro_lights_cold_dark()
-	end))
-testProc:addItem(ProcedureItem:new("LIGHTS","PREFLIGHT",FlowItem.actorFO,5,true,
-	function () 
-	  kc_macro_lights_preflight()
-	  sysLights.domeLightSwitch:actuate(0)
-	end))
-testProc:addItem(ProcedureItem:new("LIGHTS","BEFORE START",FlowItem.actorFO,5,true,
-	function () 
-	  kc_macro_lights_before_start()
-	  
-	end))
-testProc:addItem(ProcedureItem:new("LIGHTS","BEFORE TAXI",FlowItem.actorFO,5,true,
-	function () 
-	  kc_macro_lights_before_taxi()
-	end))
-testProc:addItem(ProcedureItem:new("LIGHTS","TAKEOFF",FlowItem.actorFO,5,true,
-	function () 
-	  kc_macro_lights_for_takeoff()
-	end))
-testProc:addItem(ProcedureItem:new("LIGHTS","CLMB 10K",FlowItem.actorFO,5,true,
-	function () 
-	  kc_macro_lights_climb_10k()
-	end))
-testProc:addItem(ProcedureItem:new("LIGHTS","DESC 10K",FlowItem.actorFO,5,true,
-	function () 
-	  kc_macro_lights_descend_10k()
-	end))
-testProc:addItem(ProcedureItem:new("LIGHTS","APPROACH",FlowItem.actorFO,5,true,
-	function () 
-	  kc_macro_lights_approach()
-	end))
-testProc:addItem(ProcedureItem:new("LIGHTS","CLEANUP",FlowItem.actorFO,5,true,
-	function () 
-	  kc_macro_lights_cleanup()
-	end))
-testProc:addItem(ProcedureItem:new("LIGHTS","ARRIVE PARKING",FlowItem.actorFO,5,true,
-	function () 
-	  kc_macro_lights_arrive_parking()
-	end))
-testProc:addItem(ProcedureItem:new("LIGHTS","SHUTDOWN",FlowItem.actorFO,5,true,
-	function () 
-	  kc_macro_lights_after_shutdown()
-	end))
-
 	
-
-
--- ============ PRELIMINARY COCKPIT PREP (PM) ============
--- ==== AIRCRAFT SETUP
--- ENGINE MASTERS 1 & 2.........................OFF   (PM)
--- ENGINE MODE SELECTOR........................NORM   (PM)
--- WEATHER RADAR................................OFF   (PM)
--- LANDING GEAR LEVER..........................DOWN   (PM)
--- BOTH WIPER SELECTORS.........................OFF   (PM)
-
--- ==== BATTERY CHECK & EXTERNAL POWER
--- BAT 1 / BAT 2............CHECK BOTH ABOVE 25.5 V   (PM)
--- BAT 1 / BAT 2.................................ON   (PM)
-
--- ==== Activate External Power
--- EXT POWER if available........................ON   (PM)
---   Use Ground Handling CDU menu to turn EXT Power on         
-
--- ==== Activate APU 
--- APU FIRE..........................IN and GUARDED   (PM)
--- APU FIRE TEST.........................CHECK/TEST   (PM)
--- APU MASTER PB..............................PRESS   (PM)
---   After master switch, wait 3s 
--- APU START PB...............................PRESS   (PM)
-
--- ==== LIGHT UP
--- COCKPIT LIGHTS...........................AS RQRD   (PM) 
-
--- ==== AIRCRAFT ACCEPTANCE
--- ECAM RCL...............................PRESS 3 S   (PM)
---   Recalls warnings cleared during last flight
--- All paper work on board and checked
--- M E L and Technical Logbook checked
-
--- ==== ECAM SD PAGES
--- ENG SD PAGE.........................OIL QUANTITY   (PM)
---   NEO=10.6qt+0.45qt/h
--- HYD SD PAGE..........CHECK RESERVOIR FLUID LEVEL   (PM)
--- DOOR SD PAGE..................CHECK OXY PRESSURE   (PM)
-
--- ==== FCTL
--- FLAPS.............................CHECK POSITION   (PM)
---   ECAM flaps position agrees with handle position
--- SPEEDBRAKE LEVER......CHECK RETRACTED & DISARMED   (PM)
-
--- ==== BRAKES
--- PARKING BRAKE.................................ON   (PM)
--- ACCU PRESS INDICATOR............CHECK GREEN BAND   (PM)
---   (if not use Y elec pump)
--- PARKING BRAKE INDICATOR....................CHECK   (PM)
--- Alternate Brake – Check:
---   YELLOW ELEC PUMP...........................OFF   (PM) 
---   CHOCKS......................................ON   (PM)
---   PARKING BRAKES.............................OFF   (PM)
---     Brake Pedals – Press to Check Pressure on 
---     Brake Pressure Indicator
---     Brake Pedals Release – Parking Brakes ON
---   PARKING BRAKES..............................ON   (PM)
-  
--- ==== REST
--- EMERGENCY EQUIPMENT........................CHECK   (PM)
--- CB PANELS..................................CHECK   (PM)
--- RAIN REPELLENT.............................CHECK   (PM)
--- CIRCUIT BREAKERS..........................ALL IN   (PM)
--- GEAR PINS & COVERS............ONBOARD AND STOWED   (PM)
--- RMP2 (Radio Management Panel)...........ON & SET   (PF)
--- ACP2 (Audio Control Panel)...........AS REQUIRED   (PF)
+-- =========== PRELIMINARY COCKPIT PREPARATION ===========
+-- ENGINE MASTERS 1 & 2.........................OFF   (FO)
+-- ENGINE MODE SELECTOR........................NORM   (FO)
+-- LANDING GEAR LEVER..........................DOWN   (FO)
+-- BOTH WIPER SELECTORS.........................OFF   (FO)
+-- BAT 1 / BAT 2................................OFF   (FO)
+-- BAT 1 / BAT 2............CHECK BOTH ABOVE 25.5 V   (FO)
+-- EXT POWER..............................CONNECTED   (FO)
+-- EXT POWER SWITCH..............................ON   (FO)
+-- BAT 1 / BAT 2...............................AUTO   (FO)
+-- COCKPIT LIGHTS.......................AS REQUIRED   (FO)
+-- ACCU PRESS INDICATOR............CHECK GREEN BAND   (FO)
+-- CHOCKS..................................IN PLACE   (FO)
+-- PARKING BRAKE................................OFF   (FO)
+-- FLAPS.............................CHECK POSITION   (FO)
+-- SPEED BRAKE LEVER.....CHECK RETRACTED & DISARMED   (FO)
+-- PROBE WINDOW HEAT.....................CHECK AUTO   (FO)
+-- AIR COND PANEL..............ALL WHITE LIGHTS OFF   (FO)
+-- CROSS BLEED.................................AUTO   (FO)
+-- ZONE TEMP SEL........................AS REQUIRED   (FO)
+-- WEATHER RADAR................................OFF   (FO)
+-- ELECTRIC PANEL.........NO AMBER EXCEPT GEN FAULT   (FO)
+-- VENT PANEL..................ALL WHITE LIGHTS OFF   (FO)
+-- ECAM OXY PRESS...........................CHECKED   (FO)
+-- ECAM HYD QTY.............................CHECKED   (FO)
+-- ADIRS L,R,C..................................NAV  (CPT)
+--   Switch one at a time waiting for the BAT light
+--   to go off before switching the next one on.
+-- RADIO MANAGEMENT PANELS...............ON AND SET   (FO)
+-- CLOCK ET...................................RESET  (CPT)
 -- =======================================================
 
-local prelCockpitPrep = Procedure:new("PRELIMINARY COCKPIT PREPARATION","performing preliminary cockpit preparation","Setup finished")
+local prelCockpitPrep = Procedure:new("PRELIMINARY COCKPIT PREPARATION","")
 prelCockpitPrep:setFlightPhase(2)
-prelCockpitPrep:setResize(false)
-prelCockpitPrep:addItem(SimpleProcedureItem:new("==== AIRCRAFT SETUP"))
-prelCockpitPrep:addItem(ProcedureItem:new("ENGINE MASTERS 1 & 2","OFF",FlowItem.actorPM,1,
+
+prelCockpitPrep:addItem(ProcedureItem:new("ENGINE MASTERS","ALL OFF",FlowItem.actorPM,1,
 	function () return sysEngines.engStarterGroup:getStatus() == 0 end,
 	function () sysEngines.engStarterGroup:actuate(0) end))
 prelCockpitPrep:addItem(ProcedureItem:new("ENGINE MODE SELECTOR","NORM",FlowItem.actorPM,1,
 	function () return sysEngines.engModeSelector:getStatus() == sysEngines.engModeNorm end,
 	function () sysEngines.engModeSelector:setValue(sysEngines.engModeNorm) end))
-prelCockpitPrep:addItem(ProcedureItem:new("WEATHER RADAR","OFF",FlowItem.actorPM,1,
-	function () return sysGeneral.wxRadar:getStatus() == 0 end,
-	function () sysGeneral.wxRadar:actuate(0) end))
 prelCockpitPrep:addItem(ProcedureItem:new("LANDING GEAR LEVER","DOWN",FlowItem.actorPM,1,
 	function () return sysGeneral.GearSwitch:getStatus() == 1 end,
 	function () sysGeneral.GearSwitch:actuate(1) end))
 prelCockpitPrep:addItem(ProcedureItem:new("BOTH WIPER SELECTORS","OFF",FlowItem.actorPM,1,
 	function () return sysGeneral.wiperGroup:getStatus() == sysGeneral.wiperPosOff end,
 	function () sysGeneral.wiperGroup:setValue(sysGeneral.wiperPosOff) end))
-
-prelCockpitPrep:addItem(SimpleProcedureItem:new("==== BATTERY CHECK & EXTERNAL POWER"))
+prelCockpitPrep:addItem(ProcedureItem:new("EXT POWER","CONNECTED",FlowItem.actorPM,1,
+	function () return sysElectric.gpuAvailAnc:getStatus() == 1 end))
+prelCockpitPrep:addItem(ProcedureItem:new("EXT POWER","ON",FlowItem.actorPM,1,
+	function () return sysElectric.gpuSwitch:getStatus() == 1 end,
+	function () sysElectric.gpuSwitch:setValue(1) end))
+prelCockpitPrep:addItem(ProcedureItem:new("BAT 1 / BAT 2","OFF",FlowItem.actorPM,1,
+	function () return sysElectric.batterySwitch:getStatus() == 0 and sysElectric.battery2Switch:getStatus() == 0 end,
+	function () sysElectric.batterySwitch:actuate(0) 
+				sysElectric.battery2Switch:actuate(0) 
+	end))
 prelCockpitPrep:addItem(ProcedureItem:new("BAT 1 / BAT 2","CHECK BOTH ABOVE 25.5 V",FlowItem.actorPM,1,
 	function () return sysElectric.bat1Volt:getStatus() > 25.5 and sysElectric.bat2Volt:getStatus() > 25.5 end))
 prelCockpitPrep:addItem(ProcedureItem:new("BAT 1 / BAT 2","ON",FlowItem.actorPM,1,
@@ -205,21 +122,27 @@ prelCockpitPrep:addItem(ProcedureItem:new("BAT 1 / BAT 2","ON",FlowItem.actorPM,
 	function () sysElectric.batterySwitch:actuate(1) 
 				sysElectric.battery2Switch:actuate(1) 
 	end))
+prelCockpitPrep:addItem(ProcedureItem:new("COCKPIT LIGHTS","AS REQUIRED",FlowItem.actorPM,1,true,
+	function () 
+		kc_macro_lights_preflight()
+	end))
 
-prelCockpitPrep:addItem(SimpleProcedureItem:new("==== Activate External Power",
-	function () return activePrefSet:get("aircraft:powerup_apu") == true end))
-prelCockpitPrep:addItem(ProcedureItem:new("EXT POWER","CONNECTED",FlowItem.actorPM,1,
-	function () return sysElectric.gpuAvailAnc:getStatus() == 1 end,nil,
-	function () return activePrefSet:get("aircraft:powerup_apu") == true end))
-prelCockpitPrep:addItem(ProcedureItem:new("EXT POWER","ON",FlowItem.actorPM,1,
-	function () return sysElectric.gpuSwitch:getStatus() == 1 end,
-	function () sysElectric.gpuSwitch:setValue(1) end,
-	function () return activePrefSet:get("aircraft:powerup_apu") == true end))
 
-prelCockpitPrep:addItem(SimpleProcedureItem:new("==== Activate APU",
-	function () return activePrefSet:get("aircraft:powerup_apu") == false end))
-prelCockpitPrep:addItem(ProcedureItem:new("APU FIRE","IN AND GUARDED",FlowItem.actorPM,1,true,nil,
-	function () return activePrefSet:get("aircraft:powerup_apu") == false end))
+
+-- prelCockpitPrep:addItem(ProcedureItem:new("WEATHER RADAR","OFF",FlowItem.actorPM,1,
+	-- function () return sysGeneral.wxRadar:getStatus() == 0 end,
+	-- function () sysGeneral.wxRadar:actuate(0) end))
+
+
+
+
+-- prelCockpitPrep:addItem(SimpleProcedureItem:new("==== Activate External Power",
+	-- function () return activePrefSet:get("aircraft:powerup_apu") == true end))
+
+-- prelCockpitPrep:addItem(SimpleProcedureItem:new("==== Activate APU",
+	-- function () return activePrefSet:get("aircraft:powerup_apu") == false end))
+-- prelCockpitPrep:addItem(ProcedureItem:new("APU FIRE","IN AND GUARDED",FlowItem.actorPM,1,true,nil,
+	-- function () return activePrefSet:get("aircraft:powerup_apu") == false end))
 prelCockpitPrep:addItem(IndirectProcedureItem:new("APU FIRE TEST","CHECK/TEST",FlowItem.actorPM,2,"apufiretest",
 	function () return sysEngines.apuFireTest:getStatus() == 1 end,
 	function () sysEngines.apuFireTest:setValue(1) end,
@@ -234,18 +157,27 @@ prelCockpitPrep:addItem(ProcedureItem:new("APU START PB","PRESS",FlowItem.actorP
 	function () return sysElectric.apuStarter:getStatus() > 0 end,
 	function () sysElectric.apuStarter:setValue(1) end,
 	function () return activePrefSet:get("aircraft:powerup_apu") == false end))
-
-prelCockpitPrep:addItem(SimpleProcedureItem:new("==== LIGHT UP"))
-prelCockpitPrep:addItem(ProcedureItem:new("COCKPIT LIGHTS","AS REQUIRED",FlowItem.actorPM,1,true,
-	function () 
-		if kc_is_daylight() then		
-			sysLights.instrLightGroup:actuate(0)
-			sysLights.domeLightSwitch:actuate(0)
-		else
-			sysLights.instrLightGroup:actuate(0.5)
-			sysLights.domeLightSwitch:actuate(1)
-		end
-	end))
+prelCockpitPrep:addItem(ProcedureItem:new("ACCU PRESS INDICATOR","CHECK GREEN BAND",FlowItem.actorPM,1,
+	function () return sysHydraulic.accuPress:getStatus() > 3 end))
+prelCockpitPrep:addItem(ProcedureItem:new("CHOCKS","ON",FlowItem.actorPM,1,
+	function () return sysGeneral.chocksGroup:getStatus() == 0 end,
+	function () sysGeneral.chocksGroup:setValue(0) end))
+prelCockpitPrep:addItem(ProcedureItem:new("PARKING BRAKE","OFF",FlowItem.actorPM,1,
+	function () return sysGeneral.parkBrakeSwitch:getStatus() == 0 end,
+	function () sysGeneral.parkBrakeSwitch:actuate(0) end))
+prelCockpitPrep:addItem(ProcedureItem:new("FLAPS","UP",FlowItem.actorPM,1,
+	function () return sysControls.flapsSwitch:getStatus() == 0 end,
+	function () sysControls.flapsSwitch:setValue(0) end))
+prelCockpitPrep:addItem(ProcedureItem:new("SPEED BRAKE","CHECK RETRACTED & DISARMED",FlowItem.actorPM,1,
+	function () return sysControls.speedBrake:getStatus() == 0 end,
+	function () sysControls.speedBrake:setValue(0) end))
+prelCockpitPrep:addItem(ProcedureItem:new("PROBE/WINDOW HEAT","CHECK AUTO",FlowItem.actorPF,1,
+	function () return sysAice.probeSwitch:getStatus() == 0 end,
+	function () sysAice.probeSwitch:setValue(0) end))
+prelCockpitPrep:addItem(ProcedureItem:new("AIR COND PANEL","ALL WHITE LIGHTS OFF",FlowItem.actorFO,0,
+	function () return kc_aircond_has_white_lights() == false end,
+	function () kc_macro_aircond_all_white_off() end))
+--
 
 prelCockpitPrep:addItem(SimpleProcedureItem:new("==== AIRCRAFT ACCEPTANCE"))
 prelCockpitPrep:addItem(ProcedureItem:new("ECAM RCL","PRESS 3 S",FlowItem.actorPM,1,true,nil))
@@ -263,23 +195,13 @@ prelCockpitPrep:addItem(ProcedureItem:new("HYD SD PAGE","CHECK RESERVOIR FLUID L
 prelCockpitPrep:addItem(ProcedureItem:new("DOOR SD PAGE","CHECK OXY PRESSURE",FlowItem.actorPM,3,true,
 	function () sysGeneral.ECAMMode:setValue(sysGeneral.ecamModeDOOR) end))
 
-prelCockpitPrep:addItem(SimpleProcedureItem:new("==== FCTL"))
-prelCockpitPrep:addItem(ProcedureItem:new("FLAPS","UP",FlowItem.actorPM,1,
-	function () return sysControls.flapsSwitch:getStatus() == 0 end,
-	function () sysControls.flapsSwitch:setValue(0) end))
-prelCockpitPrep:addItem(ProcedureItem:new("SPEED BRAKE","CHECK RETRACTED & DISARMED",FlowItem.actorPM,1,
-	function () return sysControls.speedBrake:getStatus() == 0 end,
-	function () sysControls.speedBrake:setValue(0) end))
+
 
 prelCockpitPrep:addItem(SimpleProcedureItem:new("==== BRAKES"))
-prelCockpitPrep:addItem(ProcedureItem:new("CHOCKS","ON",FlowItem.actorPM,1,
-	function () return sysGeneral.chocksGroup:getStatus() == 0 end,
-	function () sysGeneral.chocksGroup:setValue(0) end))
+
 prelCockpitPrep:addItem(ProcedureItem:new("PARKING BRAKE","ON",FlowItem.actorPM,1,
 	function () return sysGeneral.parkBrakeSwitch:getStatus() == 1 end,
 	function () sysGeneral.parkBrakeSwitch:actuate(1) end))
-prelCockpitPrep:addItem(ProcedureItem:new("ACCU PRESS INDICATOR","CHECK GREEN BAND",FlowItem.actorPM,1,
-	function () return sysHydraulic.accuPress:getStatus() > 3 end))
 prelCockpitPrep:addItem(SimpleProcedureItem:new("  If not use Y elec pump"))
 prelCockpitPrep:addItem(ProcedureItem:new("PARKING BRAKE INDICATOR","CHECK",FlowItem.actorPM,1,
 	function () return sysHydraulic.leftBrakePress:getStatus() > 1 and sysHydraulic.rightBrakePress:getStatus() > 1 end))
@@ -434,9 +356,6 @@ cockpitPrep:addItem(ProcedureItem:new("WING-ANTI-ICE","OFF",FlowItem.actorPF,1,
 cockpitPrep:addItem(ProcedureItem:new("ENGINE ANTI-ICE","OFF",FlowItem.actorPF,1,
 	function () return sysAice.engAiceGroup:getStatus() == 0 end,
 	function () sysAice.engAiceGroup:setValue(0) end))
-cockpitPrep:addItem(ProcedureItem:new("PROBE/WINDOW HEAT","CHECK AUTO",FlowItem.actorPF,1,
-	function () return sysAice.probeSwitch:getStatus() == 0 end,
-	function () sysAice.probeSwitch:setValue(0) end))
 cockpitPrep:addItem(ProcedureItem:new("CABIN PRESSURE LDG ELEV","AUTO",FlowItem.actorPF,1,
 	function () return sysAir.cabPressSwitch:getStatus() == 0 end,
 	function () sysAir.cabPressSwitch:setValue(0) end))

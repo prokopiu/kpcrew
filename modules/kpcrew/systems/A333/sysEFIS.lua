@@ -3,9 +3,7 @@
 
 -- @classmod sysEFIS
 -- @author Kosta Prokopiu
--- @copyright 2022 Kosta Prokopiu
-local sysEFIS = {
-}
+-- @copyright 2024 Kosta Prokopiu
 
 local TwoStateDrefSwitch 	= require "kpcrew.systems.TwoStateDrefSwitch"
 local TwoStateCmdSwitch	 	= require "kpcrew.systems.TwoStateCmdSwitch"
@@ -18,6 +16,6 @@ local MultiStateCmdSwitch 	= require "kpcrew.systems.MultiStateCmdSwitch"
 local InopSwitch 			= require "kpcrew.systems.InopSwitch"
 local KeepPressedSwitchCmd	= require "kpcrew.systems.KeepPressedSwitchCmd"
 
-require "kpcrew.systems.DFLT.sysEFIS"
+sysEFIS = require("kpcrew.systems.DFLT.sysEFIS")
 
 return sysEFIS

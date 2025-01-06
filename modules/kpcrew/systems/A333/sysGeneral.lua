@@ -3,12 +3,7 @@
 
 -- @classmod sysGeneral
 -- @author Kosta Prokopiu
--- @copyright 2022 Kosta Prokopiu
-local sysGeneral = {
-	wiperPosOff 	= 0,
-	wiperPosSlow 	= 1,
-	wiperPosFast	= 2
-}
+-- @copyright 2024 Kosta Prokopiu
 
 local TwoStateDrefSwitch 	= require "kpcrew.systems.TwoStateDrefSwitch"
 local TwoStateCmdSwitch	 	= require "kpcrew.systems.TwoStateCmdSwitch"
@@ -21,9 +16,13 @@ local MultiStateCmdSwitch 	= require "kpcrew.systems.MultiStateCmdSwitch"
 local InopSwitch 			= require "kpcrew.systems.InopSwitch"
 local KeepPressedSwitchCmd	= require "kpcrew.systems.KeepPressedSwitchCmd"
 
--- Landing Gear
-sysGeneral.GearSwitch 		= TwoStateCmdSwitch:new("gear","sim/cockpit2/controls/gear_handle_down",0,
-	"sim/flight_controls/landing_gear_down","sim/flight_controls/landing_gear_up","nocommand")
+local sysGeneral = {
+	wiperPosOff 	= 0,
+	wiperPosSlow 	= 1,
+	wiperPosFast	= 2
+}
+
+sysGeneral = require("kpcrew.systems.DFLT.sysGeneral")
 
 -- Gear Lights for annunciators
 sysGeneral.gearLeftGreenAnc = SimpleAnnunciator:new("gear", "laminar/A333/annun/landing_gear/left_green",0)
@@ -126,13 +125,6 @@ sysGeneral.wxRadar			= TwoStateCustomSwitch:new("reverse1","laminar/A333/switche
 	function () 
 	end	
 )
-
--- Wiper Switches
-sysGeneral.wiperLeft = TwoStateDrefSwitch:new("wiperleft","sim/cockpit2/switches/wiper_speed_switch",-1)
-sysGeneral.wiperRight = TwoStateDrefSwitch:new("wiperleft","sim/cockpit2/switches/wiper_speed_switch",1)
-sysGeneral.wiperGroup = SwitchGroup:new("wipers")
-sysGeneral.wiperGroup:addSwitch(sysGeneral.wiperLeft)
-sysGeneral.wiperGroup:addSwitch(sysGeneral.wiperRight)
 
 -- Master Caution
 sysGeneral.masterCautionAnc = SimpleAnnunciator:new("mastercaution", "laminar/A333/annun/master_caution",0)

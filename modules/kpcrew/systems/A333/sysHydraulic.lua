@@ -3,9 +3,7 @@
 
 -- @classmod sysHydraulic
 -- @author Kosta Prokopiu
--- @copyright 2022 Kosta Prokopiu
-local sysHydraulic = {
-}
+-- @copyright 2024 Kosta Prokopiu
 
 local TwoStateDrefSwitch 	= require "kpcrew.systems.TwoStateDrefSwitch"
 local TwoStateCmdSwitch	 	= require "kpcrew.systems.TwoStateCmdSwitch"
@@ -17,6 +15,8 @@ local TwoStateToggleSwitch	= require "kpcrew.systems.TwoStateToggleSwitch"
 local MultiStateCmdSwitch 	= require "kpcrew.systems.MultiStateCmdSwitch"
 local InopSwitch 			= require "kpcrew.systems.InopSwitch"
 local KeepPressedSwitchCmd	= require "kpcrew.systems.KeepPressedSwitchCmd"
+
+sysHydraulic = require("kpcrew.systems.DFLT.sysHydraulic")
 
 -- LOW HYDRAULIC annunciator
 sysHydraulic.hydraulicLowAnc = CustomAnnunciator:new("hydrauliclow",
