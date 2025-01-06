@@ -437,5 +437,118 @@ function kc_macro_mcp_after_landing()
 	sysMCP.yawDamper:actuate(0)
 end
 
-return sysMacros
+-- set baros to local pressure at departure airport
+function kc_macro_set_local_baro()
+	set("sim/cockpit/misc/barometer_setting",math.floor(get("sim/weather/barometer_sealevel_inhg")*100)/100)
+	set("sim/cockpit/misc/barometer_setting2",math.floor(get("sim/weather/barometer_sealevel_inhg")*100)/100) 
+end
 
+-- packs all on
+function kc_macro_packs_on()
+	sysAir.packSwitchGroup:actuate(1)
+end
+
+-- packs all on
+function kc_macro_packs_off()
+	sysAir.packSwitchGroup:actuate(0)
+end
+
+-- packs for takeoff
+function kc_macro_packs_takeoff()
+	if activeBriefings:get("takeoff:packs") < 2 then 
+		sysAir.packSwitchGroup:setValue(1)
+	else
+		sysAir.packSwitchGroup:setValue(0)
+	end
+end
+
+-- bleeds on
+function kc_macro_bleeds_on()
+	sysAir.engBleedGroup:actuate(1) 
+end
+
+-- bleeds takeoff 
+function kc_macro_bleeds_takeoff()
+	if activeBriefings:get("takeoff:bleeds") > 1 then 
+		sysAir.engBleedGroup:actuate(1) 
+	else
+		sysAir.engBleedGroup:actuate(0) 
+	end
+	sysAir.apuBleedSwitch:actuate(0)
+end
+
+function kc_macro_below_10000_ft()
+	kc_macro_lights_descend_10k()
+	set("sim/cockpit2/switches/fasten_seat_belts",1) 
+end
+
+-- 10000 feet activities up and down
+function kc_macro_above_10000_ft()
+	kc_macro_lights_climb_10k()
+	set("sim/cockpit2/switches/fasten_seat_belts",0) 
+end
+
+function kc_macro_below_10000_ft()
+	kc_macro_lights_descend_10k()
+	kc_macro_lights_descend_10k()
+	set("sim/cockpit2/switches/fasten_seat_belts",1) 
+end
+
+function kc_macro_at_trans_alt()
+	command_once("sim/instruments/barometer_std")
+	command_once("sim/instruments/barometer_copilot_std")
+end
+
+function kc_macro_at_trans_lvl()
+	if math.abs(get("sim/cockpit2/gauges/actuators/barometer_setting_in_hg_pilot")-29.921249) < 0.01 then 
+		command_once("sim/instruments/barometer_std")
+	end
+	if activeBriefings:get("arrival:atisQNH") ~= "" then
+		if activePrefSet:get("general:baro_mode_hpa") then
+			set("sim/cockpit2/gauges/actuators/barometer_setting_in_hg_pilot", tonumber(activeBriefings:get("arrival:atisQNH")) * 0.02952999)
+			set("sim/cockpit2/gauges/actuators/barometer_setting_in_hg_copilot", tonumber(activeBriefings:get("arrival:atisQNH")) * 0.02952999) 
+		else
+			set("sim/cockpit2/gauges/actuators/barometer_setting_in_hg_pilot", tonumber(activeBriefings:get("arrival:atisQNH")))
+			set("sim/cockpit2/gauges/actuators/barometer_setting_in_hg_copilot", tonumber(activeBriefings:get("arrival:atisQNH"))) 
+		end
+	end
+end
+
+
+-- wait for climbing through 10.000 ft then execute items
+function kc_bck_climb_through_10k(trigger)
+	if get("sim/cockpit2/gauges/indicators/altitude_ft_pilot") > 10000 then
+		kc_speakNoText(0,"ten thousand")
+		kc_macro_above_10000_ft()
+		kc_procvar_set(trigger,false)
+	end
+end
+
+-- wait for descending through 10.000 ft then execute items
+function kc_bck_descend_through_10k(trigger)
+	if get("sim/cockpit2/gauges/indicators/altitude_ft_pilot") < 10000 then
+		kc_speakNoText(0,"ten thousand")
+		kc_macro_below_10000_ft()
+		kc_procvar_set(trigger,false)
+	end
+end
+
+-- wait for climbing through trans alt then execute items
+function kc_bck_transition_altitude(trigger)
+	if get("sim/cockpit2/gauges/indicators/altitude_ft_pilot") > activeBriefings:get("departure:transalt") then
+		kc_speakNoText(0,"transition altitude")
+		kc_macro_at_trans_alt()
+		kc_procvar_set(trigger,false)
+	end
+end
+
+-- wait for descending through trans lvl then execute items
+function kc_bck_transition_level(trigger)
+	if get("sim/cockpit2/gauges/indicators/altitude_ft_pilot") < activeBriefings:get("arrival:translvl")*100 then
+		kc_speakNoText(0,"transition level")
+		kc_macro_at_trans_lvl()
+		kc_procvar_set(trigger,false)
+	end
+end
+
+return sysMacros

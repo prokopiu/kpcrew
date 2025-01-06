@@ -21,7 +21,14 @@ local drefHydPressure1 		= "sim/cockpit2/hydraulics/indicators/hydraulic_pressur
 local drefHydPressure2 		= "sim/cockpit2/hydraulics/indicators/hydraulic_pressure_2"
 
 -- HYD Electric Pump
-sysHydraulic.elecHydPumpGroup = TwoStateDrefSwitch:new("hydpump","sim/cockpit2/switches/electric_hydraulic_pump_on",0)
+sysHydraulic.elecHydPumpGroup = TwoStateDrefSwitch:new("elechydpump","sim/cockpit2/switches/electric_hydraulic_pump_on",0)
+
+-- HYD Engine Pumps
+sysHydraulic.engHydPump1	= TwoStateDrefSwitch:new("enghydpump1","sim/cockpit2/hydraulics/actuators/engine_pump",0)
+sysHydraulic.engHydPump2	= TwoStateDrefSwitch:new("enghydpump2","sim/cockpit2/hydraulics/actuators/engine_pump",1)
+sysHydraulic.engHydPumpGroup = SwitchGroup:new("enghydpumps")
+sysHydraulic.engHydPumpGroup:addSwitch(sysHydraulic.engHydPump1)
+sysHydraulic.engHydPumpGroup:addSwitch(sysHydraulic.engHydPump2)
 
 -- LOW HYDRAULIC annunciator
 sysHydraulic.hydraulicLowAnc = CustomAnnunciator:new("hydrauliclow",

@@ -3,7 +3,8 @@
 
 -- @classmod sysControls
 -- @author Kosta Prokopiu
--- @copyright 2022 Kosta Prokopiu
+-- @copyright 2024 Kosta Prokopiu
+
 local sysControls = {
 	trimCenter 	= 2,
 	trimLeft 	= 1,
@@ -112,8 +113,7 @@ sysControls.rudderReset = TwoStateToggleSwitch:new("rudderreset","sim/cockpit2/c
 	"sim/flight_controls/rudder_trim_center")
 
 -- YAW Damper
-sysControls.yawDamper = TwoStateToggleSwitch:new("yawdamper","sim/cockpit2/switches/yaw_damper_on",0,
-	"sim/systems/yaw_damper_toggle")
+sysControls.yawDamper = TwoStateDrefSwitch:new("yawdamper","sim/cockpit2/switches/yaw_damper_on",0)
 
 --------- Annunciators
 

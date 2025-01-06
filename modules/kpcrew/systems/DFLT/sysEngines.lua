@@ -3,7 +3,8 @@
 
 -- @classmod sysEngines
 -- @author Kosta Prokopiu
--- @copyright 2022 Kosta Prokopiu
+-- @copyright 2024 Kosta Prokopiu
+
 local sysEngines = {
 }
 
@@ -25,8 +26,6 @@ local drefEngine1Oil 		= "sim/cockpit/warnings/annunciators/oil_pressure_low"
 local drefEngine2Oil 		= "sim/cockpit/warnings/annunciators/oil_pressure_low"
 local drefEngine1Fire 		= "sim/cockpit2/annunciators/engine_fires"
 local drefEngine2Fire 		= "sim/cockpit2/annunciators/engine_fires"
-
-logMsg ("Engine DFLT")
 
 ----------- Switches
 

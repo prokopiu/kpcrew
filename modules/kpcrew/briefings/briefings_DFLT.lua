@@ -27,10 +27,11 @@ kc_MELIssues 		= "no M E L issues|some M E L issues"
 -- MAX FUEL CAPACITY:		 xxxxx KG -  xxxxx LBS
 -- FUEL FLOW PER HOUR:		  xxxx KG -   xxxx LBS
 
+kc_MaxRamp			= -1		-- Max Ramp weight
 kc_DOW 				= -1		-- Dry Operating Weight (aka OEW)
 kc_MZFW  			= -1		-- Maximum Zero Fuel Weight
 kc_MaxFuel 			= -1		-- Maximum Fuel Capacity
-kc_MaxPayld 		= -1		-- Maximum Payload to be set
+kc_MaxPayload 		= -1		-- Maximum Payload to be set
 kc_MTOW 			= -1		-- Maximum Takeoff Weight
 kc_MLW  			= -1		-- Maximum Landing Weight
 kc_FFPH 			= -1		-- Fuel Flow per hour
@@ -56,7 +57,7 @@ kc_speeds_vlo		= 210		-- Maximum Gear Extended Speed Vlo 210 KIAS
 -- Altitudes
 kc_max_altitude		= 40000 -- Max Altitude
 
--- Briefing flags
+-- Briefing flags (not used at this time)
 -- kc_show_load_button = false
 -- kc_show_cost_index 	= false
 -- kc_show_fmc_buttons = false

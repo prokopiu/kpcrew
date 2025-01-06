@@ -26,7 +26,7 @@ local drefNav1Flip 			= "sim/cockpit2/radios/actuators/nav1_right_is_selected"
 local drefNav2Flip 			= "sim/cockpit2/radios/actuators/nav2_right_is_selected"
 local drefAdf1Flip 			= "sim/cockpit2/radios/actuators/adf1_right_is_selected"
 local drefAdf2Flip 			= "sim/cockpit2/radios/actuators/adf2_right_is_selected"
-local drefXpdrSwitch 		= ""
+local drefXpdrSwitch 		= "sim/cockpit/radios/transponder_mode"
 local drefXpdrCode 			= "sim/cockpit/radios/transponder_code"
 
 --------- Annunciator datarefs common
@@ -142,7 +142,7 @@ sysRadios.adf2Flip 			= TwoStateToggleSwitch:new("",drefAdf2Flip,0,
 sysRadios.adf2ActiveFreq 	= SimpleAnnunciator:new("",drefAdf2ActiveFreq,0)
 sysRadios.adf2StandbyFreq 	= SimpleAnnunciator:new("",drefAdf2StandbyFreq,0)
 
-sysRadios.xpdrSwitch 		= InopSwitch:new ("xpdr")
+sysRadios.xpdrSwitch 		= TwoStateDrefSwitch:new ("xpdr",drefXpdrSwitch,0)
 sysRadios.xpdrCode 			= TwoStateDrefSwitch:new ("xpdr",drefXpdrCode,0)
 
 -- render the MCP part
