@@ -33,4 +33,7 @@ local sysControls = {
 
 sysControls = require("kpcrew.systems.DFLT.sysControls")
 
+sysControls.flaps_pos = {[0] =   0, [1] = 0.125, [2] = 0.25, [3] = 0.375, [4] = 0.5, [5] = 0.625, [6] = 0.75, [7] = 0.875, [8] = 1}
+sysControls.flaps_spd = {[0] = 999, [1] =   999, [2] =  999, [3] =   999, [4] = 999, [5] =   999, [6] =  999, [7] =   999, [8] = 999}
+
 return sysControls

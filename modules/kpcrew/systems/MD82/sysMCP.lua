@@ -16,12 +16,6 @@ local MultiStateCmdSwitch 	= require "kpcrew.systems.MultiStateCmdSwitch"
 local InopSwitch 			= require "kpcrew.systems.InopSwitch"
 local KeepPressedSwitchCmd	= require "kpcrew.systems.KeepPressedSwitchCmd"
 
-local drefVORLocLight = "sim/cockpit2/autopilot/nav_status"
-local drefLNAVLight = "sim/cockpit2/radios/actuators/HSI_source_select_pilot"
-local drefSPDLight = "sim/cockpit2/autopilot/autothrottle_on"
-local drefVSLight = "sim/cockpit2/autopilot/vvi_status"
-local drefVNAVLight = "sim/cockpit2/autopilot/fms_vnav"
-
 sysMCP = require("kpcrew.systems.DFLT.sysMCP")
 
 -- A/P mode annunciator

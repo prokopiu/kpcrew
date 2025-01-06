@@ -53,29 +53,11 @@ kcSopFlightPhase = { [1] = "Cold & Dark", 	[2] = "Prel Preflight", [3] = "Prefli
 -- Set up SOP =========================================================================
 
 activeSOP = SOP:new("Zibo Mod SOP")
+set("sim/private/controls/shadow/cockpit_near_adjust",1)
 
 local testProc = Procedure:new("TEST","","")
 testProc:setFlightPhase(1)
-testProc:addItem(ProcedureItem:new("MCP","C&D",FlowItem.actorFO,5,false,
-	function () 
-	  kc_macro_mcp_cold_dark()
-	end))
-testProc:addItem(ProcedureItem:new("MCP","PREFLIGHT",FlowItem.actorFO,5,false,
-	function () 
-	  kc_macro_mcp_preflight()
-	end))
-testProc:addItem(ProcedureItem:new("MCP","TAKEOFF",FlowItem.actorFO,5,false,
-	function () 
-	  kc_macro_mcp_takeoff()
-	end))
-testProc:addItem(ProcedureItem:new("MCP","GA",FlowItem.actorFO,5,false,
-	function () 
-	  kc_macro_mcp_goaround()
-	end))
-testProc:addItem(ProcedureItem:new("MCP","AFTER LAND",FlowItem.actorFO,5,false,
-	function () 
-	  kc_macro_mcp_after_landing()
-	end))
+
 	
 -- ============ Electrical Power Up Procedure ============
 -- All paper work on board and checked
@@ -999,7 +981,7 @@ preflightFOProc:addItem(ProcedureItem:new("BAROMETRIC REFERENCE SELECTOR","%s|(a
 	function () 
 		kc_macro_set_pref_baro_mode()
 	end))
-preflightFOProc:addItem(ProcedureItem:new("BAROMETRIC SELECTORS TO LOCAL","%s|kc_getQNHString(kc_metar_local)",FlowItem.actorFO,0,
+preflightFOProc:addItem(ProcedureItem:new("BAROMETRIC SELECTORS TO LOCAL","%s|kc_getQNHString(origmetar)",FlowItem.actorFO,0,
 	function () 
 		return kc_macro_test_local_baro()
 	end,
@@ -1246,7 +1228,7 @@ preflightFOProc:addItem(ProcedureItem:new("  IAS/MACH SELECTOR","SET V2 %03d|act
 preflightFOProc:addItem(ProcedureItem:new("  LNAV","ARM",FlowItem.actorCPT,0,
 	function () return sysMCP.lnavSwitch:getStatus() == 1 end,nil,
 	function () return activeBriefings:get("takeoff:apMode") ~= 1 or
-		activeBriefings:get("departure:type") > 1 end))
+		activeBriefings:get("departure:deptype") > 1 end))
 preflightFOProc:addItem(ProcedureItem:new("  VNAV","ARM",FlowItem.actorCPT,0,
 	function () return sysMCP.vnavSwitch:getStatus() == 1 end,nil,
 	function () return activeBriefings:get("takeoff:apMode") ~= 1 end))
