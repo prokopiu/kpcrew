@@ -3,9 +3,7 @@
 
 -- @classmod sysAice
 -- @author Kosta Prokopiu
--- @copyright 2022 Kosta Prokopiu
-local sysAice = {
-}
+-- @copyright 2024 Kosta Prokopiu
 
 local TwoStateDrefSwitch 	= require "kpcrew.systems.TwoStateDrefSwitch"
 local TwoStateCmdSwitch	 	= require "kpcrew.systems.TwoStateCmdSwitch"
@@ -16,6 +14,9 @@ local CustomAnnunciator 	= require "kpcrew.systems.CustomAnnunciator"
 local TwoStateToggleSwitch	= require "kpcrew.systems.TwoStateToggleSwitch"
 local MultiStateCmdSwitch 	= require "kpcrew.systems.MultiStateCmdSwitch"
 local InopSwitch 			= require "kpcrew.systems.InopSwitch"
+local KeepPressedSwitchCmd	= require "kpcrew.systems.KeepPressedSwitchCmd"
+
+sysAice = require("kpcrew.systems.DFLT.sysAice")
 
 -- Window Heat
 sysAice.windowHeat1 		= TwoStateCmdSwitch:new("winheat1","laminar/CitX/ice/windshield_left",0,

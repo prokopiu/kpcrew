@@ -1352,7 +1352,7 @@ landingProc:addItem(ProcedureItem:new("AIR CONDITIONING PACK SWITCHES","AUTO",Fl
 	function () return activeBriefings:get("approach:packs") > 1 end))
 landingProc:addItem(ProcedureItem:new("AIR CONDITIONING PACK SWITCHES","OFF",FlowItem.actorPM,0,
 	function () return sysAir.packSwitchGroup:getStatus() == 0 end,
-	function () sysAir.packSwitchGroup:setValue(0) end,
+	function () sysAir.packSwitchGroup:actuate(0) end,
 	function () return activeBriefings:get("approach:packs") == 1 end))
 landingProc:addItem(ProcedureItem:new("LANDING LIGHTS","ON",FlowItem.actorPF,0,
 	function () return sysLights.landLightGroup:getStatus() > 0 end,
