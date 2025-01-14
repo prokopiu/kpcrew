@@ -27,19 +27,25 @@ local sysElectric = {
 
 sysElectric = require("kpcrew.systems.DFLT.sysElectric")
 
-return sysElectric
+-- APU Bus Switches
+sysElectric.apuGenBus1 		= TwoStateToggleSwitch:new("apubus1","laminar/md82/electrical/cross_tie_APU_L",0,
+	"laminar/md82cmd/electrical/cross_tie_APU_L")
+sysElectric.apuGenBus2 		= TwoStateToggleSwitch:new("apubus2","laminar/md82/electrical/cross_tie_APU_R",0,
+	"laminar/md82cmd/electrical/cross_tie_APU_R")
+sysElectric.apuGenBusGroup	= SwitchGroup:new("apubussgroup")
+sysElectric.apuGenBusGroup:addSwitch(sysElectric.apuGenBus1)
+sysElectric.apuGenBusGroup:addSwitch(sysElectric.apuGenBus2)
 
 -- GPU Bus Switches
--- sysElectric.gpuGenBus1 		= TwoStateToggleSwitch:new("gpubus1","laminar/md82/electrical/cross_tie_GPU_L",0,
-	-- "laminar/md82cmd/electrical/cross_tie_GPU_L")
--- sysElectric.gpuGenBus2 		= TwoStateToggleSwitch:new("gpubus2","laminar/md82/electrical/cross_tie_GPU_R",0,
-	-- "laminar/md82cmd/electrical/cross_tie_GPU_R")
+sysElectric.gpuGenBus1 		= TwoStateToggleSwitch:new("gpubus1","laminar/md82/electrical/cross_tie_GPU_L",0,
+	"laminar/md82cmd/electrical/cross_tie_GPU_L")
+sysElectric.gpuGenBus2 		= TwoStateToggleSwitch:new("gpubus2","laminar/md82/electrical/cross_tie_GPU_R",0,
+	"laminar/md82cmd/electrical/cross_tie_GPU_R")
+sysElectric.gpuGenBusGroup	= SwitchGroup:new("gpubussgroup")
+sysElectric.gpuGenBusGroup:addSwitch(sysElectric.gpuGenBus1)
+sysElectric.gpuGenBusGroup:addSwitch(sysElectric.gpuGenBus2)
 
--- APU Bus Switches
--- sysElectric.apuGenBus1 		= TwoStateToggleSwitch:new("apubus1","laminar/md82/electrical/cross_tie_APU_L",0,
-	-- "laminar/md82cmd/electrical/cross_tie_APU_L")
--- sysElectric.apuGenBus2 		= TwoStateToggleSwitch:new("apubus2","laminar/md82/electrical/cross_tie_APU_R",0,
-	-- "laminar/md82cmd/electrical/cross_tie_APU_R")
+return sysElectric
 
 -- Voltmeter MD82
 -- sysElectric.voltmeterSwitch = MultiStateCmdSwitch:new("voltmeter","laminar/md82/electrical/voltmeter_source",0,

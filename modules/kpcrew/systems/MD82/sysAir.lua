@@ -22,11 +22,22 @@ local KeepPressedSwitchCmd	= require "kpcrew.systems.KeepPressedSwitchCmd"
 
 sysAir = require("kpcrew.systems.DFLT.sysAir")
 
+-- APU Bleed
+sysAir.apuBleedSwitch 		= TwoStateCmdSwitch:new("apubleed","laminar/md82/bleedair/APU_on",0,
+	"laminar/md82cmd/bleedair/APU_dwn","laminar/md82cmd/bleedair/APU_up","nocommand")
+
+-- BLEED AIR
+sysAir.bleedEng1Switch 		= TwoStateToggleSwitch:new("bleed1","laminar/md82/bleedair/engineL_xfeed_lever",0,
+	"laminar/md82cmd/bleedair/L_xfeed_lever_toggle")
+sysAir.bleedEng2Switch 		= TwoStateToggleSwitch:new("bleed2","laminar/md82/bleedair/engineR_xfeed_lever",0, 	
+	"laminar/md82cmd/bleedair/R_xfeed_lever_toggle")
+sysAir.engBleedGroup 		= SwitchGroup:new("EngBleeds")
+sysAir.engBleedGroup:addSwitch(sysAir.bleedEng1Switch)
+sysAir.engBleedGroup:addSwitch(sysAir.bleedEng2Switch)
+	
 return sysAir
 
--- APU Bleed
--- sysAir.apuBleedSwitch 		= TwoStateCmdSwitch:new("apubleed","laminar/md82/bleedair/APU_on",0,
-	-- "laminar/md82cmd/bleedair/APU_dwn","laminar/md82cmd/bleedair/APU_up","nocommand")
+
 
 -- PACK switches
 -- sysAir.packLeftSwitch 		= TwoStateCustomSwitch:new("pack1","laminar/md82/bleedair/bleedair_HVAC_L",0,
@@ -57,11 +68,3 @@ return sysAir
 -- sysAir.packSwitchGroup:addSwitch(sysAir.packLeftSwitch)
 -- sysAir.packSwitchGroup:addSwitch(sysAir.packRightSwitch)
 
--- BLEED AIR
--- sysAir.bleedEng1Switch 		= TwoStateToggleSwitch:new("bleed1","laminar/md82/bleedair/engineL_xfeed_lever",0,
-	-- "laminar/md82cmd/bleedair/L_xfeed_lever_toggle")
--- sysAir.bleedEng2Switch 		= TwoStateToggleSwitch:new("bleed2","laminar/md82/bleedair/engineR_xfeed_lever",0,
-	-- "laminar/md82cmd/bleedair/R_xfeed_lever_toggle")
--- sysAir.engBleedGroup 		= SwitchGroup:new("EngBleeds")
--- sysAir.engBleedGroup:addSwitch(sysAir.bleedEng1Switch)
--- sysAir.engBleedGroup:addSwitch(sysAir.bleedEng2Switch)

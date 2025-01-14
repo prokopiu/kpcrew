@@ -52,6 +52,17 @@ sysElectric.gpuSwitch 		= TwoStateCmdSwitch:new("GPU","sim/cockpit/electrical/gp
 
 -- APU Bus Switches
 sysElectric.apuGenBus1 		= InopSwitch:new("apubus1")
+sysElectric.apuGenBus2 		= InopSwitch:new("apubus2")
+sysElectric.apuGenBusGroup	= SwitchGroup:new("apubussgroup")
+sysElectric.apuGenBusGroup:addSwitch(sysElectric.apuGenBus1)
+sysElectric.apuGenBusGroup:addSwitch(sysElectric.apuGenBus2)
+
+-- GPU Bus Switches
+sysElectric.gpuGenBus1 		= InopSwitch:new("gpubus1")
+sysElectric.gpuGenBus2 		= InopSwitch:new("gpubus2")
+sysElectric.gpuGenBusGroup	= SwitchGroup:new("gpubussgroup")
+sysElectric.gpuGenBusGroup:addSwitch(sysElectric.gpuGenBus1)
+sysElectric.gpuGenBusGroup:addSwitch(sysElectric.gpuGenBus2)
 
 -- GEN Switches
 sysElectric.gen1Switch 		= TwoStateCmdSwitch:new("gen1","sim/cockpit/electrical/generator_on",-1,
@@ -84,7 +95,8 @@ sysElectric.avionicsSwitchGroup:addSwitch(sysElectric.avionics1Bus)
 sysElectric.avionicsSwitchGroup:addSwitch(sysElectric.avionics2Bus)
 
 -- APU Starter
-sysElectric.apuStartSwitch 	= KeepPressedSwitchCmd:new("apu","sim/cockpit2/electrical/APU_running",0,"sim/electrical/APU_start")
+sysElectric.apuStartSwitch 	= KeepPressedSwitchCmd:new("apu","Rotate/md80/electrical/APU_power_available",0,
+	"Rotate/md80/electrical/APU_switch_up")
 
 --------- Annunciators
 

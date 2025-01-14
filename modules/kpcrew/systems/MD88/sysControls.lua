@@ -1,4 +1,4 @@
--- MD88  airplane 
+-- Rotate MD88 airplane 
 -- Flight Controls functionality
 
 -- @classmod sysControls

@@ -1,4 +1,4 @@
--- MD88 Airplane
+-- Rotate MD88 Airplane
 -- FMC related functionality
 
 -- @classmod sysFMC

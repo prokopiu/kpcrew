@@ -1,4 +1,4 @@
--- MD88 airplane 
+-- Rotate MD88 airplane 
 -- Hydraulic system functionality
 
 -- @classmod sysHydraulic
@@ -17,5 +17,8 @@ local InopSwitch 			= require "kpcrew.systems.InopSwitch"
 local KeepPressedSwitchCmd	= require "kpcrew.systems.KeepPressedSwitchCmd"
 
 sysHydraulic = require("kpcrew.systems.DFLT.sysHydraulic")
+
+-- HYD Electric Pump
+sysHydraulic.elecHydPumpGroup = TwoStateDrefSwitch:new("elechydpump","Rotate/md80/hydraulic/hyd_switch_electric",0)
 
 return sysHydraulic

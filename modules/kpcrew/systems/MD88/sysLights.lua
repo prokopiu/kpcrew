@@ -1,4 +1,4 @@
--- MD88 airplane 
+-- Rotate MD88 airplane 
 -- Aircraft lights specific functionality
 
 -- @classmod sysLights
@@ -17,5 +17,8 @@ local InopSwitch 			= require "kpcrew.systems.InopSwitch"
 local KeepPressedSwitchCmd	= require "kpcrew.systems.KeepPressedSwitchCmd"
 
 sysLights = require("kpcrew.systems.DFLT.sysLights")
+
+-- Beacons or Anticollision Lights, single, onoff, command driven
+sysLights.beaconSwitch 		= TwoStateDrefSwitch:new("beacon","Rotate/md80/lights/anticollision_light_switch",0)
 
 return sysLights

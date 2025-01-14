@@ -9,17 +9,15 @@ local sysMacros = {
 }
 
 function kc_macro_state_cold_and_dark()
-	command_once("sim/electrical/battery_1_off")
 	set_array("laminar/md82/safeguard",3,0)
-	kc_macro_ext_lights_off()
+	kc_macro_lights_cold_dark()
 	set("laminar/md82/electrical/voltmeter_source",0)
-
 	set("sim/cockpit2/controls/flap_ratio",0)
 	sysGeneral.doorGroup:actuate(0)
 	sysGeneral.doorL1:actuate(1)
-	sysGeneral.stairsLeft:actuate(1)
+	-- sysGeneral.stairsLeft:actuate(1)
 	sysGeneral.cockpitDoor:actuate(1)
-	sysElectric.gpuSwitch:actuate(0)
+	-- sysElectric.gpuSwitch:actuate(0)
 	if get("laminar/md82/safeguard",2) > 0 then
 		command_once("laminar/md82cmd/safeguard02")
 	end
@@ -28,27 +26,24 @@ function kc_macro_state_cold_and_dark()
 		command_once("sim/lights/generic_36_light_tog")
 	end
 	sysControls.yawDamper:actuate(0)
-	kc_macro_ext_lights_off()
-	sysGeneral.wiperSwitch1:actuate(0)
+	sysGeneral.wiperGroup:actuate(0)
 	sysGeneral.GearSwitch:actuate(1)
 	sysAir.engBleedGroup:actuate(0)
 	sysAir.packSwitchGroup:actuate(0)
 	sysFuel.fuelPumpGroup:actuate(0)
-	kc_macro_gpu_disconnect()
+	-- kc_macro_gpu_disconnect()
 	if get("laminar/md82/safeguard",3) == 1 then 
 		command_once("laminar/md82cmd/safeguard03")
 	end
-	command_once("sim/electrical/APU_off")
-	sysElectric.apuGenBus1:actuate(0)
-	sysElectric.apuGenBus2:actuate(0)
+	-- command_once("sim/electrical/APU_off")
+	-- sysElectric.apuGenBusGroup:actuate(0)
 	sysAir.apuBleedSwitch:actuate(0)
 	sysAir.bleedEng1Switch:actuate(0)
 	sysAir.packLeftSwitch:actuate(0)
 	sysFuel.fuelPumpRightAft:actuate(0)
-	sysElectric.batterySwitch:actuate(0) 
 	sysLights.positionSwitch:actuate(0)
-	sysElectric.voltmeterSwitch:actuate(1) 
-	sysEngines.startPumpDc:actuate(0)
+	command_once("sim/electrical/battery_1_off")
+	-- sysEngines.startPumpDc:actuate(0)
 end
 
 function kc_macro_state_turnaround()
@@ -97,6 +92,89 @@ function kc_macro_state_turnaround2()
 	sysFuel.fuelPumpRightAft:actuate(1)
 	kc_macro_gpu_disconnect()
 end
+
+-- ====================================== Lights related functions
+function kc_macro_lights_preflight()
+
+	-- set the lights as needed during preflight/turnaround
+	-- external
+	set_array("sim/cockpit2/switches/landing_lights_switch",1,0)
+	set_array("sim/cockpit2/switches/landing_lights_switch",2,0)
+	set_array("sim/cockpit2/switches/landing_lights_switch",3,0)
+	command_once("laminar/md82cmd/switches/navstrobe_lights_switch_up")	
+	command_once("laminar/md82cmd/switches/navstrobe_lights_switch_up")
+	command_once("laminar/md82cmd/switches/navstrobe_lights_switch_dwn")
+	set("sim/cockpit/electrical/beacon_lights_on",0)
+	set("laminar/md82/switches/navstrobe_lights_switch",0)
+	set_array("sim/cockpit2/switches/generic_lights_switch",1,0)
+	set_array("sim/cockpit2/switches/generic_lights_switch",2,0)
+	set_array("sim/cockpit2/switches/generic_lights_switch",3,1)
+	set("sim/cockpit/electrical/taxi_light_on",0)
+
+	-- internal
+	set_array("sim/cockpit2/switches/panel_brightness_ratio",0,0)
+	set_array("sim/cockpit2/switches/panel_brightness_ratio",1,0)
+	set_array("sim/cockpit2/switches/panel_brightness_ratio",2,0)
+	set_array("sim/cockpit2/switches/panel_brightness_ratio",3,0)
+
+	if kc_is_daylight() then		
+		set("sim/cockpit/electrical/instrument_brightness",0)
+
+		set_array("sim/cockpit2/switches/instrument_brightness_ratio",0,0)
+		set_array("sim/cockpit2/switches/instrument_brightness_ratio",1,0)
+		set_array("sim/cockpit2/switches/instrument_brightness_ratio",2,1)
+		set_array("sim/cockpit2/switches/instrument_brightness_ratio",3,1)
+		set_array("sim/cockpit2/switches/instrument_brightness_ratio",4,1)
+		
+		set_array("sim/cockpit2/switches/panel_brightness_ratio",0,0)
+		set_array("sim/cockpit2/switches/panel_brightness_ratio",1,0)
+		set_array("sim/cockpit2/switches/panel_brightness_ratio",2,0)
+		set_array("sim/cockpit2/switches/panel_brightness_ratio",3,0)
+	else
+		set("sim/cockpit/electrical/instrument_brightness",1)
+
+		set_array("sim/cockpit2/switches/instrument_brightness_ratio",0,1)
+		set_array("sim/cockpit2/switches/instrument_brightness_ratio",1,1)
+		set_array("sim/cockpit2/switches/instrument_brightness_ratio",2,1)
+		set_array("sim/cockpit2/switches/instrument_brightness_ratio",3,1)
+		set_array("sim/cockpit2/switches/instrument_brightness_ratio",4,1)
+		
+		set_array("sim/cockpit2/switches/panel_brightness_ratio",0,1)
+		set_array("sim/cockpit2/switches/panel_brightness_ratio",1,1)
+		set_array("sim/cockpit2/switches/panel_brightness_ratio",2,1)
+		set_array("sim/cockpit2/switches/panel_brightness_ratio",3,1)
+	end
+end
+
+function kc_macro_lights_cold_dark()
+	-- set the lights for cold & dark mode
+	-- external
+	set_array("sim/cockpit2/switches/landing_lights_switch",1,0)
+	set_array("sim/cockpit2/switches/landing_lights_switch",2,0)
+	set_array("sim/cockpit2/switches/landing_lights_switch",3,0)
+	command_once("laminar/md82cmd/switches/navstrobe_lights_switch_up")	command_once("laminar/md82cmd/switches/navstrobe_lights_switch_up")
+	set("sim/cockpit/electrical/beacon_lights_on",0)
+	set("laminar/md82/switches/navstrobe_lights_switch",0)
+	set_array("sim/cockpit2/switches/generic_lights_switch",1,0)
+	set_array("sim/cockpit2/switches/generic_lights_switch",2,0)
+	set_array("sim/cockpit2/switches/generic_lights_switch",3,0)
+	set("sim/cockpit/electrical/taxi_light_on",0)
+	
+	-- internal
+	set("sim/cockpit/electrical/instrument_brightness",0)
+
+	set_array("sim/cockpit2/switches/instrument_brightness_ratio",0,0)
+	set_array("sim/cockpit2/switches/instrument_brightness_ratio",1,0)
+	set_array("sim/cockpit2/switches/instrument_brightness_ratio",2,0)
+	set_array("sim/cockpit2/switches/instrument_brightness_ratio",3,0)
+	set_array("sim/cockpit2/switches/instrument_brightness_ratio",4,0)
+	
+	set_array("sim/cockpit2/switches/panel_brightness_ratio",0,0)
+	set_array("sim/cockpit2/switches/panel_brightness_ratio",1,0)
+	set_array("sim/cockpit2/switches/panel_brightness_ratio",2,0)
+	set_array("sim/cockpit2/switches/panel_brightness_ratio",3,0)
+end
+
 
 -- external lights all off
 function kc_macro_ext_lights_off()

@@ -1,10 +1,10 @@
 -- Base SOP for RotateSim MD-88 XP 12
 
--- @classmod SOP_MD82
+-- @classmod SOP_MD88
 -- @author Kosta Prokopiu
 -- @copyright 2024 Kosta Prokopiu
 
-local SOP_MD82 = {
+local SOP_MD88 = {
 }
 
 -- SOP related imports
@@ -44,6 +44,7 @@ sysRadios					= require("kpcrew.systems." .. kc_acf_icao .. ".sysRadios")
 sysMacros					= require("kpcrew.systems." .. kc_acf_icao .. ".sysMacros")	
 
 require("kpcrew.briefings.briefings_" .. kc_acf_icao)
+set("sim/private/controls/shadow/cockpit_near_adjust",1)
 
 kcSopFlightPhase = { [1] = "Cold & Dark", 	[2] = "Prel Preflight", [3] = "Preflight", 		[4] = "Before Start", 
 					 [5] = "After Start", 	[6] = "Taxi to Runway", [7] = "Before Takeoff", [8] = "Takeoff",
@@ -66,7 +67,7 @@ testProc:addItem(ProcedureItem:new("BATTERY SWITCH","ON",FlowItem.actorFO,0,true
 
 -- =========== PRELIMINARY COCKPIT PREPARATION ===========
 -- === COCKPIT SAFETY INSPECTION (CM2)
--- BATT SWITCH..............................ON/LOCK   (FO)
+-- BATTERY SWITCH...........................ON/LOCK   (FO)
 -- METER SELECTOR.........................BATT VOLT   (FO)
 -- BATTERY.........................CHECK ABOVE 25 V   (FO)
 -- WING/NACL LIGHTS..............................ON   (FO)
@@ -79,9 +80,11 @@ testProc:addItem(ProcedureItem:new("BATTERY SWITCH","ON",FlowItem.actorFO,0,true
 -- CIRCUIT BREAKERS....................CHECK ALL IN   (FO)
 -- PARKING BRAKE.................................ON   (FO)
 -- ACCU PRESS INDICATOR............CHECK GREEN BAND   (FO)
+
 -- === PRELIMINARY COCKPIT PREPARATION (CM2)
 -- EXT POWER................................CONNECT   (FO)
 -- EXT PWR L & R.............................ON BUS   (FO)
+
 -- ===== IF APU REQUIRED NOW                           
 -- FIRE LOOP TEST...........................PERFORM   (FO)
 -- ANTI COLLISION LIGHT..........................ON   (FO)
@@ -111,320 +114,100 @@ testProc:addItem(ProcedureItem:new("BATTERY SWITCH","ON",FlowItem.actorFO,0,true
 -- RUDDER TRIM.................................ZERO   (FO)
 -- =======================================================
 
-
 local prelCockpitPrep = Procedure:new("PRELIMINARY COCKPIT PREP","","")
 prelCockpitPrep:setFlightPhase(2)
+prelCockpitPrep:addItem(SimpleProcedureItem:new("=== COCKPIT SAFETY INSPECTION (CM2)"))
 
-
-local electricalPowerUpProc = Procedure:new("ELECTRICAL POWER UP","performing ELECTRICAL POWER UP","Power up finished")
-electricalPowerUpProc:setFlightPhase(1)
-electricalPowerUpProc:addItem(SimpleProcedureItem:new("All paper work on board and checked"))
-electricalPowerUpProc:addItem(SimpleProcedureItem:new("M E L and Technical Logbook checked"))
-
-electricalPowerUpProc:addItem(SimpleProcedureItem:new("== Initial Checks"))
-electricalPowerUpProc:addItem(ProcedureItem:new("WINDSHIELD WIPER SELECTORS","PARK/OFF",FlowItem.actorFO,0,
-	function () return sysGeneral.wiperSwitch1:getStatus() == 0 end,
-	function () sysGeneral.wiperSwitch1:actuate(0) end))
-electricalPowerUpProc:addItem(IndirectProcedureItem:new("FLAP LEVER","UP",FlowItem.actorFO,0,"initial_flap_lever",
+prelCockpitPrep:addItem(IndirectProcedureItem:new("BATTERY SWITCH","ON/LOCK",FlowItem.actorFO,0,"battswitch_safe",
+	function () return get("Rotate/md80/electrical/battery_on") == 2 end,
+	function () set("Rotate/md80/electrical/battery_on",2) end))
+prelCockpitPrep:addItem(IndirectProcedureItem:new("METER SELECTOR","BATT VOLT",FlowItem.actorFO,0,"metervoltinit",
+	function () return get("Rotate/md80/electrical/power_indicator_switch") == 4 end,
+	function () set("Rotate/md80/electrical/power_indicator_switch",4) end))
+prelCockpitPrep:addItem(IndirectProcedureItem:new("BATTERY VOLTAGE","CHECK MIN 25V",FlowItem.actorFO,0,"bat24v",
+	function () return get("Rotate/md80/electrical/dc_indicator_volt_amp") > 24.9 end))
+-- DC TRANSFER BUS OFF LIGHT....................OFF   (FO)
+prelCockpitPrep:addItem(ProcedureItem:new("LIGHTS & INSTRUMENT LIGHTING","SET",FlowItem.actorFO,0,true,
+	function () 
+		kc_macro_lights_preflight()
+		kc_macro_doors_preflight()
+	end))
+prelCockpitPrep:addItem(ProcedureItem:new("WINDSHIELD WIPER SELECTORS","PARK/OFF",FlowItem.actorFO,0,
+	function () return sysGeneral.wiperGroup:getStatus() <= 2 end,
+	function () sysGeneral.wiperGroup:actuate(1) end))
+prelCockpitPrep:addItem(ProcedureItem:new("LANDING GEAR LEVER","DOWN",FlowItem.actorFO,0,
+	function () return sysGeneral.GearSwitch:getStatus() == 1 end,
+	function () sysGeneral.GearSwitch:actuate(1) end))
+prelCockpitPrep:addItem(ProcedureItem:new("AUX HYD PUMP SWITCH","OFF",FlowItem.actorFO,0,
+	function () return sysHydraulic.elecHydPumpGroup:getStatus() == 0 end,
+	function () sysHydraulic.elecHydPumpGroup:actuate(0) end))
+prelCockpitPrep:addItem(IndirectProcedureItem:new("FLAP/SLAT LEVER","UP/RET",FlowItem.actorFO,0,"initial_flap_lever",
 	function () return sysControls.flapsSwitch:getStatus() == 0 end,
-	function () sysControls.flapsSwitch:actuate(0) end))								 
-electricalPowerUpProc:addItem(ProcedureItem:new("LANDING GEAR LEVER","DOWN",FlowItem.actorFO,0,
-	function () return sysGeneral.GearSwitch:getStatus() == modeOn end,
-	function () sysGeneral.GearSwitch:actuate(modeOn) end))
-
-electricalPowerUpProc:addItem(SimpleProcedureItem:new("==== DC Electric Power"))
-electricalPowerUpProc:addItem(ProcedureItem:new("CIRCUIT BREAKERS","CHECK ALL IN",FlowItem.actorFO,0,true))
-electricalPowerUpProc:addItem(IndirectProcedureItem:new("BATTERY VOLTAGE","CHECK MIN 24V",FlowItem.actorFO,0,"bat24v",
-	function () return get("sim/flightmodel/engine/ENGN_bat_volt",0) > 23 end,
-	function () sysElectric.voltmeterSwitch:actuate(4) end))
-electricalPowerUpProc:addItem(IndirectProcedureItem:new("BATTERY SWITCH","ON",FlowItem.actorFO,0,"battswitch_safe",
+	function () sysControls.flapsSwitch:actuate(0) end))
+prelCockpitPrep:addItem(ProcedureItem:new("SPEED BRAKE LEVER","RETRACTED & DISARMED",FlowItem.actorFO,0,
+	function () return get("Rotate/md80/systems/speedbrake_position") == 0 end,
+	function () set("Rotate/md80/systems/speedbrake_position",0) end))
+prelCockpitPrep:addItem(ProcedureItem:new("CIRCUIT BREAKERS","CHECK ALL IN",FlowItem.actorFO,0,true))
+prelCockpitPrep:addItem(ProcedureItem:new("IRS UNITS","NAV",FlowItem.actorFO,0,
 	function () return 
-		sysElectric.batterySwitch:getStatus() == 1 and
-		get("laminar/md82/safeguard",3) == 1
+		get("Rotate/md80/instruments/irs_mode_switch") == 2 and
+		get("Rotate/md80/instruments/irs2_mode_switch") == 2
 	end,
 	function () 
-		sysElectric.batterySwitch:actuate(1) 
-		if get("laminar/md82/safeguard",3) == 0 then 
-			command_once("laminar/md82cmd/safeguard03")
-		end
-		kc_macro_ext_lights_stand()
-		kc_macro_int_lights_on()
+		set("Rotate/md80/instruments/irs_mode_switch",2)
+		set("Rotate/md80/instruments/irs2_mode_switch",2)
 	end))
-electricalPowerUpProc:addItem(ProcedureItem:new("POSITION LIGHT SWITCH","ON",FlowItem.actorFO,0,
-	function () return sysLights.positionSwitch:getStatus() == 1 end,
-	function () sysLights.positionSwitch:actuate(1) end))
-electricalPowerUpProc:addItem(SimpleProcedureItem:new("==== Activate External Power",
-	function () return activePrefSet:get("aircraft:powerup_apu") == true end))
-electricalPowerUpProc:addItem(ProcedureItem:new("EXT POWER","CONNECTED",FlowItem.actorFO,0,
+prelCockpitPrep:addItem(ProcedureItem:new("RUDDER TRIM","ZERO",FlowItem.actorFO,0,
 	function () return 
-		sysElectric.gpuSwitch:getStatus() == 1 and
+		get("Rotate/md80/systems/rudder_deg") == 0
+	end,
+	function () 
+		set("sim/cockpit2/controls/rudder_trim",0) 
+	end))
+prelCockpitPrep:addItem(SimpleProcedureItem:new("==== PRELIMINARY COCKPIT PREPARATION (CM2)"))
+prelCockpitPrep:addItem(ProcedureItem:new("EXT POWER","CONNECTED",FlowItem.actorFO,0,
+	function () return 
+		get("Rotate/md80/electrical/GPU_power_available") == 1
+	end,
+	function () set("Rotate/md80/electrical/GPU_power_available",1) end))
+prelCockpitPrep:addItem(ProcedureItem:new("EXT PWR L & R","ON BUS",FlowItem.actorFO,0,
+	function () return 
 		sysElectric.gpuGenBus1:getStatus() == 1 and
 		sysElectric.gpuGenBus2:getStatus() == 1
 	end,
-	function () kc_macro_gpu_connect() end,
-	function () return activePrefSet:get("aircraft:powerup_apu") == true end))
-
-electricalPowerUpProc:addItem(SimpleProcedureItem:new("==== Activate APU",
-	function () return activePrefSet:get("aircraft:powerup_apu") == false end))
-electricalPowerUpProc:addItem(IndirectProcedureItem:new("FIRE LOOPS A TEST","TEST",FlowItem.actorFO,12,"testloopa",
-	function () return get("sim/cockpit2/annunciators/engine_fires",0) == 1 end,
-	function () command_begin("sim/annunciator/test_fire_L_annun") end,
-	function () return activePrefSet:get("aircraft:powerup_apu") == false end))
-electricalPowerUpProc:addItem(IndirectProcedureItem:new("FIRE LOOPS B TEST","TEST",FlowItem.actorFO,12,"testloopb",
-	function () return get("sim/cockpit2/annunciators/engine_fires",1) == 1 end,
 	function () 
-		command_end("sim/annunciator/test_fire_L_annun") 
-		command_begin("sim/annunciator/test_fire_R_annun") 
-	end,
-	function () return activePrefSet:get("aircraft:powerup_apu") == false end))
-electricalPowerUpProc:addItem(IndirectProcedureItem:new("START PUMP SW (DC)","ON",FlowItem.actorFO,0,"startuppmp",
-	function () return sysEngines.startPumpDc:getStatus() == 1 end,
-	function () 
-		sysEngines.startPumpDc:actuate(1)
-		command_end("sim/annunciator/test_fire_R_annun") 
-	end,
-	function () return activePrefSet:get("aircraft:powerup_apu") == false end))
-electricalPowerUpProc:addItem(ProcedureItem:new("ANTI COLLISION LIGHTS","ON",FlowItem.actorFO,0,
-	function () return sysLights.beaconSwitch:getStatus() == 1 end,
-	function () sysLights.beaconSwitch:actuate(1) end,
-	function () return activePrefSet:get("aircraft:powerup_apu") == false end))
-electricalPowerUpProc:addItem(IndirectProcedureItem:new("#spell|APU# START SW","START",FlowItem.actorFO,2,"apupwrstart",
-	function () return sysElectric.apuStartSwitch:getStatus() == 2 end,
-	function () sysElectric.apuStartSwitch:repeatOn() end,
-	function () return activePrefSet:get("aircraft:powerup_apu") == false end))
-
-electricalPowerUpProc:addItem(ProcedureItem:new("  #spell|APU# PWR AVAIL LIGHT","ILLUMINATED",FlowItem.actorFO,0,
-	function () return get("sim/cockpit2/electrical/APU_N1_percent") > 90 end,
-	function () sysElectric.apuStartSwitch:repeatOff() end,
-	function () return activePrefSet:get("aircraft:powerup_apu") == false end))
-electricalPowerUpProc:addItem(ProcedureItem:new("  #spell|APU# L & R BUS SWITCHES","ON",FlowItem.actorFO,0,
-	function () return 
-		sysElectric.apuGenBus1:getStatus() == 1 and
-		sysElectric.apuGenBus2:getStatus() == 1 
-	end,
-	function () 
-		sysElectric.apuGenBus1:actuate(1)
-		sysElectric.apuGenBus2:actuate(1)
-	end,
-	function () return activePrefSet:get("aircraft:powerup_apu") == false end))
-electricalPowerUpProc:addItem(ProcedureItem:new("  #spell|APU# POWER CONSUMPTION","CHECK BELOW 1.0",FlowItem.actorFO,0,
-	function () return get("sim/cockpit2/electrical/bus_load_amps") < 59.0 end,nil,
-	function () return activePrefSet:get("aircraft:powerup_apu") == false end))
-electricalPowerUpProc:addItem(ProcedureItem:new("  #spell|APU# AIR","ON",FlowItem.actorFO,0,
-	function () return sysAir.apuBleedSwitch:getStatus() > 0 end,
-	function () sysAir.apuBleedSwitch:actuate(1) end,
-	function () return activePrefSet:get("aircraft:powerup_apu") == false end))
-electricalPowerUpProc:addItem(ProcedureItem:new("  RIGHT PNEU-X-FEED","OPEN",FlowItem.actorFO,0,
-	function () return sysAir.bleedEng1Switch:getStatus() > 0 end,
-	function () sysAir.bleedEng1Switch:actuate(1) end,
-	function () return activePrefSet:get("aircraft:powerup_apu") == false end))
-electricalPowerUpProc:addItem(ProcedureItem:new("  RIGHT AFT FUEL PUMP SW","ON",FlowItem.actorFO,0,
-	function () return sysFuel.fuelPumpRightAft:getStatus() > 0 end,
-	function () 
-		sysFuel.fuelPumpGroup:actuate(0)
-		sysFuel.fuelPumpRightAft:actuate(1)
-	end,
-	function () return activePrefSet:get("aircraft:powerup_apu") == false end))
--- • AIR pressure centure duct CHECK  ?? ?where
-electricalPowerUpProc:addItem(ProcedureItem:new("START PUMP SW (DC)","OFF",FlowItem.actorFO,0,
-	function () return sysEngines.startPumpDc:getStatus() == 0 end,
-	function () sysEngines.startPumpDc:actuate(0) end,
-	function () return activePrefSet:get("aircraft:powerup_apu") == false end))
-
-electricalPowerUpProc:addItem(SimpleProcedureItem:new("==== "))
-electricalPowerUpProc:addItem(ProcedureItem:new("AVIONICS BRIGHTNESS","SET",FlowItem.actorFO,0,
-	function () return sysLights.instr7Light:getStatus() > 0 end,
-	function () kc_macro_glareshield_initial() end))
-
--- ================= PREFLIGHT PROCEDURE =================
--- ELECTRICAL POWER UP......................COMPLETE (F/O)
--- PRIMARY FLIGHT DISPLAYS........................ON (F/O)
--- NAVIGATION DISPLAYS............................ON (F/O)
--- ANNUNCIATOR LIGHTS ..........................TEST (F/O)
--- FLIGHT DIRECTORS...............................ON (F/O)
--- EFIS ........................................TEST (F/O)
--- AUTOLAND AVAILABILITY........................TEST (F/O)
--- TRIM.........................................TEST (F/O)
--- ENGINE SYNC SELECTOR..........................OFF (F/O)
--- GALLEY POWER...................................ON (F/O)
--- FUEL PUMP SWITCH.............................TEST (F/O)
--- NO SMOKING.....................................ON (F/O)
--- PITOT HEATER.................................TEST (F/O)
--- WINDSHIELD HEAT................................ON (F/O)
--- PNEUMATIC X-FEEDS............................OPEN (F/O)
--- GPWS.........................................TEST (F/O)
--- WINDSHEAR....................................TEST (F/O)
--- ANTI SKID....................................TEST (F/O)
--- STALL........................................TEST (F/O)
--- OVERSPEED....................................TEST (F/O)
--- YAW DAMPER.....................................ON (F/O)
--- ICE FOD......................................TEST (F/O)
--- TCAS.........................................TEST (F/O)
--- SET XPONDER.................................ABOVE (F/O)
--- TAKEOFF WARNING..............................TEST (F/O)
--- HYDRAULIC PUMP...............................TEST (F/O)
--- GEAR.........................................TEST (F/O)
--- WX RADAR.....................................TEST (F/O)
--- SET ALTIMETERS................................SET (F/O)
--- TRP..........................................TEST (F/O)
--- TRP TO TAKEOFF................................SET (F/O)
--- ADF..........................................TEST (F/O)
--- ZFW..........................................TEST (F/O)
-
--- BRIEFING..................................PERFORM (CPT)
--- STANDBY ATTITUDE INDICATOR...................CAGE (CPT)
--- EMERGENCY LIGHT TEST......................PERFORM (CPT)
--- ARRIVAL ELEVATION.............................SET (CPT)
--- FLIGHT DATA RECORDER PANEL....................SET (CPT)
--- FLIGHT CONTROL PANEL..........................SET (CPT)
--- FMS MCDU PROGRAMMING......................PERFORM (CPT)
--- AUTOFLIGHT PANEL..............................SET (CPT)
--- TRANSPONDER CODE..............................SET (CPT)
-
--- APU.........................................START (CPT)
--- COM, NAV RADIO'S AND TRANSPONDER..............SET (CPT)
--- TRP (IF REDUCED TAKE OFF) ....................SET (CPT)
--- SPEED BUGS....................................SET (CPT)
--- DEPARTURE BRIEF...........................PERFORM (CPT)
--- =======================================================
-
-local preflightProc = Procedure:new("PREFLIGHT PROCEDURE","starting pre flight procedure","")
-preflightProc:setFlightPhase(2)
-preflightProc:setResize(false)
-preflightProc:addItem(ProcedureItem:new("ELECTRICAL POWER UP","COMPLETE",FlowItem.actorFO,0,
-	function () return 
-		sysElectric.apuRunningAnc:getStatus() > 0 or
-		sysElectric.gpuOnBus:getStatus() == 1
+		sysElectric.gpuGenBus1:actuate(1)
+		sysElectric.gpuGenBus2:actuate(1)
 	end))
-preflightProc:addItem(ProcedureItem:new("PRIMARY FLIGHT DISPLAYS","ON",FlowItem.actorFO,0,
-	function () return sysLights.instr6Light:getStatus() == 1 end,
-	function () sysLights.instr6Light:actuate(1)end))
-preflightProc:addItem(ProcedureItem:new("NAVIGATION DISPLAYS","ON",FlowItem.actorFO,0,
-	function () return sysLights.instr7Light:getStatus() == 1 end,
-	function () sysLights.instr7Light:actuate(1)end))
-preflightProc:addItem(IndirectProcedureItem:new("ANNUNCIATOR LIGHTS","TEST",FlowItem.actorFO,3,"annuntest",
-	function () return get("sim/cockpit/warnings/annunciator_test_pressed") == 1 end,
-	function () command_begin("sim/annunciator/test_all_annunciators") end,
-	function () return activeBriefings:get("flight:firstFlightDay") == true end))
-preflightProc:addItem(ProcedureItem:new("EFIS","TEST",FlowItem.actorFO,0,true,
-	function () command_end("sim/annunciator/test_all_annunciators") end))
-preflightProc:addItem(ProcedureItem:new("AUTOLAND AVAILABILITY","TEST",FlowItem.actorFO,0,true,nil))
-preflightProc:addItem(ProcedureItem:new("TRIM","TEST",FlowItem.actorFO,0,true,nil))
-preflightProc:addItem(ProcedureItem:new("ENGINE SYNC SELECTOR","OFF",FlowItem.actorFO,0,true,nil))
-preflightProc:addItem(ProcedureItem:new("GALLEY POWER","ON",FlowItem.actorFO,0,
-	function () return sysElectric.galleyPower:getStatus() == 1 end,
-	function () sysElectric.galleyPower:actuate(1) end))
-preflightProc:addItem(ProcedureItem:new("FUEL PUMP SWITCH","TEST",FlowItem.actorFO,0,true,nil))
-preflightProc:addItem(ProcedureItem:new("NO SMOKING","ON",FlowItem.actorFO,0,
-	function () return sysGeneral.noSmokingSwitch:getStatus() == 1 end,
-	function () sysGeneral.noSmokingSwitch:actuate(1) end))
-preflightProc:addItem(ProcedureItem:new("PITOT HEATER","TEST",FlowItem.actorFO,0,true,nil))
-preflightProc:addItem(ProcedureItem:new("WINDSHIELD HEAT","ON",FlowItem.actorFO,0,
-	function () return sysAice.windowHeatGroup:getStatus() == 1 end,
-	function () sysAice.windowHeatGroup:actuate(1) end))
-preflightProc:addItem(ProcedureItem:new("PNEUMATIC X-FEEDS","OPEN",FlowItem.actorFO,0,
-	function () return sysAir.engBleedGroup:getStatus() == 2 end,
-	function () sysAir.engBleedGroup:actuate(1) end))
-preflightProc:addItem(ProcedureItem:new("GPWS","TEST",FlowItem.actorFO,0,true,nil))
-preflightProc:addItem(ProcedureItem:new("WINDSHEAR","TEST",FlowItem.actorFO,0,true,nil))
-preflightProc:addItem(ProcedureItem:new("ANTI SKID","TEST",FlowItem.actorFO,0,true,nil))
-preflightProc:addItem(ProcedureItem:new("STALL","TEST",FlowItem.actorFO,0,true,nil))
-preflightProc:addItem(ProcedureItem:new("OVERSPEED","TEST",FlowItem.actorFO,0,true,nil))
-preflightProc:addItem(ProcedureItem:new("YAW DAMPER","ON",FlowItem.actorFO,0,
-	function () return sysControls.yawDamper:getStatus() == 1 end,
-	function () sysControls.yawDamper:actuate(1) end))
-preflightProc:addItem(ProcedureItem:new("ICE FOD","TEST",FlowItem.actorFO,0,true,nil))
-preflightProc:addItem(ProcedureItem:new("TCAS","TEST",FlowItem.actorFO,0,true,nil))
-preflightProc:addItem(ProcedureItem:new("TRANSPONDER","ABOVE/SRBY",FlowItem.actorFO,0,
-	function () return sysRadios.xpdrSwitch:getStatus() <= 1 end,
-	function () sysRadios.xpdrSwitch:actuate(0) end))
-preflightProc:addItem(ProcedureItem:new("TAKEOFF WARNING","TEST",FlowItem.actorFO,0,true,nil))
-preflightProc:addItem(ProcedureItem:new("HYDRAULIC PUMP","TEST",FlowItem.actorFO,0,true,nil))
-preflightProc:addItem(ProcedureItem:new("GEAR","TEST",FlowItem.actorFO,0,true,nil))
-preflightProc:addItem(ProcedureItem:new("WX RADAR","TEST",FlowItem.actorFO,0,true,nil))
-preflightProc:addItem(ProcedureItem:new("BAROMETRIC SELECTORS TO LOCAL","%s|kc_getQNHString(kc_metar_local)",FlowItem.actorBOTH,0,true,
-	function () 
-		kc_macro_set_local_baro()
-	end))
-preflightProc:addItem(ProcedureItem:new("ADF","TEST",FlowItem.actorFO,0,true,nil))
-preflightProc:addItem(ProcedureItem:new("ZFW","TEST",FlowItem.actorFO,0,true,nil))
-preflightProc:addItem(ProcedureItem:new("TRP","TEST",FlowItem.actorFO,0,true,nil))
-preflightProc:addItem(ProcedureItem:new("TRP TO TAKEOFF","SET",FlowItem.actorFO,0,true,
-	function () kc_wnd_brief_action=1 end))
-
-preflightProc:addItem(HoldProcedureItem:new("BRIEFING","PERFORM",FlowItem.actorCPT))
-preflightProc:addItem(ProcedureItem:new("STANDBY ATTITUDE INDICATOR","CAGE",FlowItem.actorCPT,0,true,nil))
-preflightProc:addItem(ProcedureItem:new("EMERGENCY LIGHT TEST","PERFORM",FlowItem.actorCPT,0,true,nil))
-preflightProc:addItem(ProcedureItem:new("ARRIVAL ELEVATION","SET",FlowItem.actorCPT,0,true,nil))
-preflightProc:addItem(ProcedureItem:new("FLIGHT DATA RECORDER PANEL","SET",FlowItem.actorCPT,0,true,nil))
-preflightProc:addItem(ProcedureItem:new("FLIGHT CONTROL PANEL","SET",FlowItem.actorCPT,0,true,nil))
-preflightProc:addItem(HoldProcedureItem:new("FMS MCDU PROGRAMMING","PERFORM",FlowItem.actorCPT))
-preflightProc:addItem(ProcedureItem:new("AUTOFLIGHT PANEL","SET",FlowItem.actorCPT,0,
-	function () return sysMCP.altSelector:getStatus() == activePrefSet:get("aircraft:mcp_def_alt") end,
-	function () 
-		kc_macro_glareshield_initial()
-		
-	end))
-preflightProc:addItem(ProcedureItem:new("FLIGHT DIRECTORS","ON",FlowItem.actorCPT,0,
-	function () return sysMCP.fdirPilotSwitch:getStatus() == 1 end,
-	function () 
-		sysMCP.fdirPilotSwitch:actuate(1)													   
-	end))
-preflightProc:addItem(ProcedureItem:new("TRANSPONDER CODE","SET",FlowItem.actorCPT,0,
-	function () return sysRadios.xpdrSwitch:getStatus() <= 1 end,
-	function () 
-		sysRadios.xpdrSwitch:actuate(sysRadios.xpdrStby) 
-		local xpdrcode = activeBriefings:get("departure:squawk")
-		if xpdrCode == nil or xpdrCode == "" then
-			sysRadios.xpdrCode:actuate("2000")
-		else
-			sysRadios.xpdrCode:actuate(xpdrCode)
-		end
-	end))
-preflightProc:addItem(ProcedureItem:new("TAKEOFF FLAPS DIAL","SET",FlowItem.actorCPT,0,true,nil))
-preflightProc:addItem(ProcedureItem:new("CG TAKEOFF COMPUTER","SET",FlowItem.actorCPT,0,true,nil))
-preflightProc:addItem(ProcedureItem:new("STABILIZER TRIM","SET",FlowItem.actorCPT,0,true,nil))
-preflightProc:addItem(ProcedureItem:new("SEAT BELT SIGNS","ON",FlowItem.actorCPT,0,
-	function () return sysGeneral.seatBeltSwitch:getStatus() > 0 end,
-	function () 
-		sysGeneral.seatBeltSwitch:actuate(1)
-	end))
+prelCockpitPrep:addItem(ProcedureItem:new("POSITION LIGHT SWITCH","ON",FlowItem.actorFO,0,
+	function () return sysLights.positionSwitch:getStatus() == 1 end,
+	function () sysLights.positionSwitch:actuate(1) end))
 	
--- APU
-preflightProc:addItem(SimpleProcedureItem:new("==== Activate APU",
-	function () return activePrefSet:get("aircraft:powerup_apu") == true end))
-preflightProc:addItem(IndirectProcedureItem:new("FIRE LOOPS A TEST","TEST",FlowItem.actorFO,12,"testloopa",
-	function () return get("sim/cockpit2/annunciators/engine_fires",0) == 1 end,
-	function () command_begin("sim/annunciator/test_fire_L_annun") end,
-	function () return activePrefSet:get("aircraft:powerup_apu") == true end))
-preflightProc:addItem(IndirectProcedureItem:new("FIRE LOOPS B TEST","TEST",FlowItem.actorFO,12,"testloopb",
-	function () return get("sim/cockpit2/annunciators/engine_fires",1) == 1 end,
-	function () 
-		command_end("sim/annunciator/test_fire_L_annun") 
-		command_begin("sim/annunciator/test_fire_R_annun") 
+prelCockpitPrep:addItem(SimpleProcedureItem:new("==== Activate APU",
+	function () return activePrefSet:get("aircraft:powerup_apu") == false end))
+prelCockpitPrep:addItem(IndirectProcedureItem:new("  START PUMP SW (DC)","ON",FlowItem.actorFO,0,"startuppmpapu",
+	function () return get("Rotate/md80/fuel/start_pump") == 1 end,
+	function () set("Rotate/md80/fuel/start_pump",1) end,
+	function () return activePrefSet:get("aircraft:powerup_apu") == false end))
+prelCockpitPrep:addItem(IndirectProcedureItem:new("  #spell|APU# L & R BUS SWITCHES","OFF",FlowItem.actorFO,0,"preapubusoff",
+	function () return 
+		sysElectric.apuGenBus1:getStatus() == 0 and
+		sysElectric.apuGenBus2:getStatus() == 0 
 	end,
-	function () return activePrefSet:get("aircraft:powerup_apu") == true end))
-preflightProc:addItem(IndirectProcedureItem:new("START PUMP SW (DC)","ON",FlowItem.actorFO,0,"startuppmp",
-	function () return sysEngines.startPumpDc:getStatus() == 1 end,
 	function () 
-		sysEngines.startPumpDc:actuate(1)
-		command_end("sim/annunciator/test_fire_R_annun") 
+		sysElectric.apuGenBus1:actuate(0)
+		sysElectric.apuGenBus2:actuate(0)
 	end,
-	function () return activePrefSet:get("aircraft:powerup_apu") == true end))
-preflightProc:addItem(ProcedureItem:new("ANTI COLLISION LIGHTS","ON",FlowItem.actorFO,0,
-	function () return sysLights.beaconSwitch:getStatus() == 1 end,
-	function () sysLights.beaconSwitch:actuate(1) end,
-	function () return activePrefSet:get("aircraft:powerup_apu") == true end))
-preflightProc:addItem(IndirectProcedureItem:new("#spell|APU# START SW","START",FlowItem.actorFO,2,"apupwrstart",
-	function () return sysElectric.apuStartSwitch:getStatus() == 2 end,
+	function () return activePrefSet:get("aircraft:powerup_apu") == false end))
+prelCockpitPrep:addItem(IndirectProcedureItem:new("#spell|  APU# START SW","START",FlowItem.actorFO,7,"apupwrstart",
+	function () return sysElectric.apuStartSwitch:getStatus() > 0 end,
 	function () sysElectric.apuStartSwitch:repeatOn() end,
-	function () return activePrefSet:get("aircraft:powerup_apu") == true end))
-
-preflightProc:addItem(ProcedureItem:new("  #spell|APU# PWR AVAIL LIGHT","ILLUMINATED",FlowItem.actorFO,0,
-	function () return get("sim/cockpit2/electrical/APU_N1_percent") > 90 end,
+	function () return activePrefSet:get("aircraft:powerup_apu") == false end))
+prelCockpitPrep:addItem(ProcedureItem:new("  #spell|APU# PWR AVAIL LIGHT","ILLUMINATED",FlowItem.actorFO,0,
+	function () return get("Rotate/md80/electrical/APU_power_available") == 1 end,
 	function () sysElectric.apuStartSwitch:repeatOff() end,
-	function () return activePrefSet:get("aircraft:powerup_apu") == true end))
-preflightProc:addItem(ProcedureItem:new("  #spell|APU# L & R BUS SWITCHES","ON",FlowItem.actorFO,0,
+	function () return activePrefSet:get("aircraft:powerup_apu") == false end))
+prelCockpitPrep:addItem(ProcedureItem:new("  #spell|APU# L & R BUS SWITCHES","ON",FlowItem.actorFO,0,
 	function () return 
 		sysElectric.apuGenBus1:getStatus() == 1 and
 		sysElectric.apuGenBus2:getStatus() == 1 
@@ -433,278 +216,555 @@ preflightProc:addItem(ProcedureItem:new("  #spell|APU# L & R BUS SWITCHES","ON",
 		sysElectric.apuGenBus1:actuate(1)
 		sysElectric.apuGenBus2:actuate(1)
 	end,
-	function () return activePrefSet:get("aircraft:powerup_apu") == true end))
-preflightProc:addItem(ProcedureItem:new("  #spell|APU# POWER CONSUMPTION","CHECK BELOW 1.0",FlowItem.actorFO,0,
-	function () return get("sim/cockpit2/electrical/bus_load_amps") < 65.0 end,nil,
-	function () return activePrefSet:get("aircraft:powerup_apu") == true end))
-preflightProc:addItem(ProcedureItem:new("  #spell|APU# AIR","ON",FlowItem.actorFO,0,
+	function () return activePrefSet:get("aircraft:powerup_apu") == false end))
+prelCockpitPrep:addItem(ProcedureItem:new("  #spell|APU# POWER CONSUMPTION","CHECK BELOW 1.0",FlowItem.actorFO,0,
+	function () return get("sim/cockpit2/electrical/bus_load_amps") < 59.0 end,
+	function () set("Rotate/md80/electrical/power_indicator_switch",0) end,
+	function () return activePrefSet:get("aircraft:powerup_apu") == false end))
+prelCockpitPrep:addItem(ProcedureItem:new("  #spell|APU# AIR","ON",FlowItem.actorFO,0,
 	function () return sysAir.apuBleedSwitch:getStatus() > 0 end,
 	function () sysAir.apuBleedSwitch:actuate(1) end,
-	function () return activePrefSet:get("aircraft:powerup_apu") == true end))
-preflightProc:addItem(ProcedureItem:new("  RIGHT PNEU-X-FEED","OPEN",FlowItem.actorFO,0,
-	function () return sysAir.bleedEng1Switch:getStatus() > 0 end,
-	function () sysAir.bleedEng1Switch:actuate(1) end,
-	function () return activePrefSet:get("aircraft:powerup_apu") == true end))
-preflightProc:addItem(ProcedureItem:new("  RIGHT AFT FUEL PUMP SW","ON",FlowItem.actorFO,0,
+	function () return activePrefSet:get("aircraft:powerup_apu") == false end))
+prelCockpitPrep:addItem(ProcedureItem:new("  RIGHT PNEU-X-FEED","OPEN",FlowItem.actorFO,0,
+	function () return sysAir.bleedEng2Switch:getStatus() > 0 end,
+	function () sysAir.bleedEng2Switch:actuate(1) end,
+	function () return activePrefSet:get("aircraft:powerup_apu") == false end))
+prelCockpitPrep:addItem(ProcedureItem:new("  RIGHT AFT FUEL PUMP SW","ON",FlowItem.actorFO,0,
 	function () return sysFuel.fuelPumpRightAft:getStatus() > 0 end,
 	function () 
-		sysFuel.fuelPumpGroup:actuate(0)
+		sysFuel.allFuelPumpGroup:actuate(0)
 		sysFuel.fuelPumpRightAft:actuate(1)
 	end,
-	function () return activePrefSet:get("aircraft:powerup_apu") == true end))
--- • AIR pressure centure duct CHECK  ?? ?where
-preflightProc:addItem(ProcedureItem:new("START PUMP SW (DC)","OFF",FlowItem.actorFO,0,
-	function () return sysEngines.startPumpDc:getStatus() == 0 end,
-	function () sysEngines.startPumpDc:actuate(0) end,
-	function () return activePrefSet:get("aircraft:powerup_apu") == true end))
-preflightProc:addItem(ProcedureItem:new("EXT POWER","DISCONNECT",FlowItem.actorCPT,0,
-	function () return 
-		sysElectric.gpuGenBus1:getStatus() == 0 and
-		sysElectric.gpuGenBus2:getStatus() == 0 and
-		sysElectric.gpuSwitch:getStatus() == 0 
+	function () return activePrefSet:get("aircraft:powerup_apu") == false end))
+
+prelCockpitPrep:addItem(ProcedureItem:new("  START PUMP SW (DC)","OFF",FlowItem.actorFO,0,
+	function () return get("Rotate/md80/fuel/start_pump",0) == 0 end,
+	function () 
+		set("Rotate/md80/fuel/start_pump",0)
+		set("Rotate/md80/fuel/right_aft_pump",1)
 	end,
-	function () kc_macro_gpu_disconnect() end))
+	function () return activePrefSet:get("aircraft:powerup_apu") == false end))
+prelCockpitPrep:addItem(ProcedureItem:new("  APU AIR SWITCH","ON",FlowItem.actorFO,0,
+	function () return get("Rotate/md80/air/APU_bleed_air_switch") > 0 end,
+	function () set("Rotate/md80/air/APU_bleed_air_switch",1) end,
+	function () return activePrefSet:get("aircraft:powerup_apu") == false end))
+prelCockpitPrep:addItem(ProcedureItem:new("EMERGENCY LIGHTS SWITCH","ARM",FlowItem.actorFO,0,
+	function () return get("Rotate/md80/systems/emergency_lights_switch") == 1 end,
+	function () set("Rotate/md80/systems/emergency_lights_switch",1) end))
 
+prelCockpitPrep:addItem(IndirectProcedureItem:new("ANNUNCIATOR/DIGITAL LIGHTS","TEST",FlowItem.actorFO,10,"annuntest",
+	function () return get("Rotate/md80/test/annun_digital_click") == 1 end,
+	function () command_begin("Rotate/md80/test/annun_digital") end,
+	function () return activeBriefings:get("flight:firstFlightDay") == 2 end))
+prelCockpitPrep:addItem(ProcedureItem:new("EFIS","TEST",FlowItem.actorFO,0,true,
+	function () command_end("Rotate/md80/test/annun_digital") end))
+prelCockpitPrep:addItem(ProcedureItem:new("CABIN PRESS CONTROL LEVER","CHECK & AUTO",FlowItem.actorFO,0,
+	function () return 
+		get("Rotate/md80/air/cabin_press_control_lever") == 1 and
+		get("Rotate/md80/air/cabin_press_control_wheel") == 147
+	end,
+	function () 
+		set("Rotate/md80/air/cabin_press_control_lever",0) 
+		set("Rotate/md80/air/cabin_press_control_wheel",147)
+		set("Rotate/md80/air/cabin_press_control_lever",1) 
+	end))
+prelCockpitPrep:addItem(ProcedureItem:new("AILERON TRIM","FREE",FlowItem.actorFO,0,
+	function () return 
+		get("Rotate/md80/systems/aileron_l_deg") < 0.001 and
+		get("Rotate/md80/systems/aileron_r_deg") < 0.001
+	end,
+	function () set("sim/cockpit2/controls/aileron_trim",0) end))
+prelCockpitPrep:addItem(ProcedureItem:new("RUDDER TRIM","ZERO",FlowItem.actorFO,0,
+	function () return 
+		get("Rotate/md80/systems/rudder_deg") == 0
+	end,
+	function () 
+		set("sim/cockpit2/controls/rudder_trim",0) 
+		kc_speakNoText(0,"I am out for the walk around")
+	end))
+prelCockpitPrep:addItem(HoldProcedureItem:new("KPCREW DEPARTURE BRIEF","PERFORM",FlowItem.actorCPT))
 
-preflightProc:addItem(HoldProcedureItem:new("COM, NAV RADIO'S AND TRANSPONDER","SET",FlowItem.actorCPT))
-preflightProc:addItem(ProcedureItem:new("TRP (IF REDUCED TAKE OFF)","SET",FlowItem.actorCPT,0,true,nil))
-preflightProc:addItem(HoldProcedureItem:new("SPEED BUGS","SET",FlowItem.actorCPT))
-preflightProc:addItem(HoldProcedureItem:new("KPCREW DEPARTURE BRIEF","PERFORM",FlowItem.actorCPT,
-	function () kc_wnd_brief_action = 1 end))
-
-
--- ========= PRE-START CHECK ABOVE (F/O SILENT) ==========
--- CIRCUIT BREAKERS.....................CHECK ALL IN (F/O)
--- L & R AC BUS X TIE...........................AUTO (F/O)
--- DC BUS X TIE.................................OPEN (F/O)
--- EMERG POWER...........................CHECKED/OFF (F/O)
--- GALLEY POWER...................................ON (F/O)
--- CABIN ALT CNTRL WHEEL/LEVER AUTO/VALVE.......OPEN (F/O)
--- PNEUM X-FEED VALVE LEVERS....................OPEN (F/O)
--- CABIN PRESS CONTROL...........................SET (F/O)
--- COCKPIT / CABIN CONTROL..........TEMP AS REQUIRED (F/O)
--- OXYGEN CYL PRESS..........................CHECKED (F/O)
--- FLIGHT RECORDER.......................CHECKED/SET (F/O)
--- VOICE RECORDER............................CHECKED (F/O)
--- CADC/FD CMD/ EFIS SEL....................... NORM (F/O)
--- ENG SYNC SELECTOR ............................OFF (F/O)
--- GPWS......................................CHECKED (F/O)
--- ANTI-SKID ..........................CHECKED/ARMED (F/O)
--- STALL WARNING.............................CHECKED (F/O)
--- MAX SPEED WARNING.........................CHECKED (F/O)
--- MACH TRIM COMPENSATOR.....................ON/NORM (F/O)
--- YAW DAMPER.....................................ON (F/O)
--- RADIO RACK....................................FAN (F/O)
--- AIR COND SHUTOFF.............................AUTO (F/O)
--- RAM AIR.......................................OFF (F/O)
--- FUEL PUMPS................................CHECKED (F/O)
--- IGNITION......................................OFF (F/O)
--- EMER LIGHTS.........................CHECKED/ARMED (F/O)
--- NO SMOKING SW..................................ON (F/O)
--- SEATBELT SW....................................ON (F/O)
--- PITOT HEAT............................CHECKED/OFF (F/O)
--- AIRFOIL / ENG ANTI ICE....................... OFF (F/O)
--- WINDSHIELD HEAT................................ON (F/O)
--- ANNUNCIATOR / DIGITAL LIGHTS............. CHECKED (F/O)
--- DFGS / NAVAIDS................................SET (F/O)
--- FLIGHT INSTRUMENTS....................... CHECKED (F/O)
--- BRAKE PRESSURE & TEMP.................... CHECKED (F/O)
--- HYDRAULIC SYSTEM..........................CHECKED (F/O)
--- GEAR LIGHTS & AURAL WARNING.............. CHECKED (F/O)
--- FUEL USED...................................RESET (F/O)
--- ENGINE INSTRUMENTS........................CHECKED (F/O)
--- STATIC AIR SELECTOR..........................NORM (F/O)
--- TCAS......................................CHECKED (F/O)
--- RADAR.....................................CHECKED (F/O)
--- RUD HYD CONTROL.........................LEVER PWR (F/O)
--- FUEL X-FEED.............................LEVER OFF (F/O)
--- FUEL SWITCHES.............................CHECKED (F/O)
-
--- T/O WARNING.............................. CHECKED (F/O)
--- STABILIZER................................CHECKED (F/O)
--- SPOILERS.............................DISARMED/RET (F/O)
--- FLAPS/SLATS..............................UP / RET (F/O)
+-- ============ COCKPIT PREPARATION PROCEDURE ============
+-- === CM1 (CPT)
+-- PARKING BRAKE................................SET  (CPT)
+-- WING LDG LTS & NOSE LTS SWITCHES ........RET/OFF  (CPT)
+-- FGCP/FGS...............................CHECK/SET  (CPT)
+-- FD SWITCH.............................MOVE TO FD  (CPT)  
+-- AUTOPILOT...................................TEST  (CPT) 
+-- AUTOPILOT SWITCH.............................OFF  (CPT)
+-- FLIGHT & NAV INSTRUMENTS......CHECK first flight
+-- EFIS........................................TEST  (CPT)
+-- Clock..................................CHECK/SET  (CPT)
+-- STATIC AIR SELECTOR........................ NORM  (CPT)
+-- CREW OXYGEN & MASK....................TEST/CHECK  (CPT) 
+-- PRIMARY STABILIZER TRIM.....................TEST  (CPT)
+-- ALTERNATE STABILIZER TRIM...................TEST  (CPT)
+-- === PF
+-- RADIO AIDS...................................SET   (PF)
+-- SPEED READOUT................................SET   (PF)   
+-- HDG READOUT..................................SET   (PF)  
+-- DFGS.........................................SET   (PF)  
+-- ALT READOUT..................................SET   (PF) 
+-- FMS SETUP...............................FINISHED   (PF)
 -- =======================================================
 
-local preStartProc = Procedure:new("PRE-START CHECKS ABOVE THE LINE","performing pre-start checks","ready for pre start checklist")
-preStartProc:setFlightPhase(4)
-preStartProc:setResize(false)
-preStartProc:addItem(ProcedureItem:new("CIRCUIT BREAKERS","CHECK ALL IN",FlowItem.actorFO,0,true))
-preStartProc:addItem(ProcedureItem:new("L & R AC BUS X TIE","AUTO",FlowItem.actorFO,0,
-	function () return sysElectric.acBusXTie:getStatus() == 1 end,
-	function () sysElectric.acBusXTie:actuate(1) end))
-preStartProc:addItem(ProcedureItem:new("DC BUS X TIE","OPEN",FlowItem.actorFO,0,
-	function () return sysElectric.dcBusXTie:getStatus() == 0 end,
-	function () sysElectric.dcBusXTie:actuate(0) end))
-preStartProc:addItem(ProcedureItem:new("EMERG POWER","CHECKED/OFF",FlowItem.actorFO,0,
-	function () return get("sim/cockpit/electrical/battery_array_on",1) == 0 end,
-	function () command_once("sim/electrical/battery_2_off") end))
-preStartProc:addItem(ProcedureItem:new("GALLEY POWER","OFF",FlowItem.actorFO,0,
-	function () return sysElectric.galleyPower:getStatus() == 0 end,
-	function () sysElectric.galleyPower:actuate(0) end))
-preStartProc:addItem(ProcedureItem:new("CABIN ALT CNTRL WHEEL/LEVER AUTO/VALVE","OPEN",FlowItem.actorFO,0,true))
-preStartProc:addItem(ProcedureItem:new("PNEUM X-FEED VALVE LEVERS","BOTH OPEN",FlowItem.actorFO,0,
+local cockpitPrepProc1 = Procedure:new("COCKPIT PREPARATION CM1","","")
+cockpitPrepProc1:setFlightPhase(3)
+
+cockpitPrepProc1:addItem(HoldProcedureItem:new("FMS DATA ENTRY","PERFORM",FlowItem.actorCPT))
+cockpitPrepProc1:addItem(ProcedureItem:new("PARKING BRAKE","SET",FlowItem.actorCPT,0,
+	function () return sysGeneral.parkBrakeSwitch:getStatus() == 1 end,
+	function () sysGeneral.parkBrakeSwitch:actuate(1) end))
+
+cockpitPrepProc1:addItem(ProcedureItem:new("WING LDG LTS & NOSE LTS SWITCHES","RET/OFF",FlowItem.actorCPT,0,
 	function () return 
-		sysAir.bleedEng1Switch:getStatus() > 0 and
-		sysAir.bleedEng2Switch:getStatus() > 0 
+		get("Rotate/md80/lights/wing_ldg_light_switch_l") == 0 and
+		get("Rotate/md80/lights/wing_ldg_light_switch_r") == 0 and
+		get("Rotate/md80/lights/nose_light_switch") == 0
 	end,
 	function () 
-		sysAir.bleedEng1Switch:actuate(1) 
-		sysAir.bleedEng2Switch:actuate(1) 
+		set("Rotate/md80/lights/wing_ldg_light_switch_l",0)
+		set("Rotate/md80/lights/wing_ldg_light_switch_r",0)
+		set("Rotate/md80/lights/nose_light_switch",0)
 	end))
-preStartProc:addItem(ProcedureItem:new("CABIN PRESS CONTROL","SET",FlowItem.actorFO,0,true))
-preStartProc:addItem(ProcedureItem:new("COCKPIT / CABIN CONTROL","AUTO",FlowItem.actorFO,0,
+cockpitPrepProc1:addItem(ProcedureItem:new("FGCP/FGS","CHECK/SET",FlowItem.actorCPT,0,
+	function () return kc_is_preflight_fgcp_checked() end,
+	function () kc_macro_mcp_preflight() end))
+cockpitPrepProc1:addItem(HoldProcedureItem:new("FLIGHT & NAV INSTRUMENTS","CHECK",FlowItem.actorCPT))
+cockpitPrepProc1:addItem(ProcedureItem:new("CLOCK LEFT","CHECK/SET",FlowItem.actorCPT,0,
+	function () return get("Rotate/md80/instruments/timer_switch") == 1 end,
+	function () set("Rotate/md80/instruments/timer_switch",2) end))
+cockpitPrepProc1:addItem(ProcedureItem:new("STATIC AIR SELECTOR LEFT","NORM",FlowItem.actorCPT,0,
+	function () return get("Rotate/md80/systems/static_air_l") == 0 end,
+	function () set("Rotate/md80/systems/static_air_l",0) end))
+-- CREW OXYGEN & MASK....................TEST/CHECK  (CPT) not supported
+
+cockpitPrepProc1:addItem(HoldProcedureItem:new("RADIO AIDS","SET",FlowItem.actorCPT))
+cockpitPrepProc1:addItem(HoldProcedureItem:new("SPEED READOUT","SET",FlowItem.actorCPT))
+cockpitPrepProc1:addItem(HoldProcedureItem:new("HDG READOUT","SET",FlowItem.actorCPT))
+cockpitPrepProc1:addItem(HoldProcedureItem:new("DFGS","SET",FlowItem.actorCPT))
+cockpitPrepProc1:addItem(HoldProcedureItem:new("ALT READOUT","SET",FlowItem.actorCPT))
+cockpitPrepProc1:addItem(HoldProcedureItem:new("FMS SETUP","FINISHED",FlowItem.actorCPT))
+
+-- ============ COCKPIT PREPARATION PROCEDURE ============
+-- === CM2 (FO)
+-- GROUND SERVICE POWER SWITCHES................OFF   (FO)
+-- MAINTENANCE INTERPHONE SWITCH................OFF   (FO)
+-- FLIGHT RECORDER/AIDS TEST....................SET   (FO)
+-- FIRE SUPPRESSION SYSTEM (SDFSS).............TEST   (FO)
+-- FIRE DETECTOR LOOPS SWITCHES............... BOTH   (FO)
+-- INSTRUMENT TRANSFER SELECTORS.............NORMAL   (FO) 
+-- WAGS........................................TEST   (FO)
+-- ELECTRICAL SYSTEM..........................CHECK   (FO) 
+-- EMERGENCY ELECTRICAL POWER..............TEST/OFF   (FO) 
+-- APU PANEL..................................CHECK   (FO) 
+-- ENG IGN SELECTOR.............................OFF   (FO)
+-- FUEL SYSTEM.....................TEST/AS REQUIRED   (FO)  
+-- EMERGENCY LIGHTS.............................ARM   (FO)
+-- CABIN SIGNS................................ON/ON   (FO) 
+-- PITOT AND STATIC HEATERS................TEST/OFF   (FO)
+-- AIRFOIL & ENG ANTI-ICE SWITCHES..............OFF   (FO) 
+-- WINDSHIELD ANTI-FOG SWITCH...................OFF   (FO)  
+-- WINDSHIELD ANTI-ICE SWITCH....................ON   (FO)
+-- ENG SYNC SELECTOR............................OFF   (FO)  
+-- GND PROX WARN SWITCH........................NORM   (FO)  
+-- STALL WARNING SYSTEM........................TEST   (FO) 
+-- YAW DAMP SWITCH...............................ON   (FO) 
+-- OVERSPEED WARNING SYSTEM....................TEST   (FO)
+-- MACH TRIM COMP SWITCH.......................NORM   (FO)  
+-- LOGO LIGHTS..........................AS REQUIRED   (FO)
+-- CKPT & CABIN TEMP SELECTORS.............TEST/SET   (FO) 
+-- RADIO RACK SWITCH............................FAN   (FO) 
+-- CABIN PRESSURE CONTROLLER....................SET   (FO) 
+-- AIR COND SHUTOFF SWITCH.....................AUTO   (FO)
+-- RAM AIR SWITCH.......................AS REQUIRED   (FO)
+-- LIGHTS.......................................SET   (FO)  
+-- FGCP/FGS...............................CHECK/SET   (FO)   
+-- ENG FIRE SHUTOFF HANDLES......................IN   (FO)  
+-- FIRE PROTECTION SYSTEM......................TEST   (FO)  
+-- REVERSE THRUST LIGHTS........................OFF   (FO)  
+-- ENGINE INDICATORS..........................CHECK   (FO)  
+-- FUEL USED READOUTS.........................RESET   (FO)  
+-- ENGINE OIL INDICATORS......................CHECK   (FO) 
+-- TRC.........................................TEST   (FO)  
+-- FUEL QTY INDICATOR..........................TEST   (FO) 
+-- GEAR DOOR OPEN LIGHT.........................OFF   (FO)
+-- GEAR LIGHTS & AURAL WARNING.................TEST   (FO)  
+-- TAS/SAT....................................CHECK   (FO) 
+-- FLIGHT & NAVIGATION INSTRUMENTS.......TEST/CHECK   (FO) 
+-- CLOCK..................................CHECK/SET   (FO)  
+-- SDP........................................CHECK   (FO)   
+-- HYDRAULIC SYSTEM............................TEST   (FO) 
+-- Hydraulic System.............................SET   (FO)  
+-- BRAKE TEMP INDICATOR....................TEST/ALL   (FO)
+-- STATIC AIR SELECTOR.........................NORM   (FO)  
+-- CREW OXYGEN AND MASK..................TEST/CHECK   (FO) 
+-- PRIMARY STABILIZER TRIM.....................TEST   (FO)   
+-- RADAR...................................TEST/OFF   (FO)
+-- RUD HYD CONT LEVER...........................PWR   (FO)  
+-- TAKEOFF WARNING / THRUST LEVERS........TEST/IDLE   (FO)  
+-- FUEL SHUTOFF LEVERS..........................OFF   (FO)
+-- FUEL X-FEED LEVER............................OFF   (FO)  
+-- FLAP T.O. SELECTOR..........................STOW   (FO) 
+-- ATC/TCAS................................SET/TEST   (FO)  
+-- ADF.........................................TEST   (FO) 
+-- =======================================================
+
+local cockpitPrepProc2 = Procedure:new("COCKPIT PREPARATION CM2","","")
+cockpitPrepProc2:setFlightPhase(3)
+cockpitPrepProc2:addItem(ProcedureItem:new("GROUND SERVICE POWER SWITCHES","OFF",FlowItem.actorFO,0,
 	function () return 
-		get("laminar/md82/bleedair/HVAC_L_knob") == 0 and
-		get("laminar/md82/bleedair/HVAC_R_knob") == 0
+		get("Rotate/md80/electrical/APU_gs_bus_switch") == 0 and
+		get("Rotate/md80/electrical/GPU_gs_bus_switch") == 0
 	end,
-	function () 
-		set("laminar/md82/bleedair/HVAC_L_knob",0)
-		set("laminar/md82/bleedair/HVAC_R_knob",0)
+	function ()  
+		set("Rotate/md80/electrical/APU_gs_bus_switch",0)
+		set("Rotate/md80/electrical/GPU_gs_bus_switch",0)
 	end))
-preStartProc:addItem(ProcedureItem:new("OXYGEN CYL PRESS","CHECK",FlowItem.actorFO,0,true))
-preStartProc:addItem(ProcedureItem:new("FLIGHT RECORDER","CHECK/SET",FlowItem.actorFO,0,true))
-preStartProc:addItem(ProcedureItem:new("VOICE RECORDER","CHECK",FlowItem.actorFO,0,true))
-preStartProc:addItem(ProcedureItem:new("CADC/FD CMD/ EFIS SEL","NORM",FlowItem.actorFO,0,true))
-preStartProc:addItem(ProcedureItem:new("ENG SYNC SELECTOR","OFF",FlowItem.actorFO,0,true))
-preStartProc:addItem(ProcedureItem:new("GPWS","CHECK",FlowItem.actorFO,0,true))
-preStartProc:addItem(ProcedureItem:new("ANTI-SKID","CHECKED/ARMED",FlowItem.actorFO,0,
-	function () return get("sim/cockpit2/switches/generic_lights_switch",35) > 0 end,
-	function () 
-		if get("sim/cockpit2/switches/generic_lights_switch",35) == 0 then
-			command_once("sim/lights/generic_36_light_tog")
+cockpitPrepProc2:addItem(ProcedureItem:new("FLIGHT RECORDER/AIDS","TEST/NORM",FlowItem.actorFO,0,
+	function () return get("Rotate/md80/systems/flt_recorder_switch") == 0 end,
+	function () set("Rotate/md80/systems/flt_recorder_switch",0) end,
+	function ()
+		return activeBriefings:get("flight:firstFlightDay") == 2 
+	end))
+cockpitPrepProc2:addItem(ProcedureItem:new("FIRE DETECTOR LOOPS SWITCHES","BOTH",FlowItem.actorFO,0,
+	function () return 
+		get("Rotate/md80/systems/fire_det_loop_selector_apu") == 1 and
+		get("Rotate/md80/systems/fire_det_loop_selector_l") == 1 and
+		get("Rotate/md80/systems/fire_det_loop_selector_r") == 1
+	end,
+	function ()  
+		set("Rotate/md80/systems/fire_det_loop_selector_apu",1) 
+		set("Rotate/md80/systems/fire_det_loop_selector_l",1) 
+		set("Rotate/md80/systems/fire_det_loop_selector_r",1) 
+	end))
+cockpitPrepProc2:addItem(ProcedureItem:new("EMERGENCY ELECTRICAL POWER","OFF",FlowItem.actorFO,0,
+	function () return get("Rotate/md80/electrical/emergency_power_switch") == 0 end,
+	function () set("Rotate/md80/electrical/emergency_power_switch",0) end))	
+cockpitPrepProc2:addItem(ProcedureItem:new("ENG IGN SELECTOR","OFF",FlowItem.actorFO,0,
+	function () return get("Rotate/md80/engines/igniter_switch") == 1 end,
+	function () set("Rotate/md80/engines/igniter_switch",1) end))
+cockpitPrepProc2:addItem(ProcedureItem:new("EMERGENCY LIGHTS","ARM",FlowItem.actorFO,0,
+	function () return get("Rotate/md80/systems/emergency_lights_switch") == 1 end,
+	function () set("Rotate/md80/systems/emergency_lights_switch",1) end))
+cockpitPrepProc2:addItem(ProcedureItem:new("CABIN SIGNS","ON/ON",FlowItem.actorFO,0,
+	function () return 
+		get("Rotate/md80/systems/seatbelts_switch") == 1 and
+		get("Rotate/md80/systems/no_smoking_switch") == 1
+	end,
+	function ()  
+		set("Rotate/md80/systems/seatbelts_switch",1)
+		set("Rotate/md80/systems/no_smoking_switch",1)
+	end))
+cockpitPrepProc2:addItem(ProcedureItem:new("PITOT AND STATIC HEATERS","OFF",FlowItem.actorFO,0,
+	function () return get("Rotate/md80/ice/probes_antiice_switch") == 0 end,
+	function () set("Rotate/md80/ice/probes_antiice_switch",0) end))
+cockpitPrepProc2:addItem(ProcedureItem:new("AIRFOIL & ENG ANTI-ICE SWITCHES","OFF",FlowItem.actorFO,0,
+	function () return 
+		get("Rotate/md80/ice/airfoil_antiice") == 0 and
+		get("Rotate/md80/ice/tail_heat_switch_clicked") == 0 and
+		get("Rotate/md80/ice/engine_antiice_left") == 0 and
+		get("Rotate/md80/ice/engine_antiice_right") == 0
+	end,
+	function ()  
+		set("Rotate/md80/ice/airfoil_antiice",0) 
+		set("Rotate/md80/ice/engine_antiice_left",0)		
+		set("Rotate/md80/ice/engine_antiice_right",0) 
+		if get("Rotate/md80/ice/tail_heat_switch_clicked") == 1 then
+			command_once("Rotate/md80/ice/tail_heat_switch")
 		end
 	end))
-preStartProc:addItem(IndirectProcedureItem:new("STALL WARNING","CHECK",FlowItem.actorFO,2,"stallwarn",
-	function () return get("sim/cockpit2/annunciators/stall_warning") > 0 end,
-	function () command_begin("sim/annunciator/test_stall") end))
-preStartProc:addItem(ProcedureItem:new("MAX SPEED WARNING","CHECKED",FlowItem.actorFO,0,
-	function () return true end,
+cockpitPrepProc2:addItem(ProcedureItem:new("WINDSHIELD ANTI-FOG SWITCH","OFF",FlowItem.actorFO,0,
+	function () return get("Rotate/md80/systems/windshield_antifog_switch") == 0 end,
+	function () set("Rotate/md80/systems/windshield_antifog_switch",0) end))	
+cockpitPrepProc2:addItem(ProcedureItem:new("WINDSHIELD ANTI-ICE SWITCH","ON",FlowItem.actorFO,0,
+	function () return get("Rotate/md80/ice/windshield_antiice_switch") == 1 end,
+	function () set("Rotate/md80/ice/windshield_antiice_switch",1) end))
+cockpitPrepProc2:addItem(ProcedureItem:new("ENG SYNC SELECTOR","OFF",FlowItem.actorFO,0,
+	function () return get("Rotate/md80/systems/eng_sync_switch") == 0 end,
+	function () set("Rotate/md80/systems/eng_sync_switch",0) end))
+cockpitPrepProc2:addItem(ProcedureItem:new("GND PROX WARN SWITCH","TEST/NORM",FlowItem.actorFO,0,
+	function () return get("Rotate/md80/test/gpws_test_switch") == 0 end,
+	function () command_once("Rotate/md80/test/gpws_test_switch_up") end))
+cockpitPrepProc2:addItem(IndirectProcedureItem:new("STALL WARNING SYSTEM 1","TEST",FlowItem.actorFO,4,"stalltest1",
+	function () return get("Rotate/md80/test/stall_test_switch") == 1 end,
+	function () set("Rotate/md80/test/stall_test_switch",1) end,
+	function ()
+		return activeBriefings:get("flight:firstFlightDay") == 2 
+	end))
+cockpitPrepProc2:addItem(IndirectProcedureItem:new("STALL WARNING SYSTEM 2","TEST",FlowItem.actorFO,4,"stalltest2",
+	function () return get("Rotate/md80/test/stall_test_switch") == -1 end,
+	function () set("Rotate/md80/test/stall_test_switch",-1) end,
+	function ()
+		return activeBriefings:get("flight:firstFlightDay") == 2 
+	end))
+cockpitPrepProc2:addItem(ProcedureItem:new("STALL WARNING SYSTEM","NORM",FlowItem.actorFO,0,
+	function () return get("Rotate/md80/test/stall_test_switch") == 0 end,
+	function () set("Rotate/md80/test/stall_test_switch",0) end))
+cockpitPrepProc2:addItem(ProcedureItem:new("YAW DAMPER SWITCH","ON",FlowItem.actorFO,0,
+	function () return get("Rotate/md80/systems/yaw_damper_switch") == 1 end,
+	function () set("Rotate/md80/systems/yaw_damper_switch",1) end))
+cockpitPrepProc2:addItem(IndirectProcedureItem:new("OVERSPEED WARNING SYSTEM 1","TEST",FlowItem.actorFO,4,"ovspdtest1",
+	function () return get("Rotate/md80/test/max_speed_test_switch") == 1 end,
+	function () set("Rotate/md80/test/max_speed_test_switch",1) end,
+	function ()
+		return activeBriefings:get("flight:firstFlightDay") == 2 
+	end))
+cockpitPrepProc2:addItem(IndirectProcedureItem:new("OVERSPEED WARNING SYSTEM 2","TEST",FlowItem.actorFO,4,"ovspdtest2",
+	function () return get("Rotate/md80/test/max_speed_test_switch") == -1 end,
+	function () set("Rotate/md80/test/max_speed_test_switch",-1) end,
+	function ()
+		return activeBriefings:get("flight:firstFlightDay") == 2 
+	end))
+cockpitPrepProc2:addItem(ProcedureItem:new("OVERSPEED WARNING SYSTEM","NORM",FlowItem.actorFO,0,
+	function () return get("Rotate/md80/test/max_speed_test_switch") == 0 end,
+	function () set("Rotate/md80/test/max_speed_test_switch",0) end))
+cockpitPrepProc2:addItem(ProcedureItem:new("MACH TRIM COMP SWITCH","NORM",FlowItem.actorFO,0,
+	function () return get("Rotate/md80/systems/mach_trim_comp_override") == 0 end,
+	function () set("Rotate/md80/systems/mach_trim_comp_override",0) end))
+cockpitPrepProc2:addItem(ProcedureItem:new("LOGO LIGHTS","AS REQUIRED",FlowItem.actorFO,0,
 	function () 
-		command_end("sim/annunciator/test_stall") 
-	end))
-preStartProc:addItem(ProcedureItem:new("MACH TRIM COMPENSATOR","ON/NORM",FlowItem.actorFO,0,true))
-preStartProc:addItem(ProcedureItem:new("YAW DAMPER","ON",FlowItem.actorFO,0,
-	function () return sysControls.yawDamper:getStatus() == 1 end,
-	function () sysControls.yawDamper:actuate(1) end))
-preStartProc:addItem(ProcedureItem:new("RADIO RACK","FAN",FlowItem.actorFO,0,true))
-preStartProc:addItem(ProcedureItem:new("AIR COND SHUTOFF","AUTO",FlowItem.actorFO,0,true))
-preStartProc:addItem(ProcedureItem:new("RAM AIR","OFF",FlowItem.actorFO,0,true))
-preStartProc:addItem(ProcedureItem:new("FUEL PUMPS","CHECKED",FlowItem.actorFO,0,
-	function () return sysFuel.fuelPumpGroup:getStatus() > 2 end,
-	function () sysFuel.fuelPumpGroup:actuate(1) end))
-preStartProc:addItem(ProcedureItem:new("IGNITION","OFF",FlowItem.actorFO,0,
-	function () return sysEngines.ignition:getStatus() == 0 end,
-	function () sysEngines.ignition:actuate(0) end))
-preStartProc:addItem(ProcedureItem:new("EMER LIGHTS","CHECKED/ARMED",FlowItem.actorFO,0,true))
-preStartProc:addItem(ProcedureItem:new("NO SMOKING SW","ON",FlowItem.actorFO,0,
-	function () return sysGeneral.noSmokingSwitch:getStatus() == 1 end,
-	function () sysGeneral.noSmokingSwitch:actuate(1) end))
-preStartProc:addItem(ProcedureItem:new("SEATBELT SW","ON",FlowItem.actorFO,0,
-	function () return sysGeneral.seatBeltSwitch:getStatus() == 1 end,
-	function () sysGeneral.seatBeltSwitch:actuate(1) end))
-preStartProc:addItem(ProcedureItem:new("PITOT HEAT","CHECKED/OFF",FlowItem.actorFO,0,
-	function () return sysAice.pitotHeat:getStatus() < 2 end,
-	function () sysAice.pitotHeat:actuate(2) end))
-preStartProc:addItem(ProcedureItem:new("AIRFOIL ANTI ICE","OFF",FlowItem.actorFO,0,
-	function () return sysAice.antiIceWingGroup:getStatus() == 0 end,
-	function () sysAice.antiIceWingGroup:actuate(0) end))
-preStartProc:addItem(ProcedureItem:new("ENG ANTI ICE","OFF",FlowItem.actorFO,0,
-	function () return sysAice.antiIceEngGroup:getStatus() == 0 end,
-	function () sysAice.antiIceEngGroup:actuate(0) end))
-preStartProc:addItem(ProcedureItem:new("WINDSHIELD HEAT","ON",FlowItem.actorFO,0,
-	function () return sysAice.windowHeatGroup:getStatus() > 0 end,
-	function () sysAice.windowHeatGroup:actuate(1) end))
-preStartProc:addItem(IndirectProcedureItem:new("ANNUNCIATOR / DIGITAL LIGHTS","CHECKED",FlowItem.actorFO,5,"annuntest",
-	function () return get("sim/cockpit/warnings/annunciator_test_pressed") == 1 end,
-	function () command_begin("sim/annunciator/test_all_annunciators") end))
-preStartProc:addItem(ProcedureItem:new("DFGS / NAVAIDS","SET",FlowItem.actorFO,0,true,
-	function () command_end("sim/annunciator/test_all_annunciators") end))
-preStartProc:addItem(ProcedureItem:new("FLIGHT INSTRUMENTS","CHECKED",FlowItem.actorFO,0,true))
-preStartProc:addItem(ProcedureItem:new("BRAKE PRESSURE & TEMP","CHECKED",FlowItem.actorFO,0,true))
-preStartProc:addItem(ProcedureItem:new("HYDRAULIC SYSTEM","CHECKED",FlowItem.actorFO,0,true))
-preStartProc:addItem(ProcedureItem:new("GEAR LIGHTS & AURAL WARNING","CHECKED",FlowItem.actorFO,0,
-	function () return 
-		get("laminar/md82/controls/landing_gear_handle") == 1
+		if kc_is_daylight() then
+			return get("Rotate/md80/lights/logo_light_switch") == 0 
+		else
+			return get("Rotate/md80/lights/logo_light_switch") == 1
+		end			
 	end,
-	function () set("laminar/md82/controls/landing_gear_handle",1) end))
-preStartProc:addItem(ProcedureItem:new("FUEL USED","RESET",FlowItem.actorFO,0,true))
-preStartProc:addItem(ProcedureItem:new("ENGINE INSTRUMENTS","CHECKED",FlowItem.actorFO,0,
-	function () return 
-		get("sim/cockpit2/engine/indicators/EPR_ratio",0) == 1.0 and
-		get("sim/cockpit2/engine/indicators/EPR_ratio",1) == 1.0 and
-		get("sim/flightmodel/engine/ENGN_N1_",0) == 0 and
-		get("sim/flightmodel/engine/ENGN_N1_",1) == 0 and
-		get("sim/flightmodel2/engines/EGT_deg_C",0) < 10 and
-		get("sim/flightmodel2/engines/EGT_deg_C",1) < 10 and
-		get("sim/flightmodel/engine/ENGN_N2_",0) == 0 and
-		get("sim/flightmodel/engine/ENGN_N2_",1) == 0
+	function () 
+		if kc_is_daylight() then
+			set("Rotate/md80/lights/logo_light_switch",0)
+		else
+			set("Rotate/md80/lights/logo_light_switch",1)
+		end			
 	end))
-preStartProc:addItem(ProcedureItem:new("STATIC AIR SELECTOR","NORM",FlowItem.actorFO,0,true))
-preStartProc:addItem(ProcedureItem:new("TCAS","CHECKED",FlowItem.actorFO,0,
-	function () return get("sim/cockpit/radios/transponder_mode") == 1 end,
-	function () set("sim/cockpit/radios/transponder_mode",1) end))
-preStartProc:addItem(ProcedureItem:new("RADAR","CHECKED",FlowItem.actorFO,0,true))
-preStartProc:addItem(ProcedureItem:new("RUD HYD CONTROL","LEVER PWR",FlowItem.actorFO,0,true))
-preStartProc:addItem(ProcedureItem:new("FUEL X-FEED","LEVER OFF",FlowItem.actorFO,0,true))
-preStartProc:addItem(ProcedureItem:new("FUEL SWITCHES","CHECKED",FlowItem.actorFO,0,
-	function () return sysFuel.fuelPumpGroup:getStatus() > 0 end,
-	function () sysFuel.fuelPumpGroup:actuate(1) end))
-preStartProc:addItem(ProcedureItem:new("T/O WARNING","CHECKED",FlowItem.actorFO,0,true))
-preStartProc:addItem(ProcedureItem:new("STABILIZER","CHECKED",FlowItem.actorFO,0,true))
-preStartProc:addItem(ProcedureItem:new("SPOILERS","DISARMED/RET",FlowItem.actorFO,0,
-	function () return sysControls.speedBrake:getStatus() == 0 end,
-	function () sysControls.speedBrake:actuate(0) end))
-preStartProc:addItem(ProcedureItem:new("FLAPS/SLATS","UP/RETRACTED",FlowItem.actorFO,0,
-	function () return sysControls.flapsSwitch:getStatus() == 0 end,
-	function () sysControls.flapsSwitch:actuate(0) end))
+cockpitPrepProc2:addItem(ProcedureItem:new("CKPT & CABIN TEMP SELECTORS","SET",FlowItem.actorFO,0,
+	function () 
+		return 
+			get("Rotate/md80/air/temp_control_cockpit_setting") == 0.5 and
+			get("Rotate/md80/air/temp_control_cabin_setting") == 0.5 
+	end,
+	function () 
+		set("Rotate/md80/air/temp_control_cockpit_setting",0.5)
+		set("Rotate/md80/air/temp_control_cabin_setting",0.5 )
+	end))
+cockpitPrepProc2:addItem(ProcedureItem:new("RADIO RACK SWITCH","FAN",FlowItem.actorFO,0,
+	function () return get("Rotate/md80/systems/radio_rack_switch") == 1 end,
+	function () set("Rotate/md80/systems/radio_rack_switch",1) end))
+cockpitPrepProc2:addItem(ProcedureItem:new("CABIN PRESSURE CONTROLLER","SET",FlowItem.actorFO,0,
+	function () 
+		return 
+			get("Rotate/md80/air/land_altitude_set") == math.floor(get("sim/flightmodel2/position/pressure_altitude")/10) and
+			get("Rotate/md80/air/land_pressure_set") == get("sim/weather/barometer_sealevel_inhg") 
+	end,
+	function () 
+		set("Rotate/md80/air/land_altitude_set",get("sim/flightmodel2/position/pressure_altitude")/10)
+		set("Rotate/md80/air/land_pressure_set",get("sim/weather/barometer_sealevel_inhg"))
+	end))	
+cockpitPrepProc2:addItem(ProcedureItem:new("AIR COND SHUTOFF SWITCH","AUTO",FlowItem.actorFO,0,
+	function () return get("Rotate/md80/air/aircon_shutoff_ovrd") == 0 end,
+	function () set("Rotate/md80/air/aircon_shutoff_ovrd",0) end))
+cockpitPrepProc2:addItem(ProcedureItem:new("RAM AIR SWITCH","AS REQUIRED",FlowItem.actorFO,0,
+	function () return get("Rotate/md80/air/aircon_ram_air") == 0 end,
+	function () set("Rotate/md80/air/aircon_ram_air",0) end))
+cockpitPrepProc2:addItem(ProcedureItem:new("FGCP/FGS","CHECK/SET",FlowItem.actorFO,0,
+	function () return sysMCP.fdirPilotSwitch:getStatus() == 1 end,
+	function () kc_macro_mcp_preflight() end))
 
--- ================ PRE-START CHECK BELOW ================
--- COVERS & PINS.............................REMOVED (CPT)
--- AIRCRAFT LOG & DOCUMENTS.........CHECKED ON BOARD (CPT)
--- ALTIMETERS....................QNH…. SET / CHECKED (CPT)
--- FUEL/OIL/HYD QUANTITY.....................CHECKED (CPT)
--- ZERO FUEL WEIGHT..............................SET (CPT)
--- TRP......................TAKEOFF / … TAKEOFF FLEX (CPT)
--- STABILIZER..........POINT ZERO SET (.. = 1 TO 12) (CPT)
--- FLAPS TAKEOFF SELECTOR.....................STOWED (CPT)
--- SPEED BUGS....................................SET (CPT)
+-- FIRE PROTECTION SYSTEM......................TEST   (FO)  
+-- REVERSE THRUST LIGHTS........................OFF   (FO) 
+ 
+cockpitPrepProc2:addItem(ProcedureItem:new("FUEL USED READOUTS","RESET",FlowItem.actorFO,0,
+	function () 
+		return 
+			get("Rotate/md80/fuel/fuel_flow_used_switched_l") == 0 and
+			get("Rotate/md80/fuel/fuel_flow_used_switched_r") == 0
+	end,
+	function () 
+		command_once("Rotate/md80/fuel/reset_burned_fuel_counter")
+	end))
+
+
+-- ENGINE OIL INDICATORS......................CHECK   (FO)
+
+cockpitPrepProc2:addItem(ProcedureItem:new("FUEL QTY INDICATOR","TEST",FlowItem.actorFO,2,
+	function () return get("Rotate/md80/fuel/fuel_test_button_active") == 1 end,
+	function () set("Rotate/md80/fuel/fuel_test_button_active",1) end))
+
+-- GEAR DOOR OPEN LIGHT.........................OFF   (FO)
+-- GEAR LIGHTS & AURAL WARNING.................TEST   (FO)
+-- TAS/SAT....................................CHECK   (FO) 
+-- SDP........................................CHECK   (FO)   
+
+cockpitPrepProc2:addItem(ProcedureItem:new("HYDRAULIC SYSTEM","SET",FlowItem.actorFO,0,
+	function () 
+		return 
+			get("Rotate/md80/hydraulic/hyd_switch_electric") == 0 and
+			get("Rotate/md80/hydraulic/hyd_trans") == 0
+	end,
+	function () 
+		set("Rotate/md80/hydraulic/hyd_switch_electric",0)
+		set("Rotate/md80/hydraulic/hyd_trans",0)
+	end))
+cockpitPrepProc2:addItem(ProcedureItem:new("BRAKE TEMP INDICATOR","TEST",FlowItem.actorFO,2,
+	function () return get("Rotate/md80/test/brake_temp_test_active") == 1 end,
+	function () set("Rotate/md80/test/brake_temp_test_active",1) end))
+cockpitPrepProc2:addItem(ProcedureItem:new("BRAKE TEMP INDICATOR","ALL",FlowItem.actorFO,0,
+	function () return get("Rotate/md80/systems/brake_temp_selector") == 0 end,
+	function () 
+		set("Rotate/md80/test/brake_temp_test_active",0)
+		set("Rotate/md80/systems/brake_temp_selector",0) 
+	end))
+cockpitPrepProc2:addItem(ProcedureItem:new("STATIC AIR SELECTOR RIGHT","NORM",FlowItem.actorFO,0,
+	function () return get("Rotate/md80/systems/static_air_r") == 0 end,
+	function () set("Rotate/md80/systems/static_air_r",0) end))
+-- CREW OXYGEN AND MASK..................TEST/CHECK   (FO) 
+cockpitPrepProc2:addItem(ProcedureItem:new("WX RADAR","TEST",FlowItem.actorFO,2,
+	function () return get("Rotate/md80/instruments/wx_switch") == 0 end,
+	function () set("Rotate/md80/instruments/wx_switch",0) end))
+cockpitPrepProc2:addItem(ProcedureItem:new("WX RADAR","OFF",FlowItem.actorFO,0,
+	function () return get("Rotate/md80/instruments/wx_switch") == 1 end,
+	function () set("Rotate/md80/instruments/wx_switch",1) end))
+cockpitPrepProc2:addItem(ProcedureItem:new("RUD HYD CONT LEVER","PWR",FlowItem.actorFO,0,
+	function () return get("Rotate/md80/hydraulic/rudder_control_manual") == 0 end,
+	function () set("Rotate/md80/hydraulic/rudder_control_manual",0) end))
+cockpitPrepProc2:addItem(ProcedureItem:new("TAKEOFF WARNING / THRUST LEVERS","TEST/IDLE",FlowItem.actorFO,3,
+	function () return get("Rotate/md80/controls/throttle_ratio_all") == 1 end,
+	function () set("Rotate/md80/controls/throttle_ratio_all",1) end,
+	function ()
+		return activeBriefings:get("flight:firstFlightDay") == 2 
+	end))
+cockpitPrepProc2:addItem(ProcedureItem:new("FUEL SHUTOFF LEVERS","OFF",FlowItem.actorFO,0,
+	function () 
+		return 
+			get("Rotate/md80/fuel/fuel_valve_ratio_l") == 0 and
+			get("Rotate/md80/fuel/fuel_valve_ratio_r") == 0 
+	end,
+	function () 
+		set("Rotate/md80/controls/throttle_ratio_all",0)
+		set("Rotate/md80/fuel/fuel_valve_ratio_l",0)
+		set("Rotate/md80/fuel/fuel_valve_ratio_r",0)
+	end))
+cockpitPrepProc2:addItem(ProcedureItem:new("FUEL X-FEED LEVER","OFF",FlowItem.actorFO,0,
+	function () return get("Rotate/md80/fuel/fuel_xfeed_valve_ratio") == 0 end,
+	function () set("Rotate/md80/fuel/fuel_xfeed_valve_ratio",0) end))
+cockpitPrepProc2:addItem(ProcedureItem:new("FLAP T.O. SELECTOR","STOW",FlowItem.actorFO,0,
+	function () return get("Rotate/md80/systems/flap_to_sel") == 25 end,
+	function () set("Rotate/md80/systems/flap_to_sel",25) end))
+cockpitPrepProc2:addItem(ProcedureItem:new("ATC/TCAS","SET/TEST",FlowItem.actorFO,0,
+	function () 
+		return get("Rotate/md80/instruments/transponder_mode_switch") == 1 and
+			get("sim/cockpit2/radios/actuators/transponder_code") == 2000
+	end,
+	function () 
+		set("Rotate/md80/instruments/transponder_mode_switch",1) 
+		set("sim/cockpit2/radios/actuators/transponder_code",2000)
+		command_once("Rotate/md80/instruments/transponder_test")
+	end))
+
+
+-- ============== FINAL COCKPIT PREPARATION ==============
+-- AHRS ALIGNMENT...........................CONFIRM  (CPT)
+-- T.O. DATA FORM & TRC/ART..............CROSSCHECK  (CPT)
+-- ALTIMETERS.....................SET & CROSS-CHECK (BOTH) 
+-- PREFLIGHT BRIEFING.......................PERFORM  (CPT)
+-- ND MODE & RANGE..........................AS RQRD  (CPT)
+-- RADIO AIDS...............................X-CHECK  (CPT)   
+-- FGCP.....................................X-CHECK  (CPT)
+-- START-UP CLEARANCE.......................REQUEST  (CPT)
+-- COCKPIT CREW CHECKLIST..................COMPLETE (BOTH)
 -- =======================================================
 
-local preStartChecklist = Checklist:new("PRE-START CHECKLIST BELOW","pre start checklist","")
-preStartChecklist:setFlightPhase(4)
-
-preStartChecklist:addItem(ChecklistItem:new("COVERS & PINS","REMOVED",FlowItem.actorCPT,0,true))
-preStartChecklist:addItem(ChecklistItem:new("AIRCRAFT LOG & DOCUMENTS","CHECKED ON BOARD",FlowItem.actorCPT,0,true))
-preStartChecklist:addItem(ChecklistItem:new("ALTIMETERS","SET TO LOCAL: QNH %s|activeBriefings:get(\"departure:atisQNH\")",FlowItem.actorCPT,0,
+local cockpitPrepProc3 = Procedure:new("FINAL COCKPIT PREPARATION","","")
+cockpitPrepProc3:setFlightPhase(3)
+cockpitPrepProc3:addItem(ProcedureItem:new("AHRS ALIGNMENT","CONFIRM",FlowItem.actorFO,0,
 	function () 
-		return kc_macro_test_local_baro()
-	end,
-	function () 
-		kc_macro_set_local_baro()
+		return 
+			get("Rotate/md80/fms/irs_align_light") == 0 and
+			get("Rotate/md80/fms/irs2_align_light") == 0 
 	end))
-preStartChecklist:addItem(ChecklistItem:new("FUEL/OIL/HYDRAULIC QUANTITY","CHECKED",FlowItem.actorCPT,0,true))
-preStartChecklist:addItem(ChecklistItem:new("ZERO FUEL WEIGHT","SET",FlowItem.actorCPT,0,true))
-preStartChecklist:addItem(ChecklistItem:new("TRP","AS REQUIRED",FlowItem.actorCPT,0,
-	function () return true end,
-	function ()  end))
-preStartChecklist:addItem(ChecklistItem:new("STABILIZER","SET",FlowItem.actorCPT,0,
-	function () return true end,
-	function ()  end))
-preStartChecklist:addItem(ChecklistItem:new("FLAPS TAKEOFF SELECTOR","SET 15",FlowItem.actorCPT,0,
-	function () return get("sim/cockpit2/controls/flap_ratio") >= 0.6 end,
-	function () set("sim/cockpit2/controls/flap_ratio",0.6) end))
-preStartChecklist:addItem(ChecklistItem:new("SPEED BUGS","SET",FlowItem.actorCPT,0,
-	function () return  
-		get("laminar/md82/IAS/custom_bug1") == (0.154392 + (activeBriefings:get("takeoff:v1")-100)*0.0038) and
-		get("laminar/md82/IAS/custom_bug2") == 0.376973 and
-		get("laminar/md82/IAS/custom_bug3") == 0.495849 and
-		get("laminar/md82/IAS/custom_bug4") == 0.680363 and
-		sysMCP.iasSelector:getStatus() == activeBriefings:get("takeoff:v2")
-	end,
-	function () kc_macro_md82_set_to_speedbugs() end))
+cockpitPrepProc3:addItem(HoldProcedureItem:new("T.O. DATA FORM & TRC/ART","CROSSCHECK",FlowItem.actorCPT))
+cockpitPrepProc3:addItem(HoldProcedureItem:new("ALTIMETERS","SET & CROSSCHECK",FlowItem.actorCPT))
+cockpitPrepProc3:addItem(HoldProcedureItem:new("PREFLIGHT BRIEFING","PERFORM",FlowItem.actorCPT))
+cockpitPrepProc3:addItem(HoldProcedureItem:new("ND MODE & RANGE","AS RQRD",FlowItem.actorCPT))
+cockpitPrepProc3:addItem(HoldProcedureItem:new("RADIO AIDS","CROSSCHECK",FlowItem.actorCPT))
+cockpitPrepProc3:addItem(HoldProcedureItem:new("FGCP","CROSSCHECK",FlowItem.actorCPT))
+cockpitPrepProc3:addItem(HoldProcedureItem:new("START-UP CLEARANCE","REQUEST",FlowItem.actorCPT))
+
+
+-- =============== COCKPIT CREW CHECKLIST ================
+-- FLT RECORDER/AIDS.......................TEST/CKD   (FO)
+-- AHRS ALIGNMENT..........................VERIFIED (BOTH)
+-- FMS/GPS................................CKD/X-CKD (BOTH)
+-- EMERGENCY LIGHTS...........................ARMED  (CPT) 
+-- CABIN SIGNS................................ON/ON  (CPT) 
+-- WINSHIELD ANTI-ICE SW.........................ON  (CPT) 
+-- ENG SYNC SEL.................................OFF  (CPT)
+-- STALL WARNING.............................TESTED   (FO)
+-- AIR COND SHUTOFF SW........................ AUTO  (CPT)
+-- FIRE PROTECTION SYS.......................TESTED   (FO)
+-- TRP.......................................TESTED   (FO)
+-- FUEL QUANTITY.............................___KGS (BOTH)
+-- ALTIMETERS.........................QNH/QNH/X-CKD (BOTH)
+-- FUEL SHUTOFF LEVERS..........................OFF  (CPT)
+-- CABIN PRESS LEVER...........................AUTO  (CPT)
+-- COCKPIT CREW CHECKLIST.................COMPLETED 
+-- =======================================================
+
+local cockpitCrewChecklist = Checklist:new("COCKPIT CREW CHECKLIST","","")
+cockpitCrewChecklist:setFlightPhase(3)
+
+
+
+
+
+
+
+
+
 
 -- ================= BEFORE-START CHECK ==================
+-- Load Sheet / Takeoff Data ..................................................................................................... X-CHECK PN/PM  
+-- ZFW ........................................................................................................................................................ SET PF  
+-- FMS final data entry ................................................................................................................... PERFORM PF 
+-- INIT REF ....................................................................................................................................... DEPRESS PF  
+-- PERF INIT> ..................................................................................................................................... SELECT PF 
+-- <INDEX ............................................................................................................................................ SELECT PF  
+-- <TAKEOFF ...................................................................................................................................... SELECT PF 
+-- MCDU TAKEOFF CONFIGURATION .............................................................................................. SET PF/PM 
+-- FLAP T.O. Selector (If Required) ............................................................................................................ SET 2 
+-- Takeoff Condition Longitudinal Trim Readouts .................................................................................... SET 1 
+-- Stabilizer Trim .......................................................................................................................................... SET 1 
+-- AIDS ............................................................................................................................................... SET DATA 2 
+-- Parking Brake ........................................................................................................................................... SET 1  
+-- APU AIR Switch ...................................................................................................................... AS REQUIRED 2 
+-- APU NORM/ECON Switch ................................................................................................................... NORM 2 
+-- AIR COND SUPPLY Switches ................................................................................................................. OFF 2 
+-- Fuel System ............................................................................................................................................. SET  2 
+-- Anti-Collision Lights ................................................................................................................................. ON 2 
+-- PNEU X-FEED VALVE Levers ….......................................................................................................... OPEN 1 
+-- Thrust Levers .......................................................................................................................................... IDLE 1 
+-- Pneumatic Pressure .......................................................................................................................... CHECK 1 
+-- ENG IGN Selector ................................................................................................................ SYS A or SYS B 1 
+-- Before Start Checklist ................................................................................................................ COMPLETE 2 
+-- =======================================================
+
+
+-- =============== BEFORE START CHECKLIST ================
+-- Parking Brakes........................................SET     1 
+-- EFB.....................................FLIGHT MODE     1/2 
+-- Pneumatic Pressure..............................__PSI    1 
+-- ENG ING Sel.....................SYS A or SYS B    2 
+-- Left/Right/Centre Fuel 
+-- Tank Pumps.....................................ALL ON    1 
+-- Anti-Collision Lts....................................ON    2 
+-- APU NORM/ECON Sw.....................NORM    2 
+-- AIR COND SUPPLY Sw.......................OFF    2 
+-- PNEU X-FEED Levers.......................OPEN    2 
+-- Thrust Levers........................................IDLE    2 
+-- Before Start Checklist Completed
+-- =======================================================
+
+-- xxx
 -- PARKING BRAKE.................................SET (CPT)
 -- DOORS......................................CLOSED (CPT)
 -- START-UP & PUSHBACK CLRNCE...............APPROVED (CPT)
@@ -716,7 +776,6 @@ preStartChecklist:addItem(ChecklistItem:new("SPEED BUGS","SET",FlowItem.actorCPT
 -- GALLEY POWER..................................OFF (F/O)
 -- IGNITION....................................A / B (F/O)
 -- PNEUM PRESS.................................CHECK (F/O)
--- =======================================================
 
 local beforeStartProc = Procedure:new("BEFORE START CHECKS","","")
 beforeStartProc:setFlightPhase(4)
@@ -778,6 +837,7 @@ beforeStartProc:addItem(ProcedureItem:new("PNEUM PRESS","CHECK",FlowItem.actorFO
 
 
 -- PUCHBACK and ENGINE START
+-- Start Sequence 2 then 1
 -- “START RIGHT ENGINE” Engage start switch right engine and checks pressure
 -- “RIGHT START VALVE OPEN”
 -- fuel lever ON “FUEL ON”
@@ -1045,7 +1105,42 @@ pushstartProc:addItem(ProcedureItem:new("  LOCKOUT PIN REMOVED","VERIFY",FlowIte
 pushstartProc:addItem(ProcedureItem:new("PARKING BRAKE","SET",FlowItem.actorFO,0,
 	function () return sysGeneral.parkBrakeSwitch:getStatus() == 1 end))
 
--- ============ AFTER ENGINE START CHECKLIST =============
+-- ==== AFTER START =====
+-- Electrical System ..................................................................................................................... CHECK/TEST 1 
+-- Galley Power .............................................................................................................................................. ON 1  
+-- ENG IGN Selector .................................................................................................................................... OFF 1 
+-- Pitot and Static Heaters ............................................................................................................... ON (CAPT) 1 
+-- AIR FOIL Anti-lce Switches ................................................................................................... AS REQUIRED 1  
+-- AIR COND SUPPLY Switches ............................................................................................................. AUTO 1
+-- APU AIR Switch ....................................................................................................................................... OFF 1  
+-- APU MASTER Switch .............................................................................................................................. OFF 1  
+-- Hydraulic System ................................................................................................................... CHECK & SET 2  
+-- ATC/TCAS ................................................................................................................................ SET/XPNDR 1/2  
+-- PNEU X-FEED VALVE Levers ............................................................................................... AS REQUIRED 2 
+-- Windows .......................................................................................................................................... CLOSE 1/2  
+-- DOOR LOCK Sw ................................................................................................................................. DENY 1/2 
+-- Door Annunciations ................................................................................................................ CHECK OFF 1/2
+-- SPOILERS …....................................................................................................................................... ARMED 1
+-- AIDS ......................................................................................................................................... CHECK/PUSH 2
+-- Ground Crew Clearance ................................................................................................................  RECEIVE 1   
+-- After Start Checklist ................................................................................................................... COMPLETE 2 
+-- =======================================================
+
+
+
+-- =============== AFTER START CHECKLIST =================
+-- ENG IGN Sel..........................................OFF    2 
+-- Pitot & Static 
+-- Heaters........................................ON(CAPT)    2 
+-- AIR FOIL & ENG 
+-- Anti Ice Sws....................................AS RQD    1 
+-- AIR COND SUPPLY Sws.................AUTO    2 
+-- Door Cue Light.............................CKD OFF  1/2 
+-- Hyd Sys.....................................CKD & SET    2 
+-- After Start Checklist Completed 
+-- =======================================================
+
+-- xxx
 -- IGNITION......................................OFF (CPT)
 -- ELECTRICAL LOADS..........................CHECKED (CPT)
 -- AIR COND SUPPLY..............................AUTO (CPT)
@@ -1058,7 +1153,6 @@ pushstartProc:addItem(ProcedureItem:new("PARKING BRAKE","SET",FlowItem.actorFO,0
 -- GROUND EQUIPMENT..........................REMOVED (CPT)
 -- ALL CLEAR SIGNAL.........................RECEIVED (CPT)
 -- FLAPS SLATS (READ AND DO).....................SET (CPT)
--- =======================================================
 
 local afterStartChkl = Checklist:new("AFTER ENGINE START CHECKLIST","","")
 afterStartChkl:setFlightPhase(5)
@@ -1123,6 +1217,47 @@ afterStartChkl:addItem(ChecklistItem:new("FLAP LEVER","SET TAKEOFF FLAPS %s|kc_p
 	function () sysControls.flapsSwitch:setValue(sysControls.flaps_pos[activeBriefings:get("takeoff:flaps")]) end)) 
 
 
+-- ================= TAXIING PROCEDURE ===================
+-- Taxi Clearance ................................................................................................................................. RECEIVE 2   
+-- FLAP/SLAT Lever .......................................................................................................... SET FOR TAKEOFF 2   
+-- Exterior Lights ..................................................................................................................... AS REQUIRED 1/2   
+-- Parking Brake ................................................................................................................................. RELEASE 1   
+-- Speed and Directional Control ..................................................................................................... MAINTAIN 1   
+-- Flight Instruments ........................................................................................................................... CHECK 1/2   
+-- Flight Controls .................................................................................................................................... TEST 1/2   
+-- Takeoff Data ................................................................................................................................... REVIEW 1/2    
+-- V Bugs .............................................................................................................................................. CHECK 1/2   
+-- TRC/ART ...................................................................................................................... SET AS REQUIRED 1/2   
+-- Aileron, Rudder and Stabilizer Trim ......................................................................... ZERO, ZERO, CHECK 2   
+-- Fuel Heat ................................................................................................................................. AS REQUIRED 2   
+-- ATC Clearance ............................................................................................................................. RECEIVE 1/2 
+-- FGS ........................................................................................................................................................ SET 1/2    
+-- Takeoff Briefing ................................................................................................................. COMPLETE PF/PM   
+-- Cabin Report ..................................................................................................................................... OBTAIN 1    
+-- Taxiing Checklist ........................................................................................................................ COMPLETE 2
+-- =======================================================
+
+-- ================= TAXIING CHECKLIST ===================
+-- APU AIR  Sw.........................................OFF    2 
+-- TRP/ART.........................................AS RQD  1/2 
+-- V Bugs.......................................__/__/__/__/  1/2 
+-- Flt Instruments/FGS..............................CKD  1/2 
+-- FMS/GPS..............................................CKD     PF/PM 
+-- Flt Controls.....................................TESTED  1/2 
+-- FLAP/SLAT Lever...........................__/EXT  1/2 
+-- Autobrake/Autospoiler...................AS RQD  1/2 
+-- Ail,Rudder & 
+-- Stab Trim........................ZERO/ZERO/CKD    2 
+-- T.O. Briefing..........................PERFORMED    PF/PM 
+-- Cabin Report..............................OBTAINED    1 
+-- Taxiing Checklist Completed 
+-- =======================================================
+
+
+
+
+
+
 
 -- Sets air conditioning supply AUTO  Set CAPT Pitot Heater ON
 -- Check Hydraulic pumps and switcheS HI/ON
@@ -1141,6 +1276,55 @@ afterStartChkl:addItem(ChecklistItem:new("FLAP LEVER","SET TAKEOFF FLAPS %s|kc_p
 -- APU Air/APU Master OFF / Leave APU on
 --  "Both Off / Air Off / "ON"  APU Air/Master SW
 --  "Checked"  Brake Temp & Pressure
+
+-- ============== BEFORE TAKEOFF PROCEDURE ===============
+-- Line-Up and Takeoff Clearance ..................................................................................................... RECEIVE 2   
+-- ATC/TCAS ............................................................................................................................................ TA/RA 2   
+-- Fuel Balance .................................................................................................................................... CHECK 1/2   
+-- Brake Temperatures .......................................................................................................................... CHECK 2   
+-- Takeoff Immanency ................................................................................................................ ANNOUNCE 1/2   
+-- EGPWS TERR Sw ................................................................................................................................... ON PM 
+-- Radar ................................................................................................................................... AS REQUIRED 1/2   
+-- ENG IGN Selector ................................................................................................................................. BOTH 1   
+-- EOAP ................................................................................................................................................ CHECK 1/2   
+-- Before Takeoff Checklist ............................................................................................................ COMPLETE 2
+-- =======================================================
+
+-- ============== BEFORE TAKEOFF CHECKLIST ===============
+-- T.O. RWY......RWY ___/ENTRY POINT__        1/2 
+-- T.O. Data................................CONFIRMED  1/2 
+-- Fuel Balance..........................................CKD  1/2 
+-- Brake Temperatures..............................CKD    2 
+-- ENG IGN Sel......................................BOTH    2 
+-- EOAP....................................................CKD
+-- =======================================================
+
+-- ================= TAKEOFF PROCEDURE ===================
+-- Landing and Exterior Lights ................................................................................................. AS REQUIRED 1    
+-- Thrust Levers .................................................................................................................................. 1.4 EPR 1/2   
+-- Autothrottle .................................................................................................................................. ENGAGE 1/2    
+-- Thrust Levers ...................................................................................... SET T.O. THRUST/CHECK MIN N1 1/2    
+-- Clocks ............................................................................................................................................... START 1/2    
+-- Airplane Directional Control ...................................................................................................... MAINTAIN 1/2  
+-- EEDP/ESDP ................................................................................................................................ MONITOR 1/2   
+-- Airspeed Indicators (80 knots) ......................................................................................... CROSS-CHECK 1/2   
+-- V Speeds .................................................................................................................................. ANNOUNCE 1/2   
+-- Airplane Rotation ......................................................................................................................... ACHIEVE 1/2   
+-- Landing Gear .............................................................................................................................. RETRACT 1/2  
+-- Landing Lights ............................................................................................................................... RETRACT 1   
+-- Autopilot .......................................................................................................................................... ON   PF/PM   
+-- FGS .........................................………………...………………………………………….....……… AS RQD PF/PM  
+-- FMS …………………………………………………………...............................…….......................... SET PF/PM   
+
+-- At Thrust Reduction Altitude
+-- Climb EPR ............................................................................................................................................. SET 1/2   
+
+-- At Acceleration Altitude  
+-- FGS ...........................................………………………………………………….…………… VNAV/IAS SET PF  
+-- Flaps/Slats .................................................................................................................................. RETRACT 1/2    
+-- FLAP T.O. Selector ............................................................................................................................... STOW 2
+-- ART Switch (if T.O. Flex Used) ............................................................................................................ AUTO 2  
+-- =======================================================
 
 
 -- When ready for departure:
@@ -1202,12 +1386,100 @@ afterStartChkl:addItem(ChecklistItem:new("FLAP LEVER","SET TAKEOFF FLAPS %s|kc_p
 -- Fuel Pumps "As Required"
 --  "On / Off/ Auto"  "Seatbelts" (READ) "On / Off/ Auto"
 
+
+-- ============== AFTER TAKEOFF PROCEDURE ================
+-- FMS ................................................................................................................................ AS REQUIRED PF/PM   
+-- ENG IGN Selector ............................................................................................................... AS REQUIRED PM   
+-- Fuel System ........................................................................................................................ AS REQUIRED PM    
+-- Hydraulic System …................................................................................................................ CHECK/SET PM    
+-- Brake Temperatures .......................................................................................................................... CHECK 2    
+-- Spoilers ................................................................................................................................... FLIGHT MODE 1   
+-- Altimeters (CM1/CM2/Stand-by) ....................................................................................... 1013/1013/1013 1/2    
+-- After Takeoff Checklist ........................................................................................................... COMPLETE PM  
+-- =======================================================
+
+-- ============== AFTER TAKEOFF CHECKLIST ================
+-- Brake Temperatures..............................CKD 
+-- Landing Gear...........................UP/LTS OUT 
+-- Autobrake...............................................OFF 
+-- SPEEDBRAKE Lever............................RET  
+-- FLAP/SLAT Lever..........................UP/RET 
+-- ENG IGN Sel..................................AS RQD 
+-- Center Fuel Tank Pump..................AS RQD 
+-- Altimeters............................1013/1013/1013  1/2 
+-- After Takeoff Checklist Completed 
+-- =======================================================
+
 -- 10000 feet  Wing Landing lights OFF
 -- Transition Altitude or cleared above :
 --  “TRANSITION 2992 / 1013"  Altimeter FO 2992 / 1013 SET
 --  Altimeter CA 2992 / 1013 SET
 --  "PASSING FLIGHT LEVEL xxx …. --> "NOW”
 
+-- ================== CLIMB PROCEDURE ====================
+-- EOAP ................................................................................................................................................... CHECK 2   
+-- Radar .................................................................................................................................... AS REQUIRED 1/2   
+-- EGPWS ................................................................................................................................ AS REQUIRED PM   
+-- Cabin Signs ............................................................................................................................ AS REQUIRED 1   
+-- FMS ........................................................................................................................................... AS RQD PF/PM   
+-- TCAS A/N/B button ................................................................................................................... B (BELOW) 1/2   
+-- Engine/Airplane Systems ........................................................................................................... MONITOR 1/2    
+-- Altimeters .................................................................................................................... CROSS-CHECK PF/PM  
+-- =======================================================
+
+
+
+-- ================= DESCEND PREPARTION ==================
+-- Weather Information .................................................................................................................... RECEIVE PM   
+-- Landing Data .......................................................................................................................... CONFIRMED 1/2   
+-- V Bugs ................................................................................................................................................... SET 1/2   
+-- MSA .................................................................................................................................................. CHECK 1/2   
+-- APPROACH and LANDING BRIEFING ................................................................................ PERFORM PF/PM  
+-- FMS ........................................................................................................................................... AS RQD PF/PM   
+-- Altitude Reference Bugs (If required) .................................................................................................. SET 1/2   
+-- MDF ........................................................................................................................................... _____/X-CK 1/2   
+-- Radio Altimeters ................................................................................................................................... SET 1/2    
+-- TCAS A/N/B button ................................................................................................................... B (BELOW) 1/2  
+-- EGPWS TERR Sw .......................................................................................................................... AS RQD PM    
+-- Fuel Heat System ................................................................................................................... AS REQUIRED 1   
+-- WINDSHIELD ANTI-FOG Switch ........................................................................................... AS REQUIRED 1   
+-- Hydraulic System ................................................................................................................... SET & CHECK 2   
+-- Pressurization ......................................................................................................................... CHECK/SET PM  
+-- Descent Clearance ........................................................................................................................ OBTAIN PM    
+-- FGS ........................................................................................................................................... AS RQD PF/PM 
+-- Descent Checklist ................................................................................................................... COMPLETE PM  
+-- =======================================================
+
+-- ================= DESCEND CHECKLIST ===================
+-- MSA......................................................CKD    PF/PM 
+-- APPR and LND Briefing.......PERFORMED    PF/PM 
+-- MDF......................................._____/X-CKD    PF/PM 
+-- Landing Data..........................CONFIRMED  1/2 
+-- V Bugs.......................................__/__/__/__/ PF/PM 
+-- Radio Altimeter/Audio Marker........SET/ON    PF/PM 
+-- Hyd Sys......................................SET & CKD    2 
+-- Pressurization….............................CKD/SET     PM 
+-- Descent Checklist Completed 
+-- =======================================================
+
+
+-- ================= DESCEND PROCEDURE ===================
+-- DESCENT ..................................................................................................................................... MONITOR PF  
+-- SPEEDBRAKE Lever ........................................................................................................... AS REQUIRED PF   
+-- Radio and Flight Instruments ................................................................................... SET/CROSS CHECK 1/2   
+-- Cabin Signs ................................................................................................................................................ ON 1   
+-- Fuel System .............................................................................................................................................. SET 1   
+-- Altimeters ................................................................................................................................ QNH & X-CK 1/2   
+-- ENG SYNC Selector ................................................................................................................................. OFF 2    
+-- Approach Checklist ................................................................................................................. COMPLETE PM  
+-- =======================================================
+
+-- ================= APPROACH CHECKLIST ==================
+-- Cabin Signs.......................................ON/ON   PM 
+-- Fuel Sys..................................................SET   PM 
+-- Altimeters and Bugs......... __/__/__/X-CKD   1/2 
+-- Approach Checklist Completed 
+-- =======================================================
 
 -- descend
 -- 20000 feet  Flood, logo and Wing Nacelle lights ON
@@ -1243,6 +1515,37 @@ afterStartChkl:addItem(ChecklistItem:new("FLAP LEVER","SET TAKEOFF FLAPS %s|kc_p
 -- FS2Crew Voice Flow Maddog 2008 SP3 version 1.00 Page 4 of 5
 --  Autobrake SET
 
+-- ================== FINAL PROCEDURE ====================
+-- Initial Approach Configuration ................................................................................................... ACHIEVE 1/2   
+-- FGS .......................................................................................................................... SET FOR APPROACH 1/2   
+-- FGS (AUTOLAND) ................................................................................................... SET FOR APPROACH 1/2   
+-- Localizer/VOR Capture ............................................................................................................... MONITOR 1/2   
+-- Glide Slope Capture .................................................................................................................... MONITOR 1/2   
+-- Landing Gear ................................................................................................................................. EXTEND 1/2
+-- TRC .......................................................................................................................................................... GA 1/2   
+-- Landing Lights …....................................................................................................................... EXT ON/BRT 1   
+-- Final Approach Configuration .................................................................................................... ACHIEVE 1/2  
+-- FLAP/SLAT Lever (If Required) ....................................................................................................... 40/EXT 1/2   
+-- SPEEDBRAKE Lever .............................................................................................................................. ARM 1   
+-- ENG IGN Selector ................................................................................................................................. BOTH 1    
+-- FUEL HEAT Sw ........................................................................................................................................ OFF 1    
+-- EOAP ................................................................................................................................................ CHECK 1/2 
+-- FGS ......................................................................................................................................... SET FOR G/A PF   
+-- Final Checklist ......................................................................................................................... COMPLETE PM    
+-- Radio Altimeter Callouts ............................................................................................................ MONITOR 1/2   
+-- Windshield Wipers ............................................................................................................. AS REQUIRED PM   
+-- Autopilot (If AUTOLAND Not Used) ..................................................................................................... OFF 1/2
+-- =======================================================
+
+-- ================== FINAL CHECKLIST ====================
+-- Land Gear/Lts..................DOWN/3 GREEN  1/2 
+-- FLAP/SLAT Lever...........................__/EXT  PM 
+-- SPEEDBRAKE Lever.........................ARM  PM 
+-- Autobrake.......................................AS RQD  PM 
+-- ENG IGN Sel.....................................BOTH  PM 
+-- EOAP....................................................CKD  PM 
+-- Final Checklist Completed 
+-- =======================================================
 
 -- "FINAL CHECK"
 --  Set Engine Ignition
@@ -1257,6 +1560,38 @@ afterStartChkl:addItem(ChecklistItem:new("FLAP LEVER","SET TAKEOFF FLAPS %s|kc_p
 --  "LANDING CLEARANCE RECEIVED"
 
 
+
+-- ============== AFTER LANDING PROCEDURE ================
+-- SPEEDBRAKE Lever ........................................................................................................................ DISARM 1   
+-- Exterior Lights ..................................................................................................................... AS REQUIRED 1/2    
+-- FLAP/SLAT Lever ............................................................................................................................... 15/EXT 2   
+-- ENG IGN Selector .................................................................................................................................... OFF 2 
+-- Pitot and Static Heaters .......................................................................................................................... OFF 2   
+-- AIR FOIL and ENG Anti-Ice Switches .................................................................................................... OFF 2   
+-- WINDSHIELD ANTI-FOG Switch ............................................................................................................. OFF 2   
+-- WINDSHIELD ANTI-ICE Switch ............................................................................................. AS REQUIRED 2   
+-- EGPWS TERR Sw ................................................................................................................................. OFF PM    
+-- ATC/TCAS ........................................................................................................................................... XPNDR 2     
+-- APU (If Required) ................................................................................................................. START/BUS ON 2   
+-- Air Cond Sys ........................................................................................................................ AS REQUIRED 1/2  
+-- One Engine (If applicable) ....................................................................................................... SHUT DOWN 1   
+-- Radar ........................................................................................................................................................ OFF 2    
+-- After Landing Checklist ............................................................................................................. COMPLETE 2
+-- =======================================================
+
+-- ============== AFTER LANDING CHECKLIST ================
+-- FLAP/SLAT Lever...........................15/EXT 
+-- Autobrake...............................................OFF 
+-- SPEEDBRAKE Lever............................RET 
+-- ENG IGN Sel.........................................OFF 
+-- Pitot & Static Heaters.............................OFF 
+-- AIR FOIL & ENG Anti- 
+-- Ice Sw....................................................OFF 
+-- WX Radar..............................................OFF 
+-- After Landing Checklist Completed 
+-- =======================================================
+
+
 -- "AFTER LANDING CHECK" / "AFTER LANDING CHECK WITHOUT APU" Challenge: First Officer (silently)
 -- Response: NONE
 -- Timer stopped
@@ -1267,6 +1602,39 @@ afterStartChkl:addItem(ChecklistItem:new("FLAP LEVER","SET TAKEOFF FLAPS %s|kc_p
 -- Radar Off
 -- Left Air Cond Supply Off
 -- APU As Required
+
+-- ================= PARKING PROCEDURE ===================
+-- APU (If Required) ................................................................................................................. START/BUS ON 2   
+-- Exterior Lights ...................................................................................................................................... OFF 1/2   
+-- FLAP/SLAT Lever .............................................................................................................................. UP/RET 2   
+-- Stabilizer Trim (If Required) ................................................................................................................. ZERO 2   
+-- Parking Brake .......................................................................................................................................... SET 1    
+-- Electrical Power .............................................................................................................................. APU/EXT 2   
+-- FUEL Shutoff Levers ............................................................................................................................... OFF 1   
+-- SEAT BELTS Switch ................................................................................................................................ OFF 2   
+-- FUEL TANK PUMP Switches ................................................................................................ AS REQUIRED 2   
+-- Pneu X-Feed Valves .............................................................................................................................. OPEN 2 
+-- APU AIR Switch ......................................................................................................................................... ON 2  
+-- AIR COND SUPPLY Sws (one at a time) ............................................................................................. AUTO 2  
+-- SUPPLY AIR PRESS Indicator .......................................................................................... 12 PSI or greater 2  
+-- Anti- Collision Lights ............................................................................................................................... OFF 2   
+-- Galley Power ............................................................................................................................................ OFF 2   
+-- EFIS/FD Switches .................................................................................................................. AS RQD/OFF 1/2   
+-- EOAP ................................................................................................................................................... CHECK 2    
+-- Parking Brake (If Chocks In Place) .............................................................................................. RELEASE 1   
+-- Auxiliary and Transfer Hydraulic Pumps .............................................................................................. OFF 2   
+-- ATC/TCAS .............................................................................................................................................. STBY 2   
+-- Cabin Air Outflow Valves ...................................................................................................... AS REQUIRED 2
+-- DOOR LOCK Sw .............................................................................................................................. UNLKD 1/2   
+-- Parking Checklist ........................................................................................................................ COMPLETE 2  
+-- =======================================================
+
+-- ================= PARKING CHECKLIST ===================
+-- FUEL TANK PUMP Sw................AS RQD    2 
+-- Aux & Trans Hyd Pumps......................OFF    2 
+-- Parking Brake........................................SET    1 
+-- Parking Checklist Completed 
+-- =======================================================
 
 
 -- Reaching gate
@@ -1289,6 +1657,28 @@ afterStartChkl:addItem(ChecklistItem:new("FLAP LEVER","SET TAKEOFF FLAPS %s|kc_p
 --  "Off"  Seat Belt SW
 --  "Off"  Ice Protection Panel
 --  "Standby"  Xpdr
+
+-- ================== LEAVING AIRCRAFT ===================
+-- Emergency Lights ................................................................................................................................... OFF 2   
+-- Position Lights ......................................................................................................................................... OFF 2    
+-- Station Lighting ....................................................................................................................................... OFF 2    
+-- APU ......................................................................................................................................... AS REQUIRED 2    
+-- BATT Switch ........................................................................................................................... AS REQUIRED 2   
+-- Leaving the Airplane Checklist .................................................................................................. COMPLETE 2  
+-- =======================================================
+
+-- ============= LEAVING AIRCRAFT CHECKLIST ==============
+-- Emergency Lts........................................OFF    2 
+-- EFB ....................................................... OFF     1/2 
+-- APU.................................................AS RQD    2 
+-- BATT Sw........................................AS RQD    2 
+-- Leaving The Airplane Checklist Completed
+-- =======================================================
+
+
+
+
+
 
 -- ======== STATES =============
 
@@ -1384,13 +1774,14 @@ activeSOP:addBackground(backgroundFlow)
 -- ============  =============
 -- add the checklists and procedures to the active sop
 -- activeSOP:addProcedure(testProc)
-activeSOP:addProcedure(electricalPowerUpProc)
-activeSOP:addProcedure(preflightProc)
-activeSOP:addProcedure(preStartProc)
-activeSOP:addProcedure(preStartChecklist)
-activeSOP:addProcedure(beforeStartProc)
-activeSOP:addProcedure(pushstartProc)
-activeSOP:addProcedure(afterStartChkl)
+activeSOP:addProcedure(prelCockpitPrep)
+activeSOP:addProcedure(cockpitPrepProc2)
+activeSOP:addProcedure(cockpitPrepProc1)
+activeSOP:addProcedure(cockpitPrepProc3)
+-- activeSOP:addProcedure(preStartChecklist)
+-- activeSOP:addProcedure(beforeStartProc)
+-- activeSOP:addProcedure(pushstartProc)
+-- activeSOP:addProcedure(afterStartChkl)
 
 -- =========== States ===========
 activeSOP:addState(turnAroundProc)
