@@ -3,7 +3,8 @@
 
 -- @classmod sysHydraulic
 -- @author Kosta Prokopiu
--- @copyright 2022 Kosta Prokopiu
+-- @copyright 2024 Kosta Prokopiu
+
 local sysHydraulic = {
 }
 
@@ -24,11 +25,24 @@ local drefHydPressure2 		= "sim/cockpit2/hydraulics/indicators/hydraulic_pressur
 sysHydraulic.elecHydPumpGroup = TwoStateDrefSwitch:new("elechydpump","sim/cockpit2/switches/electric_hydraulic_pump_on",0)
 
 -- HYD Engine Pumps
-sysHydraulic.engHydPump1	= TwoStateDrefSwitch:new("enghydpump1","sim/cockpit2/hydraulics/actuators/engine_pump",0)
-sysHydraulic.engHydPump2	= TwoStateDrefSwitch:new("enghydpump2","sim/cockpit2/hydraulics/actuators/engine_pump",1)
+-- XCrafts Freeware E175 and E195
+if PLANE_ICAO == "E190" then
+	sysHydraulic.engHydPump1	= TwoStateDrefSwitch:new("enghydpump1","XCrafts/ERJ_195/Hydraulics1",0)
+	sysHydraulic.engHydPump2	= TwoStateDrefSwitch:new("enghydpump2","XCrafts/ERJ_195/Hydraulics2",0)
+elseif PLANE_ICAO == "E170" then
+	sysHydraulic.engHydPump1	= TwoStateDrefSwitch:new("enghydpump1","XCrafts/ERJ_175/Hydraulics1",0)
+	sysHydraulic.engHydPump2	= TwoStateDrefSwitch:new("enghydpump2","XCrafts/ERJ_175/Hydraulics2",0)
+else
+	sysHydraulic.engHydPump1	= TwoStateDrefSwitch:new("enghydpump1","sim/cockpit2/hydraulics/actuators/engine_pump",0)
+	sysHydraulic.engHydPump2	= TwoStateDrefSwitch:new("enghydpump2","sim/cockpit2/hydraulics/actuators/engine_pump",1)
+end
+sysHydraulic.engHydPump3	= TwoStateDrefSwitch:new("enghydpump3","sim/cockpit2/hydraulics/actuators/engine_pump",2)
+sysHydraulic.engHydPump4	= TwoStateDrefSwitch:new("enghydpump4","sim/cockpit2/hydraulics/actuators/engine_pump",3)
 sysHydraulic.engHydPumpGroup = SwitchGroup:new("enghydpumps")
 sysHydraulic.engHydPumpGroup:addSwitch(sysHydraulic.engHydPump1)
 sysHydraulic.engHydPumpGroup:addSwitch(sysHydraulic.engHydPump2)
+sysHydraulic.engHydPumpGroup:addSwitch(sysHydraulic.engHydPump3)
+sysHydraulic.engHydPumpGroup:addSwitch(sysHydraulic.engHydPump4)
 
 -- LOW HYDRAULIC annunciator
 sysHydraulic.hydraulicLowAnc = CustomAnnunciator:new("hydrauliclow",

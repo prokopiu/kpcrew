@@ -24,17 +24,14 @@ logMsg ("Electrics DFLT")
 --------- Batteries
 
 -- ** BATTERY Switches
-sysElectric.batterySwitch 	= TwoStateCmdSwitch:new("battery1","sim/cockpit/electrical/battery_array_on",0,
-	"sim/electrical/battery_1_on", "sim/electrical/battery_1_off", "sim/electrical/battery_1_toggle")
-sysElectric.battery2Switch 	= TwoStateDrefSwitch:new("battery2","sim/cockpit/electrical/battery_array_on",1,
-	"sim/electrical/battery_2_on", "sim/electrical/battery_2_off", "sim/electrical/battery_2_toggle")
+sysElectric.batterySwitch 	= TwoStateDrefSwitch:new("battery1","sim/cockpit/electrical/battery_array_on",-1)
+sysElectric.battery2Switch 	= TwoStateDrefSwitch:new("battery2","sim/cockpit/electrical/battery_array_on",1)
 sysElectric.batteryGroup 	= SwitchGroup:new("battery switches")
 sysElectric.batteryGroup:addSwitch(batterySwitch)
 sysElectric.batteryGroup:addSwitch(battery2Switch)
-logMsg ("Electrics DFLT")
 
 -- ** HARDWARE BATTERY Switch
-sysElectric.battery1HwSwitch 	= TwoStateDrefSwitch:new("hwbattery1","sim/cockpit2/electrical/battery_on",0)
+sysElectric.battery1HwSwitch 	= TwoStateDrefSwitch:new("hwbattery1","sim/cockpit2/electrical/battery_on",-1)
 sysElectric.battery2HwSwitch 	= TwoStateDrefSwitch:new("hwbattery2","sim/cockpit2/electrical/battery_on",1)
 sysElectric.batteryHwGroup 	= SwitchGroup:new("battery hardware")
 sysElectric.batteryHwGroup:addSwitch(battery1HwSwitch)
@@ -47,11 +44,19 @@ sysElectric.batt1Amp 		= SimpleAnnunciator:new("BATT1 Amps","sim/cockpit2/electr
 sysElectric.batt2Amp 		= SimpleAnnunciator:new("BATT2 Amps","sim/cockpit2/electrical/battery_amps",1)
 
 -- Ground Power
-sysElectric.gpuSwitch 		= TwoStateCmdSwitch:new("GPU","sim/cockpit/electrical/gpu_on",0,
-	"sim/electrical/GPU_on","sim/electrical/GPU_off","sim/electrical/GPU_toggle")
+if PLANE_ICAO == "E190" or PLANE_ICAO == "E170" then
+	sysElectric.gpuSwitch 		= TwoStateDrefSwitch:new("GPU",
+		"xcraft/electric/GPU_sw",0)
+else
+	sysElectric.gpuSwitch 		= TwoStateDrefSwitch:new("GPU",
+		"sim/cockpit/electrical/gpu_on",0)
+end
+
+sysElectric.apuStartSwitch 		= TwoStateDrefSwitch:new("apuswitch",
+	"sim/cockpit/engine/APU_switch",0)
 
 -- APU Bus Switches
-sysElectric.apuGenBus1 		= InopSwitch:new("apubus1")
+sysElectric.apuGenBus1 		= TwoStateDrefSwitch:new("apubus1","sim/cockpit/electrical/generator_apu_on",0)
 sysElectric.apuGenBus2 		= InopSwitch:new("apubus2")
 sysElectric.apuGenBusGroup	= SwitchGroup:new("apubussgroup")
 sysElectric.apuGenBusGroup:addSwitch(sysElectric.apuGenBus1)
@@ -65,17 +70,19 @@ sysElectric.gpuGenBusGroup:addSwitch(sysElectric.gpuGenBus1)
 sysElectric.gpuGenBusGroup:addSwitch(sysElectric.gpuGenBus2)
 
 -- GEN Switches
-sysElectric.gen1Switch 		= TwoStateCmdSwitch:new("gen1","sim/cockpit/electrical/generator_on",-1,
-	"sim/electrical/generator_1_on","sim/electrical/generator_1_off","sim/electrical/generator_1_toggle")
-sysElectric.gen2Switch 		= TwoStateCmdSwitch:new("gen2","sim/cockpit/electrical/generator_on",1,
-	"sim/electrical/generator_2_on","sim/electrical/generator_2_off","sim/electrical/generator_2_toggle")
--- sysElectric.gen3Switch 		= InopSwitch:new("gen3")
--- sysElectric.gen4Switch 		= InopSwitch:new("gen4")
+sysElectric.gen1Switch 		= TwoStateDrefSwitch:new("gen1",
+	"sim/cockpit/electrical/generator_on",-1)
+sysElectric.gen2Switch 		= TwoStateDrefSwitch:new("gen2",
+	"sim/cockpit/electrical/generator_on",1)
+sysElectric.gen3Switch 		= TwoStateDrefSwitch:new("gen3",
+	"sim/cockpit/electrical/generator_on",2)
+sysElectric.gen4Switch 		= TwoStateDrefSwitch:new("gen4",
+	"sim/cockpit/electrical/generator_on",3)
 sysElectric.genSwitchGroup 	= SwitchGroup:new("genswitches")
 sysElectric.genSwitchGroup:addSwitch(sysElectric.gen1Switch)
 sysElectric.genSwitchGroup:addSwitch(sysElectric.gen2Switch)
--- sysElectric.genSwitchGroup:addSwitch(sysElectric.gen3Switch)
--- sysElectric.genSwitchGroup:addSwitch(sysElectric.gen4Switch)
+sysElectric.genSwitchGroup:addSwitch(sysElectric.gen3Switch)
+sysElectric.genSwitchGroup:addSwitch(sysElectric.gen4Switch)
 
 -- ** ALTERNATOR Switches to help when aircraft do not work with the switches
 sysElectric.alternator1Switch 		= TwoStateCmdSwitch:new("gen1","sim/cockpit/electrical/generator_on",-1,
@@ -87,16 +94,11 @@ sysElectric.alternatorSwitchGroup:addSwitch(sysElectric.alternator1Switch)
 sysElectric.alternatorSwitchGroup:addSwitch(sysElectric.alternator2Switch)
 
 -- ** Avionics Buses
-sysElectric.avionics1Bus		= TwoStateCmdSwitch:new("aviobus1","sim/cockpit2/switches/avionics_power_on",0,
-	"sim/systems/avionics_on","sim/systems/avionics_off","sim/systems/avionics_toggle")
+sysElectric.avionics1Bus		= TwoStateDrefSwitch:new("aviobus1","sim/cockpit2/switches/avionics_power_on",0)
 sysElectric.avionics2Bus		= InopSwitch:new("aviobus2")
 sysElectric.avionicsSwitchGroup 	= SwitchGroup:new("altswitches")
 sysElectric.avionicsSwitchGroup:addSwitch(sysElectric.avionics1Bus)
-sysElectric.avionicsSwitchGroup:addSwitch(sysElectric.avionics2Bus)
-
--- APU Starter
-sysElectric.apuStartSwitch 	= KeepPressedSwitchCmd:new("apu","Rotate/md80/electrical/APU_power_available",0,
-	"Rotate/md80/electrical/APU_switch_up")
+-- sysElectric.avionicsSwitchGroup:addSwitch(sysElectric.avionics2Bus)
 
 --------- Annunciators
 

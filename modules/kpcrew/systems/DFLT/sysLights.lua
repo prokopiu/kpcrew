@@ -56,9 +56,14 @@ sysLights.taxiAnc 			= SimpleAnnunciator:new("strobelights","sim/cockpit2/switch
 -- Landing Lights, single onoff command driven
 sysLights.llLeftSwitch 		= TwoStateDrefSwitch:new("llleft",drefLandingLights,-1)
 sysLights.llRightSwitch 	= TwoStateDrefSwitch:new("llright",drefLandingLights,1)
+sysLights.ll3rdSwitch 		= TwoStateDrefSwitch:new("ll3rd",drefLandingLights,2)
+sysLights.ll4thSwitch 		= TwoStateDrefSwitch:new("ll3rd",drefLandingLights,3)
 sysLights.landLightGroup 	= SwitchGroup:new("landinglights")
 sysLights.landLightGroup:addSwitch(sysLights.llLeftSwitch)
 sysLights.landLightGroup:addSwitch(sysLights.llRightSwitch)
+sysLights.landLightGroup:addSwitch(sysLights.ll3rdSwitch)
+sysLights.landLightGroup:addSwitch(sysLights.ll4thSwitch)
+
 
 -- annunciator to mark any landing lights on
 sysLights.landingAnc 		= CustomAnnunciator:new("landinglights",
@@ -71,17 +76,21 @@ function ()
 end)
 
 -- Logo Light
-sysLights.logoSwitch 		= TwoStateDrefSwitch:new("logo",drefGenericLights,-1)
+sysLights.logoSwitch 		= TwoStateDrefSwitch:new("logo",drefGenericLights,10)
 
 -- Logo Light(s) status
-sysLights.logoAnc 			= SimpleAnnunciator:new("logolights","sim/cockpit2/switches/generic_lights_switch",0)
+sysLights.logoAnc 			= SimpleAnnunciator:new("logolights","sim/cockpit2/switches/generic_lights_switch",10)
 
 -- RWY Turnoff Lights (2)
 sysLights.rwyLeftSwitch 	= TwoStateDrefSwitch:new("rwyleft",drefGenericLights,1)
 sysLights.rwyRightSwitch 	= TwoStateDrefSwitch:new("rwyright",drefGenericLights,2)
+sysLights.e1x5xcSwitch		= TwoStateDrefSwitch:new("side light xce1x5",drefGenericLights,12)
 sysLights.rwyLightGroup 	= SwitchGroup:new("runwaylights")
 sysLights.rwyLightGroup:addSwitch(sysLights.rwyLeftSwitch)
 sysLights.rwyLightGroup:addSwitch(sysLights.rwyRightSwitch)
+if PLANE_ICAO == "E170" or PLANE_ICAO == "E190" then
+	sysLights.rwyLightGroup:addSwitch(sysLights.e1x5xcSwitch)
+end
 
 -- runway turnoff lights
 sysLights.runwayAnc 		= CustomAnnunciator:new("runwaylights",
@@ -100,10 +109,10 @@ sysLights.wingSwitch 		= TwoStateDrefSwitch:new("wing",drefGenericLights,3)
 sysLights.wingAnc 			= SimpleAnnunciator:new("winglights",drefGenericLights, 3)
 
 -- Wheel well Lights
-sysLights.wheelSwitch 		= TwoStateDrefSwitch:new("wheel",drefGenericLights,5)
+sysLights.wheelSwitch 		= TwoStateDrefSwitch:new("wheel",drefGenericLights,11)
 
 -- Wheel well Light(s) status
-sysLights.wheelAnc 			= SimpleAnnunciator:new("wheellights",drefGenericLights,5)
+sysLights.wheelAnc 			= SimpleAnnunciator:new("wheellights",drefGenericLights,11)
 
 -- Dome Light
 sysLights.domeLightSwitch 	= TwoStateDrefSwitch:new("dome","sim/cockpit/electrical/cockpit_lights",0)
