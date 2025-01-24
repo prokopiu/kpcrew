@@ -7,6 +7,8 @@
 local sysGeneral = {
 }
 
+logMsg("DFLT sysGeneral")
+
 local TwoStateDrefSwitch 	= require "kpcrew.systems.TwoStateDrefSwitch"
 local TwoStateCmdSwitch	 	= require "kpcrew.systems.TwoStateCmdSwitch"
 local TwoStateCustomSwitch 	= require "kpcrew.systems.TwoStateCustomSwitch"
@@ -251,6 +253,7 @@ sysGeneral.doorACargo 		= TwoStateCustomSwitch:new("dooracargo",drefSlider,5,
 		end
 	end)
 sysGeneral.cockpitDoor 		= InopSwitch:new("cockpitdoor")
+sysGeneral.stairsL1 		= InopSwitch:new("stairs1")
 
 sysGeneral.doorGroup = SwitchGroup:new("doors")
 sysGeneral.doorGroup:addSwitch(sysGeneral.doorL1)
@@ -260,6 +263,7 @@ sysGeneral.doorGroup:addSwitch(sysGeneral.doorR2)
 sysGeneral.doorGroup:addSwitch(sysGeneral.doorFCargo)
 sysGeneral.doorGroup:addSwitch(sysGeneral.doorACargo)
 sysGeneral.doorGroup:addSwitch(sysGeneral.cockpitDoor)
+sysGeneral.doorGroup:addSwitch(sysGeneral.stairsL1)
 
 -- Door annunciators
 sysGeneral.doorL1Anc 		= SimpleAnnunciator:new("doorl1",drefSlider,0)
@@ -285,8 +289,8 @@ function ()
 end)
 
 -- Wiper Switches
-sysGeneral.wiperLeft = TwoStateDrefSwitch:new("wiperleft","sim/cockpit2/switches/wiper_speed_switch",-1)
-sysGeneral.wiperRight = TwoStateDrefSwitch:new("wiperleft","sim/cockpit2/switches/wiper_speed_switch",1)
+sysGeneral.wiperLeft = TwoStateDrefSwitch:new("wiperleft","sim/cockpit2/switches/wiper_speed",0)
+sysGeneral.wiperRight = InopSwitch:new("wiperleft")
 sysGeneral.wiperGroup = SwitchGroup:new("wipers")
 sysGeneral.wiperGroup:addSwitch(sysGeneral.wiperLeft)
 sysGeneral.wiperGroup:addSwitch(sysGeneral.wiperRight)
@@ -330,12 +334,7 @@ sysGeneral.irsUnitGroup:addSwitch(sysGeneral.irsUnit1Switch)
 sysGeneral.irsUnitGroup:addSwitch(sysGeneral.irsUnit2Switch)
 sysGeneral.irsUnitGroup:addSwitch(sysGeneral.irsUnit3Switch)
 
-
-
------------- Annunciators
-
-
-
+-- ---------- Annunciators
 
 -- Master Caution
 sysGeneral.masterCautionAnc = SimpleAnnunciator:new("mastercaution", "sim/cockpit2/annunciators/master_caution",0)
@@ -353,6 +352,5 @@ sysGeneral.baroInhg 		= CustomAnnunciator:new("inhg",
 function () 
 	return get("sim/cockpit2/gauges/actuators/barometer_setting_in_hg_pilot") 
 end)
-
 
 return sysGeneral

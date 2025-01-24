@@ -27,6 +27,8 @@ local sysEFIS = {
 	minsTypeBaro 	= 1
 }
 
+logMsg("DFLT sysEFIS")
+
 local TwoStateDrefSwitch 	= require "kpcrew.systems.TwoStateDrefSwitch"
 local TwoStateCmdSwitch	 	= require "kpcrew.systems.TwoStateCmdSwitch"
 local TwoStateCustomSwitch 	= require "kpcrew.systems.TwoStateCustomSwitch"

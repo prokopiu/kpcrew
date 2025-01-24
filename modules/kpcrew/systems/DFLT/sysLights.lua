@@ -8,7 +8,8 @@
 local sysLights = {
 }
 
-logMsg("Loading DFLT sysLights")
+logMsg("DFLT sysLights")
+
 
 local TwoStateDrefSwitch 	= require "kpcrew.systems.TwoStateDrefSwitch"
 local TwoStateCmdSwitch	 	= require "kpcrew.systems.TwoStateCmdSwitch"
@@ -133,27 +134,31 @@ end)
 
 -- Instrument Lights
 sysLights.instr1Light		= TwoStateDrefSwitch:new("","sim/cockpit/electrical/instrument_brightness",-1)
-sysLights.instr2Light		= TwoStateDrefSwitch:new("","sim/cockpit2/switches/panel_brightness_ratio",-1)
-sysLights.instr3Light		= TwoStateDrefSwitch:new("","sim/cockpit2/switches/instrument_brightness_ratio",2)
-sysLights.instr4Light		= TwoStateDrefSwitch:new("","sim/cockpit2/switches/instrument_brightness_ratio",-1)
+sysLights.instr2Light		= TwoStateDrefSwitch:new("","sim/cockpit2/switches/instrument_brightness_ratio",-1)
+sysLights.instr3Light		= TwoStateDrefSwitch:new("","sim/cockpit2/switches/instrument_brightness_ratio",1)
+sysLights.instr4Light		= TwoStateDrefSwitch:new("","sim/cockpit2/switches/instrument_brightness_ratio",2)
 sysLights.instr5Light		= TwoStateDrefSwitch:new("","sim/cockpit2/switches/instrument_brightness_ratio",3)
-sysLights.instr6Light		= TwoStateDrefSwitch:new("","sim/cockpit2/switches/instrument_brightness_ratio",1)
-sysLights.instr7Light		= TwoStateDrefSwitch:new("","sim/cockpit2/switches/panel_brightness_ratio",1)
-sysLights.instr8Light		= TwoStateDrefSwitch:new("","sim/cockpit2/switches/panel_brightness_ratio",2)
-sysLights.instr9Light		= TwoStateDrefSwitch:new("","sim/cockpit2/switches/panel_brightness_ratio",3)
+sysLights.instr6Light		= TwoStateDrefSwitch:new("","sim/cockpit2/switches/instrument_brightness_ratio",3)
 sysLights.instrLightGroup 	= SwitchGroup:new("instrumentlights")
 sysLights.instrLightGroup:addSwitch(sysLights.instr1Light)
 sysLights.instrLightGroup:addSwitch(sysLights.instr2Light)
 sysLights.instrLightGroup:addSwitch(sysLights.instr3Light)
 sysLights.instrLightGroup:addSwitch(sysLights.instr4Light)
 sysLights.instrLightGroup:addSwitch(sysLights.instr5Light)
-sysLights.instrLightGroup:addSwitch(sysLights.instr6Light)
-sysLights.instrLightGroup:addSwitch(sysLights.instr7Light)
-sysLights.instrLightGroup:addSwitch(sysLights.instr8Light)
-sysLights.instrLightGroup:addSwitch(sysLights.instr9Light)
 
 -- Instrument Light(s) status
 sysLights.instrumentAnc = SimpleAnnunciator:new("instrumentlights", "sim/cockpit2/switches/instrument_brightness_ratio",0)
+
+-- panel lights
+sysLights.panel1Light		= TwoStateDrefSwitch:new("panellight1","sim/cockpit2/switches/panel_brightness_ratio",-1)
+sysLights.panel2Light		= TwoStateDrefSwitch:new("panellight2","sim/cockpit2/switches/panel_brightness_ratio",1)
+sysLights.panel3Light		= TwoStateDrefSwitch:new("panellight3","sim/cockpit2/switches/panel_brightness_ratio",2)
+sysLights.panel4Light		= TwoStateDrefSwitch:new("panellight4","sim/cockpit2/switches/panel_brightness_ratio",3)
+sysLights.panelLightGroup 	= SwitchGroup:new("panellights")
+sysLights.panelLightGroup:addSwitch(sysLights.panel1Light)
+sysLights.panelLightGroup:addSwitch(sysLights.panel2Light)
+sysLights.panelLightGroup:addSwitch(sysLights.panel3Light)
+sysLights.panelLightGroup:addSwitch(sysLights.panel4Light)
 
 -- ===== UI related functions =====
 

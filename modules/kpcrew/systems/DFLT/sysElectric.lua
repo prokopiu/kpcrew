@@ -19,7 +19,7 @@ local MultiStateCmdSwitch 	= require "kpcrew.systems.MultiStateCmdSwitch"
 local InopSwitch 			= require "kpcrew.systems.InopSwitch"
 local KeepPressedSwitchCmd	= require "kpcrew.systems.KeepPressedSwitchCmd"
 
-logMsg ("Electrics DFLT")
+logMsg("DFLT sysElectric")
 
 --------- Batteries
 

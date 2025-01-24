@@ -64,8 +64,8 @@ elseif PLANE_ICAO == "A20N" and PLANE_TAILNUMBER == "C-GTLT" then
 elseif PLANE_ICAO == "A346" then
 	kc_acf_icao = "A20N"
 -- Laminar MD-82
--- elseif PLANE_ICAO == "MD82" and PLANE_TAILNUMBER == "N552AA" then
-	-- kc_acf_icao = "MD82"
+elseif PLANE_ICAO == "MD82" and PLANE_TAILNUMBER == "N552AA" then
+	kc_acf_icao = "MD82"
 end
 
 -- Aircraft Specific SOP/Checklist/Procedure Definitions

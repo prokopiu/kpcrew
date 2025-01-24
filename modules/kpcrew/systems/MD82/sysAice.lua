@@ -21,4 +21,6 @@ local KeepPressedSwitchCmd	= require "kpcrew.systems.KeepPressedSwitchCmd"
 
 sysAice = require("kpcrew.systems.DFLT.sysAice")
 
+logMsg("MD82 sysAice")
+
 return sysAice

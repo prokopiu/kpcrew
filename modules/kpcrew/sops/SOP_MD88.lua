@@ -338,6 +338,8 @@ cockpitPrepProc1:addItem(ProcedureItem:new("STATIC AIR SELECTOR LEFT","NORM",Flo
 	function () return get("Rotate/md80/systems/static_air_l") == 0 end,
 	function () set("Rotate/md80/systems/static_air_l",0) end))
 -- CREW OXYGEN & MASK....................TEST/CHECK  (CPT) not supported
+-- PRIMARY STABILIZER TRIM.....................TEST  (CPT) not supported
+-- ALTERNATE STABILIZER TRIM...................TEST  (CPT) not supported
 
 cockpitPrepProc1:addItem(HoldProcedureItem:new("RADIO AIDS","SET",FlowItem.actorCPT))
 cockpitPrepProc1:addItem(HoldProcedureItem:new("SPEED READOUT","SET",FlowItem.actorCPT))

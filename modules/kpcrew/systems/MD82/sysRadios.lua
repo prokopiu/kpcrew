@@ -18,4 +18,6 @@ local KeepPressedSwitchCmd	= require "kpcrew.systems.KeepPressedSwitchCmd"
 
 sysRadios = require("kpcrew.systems.DFLT.sysRadios")
 
+logMsg("MD82 sysRadios")
+
 return sysRadios

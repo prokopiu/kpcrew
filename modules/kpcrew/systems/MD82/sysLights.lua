@@ -23,6 +23,8 @@ local drefPanelLights 		= "sim/cockpit2/switches/panel_brightness_ratio"
 
 sysLights = require("kpcrew.systems.DFLT.sysLights")
 
+logMsg("MD82 sysLights")
+
 -- Landing Lights, single onoff command driven
 sysLights.llLeftSwitch = TwoStateCustomSwitch:new("llleft",drefLandingLights,1,
 function () 

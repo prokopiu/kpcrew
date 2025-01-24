@@ -18,6 +18,8 @@ local KeepPressedSwitchCmd	= require "kpcrew.systems.KeepPressedSwitchCmd"
 
 sysMCP = require("kpcrew.systems.DFLT.sysMCP")
 
+logMsg("MD82 sysMCP")
+
 -- A/P mode annunciator
 sysMCP.apAnc = SimpleAnnunciator:new("autopilotanc","sim/cockpit2/autopilot/autopilot_on_or_cws",0)
 

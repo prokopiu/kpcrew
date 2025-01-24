@@ -19,6 +19,8 @@ local drefFuelPressLow 		= "sim/cockpit2/annunciators/fuel_pressure_low"
 
 sysFuel = require("kpcrew.systems.DFLT.sysFuel")
 
+logMsg("MD82 sysFuel")
+
 -- fuel pumps MD82
 sysFuel.fuelPumpLeftAft 	= TwoStateDrefSwitch:new("fuelpumpleftaft","sim/cockpit2/fuel/fuel_tank_pump_on",1)
 sysFuel.fuelPumpLeftFwd 	= TwoStateDrefSwitch:new("fuelpumpleftfwd","sim/cockpit2/fuel/fuel_tank_pump_on",1)

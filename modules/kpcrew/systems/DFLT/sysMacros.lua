@@ -8,9 +8,11 @@
 local sysMacros = {
 }
 
+logMsg("DFLT sysMacros")
+
 -- ====================================== States related macros
 function kc_macro_state_cold_and_dark()
-	logMsg("kc_macro_state_cold_and_dark")
+	logMsg("DFLT kc_macro_state_cold_and_dark")
 	set("sim/private/controls/shadow/cockpit_near_adjust",0.09)
 	activeBckVars:set("general:timesOFF","==:==")
 	activeBckVars:set("general:timesOUT","==:==")
@@ -57,7 +59,7 @@ function kc_macro_state_cold_and_dark()
 end
 
 function kc_macro_state_turnaround()
-	logMsg("kc_macro_state_turnaround")
+	logMsg("DFLT kc_macro_state_turnaround")
 	sysElectric.batterySwitch:actuate(1) 
 	set_array("sim/cockpit/electrical/battery_array_on",1,1)
 	kc_macro_lights_preflight()
@@ -101,8 +103,8 @@ end
 
 -- ====================================== Lights related functions
 function kc_macro_lights_preflight()
+	logMsg("DFLT kc_macro_lights_preflight")
 	-- set the lights as needed during preflight/turnaround
-	-- external
 	sysLights.landLightGroup:actuate(0)
 	sysLights.rwyLightGroup:actuate(0)
 	sysLights.taxiSwitch:actuate(0)
@@ -110,253 +112,104 @@ function kc_macro_lights_preflight()
 	sysLights.beaconSwitch:actuate(0)
 	sysLights.strobesSwitch:actuate(0)
 	sysLights.instrLightGroup:actuate(1)
-	-- internal
 	if kc_is_daylight() then		
 		sysLights.domeLightSwitch:actuate(0)
-		-- sysLights.instrLightGroup:actuate(0)
 		sysLights.logoSwitch:actuate(0)
 		sysLights.wingSwitch:actuate(0)
 		sysLights.wheelSwitch:actuate(0)
+		sysLights.panelLightGroup:actuate(0)
 	else
 		sysLights.domeLightSwitch:actuate(1)
-		-- sysLights.instrLightGroup:actuate(1)
 		sysLights.logoSwitch:actuate(1)
 		sysLights.wingSwitch:actuate(1)
 		sysLights.wheelSwitch:actuate(1)
+		sysLights.panelLightGroup:actuate(1)
 	end
 end
 
 function kc_macro_lights_before_start()
 	-- set the lights as needed when preparing for push and engine start
-	-- external
-	sysLights.landLightGroup:actuate(0)
-	sysLights.rwyLightGroup:actuate(0)
-	sysLights.taxiSwitch:actuate(0)
-	sysLights.positionSwitch:actuate(1)
+	kc_macro_lights_preflight()
 	sysLights.beaconSwitch:actuate(1)
-	sysLights.strobesSwitch:actuate(0)
-	sysLights.instrLightGroup:actuate(1)
-	-- internal
-	if kc_is_daylight() then		
-		sysLights.domeLightSwitch:actuate(0)
-		-- sysLights.instrLightGroup:actuate(0)
-		sysLights.logoSwitch:actuate(0)
-		sysLights.wingSwitch:actuate(0)
-		sysLights.wheelSwitch:actuate(0)
-	else
-		sysLights.domeLightSwitch:actuate(1)
-		-- sysLights.instrLightGroup:actuate(1)
-		sysLights.logoSwitch:actuate(1)
+	if kc_is_daylight() == false then		
 		sysLights.wingSwitch:actuate(0)
 		sysLights.wheelSwitch:actuate(0)
 	end
 end
 
 function kc_macro_lights_before_taxi()
-	-- set the lights as needed when ready to taxi
-	-- external
-	sysLights.landLightGroup:actuate(0)
-	sysLights.rwyLightGroup:actuate(0)
+	kc_macro_lights_preflight()
 	sysLights.taxiSwitch:actuate(1)
-	sysLights.positionSwitch:actuate(1)
-	sysLights.beaconSwitch:actuate(1)
-	sysLights.strobesSwitch:actuate(0)
-	sysLights.instrLightGroup:actuate(1)
-	-- internal
-	if kc_is_daylight() then		
-		sysLights.domeLightSwitch:actuate(0)
-		-- sysLights.instrLightGroup:actuate(0)
-		sysLights.logoSwitch:actuate(0)
-		sysLights.wingSwitch:actuate(0)
-		sysLights.wheelSwitch:actuate(0)
-	else
-		sysLights.domeLightSwitch:actuate(0)
-		-- sysLights.instrLightGroup:actuate(0.3)
-		sysLights.logoSwitch:actuate(1)
-		sysLights.wingSwitch:actuate(0)
-		sysLights.wheelSwitch:actuate(0)
-	end
+	sysLights.domeLightSwitch:actuate(0)
 end
 
 function kc_macro_lights_for_takeoff()
 	-- set the lights when entering the runway
-	-- external
+	kc_macro_lights_before_taxi()
 	sysLights.landLightGroup:actuate(1)
 	sysLights.rwyLightGroup:actuate(1)
 	sysLights.taxiSwitch:actuate(0)
-	sysLights.positionSwitch:actuate(1)
-	sysLights.beaconSwitch:actuate(1)
 	sysLights.strobesSwitch:actuate(1)
-	sysLights.instrLightGroup:actuate(1)
-	-- internal
-	if kc_is_daylight() then		
-		sysLights.domeLightSwitch:actuate(0)
-		-- sysLights.instrLightGroup:actuate(0)
-		sysLights.logoSwitch:actuate(0)
-		sysLights.wingSwitch:actuate(0)
-		sysLights.wheelSwitch:actuate(0)
-	else
-		sysLights.domeLightSwitch:actuate(0)
-		-- sysLights.instrLightGroup:actuate(0.3)
-		sysLights.logoSwitch:actuate(1)
-		sysLights.wingSwitch:actuate(0)
-		sysLights.wheelSwitch:actuate(0)
-	end
 end
 
 function kc_macro_lights_climb_10k()
 	-- set the lights when reaching 10.000 ft
-	-- external
+	kc_macro_lights_for_takeoff()
 	sysLights.landLightGroup:actuate(0)
 	sysLights.rwyLightGroup:actuate(0)
-	sysLights.taxiSwitch:actuate(0)
-	sysLights.positionSwitch:actuate(1)
-	sysLights.beaconSwitch:actuate(1)
-	sysLights.strobesSwitch:actuate(1)
-	sysLights.instrLightGroup:actuate(1)
-	-- internal
-	if kc_is_daylight() then		
-		sysLights.domeLightSwitch:actuate(0)
-		-- sysLights.instrLightGroup:actuate(0)
-		sysLights.logoSwitch:actuate(0)
-		sysLights.wingSwitch:actuate(0)
-		sysLights.wheelSwitch:actuate(0)
-	else
-		sysLights.domeLightSwitch:actuate(0)
-		-- sysLights.instrLightGroup:actuate(0.3)
-		sysLights.logoSwitch:actuate(1)
-		sysLights.wingSwitch:actuate(0)
-		sysLights.wheelSwitch:actuate(0)
-	end
+	sysLights.logoSwitch:actuate(0)
 end
 
 function kc_macro_lights_descend_10k()
 	-- set the lights when sinking through 10.000 ft
-	-- external
+	kc_macro_lights_climb_10k()
 	sysLights.landLightGroup:actuate(1)
-	sysLights.rwyLightGroup:actuate(0)
-	sysLights.taxiSwitch:actuate(0)
-	sysLights.positionSwitch:actuate(1)
-	sysLights.beaconSwitch:actuate(1)
-	sysLights.strobesSwitch:actuate(1)
-	sysLights.instrLightGroup:actuate(1)
-	-- internal
-	if kc_is_daylight() then		
-		sysLights.domeLightSwitch:actuate(0)
-		-- sysLights.instrLightGroup:actuate(0)
-		sysLights.logoSwitch:actuate(0)
-		sysLights.wingSwitch:actuate(0)
-		sysLights.wheelSwitch:actuate(0)
-	else
-		sysLights.domeLightSwitch:actuate(0)
-		-- sysLights.instrLightGroup:actuate(0.3)
+	if kc_is_daylight() == false then		
 		sysLights.logoSwitch:actuate(1)
-		sysLights.wingSwitch:actuate(0)
-		sysLights.wheelSwitch:actuate(0)
 	end
 end
 
 function kc_macro_lights_approach()
 	-- set the lights when in the approach
-	-- external
-	sysLights.landLightGroup:actuate(1)
+	kc_macro_lights_descend_10k()
 	sysLights.rwyLightGroup:actuate(1)
-	sysLights.taxiSwitch:actuate(0)
-	sysLights.positionSwitch:actuate(1)
-	sysLights.beaconSwitch:actuate(1)
-	sysLights.strobesSwitch:actuate(1)
-	sysLights.instrLightGroup:actuate(1)
-	-- internal
-	if kc_is_daylight() then		
-		sysLights.domeLightSwitch:actuate(0)
-		-- sysLights.instrLightGroup:actuate(0)
-		sysLights.logoSwitch:actuate(0)
-		sysLights.wingSwitch:actuate(0)
-		sysLights.wheelSwitch:actuate(0)
-	else
-		sysLights.domeLightSwitch:actuate(0)
-		-- sysLights.instrLightGroup:actuate(0.3)
+	if kc_is_daylight() == false then		
 		sysLights.logoSwitch:actuate(1)
-		sysLights.wingSwitch:actuate(0)
-		sysLights.wheelSwitch:actuate(0)
-	end
+	end	
 end
 
 function kc_macro_lights_cleanup()
 	-- set the lights on cleaning up after landing
-	-- external
+	kc_macro_lights_approach()
 	sysLights.landLightGroup:actuate(0)
 	sysLights.rwyLightGroup:actuate(0)
 	sysLights.taxiSwitch:actuate(1)
-	sysLights.positionSwitch:actuate(1)
-	sysLights.beaconSwitch:actuate(1)
 	sysLights.strobesSwitch:actuate(0)
-	sysLights.instrLightGroup:actuate(1)
-	-- internal
-	if kc_is_daylight() then		
-		sysLights.domeLightSwitch:actuate(0)
-		-- sysLights.instrLightGroup:actuate(0)
-		sysLights.logoSwitch:actuate(0)
-		sysLights.wingSwitch:actuate(0)
-		sysLights.wheelSwitch:actuate(0)
-	else
-		sysLights.domeLightSwitch:actuate(0)
-		-- sysLights.instrLightGroup:actuate(0.3)
-		sysLights.logoSwitch:actuate(1)
-		sysLights.wingSwitch:actuate(0)
-		sysLights.wheelSwitch:actuate(0)
-	end
 end
 
 function kc_macro_lights_arrive_parking()
 	-- set the lights when arriving the parking position
-	-- external
-	sysLights.landLightGroup:actuate(0)
-	sysLights.rwyLightGroup:actuate(0)
-	sysLights.taxiSwitch:actuate(0)
-	sysLights.positionSwitch:actuate(1)
-	sysLights.beaconSwitch:actuate(1)
-	sysLights.strobesSwitch:actuate(0)
-	sysLights.instrLightGroup:actuate(1)
-	-- internal
-	if kc_is_daylight() then		
-		sysLights.domeLightSwitch:actuate(0)
-		-- sysLights.instrLightGroup:actuate(0)
-		sysLights.logoSwitch:actuate(0)
-		sysLights.wingSwitch:actuate(0)
-		sysLights.wheelSwitch:actuate(0)
-	else
-		sysLights.domeLightSwitch:actuate(0)
-		-- sysLights.instrLightGroup:actuate(1)
-		sysLights.logoSwitch:actuate(1)
-		sysLights.wingSwitch:actuate(1)
-		sysLights.wheelSwitch:actuate(1)
-	end
+	kc_macro_lights_cleanup()
+	sysLights.taxiSwitch:actuate(0)	
 end
 
 function kc_macro_lights_after_shutdown()
 	-- set the lights when engines are stopped
-	-- external
-	sysLights.landLightGroup:actuate(0)
-	sysLights.rwyLightGroup:actuate(0)
-	sysLights.taxiSwitch:actuate(0)
+	kc_macro_lights_arrive_parking()
 	sysLights.positionSwitch:actuate(1)
 	sysLights.beaconSwitch:actuate(0)
-	sysLights.strobesSwitch:actuate(0)
-	sysLights.instrLightGroup:actuate(1)
-	-- internal
 	if kc_is_daylight() then		
 		sysLights.domeLightSwitch:actuate(0)
-		-- sysLights.instrLightGroup:actuate(0)
 		sysLights.logoSwitch:actuate(0)
 		sysLights.wingSwitch:actuate(0)
 		sysLights.wheelSwitch:actuate(0)
+		sysLights.panelLightGroup:actuate(0)
 	else
 		sysLights.domeLightSwitch:actuate(1)
-		-- sysLights.instrLightGroup:actuate(1)
 		sysLights.logoSwitch:actuate(1)
 		sysLights.wingSwitch:actuate(1)
 		sysLights.wheelSwitch:actuate(1)
+		sysLights.panelLightGroup:actuate(1)
 	end
 end
 
@@ -375,6 +228,7 @@ function kc_macro_lights_cold_dark()
 	-- internal
 	sysLights.domeLightSwitch:actuate(0)
 	sysLights.instrLightGroup:actuate(0)
+	sysLights.panelLightGroup:actuate(0)
 end
 
 function kc_macro_lights_all_on()
@@ -392,11 +246,13 @@ function kc_macro_lights_all_on()
 	-- internal
 	sysLights.domeLightSwitch:actuate(1)
 	sysLights.instrLightGroup:actuate(1)
+	sysLights.panelLightGroup:actuate(1)
 end
 
 -- ====================================== Door related functions
 function kc_macro_doors_preflight()
 	sysGeneral.doorL1:actuate(1)
+	sysGeneral.stairsL1:actuate(1)
 	sysGeneral.doorL2:actuate(0)
 	sysGeneral.doorR1:actuate(0)
 	sysGeneral.doorR2:actuate(0)
@@ -426,7 +282,8 @@ function kc_macro_doors_after_shutdown()
 end
 
 function kc_macro_doors_cold_dark()
-	sysGeneral.doorL1:actuate(0)
+	sysGeneral.doorL1:actuate(1)
+	sysGeneral.stairsL1:actuate(1)
 	sysGeneral.doorL2:actuate(0)
 	sysGeneral.doorR1:actuate(0)
 	sysGeneral.doorR2:actuate(0)
@@ -437,6 +294,7 @@ end
 
 function kc_macro_doors_all_open()
 	sysGeneral.doorL1:actuate(1)
+	sysGeneral.stairsL1:actuate(1)
 	sysGeneral.doorL2:actuate(1)
 	sysGeneral.doorR1:actuate(1)
 	sysGeneral.doorR2:actuate(1)
@@ -447,12 +305,13 @@ end
 
 function kc_macro_doors_all_closed()
 	sysGeneral.doorL1:actuate(0)
+	sysGeneral.stairsL1:actuate(0)
 	sysGeneral.doorL2:actuate(0)
 	sysGeneral.doorR1:actuate(0)
 	sysGeneral.doorR2:actuate(0)
 	sysGeneral.doorFCargo:actuate(0)
 	sysGeneral.doorACargo:actuate(0)
-	sysGeneral.cockpitDoor:actuate(1)
+	sysGeneral.cockpitDoor:actuate(0)
 end
 
 -- ====================================== A/P & Glareshield related functions

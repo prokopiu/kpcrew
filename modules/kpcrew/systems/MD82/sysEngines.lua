@@ -18,6 +18,8 @@ local KeepPressedSwitchCmd	= require "kpcrew.systems.KeepPressedSwitchCmd"
 
 sysEngines = require("kpcrew.systems.DFLT.sysEngines")
 
+logMsg("MD82 sysEngines")
+
 return sysEngines
 
 -- sysEngines.ignition = MultiStateCmdSwitch:new("ignition","laminar/md82/ignition_sys",0,

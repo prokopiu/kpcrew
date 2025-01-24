@@ -22,6 +22,8 @@ local KeepPressedSwitchCmd	= require "kpcrew.systems.KeepPressedSwitchCmd"
 
 sysAir = require("kpcrew.systems.DFLT.sysAir")
 
+logMsg("MD82 sysAir")
+
 -- APU Bleed
 sysAir.apuBleedSwitch 		= TwoStateCmdSwitch:new("apubleed","laminar/md82/bleedair/APU_on",0,
 	"laminar/md82cmd/bleedair/APU_dwn","laminar/md82cmd/bleedair/APU_up","nocommand")

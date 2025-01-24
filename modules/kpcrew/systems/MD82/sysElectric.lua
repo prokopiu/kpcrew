@@ -27,6 +27,8 @@ local sysElectric = {
 
 sysElectric = require("kpcrew.systems.DFLT.sysElectric")
 
+logMsg("MD82 sysElectric")
+
 -- APU Bus Switches
 sysElectric.apuGenBus1 		= TwoStateToggleSwitch:new("apubus1","laminar/md82/electrical/cross_tie_APU_L",0,
 	"laminar/md82cmd/electrical/cross_tie_APU_L")

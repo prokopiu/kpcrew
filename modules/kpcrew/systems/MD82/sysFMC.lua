@@ -18,4 +18,6 @@ local KeepPressedSwitchCmd	= require "kpcrew.systems.KeepPressedSwitchCmd"
 
 sysFMC = require("kpcrew.systems.DFLT.sysFMC")
 
+logMsg("MD82 sysFMC")
+
 return sysFMC

@@ -18,4 +18,6 @@ local KeepPressedSwitchCmd	= require "kpcrew.systems.KeepPressedSwitchCmd"
 
 sysEFIS = require("kpcrew.systems.DFLT.sysEFIS")
 
+logMsg("MD82 sysEFIS")
+
 return sysEFIS

@@ -535,7 +535,13 @@ end
 
 -- get daylight 0=dark 1=bright
 function kc_is_daylight()
-	if get("sim/private/stats/skyc/sun_amb_b") < 0.22 then
+	local lightthreshold = 0
+	if kc_simversion > 120000 then
+		lightthreshold = 0.22
+	else
+		lightthreshold = 0.1
+	end
+	if get("sim/private/stats/skyc/sun_amb_b") < lightthreshold then
 		return false
 	else
 		return true

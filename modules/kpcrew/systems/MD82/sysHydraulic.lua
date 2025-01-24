@@ -18,4 +18,6 @@ local KeepPressedSwitchCmd	= require "kpcrew.systems.KeepPressedSwitchCmd"
 
 sysHydraulic = require("kpcrew.systems.DFLT.sysHydraulic")
 
+logMsg("MD82 sysHydraulic")
+
 return sysHydraulic
