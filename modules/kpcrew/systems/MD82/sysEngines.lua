@@ -20,10 +20,12 @@ sysEngines = require("kpcrew.systems.DFLT.sysEngines")
 
 logMsg("MD82 sysEngines")
 
+sysEngines.ignition = MultiStateCmdSwitch:new("ignition","laminar/md82/ignition_sys",0,
+	"laminar/md82cmd/ignition_sys_dwn","laminar/md82cmd/ignition_sys_up",0,4,true)
+	
 return sysEngines
 
--- sysEngines.ignition = MultiStateCmdSwitch:new("ignition","laminar/md82/ignition_sys",0,
-	-- "laminar/md82cmd/ignition_sys_dwn","laminar/md82cmd/ignition_sys_up",0,4,true)
+
 
 -- sysEngines.engStart1Switch = KeepPressedSwitchCmd:new("eng1start","sim/flightmodel2/engines/starter_is_running",-1,
 	-- "sim/ignition/engage_starter_1")

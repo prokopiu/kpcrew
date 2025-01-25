@@ -31,15 +31,15 @@ sysFuel.fuelPumpCtrRight 	= TwoStateDrefSwitch:new("fuelpumpctrright","sim/cockp
 
 sysFuel.fuelPumpGroup 		= SwitchGroup:new("fuelpumpgroup")
 sysFuel.fuelPumpGroup:addSwitch(sysFuel.fuelPumpLeftAft)
-sysFuel.fuelPumpGroup:addSwitch(sysFuel.fuelPumpLeftFwd)
+-- sysFuel.fuelPumpGroup:addSwitch(sysFuel.fuelPumpLeftFwd)
 sysFuel.fuelPumpGroup:addSwitch(sysFuel.fuelPumpRightAft)
-sysFuel.fuelPumpGroup:addSwitch(sysFuel.fuelPumpRightFwd)
+-- sysFuel.fuelPumpGroup:addSwitch(sysFuel.fuelPumpRightFwd)
 sysFuel.fuelPumpGroup:addSwitch(sysFuel.fuelPumpCtrLeft)
-sysFuel.fuelPumpGroup:addSwitch(sysFuel.fuelPumpCtrRight)
+-- sysFuel.fuelPumpGroup:addSwitch(sysFuel.fuelPumpCtrRight)
 
-sysFuel.ctrFuelPumpGroup 	= SwitchGroup:new("ctrfuelpumpgroup")
-sysFuel.ctrFuelPumpGroup:addSwitch(sysFuel.fuelPumpCtrLeft)
-sysFuel.ctrFuelPumpGroup:addSwitch(sysFuel.fuelPumpCtrRight)
+-- sysFuel.ctrFuelPumpGroup 	= SwitchGroup:new("ctrfuelpumpgroup")
+-- sysFuel.ctrFuelPumpGroup:addSwitch(sysFuel.fuelPumpCtrLeft)
+-- sysFuel.ctrFuelPumpGroup:addSwitch(sysFuel.fuelPumpCtrRight)
 
 sysFuel.crossFeed 			= TwoStateCmdSwitch:new("crossfeed","sim/cockpit2/fuel/auto_crossfeed",0,
 	"sim/fuel/auto_crossfeed_on_open","sim/fuel/auto_crossfeed_off")

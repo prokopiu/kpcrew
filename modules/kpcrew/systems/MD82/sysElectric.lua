@@ -47,14 +47,27 @@ sysElectric.gpuGenBusGroup	= SwitchGroup:new("gpubussgroup")
 sysElectric.gpuGenBusGroup:addSwitch(sysElectric.gpuGenBus1)
 sysElectric.gpuGenBusGroup:addSwitch(sysElectric.gpuGenBus2)
 
-return sysElectric
+sysElectric.galleyPower = TwoStateDrefSwitch:new("galleypwr","sim/cockpit2/switches/generic_lights_switch",36)
 
 -- Voltmeter MD82
--- sysElectric.voltmeterSwitch = MultiStateCmdSwitch:new("voltmeter","laminar/md82/electrical/voltmeter_source",0,
-	-- "laminar/md82cmd/electrical/voltmeter_source_dwn","laminar/md82cmd/electrical/voltmeter_source_up",0,5,true)
+sysElectric.voltmeterSwitch = MultiStateCmdSwitch:new("voltmeter","laminar/md82/electrical/voltmeter_source",0,
+	"laminar/md82cmd/electrical/voltmeter_source_dwn","laminar/md82cmd/electrical/voltmeter_source_up",0,5,true)
 
--- sysElectric.galleyPower = TwoStateToggleSwitch:new("galleypwr","sim/cockpit2/switches/generic_lights_switch",36,
-	-- "sim/lights/generic_37_light_tog")
+-- GPU on bus annunciator
+sysElectric.gpuOnBus = CustomAnnunciator:new("gpuonbus",
+function () 
+	if get("sim/cockpit/electrical/gpu_on") == 1 and 
+		get("laminar/md82/electrical/cross_tie_GPU_L") == 1 and
+		get("laminar/md82/electrical/cross_tie_GPU_R") == 1 then
+		return 1
+	else
+		return 0
+	end
+end)
+
+return sysElectric
+
+
 
 -- sysElectric.dcBusXTie = TwoStateToggleSwitch:new("dcbusxtie","laminar/md82/electrical/cross_tie_DC",0,
 	-- "laminar/md82cmd/electrical/cross_tie_DC")
@@ -62,14 +75,3 @@ return sysElectric
 -- sysElectric.acBusXTie = TwoStateToggleSwitch:new("acbusxtie","laminar/md82/electrical/cross_tie_AC",0,
 	-- "laminar/md82cmd/electrical/cross_tie_AC")
 	
--- GPU on bus annunciator
--- sysElectric.gpuOnBus = CustomAnnunciator:new("gpuonbus",
--- function () 
-	-- if get("sim/cockpit/electrical/gpu_on") == 1 and 
-		-- get("laminar/md82/electrical/cross_tie_GPU_L") == 1 and
-		-- get("laminar/md82/electrical/cross_tie_GPU_R") == 1 then
-		-- return 1
-	-- else
-		-- return 0
-	-- end
--- end)

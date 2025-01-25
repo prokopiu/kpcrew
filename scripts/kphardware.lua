@@ -31,51 +31,45 @@ if PLANE_ICAO == "B738" then
 	else
 		kh_acf_icao = "B738" -- Zibo Mod and variants
 	end
-end
-if PLANE_ICAO == "A333" then
-	kh_acf_icao = "A333"
-end
--- if (PLANE_ICAO == "A321" and PLANE_TAILNUMBER == "C-GTLU") then
-		-- kc_acf_icao = "A20N"
--- end
--- if (PLANE_ICAO == "A20N" and PLANE_TAILNUMBER == "C-GTLT") then
-		-- kc_acf_icao = "A20N"
--- end
--- if PLANE_ICAO == "A359" then
+-- elseif PLANE_ICAO == "A359" then
 	-- kh_acf_icao = "A359"
--- end
 -- XP12 Citation X
-if PLANE_ICAO == "C750" and PLANE_TAILNUMBER == "N750XP" then
+elseif PLANE_ICAO == "C750" and PLANE_TAILNUMBER == "N750XP" then
 	kh_acf_icao = "C750"
-end
-if PLANE_ICAO == "MD11" then
-	kh_acf_icao = "MD11"
-end
--- if PLANE_ICAO == "B732" then
+-- elseif PLANE_ICAO == "C172" and PLANE_TAILNUMBER ~= "OK-AFL" then
+	-- kh_acf_icao = "C172"
+-- XP12 A330-300 Laminar
+-- elseif PLANE_ICAO == "A333" then
+	-- kh_acf_icao = "A333"
+-- elseif PLANE_ICAO == "C172" and PLANE_TAILNUMBER == "OK-AFL" then
+	-- kh_acf_icao = "C17D"
+-- elseif PLANE_ICAO == "A306" then
+	-- kh_acf_icao = "A306"
+-- elseif PLANE_ICAO == "B762" or PLANE_ICAO == "B763" or PLANE_ICAO == "B764" then
+	-- kh_acf_icao = "B7x7"
+-- elseif PLANE_ICAO == "MD11" then
+	-- kh_acf_icao = "MD11"
+-- elseif PLANE_ICAO == "B732" then
 	-- kh_acf_icao = "B732"
--- end
--- if PLANE_ICAO == "B733" then
+-- elseif PLANE_ICAO == "B733" then
 	-- kh_acf_icao = "B733"
--- end
--- if PLANE_ICAO == "E135" or PLANE_ICAO == "E140" or PLANE_ICAO == "E145" or PLANE_ICAO == "E45X" then
-	-- kh_acf_icao = "ERJF"
--- end
-if PLANE_ICAO == "B762" or PLANE_ICAO == "B763" or PLANE_ICAO == "B764" then
-	kh_acf_icao = "B7x7"
-end
-if PLANE_ICAO == "B772" then
-	kh_acf_icao = "B777"
-end
-if PLANE_ICAO == "A321" and PLANE_TAILNUMBER == "C-GTLU" then
+elseif PLANE_ICAO == "A321" then
 	kh_acf_icao = "A20N"
-end
+elseif PLANE_ICAO == "A339" then
+	kh_acf_icao = "A20N"
+elseif PLANE_ICAO == "A319" and PLANE_TAILNUMBER == "C-GTLS" then
+	kh_acf_icao = "A20N"
+elseif PLANE_ICAO == "A20N" and PLANE_TAILNUMBER == "C-GTLT" then
+	kh_acf_icao = "A20N"
+elseif PLANE_ICAO == "A346" then
+	kh_acf_icao = "A20N"
 -- Laminar MD-82
--- if PLANE_ICAO == "MD82" and PLANE_TAILNUMBER == "N552AA" then
-	-- kh_acf_icao = "MD82"
--- end
--- if PLANE_ICAO == "B744" then
-	-- kh_acf_icao = "B744"
--- end
+elseif PLANE_ICAO == "MD82" and PLANE_TAILNUMBER == "N552AA" then
+	kh_acf_icao = "MD82"
+-- RotateSim MD-88
+elseif PLANE_ICAO == "MD88" then
+	kh_acf_icao = "MD88"
+end
 
 -- set("sim/private/controls/shadow/cockpit_near_adjust",0.09)
 

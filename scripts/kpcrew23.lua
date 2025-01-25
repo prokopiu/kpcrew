@@ -39,16 +39,16 @@ elseif PLANE_ICAO == "C750" and PLANE_TAILNUMBER == "N750XP" then
 -- elseif PLANE_ICAO == "C172" and PLANE_TAILNUMBER ~= "OK-AFL" then
 	-- kc_acf_icao = "C172"
 -- XP12 A330-300 Laminar
-elseif PLANE_ICAO == "A333" then
-	kc_acf_icao = "A333"
+-- elseif PLANE_ICAO == "A333" then
+	-- kc_acf_icao = "A333"
 -- elseif PLANE_ICAO == "C172" and PLANE_TAILNUMBER == "OK-AFL" then
 	-- kc_acf_icao = "C17D"
 -- elseif PLANE_ICAO == "A306" then
 	-- kc_acf_icao = "A306"
-elseif PLANE_ICAO == "B762" or PLANE_ICAO == "B763" or PLANE_ICAO == "B764" then
-	kc_acf_icao = "B7x7"
-elseif PLANE_ICAO == "MD11" then
-	kc_acf_icao = "MD11"
+-- elseif PLANE_ICAO == "B762" or PLANE_ICAO == "B763" or PLANE_ICAO == "B764" then
+	-- kc_acf_icao = "B7x7"
+-- elseif PLANE_ICAO == "MD11" then
+	-- kc_acf_icao = "MD11"
 -- elseif PLANE_ICAO == "B732" then
 	-- kc_acf_icao = "B732"
 -- elseif PLANE_ICAO == "B733" then
@@ -66,6 +66,9 @@ elseif PLANE_ICAO == "A346" then
 -- Laminar MD-82
 elseif PLANE_ICAO == "MD82" and PLANE_TAILNUMBER == "N552AA" then
 	kc_acf_icao = "MD82"
+-- RotateSim MD-88
+elseif PLANE_ICAO == "MD88" then
+	kc_acf_icao = "MD88"
 end
 
 -- Aircraft Specific SOP/Checklist/Procedure Definitions

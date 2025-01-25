@@ -26,10 +26,28 @@ if PLANE_ICAO == "B738" then
 	else
 		kc_acf_icao = "B738" -- Zibo Mod
 	end
+-- elseif PLANE_ICAO == "A359" then
+	-- kc_acf_icao = "A359"
 -- XP12 Citation X
 elseif PLANE_ICAO == "C750" and PLANE_TAILNUMBER == "N750XP" then
 	kc_acf_icao = "C750"
--- ToLiss Airbusses
+-- elseif PLANE_ICAO == "C172" and PLANE_TAILNUMBER ~= "OK-AFL" then
+	-- kc_acf_icao = "C172"
+-- XP12 A330-300 Laminar
+-- elseif PLANE_ICAO == "A333" then
+	-- kc_acf_icao = "A333"
+-- elseif PLANE_ICAO == "C172" and PLANE_TAILNUMBER == "OK-AFL" then
+	-- kc_acf_icao = "C17D"
+-- elseif PLANE_ICAO == "A306" then
+	-- kc_acf_icao = "A306"
+-- elseif PLANE_ICAO == "B762" or PLANE_ICAO == "B763" or PLANE_ICAO == "B764" then
+	-- kc_acf_icao = "B7x7"
+-- elseif PLANE_ICAO == "MD11" then
+	-- kc_acf_icao = "MD11"
+-- elseif PLANE_ICAO == "B732" then
+	-- kc_acf_icao = "B732"
+-- elseif PLANE_ICAO == "B733" then
+	-- kc_acf_icao = "B733"
 elseif PLANE_ICAO == "A321" then
 	kc_acf_icao = "A20N"
 elseif PLANE_ICAO == "A339" then
@@ -40,6 +58,16 @@ elseif PLANE_ICAO == "A20N" and PLANE_TAILNUMBER == "C-GTLT" then
 	kc_acf_icao = "A20N"
 elseif PLANE_ICAO == "A346" then
 	kc_acf_icao = "A20N"
+-- Laminar MD-82
+elseif PLANE_ICAO == "MD82" and PLANE_TAILNUMBER == "N552AA" then
+	kc_acf_icao = "MD82"
+-- RotateSim MD-88
+elseif PLANE_ICAO == "MD88" then
+	kc_acf_icao = "MD88"
+end
+
+if kc_file_exists(SCRIPT_DIRECTORY .. "..\\Modules\\kpcrew_prefs\\" .. kc_acf_icao .. ".preferences") then
+	getActivePrefs():load()
 end
 
 kb_font_scale = 1.4
@@ -343,7 +371,11 @@ function kb_get_asky_metar(icao)
 			return "-- NO DATA -- "
 		end
 		startindex, endindex = string.find(wx, ":"..icao, 7)
-		return string.sub(wx,7,startindex-2)
+		if startindex ~= nil then
+			return string.sub(wx,7,startindex-2)
+		else
+			return "-- NO DATA --"
+		end
     else
         return "-- NO ICAO --"
     end
@@ -551,7 +583,7 @@ function kb_brief_builder(kb_brief_wnd, x, y)
 				end
 			end
 		imgui.EndCombo()
-		end
+		end		
     imgui.PopStyleColor()
     imgui.PopItemWidth()
 	imgui.PopID()
@@ -1059,7 +1091,11 @@ function kb_brief_builder(kb_brief_wnd, x, y)
 							imgui.TextUnformatted("RAMP  (" .. wunit .. "):")
 						imgui.PopStyleColor()
 						imgui.SameLine()
-						imgui.PushStyleColor(imgui.constant.Col.Text, color_orange)
+						if kc_get_gross_weight() > kc_get_MaxRampWeight() then
+							imgui.PushStyleColor(imgui.constant.Col.Text, color_red)
+						else
+							imgui.PushStyleColor(imgui.constant.Col.Text, color_orange)
+						end
 							imgui.TextUnformatted(kc_get_gross_weight())
 						imgui.PopStyleColor()
 
@@ -1293,13 +1329,13 @@ function kb_brief_builder(kb_brief_wnd, x, y)
 							imgui.TextUnformatted(handler.root.OFP.impacts.zfw_minus_1000.burn_difference)
 						imgui.PopStyleColor()
 						
-						imgui.PushStyleColor(imgui.constant.Col.Text, color_white)
-							imgui.TextUnformatted("1FL BELOW  :")
-						imgui.PopStyleColor()
-						imgui.SameLine()
-						imgui.PushStyleColor(imgui.constant.Col.Text, color_green)
-							imgui.TextUnformatted(handler.root.OFP.impacts.minus_2000ft.burn_difference)
-						imgui.PopStyleColor()
+						-- imgui.PushStyleColor(imgui.constant.Col.Text, color_white)
+							-- imgui.TextUnformatted("1FL BELOW  :")
+						-- imgui.PopStyleColor()
+						-- imgui.SameLine()
+						-- imgui.PushStyleColor(imgui.constant.Col.Text, color_green)
+							-- imgui.TextUnformatted(handler.root.OFP.impacts.minus_2000ft.burn_difference)
+						-- imgui.PopStyleColor()
 						
 					imgui.EndChild()
 
@@ -1789,10 +1825,8 @@ function kb_brief_builder(kb_brief_wnd, x, y)
 					imgui.BeginChild("origincol4")
 		
 						-- imgui.SetWindowFontScale(kb_font_scale)
-
-
 						imgui.PushStyleColor(imgui.constant.Col.Text, 0xFFCCCCCC)
-						imgui.TextUnformatted("V1          :")
+							imgui.TextUnformatted("V1      :")
 						imgui.PopStyleColor()
 						imgui.SameLine()
 						imgui.PushItemWidth(30*kb_font_scale);
@@ -2889,13 +2923,208 @@ function kb_brief_builder(kb_brief_wnd, x, y)
 
 		imgui.EndTabItem()
 		end
+
+-- Alternate
+		if imgui.BeginTabItem("DEBUG") then
+
+			imgui.BeginChild("debugtab")
+			
+				imgui.Columns(4,"dbgcolumns",true)
+
+					imgui.BeginChild("dbg1")
+
+						imgui.PushStyleColor(imgui.constant.Col.Text, color_white)
+							imgui.TextUnformatted("Max Ramp Weight:")
+						imgui.PopStyleColor()
+						imgui.SameLine()
+						imgui.PushStyleColor(imgui.constant.Col.Text, color_green)
+							imgui.TextUnformatted(kc_get_MaxRampWeight())
+						imgui.PopStyleColor()
+
+						imgui.PushStyleColor(imgui.constant.Col.Text, color_white)
+							imgui.TextUnformatted("DOW:")
+						imgui.PopStyleColor()
+						imgui.SameLine()
+						imgui.PushStyleColor(imgui.constant.Col.Text, color_green)
+							imgui.TextUnformatted(kc_get_DOW())
+						imgui.PopStyleColor()
+
+						imgui.PushStyleColor(imgui.constant.Col.Text, color_white)
+							imgui.TextUnformatted("MZFW:")
+						imgui.PopStyleColor()
+						imgui.SameLine()
+						imgui.PushStyleColor(imgui.constant.Col.Text, color_green)
+							imgui.TextUnformatted(kc_get_MZFW())
+						imgui.PopStyleColor()
+
+						imgui.PushStyleColor(imgui.constant.Col.Text, color_white)
+							imgui.TextUnformatted("ZFW:")
+						imgui.PopStyleColor()
+						imgui.SameLine()
+						imgui.PushStyleColor(imgui.constant.Col.Text, color_green)
+							imgui.TextUnformatted(kc_get_zfw())
+						imgui.PopStyleColor()
+
+						imgui.PushStyleColor(imgui.constant.Col.Text, color_white)
+							imgui.TextUnformatted("MTOW:")
+						imgui.PopStyleColor()
+						imgui.SameLine()
+						imgui.PushStyleColor(imgui.constant.Col.Text, color_green)
+							imgui.TextUnformatted(kc_get_MTOW())
+						imgui.PopStyleColor()
+						
+						imgui.PushStyleColor(imgui.constant.Col.Text, color_white)
+							imgui.TextUnformatted("MLW:")
+						imgui.PopStyleColor()
+						imgui.SameLine()
+						imgui.PushStyleColor(imgui.constant.Col.Text, color_green)
+							imgui.TextUnformatted(kc_get_MLW())
+						imgui.PopStyleColor()
+
+						imgui.PushStyleColor(imgui.constant.Col.Text, color_white)
+							imgui.TextUnformatted("Max Payload:")
+						imgui.PopStyleColor()
+						imgui.SameLine()
+						imgui.PushStyleColor(imgui.constant.Col.Text, color_green)
+							imgui.TextUnformatted(kc_get_MaxPayload())
+						imgui.PopStyleColor()
+
+						imgui.PushStyleColor(imgui.constant.Col.Text, color_white)
+							imgui.TextUnformatted("Payload:")
+						imgui.PopStyleColor()
+						imgui.SameLine()
+						imgui.PushStyleColor(imgui.constant.Col.Text, color_green)
+							imgui.TextUnformatted(kc_get_Payload())
+						imgui.PopStyleColor()
+
+						imgui.PushStyleColor(imgui.constant.Col.Text, color_white)
+							imgui.TextUnformatted("Gross Weight:")
+						imgui.PopStyleColor()
+						imgui.SameLine()
+						imgui.PushStyleColor(imgui.constant.Col.Text, color_green)
+							imgui.TextUnformatted(kc_get_gross_weight())
+						imgui.PopStyleColor()
+
+					imgui.EndChild()
+
+				imgui.NextColumn()
+					imgui.BeginChild("dbg2")
+
+						imgui.PushStyleColor(imgui.constant.Col.Text, color_white)
+							imgui.TextUnformatted("# of fuel tanks:")
+						imgui.PopStyleColor()
+						imgui.SameLine()
+						imgui.PushStyleColor(imgui.constant.Col.Text, color_green)
+							imgui.TextUnformatted(kc_get_nr_tanks())
+						imgui.PopStyleColor()
+
+						imgui.PushStyleColor(imgui.constant.Col.Text, color_white)
+							imgui.TextUnformatted("Max Fuel:")
+						imgui.PopStyleColor()
+						imgui.SameLine()
+						imgui.PushStyleColor(imgui.constant.Col.Text, color_green)
+							imgui.TextUnformatted(kc_get_MaxFuel())
+						imgui.PopStyleColor()
+
+						imgui.PushStyleColor(imgui.constant.Col.Text, color_white)
+							imgui.TextUnformatted("Total Fuel loaded:")
+						imgui.PopStyleColor()
+						imgui.SameLine()
+						imgui.PushStyleColor(imgui.constant.Col.Text, color_green)
+							imgui.TextUnformatted(kc_get_total_fuel())
+						imgui.PopStyleColor()
+
+						for itank=0, kc_get_nr_tanks()-1, 1 do
+ 
+							imgui.PushStyleColor(imgui.constant.Col.Text, color_white)
+								imgui.TextUnformatted("MFL " .. itank+1 .. ":")
+							imgui.PopStyleColor()
+							imgui.SameLine()
+							imgui.PushStyleColor(imgui.constant.Col.Text, color_green)
+								imgui.TextUnformatted(kc_get_MFL(itank))
+							imgui.PopStyleColor()
+
+						end
+						
+						for itank=0, kc_get_nr_tanks()-1, 1 do
+ 
+							imgui.PushStyleColor(imgui.constant.Col.Text, color_white)
+								imgui.TextUnformatted("Fuel tank " .. itank+1 .. ":")
+							imgui.PopStyleColor()
+							imgui.SameLine()
+							imgui.PushStyleColor(imgui.constant.Col.Text, color_green)
+								imgui.TextUnformatted(kc_get_tank_weight(itank))
+							imgui.PopStyleColor()
+
+						end
+
+						-- imgui.PushStyleColor(imgui.constant.Col.Text, color_white)
+							-- imgui.TextUnformatted("MZFW:")
+						-- imgui.PopStyleColor()
+						-- imgui.SameLine()
+						-- imgui.PushStyleColor(imgui.constant.Col.Text, color_green)
+							-- imgui.TextUnformatted(kc_get_MZFW())
+						-- imgui.PopStyleColor()
+
+					imgui.EndChild()
+				imgui.NextColumn()
+
+					imgui.BeginChild("dbg3")
+						-- imgui.PushStyleColor(imgui.constant.Col.Text, color_white)
+							-- imgui.TextUnformatted("MZFW:")
+						-- imgui.PopStyleColor()
+						-- imgui.SameLine()
+						-- imgui.PushStyleColor(imgui.constant.Col.Text, color_green)
+							-- imgui.TextUnformatted(kc_get_MZFW())
+						-- imgui.PopStyleColor()
+
+						-- imgui.PushStyleColor(imgui.constant.Col.Text, color_white)
+							-- imgui.TextUnformatted("MZFW:")
+						-- imgui.PopStyleColor()
+						-- imgui.SameLine()
+						-- imgui.PushStyleColor(imgui.constant.Col.Text, color_green)
+							-- imgui.TextUnformatted(kc_get_MZFW())
+						-- imgui.PopStyleColor()
+
+						-- imgui.PushStyleColor(imgui.constant.Col.Text, color_white)
+							-- imgui.TextUnformatted("MZFW:")
+						-- imgui.PopStyleColor()
+						-- imgui.SameLine()
+						-- imgui.PushStyleColor(imgui.constant.Col.Text, color_green)
+							-- imgui.TextUnformatted(kc_get_MZFW())
+						-- imgui.PopStyleColor()
+
+					imgui.EndChild()
+				imgui.NextColumn()
+
+					imgui.BeginChild("dbg4")
+
+
+
+
+-- function kc_get_FFPH()
+-- function kc_get_nr_tanks()
+-- function kc_get_nr_engines()
+-- function kc_get_nr_batteries()
+-- function kc_get_nr_batteries()
+-- function kc_get_nr_inverters()
+-- function kc_get_VFe()
+-- function kc_get_VLe()
+-- function kc_get_VSo()
+
+
+					imgui.EndChild()
+				imgui.Columns()
+			
+			imgui.EndChild()
+
+		imgui.EndTabItem()
+		end
+
 	end
 
 end
 
-if kc_file_exists(SCRIPT_DIRECTORY .. "..\\Modules\\kpcrew_prefs\\" .. kc_acf_icao .. ".preferences") then
-	getActivePrefs():load()
-end
 logMsg(activePrefSet:get("general:simbriefuser"))
 
 -- command to toggle the brief window

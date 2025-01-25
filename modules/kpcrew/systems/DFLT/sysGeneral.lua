@@ -334,6 +334,10 @@ sysGeneral.irsUnitGroup:addSwitch(sysGeneral.irsUnit1Switch)
 sysGeneral.irsUnitGroup:addSwitch(sysGeneral.irsUnit2Switch)
 sysGeneral.irsUnitGroup:addSwitch(sysGeneral.irsUnit3Switch)
 
+sysGeneral.noSmokingSwitch	= TwoStateDrefSwitch:new("nosmoke","sim/cockpit2/switches/no_smoking",0)
+
+sysGeneral.seatBeltSwitch	= TwoStateDrefSwitch:new("seatbelts","sim/cockpit/switches/fasten_seat_belts",0)
+
 -- ---------- Annunciators
 
 -- Master Caution
