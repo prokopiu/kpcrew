@@ -111,11 +111,17 @@ sysControls.rudderTrimSwitch = TwoStateCustomSwitch:new("ruddertrim","sim/cockpi
 	end
 )
 
-sysControls.rudderReset = TwoStateToggleSwitch:new("rudderreset","sim/cockpit2/controls/rudder_trim",0,
+sysControls.rudderReset	= TwoStateToggleSwitch:new("rudderreset","sim/cockpit2/controls/rudder_trim",0,
 	"sim/flight_controls/rudder_trim_center")
 
 -- YAW Damper
-sysControls.yawDamper = TwoStateDrefSwitch:new("yawdamper","sim/cockpit2/switches/yaw_damper_on",0)
+sysControls.yawDamper	= TwoStateDrefSwitch:new("yawdamper","sim/cockpit2/switches/yaw_damper_on",0)
+
+-- Speedbrake lever
+sysControls.Speedbrake	= TwoStateDrefSwitch:new("speedbrake","sim/cockpit2/controls/speedbrake_ratio",0)
+
+-- Autobrake
+sysControls.Autobrake	= TwoStateDrefSwitch:new("autobrake","sim/cockpit/switches/auto_brake_settings",0)
 
 --------- Annunciators
 

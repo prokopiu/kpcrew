@@ -1,4 +1,4 @@
--- Aircraft specific briefing values and functions - Default aircraft
+-- Aircraft specific briefing values and functions - Default aircraft as base for all others
 --
 -- @author Kosta Prokopiu
 -- @copyright 2024 Kosta Prokopiu
@@ -16,18 +16,19 @@ kc_apptypes 		= "ILS CAT 1|ILS CAT 2 OR 3|VOR|NDB|RNAV|VISUAL|TOUCH AND GO|CIRCL
 kc_LandingFlaps 	= "3|4|5"
 kc_LandingFlapsInd 	= "3|4|5"
 kc_LandingAutoBrake = "OFF|1|2|3|MAX"
+kc_LandingAutoBrInd = "0|1|2|3|4"
 kc_LandingPacks 	= "OFF|ON"
 kc_LandingAntiice 	= "NOT REQUIRED|ENGINE ONLY|ENGINE AND WING"
 kc_StartSequence 	= "2 THEN 1|1 THEN 2"
 
 -- full list of approach types can be overwritten by aircraft
-APP_apptype_list 	= "ILS CAT 1|ILS CAT 2 OR 3|VOR|NDB|RNAV|VISUAL|TOUCH AND GO|CIRCLING"
+-- APP_apptype_list 	= "ILS CAT 1|ILS CAT 2 OR 3|VOR|NDB|RNAV|VISUAL|TOUCH AND GO|CIRCLING"
 
 -- APU/GPU startup after landing
-APP_apu_list 		= "APU delayed start|APU|GPU"
+-- APP_apu_list 		= "APU delayed start|APU|GPU"
 
 -- Reverse Thrust
-APP_rev_thrust_list = "NONE|MINIMUM|FULL"
+-- APP_rev_thrust_list = "NONE|MINIMUM|FULL"
 
 -- aircraft specs, weights in KG
 -- EMPTY WEIGHT:			xxxxxx KG - xxxxxx LBS
@@ -47,11 +48,26 @@ kc_MaxPayload 		= -1		-- Maximum Payload to be set
 kc_MTOW 			= -1		-- Maximum Takeoff Weight
 kc_MLW  			= -1		-- Maximum Landing Weight
 kc_FFPH 			= -1		-- Fuel Flow per hour
+
 kc_NumEngines		= -1		-- Number of engines
 kc_NumTanks			= -1		-- Number of tanks
 kc_NumBatteries		= -1		-- Number of batteries
 kc_NumGenerators	= -1		-- Number of generators
 kc_NumInverters		= -1		-- Number of inverters
+kc_Numflap_detents	= -1		-- Number of flap detents
+
+kc_has_apu			= true		-- Aircraft has an APU
+kc_has_gpu			= true		-- Aircraft has GPU connection
+kc_has_stairs		= false		-- Aircraft has autonomous stairs on L1
+kc_has_autobrake	= true		-- Aircraft has autobrake
+kc_has_speedbrake	= true		-- Aircraft has an air brake to extend
+kc_spdbrk_can_arm	= false		-- Aircraft's speedbrake can be armed
+kc_has_reversers	= true		-- Aircraft has reversers
+kc_has_retractgear	= true		-- Aircraft has retractable gear
+kc_has_ground_obj	= false		-- Aircraft has its own ground objects (chocks etc)
+
+kc_is_airbus		= false		-- Aircraft is an Airbus
+kc_is_boeing		= false		-- Aircraft is a Boeing
 
 -- Operating speeds
 kc_speeds_vso		= -1		-- Stall Speed, Landing Configuration Vso 115 KIAS
@@ -69,18 +85,7 @@ kc_speeds_vlo		= 210		-- Maximum Gear Extended Speed Vlo 210 KIAS
 -- Altitudes
 kc_max_altitude		= 40000 -- Max Altitude
 
--- Briefing flags (not used at this time)
--- kc_show_load_button = false
--- kc_show_cost_index 	= false
--- kc_show_fmc_buttons = false
--- kc_show_arr_atis_button = false
--- kc_type_airbus = false
--- kc_type_boeing = false
-
-
-
 -- ======= Aircraft specific functions
-
 
 -- Maximum takeoff weight as approximation = max aircraft weight
 function kc_get_MaxRampWeight()
@@ -239,7 +244,7 @@ function kc_get_nr_tanks()
 	return kc_NumTanks
 end
 
--- get number of tanks
+-- get number of engines
 function kc_get_nr_engines()
 	if kc_NumEngines == -1 then
 		kc_NumEngines = get("sim/aircraft/engine/acf_num_engines")
@@ -256,7 +261,7 @@ function kc_get_nr_batteries()
 end
 
 -- get number of generators
-function kc_get_nr_batteries()
+function kc_get_nr_generators()
 	if kc_NumGenerators == -1 then
 		kc_NumGenerators = get("sim/aircraft/electrical/num_generators")
 	end
@@ -269,6 +274,14 @@ function kc_get_nr_inverters()
 		kc_NumInverters = get("sim/aircraft/electrical/num_inverters")
 	end
 	return kc_NumInverters
+end
+
+-- get number of flap detents
+function kc_get_nr_flapdetents()
+	if kc_Numflap_detents == -1 then
+		kc_Numflap_detents = get("sim/aircraft/controls/acf_flap_detents")
+	end
+	return kc_Numflap_detents
 end
 
 -- speeds
@@ -310,7 +323,12 @@ function kc_set_payload()
 	end
 end
 
--- set the takeoff details v-speeds, trim from the aircraft
+-- Set the fuel for the aircraft
+function kc_set_fuel()
+
+end
+
+-- set the takeoff details v-speeds, trim from the aircraft if available
 function kc_set_takeoff_details()
 	-- activeBriefings:set("takeoff:v1",get(""))
 	-- activeBriefings:set("takeoff:vr",get(""))
@@ -318,7 +336,7 @@ function kc_set_takeoff_details()
 	-- activeBriefings:set("takeoff:elevatorTrim",get(""))
 end
 
--- set the landing details v-speeds, trim
+-- set the landing details v-speeds, trim from aircraft if available
 function kc_set_landing_details()
 	-- activeBriefings:set("approach:vref",get(""))
 	-- activeBriefings:set("approach:vapp",get("")+5)

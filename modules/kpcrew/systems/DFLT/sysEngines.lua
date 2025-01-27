@@ -156,6 +156,8 @@ sysEngines.magnetoStartStop		= TwoStateCustomSwitch:new("magnetoStart","",0,
 	end	
 )
 
+sysEngines.throttlePos			= TwoStateDrefSwitch:new("throttlepos",
+"sim/cockpit2/engine/actuators/throttle_ratio_all",0)
 
 ----------- Annunciators
 

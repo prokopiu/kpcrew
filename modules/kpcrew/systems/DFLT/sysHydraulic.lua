@@ -23,28 +23,28 @@ local InopSwitch 			= require "kpcrew.systems.InopSwitch"
 local drefHydPressure1 		= "sim/cockpit2/hydraulics/indicators/hydraulic_pressure_1"
 local drefHydPressure2 		= "sim/cockpit2/hydraulics/indicators/hydraulic_pressure_2"
 
--- HYD Electric Pump
+-- --- HYD Electric Pump
 sysHydraulic.elecHydPumpGroup = TwoStateDrefSwitch:new("elechydpump","sim/cockpit2/switches/electric_hydraulic_pump_on",0)
 
--- HYD Engine Pumps
--- XCrafts Freeware E175 and E195
-if PLANE_ICAO == "E190" then
-	sysHydraulic.engHydPump1	= TwoStateDrefSwitch:new("enghydpump1","XCrafts/ERJ_195/Hydraulics1",0)
-	sysHydraulic.engHydPump2	= TwoStateDrefSwitch:new("enghydpump2","XCrafts/ERJ_195/Hydraulics2",0)
-elseif PLANE_ICAO == "E170" then
-	sysHydraulic.engHydPump1	= TwoStateDrefSwitch:new("enghydpump1","XCrafts/ERJ_175/Hydraulics1",0)
-	sysHydraulic.engHydPump2	= TwoStateDrefSwitch:new("enghydpump2","XCrafts/ERJ_175/Hydraulics2",0)
-else
-	sysHydraulic.engHydPump1	= TwoStateDrefSwitch:new("enghydpump1","sim/cockpit2/hydraulics/actuators/engine_pump",0)
-	sysHydraulic.engHydPump2	= TwoStateDrefSwitch:new("enghydpump2","sim/cockpit2/hydraulics/actuators/engine_pump",1)
-end
-sysHydraulic.engHydPump3	= TwoStateDrefSwitch:new("enghydpump3","sim/cockpit2/hydraulics/actuators/engine_pump",2)
-sysHydraulic.engHydPump4	= TwoStateDrefSwitch:new("enghydpump4","sim/cockpit2/hydraulics/actuators/engine_pump",3)
+-- ----- HYD Engine Pumps
 sysHydraulic.engHydPumpGroup = SwitchGroup:new("enghydpumps")
+sysHydraulic.engHydPump1	= TwoStateDrefSwitch:new("enghydpump1","sim/cockpit2/hydraulics/actuators/engine_pump",-1)
 sysHydraulic.engHydPumpGroup:addSwitch(sysHydraulic.engHydPump1)
-sysHydraulic.engHydPumpGroup:addSwitch(sysHydraulic.engHydPump2)
-sysHydraulic.engHydPumpGroup:addSwitch(sysHydraulic.engHydPump3)
-sysHydraulic.engHydPumpGroup:addSwitch(sysHydraulic.engHydPump4)
+if kc_get_nr_engines() > 1 then
+	sysHydraulic.engHydPump2	= TwoStateDrefSwitch:new("enghydpump2",
+	"sim/cockpit2/hydraulics/actuators/engine_pump",1)
+	sysHydraulic.engHydPumpGroup:addSwitch(sysHydraulic.engHydPump2)
+end
+if kc_get_nr_engines() > 2 then
+	sysHydraulic.engHydPump3	= TwoStateDrefSwitch:new("enghydpump3",
+	"sim/cockpit2/hydraulics/actuators/engine_pump",2)
+	sysHydraulic.engHydPumpGroup:addSwitch(sysHydraulic.engHydPump3)
+end
+if kc_get_nr_engines() > 3 then
+	sysHydraulic.engHydPump4	= TwoStateDrefSwitch:new("enghydpump4",
+	"sim/cockpit2/hydraulics/actuators/engine_pump",3)
+	sysHydraulic.engHydPumpGroup:addSwitch(sysHydraulic.engHydPump4)
+end
 
 -- LOW HYDRAULIC annunciator
 sysHydraulic.hydraulicLowAnc = CustomAnnunciator:new("hydrauliclow",
@@ -55,5 +55,10 @@ function ()
 		return 0
 	end
 end)
+
+-- hydraulic pressure
+sysHydraulic.hydPressure1	= TwoStateDrefSwitch:new("hydpressure1","sim/cockpit2/hydraulics/indicators/hydraulic_pressure_1",0)
+sysHydraulic.hydPressure2	= TwoStateDrefSwitch:new("hydpressure1","sim/cockpit2/hydraulics/indicators/hydraulic_pressure_2",0)
+sysHydraulic.hydPressure3	= TwoStateDrefSwitch:new("hydpressure1","sim/cockpit2/hydraulics/indicators/hydraulic_pressure_3",0)
 
 return sysHydraulic
