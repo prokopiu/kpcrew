@@ -16,6 +16,8 @@ local color_orange = 0xFF1b9af8
 local color_yellow = 0xFF00FFFF
 local color_green = 0xFF95C857
 
+kc_show_brief = true
+
 -- ====== Global variables =======
 kc_acf_icao = "DFLT" -- active addon aircraft ICAO code (DFLT when nothing found)
 
@@ -48,6 +50,26 @@ elseif PLANE_ICAO == "C750" and PLANE_TAILNUMBER == "N750XP" then
 	-- kc_acf_icao = "B732"
 -- elseif PLANE_ICAO == "B733" then
 	-- kc_acf_icao = "B733"
+-- X-CRAFTS E-JET FAMILIY XP12 (E1XX)
+-- E-JET FAM 170  170/170
+-- E-JET FAM 175  175/175
+-- E-JET FAM 190  190/190
+-- E-JET FAM 195  195/195
+-- elseif PLANE_ICAO == "E170" and PLANE_TAILNUMBER == "E170" then
+	-- kc_acf_icao = "E1XX"
+-- elseif PLANE_ICAO == "E175" and PLANE_TAILNUMBER == "E175" then
+	-- kc_acf_icao = "E1XX"
+-- elseif PLANE_ICAO == "E190" and PLANE_TAILNUMBER == "E190" then
+	-- kc_acf_icao = "E1XX"
+-- elseif PLANE_ICAO == "E195" and PLANE_TAILNUMBER == "E195" then
+	-- kc_acf_icao = "E1XX"
+-- X-CRAFTS FREE E-JETS XP12 (E1FF)
+-- Free 175       170/175
+-- Free 195       190/195
+elseif PLANE_ICAO == "E170" and PLANE_TAILNUMBER == "E175" then
+	kc_acf_icao = "E1FF"
+elseif PLANE_ICAO == "E190" and PLANE_TAILNUMBER == "E195" then
+	kc_acf_icao = "E1FF"
 elseif PLANE_ICAO == "A321" then
 	kc_acf_icao = "A20N"
 elseif PLANE_ICAO == "A339" then
@@ -3070,48 +3092,99 @@ function kb_brief_builder(kb_brief_wnd, x, y)
 				imgui.NextColumn()
 
 					imgui.BeginChild("dbg3")
-						-- imgui.PushStyleColor(imgui.constant.Col.Text, color_white)
-							-- imgui.TextUnformatted("MZFW:")
-						-- imgui.PopStyleColor()
-						-- imgui.SameLine()
-						-- imgui.PushStyleColor(imgui.constant.Col.Text, color_green)
-							-- imgui.TextUnformatted(kc_get_MZFW())
-						-- imgui.PopStyleColor()
+					
+						imgui.PushStyleColor(imgui.constant.Col.Text, color_white)
+							imgui.TextUnformatted("# of flap detents:")
+						imgui.PopStyleColor()
+						imgui.SameLine()
+						imgui.PushStyleColor(imgui.constant.Col.Text, color_green)
+							imgui.TextUnformatted(kc_get_nr_flapdetents())
+						imgui.PopStyleColor()
 
-						-- imgui.PushStyleColor(imgui.constant.Col.Text, color_white)
-							-- imgui.TextUnformatted("MZFW:")
-						-- imgui.PopStyleColor()
-						-- imgui.SameLine()
-						-- imgui.PushStyleColor(imgui.constant.Col.Text, color_green)
-							-- imgui.TextUnformatted(kc_get_MZFW())
-						-- imgui.PopStyleColor()
+						imgui.PushStyleColor(imgui.constant.Col.Text, color_white)
+							imgui.TextUnformatted("# of engines:")
+						imgui.PopStyleColor()
+						imgui.SameLine()
+						imgui.PushStyleColor(imgui.constant.Col.Text, color_green)
+							imgui.TextUnformatted(kc_get_nr_engines())
+						imgui.PopStyleColor()
 
-						-- imgui.PushStyleColor(imgui.constant.Col.Text, color_white)
-							-- imgui.TextUnformatted("MZFW:")
-						-- imgui.PopStyleColor()
-						-- imgui.SameLine()
-						-- imgui.PushStyleColor(imgui.constant.Col.Text, color_green)
-							-- imgui.TextUnformatted(kc_get_MZFW())
-						-- imgui.PopStyleColor()
+						imgui.PushStyleColor(imgui.constant.Col.Text, color_white)
+							imgui.TextUnformatted("# of batteries:")
+						imgui.PopStyleColor()
+						imgui.SameLine()
+						imgui.PushStyleColor(imgui.constant.Col.Text, color_green)
+							imgui.TextUnformatted(kc_get_nr_batteries())
+						imgui.PopStyleColor()
 
+						imgui.PushStyleColor(imgui.constant.Col.Text, color_white)
+							imgui.TextUnformatted("# of generators:")
+						imgui.PopStyleColor()
+						imgui.SameLine()
+						imgui.PushStyleColor(imgui.constant.Col.Text, color_green)
+							imgui.TextUnformatted(kc_get_nr_generators())
+						imgui.PopStyleColor()
+
+						imgui.PushStyleColor(imgui.constant.Col.Text, color_white)
+							imgui.TextUnformatted("# of inverters:")
+						imgui.PopStyleColor()
+						imgui.SameLine()
+						imgui.PushStyleColor(imgui.constant.Col.Text, color_green)
+							imgui.TextUnformatted(kc_get_nr_inverters())
+						imgui.PopStyleColor()
+
+						imgui.PushStyleColor(imgui.constant.Col.Text, color_white)
+							imgui.TextUnformatted("has apu:")
+						imgui.PopStyleColor()
+						imgui.SameLine()
+						imgui.PushStyleColor(imgui.constant.Col.Text, color_green)
+							imgui.TextUnformatted(tostring(kc_has_apu))
+						imgui.PopStyleColor()
+
+						imgui.PushStyleColor(imgui.constant.Col.Text, color_white)
+							imgui.TextUnformatted("has gpu:")
+						imgui.PopStyleColor()
+						imgui.SameLine()
+						imgui.PushStyleColor(imgui.constant.Col.Text, color_green)
+							imgui.TextUnformatted(tostring(kc_has_gpu))
+						imgui.PopStyleColor()
+
+						imgui.PushStyleColor(imgui.constant.Col.Text, color_white)
+							imgui.TextUnformatted("has stairs:")
+						imgui.PopStyleColor()
+						imgui.SameLine()
+						imgui.PushStyleColor(imgui.constant.Col.Text, color_green)
+							imgui.TextUnformatted(tostring(kc_has_stairs))
+						imgui.PopStyleColor()
+
+						imgui.PushStyleColor(imgui.constant.Col.Text, color_white)
+							imgui.TextUnformatted("has autobrake:")
+						imgui.PopStyleColor()
+						imgui.SameLine()
+						imgui.PushStyleColor(imgui.constant.Col.Text, color_green)
+							imgui.TextUnformatted(tostring(kc_has_autobrake))
+						imgui.PopStyleColor()
+
+						imgui.PushStyleColor(imgui.constant.Col.Text, color_white)
+							imgui.TextUnformatted("has speedbrake:")
+						imgui.PopStyleColor()
+						imgui.SameLine()
+						imgui.PushStyleColor(imgui.constant.Col.Text, color_green)
+							imgui.TextUnformatted(tostring(kc_has_speedbrake))
+						imgui.PopStyleColor()
+
+						imgui.PushStyleColor(imgui.constant.Col.Text, color_white)
+							imgui.TextUnformatted("has reversers:")
+						imgui.PopStyleColor()
+						imgui.SameLine()
+						imgui.PushStyleColor(imgui.constant.Col.Text, color_green)
+							imgui.TextUnformatted(tostring(kc_has_reversers))
+						imgui.PopStyleColor()
+						
 					imgui.EndChild()
 				imgui.NextColumn()
 
 					imgui.BeginChild("dbg4")
-
-
-
-
--- function kc_get_FFPH()
--- function kc_get_nr_tanks()
--- function kc_get_nr_engines()
--- function kc_get_nr_batteries()
--- function kc_get_nr_batteries()
--- function kc_get_nr_inverters()
--- function kc_get_VFe()
--- function kc_get_VLe()
--- function kc_get_VSo()
-
 
 					imgui.EndChild()
 				imgui.Columns()

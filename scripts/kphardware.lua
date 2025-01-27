@@ -53,6 +53,26 @@ elseif PLANE_ICAO == "C750" and PLANE_TAILNUMBER == "N750XP" then
 	-- kh_acf_icao = "B732"
 -- elseif PLANE_ICAO == "B733" then
 	-- kh_acf_icao = "B733"
+-- X-CRAFTS E-JET FAMILIY XP12 (E1XX)
+-- E-JET FAM 170  170/170
+-- E-JET FAM 175  175/175
+-- E-JET FAM 190  190/190
+-- E-JET FAM 195  195/195
+-- elseif PLANE_ICAO == "E170" and PLANE_TAILNUMBER == "E170" then
+	-- kh_acf_icao = "E1XX"
+-- elseif PLANE_ICAO == "E175" and PLANE_TAILNUMBER == "E175" then
+	-- kh_acf_icao = "E1XX"
+-- elseif PLANE_ICAO == "E190" and PLANE_TAILNUMBER == "E190" then
+	-- kh_acf_icao = "E1XX"
+-- elseif PLANE_ICAO == "E195" and PLANE_TAILNUMBER == "E195" then
+	-- kh_acf_icao = "E1XX"
+-- X-CRAFTS FREE E-JETS XP12 (E1FF)
+-- Free 175       170/175
+-- Free 195       190/195
+elseif PLANE_ICAO == "E170" and PLANE_TAILNUMBER == "E175" then
+	kh_acf_icao = "E1FF"
+elseif PLANE_ICAO == "E190" and PLANE_TAILNUMBER == "E195" then
+	kh_acf_icao = "E1FF"
 elseif PLANE_ICAO == "A321" then
 	kh_acf_icao = "A20N"
 elseif PLANE_ICAO == "A339" then
@@ -218,15 +238,15 @@ create_command("kp/xsp/systems/door_cf_toggle",		"Toggle door FWD CARGO","sysGen
 create_command("kp/xsp/systems/door_ca_toggle",		"Toggle door AFT CARGO","sysGeneral.doorACargo:actuate(modeToggle)","","")
 
 ----------------- Electric --------------------
-create_command("kp/xsp/electric/bat1_master_on",	"Battery Master 1 On","sysElectric.battery1HwSwitch:actuate(modeOn)","","")
-create_command("kp/xsp/electric/bat1_master_off",	"Battery Master 1 Off","sysElectric.battery1HwSwitch:actuate(modeOff)","","")
-create_command("kp/xsp/electric/bat1_master_tgl",	"Battery Master 1 Toggle","sysElectric.battery1HwSwitch:actuate(modeToggle)","","")
-create_command("kp/xsp/electric/bat2_master_on",	"Battery Master 2 On","sysElectric.battery2HwSwitch:actuate(modeOn)","","")
-create_command("kp/xsp/electric/bat2_master_off",	"Battery Master 2 Off","sysElectric.battery2HwSwitch:actuate(modeOff)","","")
-create_command("kp/xsp/electric/bat2_master_tgl",	"Battery Master 2 Toggle","sysElectric.battery2HwSwitch:actuate(modeToggle)","","")
-create_command("kp/xsp/electric/bat_all_master_on",	"Battery Master All On","sysElectric.batteryHwGroup:actuate(modeOn)","","")
-create_command("kp/xsp/electric/bat_all_master_off","Battery Master All Off","sysElectric.batteryHwGroup:actuate(modeOff)","","")
-create_command("kp/xsp/electric/bat_all_master_tgl","Battery Master All Toggle","sysElectric.batteryHwGroup:actuate(modeToggle)","","")
+create_command("kp/xsp/electric/bat1_master_on",	"Battery Master 1 On","sysElectric.batterySwitch:actuate(modeOn)","","")
+create_command("kp/xsp/electric/bat1_master_off",	"Battery Master 1 Off","sysElectric.batterySwitch:actuate(modeOff)","","")
+create_command("kp/xsp/electric/bat1_master_tgl",	"Battery Master 1 Toggle","sysElectric.batterySwitch:actuate(modeToggle)","","")
+create_command("kp/xsp/electric/bat2_master_on",	"Battery Master 2 On","sysElectric.battery2Switch:actuate(modeOn)","","")
+create_command("kp/xsp/electric/bat2_master_off",	"Battery Master 2 Off","sysElectric.battery2Switch:actuate(modeOff)","","")
+create_command("kp/xsp/electric/bat2_master_tgl",	"Battery Master 2 Toggle","sysElectric.battery2Switch:actuate(modeToggle)","","")
+create_command("kp/xsp/electric/bat_all_master_on",	"Battery Master All On","sysElectric.batteryGroup:actuate(modeOn)","","")
+create_command("kp/xsp/electric/bat_all_master_off","Battery Master All Off","sysElectric.batteryGroup:actuate(modeOff)","","")
+create_command("kp/xsp/electric/bat_all_master_tgl","Battery Master All Toggle","sysElectric.batteryGroup:actuate(modeToggle)","","")
 
 create_command("kp/xsp/electric/alt1_on",			"Alternator 1 On","sysElectric.alternator1Switch:actuate(modeOn)","","")
 create_command("kp/xsp/electric/alt1_off",			"Alternator 1 Off","sysElectric.alternator1Switch:actuate(modeOff)","","")

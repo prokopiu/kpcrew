@@ -53,6 +53,26 @@ elseif PLANE_ICAO == "C750" and PLANE_TAILNUMBER == "N750XP" then
 	-- kc_acf_icao = "B732"
 -- elseif PLANE_ICAO == "B733" then
 	-- kc_acf_icao = "B733"
+-- X-CRAFTS E-JET FAMILIY XP12 (E1XX)
+-- E-JET FAM 170  170/170
+-- E-JET FAM 175  175/175
+-- E-JET FAM 190  190/190
+-- E-JET FAM 195  195/195
+-- elseif PLANE_ICAO == "E170" and PLANE_TAILNUMBER == "E170" then
+	-- kc_acf_icao = "E1XX"
+-- elseif PLANE_ICAO == "E175" and PLANE_TAILNUMBER == "E175" then
+	-- kc_acf_icao = "E1XX"
+-- elseif PLANE_ICAO == "E190" and PLANE_TAILNUMBER == "E190" then
+	-- kc_acf_icao = "E1XX"
+-- elseif PLANE_ICAO == "E195" and PLANE_TAILNUMBER == "E195" then
+	-- kc_acf_icao = "E1XX"
+-- X-CRAFTS FREE E-JETS XP12 (E1FF)
+-- Free 175       170/175
+-- Free 195       190/195
+elseif PLANE_ICAO == "E170" and PLANE_TAILNUMBER == "E175" then
+	kc_acf_icao = "E1FF"
+elseif PLANE_ICAO == "E190" and PLANE_TAILNUMBER == "E195" then
+	kc_acf_icao = "E1FF"
 elseif PLANE_ICAO == "A321" then
 	kc_acf_icao = "A20N"
 elseif PLANE_ICAO == "A339" then
