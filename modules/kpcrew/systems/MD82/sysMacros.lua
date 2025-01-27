@@ -15,6 +15,8 @@ logMsg("MD82 sysMacros")
 -- c&d setup
 function kc_macro_state_cold_and_dark()
 	logMsg("MD82 kc_macro_state_cold_and_dark")
+	set("sim/private/controls/shadow/cockpit_near_adjust",0.09)
+	
 	command_once("sim/electrical/battery_1_on")
 	kc_macro_lights_cold_dark()
 	kc_macro_mcp_cold_dark()
@@ -98,7 +100,8 @@ end
 
 function kc_macro_state_turnaround()
 	logMsg("MD82 kc_macro_state_turnaround")
-
+	set("sim/private/controls/shadow/cockpit_near_adjust",0.09)
+	
 	command_once("sim/electrical/battery_1_on")
 	if get("laminar/md82/safeguard",3) == 0 then 
 		command_once("laminar/md82cmd/safeguard03")

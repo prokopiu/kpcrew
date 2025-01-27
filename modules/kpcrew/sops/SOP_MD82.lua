@@ -58,14 +58,7 @@ activeSOP = SOP:new("Laminar MD-82 SOP")
 
 local testProc = Procedure:new("TEST","","")
 testProc:setFlightPhase(1)
-testProc:addItem(ProcedureItem:new("APU SWITCH","ON",FlowItem.actorFO,3,true,
-	function () 
-		sysElectric.apuGenBusGroup:actuate(1)
-	end))
-testProc:addItem(ProcedureItem:new("APU SWITCH","OFF",FlowItem.actorFO,3,true,
-	function () 
-		sysElectric.apuGenBusGroup:actuate(0)
-	end))
+
 
 -- =========== PRELIMINARY COCKPIT PREPARATION ===========
 -- === COCKPIT SAFETY INSPECTION (CM2)
@@ -1643,6 +1636,7 @@ afterTakeoffCheck:addItem(ChecklistItem:new("TAXI LIGHT","OFF",FlowItem.actorPM,
 -- STABILIZER ANTI-ICE.................AS REQUIRED   (PM)
 -- CTR WING XFER LH & RH..................BOTH OFF   (PM)
 -- LH & RH WNDSHLD ANTI-ICE................BOTH ON   (PM)
+-- AUTO BRAKE..........................AS REQUIRED   (PM)
 -- === Whatever comes first
 -- TRANSITION LEVEL...............ANNOUNCE REACHED   (PM)
 -- ALTIMETERS..........................QNH AT DEST (BOTH)
@@ -1684,6 +1678,15 @@ descentProc:addItem(ProcedureItem:new("STABILIZER ANTI-ICE","ON",FlowItem.actorP
 descentProc:addItem(ProcedureItem:new("WINDSHIELD HEAT","ALL ON",FlowItem.actorPM,0,
 	function () return sysAice.windowHeatGroup:getStatus() > 0 end,
 	function () sysAice.windowHeatGroup:actuate(1) end))
+descentProc:addItem(ProcedureItem:new("AUTO BRAKE","SET %s|kc_pref_split(kc_LandingAutoBrake)[activeBriefings:get(\"approach:autobrake\")]",FlowItem.actorCPT,0,
+	function () 
+		local abind = tonumber(kc_pref_split(kc_LandingAutoBrInd)[activeBriefings:get("approach:autobrake")])
+		return get("sim/cockpit/switches/auto_brake_settings") == flapsval 
+	end,
+	function () 
+		local abind = tonumber(kc_pref_split(kc_LandingAutoBrInd)[activeBriefings:get("approach:autobrake")])
+		set("sim/cockpit/switches/auto_brake_settings",abind)
+	end)) 	
 	
 -- ================== DESCENT CHECKLIST ==================
 -- APPROACH BRIEFING......................COMPLETED   (PF)
@@ -1696,6 +1699,7 @@ descentProc:addItem(ProcedureItem:new("WINDSHIELD HEAT","ALL ON",FlowItem.actorP
 -- PRESSURIZATION...............................SET   (PF)
 -- PASSEMGER BRIEFING.....................COMPLETED   (PM)
 -- SEAT BELT LTS........................PASS SAFETY   (PM)
+-- AUTO BRAKE...........................AS REQUIRED   (PM)
 -- =======================================================
 
 local descentChecklist = Checklist:new("DESCENT CHECKLIST","descent checklist","")
@@ -1721,7 +1725,15 @@ descentChecklist:addItem(ManualChecklistItem:new("PASSENGER BRIEFING","COMPLETED
 descentChecklist:addItem(ChecklistItem:new("SEAT BELT LIGHTS","ON",FlowItem.actorPM,0,
 	function () return sysGeneral.seatBeltSwitch:getStatus() == 1 end,
 	function () sysGeneral.seatBeltSwitch:actuate(1) end))	
-
+descentChecklist:addItem(ChecklistItem:new("AUTO BRAKE","SET %s|kc_pref_split(kc_LandingAutoBrake)[activeBriefings:get(\"approach:autobrake\")]",FlowItem.actorCPT,0,
+	function () 
+		local abind = tonumber(kc_pref_split(kc_LandingAutoBrInd)[activeBriefings:get("approach:autobrake")])
+		return get("sim/cockpit/switches/auto_brake_settings") == flapsval 
+	end,
+	function () 
+		local abind = tonumber(kc_pref_split(kc_LandingAutoBrInd)[activeBriefings:get("approach:autobrake")])
+		set("sim/cockpit/switches/auto_brake_settings",abind)
+	end)) 
 
 -- ================== LANDING PROCEDURE ==================
 -- ALTIMETERS...................................SET (BOTH)
@@ -2154,6 +2166,7 @@ activeSOP:addProcedure(flapsUpProc)
 activeSOP:addProcedure(afterTakeoffCheck)
 activeSOP:addProcedure(descentProc)
 activeSOP:addProcedure(descentChecklist)
+activeSOP:addProcedure(landingProc)
 activeSOP:addProcedure(flaps1Proc)
 activeSOP:addProcedure(flaps2Proc)
 activeSOP:addProcedure(gearDownProc)

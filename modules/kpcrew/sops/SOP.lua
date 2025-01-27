@@ -60,6 +60,10 @@ function kcSOP:getName()
     return self.name 
 end
 
+function kcSOP:setName(newname)
+    self.name = newname
+end
+
 function kcSOP:getPhaseString(phase)
 	if phase ~= nil and phase >= 0 then
 		return kcSopFlightPhase[math.abs(phase)]

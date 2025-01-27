@@ -1,4 +1,4 @@
--- ToLiss A20N airplane 
+-- MD82 airplane 
 -- Air and Pneumatics functionality
 
 -- @classmod sysAir
