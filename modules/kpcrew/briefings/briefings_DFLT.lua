@@ -1,20 +1,22 @@
 -- Aircraft specific briefing values and functions - Default aircraft as base for all others
 --
 -- @author Kosta Prokopiu
--- @copyright 2024 Kosta Prokopiu
+-- @copyright 2025 Kosta Prokopiu
 
 kc_acf_name 		= "X-Plane Default Aircraft"
 
 kc_TakeoffThrust 	= "RATED|DE-RATED|ASSUMED TEMPERATURE|RATED AND ASSUMED|DE-RATED AND ASSUMED"
-kc_TakeoffFlaps 	= "0|1|2|3|4|5"
-kc_TakeoffFlapsInd 	= "0|1|2|3|4|5"
+kc_NumFlapsTO		= 3
+kc_TakeoffFlaps 	= "0|1|2"
+kc_TakeoffFlapsInd 	= "0|1|3"
 kc_TakeoffAntiice 	= "NOT REQUIRED|ENGINE ONLY|ENGINE AND WING"
 kc_TakeoffPacks 	= "ON|AUTO|OFF"
 kc_TakeoffBleeds 	= "OFF|ON"
 kc_TakeoffApModes 	= "LNAV/VNAV|HDG/FLCH"
 kc_apptypes 		= "ILS CAT 1|ILS CAT 2 OR 3|VOR|NDB|RNAV|VISUAL|TOUCH AND GO|CIRCLING"
+kc_NumFlapsLDG		= 3
 kc_LandingFlaps 	= "3|4|5"
-kc_LandingFlapsInd 	= "3|4|5"
+kc_LandingFlapsInd 	= "5|6|8"
 kc_LandingAutoBrake = "OFF|1|2|3|MAX"
 kc_LandingAutoBrInd = "0|1|2|3|4"
 kc_LandingPacks 	= "OFF|ON"
@@ -54,7 +56,7 @@ kc_NumTanks			= -1		-- Number of tanks
 kc_NumBatteries		= -1		-- Number of batteries
 kc_NumGenerators	= -1		-- Number of generators
 kc_NumInverters		= -1		-- Number of inverters
-kc_Numflap_detents	= -1		-- Number of flap detents
+kc_Numflap_detents	=  5 		-- Number of flap detents
 
 kc_has_apu			= true		-- Aircraft has an APU
 kc_has_gpu			= true		-- Aircraft has GPU connection

@@ -16,7 +16,7 @@ local color_orange = 0xFF1b9af8
 local color_yellow = 0xFF00FFFF
 local color_green = 0xFF95C857
 
-kc_show_brief = true
+-- kc_show_brief = true
 
 -- ====== Global variables =======
 kc_acf_icao = "DFLT" -- active addon aircraft ICAO code (DFLT when nothing found)

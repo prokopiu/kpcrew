@@ -16,3 +16,11 @@ kc_spdbrk_can_arm	= true		-- Aircraft's speedbrake can be armed
 kc_has_reversers	= true		-- Aircraft has reversers
 kc_has_retractgear	= true		-- Aircraft has retractable gear
 kc_has_ground_obj	= true		-- Aircraft has its own ground objects (chocks etc)
+
+kc_Numflap_detents	= 6 		-- Number of flap detents
+kc_NumFlapsTO		= 4
+kc_TakeoffFlaps 	= "UP|1|2|3"
+kc_TakeoffFlapsInd 	= "0|1|2|3"
+kc_NumFlapsLDG		= 3
+kc_LandingFlaps 	= "4|5|FULL"
+kc_LandingFlapsInd 	= "4|5|6"
