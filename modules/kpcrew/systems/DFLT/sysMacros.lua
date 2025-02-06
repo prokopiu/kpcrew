@@ -19,9 +19,11 @@ function kc_macro_state_cold_and_dark()
 	activeBckVars:set("general:timesOUT","==:==")
 	activeBckVars:set("general:timesIN","==:==")
 	activeBckVars:set("general:timesON","==:==")
+	
 	kc_macro_lights_cold_dark()
 	kc_macro_doors_cold_dark()
 	kc_macro_mcp_cold_dark()
+	
 	sysControls.Speedbrake:setValue(0)
 	sysGeneral.wiperGroup:actuate(0)
 	sysGeneral.GearSwitch:actuate(1)
@@ -308,31 +310,17 @@ function kc_macro_doors_cold_dark()
 end
 
 function kc_macro_doors_all_open()
-	sysGeneral.doorL1:actuate(1)
-	sysGeneral.stairsL1:actuate(1)
-	sysGeneral.doorL2:actuate(1)
-	sysGeneral.doorR1:actuate(1)
-	sysGeneral.doorR2:actuate(1)
-	sysGeneral.doorFCargo:actuate(1)
-	sysGeneral.doorACargo:actuate(1)
-	sysGeneral.cockpitDoor:actuate(1)
+	sysGeneral.doorGroup:actuate(1)
 end
 
 function kc_macro_doors_all_closed()
-	sysGeneral.doorL1:actuate(0)
-	sysGeneral.stairsL1:actuate(0)
-	sysGeneral.doorL2:actuate(0)
-	sysGeneral.doorR1:actuate(0)
-	sysGeneral.doorR2:actuate(0)
-	sysGeneral.doorFCargo:actuate(0)
-	sysGeneral.doorACargo:actuate(0)
-	sysGeneral.cockpitDoor:actuate(0)
+	sysGeneral.doorGroup:actuate(0)
 end
 
 -- ====================================== A/P & Glareshield related functions
 
 function kc_macro_mcp_cold_dark()
-	sysMCP.fdirPilotSwitch:actuate(0)
+	sysMCP.fdirGroup:actuate(0)
 	sysMCP.athrSwitch:actuate(0)
 	sysMCP.crs1Selector:setValue(1)
 	sysMCP.crs2Selector:setValue(1)
@@ -346,16 +334,18 @@ function kc_macro_mcp_cold_dark()
 end
 
 function kc_macro_mcp_preflight()
-	sysMCP.fdirPilotSwitch:actuate(1)
+	sysMCP.fdirGroup:actuate(1)
 	sysMCP.athrSwitch:actuate(0)
 	sysMCP.yawDamper:actuate(0)
 	sysMCP.iasSelector:setValue(activeBriefings:get("takeoff:v2"))
 	sysMCP.hdgSelector:setValue(activeBriefings:get("departure:initHeading"))
 	sysMCP.altSelector:setValue(activeBriefings:get("departure:initAlt"))
+	sysMCP.vspSelector:actuate(0)
+	sysMCP.discAPSwitch:actuate(0)
 end
 
 function kc_macro_mcp_takeoff()
-	sysMCP.fdirPilotSwitch:actuate(1)
+	sysMCP.fdirGroup:actuate(1)
 	sysMCP.athrSwitch:actuate(1)
 	sysMCP.iasSelector:setValue(activeBriefings:get("takeoff:v2"))
 	sysMCP.hdgSelector:setValue(activeBriefings:get("departure:initHeading"))
@@ -365,11 +355,16 @@ function kc_macro_mcp_takeoff()
 		sysMCP.vnavSwitch:actuate(1)
 	else
 		sysMCP.hdgselSwitch:actuate(1)
+		sysMCP.vsSwitch:actuate(0)
 	end
+	sysMCP.crs1Selector:actuate(activeBriefings:get("departure:nav1Course"))
+	sysMCP.crs2Selector:actuate(activeBriefings:get("departure:nav2Course"))
+	sysMCP.vspSelector:actuate(0)
+	sysMCP.discAPSwitch:actuate(0)
 end
 
 function kc_macro_mcp_goaround()
-	sysMCP.fdirPilotSwitch:actuate(1)
+	sysMCP.fdirGroup:actuate(1)
 	sysMCP.athrSwitch:actuate(1)
 	sysMCP.iasSelector:setValue(activeBriefings:get("approach:gav2"))
 	sysMCP.hdgSelector:setValue(activeBriefings:get("approach:gaheading"))
@@ -385,7 +380,7 @@ function kc_macro_mcp_goaround()
 end
 
 function kc_macro_mcp_after_landing()
-	sysMCP.fdirPilotSwitch:actuate(0)
+	sysMCP.fdirGroup:actuate(0)
 	sysMCP.athrSwitch:actuate(0)
 	sysMCP.hdgselSwitch:actuate(0)
 	sysMCP.speedSwitch:actuate(0)
@@ -435,19 +430,13 @@ end
 
 function kc_macro_below_10000_ft()
 	kc_macro_lights_descend_10k()
-	set("sim/cockpit2/switches/fasten_seat_belts",1) 
+	sysGeneral.seatBeltSwitch:actuate(1)
 end
 
 -- 10000 feet activities up and down
 function kc_macro_above_10000_ft()
 	kc_macro_lights_climb_10k()
-	set("sim/cockpit2/switches/fasten_seat_belts",0) 
-end
-
-function kc_macro_below_10000_ft()
-	kc_macro_lights_descend_10k()
-	kc_macro_lights_descend_10k()
-	set("sim/cockpit2/switches/fasten_seat_belts",1) 
+	sysGeneral.seatBeltSwitch:actuate(0)
 end
 
 function kc_macro_at_trans_alt()
@@ -491,7 +480,7 @@ end
 
 -- wait for climbing through trans alt then execute items
 function kc_bck_transition_altitude(trigger)
-	if get("sim/cockpit2/gauges/indicators/altitude_ft_pilot") > activeBriefings:get("departure:transalt") then
+	if get("sim/cockpit2/gauges/indicators/altitude_ft_pilot") > tonumber(activeBriefings:get("departure:transalt")) then
 		kc_speakNoText(0,"transition altitude")
 		kc_macro_at_trans_alt()
 		kc_procvar_set(trigger,false)
@@ -500,9 +489,38 @@ end
 
 -- wait for descending through trans lvl then execute items
 function kc_bck_transition_level(trigger)
-	if get("sim/cockpit2/gauges/indicators/altitude_ft_pilot") < activeBriefings:get("arrival:translvl")*100 then
+	if get("sim/cockpit2/gauges/indicators/altitude_ft_pilot") < tonumber(activeBriefings:get("arrival:translvl")) then
 		kc_speakNoText(0,"transition level")
 		kc_macro_at_trans_lvl()
+		kc_procvar_set(trigger,false)
+	end
+end
+
+-- APU start background
+function kc_bck_apustart(trigger)
+	local delayvar = trigger .. "delay"
+	if kc_procvar_exists(delayvar) == false then
+		kc_procvar_initialize_count(delayvar,-1)
+	end
+	if kc_procvar_get(delayvar) == -1 then
+		kc_procvar_set(delayvar,30)
+		sysElectric.apuStartSwitch:setValue(2)
+	else
+		if kc_procvar_get(delayvar) <= 0 then
+			sysElectric.apuStartSwitch:setValue(1)
+			kc_procvar_set(trigger,false)
+			kc_procvar_set(delayvar,-1)
+		else
+			kc_procvar_set(delayvar,kc_procvar_get(delayvar)-1)
+		end
+	end
+end
+
+-- bring apu gen & bleed online
+function kc_bck_apuonline(trigger)
+	if get("sim/cockpit2/electrical/APU_N1_percent") == 100 then
+		sysElectric.apuGenBusGroup:actuate(1)
+		sysAir.apuBleedSwitch:actuate(1)
 		kc_procvar_set(trigger,false)
 	end
 end

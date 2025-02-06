@@ -17,8 +17,8 @@ kc_apptypes 		= "ILS CAT 1|ILS CAT 2 OR 3|VOR|NDB|RNAV|VISUAL|TOUCH AND GO|CIRCL
 kc_NumFlapsLDG		= 3
 kc_LandingFlaps 	= "3|4|5"
 kc_LandingFlapsInd 	= "5|6|8"
-kc_LandingAutoBrake = "OFF|1|2|3|MAX"
-kc_LandingAutoBrInd = "0|1|2|3|4"
+kc_LandingAutoBrake = "RTO|OFF|1|2|3|MAX"
+kc_LandingAutoBrInd = "0|1|2|3|4|5"
 kc_LandingPacks 	= "OFF|ON"
 kc_LandingAntiice 	= "NOT REQUIRED|ENGINE ONLY|ENGINE AND WING"
 kc_StartSequence 	= "2 THEN 1|1 THEN 2"
@@ -67,6 +67,7 @@ kc_spdbrk_can_arm	= false		-- Aircraft's speedbrake can be armed
 kc_has_reversers	= true		-- Aircraft has reversers
 kc_has_retractgear	= true		-- Aircraft has retractable gear
 kc_has_ground_obj	= false		-- Aircraft has its own ground objects (chocks etc)
+kc_has_irs			= false		-- Aircraft has IRS that must be aligned
 
 kc_is_airbus		= false		-- Aircraft is an Airbus
 kc_is_boeing		= false		-- Aircraft is a Boeing
@@ -312,22 +313,34 @@ function kc_get_VSo()
 end
 
 -- Set the payload for the aircraft
-function kc_set_payload()
-	set("sim/flightmodel/weight/m_fixed",activeBriefings:get("flight:payload"))
-	local fgoal = activeBriefings:get("flight:takeoffFuel")
-	set("sim/flightmodel/weight/m_fuel2",math.min(kc_MFL2,fgoal/2))
-	set("sim/flightmodel/weight/m_fuel3",math.min(kc_MFL2,fgoal/2))
-	local fdiff = fgoal - (kc_MFL2 + kc_MFL3)
-	if fdiff > 0 then
-		set("sim/flightmodel/weight/m_fuel1",math.min(kc_MFL1,fdiff))
-	else
-		set("sim/flightmodel/weight/m_fuel1",0)
+function kc_set_payload(payload)
+	if payload > kc_get_MaxPayload() then 
+		payload = kc_get_MaxPayload()
 	end
+	set("sim/flightmodel/weight/m_fixed",payload)
 end
 
 -- Set the fuel for the aircraft
-function kc_set_fuel()
-
+function kc_set_fuel(totalfuel)
+	if totalfuel > kc_get_MaxFuel() then 
+		totalfuel = kc_get_MaxFuel()
+	end
+	if kc_get_nr_tanks() == 1 then 
+		set_array("sim/flightmodel/weight/m_fuel",0,totalfuel)
+	elseif kc_get_nr_tanks() == 2 then 
+		set_array("sim/flightmodel/weight/m_fuel",0,totalfuel/2)
+		set_array("sim/flightmodel/weight/m_fuel",1,totalfuel/2)
+	elseif kc_get_nr_tanks() == 3 then 
+		if kc_MFL[0] + kc_MFL[1] < totalfuel then 
+			set_array("sim/flightmodel/weight/m_fuel",0,kc_MFL[0])
+			set_array("sim/flightmodel/weight/m_fuel",1,kc_MFL[1])
+			set_array("sim/flightmodel/weight/m_fuel",3,totalfuel - kc_MFL[0] + kc_MFL[1])
+		else
+			set_array("sim/flightmodel/weight/m_fuel",0,totalfuel/2)
+			set_array("sim/flightmodel/weight/m_fuel",1,totalfuel/2)
+			set_array("sim/flightmodel/weight/m_fuel",3,0)
+		end
+	end
 end
 
 -- set the takeoff details v-speeds, trim from the aircraft if available

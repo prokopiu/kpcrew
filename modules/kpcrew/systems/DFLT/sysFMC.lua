@@ -19,4 +19,15 @@ local TwoStateToggleSwitch	= require "kpcrew.systems.TwoStateToggleSwitch"
 local MultiStateCmdSwitch 	= require "kpcrew.systems.MultiStateCmdSwitch"
 local InopSwitch 			= require "kpcrew.systems.InopSwitch"
 
+
+-- Intertial reference System
+sysFMC.irs1		= InopSwitch:new("irs1")
+sysFMC.irs2		= InopSwitch:new("irs1")
+sysFMC.irs3		= InopSwitch:new("irs1")
+sysFMC.irsGroup = SwitchGroup:new("irsgroup")
+sysFMC.irsGroup:addSwitch(sysFMC.irs1)
+sysFMC.irsGroup:addSwitch(sysFMC.irs2)
+sysFMC.irsGroup:addSwitch(sysFMC.irs3)
+
+
 return sysFMC

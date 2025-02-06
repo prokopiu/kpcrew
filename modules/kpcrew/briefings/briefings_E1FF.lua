@@ -1,7 +1,7 @@
 -- Aircraft specific briefing values and functions - X-Crafts Free E-Jets
 --
 -- @author Kosta Prokopiu
--- @copyright 2024 Kosta Prokopiu
+-- @copyright 2025 Kosta Prokopiu
 
 require("kpcrew.briefings.briefings_DFLT")
 
@@ -24,3 +24,5 @@ kc_TakeoffFlapsInd 	= "0|1|2|3"
 kc_NumFlapsLDG		= 3
 kc_LandingFlaps 	= "4|5|FULL"
 kc_LandingFlapsInd 	= "4|5|6"
+kc_LandingAutoBrake = "RTO|OFF|LO|MED|HI"
+kc_LandingAutoBrInd = "0|1|2|3|4"

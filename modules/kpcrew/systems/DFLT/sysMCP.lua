@@ -116,20 +116,20 @@ sysMCP.aprAnc 				= SimpleAnnunciator:new("apranc","sim/cockpit2/autopilot/appro
 -- VS
 sysMCP.vsSwitch 			= TwoStateCustomSwitch:new("vsmode","sim/cockpit2/autopilot/altitude_mode",0,
 function ()
-	set("sim/operation/override/override_autopilot",4)
+	set("sim/cockpit2/autopilot/altitude_mode",4)
 end,
 function ()
-	set("sim/operation/override/override_autopilot",0)
+	set("sim/cockpit2/autopilot/altitude_mode",0)
 end,
 function ()
-	if get("sim/cockpit2/autopilot/heading_mode") ~= 4 then
-		set("sim/operation/override/override_autopilot",4)
+	if get("sim/cockpit2/autopilot/altitude_mode") ~= 4 then
+		set("sim/cockpit2/autopilot/altitude_mode",4)
 	else
-		set("sim/operation/override/override_autopilot",0)
+		set("sim/cockpit2/autopilot/altitude_mode",0)
 	end
 end,
 function () 
-	if get("sim/cockpit2/autopilot/heading_mode") == 4 then
+	if get("sim/cockpit2/autopilot/altitude_mode") == 4 then
 		return 1
 	else
 		return 0

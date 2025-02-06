@@ -146,8 +146,8 @@ flight:add(kcPreference:new("pilotextra","",kcPreference.typeInt,"Pilot extra|10
 local departure = kcPreferenceGroup:new("departure","DEPARTURE ATIS")
 departure:add(kcPreference:new("atisORIG","",kcPreference.typeInfo,"ATIS|"))
 departure:add(kcPreference:new("atisQNH",1013,kcPreference.typeInt,"*ATIS QNH|"))
-departure:add(kcPreference:new("squawk","",kcPreference.typeText,"*XPDR SQUAWK|"))
-departure:add(kcPreference:new("transalt",activePrefSet:get("general:def_trans_alt"),kcPreference.typeInt,"*Transition Altitude (ft)|100"))
+departure:add(kcPreference:new("squawk",2000,kcPreference.typeInt,"XPDR SQUAWK|1"))
+departure:add(kcPreference:new("transalt",0,kcPreference.typeInt,"*Transition Altitude (ft)|100"))
 departure:add(kcPreference:new("rwy","",kcPreference.typeText,"Departure Runway|"))
 departure:add(kcPreference:new("rwyCond",1,kcPreference.typeList,"Runway Condition|" .. kc_DEP_rwystate_list))
 departure:add(kcPreference:new("initAlt",4900,kcPreference.typeInt,"*Initial Altitude (ft)|100"))
@@ -159,6 +159,7 @@ departure:add(kcPreference:new("nav1Course",0,kcPreference.typeInt,"NAV1 CRS|10"
 departure:add(kcPreference:new("nav2Course",0,kcPreference.typeInt,"NAV2 CRS|10"))
 departure:add(kcPreference:new("decision",200,kcPreference.typeInt,"Decision Height/Altitude|10"))
 departure:add(kcPreference:new("aptElevation",0,kcPreference.typeInt,"depAirport Elevation|100"))
+departure:add(kcPreference:new("activateAPUPowerUp",1,kcPreference.typeList,"Power Up with APU|Start APU|APU remains off"))
 
 
 -- =================== TAXI BRIEFING ==================
@@ -183,7 +184,7 @@ takeoff:add(kcPreference:new("forcedReturn",1,kcPreference.typeList,"Forced Retu
 takeoff:add(kcPreference:new("msa",0,kcPreference.typeInt,"Departure MSA (ft)|100"))
 takeoff:add(kcPreference:new("v1",0,kcPreference.typeInt,"*V1|1"))
 takeoff:add(kcPreference:new("vr",0,kcPreference.typeInt,"*VR|1"))
-takeoff:add(kcPreference:new("v2",0,kcPreference.typeInt,"*V2|1"))
+takeoff:add(kcPreference:new("v2",250,kcPreference.typeInt,"*V2|1"))
 takeoff:add(kcPreference:new("apMode",1,kcPreference.typeList,"*Autopilot Modes|" .. kc_TakeoffApModes))
 
 -- =================== ARRIVAL ==================

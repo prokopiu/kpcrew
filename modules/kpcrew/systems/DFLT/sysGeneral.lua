@@ -289,8 +289,8 @@ function ()
 end)
 
 -- Wiper Switches
-sysGeneral.wiperLeft = TwoStateDrefSwitch:new("wiperleft","sim/cockpit2/switches/wiper_speed",-1)
-sysGeneral.wiperRight = TwoStateDrefSwitch:new("wiperright","sim/cockpit2/switches/wiper_speed",0)
+sysGeneral.wiperLeft = TwoStateDrefSwitch:new("wiperleft","sim/cockpit2/switches/wiper_speed_switch",-1)
+sysGeneral.wiperRight = TwoStateDrefSwitch:new("wiperright","sim/cockpit2/switches/wiper_speed_switch",1)
 sysGeneral.wiperGroup = SwitchGroup:new("wipers")
 sysGeneral.wiperGroup:addSwitch(sysGeneral.wiperLeft)
 sysGeneral.wiperGroup:addSwitch(sysGeneral.wiperRight)

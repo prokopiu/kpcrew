@@ -122,7 +122,7 @@ sysControls.yawDamper	= TwoStateDrefSwitch:new("yawdamper","sim/cockpit2/switche
 sysControls.Speedbrake	= TwoStateDrefSwitch:new("speedbrake","sim/cockpit2/controls/speedbrake_ratio",0)
 
 -- Autobrake
-sysControls.Autobrake	= TwoStateDrefSwitch:new("autobrake","sim/cockpit/switches/auto_brake_settings",0)
+sysControls.Autobrake	= TwoStateDrefSwitch:new("autobrake","sim/cockpit2/switches/auto_brake_level",0)
 
 --------- Annunciators
 
