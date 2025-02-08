@@ -28,8 +28,7 @@ function kc_macro_state_cold_and_dark()
 	sysGeneral.wiperGroup:actuate(0)
 	sysGeneral.GearSwitch:actuate(1)
 	sysEngines.throttlePos:actuate(0)
-	sysHydraulic.elecHydPumpGroup:actuate(0)
-	sysHydraulic.engHydPumpGroup:actuate(0)
+	kc_macro_hydraulic_off()
 	sysControls.aileronReset:actuate(1)
 	sysControls.rudderReset:actuate(1)
 	sysFuel.allFuelPumpGroup:actuate(0)
@@ -73,8 +72,7 @@ function kc_macro_state_turnaround()
 	sysGeneral.GearSwitch:actuate(1)
 	sysControls.Speedbrake:setValue(0)
 	sysEngines.throttlePos:actuate(0)
-	sysHydraulic.elecHydPumpGroup:actuate(1)
-	sysHydraulic.engHydPumpGroup:actuate(0)
+	kc_macro_hydraulic_initial()
 	sysElectric.gpuConnect:actuate(1)
 	sysElectric.gpuGenBusGroup:actuate(1)
 	sysElectric.avionicsSwitchGroup:actuate(1)
@@ -428,6 +426,30 @@ function kc_macro_bleeds_takeoff()
 	sysAir.apuBleedSwitch:actuate(0)
 end
 
+-- =============
+
+-- hyd pumps initial setup
+function kc_macro_hydraulic_initial()
+	sysHydraulic.elecHydPumpGroup:actuate(1)
+	sysHydraulic.engHydPumpGroup:actuate(0)
+end
+
+-- hyd pumps all off
+function kc_macro_hydraulic_off()
+	sysHydraulic.elecHydPumpGroup:actuate(0)
+	sysHydraulic.engHydPumpGroup:actuate(0)
+end
+
+-- hyd pumps all on
+function kc_macro_hydraulic_on()
+	sysHydraulic.elecHydPumpGroup:actuate(1)
+	sysHydraulic.engHydPumpGroup:actuate(1)
+end
+
+
+
+
+
 function kc_macro_below_10000_ft()
 	kc_macro_lights_descend_10k()
 	sysGeneral.seatBeltSwitch:actuate(1)
@@ -522,6 +544,54 @@ function kc_bck_apuonline(trigger)
 		sysElectric.apuGenBusGroup:actuate(1)
 		sysAir.apuBleedSwitch:actuate(1)
 		kc_procvar_set(trigger,false)
+	end
+end
+
+function kc_macro_set_autobrake(index)
+	sysControls.Autobrake:setValue(index)	
+end
+
+-- Start engines 
+function kc_bck_start_engine(trigger)
+	local delayvar = trigger .. "delay"
+	if kc_procvar_exists(delayvar) == false then
+		kc_procvar_initialize_count(delayvar,-1)
+	end
+	if kc_procvar_get(delayvar) == -1 then
+		kc_procvar_set(delayvar,20)
+		command_once("sim/engines/mixture_max")
+		if trigger == "engstart1" then
+			command_begin("sim/starters/engage_start_run_1")
+		end
+		if trigger == "engstart2" then
+			command_begin("sim/starters/engage_start_run_2")
+		end
+		if trigger == "engstart3" then
+			command_begin("sim/starters/engage_start_run_3")
+		end
+		if trigger == "engstart4" then
+			command_begin("sim/starters/engage_start_run_4")
+		end
+	else
+		if kc_procvar_get(delayvar) <= 0 then
+			if trigger == "engstart1" then
+				command_end("sim/starters/engage_start_run_1")
+			end
+			if trigger == "engstart2" then
+				command_end("sim/starters/engage_start_run_2")
+			end
+			if trigger == "engstart3" then
+				command_end("sim/starters/engage_start_run_3")
+			end
+			if trigger == "engstart4" then
+				command_end("sim/starters/engage_start_run_4")
+			end
+			
+			kc_procvar_set(trigger,false)
+			kc_procvar_set(delayvar,-1)
+		else
+			kc_procvar_set(delayvar,kc_procvar_get(delayvar)-1)
+		end
 	end
 end
 

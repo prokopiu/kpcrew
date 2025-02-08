@@ -32,10 +32,54 @@ local drefEngine2Fire 		= "sim/cockpit2/annunciators/engine_fires"
 ----------- Switches
 
 -- Starter Switches
-sysEngines.engStart1Switch	= InopSwitch:new("starter1")
-sysEngines.engStart2Switch	= InopSwitch:new("starter2")
-sysEngines.engStart3Switch	= InopSwitch:new("starter3")
-sysEngines.engStart4Switch	= InopSwitch:new("starter4")
+sysEngines.engStart1Switch	= TwoStateCustomSwitch:new("starter1","",0,
+function () 
+	kc_procvar_set("engstart1",true)
+end,
+function () 
+	kc_procvar_set("engstart1",false)
+end,
+function () 
+end,
+function () 
+	return get("sim/flightmodel2/engines/starter_is_running",0)
+end)
+sysEngines.engStart2Switch	= TwoStateCustomSwitch:new("starter2","",0,
+function () 
+	kc_procvar_set("engstart2",true)
+end,
+function () 
+	kc_procvar_set("engstart2",false)
+end,
+function () 
+end,
+function () 
+	return get("sim/flightmodel2/engines/starter_is_running",1)
+end)
+sysEngines.engStart3Switch	= TwoStateCustomSwitch:new("starter3","",0,
+function () 
+	kc_procvar_set("engstart3",true)
+end,
+function () 
+	kc_procvar_set("engstart3",false)
+end,
+function () 
+end,
+function () 
+	return get("sim/flightmodel2/engines/starter_is_running",2)
+end)
+sysEngines.engStart4Switch	= TwoStateCustomSwitch:new("starter4","",0,
+function () 
+	kc_procvar_set("engstart4",true)
+end,
+function () 
+	kc_procvar_set("engstart4",false)
+end,
+function () 
+end,
+function () 
+	return get("sim/flightmodel2/engines/starter_is_running",3)
+end)
 sysEngines.engStarterGroup 	= SwitchGroup:new("engstarters")
 sysEngines.engStarterGroup:addSwitch(sysEngines.engStart1Switch)
 sysEngines.engStarterGroup:addSwitch(sysEngines.engStart2Switch)

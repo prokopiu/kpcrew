@@ -59,6 +59,7 @@ if kc_has_apu then
 	sysElectric.apuGenBus1 		= TwoStateDrefSwitch:new("apubus1","sim/cockpit/electrical/generator_apu_on",0)
 	sysElectric.apuGenBus2 		= InopSwitch:new("apubus2")
 else
+	sysElectric.apuStartSwitch 	= InopSwitch:new("apuswitch")
 	sysElectric.apuGenBus1 		= InopSwitch:new("apubus1")
 	sysElectric.apuGenBus2 		= InopSwitch:new("apubus2")
 end

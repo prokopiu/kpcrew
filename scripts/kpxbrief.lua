@@ -28,28 +28,39 @@ if PLANE_ICAO == "B738" then
 	else
 		kc_acf_icao = "B738" -- Zibo Mod
 	end
+
+-- FF A350
 -- elseif PLANE_ICAO == "A359" then
 	-- kc_acf_icao = "A359"
+
 -- XP12 Citation X
-elseif PLANE_ICAO == "C750" and PLANE_TAILNUMBER == "N750XP" then
-	kc_acf_icao = "C750"
--- elseif PLANE_ICAO == "C172" and PLANE_TAILNUMBER ~= "OK-AFL" then
-	-- kc_acf_icao = "C172"
+-- elseif PLANE_ICAO == "C750" and PLANE_TAILNUMBER == "N750XP" then
+	-- kc_acf_icao = "C750"
+	
 -- XP12 A330-300 Laminar
--- elseif PLANE_ICAO == "A333" then
-	-- kc_acf_icao = "A333"
--- elseif PLANE_ICAO == "C172" and PLANE_TAILNUMBER == "OK-AFL" then
-	-- kc_acf_icao = "C17D"
+elseif PLANE_ICAO == "A333" then
+	kc_acf_icao = "A33L"
+	
+-- Inibuilds A300
 -- elseif PLANE_ICAO == "A306" then
 	-- kc_acf_icao = "A306"
+
+-- FF 7x7
 -- elseif PLANE_ICAO == "B762" or PLANE_ICAO == "B763" or PLANE_ICAO == "B764" then
 	-- kc_acf_icao = "B7x7"
+	
+-- Rotate MD-11
 -- elseif PLANE_ICAO == "MD11" then
 	-- kc_acf_icao = "MD11"
+	
+-- FJsim 737	
 -- elseif PLANE_ICAO == "B732" then
 	-- kc_acf_icao = "B732"
+
+-- IXEG 737
 -- elseif PLANE_ICAO == "B733" then
 	-- kc_acf_icao = "B733"
+	
 -- X-CRAFTS E-JET FAMILIY XP12 (E1XX)
 -- E-JET FAM 170  170/170
 -- E-JET FAM 175  175/175
@@ -63,6 +74,7 @@ elseif PLANE_ICAO == "C750" and PLANE_TAILNUMBER == "N750XP" then
 	-- kc_acf_icao = "E1XX"
 -- elseif PLANE_ICAO == "E195" and PLANE_TAILNUMBER == "E195" then
 	-- kc_acf_icao = "E1XX"
+	
 -- X-CRAFTS FREE E-JETS XP12 (E1FF)
 -- Free 175       170/175
 -- Free 195       190/195
@@ -70,22 +82,26 @@ elseif PLANE_ICAO == "E170" and PLANE_TAILNUMBER == "E175" then
 	kc_acf_icao = "E1FF"
 elseif PLANE_ICAO == "E190" and PLANE_TAILNUMBER == "E195" then
 	kc_acf_icao = "E1FF"
-elseif PLANE_ICAO == "A321" then
-	kc_acf_icao = "A20N"
-elseif PLANE_ICAO == "A339" then
-	kc_acf_icao = "A20N"
+	
+-- ToLiss Airbusses
+-- elseif PLANE_ICAO == "A321" then
+	-- kc_acf_icao = "A20N"
+-- elseif PLANE_ICAO == "A339" then
+	-- kc_acf_icao = "A20N"
 elseif PLANE_ICAO == "A319" and PLANE_TAILNUMBER == "C-GTLS" then
-	kc_acf_icao = "A20N"
-elseif PLANE_ICAO == "A20N" and PLANE_TAILNUMBER == "C-GTLT" then
-	kc_acf_icao = "A20N"
-elseif PLANE_ICAO == "A346" then
-	kc_acf_icao = "A20N"
+	kc_acf_icao = "A3TL"
+-- elseif PLANE_ICAO == "A20N" and PLANE_TAILNUMBER == "C-GTLT" then
+	-- kc_acf_icao = "A20N"
+-- elseif PLANE_ICAO == "A346" then
+	-- kc_acf_icao = "A20N"
+	
 -- Laminar MD-82
-elseif PLANE_ICAO == "MD82" and PLANE_TAILNUMBER == "N552AA" then
-	kc_acf_icao = "MD82"
+-- elseif PLANE_ICAO == "MD82" and PLANE_TAILNUMBER == "N552AA" then
+	-- kc_acf_icao = "MD82"
+	
 -- RotateSim MD-88
-elseif PLANE_ICAO == "MD88" then
-	kc_acf_icao = "MD88"
+-- elseif PLANE_ICAO == "MD88" then
+	-- kc_acf_icao = "MD88"
 end
 
 if kc_file_exists(SCRIPT_DIRECTORY .. "..\\Modules\\kpcrew_prefs\\" .. kc_acf_icao .. ".preferences") then
@@ -119,8 +135,8 @@ end
 kb_show_only_once = 0
 kb_hide_only_once = 0
 function kb_brief_toggle_wnd()
-    kc_show_brief = not kc_show_brief
-    if kc_show_brief then
+    kb_show_brief = not kb_show_brief
+    if kb_show_brief then
         if kb_show_only_once == 0 then
             kb_init_brief_window()
             kb_show_only_once = 1
@@ -602,6 +618,27 @@ function kb_brief_builder(kb_brief_wnd, x, y)
 			for i = 1, #options do
 				if imgui.Selectable(options[i], activeBriefings:get("flight:firstFlightDay") == i) then
 					activeBriefings:set("flight:firstFlightDay",i)
+				end
+			end
+		imgui.EndCombo()
+		end		
+    imgui.PopStyleColor()
+    imgui.PopItemWidth()
+	imgui.PopID()
+
+    imgui.SameLine()
+    imgui.PushStyleColor(imgui.constant.Col.Text, color_white)
+		imgui.TextUnformatted("|")
+	imgui.PopStyleColor()
+    imgui.SameLine()
+	imgui.PushItemWidth(125*kb_font_scale);
+	imgui.PushID("apupwrup:")
+    imgui.PushStyleColor(imgui.constant.Col.Text, color_orange)
+		if imgui.BeginCombo("", kc_split("Power up APU|Power Up GPU","|")[activeBriefings:get("departure:activateAPUPowerUp")]) then
+			local options = kc_split("Power up APU|Power Up GPU","|")
+			for i = 1, #options do
+				if imgui.Selectable(options[i], activeBriefings:get("departure:activateAPUPowerUp") == i) then
+					activeBriefings:set("departure:activateAPUPowerUp",i)
 				end
 			end
 		imgui.EndCombo()
@@ -1108,6 +1145,15 @@ function kb_brief_builder(kb_brief_wnd, x, y)
 						imgui.PushStyleColor(imgui.constant.Col.Text, color_green)
 							imgui.TextUnformatted(activeBriefings:get("flight:payload"))
 						imgui.PopStyleColor()
+						imgui.SameLine()
+						imgui.PushStyleVar_2(imgui.constant.StyleVar.FramePadding, 3, 0);
+						imgui.PushID("ldpayload")
+						if imgui.Button("LD", 20*kb_font_scale, 15*kb_font_scale) then
+							kc_set_payload(activeBriefings:get("flight:payload"))
+						end						
+						imgui.PopID()
+						imgui.Separator()
+						imgui.PopStyleVar()
 						
 						imgui.PushStyleColor(imgui.constant.Col.Text, color_white)
 							imgui.TextUnformatted("RAMP  (" .. wunit .. "):")
@@ -1118,7 +1164,7 @@ function kb_brief_builder(kb_brief_wnd, x, y)
 						else
 							imgui.PushStyleColor(imgui.constant.Col.Text, color_orange)
 						end
-							imgui.TextUnformatted(kc_get_gross_weight())
+						imgui.TextUnformatted(string.format("%6.0f",kc_get_gross_weight()))
 						imgui.PopStyleColor()
 
 					imgui.EndChild()
@@ -1175,7 +1221,7 @@ function kb_brief_builder(kb_brief_wnd, x, y)
 						imgui.PopStyleColor()
 						imgui.SameLine()
 						imgui.PushStyleColor(imgui.constant.Col.Text, color_orange)
-							imgui.TextUnformatted(kc_get_zfw())
+							imgui.TextUnformatted(string.format("%6.0f",kc_get_zfw()))
 						imgui.PopStyleColor()
 
 						imgui.PushStyleColor(imgui.constant.Col.Text, color_white)
@@ -1183,7 +1229,7 @@ function kb_brief_builder(kb_brief_wnd, x, y)
 						imgui.PopStyleColor()
 						imgui.SameLine()
 						imgui.PushStyleColor(imgui.constant.Col.Text, color_orange)
-							imgui.TextUnformatted(kc_get_gross_weight())
+							imgui.TextUnformatted(string.format("%6.0f",kc_get_gross_weight()))
 						imgui.PopStyleColor()
 
 						imgui.PushStyleColor(imgui.constant.Col.Text, color_white)
@@ -1191,7 +1237,7 @@ function kb_brief_builder(kb_brief_wnd, x, y)
 						imgui.PopStyleColor()
 						imgui.SameLine()
 						imgui.PushStyleColor(imgui.constant.Col.Text, color_orange)
-							imgui.TextUnformatted(kc_get_total_fuel())
+							imgui.TextUnformatted(string.format("%6.0f",kc_get_total_fuel()))
 						imgui.PopStyleColor()
 						
 					imgui.EndChild()
@@ -1321,8 +1367,15 @@ function kb_brief_builder(kb_brief_wnd, x, y)
 						imgui.PushStyleColor(imgui.constant.Col.Text, color_orange)
 							imgui.TextUnformatted(string.format("%6.0f",activeBriefings:get("flight:planblockfuel")+activeBriefings:get("flight:pilotextra")))
 						imgui.PopStyleColor()
-						
+						imgui.SameLine()
+						imgui.PushID("ldfuel")
+						imgui.PushStyleVar_2(imgui.constant.StyleVar.FramePadding, 3, 0);
+						if imgui.Button("LD", 20*kb_font_scale, 15*kb_font_scale) then
+							kc_set_fuel(activeBriefings:get("flight:planblockfuel")+activeBriefings:get("flight:pilotextra"))
+						end						
+						imgui.PopID()
 						imgui.Separator()
+						imgui.PopStyleVar()
 
 						imgui.PushStyleColor(imgui.constant.Col.Text, color_white)
 							imgui.TextUnformatted("AVG FF (" .. wunit .. "/h):")
@@ -1418,7 +1471,7 @@ function kb_brief_builder(kb_brief_wnd, x, y)
 						imgui.PushStyleColor(imgui.constant.Col.Text, color_green)
 							imgui.TextUnformatted("FL " .. origtranslvl/100)
 						imgui.PopStyleColor()
-
+						activeBriefings:set("arrival:translvl",origtranslvl)
 						imgui.PushStyleColor(imgui.constant.Col.Text, color_white)
 							imgui.TextUnformatted("PARKING  :")
 						imgui.PopStyleColor()
@@ -1600,7 +1653,7 @@ function kb_brief_builder(kb_brief_wnd, x, y)
 						imgui.PushItemWidth(35*kb_font_scale);
 						imgui.PushID("squawk:")
 						imgui.PushStyleColor(imgui.constant.Col.Text, color_orange)
-							local changed, textin = imgui.InputText("", activeBriefings:get("departure:squawk"), 255)
+							local changed, textin = imgui.InputInt("", activeBriefings:get("departure:squawk"), 0)
 							if changed then
 								activeBriefings:set("departure:squawk",textin)
 							end

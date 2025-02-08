@@ -188,6 +188,10 @@ function kcSOP:getActiveFlowIndex()
 	return self.activeFlowIndex
 end
 
+function kcSOP:getFlow(index)
+	return self.flows[index]
+end
+
 -- return the currently active checklist in the SOP
 -- @treturn kcChecklist object
 function kcSOP:getActiveChecklist()

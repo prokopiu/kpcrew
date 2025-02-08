@@ -45,4 +45,6 @@ SOP_E1FF = require("kpcrew.sops.SOP_DFLT")
 
 activeSOP:setName("E175/E195 FREE SOP")
 
+-- activeSOP:getFlow(1):addItem(HoldProcedureItem:new("KPCREW DEPARTURE BRIEF","PERFORM",FlowItem.actorCPT))
+
 return SOP_E1FF
