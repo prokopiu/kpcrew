@@ -20,9 +20,9 @@ sysControls = require("kpcrew.systems.DFLT.sysControls")
 
 logMsg("E1FF sysControls")
 
-sysControls.flaps_pos = {[0] =   0, [1] = 0.166, [2] = 0.333, [3] = 0.5, [4] = 0.666, [5] = 0.833, [6] = 0.1, [7] = 0.1, [8] = 1}
-sysControls.flaps_spd = {[0] = 230, [1] =   215, [2] =  200, [3] =   190, [4] = 180, [5] =   165, [6] =  165, [7] =   165, [8] = 165}
-sysControls.flaps_name= {[0] = "UP", [1] =   "1", [2] =  "2", [3] =   "3", [4] = "4", [5] =   "5", [6] =  "FULL", [7] =   "FULL", [8] = "FULL"}
+sysControls.flaps_pos = {[0] =   0, [1] = 0.166, [2] = 0.333, [3] = 0.5,   [4] = 0.666, [5] = 0.833, [6] = 1,       [7] = 1, [8] = 1}
+sysControls.flaps_spd = {[0] = 230, [1] =   215, [2] =  200, [3] =   190,  [4] = 180,   [5] =   165, [6] =  165,    [7] =   165, [8] = 165}
+sysControls.flaps_name= {[0] = "UP", [1] =   "1", [2] =  "2", [3] =   "3", [4] = "4",   [5] =   "5", [6] =  "FULL", [7] =   "FULL", [8] = "FULL"}
 
 
 return sysControls
