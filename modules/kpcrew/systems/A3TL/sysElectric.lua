@@ -1,0 +1,69 @@
+-- ToLiss Airbusses
+-- Electric system functionality
+
+-- @classmod sysElectric
+-- @author Kosta Prokopiu
+-- @copyright 2025 Kosta Prokopiu
+
+local TwoStateDrefSwitch 	= require "kpcrew.systems.TwoStateDrefSwitch"
+local TwoStateCmdSwitch	 	= require "kpcrew.systems.TwoStateCmdSwitch"
+local TwoStateCustomSwitch 	= require "kpcrew.systems.TwoStateCustomSwitch"
+local SwitchGroup  			= require "kpcrew.systems.SwitchGroup"
+local SimpleAnnunciator 	= require "kpcrew.systems.SimpleAnnunciator"
+local CustomAnnunciator 	= require "kpcrew.systems.CustomAnnunciator"
+local TwoStateToggleSwitch	= require "kpcrew.systems.TwoStateToggleSwitch"
+local MultiStateCmdSwitch 	= require "kpcrew.systems.MultiStateCmdSwitch"
+local InopSwitch 			= require "kpcrew.systems.InopSwitch"
+local KeepPressedSwitchCmd	= require "kpcrew.systems.KeepPressedSwitchCmd"
+
+sysElectric = require("kpcrew.systems.DFLT.sysElectric")
+
+logMsg("A3TL sysElectric")
+
+-- ----- Batteries
+sysElectric.batteryGroup 	= SwitchGroup:new("battery switches")
+sysElectric.batterySwitch 	= TwoStateCmdSwitch:new("battery1","AirbusFBW/BatOHPArray",-1,
+	"toliss_airbus/eleccommands/Bat1On","toliss_airbus/eleccommands/Bat1Off","toliss_airbus/eleccommands/Bat1Toggle")
+sysElectric.batteryGroup:addSwitch(batterySwitch)
+sysElectric.battery2Switch 	= TwoStateCmdSwitch:new("battery2","AirbusFBW/BatOHPArray",1,
+	"toliss_airbus/eleccommands/Bat2On","toliss_airbus/eleccommands/Bat2Off","toliss_airbus/eleccommands/Bat2Toggle")
+sysElectric.batteryGroup:addSwitch(battery2Switch)
+if PLANE_ICAO == "A339" or PLANE_ICAO == "A346" then
+	sysElectric.battery3Switch 	= TwoStateDrefSwitch:new("battery3","AirbusFBW/ElecOHPArray",2)
+	sysElectric.batteryGroup:addSwitch(battery3Switch)
+end
+
+-- de-/activate GPU
+sysElectric.gpuConnect 		= TwoStateDrefSwitch:new("GPU","AirbusFBW/EnableExternalPower",0)
+-- ----- GPU
+sysElectric.gpuGenBusGroup	= SwitchGroup:new("gpubussgroup")
+sysElectric.gpuGenBus1 		= TwoStateCmdSwitch:new("gpubus1","AirbusFBW/ExtPowOHPArray",-1,
+	"toliss_airbus/eleccommands/ExtPowOn","toliss_airbus/eleccommands/ExtPowOff","toliss_airbus/eleccommands/ExtPowToggle")
+if PLANE_ICAO == "A339" or PLANE_ICAO == "A346" then
+	sysElectric.gpuGenBus2 		= TwoStateCmdSwitch:new("gpubus2","AirbusFBW/ExtPowOHPArray",-1,
+	"toliss_airbus/eleccommands/ExtPowAOn","toliss_airbus/eleccommands/ExtPowAOff","toliss_airbus/eleccommands/ExtPowAToggle")
+else
+	sysElectric.gpuGenBus2 		= InopSwitch:new("gpubus2")
+end
+sysElectric.gpuGenBusGroup:addSwitch(sysElectric.gpuGenBus1)
+sysElectric.gpuGenBusGroup:addSwitch(sysElectric.gpuGenBus2)
+
+-- ----- APU
+sysElectric.apuGenBusGroup	= SwitchGroup:new("apubussgroup")
+if kc_has_apu then
+	sysElectric.apuStartSwitch 	= TwoStateDrefSwitch:new("apuswitch","AirbusFBW/APUStarter",0)
+	sysElectric.apuGenBus1 		= TwoStateDrefSwitch:new("apubus1","AirbusFBW/APUGenOHPArray",-1)
+	sysElectric.apuGenBus2 		= InopSwitch:new("apubus2")
+else
+	sysElectric.apuStartSwitch 	= InopSwitch:new("apuswitch")
+	sysElectric.apuGenBus1 		= InopSwitch:new("apubus1")
+	sysElectric.apuGenBus2 		= InopSwitch:new("apubus2")
+end
+sysElectric.apuGenBusGroup:addSwitch(sysElectric.apuGenBus1)
+sysElectric.apuGenBusGroup:addSwitch(sysElectric.apuGenBus2)
+
+
+-- APU RUNNING annunciator
+sysElectric.apuRunningAnc 	= SimpleAnnunciator:new("apurunning","AirbusFBW/APUAvail",0)
+
+return sysElectric
