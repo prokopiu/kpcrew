@@ -13,7 +13,6 @@ logMsg("DFLT sysMacros")
 -- ====================================== States related macros
 function kc_macro_state_cold_and_dark()
 	logMsg("DFLT kc_macro_state_cold_and_dark")
-	set("sim/private/controls/shadow/cockpit_near_adjust",0.09)
 	
 	activeBckVars:set("general:timesOFF","==:==")
 	activeBckVars:set("general:timesOUT","==:==")
@@ -25,7 +24,9 @@ function kc_macro_state_cold_and_dark()
 	kc_macro_mcp_cold_dark()
 	
 	sysControls.Speedbrake:setValue(0)
-	sysGeneral.wiperGroup:actuate(0)
+	if kc_has_wipers == true then
+		sysGeneral.wiperGroup:actuate(0)
+	end
 	sysGeneral.GearSwitch:actuate(1)
 	sysEngines.throttlePos:actuate(0)
 	kc_macro_hydraulic_off()
@@ -49,8 +50,12 @@ function kc_macro_state_cold_and_dark()
 	set_array("sim/cockpit/engine/ignition_on",3,0)
 	sysAice.windowHeatGroup:actuate(0)
 	sysElectric.avionicsSwitchGroup:actuate(0)
-	sysElectric.apuStartSwitch:actuate(0)
-	sysElectric.gpuConnect:actuate(0)
+	if kc_has_apu == true then
+		sysElectric.apuStartSwitch:actuate(0)
+	end
+	if kc_has_gpu == true then
+		sysElectric.gpuConnect:actuate(0)
+	end
 	sysElectric.batterySwitch:actuate(0) 
 	sysElectric.battery2Switch:actuate(0) 
 	sysControls.Autobrake:setValue(1)
@@ -59,7 +64,6 @@ end
 
 function kc_macro_state_turnaround()
 	logMsg("DFLT kc_macro_state_turnaround")
-	set("sim/private/controls/shadow/cockpit_near_adjust",0.09)
 	
 	activeBckVars:set("general:timesOFF","==:==")
 	activeBckVars:set("general:timesOUT","==:==")
@@ -68,13 +72,17 @@ function kc_macro_state_turnaround()
 	sysElectric.batterySwitch:actuate(1) 
 	sysElectric.battery2Switch:actuate(1)
 	kc_macro_lights_preflight()
-	sysGeneral.wiperGroup:actuate(0)
+	if kc_has_wipers == true then
+		sysGeneral.wiperGroup:actuate(0)
+	end
 	sysGeneral.GearSwitch:actuate(1)
 	sysControls.Speedbrake:setValue(0)
 	sysEngines.throttlePos:actuate(0)
 	kc_macro_hydraulic_initial()
-	sysElectric.gpuConnect:actuate(1)
-	sysElectric.gpuGenBusGroup:actuate(1)
+	if kc_has_gpu == true then
+		sysElectric.gpuConnect:actuate(1)
+		sysElectric.gpuGenBusGroup:actuate(1)
+	end
 	sysElectric.avionicsSwitchGroup:actuate(1)
 	sysControls.aileronReset:actuate(1)
 	sysControls.rudderReset:actuate(1)
@@ -147,9 +155,9 @@ end
 function kc_macro_lights_for_takeoff()
 	-- set the lights when entering the runway
 	kc_macro_lights_before_taxi()
+	sysLights.taxiSwitch:actuate(0)
 	sysLights.landLightGroup:actuate(1)
 	sysLights.rwyLightGroup:actuate(1)
-	sysLights.taxiSwitch:actuate(0)
 	sysLights.strobesSwitch:actuate(1)
 end
 
@@ -430,25 +438,27 @@ end
 
 -- hyd pumps initial setup
 function kc_macro_hydraulic_initial()
-	sysHydraulic.elecHydPumpGroup:actuate(1)
+	if kc_has_hyd_elec_pmps == true then
+		sysHydraulic.elecHydPumpGroup:actuate(1)
+	end 
 	sysHydraulic.engHydPumpGroup:actuate(0)
 end
 
 -- hyd pumps all off
 function kc_macro_hydraulic_off()
-	sysHydraulic.elecHydPumpGroup:actuate(0)
+	if kc_has_hyd_elec_pmps == true then
+		sysHydraulic.elecHydPumpGroup:actuate(0)
+	end
 	sysHydraulic.engHydPumpGroup:actuate(0)
 end
 
 -- hyd pumps all on
 function kc_macro_hydraulic_on()
-	sysHydraulic.elecHydPumpGroup:actuate(1)
+	if kc_has_hyd_elec_pmps == true then
+		sysHydraulic.elecHydPumpGroup:actuate(1)
+	end
 	sysHydraulic.engHydPumpGroup:actuate(1)
 end
-
-
-
-
 
 function kc_macro_below_10000_ft()
 	kc_macro_lights_descend_10k()
@@ -553,12 +563,12 @@ end
 
 -- Start engines 
 function kc_bck_start_engine(trigger)
-	local delayvar = trigger .. "delay"
+	local delayvar = "engstartdelay"
 	if kc_procvar_exists(delayvar) == false then
 		kc_procvar_initialize_count(delayvar,-1)
 	end
 	if kc_procvar_get(delayvar) == -1 then
-		kc_procvar_set(delayvar,20)
+		kc_procvar_set(delayvar,15)
 		command_once("sim/engines/mixture_max")
 		if trigger == "engstart1" then
 			command_begin("sim/starters/engage_start_run_1")
@@ -574,6 +584,8 @@ function kc_bck_start_engine(trigger)
 		end
 	else
 		if kc_procvar_get(delayvar) <= 0 then
+			kc_procvar_set(trigger,false)
+			kc_procvar_set(delayvar,-1)
 			if trigger == "engstart1" then
 				command_end("sim/starters/engage_start_run_1")
 			end
@@ -586,9 +598,6 @@ function kc_bck_start_engine(trigger)
 			if trigger == "engstart4" then
 				command_end("sim/starters/engage_start_run_4")
 			end
-			
-			kc_procvar_set(trigger,false)
-			kc_procvar_set(delayvar,-1)
 		else
 			kc_procvar_set(delayvar,kc_procvar_get(delayvar)-1)
 		end

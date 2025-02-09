@@ -102,6 +102,10 @@ elseif PLANE_ICAO == "A319" and PLANE_TAILNUMBER == "C-GTLS" then
 -- RotateSim MD-88
 -- elseif PLANE_ICAO == "MD88" then
 	-- kc_acf_icao = "MD88"
+	
+-- Aerobask Phenom 300
+elseif PLANE_ICAO == "E55P" then
+	kc_acf_icao = "E55P"
 end
 
 if kc_file_exists(SCRIPT_DIRECTORY .. "..\\Modules\\kpcrew_prefs\\" .. kc_acf_icao .. ".preferences") then

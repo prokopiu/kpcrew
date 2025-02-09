@@ -68,6 +68,9 @@ kc_has_reversers	= true		-- Aircraft has reversers
 kc_has_retractgear	= true		-- Aircraft has retractable gear
 kc_has_ground_obj	= false		-- Aircraft has its own ground objects (chocks etc)
 kc_has_irs			= false		-- Aircraft has IRS that must be aligned
+kc_has_wipers		= true		-- Aircraft has wipers
+kc_has_hyd_elec_pmps= true		-- Aircraft has electric hydraulic pumps
+kc_has_beacon		= true		-- Aircraft has beacon
 
 kc_is_airbus		= false		-- Aircraft is an Airbus
 kc_is_boeing		= false		-- Aircraft is a Boeing

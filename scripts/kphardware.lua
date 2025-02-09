@@ -105,6 +105,10 @@ elseif PLANE_ICAO == "A319" and PLANE_TAILNUMBER == "C-GTLS" then
 -- RotateSim MD-88
 -- elseif PLANE_ICAO == "MD88" then
 	-- kh_acf_icao = "MD88"
+
+-- Aerobask Phenom 300
+elseif PLANE_ICAO == "E55P" then
+	kh_acf_icao = "E55P"
 end
 
 -- set("sim/private/controls/shadow/cockpit_near_adjust",0.09)

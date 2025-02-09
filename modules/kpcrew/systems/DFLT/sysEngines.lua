@@ -96,6 +96,16 @@ function ()
 	-- end
 end)
 
+-- ignition
+sysEngines.engIgnition1	= TwoStateDrefSwitch:new("ignition1","sim/cockpit2/engine/actuators/auto_ignite_on",-1)
+sysEngines.engIgnition2	= TwoStateDrefSwitch:new("ignition2","sim/cockpit2/engine/actuators/auto_ignite_on",1)
+sysEngines.engIgnition3	= TwoStateDrefSwitch:new("ignition3","sim/cockpit2/engine/actuators/auto_ignite_on",2)
+sysEngines.engIgnition4	= TwoStateDrefSwitch:new("ignition4","sim/cockpit2/engine/actuators/auto_ignite_on",3)
+sysEngines.engIgnitionGroup 	= SwitchGroup:new("ignitions")
+sysEngines.engIgnitionGroup:addSwitch(sysEngines.engIgnition1)
+sysEngines.engIgnitionGroup:addSwitch(sysEngines.engIgnition2)
+sysEngines.engIgnitionGroup:addSwitch(sysEngines.engIgnition3)
+sysEngines.engIgnitionGroup:addSwitch(sysEngines.engIgnition4)
 
 -- Reversers
 sysEngines.reverser1 		= TwoStateCustomSwitch:new("reverse1",drefReverserState,-1,
