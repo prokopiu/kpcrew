@@ -119,8 +119,8 @@ sysLights.wheelAnc 			= SimpleAnnunciator:new("wheellights",drefGenericLights,11
 sysLights.domeLightSwitch 	= TwoStateDrefSwitch:new("dome","sim/cockpit/electrical/cockpit_lights",0)
 sysLights.domeLightSwitch2 	= InopSwitch:new("dome2")
 sysLights.domeLightGroup 	= SwitchGroup:new("dome lights")
-sysLights.rwyLightGroup:addSwitch(sysLights.domeLightSwitch)
-sysLights.rwyLightGroup:addSwitch(sysLights.domeLightSwitch2)
+sysLights.domeLightGroup:addSwitch(sysLights.domeLightSwitch)
+sysLights.domeLightGroup:addSwitch(sysLights.domeLightSwitch2)
 
 -- Dome Light(s) status
 sysLights.domeAnc 			= CustomAnnunciator:new("domelights",

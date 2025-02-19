@@ -70,7 +70,14 @@ kc_has_ground_obj	= false		-- Aircraft has its own ground objects (chocks etc)
 kc_has_irs			= false		-- Aircraft has IRS that must be aligned
 kc_has_wipers		= true		-- Aircraft has wipers
 kc_has_hyd_elec_pmps= true		-- Aircraft has electric hydraulic pumps
+kc_has_hyd_eng_pmps = true		-- Aircraft has engine hydraulic pumps
+kc_has_avionics_sw  = true		-- Aircraft has Avionics switch
 kc_has_beacon		= true		-- Aircraft has beacon
+kc_has_press_cab	= true		-- Aircraft has pressurized cabine
+kc_has_inv_ess_bus	= true		-- Aircraft has inverters and essential busses
+kc_has_bus_ties		= true		-- Aircraft has bus ties for AC & DC
+kc_has_window_heat	= true		-- Aircraft has deicated window heat
+kc_has_wx_radar		= true		-- Aircraft has weather radar
 
 kc_is_airbus		= false		-- Aircraft is an Airbus
 kc_is_boeing		= false		-- Aircraft is a Boeing

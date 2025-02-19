@@ -6,6 +6,8 @@
 -- @copyright 2025 Kosta Prokopiu
 
 local sysControls = {
+	autobrk_off = 1,
+	
 	trimCenter 	= 2,
 	trimLeft 	= 1,
 	trimRight 	= 0,
@@ -119,8 +121,7 @@ sysControls.rudderReset	= TwoStateToggleSwitch:new("rudderreset","sim/cockpit2/c
 sysControls.yawDamper	= TwoStateDrefSwitch:new("yawdamper","sim/cockpit2/switches/yaw_damper_on",0)
 
 -- Speedbrake lever
-sysControls.Speedbrake	= TwoStateCmdSwitch:new("speedbrake","aerobask/anim/sw_speedbrake",0,
-	"aerobask/speedbrakes_open","aerobask/speedbrakes_close","nocommand")
+sysControls.Speedbrake	= TwoStateDrefSwitch:new("speedbrake","sim/cockpit2/controls/speedbrake_ratio",0)
 
 -- Autobrake
 sysControls.Autobrake	= TwoStateDrefSwitch:new("autobrake","sim/cockpit2/switches/auto_brake_level",0)

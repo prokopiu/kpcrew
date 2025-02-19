@@ -71,7 +71,7 @@ flight:add(kcPreference:new("firstFlightDay",1,kcPreference.typeList,"First Flig
 flight:add(kcPreference:new("simbrief",0,kcPreference.typeExecButton,"Simbrief Data Load|Fetch SIMBRIEF|kc_download_simbrief()"))
 flight:add(kcPreference:new("callsign","",kcPreference.typeText,"ATC Callsign|"))
 flight:add(kcPreference:new("flightnumber","",kcPreference.typeText,"Flight Number|"))
-flight:add(kcPreference:new("airline","",kcPreference.typeText,"Airline|"))
+flight:add(kcPreference:new("airline"," ",kcPreference.typeText,"Airline|"))
 flight:add(kcPreference:new("originIcao","",kcPreference.typeText,"*Origin ICAO|"))
 flight:add(kcPreference:new("originIata","",kcPreference.typeText,"*Origin IATA|"))
 flight:add(kcPreference:new("originName","",kcPreference.typeText,"*Origin Name|"))
@@ -167,7 +167,7 @@ local taxi = kcPreferenceGroup:new("taxi","TAXI DETAILS")
 taxi:add(kcPreference:new("parkingStand","",kcPreference.typeText,"Parking Stand|"))
 taxi:add(kcPreference:new("gateStand",1,kcPreference.typeList,"Gate/Stand|" .. kc_DEP_gatestand_list))
 taxi:add(kcPreference:new("pushDirection",1,kcPreference.typeList,"Push Direction|" .. kc_DEP_push_direction))
-taxi:add(kcPreference:new("startSequence",1,kcPreference.typeList,"*Start Sequence|" .. kc_StartSequence))
+taxi:add(kcPreference:new("startSequence",2,kcPreference.typeList,"*Start Sequence|" .. kc_StartSequence))
 taxi:add(kcPreference:new("taxiRoute","",kcPreference.typeText,"Taxi Route|"))
 
 -- =================== TAKEOFF ==================

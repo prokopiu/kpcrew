@@ -23,43 +23,83 @@ function kc_macro_state_cold_and_dark()
 	kc_macro_doors_cold_dark()
 	kc_macro_mcp_cold_dark()
 	
-	sysControls.Speedbrake:setValue(0)
+	sysGeneral.parkBrakeSwitch:actuate(1) 
+	
+	if kc_has_retractgear == true then
+		sysGeneral.GearSwitch:actuate(1)
+	end
+	if kc_has_speedbrake == true then
+		sysControls.Speedbrake:setValue(0)
+	end
+	sysControls.flapsSwitch:setValue(0)
 	if kc_has_wipers == true then
 		sysGeneral.wiperGroup:actuate(0)
 	end
-	sysGeneral.GearSwitch:actuate(1)
 	sysEngines.throttlePos:actuate(0)
-	kc_macro_hydraulic_off()
+
 	sysControls.aileronReset:actuate(1)
 	sysControls.rudderReset:actuate(1)
+	
+	kc_macro_hydraulic_off()
+	
 	sysFuel.allFuelPumpGroup:actuate(0)
 	sysFuel.crossFeed:actuate(0)
-	sysAir.packSwitchGroup:actuate(0)
-	sysElectric.genSwitchGroup:actuate(0)
+
+	if kc_has_press_cab == true then
+		sysAir.packSwitchGroup:actuate(0)
+		sysAir.engBleedGroup:actuate(0)
+		sysAir.isoValveSwitch:actuate(0)
+	end
+
+	sysAice.engAntiIceGroup:actuate(0)
+	sysAice.wingAntiIce:actuate(0)
+
 	sysGeneral.seatBeltSwitch:actuate(0)
 	sysGeneral.noSmokingSwitch:actuate(0)
-	sysElectric.inverterSwitchGroup:actuate(0)
-	sysElectric.dcBusTie:actuate(0)
+	
+	sysEngines.engIgnitionGroup:actuate(0)
+
+	if kc_has_autobrake == true then
+		sysControls.Autobrake:setValue(sysControls.autobrk_off)
+	end
+	
 	set_array("sim/cockpit2/engine/actuators/auto_ignite_on",0,0)
 	set_array("sim/cockpit2/engine/actuators/auto_ignite_on",1,0)
 	set_array("sim/cockpit2/engine/actuators/auto_ignite_on",2,0)
 	set_array("sim/cockpit2/engine/actuators/auto_ignite_on",3,0)
+	
 	set_array("sim/cockpit/engine/ignition_on",0,0)
 	set_array("sim/cockpit/engine/ignition_on",1,0)
 	set_array("sim/cockpit/engine/ignition_on",2,0)
 	set_array("sim/cockpit/engine/ignition_on",3,0)
-	sysAice.windowHeatGroup:actuate(0)
-	sysElectric.avionicsSwitchGroup:actuate(0)
+	
+	if kc_has_window_heat == true then
+		sysAice.windowHeatGroup:actuate(0)
+	end
+
+	if kc_has_wipers == true then
+		sysGeneral.wiperGroup:actuate(0)
+	end
+	
+	sysElectric.genSwitchGroup:actuate(0)
+	if kc_has_avionics_sw == true then
+		sysElectric.avionicsSwitchGroup:actuate(0)
+	end
+	if kc_has_inv_ess_bus == true then
+		sysElectric.inverterSwitchGroup:actuate(0)
+	end
 	if kc_has_apu == true then
 		sysElectric.apuStartSwitch:actuate(0)
 	end
 	if kc_has_gpu == true then
 		sysElectric.gpuConnect:actuate(0)
 	end
+	if kc_has_bus_ties == true then
+		sysElectric.dcBusTie:actuate(0)
+	end
 	sysElectric.batterySwitch:actuate(0) 
 	sysElectric.battery2Switch:actuate(0) 
-	sysControls.Autobrake:setValue(1)
-	sysControls.flapsSwitch:setValue(0)
+
 end
 
 function kc_macro_state_turnaround()
@@ -69,45 +109,86 @@ function kc_macro_state_turnaround()
 	activeBckVars:set("general:timesOUT","==:==")
 	activeBckVars:set("general:timesIN","==:==")
 	activeBckVars:set("general:timesON","==:==")
-	sysElectric.batterySwitch:actuate(1) 
-	sysElectric.battery2Switch:actuate(1)
-	kc_macro_lights_preflight()
+
+	sysGeneral.parkBrakeSwitch:actuate(1) 
+
+	if kc_has_retractgear == true then
+		sysGeneral.GearSwitch:actuate(1)
+	end
+	if kc_has_speedbrake == true then
+		sysControls.Speedbrake:setValue(0)
+	end
+	sysControls.flapsSwitch:setValue(0)
 	if kc_has_wipers == true then
 		sysGeneral.wiperGroup:actuate(0)
 	end
-	sysGeneral.GearSwitch:actuate(1)
-	sysControls.Speedbrake:setValue(0)
 	sysEngines.throttlePos:actuate(0)
-	kc_macro_hydraulic_initial()
+
+	if kc_has_autobrake == true then
+		sysControls.Autobrake:setValue(sysControls.autobrk_off)
+	end
+	
+	sysElectric.batterySwitch:actuate(1) 
+	sysElectric.battery2Switch:actuate(1)
+	
+	kc_macro_lights_preflight()
+	
+	if kc_has_wipers == true then
+		sysGeneral.wiperGroup:actuate(0)
+	end
 	if kc_has_gpu == true then
 		sysElectric.gpuConnect:actuate(1)
 		sysElectric.gpuGenBusGroup:actuate(1)
 	end
-	sysElectric.avionicsSwitchGroup:actuate(1)
+	
+	kc_macro_hydraulic_initial()
+
 	sysControls.aileronReset:actuate(1)
 	sysControls.rudderReset:actuate(1)
+
+	sysFuel.allFuelPumpGroup:actuate(0)
 	sysFuel.crossFeed:actuate(0)
-	sysAir.packSwitchGroup:actuate(1)
+
+	if kc_has_press_cab == true then
+		sysAir.packSwitchGroup:actuate(0)
+	end
+
 	sysElectric.genSwitchGroup:actuate(0)
-	sysFuel.allFuelPumpGroup:actuate(1)
+	if kc_has_avionics_sw == true then
+		sysElectric.avionicsSwitchGroup:actuate(1)
+	end
+	if kc_has_inv_ess_bus == true then
+		sysElectric.inverterSwitchGroup:actuate(1)
+	end
+	if kc_has_bus_ties == true then
+		sysElectric.dcBusTie:actuate(0)
+	end
+
 	sysGeneral.seatBeltSwitch:actuate(1)
 	sysGeneral.noSmokingSwitch:actuate(1)
-	sysElectric.inverterSwitchGroup:actuate(1)
-	sysElectric.dcBusTie:actuate(1)
-	sysAice.windowHeatGroup:actuate(1)
+
+	if kc_has_window_heat == true then
+		sysAice.windowHeatGroup:actuate(1)
+	end
+
+	kc_macro_set_local_baro()
+
 	sysRadios.xpdrCode:actuate(2000)
+	set("sim/cockpit2/radios/actuators/transponder_mode",1)	
+	
 	set_array("sim/cockpit2/engine/actuators/auto_ignite_on",0,0)
 	set_array("sim/cockpit2/engine/actuators/auto_ignite_on",1,0)
 	set_array("sim/cockpit2/engine/actuators/auto_ignite_on",2,0)
 	set_array("sim/cockpit2/engine/actuators/auto_ignite_on",3,0)
+
 	set_array("sim/cockpit/engine/ignition_on",0,0)
 	set_array("sim/cockpit/engine/ignition_on",1,0)
 	set_array("sim/cockpit/engine/ignition_on",2,0)
 	set_array("sim/cockpit/engine/ignition_on",3,0)
-	sysControls.Autobrake:setValue(1)
-	sysControls.flapsSwitch:setValue(0)
+
 	kc_macro_doors_preflight()
 	kc_macro_mcp_preflight()
+	
 end
 
 -- ====================================== Lights related functions
@@ -116,6 +197,7 @@ function kc_macro_lights_preflight()
 	-- set the lights as needed during preflight/turnaround
 	sysLights.landLightGroup:actuate(0)
 	sysLights.rwyLightGroup:actuate(0)
+	sysLights.taxiSwitch:actuate(0)
 	sysLights.taxiSwitch:actuate(0)
 	sysLights.positionSwitch:actuate(1)
 	sysLights.beaconSwitch:actuate(0)
@@ -182,6 +264,7 @@ function kc_macro_lights_approach()
 	-- set the lights when in the approach
 	kc_macro_lights_descend_10k()
 	sysLights.rwyLightGroup:actuate(1)
+	sysLights.landLightGroup:actuate(1)
 	if kc_is_daylight() == false then		
 		sysLights.logoSwitch:actuate(1)
 	end	
@@ -234,6 +317,7 @@ function kc_macro_lights_cold_dark()
 	sysLights.logoSwitch:actuate(0)
 	sysLights.wingSwitch:actuate(0)
 	sysLights.wheelSwitch:actuate(0)
+	sysLights.taxiSwitch:actuate(0)
 	-- internal
 	sysLights.domeLightSwitch:actuate(0)
 	sysLights.instrLightGroup:actuate(0)
@@ -441,7 +525,9 @@ function kc_macro_hydraulic_initial()
 	if kc_has_hyd_elec_pmps == true then
 		sysHydraulic.elecHydPumpGroup:actuate(1)
 	end 
-	sysHydraulic.engHydPumpGroup:actuate(0)
+	if kc_has_hyd_eng_pmps == true then
+		sysHydraulic.engHydPumpGroup:actuate(0)
+	end
 end
 
 -- hyd pumps all off
@@ -449,7 +535,9 @@ function kc_macro_hydraulic_off()
 	if kc_has_hyd_elec_pmps == true then
 		sysHydraulic.elecHydPumpGroup:actuate(0)
 	end
-	sysHydraulic.engHydPumpGroup:actuate(0)
+	if kc_has_hyd_eng_pmps == true then
+		sysHydraulic.engHydPumpGroup:actuate(0)
+	end
 end
 
 -- hyd pumps all on
@@ -457,7 +545,9 @@ function kc_macro_hydraulic_on()
 	if kc_has_hyd_elec_pmps == true then
 		sysHydraulic.elecHydPumpGroup:actuate(1)
 	end
-	sysHydraulic.engHydPumpGroup:actuate(1)
+	if kc_has_hyd_eng_pmps == true then
+		sysHydraulic.engHydPumpGroup:actuate(1)
+	end
 end
 
 function kc_macro_below_10000_ft()
