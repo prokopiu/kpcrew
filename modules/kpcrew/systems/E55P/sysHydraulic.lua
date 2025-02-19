@@ -20,4 +20,13 @@ sysHydraulic = require("kpcrew.systems.DFLT.sysHydraulic")
 
 logMsg("E55P sysHydraulic")
 
+-- ----- HYD Engine Pumps
+sysHydraulic.engHydPumpGroup = SwitchGroup:new("enghydpumps")
+sysHydraulic.engHydPump1	= TwoStateCmdSwitch:new("enghydpump1","aerobask/hyd/sw_pump1",0,
+	"aerobask/hyd/pump1_up","aerobask/hyd/pump1_dn","nocommand")
+sysHydraulic.engHydPumpGroup:addSwitch(sysHydraulic.engHydPump1)
+sysHydraulic.engHydPump2	= TwoStateCmdSwitch:new("enghydpump2","aerobask/hyd/sw_pump2",0,
+	"aerobask/hyd/pump2_up","aerobask/hyd/pump2_dn","nocommand")
+sysHydraulic.engHydPumpGroup:addSwitch(sysHydraulic.engHydPump2)
+
 return sysHydraulic

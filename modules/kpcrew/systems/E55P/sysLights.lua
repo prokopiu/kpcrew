@@ -33,9 +33,8 @@ function ()
 	end
 end,
 function ()
-	if get("aerobask/lights/sw_ldg_taxi") == 1 then
-		command_once("aerobask/lights/ldg_taxi_dn")
-	end
+	command_once("aerobask/lights/ldg_taxi_dn")
+	command_once("aerobask/lights/ldg_taxi_dn")
 end,
 nil,
 function ()
@@ -89,5 +88,24 @@ function ()
 		return 0
 	end
 end)
+
+-- Dome Light
+sysLights.domeLightSwitch 	= TwoStateDrefSwitch:new("dome","sim/cockpit2/switches/generic_lights_switch",1)
+sysLights.domeLightSwitch2 	= TwoStateDrefSwitch:new("dome2","sim/cockpit2/switches/generic_lights_switch",2)
+sysLights.domeLightSwitch3 	= TwoStateDrefSwitch:new("dome3","sim/cockpit2/switches/generic_lights_switch",3)
+sysLights.domeLightGroup 	= SwitchGroup:new("dome lights")
+sysLights.domeLightGroup:addSwitch(sysLights.domeLightSwitch)
+sysLights.domeLightGroup:addSwitch(sysLights.domeLightSwitch2)
+sysLights.domeLightGroup:addSwitch(sysLights.domeLightSwitch3)
+
+-- Instrument Lights
+sysLights.instr1Light		= TwoStateDrefSwitch:new("","aerobask/lights/knob_panel",0)
+sysLights.instrLightGroup 	= SwitchGroup:new("instrumentlights")
+sysLights.instrLightGroup:addSwitch(sysLights.instr1Light)
+
+-- panel lights
+sysLights.panel1Light		= TwoStateDrefSwitch:new("panellight1","sim/cockpit2/switches/generic_lights_switch",0)
+sysLights.panelLightGroup 	= SwitchGroup:new("panellights")
+sysLights.panelLightGroup:addSwitch(sysLights.panel1Light)
 
 return sysLights

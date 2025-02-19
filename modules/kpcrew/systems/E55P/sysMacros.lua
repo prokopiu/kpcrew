@@ -24,47 +24,102 @@ function kc_macro_state_cold_and_dark()
 	kc_macro_lights_cold_dark()
 	kc_macro_doors_cold_dark()
 	kc_macro_mcp_cold_dark()
-	if kc_has_gpu == true then
-		sysElectric.gpuGenBusGroup:actuate(0)
-	end
 	
-	sysControls.Speedbrake:setValue(0)
-	if kc_has_wipers == true then
-		sysGeneral.wiperGroup:actuate(0)
+	command_once("aerobask/lights/emer_lt_dn")
+	command_once("aerobask/lights/emer_lt_dn")
+	
+	if get("aerobask/hide_static") == 1 then
+		command_once("aerobask/options/toggle_static_elements")
 	end
+	sysGeneral.parkBrakeSwitch:actuate(1) 
+
 	sysGeneral.GearSwitch:actuate(1)
+	command_once("aerobask/speedbrakes_close")
+	kc_macro_set_flap(0)
 	sysEngines.throttlePos:actuate(0)
-	kc_macro_hydraulic_off()
+
 	sysControls.aileronReset:actuate(1)
 	sysControls.rudderReset:actuate(1)
+	
+	command_once("aerobask/hyd/pump1_up")
+	command_once("aerobask/hyd/pump2_up")
+	
 	sysFuel.allFuelPumpGroup:actuate(0)
 	sysFuel.crossFeed:actuate(0)
+
 	sysAir.packSwitchGroup:actuate(0)
-	sysElectric.genSwitchGroup:actuate(0)
-	sysGeneral.seatBeltSwitch:actuate(0)
-	sysGeneral.noSmokingSwitch:actuate(0)
-	sysElectric.inverterSwitchGroup:actuate(0)
-	sysElectric.dcBusTie:actuate(0)
-	set_array("sim/cockpit2/engine/actuators/auto_ignite_on",0,0)
-	set_array("sim/cockpit2/engine/actuators/auto_ignite_on",1,0)
-	set_array("sim/cockpit2/engine/actuators/auto_ignite_on",2,0)
-	set_array("sim/cockpit2/engine/actuators/auto_ignite_on",3,0)
-	set_array("sim/cockpit/engine/ignition_on",0,0)
-	set_array("sim/cockpit/engine/ignition_on",1,0)
-	set_array("sim/cockpit/engine/ignition_on",2,0)
-	set_array("sim/cockpit/engine/ignition_on",3,0)
-	sysAice.windowHeatGroup:actuate(0)
-	sysElectric.avionicsSwitchGroup:actuate(0)
-	if kc_has_apu == true then
-		sysElectric.apuStartSwitch:actuate(0)
+	sysAir.engBleedGroup:actuate(0)
+	sysAir.isoValveSwitch:actuate(0)
+	if get("aerobask/oxygen/sw_cut_out") == 1 then
+		command_once("aerobask/oxygen/cut_out")
 	end
-	sysElectric.batterySwitch:actuate(0) 
-	sysElectric.battery2Switch:actuate(0) 
-	sysControls.Autobrake:setValue(1)
-	sysControls.flapsSwitch:setValue(0)
-	if kc_has_gpu == true then
-		sysElectric.gpuConnect:actuate(0)
-	end
+	command_once("aerobask/oxygen/supply_lt")
+	command_once("aerobask/oxygen/supply_lt")
+	command_once("aerobask/oxygen/supply_rt")
+	
+	sysGeneral.seatBeltSwitch:setValue(0)
+	sysGeneral.noSmokingSwitch:setValue(0)
+
+	sysEngines.engIgnitionGroup:actuate(0)
+	command_once("aerobask/engines/knob_1_lt")
+	command_once("aerobask/engines/knob_1_lt")
+	command_once("aerobask/engines/knob_2_lt")
+	command_once("aerobask/engines/knob_2_lt")
+
+	command_once("aerobask/iceprot/wshld1_off")
+	command_once("aerobask/iceprot/wshld2_off")
+	command_once("aerobask/iceprot/ads_probes_lt")
+	command_once("aerobask/iceprot/ads_probes_lt")
+	command_once("aerobask/iceprot/ads_probes_rt")
+	
+	command_once("aerobask/iceprot/eng1_off")
+	command_once("aerobask/iceprot/eng2_off")
+	command_once("aerobask/iceprot/wingstab_dn")
+	command_once("aerobask/iceprot/wingstab_dn")
+	command_once("aerobask/iceprot/insp_light_off")
+
+	command_once("aerobask/press/mode_up")
+	command_once("aerobask/press/ecs_rt")
+	command_once("aerobask/press/ecs_rt")
+	command_once("aerobask/press/ecs_rt")
+	command_once("aerobask/press/ecs_lt")
+	set("aerobask/airco/knob_ckpt_temp",0)
+	set("aerobask/airco/knob_cabin_temp",0)
+	command_once("aerobask/airco/cabin_fan_dn")
+	command_once("aerobask/airco/cabin_fan_dn")
+	command_once("aerobask/airco/ckpt_fan_dn")
+	command_once("aerobask/airco/ckpt_fan_dn")
+	command_once("aerobask/airco/mode_dn")
+	command_once("aerobask/airco/mode_dn")
+
+	sysElectric.gpuConnect:actuate(0)
+	command_once("sim/electrical/battery_1_off")
+	command_once("sim/electrical/battery_2_off")
+	command_once("aerobask/electrical/gen1_off")
+	command_once("aerobask/electrical/gen2_off")
+	command_once("aerobask/electrical/bus_tie_lt")
+	command_once("aerobask/electrical/bus_tie_lt")
+	command_once("aerobask/electrical/bus_tie_rt")
+	sysElectric.gpuGenBusGroup:actuate(0)
+	
+	command_once("aerobask/test/test_rt")
+	command_once("aerobask/test/test_rt")
+	command_once("aerobask/test/test_rt")
+	command_once("aerobask/test/test_rt")
+	command_once("aerobask/test/test_rt")
+	command_once("aerobask/test/test_lt")
+	command_once("aerobask/test/test_lt")	
+	
+	command_once("aerobask/engines/knob_1_lt")
+	command_once("aerobask/engines/knob_1_lt")
+	command_once("aerobask/engines/knob_2_lt")
+	command_once("aerobask/engines/knob_2_lt")	
+		
+	command_once("aerobask/engines/ignition_1_dn")
+	command_once("aerobask/engines/ignition_1_dn")
+	command_once("aerobask/engines/ignition_2_dn")
+	command_once("aerobask/engines/ignition_2_dn")	
+	
 end
 
 function kc_macro_state_turnaround()
@@ -74,46 +129,104 @@ function kc_macro_state_turnaround()
 	activeBckVars:set("general:timesOUT","==:==")
 	activeBckVars:set("general:timesIN","==:==")
 	activeBckVars:set("general:timesON","==:==")
-	sysElectric.batterySwitch:actuate(1) 
-	sysElectric.battery2Switch:actuate(1)
-	kc_macro_lights_preflight()
-	if kc_has_wipers == true then
-		sysGeneral.wiperGroup:actuate(0)
+	
+	if get("aerobask/hide_static") == 1 then
+		command_once("aerobask/options/toggle_static_elements")
 	end
-	sysGeneral.GearSwitch:actuate(1)
-	sysControls.Speedbrake:setValue(0)
-	sysEngines.throttlePos:actuate(0)
-	kc_macro_hydraulic_initial()
-	if kc_has_gpu == true then
-		sysElectric.gpuConnect:actuate(1)
-		sysElectric.gpuGenBusGroup:actuate(1)
-	end
-	sysElectric.avionicsSwitchGroup:actuate(1)
-	sysControls.aileronReset:actuate(1)
-	sysControls.rudderReset:actuate(1)
-	sysFuel.crossFeed:actuate(0)
-	sysAir.packSwitchGroup:actuate(1)
-	sysElectric.genSwitchGroup:actuate(0)
-	sysFuel.allFuelPumpGroup:actuate(1)
-	sysGeneral.seatBeltSwitch:actuate(1)
-	sysGeneral.noSmokingSwitch:actuate(1)
-	sysElectric.inverterSwitchGroup:actuate(1)
-	sysElectric.dcBusTie:actuate(1)
-	sysAice.windowHeatGroup:actuate(1)
-	sysRadios.xpdrCode:actuate(2000)
-	set_array("sim/cockpit2/engine/actuators/auto_ignite_on",0,0)
-	set_array("sim/cockpit2/engine/actuators/auto_ignite_on",1,0)
-	set_array("sim/cockpit2/engine/actuators/auto_ignite_on",2,0)
-	set_array("sim/cockpit2/engine/actuators/auto_ignite_on",3,0)
-	set_array("sim/cockpit/engine/ignition_on",0,0)
-	set_array("sim/cockpit/engine/ignition_on",1,0)
-	set_array("sim/cockpit/engine/ignition_on",2,0)
-	set_array("sim/cockpit/engine/ignition_on",3,0)
-	sysControls.Autobrake:setValue(1)
-	sysControls.flapsSwitch:setValue(0)
 	kc_macro_doors_preflight()
-	kc_macro_mcp_preflight()
+	sysElectric.gpuConnect:actuate(1)
+	sysElectric.gpuGenBusGroup:actuate(1)
+	if get("aerobask/oxygen/sw_cut_out") == 0 then
+		command_once("aerobask/oxygen/cut_out")
+	end	
+	command_once("aerobask/oxygen/supply_lt")
+	command_once("aerobask/oxygen/supply_lt")
+	command_once("aerobask/oxygen/supply_rt")	
 
+	command_once("sim/electrical/battery_1_off")
+	command_once("sim/electrical/battery_2_off")
+	command_once("aerobask/electrical/gen1_auto")
+	command_once("aerobask/electrical/gen2_auto")
+	command_once("aerobask/electrical/bus_tie_lt")
+	command_once("aerobask/electrical/bus_tie_lt")
+	command_once("aerobask/electrical/bus_tie_rt")
+		
+	command_once("aerobask/bleed/bleed1_auto")
+	command_once("aerobask/bleed/bleed2_auto")	
+	command_once("aerobask/bleed/xbleed_auto")
+
+	command_once("aerobask/test/test_rt")
+	command_once("aerobask/test/test_rt")
+	command_once("aerobask/test/test_rt")
+	command_once("aerobask/test/test_rt")
+	command_once("aerobask/test/test_rt")
+	command_once("aerobask/test/test_lt")
+	command_once("aerobask/test/test_lt")	
+	
+	command_once("aerobask/fuel/pump1_dn")
+	command_once("aerobask/fuel/pump1_dn")
+	command_once("aerobask/fuel/pump1_up")
+	command_once("aerobask/fuel/pump2_dn")
+	command_once("aerobask/fuel/pump2_dn")
+	command_once("aerobask/fuel/pump2_up")
+	command_once("aerobask/fuel/xfeed_lt")
+	command_once("aerobask/fuel/xfeed_lt")
+	command_once("aerobask/fuel/xfeed_rt")	
+	
+	command_once("aerobask/hyd/pump1_up")
+	command_once("aerobask/hyd/pump2_up")
+	
+	command_once("aerobask/iceprot/wshld1_off")
+	command_once("aerobask/iceprot/wshld2_off")
+	command_once("aerobask/iceprot/ads_probes_lt")
+	command_once("aerobask/iceprot/ads_probes_lt")
+	command_once("aerobask/iceprot/ads_probes_rt")
+	
+	command_once("aerobask/iceprot/eng1_off")
+	command_once("aerobask/iceprot/eng2_off")
+	command_once("aerobask/iceprot/wingstab_dn")
+	command_once("aerobask/iceprot/wingstab_dn")
+	command_once("aerobask/iceprot/insp_light_off")
+
+	command_once("aerobask/press/mode_up")
+	command_once("aerobask/press/ecs_rt")
+	command_once("aerobask/press/ecs_rt")
+	command_once("aerobask/press/ecs_rt")
+	command_once("aerobask/press/ecs_lt")
+	set("aerobask/airco/knob_ckpt_temp",0)
+	set("aerobask/airco/knob_cabin_temp",0)
+	command_once("aerobask/airco/cabin_fan_dn")
+	command_once("aerobask/airco/cabin_fan_dn")
+	command_once("aerobask/airco/ckpt_fan_dn")
+	command_once("aerobask/airco/ckpt_fan_dn")
+	command_once("aerobask/airco/mode_dn")
+	command_once("aerobask/airco/mode_dn")
+	
+	command_once("aerobask/engines/bottle_off")
+
+	command_once("aerobask/engines/knob_1_lt")
+	command_once("aerobask/engines/knob_1_lt")
+	command_once("aerobask/engines/knob_2_lt")
+	command_once("aerobask/engines/knob_2_lt")	
+
+	command_once("aerobask/engines/ignition_1_dn")
+	command_once("aerobask/engines/ignition_1_dn")
+	command_once("aerobask/engines/ignition_2_dn")
+	command_once("aerobask/engines/ignition_2_dn")
+		
+	sysControls.flapsSwitch:setValue(0)
+	sysGeneral.parkBrakeSwitch:actuate(1) 
+
+	sysElectric.batterySwitch:actuate(1) 
+	if kc_get_nr_batteries() > 1 then
+		sysElectric.battery2Switch:actuate(1) 
+	end	
+	sysRadios.xpdrCode:actuate(2000) 
+	set("sim/cockpit2/radios/actuators/transponder_mode",1)	
+
+	command_once("aerobask/lights/emer_lt_dn")
+	command_once("aerobask/lights/emer_lt_dn")	
+	
 end
 
 -- Start engines 
@@ -152,6 +265,151 @@ function kc_bck_start_engine(trigger)
 			kc_procvar_set(delayvar,kc_procvar_get(delayvar)-1)
 		end
 	end
+end
+
+function kc_macro_set_flap(flapindex)
+
+	command_once("sim/flight_controls/flaps_up")
+	command_once("sim/flight_controls/flaps_up")
+	command_once("sim/flight_controls/flaps_up")
+	command_once("sim/flight_controls/flaps_up")
+
+	if flapindex == 1 then
+		command_once("sim/flight_controls/flaps_down")
+	end
+
+	if flapindex == 2 then
+		command_once("sim/flight_controls/flaps_down")
+		command_once("sim/flight_controls/flaps_down")
+	end
+
+	if flapindex == 3 then
+		command_once("sim/flight_controls/flaps_down")
+		command_once("sim/flight_controls/flaps_down")
+		command_once("sim/flight_controls/flaps_down")
+	end
+
+	if flapindex == 4 then
+		command_once("sim/flight_controls/flaps_down")
+		command_once("sim/flight_controls/flaps_down")
+		command_once("sim/flight_controls/flaps_down")
+		command_once("sim/flight_controls/flaps_down")
+	end
+
+end
+
+-- ====================================== Lights related functions
+function kc_macro_lights_preflight()
+	logMsg("E55P kc_macro_lights_preflight")
+	
+	-- set the lights as needed during preflight/turnaround
+	command_once("aerobask/lights/ldg_taxi_dn")
+	command_once("aerobask/lights/ldg_taxi_dn")
+	sysLights.positionSwitch:actuate(1)
+	sysLights.strobesSwitch:actuate(0)
+	sysLights.instrLightGroup:actuate(1)
+	if kc_is_daylight() then		
+		sysLights.domeLightGroup:setValue(0)
+		sysLights.panelLightGroup:setValue(0)
+	else
+		sysLights.domeLightGroup:setValue(.3)
+		sysLights.panelLightGroup:setValue(.5)
+	end
+end
+
+function kc_macro_lights_before_start()
+	-- set the lights as needed when preparing for push and engine start
+	kc_macro_lights_preflight()
+end
+
+function kc_macro_lights_before_taxi()
+	kc_macro_lights_before_start()
+	command_once("aerobask/lights/ldg_taxi_up")
+	sysLights.domeLightGroup:setValue(0)
+end
+
+function kc_macro_lights_for_takeoff()
+	-- set the lights when entering the runway
+	kc_macro_lights_before_taxi()
+	command_once("aerobask/lights/ldg_taxi_up")
+	command_once("aerobask/lights/ldg_taxi_up")
+	sysLights.strobesSwitch:actuate(1)
+end
+
+function kc_macro_lights_climb_10k()
+	-- set the lights when reaching 10.000 ft
+	kc_macro_lights_for_takeoff()
+	command_once("aerobask/lights/ldg_taxi_dn")
+	command_once("aerobask/lights/ldg_taxi_dn")
+end
+
+function kc_macro_lights_descend_10k()
+	-- set the lights when sinking through 10.000 ft
+	kc_macro_lights_climb_10k()
+	command_once("aerobask/lights/ldg_taxi_up")
+	command_once("aerobask/lights/ldg_taxi_up")
+end
+
+function kc_macro_lights_approach()
+	-- set the lights when in the approach
+	kc_macro_lights_descend_10k()
+	command_once("aerobask/lights/ldg_taxi_up")
+	command_once("aerobask/lights/ldg_taxi_up")
+end
+
+function kc_macro_lights_cleanup()
+	-- set the lights on cleaning up after landing
+	kc_macro_lights_approach()
+	command_once("aerobask/lights/ldg_taxi_up")
+	command_once("aerobask/lights/ldg_taxi_up")
+	command_once("aerobask/lights/ldg_taxi_dn")
+	sysLights.strobesSwitch:actuate(0)
+end
+
+function kc_macro_lights_arrive_parking()
+	-- set the lights when arriving the parking position
+	kc_macro_lights_cleanup()
+	command_once("aerobask/lights/ldg_taxi_dn")
+	command_once("aerobask/lights/ldg_taxi_dn")
+end
+
+function kc_macro_lights_after_shutdown()
+	-- set the lights when engines are stopped
+	kc_macro_lights_arrive_parking()
+	sysLights.positionSwitch:actuate(0)
+	if kc_is_daylight() then		
+		sysLights.domeLightGroup:setValue(0)
+		sysLights.panelLightGroup:setValue(0)
+	else
+		sysLights.domeLightGroup:setValue(.3)
+		sysLights.panelLightGroup:setValue(.5)
+	end
+end
+
+function kc_macro_lights_cold_dark()
+	-- set the lights for cold & dark mode
+	-- external
+	command_once("aerobask/lights/ldg_taxi_dn")
+	command_once("aerobask/lights/ldg_taxi_dn")
+	sysLights.positionSwitch:actuate(0)
+	sysLights.strobesSwitch:actuate(0)
+	-- internal
+	sysLights.domeLightGroup:setValue(0)
+	sysLights.instrLightGroup:actuate(0)
+	sysLights.panelLightGroup:setValue(0)
+end
+
+function kc_macro_lights_all_on()
+	-- set the lights all on for test and checks
+	-- external
+	command_once("aerobask/lights/ldg_taxi_up")
+	command_once("aerobask/lights/ldg_taxi_up")
+	sysLights.positionSwitch:actuate(1)
+	sysLights.strobesSwitch:actuate(1)
+	-- internal
+	sysLights.domeLightGroup:setValue(.3)
+	sysLights.instrLightGroup:actuate(1)
+	sysLights.panelLightGroup:actuate(.5)
 end
 
 return sysMacros

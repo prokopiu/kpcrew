@@ -20,23 +20,27 @@ sysControls = require("kpcrew.systems.DFLT.sysControls")
 
 logMsg("E55P sysControls")
 
-sysControls.flaps_pos = {[0] =   0, [1] = 0.25, [2] = 0.5, [3] = 0.75,     [4] = 1,          [5] = 1, [6] = 1,       [7] = 1, [8] = 1}
+sysControls.flaps_pos = {[0] =   0, [1] = 0.333, [2] = 0.666, [3] = 0.666,     [4] = 1,          [5] = 1, [6] = 1,       [7] = 1, [8] = 1}
 sysControls.flaps_spd = {[0] = 205, [1] =   180, [2] =  170, [3] =   170,  [4] = 160,        [5] =   165, [6] =  165,    [7] =   165, [8] = 165}
 sysControls.flaps_name= {[0] = "0", [1] =   "1", [2] =  "2", [3] =   "3",  [4] = "FULL",     [5] =   "FULL", [6] =  "FULL", [7] =   "FULL", [8] = "FULL"}
 
 
 -- ** Flaps 
-sysControls.flapsSwitch 	= TwoStateCustomSwitch:new("flaps","aerobask/anim/sw_flap",0,
+sysControls.flapsSwitch 	= TwoStateCustomSwitch:new("flaps","sim/cockpit2/controls/flap_ratio",0,
 	function () 
 		command_once("sim/flight_controls/flaps_down")
 	end,
 	function () 
 		command_once("sim/flight_controls/flaps_up")
 	end,
+	nil,
 	function () 
-		return get("aerobask/anim/sw_flap")
+		return get("sim/cockpit2/controls/flap_ratio")
 	end
 )
 
-
+-- Speedbrake lever
+sysControls.Speedbrake	= TwoStateCmdSwitch:new("speedbrake","aerobask/anim/sw_speedbrake",0,
+	"aerobask/speedbrakes_open","aerobask/speedbrakes_close","nocommand")
+	
 return sysControls

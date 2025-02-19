@@ -25,34 +25,36 @@ sysElectric.gpuGenBusGroup	= SwitchGroup:new("gpubussgroup")
 -- de-/activate GPU
 sysElectric.gpuConnect 		= TwoStateCustomSwitch:new("GPU","aerobask/electrical/gpu_avail",0,
 function ()
-	if get("aerobask/electrical/gpu_avail") == 0 and get("aerobask/electrical/gpu_inuse") == 0 then
+	if get("aerobask/hide_gpu") == 1 then
+		set_array("sim/cockpit2/switches/custom_slider_on",4,1)
 		command_once("aerobask/electrical/gpu_connect_disconnect")
 	end
 end,
 function ()
-	if get("aerobask/electrical/gpu_avail") > 0 then
+	if get("aerobask/hide_gpu") == 0 then
 		command_once("aerobask/electrical/gpu_connect_disconnect")
+		set_array("sim/cockpit2/switches/custom_slider_on",4,0)
 	end
 end,
 function ()
 	command_once("aerobask/electrical/gpu_connect_disconnect")
 end,
 function ()
-	return get("aerobask/electrical/gpu_avail")
+	return 1-get("aerobask/hide_gpu")
 end)
 sysElectric.gpuGenBus1 		= TwoStateCustomSwitch:new("gpubus1","aerobask/electrical/gpu_inuse",0,
 function ()
 	if get("aerobask/electrical/gpu_inuse") == 0 then
-		command_once("aerobask/electrical/gpu_inuse")
+		command_once("aerobask/electrical/gpu")
 	end
 end,
 function ()
 	if get("aerobask/electrical/gpu_inuse") > 0 then
-		command_once("aerobask/electrical/gpu_inuse")
+		command_once("aerobask/electrical/gpu")
 	end
 end,
 function ()
-	command_once("aerobask/electrical/gpu_connect_disconnect")
+	command_once("aerobask/electrical/gpu")
 end,
 function ()
 	return get("aerobask/electrical/gpu_inuse")
@@ -64,9 +66,33 @@ sysElectric.genSwitchGroup 	= SwitchGroup:new("generators")
 sysElectric.gen1Switch 		= TwoStateCmdSwitch:new("gen1","aerobask/electrical/sw_gen1",0,
 	"aerobask/electrical/gen1_auto","aerobask/electrical/gen1_off","nocommand")
 sysElectric.genSwitchGroup:addSwitch(sysElectric.gen1Switch)
-sysElectric.gen2Switch 	= TwoStateDrefSwitch:new("gen2","aerobask/electrical/sw_gen2",0,
+sysElectric.gen2Switch 	= TwoStateCmdSwitch:new("gen2","aerobask/electrical/sw_gen2",0,
 	"aerobask/electrical/gen2_auto","aerobask/electrical/gen2_off","nocommand")
 sysElectric.genSwitchGroup:addSwitch(sysElectric.gen2Switch)
+
+-- DC Bus tie
+sysElectric.dcBusTie		= TwoStateCustomSwitch:new("dcbustie","aerobask/electrical/knob_bus_tie",0,
+function () 
+	command_once("aerobask/electrical/bus_tie_lt")
+	command_once("aerobask/electrical/bus_tie_lt")
+	command_once("aerobask/electrical/bus_tie_rt")
+end,
+function () 
+	command_once("aerobask/electrical/bus_tie_lt")
+	command_once("aerobask/electrical/bus_tie_lt")
+end,
+function () 
+	command_once("aerobask/electrical/bus_tie_rt")
+	command_once("aerobask/electrical/bus_tie_rt")
+end,
+function () 
+	if get("aerobask/electrical/knob_bus_tie") == 1 then 
+		return 1
+	else
+		return 0
+	end
+end)	
+
 sysElectric.gpuOnBus = SimpleAnnunciator:new("","aerobask/electrical/gpu_inuse",0)
 
 return sysElectric

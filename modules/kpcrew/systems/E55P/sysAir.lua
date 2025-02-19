@@ -55,13 +55,12 @@ sysAir.bleedEng1Switch 		= TwoStateCmdSwitch:new("bleed1","aerobask/bleed/sw_ble
 	"aerobask/bleed/bleed1_auto", "aerobask/bleed/bleed1_off", "nocommand")
 sysAir.bleedEng2Switch 		= TwoStateCmdSwitch:new("bleed2","aerobask/bleed/sw_bleed2",0,
 	"aerobask/bleed/bleed2_auto", "aerobask/bleed/bleed2_off", "nocommand")
--- sysAir.bleedEng3Switch 		= InopSwitch:new("bleed3")
--- sysAir.bleedEng4Switch 		= InopSwitch:new("bleed4")
 sysAir.engBleedGroup 		= SwitchGroup:new("EngBleeds")
 sysAir.engBleedGroup:addSwitch(sysAir.bleedEng1Switch)
 sysAir.engBleedGroup:addSwitch(sysAir.bleedEng2Switch)
--- sysAir.engBleedGroup:addSwitch(sysAir.bleedEng3Switch)
--- sysAir.engBleedGroup:addSwitch(sysAir.bleedEng4Switch)
 
+-- ISOLATION VLV
+sysAir.isoValveSwitch 		= TwoStateCmdSwitch:new("isolation","aerobask/bleed/sw_xbleed",0,
+	"aerobask/bleed/xbleed_auto","aerobask/bleed/xbleed_off","nocommand")
 
 return sysAir

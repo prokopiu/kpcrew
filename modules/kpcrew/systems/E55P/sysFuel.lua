@@ -21,6 +21,53 @@ sysFuel = require("kpcrew.systems.DFLT.sysFuel")
 
 logMsg("E55P sysFuel")
 
+-- Fuel pumps
+sysFuel.fuelPumpLeftAft 	= TwoStateCustomSwitch:new ("fuelpumpleftaft","aerobask/fuel/sw_pump1",0,
+function ()
+	command_once("aerobask/fuel/pump1_up")
+	command_once("aerobask/fuel/pump1_up")
+end,
+function ()
+	command_once("aerobask/fuel/pump1_dn")
+	command_once("aerobask/fuel/pump1_dn")
+end,
+function ()
+	command_once("aerobask/fuel/pump1_up")
+	command_once("aerobask/fuel/pump1_up")
+	command_once("aerobask/fuel/pump1_dn")
+end,
+function ()
+	if get("aerobask/fuel/sw_pump1") > 0 then 
+		return 1
+	else
+		return 0
+	end
+end)
+sysFuel.fuelPumpRightAft 	= TwoStateCustomSwitch:new("fuelpumprightaft","aerobask/fuel/sw_pump2",0,
+function ()
+	command_once("aerobask/fuel/pump2_up")
+	command_once("aerobask/fuel/pump2_up")
+end,
+function ()
+	command_once("aerobask/fuel/pump2_dn")
+	command_once("aerobask/fuel/pump2_dn")
+end,
+function ()
+	command_once("aerobask/fuel/pump2_up")
+	command_once("aerobask/fuel/pump2_up")
+	command_once("aerobask/fuel/pump2_dn")
+end,
+function ()
+	if get("aerobask/fuel/sw_pump2") > 0 then 
+		return 1
+	else
+		return 0
+	end
+end)
+sysFuel.allFuelPumpGroup 		= SwitchGroup:new("fuelpumpgroup")
+sysFuel.allFuelPumpGroup:addSwitch(sysFuel.fuelPumpLeftAft)
+sysFuel.allFuelPumpGroup:addSwitch(sysFuel.fuelPumpRightAft)
+
 sysFuel.crossFeed = TwoStateCustomSwitch:new("crossfeed","aerobask/fuel/knob_xfeed",0,
 function ()
 	command_once("aerobask/fuel/xfeed_lt")
