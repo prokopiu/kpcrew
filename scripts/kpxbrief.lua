@@ -198,7 +198,10 @@ function kb_extract_simbrief_ofp()
 	-- initialize OFP record and scan the downloaded XML file
 	activeBriefings:set("flight:callsign",handler.root.OFP.atc.callsign)
 	activeBriefings:set("flight:flightnumber",handler.root.OFP.general.flight_number)
-	activeBriefings:set("flight:airline",handler.root.OFP.general.icao_airline)
+	if handler.root.OFP.general.icao_airline == nil then
+		handler.root.OFP.general.icao_airline = ""
+	end
+	-- activeBriefings:set("flight:airline",handler.root.OFP.general.icao_airline)
 	activeBriefings:set("flight:planrwy",handler.root.OFP.origin.plan_rwy)
 	activeBriefings:set("flight:originIcao",handler.root.OFP.origin.icao_code)
 	activeBriefings:set("flight:originIata",handler.root.OFP.origin.iata_code)
