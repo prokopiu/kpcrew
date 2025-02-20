@@ -130,9 +130,9 @@ function kc_macro_state_turnaround()
 	activeBckVars:set("general:timesIN","==:==")
 	activeBckVars:set("general:timesON","==:==")
 	
-	if get("aerobask/hide_static") == 1 then
-		command_once("aerobask/options/toggle_static_elements")
-	end
+	-- if get("aerobask/hide_static") == 1 then
+		-- command_once("aerobask/options/toggle_static_elements")
+	-- end
 	kc_macro_doors_preflight()
 	sysElectric.gpuConnect:actuate(1)
 	sysElectric.gpuGenBusGroup:actuate(1)
@@ -411,5 +411,63 @@ function kc_macro_lights_all_on()
 	sysLights.instrLightGroup:actuate(1)
 	sysLights.panelLightGroup:actuate(.5)
 end
+
+-- ====================================== A/P & Glareshield related functions
+
+function kc_macro_mcp_cold_dark()
+	set("sim/cockpit2/autopilot/flight_director_mode",0)
+	set("sim/cockpit/radios/nav2_obs_degm",1)
+	set("sim/cockpit/radios/nav1_obs_degm",1)
+	sysMCP.iasSelector:setValue(activePrefSet:get("aircraft:mcp_def_spd"))
+	sysMCP.hdgSelector:setValue(activePrefSet:get("aircraft:mcp_def_hdg"))
+	sysMCP.altSelector:setValue(activePrefSet:get("aircraft:mcp_def_alt"))
+	set("sim/cockpit2/autopilot/vvi_dial_fpm",0)
+	set("sim/cockpit2/switches/yaw_damper_on",0)
+	command_once("sim/autopilot/servos_off_any")
+end
+
+function kc_macro_mcp_preflight()
+	set("sim/cockpit2/autopilot/flight_director_mode",1)
+	sysMCP.iasSelector:setValue(activeBriefings:get("takeoff:v2"))
+	sysMCP.hdgSelector:setValue(activeBriefings:get("departure:initHeading"))
+	sysMCP.altSelector:setValue(activeBriefings:get("departure:initAlt"))
+	set("sim/cockpit2/autopilot/vvi_dial_fpm",0)
+	set("sim/cockpit2/switches/yaw_damper_on",0)
+	command_once("sim/autopilot/servos_off_any")
+end
+
+function kc_macro_mcp_takeoff()
+	set("sim/cockpit2/autopilot/flight_director_mode",1)
+	sysMCP.iasSelector:setValue(activeBriefings:get("takeoff:v2"))
+	sysMCP.hdgSelector:setValue(activeBriefings:get("departure:initHeading"))
+	sysMCP.altSelector:setValue(activeBriefings:get("departure:initAlt"))
+	set("sim/cockpit2/autopilot/vvi_dial_fpm",0)
+	set("sim/cockpit2/switches/yaw_damper_on",0)
+	command_once("sim/autopilot/servos_off_any")
+	sysMCP.crs1Selector:actuate(activeBriefings:get("departure:nav1Course"))
+	sysMCP.crs2Selector:actuate(activeBriefings:get("departure:nav2Course"))
+end
+
+function kc_macro_mcp_goaround()
+	set("sim/cockpit2/autopilot/flight_director_mode",1)
+	sysMCP.iasSelector:setValue(activeBriefings:get("approach:gav2"))
+	sysMCP.hdgSelector:setValue(activeBriefings:get("approach:gaheading"))
+	sysMCP.altSelector:setValue(activeBriefings:get("approach:gaaltitude"))
+	command_once("sim/autopilot/heading")
+	set("sim/cockpit2/autopilot/vvi_dial_fpm",0)
+	set("sim/cockpit2/switches/yaw_damper_on",0)
+	command_once("sim/autopilot/servos_off_any")
+	sysMCP.crs1Selector:actuate(activeBriefings:get("departure:nav1Course"))
+	sysMCP.crs2Selector:actuate(activeBriefings:get("departure:nav2Course"))
+end
+
+function kc_macro_mcp_after_landing()
+	set("sim/cockpit2/autopilot/flight_director_mode",0)
+	set("sim/cockpit2/autopilot/vvi_dial_fpm",0)
+	set("sim/cockpit2/switches/yaw_damper_on",0)
+	set("sim/cockpit2/autopilot/heading_mode",0)
+	command_once("sim/autopilot/servos_off_any")
+end
+
 
 return sysMacros
