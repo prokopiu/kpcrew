@@ -3,9 +3,7 @@
 
 -- @classmod sysFuel
 -- @author Kosta Prokopiu
--- @copyright 2022 Kosta Prokopiu
-local sysFuel = {
-}
+-- @copyright 2025 Kosta Prokopiu
 
 local TwoStateDrefSwitch 	= require "kpcrew.systems.TwoStateDrefSwitch"
 local TwoStateCmdSwitch	 	= require "kpcrew.systems.TwoStateCmdSwitch"
@@ -23,6 +21,8 @@ local drefFuelPressL1 		= "laminar/B738/annunciator/low_fuel_press_l1"
 local drefFuelPressL2 		= "laminar/B738/annunciator/low_fuel_press_l2"
 local drefFuelPressR1 		= "laminar/B738/annunciator/low_fuel_press_r1"
 local drefFuelPressR2 		= "laminar/B738/annunciator/low_fuel_press_r2"
+
+sysFuel = require("kpcrew.systems.DFLT.sysFuel")
 
 sysFuel.fuelPumpLeftAft 	= TwoStateDrefSwitch:new ("fuelpumpleftaft","laminar/B738/fuel/fuel_tank_pos_lft1",0)
 sysFuel.fuelPumpLeftFwd 	= TwoStateDrefSwitch:new ("fuelpumpleftfwd","laminar/B738/fuel/fuel_tank_pos_lft2",0)

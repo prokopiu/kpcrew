@@ -3,9 +3,7 @@
 
 -- @classmod sysMCP
 -- @author Kosta Prokopiu
--- @copyright 2022 Kosta Prokopiu
-local sysMCP = {
-}
+-- @copyright 2025 Kosta Prokopiu
 
 local TwoStateDrefSwitch 	= require "kpcrew.systems.TwoStateDrefSwitch"
 local TwoStateCmdSwitch	 	= require "kpcrew.systems.TwoStateCmdSwitch"
@@ -26,6 +24,8 @@ local drefLVLCHGLight 		= "laminar/B738/autopilot/lvl_chg_status"
 local drefVNAVLight 		= "laminar/B738/autopilot/vnav_status1"
 local drefAPStatusLight 	= "laminar/B738/autopilot/cmd_a_status"
 local drefCMDBLight 		= "laminar/B738/autopilot/cmd_b_status"
+
+sysMCP = require("kpcrew.systems.DFLT.sysMCP")
 
 --------- Switches
 

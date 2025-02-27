@@ -34,8 +34,8 @@ if PLANE_ICAO == "B738" then
 	-- kc_acf_icao = "A359"
 
 -- XP12 Citation X
--- elseif PLANE_ICAO == "C750" and PLANE_TAILNUMBER == "N750XP" then
-	-- kc_acf_icao = "C750"
+elseif PLANE_ICAO == "C750" and PLANE_TAILNUMBER == "N750XP" then
+	kc_acf_icao = "C750"
 	
 -- XP12 A330-300 Laminar
 elseif PLANE_ICAO == "A333" then
@@ -1152,15 +1152,17 @@ function kb_brief_builder(kb_brief_wnd, x, y)
 						imgui.PushStyleColor(imgui.constant.Col.Text, color_green)
 							imgui.TextUnformatted(activeBriefings:get("flight:payload"))
 						imgui.PopStyleColor()
-						imgui.SameLine()
-						imgui.PushStyleVar_2(imgui.constant.StyleVar.FramePadding, 3, 0);
-						imgui.PushID("ldpayload")
-						if imgui.Button("LD", 20*kb_font_scale, 15*kb_font_scale) then
-							kc_set_payload(activeBriefings:get("flight:payload"))
-						end						
-						imgui.PopID()
+						if kc_pld_ld_button == true then
+							imgui.SameLine()
+							imgui.PushStyleVar_2(imgui.constant.StyleVar.FramePadding, 3, 0);
+							imgui.PushID("ldpayload")
+							if imgui.Button("LD", 20*kb_font_scale, 15*kb_font_scale) then
+								kc_set_payload(activeBriefings:get("flight:payload"))
+							end						
+							imgui.PopID()
+							imgui.PopStyleVar()
+						end
 						imgui.Separator()
-						imgui.PopStyleVar()
 						
 						imgui.PushStyleColor(imgui.constant.Col.Text, color_white)
 							imgui.TextUnformatted("RAMP  (" .. wunit .. "):")
@@ -1374,15 +1376,17 @@ function kb_brief_builder(kb_brief_wnd, x, y)
 						imgui.PushStyleColor(imgui.constant.Col.Text, color_orange)
 							imgui.TextUnformatted(string.format("%6.0f",activeBriefings:get("flight:planblockfuel")+activeBriefings:get("flight:pilotextra")))
 						imgui.PopStyleColor()
-						imgui.SameLine()
-						imgui.PushID("ldfuel")
-						imgui.PushStyleVar_2(imgui.constant.StyleVar.FramePadding, 3, 0);
-						if imgui.Button("LD", 20*kb_font_scale, 15*kb_font_scale) then
-							kc_set_fuel(activeBriefings:get("flight:planblockfuel")+activeBriefings:get("flight:pilotextra"))
-						end						
-						imgui.PopID()
+						if kc_fuel_ld_button == true then
+							imgui.SameLine()
+							imgui.PushID("ldfuel")
+							imgui.PushStyleVar_2(imgui.constant.StyleVar.FramePadding, 3, 0);
+							if imgui.Button("LD", 20*kb_font_scale, 15*kb_font_scale) then
+								kc_set_fuel(activeBriefings:get("flight:planblockfuel")+activeBriefings:get("flight:pilotextra"))
+							end						
+							imgui.PopID()
+							imgui.PopStyleVar()
+						end
 						imgui.Separator()
-						imgui.PopStyleVar()
 
 						imgui.PushStyleColor(imgui.constant.Col.Text, color_white)
 							imgui.TextUnformatted("AVG FF (" .. wunit .. "/h):")

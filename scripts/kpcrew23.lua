@@ -37,8 +37,8 @@ if PLANE_ICAO == "B738" then
 	-- kc_acf_icao = "A359"
 
 -- XP12 Citation X
--- elseif PLANE_ICAO == "C750" and PLANE_TAILNUMBER == "N750XP" then
-	-- kc_acf_icao = "C750"
+elseif PLANE_ICAO == "C750" and PLANE_TAILNUMBER == "N750XP" then
+	kc_acf_icao = "C750"
 	
 -- XP12 A330-300 Laminar
 elseif PLANE_ICAO == "A333" then

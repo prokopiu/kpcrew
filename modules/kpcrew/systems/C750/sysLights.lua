@@ -3,7 +3,7 @@
 
 -- @classmod sysLights
 -- @author Kosta Prokopiu
--- @copyright 2024 Kosta Prokopiu
+-- @copyright 2025 Kosta Prokopiu
 
 local TwoStateDrefSwitch 	= require "kpcrew.systems.TwoStateDrefSwitch"
 local TwoStateCmdSwitch	 	= require "kpcrew.systems.TwoStateCmdSwitch"
@@ -161,5 +161,12 @@ sysLights.dispLightGroup:addSwitch(sysLights.disp2Light)
 sysLights.dispLightGroup:addSwitch(sysLights.disp3Light)
 sysLights.dispLightGroup:addSwitch(sysLights.disp4Light)
 sysLights.dispLightGroup:addSwitch(sysLights.disp5Light)
+
+-- Position Lights, single onoff command driven
+sysLights.positionSwitch 	= TwoStateToggleSwitch:new("position","laminar/CitX/lights/navigation",0,
+	"laminar/CitX/lights/cmd_navigation_toggle")
+
+-- Position Light(s) status
+sysLights.positionAnc 		= SimpleAnnunciator:new("positionlights","laminar/CitX/lights/navigation",0)
 
 return sysLights

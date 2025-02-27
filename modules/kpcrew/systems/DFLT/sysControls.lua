@@ -73,6 +73,7 @@ sysControls.pitchTrimDownRepeat = TwoStateCustomSwitch:new("pitchtrim","sim/cock
 		return
 	end
 )
+
 sysControls.pitchTrimUpRepeat = TwoStateCustomSwitch:new("pitchtrim","sim/cockpit2/controls/elevator_trim",0,
 	function () 
 		command_begin("sim/flight_controls/pitch_trim_up")

@@ -37,12 +37,12 @@ if PLANE_ICAO == "B738" then
 	-- kh_acf_icao = "A359"
 
 -- XP12 Citation X
--- elseif PLANE_ICAO == "C750" and PLANE_TAILNUMBER == "N750XP" then
-	-- kh_acf_icao = "C750"
+elseif PLANE_ICAO == "C750" and PLANE_TAILNUMBER == "N750XP" then
+	kh_acf_icao = "C750"
 
 -- XP12 A330-300 Laminar
-elseif PLANE_ICAO == "A333" then
-	kh_acf_icao = "A33L"
+-- elseif PLANE_ICAO == "A333" then
+	-- kh_acf_icao = "A33L"
 
 -- Inibuilds A300
 -- elseif PLANE_ICAO == "A306" then
@@ -110,8 +110,6 @@ elseif PLANE_ICAO == "A319" and PLANE_TAILNUMBER == "C-GTLS" then
 elseif PLANE_ICAO == "E55P" then
 	kh_acf_icao = "E55P"
 end
-
--- set("sim/private/controls/shadow/cockpit_near_adjust",0.09)
 
 -- load aircraft specific systems
 

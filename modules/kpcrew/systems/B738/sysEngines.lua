@@ -3,9 +3,7 @@
 
 -- @classmod sysEngines
 -- @author Kosta Prokopiu
--- @copyright 2022 Kosta Prokopiu
-local sysEngines = {
-}
+-- @copyright 2025 Kosta Prokopiu
 
 local TwoStateDrefSwitch 	= require "kpcrew.systems.TwoStateDrefSwitch"
 local TwoStateCmdSwitch	 	= require "kpcrew.systems.TwoStateCmdSwitch"
@@ -51,54 +49,9 @@ local cmdStartLever2Tgl		= "laminar/B738/engine/mixture2_toggle"
 local cmdIgnSelectorDown	= "laminar/B738/toggle_switch/eng_start_source_left"
 local cmdIgnSelectorUp		= "laminar/B738/toggle_switch/eng_start_source_right"
 
---------- Actuator definitions
+sysEngines = require("kpcrew.systems.DFLT.sysEngines")
 
--- Reversers
-sysEngines.reverser1 		= TwoStateCustomSwitch:new("reverse1",drefReverserState,-1,
-	function () 
-		command_begin("sim/engines/thrust_reverse_hold_1")
-	end,
-	function () 
-		command_end("sim/engines/thrust_reverse_hold_1")
-	end,
-	function () 
-	end	
-)
-sysEngines.reverser2 		= TwoStateCustomSwitch:new("reverse2",drefReverserState,1,
-	function () 
-		command_begin("sim/engines/thrust_reverse_hold_2")
-	end,
-	function () 
-		command_end("sim/engines/thrust_reverse_hold_2")
-	end,
-	function () 
-	end	
-)
-sysEngines.reverser3 		= TwoStateCustomSwitch:new("reverse3",drefReverserState,2,
-	function () 
-		command_begin("sim/engines/thrust_reverse_hold_3")
-	end,
-	function () 
-		command_end("sim/engines/thrust_reverse_hold_3")
-	end,
-	function () 
-	end	
-)
-sysEngines.reverser4 		= TwoStateCustomSwitch:new("reverse4",drefReverserState,3,
-	function () 
-		command_begin("sim/engines/thrust_reverse_hold_4")
-	end,
-	function () 
-		command_end("sim/engines/thrust_reverse_hold_4")
-	end,
-	function () 
-	end	
-)
-sysEngines.reverserGroup 	= SwitchGroup:new("reversers")
-sysEngines.reverserGroup:addSwitch(sysEngines.reverser1)
-sysEngines.reverserGroup:addSwitch(sysEngines.reverser2)
-sysEngines.reverserGroup:addSwitch(sysEngines.reverser3)
-sysEngines.reverserGroup:addSwitch(sysEngines.reverser4)
+--------- Actuator definitions
 
 -- engine start levers (fuel)
 sysEngines.startLever1 		= TwoStateCmdSwitch:new("",drefStartLever1,0,

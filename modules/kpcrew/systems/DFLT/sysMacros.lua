@@ -56,8 +56,6 @@ function kc_macro_state_cold_and_dark()
 
 	sysGeneral.seatBeltSwitch:actuate(0)
 	sysGeneral.noSmokingSwitch:actuate(0)
-	
-	sysEngines.engIgnitionGroup:actuate(0)
 
 	if kc_has_autobrake == true then
 		sysControls.Autobrake:setValue(sysControls.autobrk_off)
@@ -67,7 +65,8 @@ function kc_macro_state_cold_and_dark()
 	set_array("sim/cockpit2/engine/actuators/auto_ignite_on",1,0)
 	set_array("sim/cockpit2/engine/actuators/auto_ignite_on",2,0)
 	set_array("sim/cockpit2/engine/actuators/auto_ignite_on",3,0)
-	
+
+	sysEngines.engIgnitionGroup:actuate(0)	
 	set_array("sim/cockpit/engine/ignition_on",0,0)
 	set_array("sim/cockpit/engine/ignition_on",1,0)
 	set_array("sim/cockpit/engine/ignition_on",2,0)
@@ -77,10 +76,6 @@ function kc_macro_state_cold_and_dark()
 		sysAice.windowHeatGroup:actuate(0)
 	end
 
-	if kc_has_wipers == true then
-		sysGeneral.wiperGroup:actuate(0)
-	end
-	
 	sysElectric.genSwitchGroup:actuate(0)
 	if kc_has_avionics_sw == true then
 		sysElectric.avionicsSwitchGroup:actuate(0)

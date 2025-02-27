@@ -55,6 +55,7 @@ activeSOP = SOP:new("AEROBASK PHENOM 300 SOP")
 
 local electricalPowerUpProc = Procedure:new("COCKPIT SAFETY & POWER UP","","")
 electricalPowerUpProc:setFlightPhase(1)
+
 electricalPowerUpProc:addItem(ProcedureItem:new("STATIC ELEMENTS","IN PLACE",FlowItem.actorFO,0,
 	function () return get("aerobask/hide_static") == 0 end,
 	function () 
@@ -289,7 +290,7 @@ electricalPowerUpProc:addItem(IndirectProcedureItem:new("FLAP LEVER","ZERO",Flow
 	function () 
 		kc_macro_set_flap(0)
 	end))	
-electricalPowerUpProc:addItem(ProcedureItem:new(" SPEED BRAKE SWITCH","CLOSE",FlowItem.actorFO,0,
+electricalPowerUpProc:addItem(ProcedureItem:new(" SPEED BRAKE","CLOSE",FlowItem.actorFO,0,
 	function () return get("sim/cockpit2/controls/speedbrake_ratio") == 0 end,
 	function () command_once("aerobask/speedbrakes_close") end))
 electricalPowerUpProc:addItem(ProcedureItem:new("PARKING BRAKE","SET",FlowItem.actorFO,0,
@@ -868,6 +869,29 @@ flapsProc:addItem(ProcedureItem:new("GO AROUND HEADING","SET %s|activeBriefings:
 flapsProc:addItem(ProcedureItem:new("YAW DAMPER","OFF",FlowItem.actorPM,0,
 	function () return get("sim/cockpit2/switches/yaw_damper_on") == 0 end,
 	function () set("sim/cockpit2/switches/yaw_damper_on",0) end))
+
+-- =====================================================================================================================
+	
+local landingCheck = Checklist:new("BEFORE LANDING CHECKLIST","landing checks","")
+landingCheck:setFlightPhase(13)
+landingCheck:addItem(ChecklistItem:new("LANDING GEAR","DOWN",FlowItem.actorPM,0,
+	function () return sysGeneral.GearSwitch:getStatus() == 1 end,
+	function () 
+		sysGeneral.GearSwitch:actuate(1) 
+	end))
+landingCheck:addItem(ChecklistItem:new("FLAPS","SET FOR LANDING",FlowItem.actorPM,0,
+	function () return get("sim/cockpit2/controls/flap_ratio") > 0.666 end,
+	function () kc_macro_set_flap(activeBriefings:get("approach:flaps")-1) end))
+landingCheck:addItem(ChecklistItem:new("YAW DAMPER","OFF",FlowItem.actorPM,0,
+	function () return get("sim/cockpit2/switches/yaw_damper_on") == 0 end,
+	function () set("sim/cockpit2/switches/yaw_damper_on",0) end))
+landingCheck:addItem(ChecklistItem:new("SPEED BRAKE","CLOSED",FlowItem.actorPM,0,
+	function () return sysControls.Speedbrake:getStatus() == 0 end,
+	function () sysControls.Speedbrake:setValue(0) end))
+landingCheck:addItem(ChecklistItem:new("GO AROUND ALTITUDE","SET %s|activeBriefings:get(\"approach:gaaltitude\")",FlowItem.actorPM,0,
+	function() return sysMCP.altSelector:getStatus()  == activeBriefings:get("approach:gaaltitude") end,
+	function() sysMCP.altSelector:setValue(activeBriefings:get("approach:gaaltitude")) end))
+
 -- =====================================================================================================================
 
 local afterLandingProc = Procedure:new("AFTER LANDING","")
@@ -896,7 +920,7 @@ afterLandingProc:addItem(ProcedureItem:new("TRANSPONDER","AS REQUIRED",FlowItem.
 			set("sim/cockpit2/radios/actuators/transponder_mode",1)	
 		end
 	end))
-afterLandingProc:addItem(ProcedureItem:new("GROUND SPOILERS","RETRACT",FlowItem.actorFO,0,
+afterLandingProc:addItem(ProcedureItem:new("SPEED BRAKE","CLOSED",FlowItem.actorFO,0,
 	function () return sysControls.Speedbrake:getStatus() == 0 end,
 	function () sysControls.Speedbrake:setValue(0) end))
 afterLandingProc:addItem(ProcedureItem:new("CHRONO & ET","STOP",FlowItem.actorFO,0,
@@ -978,9 +1002,6 @@ shutdownProc:addItem(ProcedureItem:new("ICE PROTECTION PANEL","ALL OFF",FlowItem
 		command_once("aerobask/iceprot/wingstab_dn")
 		command_once("aerobask/iceprot/insp_light_off")
 	end))
--- shutdownProc:addItem(IndirectProcedureItem:new("THROTTLES","CUT",FlowItem.actorCAPT,0,"throttlescutland",
-	-- function () return get("sim/cockpit2/engine/actuators/mixture_ratio_all") <= 0 end,
-	-- function () set("sim/cockpit2/engine/actuators/mixture_ratio_all",0) end))
 shutdownProc:addItem(ProcedureItem:new("START/STOP KNOBS","STOP",FlowItem.actorFO,0,
 	function () return 
 		get("aerobask/engines/knob_start_stop_1") == 0 and 
@@ -1058,7 +1079,7 @@ shutdownProc:addItem(ProcedureItem:new("PRESSURIZATION & AIRCOND PANEL","CHECK",
 	end))
 shutdownProc:addItem(ProcedureItem:new("ELT SWITCH","OFF",FlowItem.actorFO,0,
 	function () return 
-		get("aerobask/elt/sw_elt") == 0
+		get("aerobask/elt/sw_elt") == 1
 	end,
 	function () 
 		command_once("aerobask/elt/elt_dn")
@@ -1114,6 +1135,7 @@ activeSOP:addProcedure(cruiseCheck)
 activeSOP:addProcedure(descentProc)
 activeSOP:addProcedure(landingProc)
 activeSOP:addProcedure(flapsProc)
+activeSOP:addProcedure(landingCheck)
 activeSOP:addProcedure(afterLandingProc)
 activeSOP:addProcedure(taxiLightOff)
 activeSOP:addProcedure(shutdownProc)
@@ -1179,6 +1201,5 @@ kc_procvar_initialize_bool("waitformaster", false)
 function getActiveSOP()
 	return activeSOP
 end
-
 
 return SOP_E55P

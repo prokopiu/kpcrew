@@ -224,7 +224,7 @@ approach:add(kcPreference:new("gaheading",0,kcPreference.typeInt,"Go-Around Head
 approach:add(kcPreference:new("gaaltitude",0,kcPreference.typeInt,"Go-Around Altitude|100"))
 approach:add(kcPreference:new("altngaheading",0,kcPreference.typeInt,"altn Go-Around Heading|10"))
 approach:add(kcPreference:new("altngaaltitude",0,kcPreference.typeInt,"altn Go-Around Altitude|100"))
-approach:add(kcPreference:new("flaps",1,kcPreference.typeList,"*Landing Flaps|" .. kc_LandingFlaps))
+approach:add(kcPreference:new("flaps",0,kcPreference.typeList,"*Landing Flaps|" .. kc_LandingFlaps))
 approach:add(kcPreference:new("altnflaps",1,kcPreference.typeList,"*Landing Flaps|" .. kc_LandingFlaps))
 approach:add(kcPreference:new("vref",0,kcPreference.typeInt,"*Vref|1"))
 approach:add(kcPreference:new("altnvref",0,kcPreference.typeInt,"*altn Vref|1"))

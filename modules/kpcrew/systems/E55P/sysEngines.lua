@@ -20,7 +20,6 @@ sysEngines = require("kpcrew.systems.DFLT.sysEngines")
 
 logMsg("E55P sysEngines")
 
-
 -- ignition
 sysEngines.engIgnition1	= TwoStateCustomSwitch:new("ignition1","aerobask/engines/sw_ignition_1",0,
 function () 

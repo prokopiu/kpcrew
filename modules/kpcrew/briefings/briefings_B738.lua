@@ -1,23 +1,22 @@
 -- Aircraft specific briefing values and functions - Zibo Mod B738
 --
 -- @author Kosta Prokopiu
--- @copyright 2024 Kosta Prokopiu
+-- @copyright 2025 Kosta Prokopiu
+
+require("kpcrew.briefings.briefings_DFLT")
 
 kc_acf_name 		= "Zibo Boeing 737-800"
 
-kc_TakeoffThrust 	= "RATED|DE-RATED|ASSUMED TEMPERATURE|RATED AND ASSUMED|DE-RATED AND ASSUMED"
-kc_TakeoffFlaps 	= "1|2|5|10|15|25"
-kc_TakeoffAntiice 	= "NOT REQUIRED|ENGINE ONLY|ENGINE AND WING"
-kc_TakeoffPacks 	= "ON|AUTO|OFF"
-kc_TakeoffBleeds 	= "OFF|ON"
-kc_TakeoffApModes 	= "LNAV/VNAV|HDG/FLCH"
-kc_apptypes 		= "ILS CAT 1|ILS CAT 2 OR 3|VOR|NDB|RNAV|VISUAL|TOUCH AND GO|CIRCLING"
-kc_LandingFlaps 	= "30|40"
-kc_LandingAutoBrake = "OFF|1|2|3|MAX"
+kc_NumFlapsTO		= 5
+kc_TakeoffFlaps 	= "UP|1|5|10|15"
+kc_TakeoffFlapsInd 	= "0|1|3|4|5"
+kc_NumFlapsLDG		= 3
+kc_LandingFlaps 	= "25|30|40"
+kc_LandingFlapsInd 	= "6|7|8"
+kc_LandingAutoBrake = "RTO|OFF|1|2|3|MAX"
+kc_LandingAutoBrInd = "0|1|2|3|4|5"
 kc_LandingPacks 	= "OFF|ON|UNDER PRESSURIZED"
-kc_LandingAntiice 	= "NOT REQUIRED|ENGINE ONLY|ENGINE AND WING"
-kc_StartSequence 	= "2 THEN 1|1 THEN 2"
-kc_MELIssues 		= "no M E L issues|M E L issues"
+kc_Numflap_detents	=  8 		-- Number of flap detents
 
 -- aircraft specs, weights in KG
 -- MAX ZERO FUEL WEIGHT:   62732 KG - 138300 LBS
@@ -26,21 +25,21 @@ kc_MELIssues 		= "no M E L issues|M E L issues"
 -- MAX FUEL CAPACITY:      20900 KG -  46077 LBS
 -- FUEL FLOW PER HOUR:      2187 KG -   4825 LBS
 
-kc_DOW 				= 41510  -- Dry Operating Weight (aka OEW)
-kc_MZFW  			= 62732  -- Maximum Zero Fuel Weight
-kc_MaxFuel 			= 21611  -- Maximum Fuel Capacity
-kc_MaxPayld 		= 22000  -- Maximum Payload to be set     *********************************************
-kc_MTOW 			= 79016  -- Maximum Takeoff Weight
-kc_MLW  			= 66361  -- Maximum Landing Weight
-kc_FFPH 			=  2187  -- Average Fuel Flow per hour
-kc_NumEngines		=     2	 -- Number of engines
-kc_NumTanks			=     4	 -- Number of tanks
-kc_MFL1				=  4112  -- max fuel in tank left
-kc_MFL2				= 13385  -- max fuel in tank center
-kc_MFL3				=  4112  -- max fuel in tank right
+kc_fuel_ld_button	= false		-- Load the aircraft fuel from kpxbrief	
+kc_pld_ld_button	= false		-- Load the aircraft payload from kpxbrief	
 
--- Altitudes
-kc_max_altitude		= 40000 -- Max Altitude
+-- kc_DOW 				= 41510  -- Dry Operating Weight (aka OEW)
+-- kc_MZFW  			= 62732  -- Maximum Zero Fuel Weight
+-- kc_MaxFuel 			= 21611  -- Maximum Fuel Capacity
+-- kc_MaxPayld 		= 22000  -- Maximum Payload to be set     *********************************************
+-- kc_MTOW 			= 79016  -- Maximum Takeoff Weight
+-- kc_MLW  			= 66361  -- Maximum Landing Weight
+-- kc_FFPH 			=  2187  -- Average Fuel Flow per hour
+-- kc_NumEngines		=     2	 -- Number of engines
+-- kc_NumTanks			=     4	 -- Number of tanks
+-- kc_MFL1				=  4112  -- max fuel in tank left
+-- kc_MFL2				= 13385  -- max fuel in tank center
+-- kc_MFL3				=  4112  -- max fuel in tank right
 
 -- Operating speeds
 kc_speeds_vs0		= 115		-- Stall Speed, Landing Configuration Vso 115 KIAS
@@ -101,91 +100,13 @@ kc_speeds_vlo		= 210		-- Maximum Gear Extended Speed Vlo 210 KIAS
 -- Another example: Act land weight is 49.4t diff is 9.4. Half of that is 4.7. It is then multiplied by 3. (4x3=12)+(.7x3=2.1) = 14.1 + 119 = 133kts.
 
 -- full list of approach types can be overwritten by aircraft
-APP_apptype_list 	= "ILS CAT 1|ILS CAT 2 OR 3|VOR|NDB|RNAV|VISUAL|TOUCH AND GO|CIRCLING"
+-- APP_apptype_list 	= "ILS CAT 1|ILS CAT 2 OR 3|VOR|NDB|RNAV|VISUAL|TOUCH AND GO|CIRCLING"
 
 -- APU/GPU startup after landing
-APP_apu_list 		= "APU delayed start|APU|GPU"
+-- APP_apu_list 		= "APU delayed start|APU|GPU"
 
 -- Reverse Thrust
-APP_rev_thrust_list = "NONE|MINIMUM|FULL"
-
--- ======= Aircraft specific functions
--- get Dry Operating Weight
-function kc_get_DOW()
-	if activePrefSet:get("general:weight_kgs") then
-		return kc_DOW
-	else
-		return kc_DOW * 2.20462262
-	end
-end
-
--- get MaxFuel
-function kc_get_MaxFuel()
-	if activePrefSet:get("general:weight_kgs") then
-		return kc_MaxFuel
-	else
-		return kc_MaxFuel * 2.20462262
-	end
-end
-
--- get Max Zero Fuel Weight
-function kc_get_MZFW()
-	if activePrefSet:get("general:weight_kgs") then
-		return kc_MZFW
-	else
-		return kc_MZFW * 2.20462262
-	end
-end
-
--- get Max Take Off Weight
-function kc_get_MTOW()
-	if activePrefSet:get("general:weight_kgs") then
-		return kc_MTOW
-	else
-		return kc_MTOW * 2.20462262
-	end
-end
-
--- get Max Landing Weight
-function kc_get_MLW()
-	if activePrefSet:get("general:weight_kgs") then
-		return kc_MLW
-	else
-		return kc_MLW * 2.20462262
-	end
-end
-
--- get average Fuel Flow per Hour
-function kc_get_FFPH()
-	if activePrefSet:get("general:weight_kgs") then
-		return kc_FFPH
-	else
-		return kc_FFPH * 2.20462262
-	end
-end
-
--- get total fuel weight from all tanks
-function kc_get_total_fuel()
-	if activePrefSet:get("general:weight_kgs") then
-		return get("laminar/B738/fuel/total_tank_kgs")
-	else
-		return get("laminar/B738/fuel/total_tank_lbs")
-	end
-end
-
--- get Gross Weight
-function kc_get_gross_weight()
-	if activePrefSet:get("general:weight_kgs") then
-		return get("sim/flightmodel/weight/m_total")
-	else
-		return get("sim/flightmodel/weight/m_total")*2.20462262
-	end	
-end
-
--- get Zero Fuel Weight
-function kc_get_zfw()
-	return kc_get_gross_weight()-kc_get_total_fuel()
-end
+-- APP_rev_thrust_list = "NONE|MINIMUM|FULL"
 
 -- set payload (does not work in all addons and sim versions)
 function kc_set_payload()

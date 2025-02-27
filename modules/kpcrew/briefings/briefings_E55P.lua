@@ -23,3 +23,6 @@ kc_TakeoffFlapsInd 	= "0|1|2"
 kc_NumFlapsLDG		= 3
 kc_LandingFlaps 	= "2|3|FULL"
 kc_LandingFlapsInd 	= "2|3|4"
+kc_LandingAutoBrake = "NO A/B|"
+
+kc_apptypes 		= "ILS CAT 1|VOR|NDB|RNAV|VISUAL|TOUCH AND GO|CIRCLING"

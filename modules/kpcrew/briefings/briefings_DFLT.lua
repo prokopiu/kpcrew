@@ -19,9 +19,13 @@ kc_LandingFlaps 	= "3|4|5"
 kc_LandingFlapsInd 	= "5|6|8"
 kc_LandingAutoBrake = "RTO|OFF|1|2|3|MAX"
 kc_LandingAutoBrInd = "0|1|2|3|4|5"
+kc_AutoBrakeOff		= 1
+kc_AutoBrakeRTO		= 0
 kc_LandingPacks 	= "OFF|ON"
 kc_LandingAntiice 	= "NOT REQUIRED|ENGINE ONLY|ENGINE AND WING"
 kc_StartSequence 	= "2 THEN 1|1 THEN 2"
+kc_MELIssues 		= "no M E L issues|M E L issues"
+
 
 -- full list of approach types can be overwritten by aircraft
 -- APP_apptype_list 	= "ILS CAT 1|ILS CAT 2 OR 3|VOR|NDB|RNAV|VISUAL|TOUCH AND GO|CIRCLING"
@@ -81,6 +85,9 @@ kc_has_wx_radar		= true		-- Aircraft has weather radar
 
 kc_is_airbus		= false		-- Aircraft is an Airbus
 kc_is_boeing		= false		-- Aircraft is a Boeing
+
+kc_fuel_ld_button	= true		-- Load the aircraft fuel from kpxbrief	
+kc_pld_ld_button	= true		-- Load the aircraft payload from kpxbrief	
 
 -- Operating speeds
 kc_speeds_vso		= -1		-- Stall Speed, Landing Configuration Vso 115 KIAS
