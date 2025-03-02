@@ -240,7 +240,7 @@ approach:add(kcPreference:new("gateStand",1,kcPreference.typeList,"Gate/Stand|" 
 approach:add(kcPreference:new("parkingPosition","",kcPreference.typeText,"Parking Position|"))
 approach:add(kcPreference:new("altngateStand",1,kcPreference.typeList,"Altn Gate/Stand|" .. kc_APP_gatestand_list))
 approach:add(kcPreference:new("altnparkingPosition","",kcPreference.typeText,"AltnParking Position|"))
-approach:add(kcPreference:new("powerAtGate",1,kcPreference.typeList,"External Power at Stand|" .. kc_APP_power_at_stand))
+approach:add(kcPreference:new("powerAtGate",2,kcPreference.typeList,"External Power at Stand|" .. kc_APP_power_at_stand))
 approach:add(kcPreference:new("activateAPUafterLand",1,kcPreference.typeList,"*Start APU after Landing|Start APU|APU remains off"))
 approach:add(kcPreference:new("taxiIn","",kcPreference.typeText,"Taxi to Position via|"))
 approach:add(kcPreference:new("altntaxiIn","",kcPreference.typeText,"Altn Taxi to Position via|"))

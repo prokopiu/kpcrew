@@ -14,6 +14,7 @@ logMsg("E55P sysMacros")
 
 -- c&d setup
 function kc_macro_state_cold_and_dark()
+
 	logMsg("E55P kc_macro_state_cold_and_dark")
 	
 	activeBckVars:set("general:timesOFF","==:==")

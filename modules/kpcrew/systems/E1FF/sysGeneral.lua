@@ -24,7 +24,7 @@ sysGeneral = require("kpcrew.systems.DFLT.sysGeneral")
 logMsg("E1FF sysGeneral")
 
 -- Optional Gound objects
-sysGeneral.groundObjects = TwoStateDrefSwitch:new("ground objects","xcraft/other/ground_objects",0)
+sysGeneral.groundObjects = InopSwitch:new("ground objects")
 
 sysGeneral.doorL1			= TwoStateDrefSwitch:new("doorl1","xcraft/doors/front_main",0)
 sysGeneral.doorL2			= TwoStateDrefSwitch:new("doorl2","xcraft/doors/back_main",0)

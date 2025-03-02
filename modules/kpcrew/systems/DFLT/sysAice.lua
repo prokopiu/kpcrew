@@ -3,7 +3,8 @@
 
 -- @classmod sysAice
 -- @author Kosta Prokopiu
--- @copyright 2022 Kosta Prokopiu
+-- @copyright 2025 Kosta Prokopiu
+
 local sysAice = {
 }
 

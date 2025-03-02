@@ -3,7 +3,8 @@
 
 -- @classmod sysEFIS
 -- @author Kosta Prokopiu
--- @copyright 2022 Kosta Prokopiu
+-- @copyright 2025 Kosta Prokopiu
+
 local sysEFIS = {
 	mapRange_5 		= 0,
 	mapRange10 		= 1,

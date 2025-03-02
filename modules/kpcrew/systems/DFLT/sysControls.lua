@@ -44,9 +44,9 @@ sysControls.flapsSwitch 	= TwoStateCustomSwitch:new("flaps","sim/cockpit2/contro
 	end,
 	function () 
 		command_once("sim/flight_controls/flaps_up")
-	end,
+	end,nil,
 	function () 
-		return
+		return get("sim/cockpit2/controls/flap_ratio")
 	end
 )
 
@@ -57,9 +57,9 @@ sysControls.pitchTrimSwitch = TwoStateCustomSwitch:new("pitchtrim","sim/cockpit2
 	end,
 	function () 
 		command_once("sim/flight_controls/pitch_trim_up")
-	end,
+	end,nil,
 	function () 
-		return
+		return get("sim/cockpit2/controls/elevator_trim")
 	end
 )
 sysControls.pitchTrimDownRepeat = TwoStateCustomSwitch:new("pitchtrim","sim/cockpit2/controls/elevator_trim",0,
@@ -68,9 +68,9 @@ sysControls.pitchTrimDownRepeat = TwoStateCustomSwitch:new("pitchtrim","sim/cock
 	end,
 	function () 
 		command_end("sim/flight_controls/pitch_trim_down")
-	end,
+	end,nil,
 	function () 
-		return
+		return get("sim/cockpit2/controls/elevator_trim")
 	end
 )
 
@@ -80,9 +80,9 @@ sysControls.pitchTrimUpRepeat = TwoStateCustomSwitch:new("pitchtrim","sim/cockpi
 	end,
 	function () 
 		command_end("sim/flight_controls/pitch_trim_up")
-	end,
+	end,nil,
 	function () 
-		return
+		return get("sim/cockpit2/controls/elevator_trim")
 	end
 )
 
@@ -93,9 +93,9 @@ sysControls.aileronTrimSwitch = TwoStateCustomSwitch:new("ailerontrim","sim/cock
 	end,
 	function () 
 		command_once("sim/flight_controls/aileron_trim_left")
-	end,
+	end,nil,
 	function () 
-		return
+		return get("sim/cockpit2/controls/aileron_trim")
 	end
 )
 
@@ -109,9 +109,9 @@ sysControls.rudderTrimSwitch = TwoStateCustomSwitch:new("ruddertrim","sim/cockpi
 	end,
 	function () 
 		command_once("sim/flight_controls/rudder_trim_left")
-	end,
+	end,nil,
 	function () 
-		return
+		return get("sim/cockpit2/controls/rudder_trim")
 	end
 )
 
@@ -128,5 +128,7 @@ sysControls.Speedbrake	= TwoStateDrefSwitch:new("speedbrake","sim/cockpit2/contr
 sysControls.Autobrake	= TwoStateDrefSwitch:new("autobrake","sim/cockpit2/switches/auto_brake_level",0)
 
 --------- Annunciators
+
+sysControls.rudderDeflection	= SimpleAnnunciator:new("rudderdeflection","sim/flightmodel2/wing/rudder1_deg",0)
 
 return sysControls

@@ -55,10 +55,12 @@ sysElectric.gpuGenBusGroup:addSwitch(sysElectric.gpuGenBus2)
 -- ----- APU
 sysElectric.apuGenBusGroup	= SwitchGroup:new("apubussgroup")
 if kc_has_apu then
+	sysElectric.apuMaster	 	= TwoStateDrefSwitch:new("apuswitch","sim/cockpit2/electrical/APU_starter_switch",0)
 	sysElectric.apuStartSwitch 	= TwoStateDrefSwitch:new("apuswitch","sim/cockpit2/electrical/APU_starter_switch",0)
 	sysElectric.apuGenBus1 		= TwoStateDrefSwitch:new("apubus1","sim/cockpit/electrical/generator_apu_on",0)
 	sysElectric.apuGenBus2 		= InopSwitch:new("apubus2")
 else
+	sysElectric.apuMaster	 	= InopSwitch:new("apuswitch")
 	sysElectric.apuStartSwitch 	= InopSwitch:new("apuswitch")
 	sysElectric.apuGenBus1 		= InopSwitch:new("apubus1")
 	sysElectric.apuGenBus2 		= InopSwitch:new("apubus2")

@@ -46,6 +46,9 @@ local cmdBaroRightUp		= "sim/instruments/barometer_copilot_up"
 local cmdBaroStbyDown		= "sim/instruments/barometer_stby_down"
 local cmdBaroStbyUp			= "sim/instruments/barometer_stby_up"
 
+-- Optional Gound objects
+sysGeneral.groundObjects = InopSwitch:new("ground objects")
+
 -- Parking Brake
 sysGeneral.parkBrakeSwitch 	= TwoStateToggleSwitch:new("parkbrake","sim/cockpit2/controls/parking_brake_ratio",0,
 	"sim/flight_controls/brakes_toggle_max")
@@ -342,6 +345,8 @@ sysGeneral.seatBeltSwitch	= TwoStateDrefSwitch:new("seatbelts","sim/cockpit/swit
 -- Optional Gound objects
 sysGeneral.groundObjects = InopSwitch:new("ground objects")
 
+sysGeneral.tocheck		 = InopSwitch:new("tockeck")
+
 -- ---------- Annunciators
 
 -- Master Caution
@@ -360,5 +365,8 @@ sysGeneral.baroInhg 		= CustomAnnunciator:new("inhg",
 function () 
 	return get("sim/cockpit2/gauges/actuators/barometer_setting_in_hg_pilot") 
 end)
+
+sysGeneral.chrono			= InopSwitch:new("chrono")
+sysGeneral.clock			= InopSwitch:new("clock")
 
 return sysGeneral

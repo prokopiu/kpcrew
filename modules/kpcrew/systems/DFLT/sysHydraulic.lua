@@ -57,8 +57,13 @@ function ()
 end)
 
 -- hydraulic pressure
-sysHydraulic.hydPressure1	= TwoStateDrefSwitch:new("hydpressure1","sim/cockpit2/hydraulics/indicators/hydraulic_pressure_1",0)
-sysHydraulic.hydPressure2	= TwoStateDrefSwitch:new("hydpressure1","sim/cockpit2/hydraulics/indicators/hydraulic_pressure_2",0)
-sysHydraulic.hydPressure3	= TwoStateDrefSwitch:new("hydpressure1","sim/cockpit2/hydraulics/indicators/hydraulic_pressure_3",0)
+sysHydraulic.hydPressureLow	= CustomAnnunciator:new("hydpressurelow",
+function ()  
+	if get("sim/cockpit2/hydraulics/indicators/hydraulic_pressure_1") < 2800 then 
+		return 1
+	else
+		return 0
+	end
+end)
 
 return sysHydraulic
