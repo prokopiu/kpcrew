@@ -43,6 +43,34 @@ sysMacros					= require("kpcrew.systems." .. kc_acf_icao .. ".sysMacros")
 
 SOP_A3TL = require("kpcrew.sops.SOP_DFLT")
 
+require("kpcrew.briefings.briefings_" .. kc_acf_icao)
+
 activeSOP:setName("ToLiss Airbuses SOP")
 
+-- Power up addons
+activeSOP:getFlow(1):addItem(ProcedureItem:new("EMER LTS","ARM",FlowItem.actorFO,0,
+	function () return get("AirbusFBW/OHPLightSwitches",10) == 1 end,
+	function () set_array("AirbusFBW/OHPLightSwitches",10,1) end))
+activeSOP:getFlow(1):addItem(ProcedureItem:new("CREW SUPPLY","AUTO",FlowItem.actorFO,0,
+	function () return get("AirbusFBW/CrewOxySwitch") == 1 end,
+	function () set("AirbusFBW/CrewOxySwitch",1) end))
+activeSOP:getFlow(1):addItem(ProcedureItem:new("PACK FLOW","NORMAL",FlowItem.actorFO,0,
+	function () return get("ckpt/oh/packFlow") == 1 end,
+	function () set("ckpt/oh/packFlow",1) end))	
+
+-- before start
+activeSOP:getFlow(2):addItem(ProcedureItem:new("ELEC HYD PUMP","OFF",FlowItem.actorFO,0,
+	function () return get("AirbusFBW/HydOHPArray",3) == 0 end,
+	function () set_array("AirbusFBW/HydOHPArray",3,0) end))	
+
+-- landing Procedure
+activeSOP:getFlow(12):addItem(ProcedureItem:new("LS","ON",FlowItem.actorFO,0,
+	function () return get("AirbusFBW/ILSonCapt") == 1 end,
+	function () set("AirbusFBW/ILSonCapt",1) end))
+	
+-- Shutdown addons
+activeSOP:getFlow(16):addItem(ProcedureItem:new("EMER LTS","OFF",FlowItem.actorFO,0,
+	function () return get("AirbusFBW/OHPLightSwitches",10) == 0 end,
+	function () set_array("AirbusFBW/OHPLightSwitches",10,0) end))
+	
 return SOP_A3TL

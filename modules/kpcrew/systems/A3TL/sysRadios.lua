@@ -20,4 +20,13 @@ sysRadios = require("kpcrew.systems.DFLT.sysRadios")
 
 logMsg("A3TL sysRadios")
 
+sysRadios.xpdrSwitch 		= TwoStateDrefSwitch:new ("xpdrmode","AirbusFBW/XPDRPower",0)
+	
+sysRadios.xpdrCode 			= TwoStateDrefSwitch:new ("xpdrcode","sim/cockpit2/radios/actuators/transponder_code",0)
+
+sysRadios.stby				= 0
+sysRadios.alt				= 2
+sysRadios.ta				= 3
+sysRadios.tara				= 4
+
 return sysRadios

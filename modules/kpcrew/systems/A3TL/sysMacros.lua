@@ -15,13 +15,56 @@ logMsg("A3TL sysMacros")
 -- c&d setup
 function kc_macro_state_cold_and_dark()
 	logMsg("A3TL kc_macro_state_cold_and_dark")
-	
-	kc_macro_doors_cold_dark()
 
-	set("AirbusFBW/Chocks",1)
-	command_once("toliss_airbus/park_brake_release")	
+	activeBckVars:set("general:timesOFF","==:==")
+	activeBckVars:set("general:timesOUT","==:==")
+	activeBckVars:set("general:timesIN","==:==")
+	activeBckVars:set("general:timesON","==:==")
 	
-		set("AirbusFBW/EnableExternalPower",0)
+	kc_macro_lights_cold_dark()
+	kc_macro_doors_cold_dark()
+	-- kc_macro_mcp_cold_dark()
+
+	kc_macro_set_irs(0)
+	
+	sysGeneral.parkBrakeSwitch:actuate(1) 
+	kc_macro_set_groundobjects(1)
+	
+	sysGeneral.GearSwitch:actuate(1)
+
+	sysControls.Speedbrake:setValue(0)
+
+	kc_macro_set_flap(0)
+
+	sysGeneral.wiperGroup:actuate(0)
+
+	sysEngines.throttlePos:actuate(0)
+	
+	sysControls.aileronReset:actuate(1)
+	sysControls.rudderReset:actuate(1)
+
+	kc_macro_hydraulic_off()	
+
+	kc_macro_fuelpumps_off()
+
+	sysAir.packSwitchGroup:actuate(0)
+	sysAir.engBleedGroup:actuate(0)
+	sysAir.isoValveSwitch:actuate(0)
+	kc_macro_aircond_all_white_off()
+
+	sysAice.engAntiIceGroup:actuate(0)
+	sysAice.wingAntiIce:actuate(0)
+	sysAice.windowHeatGroup:actuate(0)
+
+	sysGeneral.seatBeltSwitch:actuate(0)
+	sysGeneral.noSmokingSwitch:actuate(0)
+
+	if kc_has_autobrake == true then
+		sysControls.Autobrake:setValue(sysControls.autobrk_off)
+	end
+
+	kc_macro_elec_cold_dark()
+	
 	set("AirbusFBW/RMP1Switch",0)
 	set("AirbusFBW/RMP2Switch",0)
 	set("AirbusFBW/RMP3Switch",0)
@@ -33,13 +76,6 @@ function kc_macro_state_cold_and_dark()
 	set("AirbusFBW/XPDR2",0)
 	set("AirbusFBW/XPDR1",0)
 
-	command_once("toliss_airbus/adirucommands/ADIRU1SwitchDown")
-	command_once("toliss_airbus/adirucommands/ADIRU1SwitchDown")
-	command_once("toliss_airbus/adirucommands/ADIRU2SwitchDown")
-	command_once("toliss_airbus/adirucommands/ADIRU2SwitchDown")
-	command_once("toliss_airbus/adirucommands/ADIRU3SwitchDown")
-	command_once("toliss_airbus/adirucommands/ADIRU3SwitchDown")
-
 	if (get("AirbusFBW/WXPowerSwitch") == 0) then
 		command_once("toliss_airbus/WXRadarSwitchRight")
 	end
@@ -48,9 +84,6 @@ function kc_macro_state_cold_and_dark()
 	end
 	
 	set("AirbusFBW/XBleedSwitch",0)
-
-	set("sim/cockpit2/controls/speedbrake_ratio",0)
-	set("sim/cockpit2/controls/flap_ratio",0)	
 
 -- yellow elec pump off
 
@@ -62,50 +95,20 @@ function kc_macro_state_cold_and_dark()
 	end
 	command_once("toliss_airbus/engcommands/EngineModeSwitchToNorm")
 	command_once("sim/flight_controls/landing_gear_down")
-	set("AirbusFBW/LeftWiperSwitch",0) 
-	set("AirbusFBW/RightWiperSwitch",0)
-	
 
 	set("AirbusFBW/CrewOxySwitch",0)
 	set("AirbusFBW/CvrGndCtrl",0)
-
 
 	set_array("AirbusFBW/GPWSSwitchArray",0,1)
 	set_array("AirbusFBW/GPWSSwitchArray",1,1)
 	set_array("AirbusFBW/GPWSSwitchArray",2,1)
 	set_array("AirbusFBW/GPWSSwitchArray",3,0)
 	set_array("AirbusFBW/GPWSSwitchArray",4,1)
-
-	set_array("AirbusFBW/OHPLightSwitches",11,0)
-	set_array("AirbusFBW/OHPLightSwitches",12,0)
-	set_array("AirbusFBW/OHPLightSwitches",10,0)
-
-	set("AirbusFBW/PackFlowSel",1)
-	command_once("toliss_airbus/antiicecommands/WingOff")
-	command_once("toliss_airbus/antiicecommands/ENG1Off")
-	command_once("toliss_airbus/antiicecommands/ENG2Off")
-	if PLANE_ICAO == "A346" then
-		command_once("toliss_airbus/antiicecommands/ENG3Off")
-		command_once("toliss_airbus/antiicecommands/ENG4Off")
-	end 
 	
-	set("AirbusFBW/ProbeHeatSwitch",0)
 	set("AirbusFBW/LandElev",-3)
 	set("AirbusFBW/APUBleedSwitch",0)
+	
 	set("AirbusFBW/XBleedSwitch",1)
-
-	set_array("AirbusFBW/ElecOHPArray",8,1)
-	set_array("AirbusFBW/ElecOHPArray",9,1)
-	set_array("AirbusFBW/ElecOHPArray",5,1)
-	set_array("AirbusFBW/ElecOHPArray",6,1)
-	set_array("AirbusFBW/ElecOHPArray",7,0)
-	set_array("AirbusFBW/ElecOHPArray",2,1)
-	set_array("AirbusFBW/ElecOHPArray",4,1)
-	set_array("AirbusFBW/ElecOHPArray",0,1)
-	set_array("AirbusFBW/ElecOHPArray",1,1)
-
-	kc_macro_fuelpumps_off()
-	kc_macro_hydraulic_off()	
 
 	set("AirbusFBW/NWSnAntiSkid",1)
 	set("AirbusFBW/WXSwitchPWS",0)
@@ -116,22 +119,6 @@ function kc_macro_state_cold_and_dark()
 		set("ckpt/gravityGearOn/anim",0) 
 	end
 
-	set("AirbusFBW/CockpitTemp",22)
-	set("AirbusFBW/FwdCabinTemp",22)
-	set("AirbusFBW/AftCabinTemp",22)
-	set("AirbusFBW/BlowerSwitch",0)
-	set("AirbusFBW/ExtractSwitch",0)
-	set("AirbusFBW/CabinFanSwitch",1)
-
-	activeBckVars:set("general:timesOFF","==:==")
-	activeBckVars:set("general:timesOUT","==:==")
-	activeBckVars:set("general:timesIN","==:==")
-	activeBckVars:set("general:timesON","==:==")
-
-	kc_macro_lights_cold_dark()
-	-- kc_macro_mcp_cold_dark()
-	kc_macro_aircond_all_white_off()
-	
 	set("AirbusFBW/APUMaster",0)
 	set("AirbusFBW/APUStarter",0)
 	if PLANE_ICAO == "A339" or PLANE_ICAO == "A346" then
@@ -140,14 +127,10 @@ function kc_macro_state_cold_and_dark()
 	else
 		command_once("toliss_airbus/eleccommands/ExtPowOff") 
 	end
-	command_once("toliss_airbus/eleccommands/Bat1Off")
-	command_once("toliss_airbus/eleccommands/Bat2Off")
-	if PLANE_ICAO == "A339" or PLANE_ICAO == "A346" then
-		set_array("AirbusFBW/ElecOHPArray",16,0)
-		set_array("AirbusFBW/ElecOHPArray",18,0)
-		set_array("AirbusFBW/ElecOHPArray",8,0)
-		set_array("AirbusFBW/ElecOHPArray",9,0)
-	end
+	set("AirbusFBW/EnableExternalPower",0)
+	
+	kc_macro_set_xpdrcode(2000)
+	kc_macro_elec_cold_dark()	
 	
 end
 
@@ -190,10 +173,9 @@ function kc_macro_state_turnaround()
 	set("AirbusFBW/RMP1Switch",1)
 	set("AirbusFBW/RMP2Switch",1)
 	set("AirbusFBW/RMP3Switch",1)
-	set("AirbusFBW/XPDR4",2)
-	set("AirbusFBW/XPDR3",0)
-	set("AirbusFBW/XPDR2",0)
-	set("AirbusFBW/XPDR1",0)
+	
+	kc_macro_set_xpdrcode(1234)
+	
 	set("sim/cockpit2/controls/flap_ratio",0)
 	set("sim/cockpit2/controls/speedbrake_ratio",0)
 	set("AirbusFBW/Chocks",1)
@@ -264,6 +246,7 @@ function kc_macro_state_turnaround()
 	kc_macro_aircond_all_white_off()
 	kc_macro_elec_all_white_off()		
 	-- kc_macro_fuel_all_white_off()
+	kc_macro_mcp_preflight()
 	
 	activeBckVars:set("general:timesOFF","==:==")
 	activeBckVars:set("general:timesOUT","==:==")
@@ -271,6 +254,7 @@ function kc_macro_state_turnaround()
 	activeBckVars:set("general:timesON","==:==")
 
 end
+
 -- ========= air conditioning
 
 function kc_macro_aircond_all_white_off()
@@ -284,8 +268,16 @@ function kc_macro_aircond_all_white_off()
 		set("AirbusFBW/ENG4BleedSwitch",1)
 	end 
 	set("AirbusFBW/RamAirSwitch",0)
+	set("AirbusFBW/PackFlowSel",1)
+	
+	set("AirbusFBW/CockpitTemp",22)
+	set("AirbusFBW/FwdCabinTemp",22)
+	set("AirbusFBW/AftCabinTemp",22)
+	
+	set("AirbusFBW/BlowerSwitch",0)
+	set("AirbusFBW/ExtractSwitch",0)
+	set("AirbusFBW/CabinFanSwitch",1)
 end
-
 
 -- ========= doors
 
@@ -406,7 +398,10 @@ function kc_macro_lights_cold_dark()
 	set_array("AirbusFBW/DUBrightness",0,1)
 	set_array("AirbusFBW/SupplLightLevelRehostats",0,0)
 	set_array("AirbusFBW/SupplLightLevelRehostats",1,0)
-
+	set_array("AirbusFBW/OHPLightSwitches",11,0)
+	set_array("AirbusFBW/OHPLightSwitches",12,0)
+	set_array("AirbusFBW/OHPLightSwitches",10,0)
+	
 end
 
 function kc_macro_lights_preflight()
@@ -463,7 +458,55 @@ function kc_macro_lights_preflight()
 	end
 end
 
+function kc_macro_lights_for_takeoff()
 
+	command_once("toliss_airbus/lightcommands/LLandLightUp")
+	command_once("toliss_airbus/lightcommands/RLandLightUp")
+	command_once("toliss_airbus/lightcommands/TurnoffLightOn")
+	command_once("toliss_airbus/lightcommands/NoseLightUp")
+	command_once("toliss_airbus/lightcommands/NoseLightUp")
+	command_once("toliss_airbus/lightcommands/NavLightDown")
+	command_once("toliss_airbus/lightcommands/NavLightDown")
+	command_once("toliss_airbus/lightcommands/NavLightUp")
+	command_once("toliss_airbus/lightcommands/BeaconOn")
+	command_once("toliss_airbus/lightcommands/StrobeLightUp")
+	command_once("toliss_airbus/lightcommands/StrobeLightUp")
+	command_once("toliss_airbus/lightcommands/WingLightOff")
+	
+	-- internal
+	command_once("toliss_airbus/lightcommands/DomeLightDown")
+	command_once("toliss_airbus/lightcommands/DomeLightDown")
+	if kc_is_daylight() then		
+		command_once("toliss_airbus/lightcommands/DomeLightDown")
+		command_once("toliss_airbus/lightcommands/DomeLightDown")
+		set("AirbusFBW/OHPBrightnessLevel",0)
+		set("AirbusFBW/PanelFloodBrightnessLevel",0)
+		set("AirbusFBW/PanelBrightnessLevel",0)
+		set("AirbusFBW/PedestalFloodBrightnessLevel",0)
+		set_array("AirbusFBW/DUBrightness",0,1)
+		set_array("AirbusFBW/DUBrightness",0,1)
+		set_array("AirbusFBW/DUBrightness",0,1)
+		set_array("AirbusFBW/DUBrightness",0,1)
+		set_array("AirbusFBW/DUBrightness",0,1)
+		set_array("AirbusFBW/DUBrightness",0,1)
+		set_array("AirbusFBW/SupplLightLevelRehostats",0,0)
+		set_array("AirbusFBW/SupplLightLevelRehostats",1,0)
+	else
+		command_once("toliss_airbus/lightcommands/NavLightUp")
+		set("AirbusFBW/OHPBrightnessLevel",0.4)
+		set("AirbusFBW/PanelFloodBrightnessLevel",0.1)
+		set("AirbusFBW/PanelBrightnessLevel",0.1)
+		set("AirbusFBW/PedestalFloodBrightnessLevel",0.1)
+		set_array("AirbusFBW/SupplLightLevelRehostats",0,1)
+		set_array("AirbusFBW/SupplLightLevelRehostats",1,1)
+		set_array("AirbusFBW/DUBrightness",0,0.8)
+		set_array("AirbusFBW/DUBrightness",0,0.8)
+		set_array("AirbusFBW/DUBrightness",0,0.8)
+		set_array("AirbusFBW/DUBrightness",0,0.8)
+		set_array("AirbusFBW/DUBrightness",0,0.8)
+		set_array("AirbusFBW/DUBrightness",0,0.8)
+	end
+end
 
 -- ========= fuel
 -- fuel pumps all off
@@ -497,7 +540,6 @@ function kc_macro_fuelpumps_off()
 		set_array("AirbusFBW/FuelOHPArray",24,0)
 	end
 end
-
 
 function kc_macro_fuelpumps_stand()
 	set_array("AirbusFBW/FuelOHPArray",0,0)
@@ -699,6 +741,26 @@ function kc_elec_has_lights_on()
 		get("AirbusFBW/ElecOHPArray",9) == 0 
 end
 
+function kc_macro_elec_cold_dark()
+	set_array("AirbusFBW/ElecOHPArray",8,1)
+	set_array("AirbusFBW/ElecOHPArray",9,1)
+	set_array("AirbusFBW/ElecOHPArray",5,1)
+	set_array("AirbusFBW/ElecOHPArray",6,1)
+	set_array("AirbusFBW/ElecOHPArray",7,0)
+	set_array("AirbusFBW/ElecOHPArray",2,1)
+	set_array("AirbusFBW/ElecOHPArray",4,1)
+	set_array("AirbusFBW/ElecOHPArray",0,1)
+	set_array("AirbusFBW/ElecOHPArray",1,1)
+	if PLANE_ICAO == "A339" or PLANE_ICAO == "A346" then
+		set_array("AirbusFBW/ElecOHPArray",16,0)
+		set_array("AirbusFBW/ElecOHPArray",18,0)
+		set_array("AirbusFBW/ElecOHPArray",8,0)
+		set_array("AirbusFBW/ElecOHPArray",9,0)
+	end
+	command_once("toliss_airbus/eleccommands/Bat1Off")
+	command_once("toliss_airbus/eleccommands/Bat2Off")
+end
+
 function kc_macro_elec_all_white_off()
 	set_array("AirbusFBW/ElecOHPArray",0,1)
 	set_array("AirbusFBW/ElecOHPArray",1,1)
@@ -746,20 +808,66 @@ function kc_fuel_all_white_off()
 	return stdwhites and a346whites
 end
 
+-- mcp
+
+function kc_macro_mcp_cold_dark()
+	sysMCP.fdirGroup:actuate(0)
+	sysMCP.athrSwitch:actuate(0)
+	sysMCP.iasSelector:setValue(activePrefSet:get("aircraft:mcp_def_spd"))
+	sysMCP.hdgSelector:setValue(activePrefSet:get("aircraft:mcp_def_hdg"))
+	sysMCP.altSelector:setValue(activePrefSet:get("aircraft:mcp_def_alt"))
+	sysMCP.vspSelector:setValue(0)
+	sysMCP.discAPSwitch:actuate(0)
+	sysMCP.ap1Switch:actuate(0)
+end
+
+function kc_macro_mcp_preflight()
+	sysMCP.fdirGroup:actuate(1)
+	sysMCP.athrSwitch:actuate(0)
+	sysMCP.iasSelector:setValue(activePrefSet:get("aircraft:mcp_def_spd"))
+	sysMCP.hdgSelector:setValue(activePrefSet:get("aircraft:mcp_def_hdg"))
+	sysMCP.altSelector:setValue(activePrefSet:get("aircraft:mcp_def_alt"))
+	sysMCP.vspSelector:actuate(0)
+	sysMCP.discAPSwitch:actuate(0)
+end
+
+function kc_macro_mcp_takeoff()
+	sysMCP.fdirGroup:actuate(1)
+	sysMCP.athrSwitch:actuate(1)
+	sysMCP.altSelector:setValue(activeBriefings:get("departure:initAlt"))
+	sysMCP.vspSelector:actuate(0)
+	sysMCP.discAPSwitch:actuate(0)
+end
+
+function kc_macro_mcp_goaround()
+	sysMCP.fdirGroup:actuate(1)
+	sysMCP.athrSwitch:actuate(1)
+	sysMCP.altSelector:setValue(activeBriefings:get("approach:gaaltitude"))
+end
+
+function kc_macro_mcp_after_landing()
+	sysMCP.fdirGroup:actuate(0)
+	sysMCP.athrSwitch:actuate(0)
+	sysMCP.hdgselSwitch:actuate(0)
+	sysMCP.speedSwitch:actuate(0)
+	sysMCP.ap1Switch:actuate(0)
+end
+
 -- autobrake
 function kc_macro_set_autobrake(index)
 	if index > 0 then
 		if index == 1 then
-			set("AirbusFBW/AbrkLo",1)
+			command_once("AirbusFBW/AbrkLo")
 		elseif index == 2 then
-			set("AirbusFBW/AbrkMed",1)
+			command_once("AirbusFBW/AbrkMed")
 		elseif index == 3 then
-			set("AirbusFBW/AbrkMax",1)
+			command_once("AirbusFBW/AbrkMax")
 		end
 	else
-		set("AirbusFBW/AbrkLo",0)
-		set("AirbusFBW/AbrkMed",0)
-		set("AirbusFBW/AbrkMax",0)
+		command_once("AirbusFBW/AbrkLo")
+		command_once("AirbusFBW/AbrkMed")
+		command_once("AirbusFBW/AbrkMax")
+		command_once("AirbusFBW/AbrkMax")
 	end
 end
 
@@ -822,6 +930,69 @@ function kc_bck_start_engine(trigger)
 			kc_procvar_set(delayvar,kc_procvar_get(delayvar)-1)
 		end
 	end
+end
+	
+-- set flaps based on index
+function kc_macro_set_flap(flapindex)
+
+	for i = 1, kc_Numflap_detents do
+		command_once("sim/flight_controls/flaps_up")
+	end 
+	
+	for i = 1, flapindex do
+		command_once("sim/flight_controls/flaps_down")
+	end
+
+end
+
+-- IRS off 0=OFF, 1=NAV, 2=ATT
+function kc_macro_set_irs(mode)
+	command_once("toliss_airbus/adirucommands/ADIRU1SwitchDown")
+	command_once("toliss_airbus/adirucommands/ADIRU1SwitchDown")
+	command_once("toliss_airbus/adirucommands/ADIRU2SwitchDown")
+	command_once("toliss_airbus/adirucommands/ADIRU2SwitchDown")
+	command_once("toliss_airbus/adirucommands/ADIRU3SwitchDown")
+	command_once("toliss_airbus/adirucommands/ADIRU3SwitchDown")
+	if mode == 0 then -- OFF
+		-- do nothing see above
+	elseif mode == 1 then -- ALIGN
+		command_once("toliss_airbus/adirucommands/ADIRU1SwitchUp")
+		command_once("toliss_airbus/adirucommands/ADIRU2SwitchUp")
+		command_once("toliss_airbus/adirucommands/ADIRU3SwitchUp")
+	elseif mode == 2 then -- NAV 
+		command_once("toliss_airbus/adirucommands/ADIRU1SwitchUp")
+		command_once("toliss_airbus/adirucommands/ADIRU1SwitchUp")
+		command_once("toliss_airbus/adirucommands/ADIRU2SwitchUp")
+		command_once("toliss_airbus/adirucommands/ADIRU2SwitchUp")
+		command_once("toliss_airbus/adirucommands/ADIRU3SwitchUp")		
+		command_once("toliss_airbus/adirucommands/ADIRU3SwitchUp")
+	end
+end
+
+-- ground objects 1=on 0=off
+function kc_macro_set_groundobjects(state)
+	if state == 1 then
+		set("AirbusFBW/Chocks",1)
+		command_once("toliss_airbus/park_brake_release")
+	else
+		command_once("toliss_airbus/park_brake_set")
+		set("AirbusFBW/Chocks",0)
+	end
+end
+
+function kc_macro_set_xpdrmode(mode)
+	sysRadios.xpdrSwitch:setValue(mode)
+end
+
+function kc_macro_set_xpdrcode(xpdrcode)
+	local digit1 = math.floor(xpdrcode/1000)
+	local digit2 = math.floor((xpdrcode-digit1*1000)/100)
+	local digit3 = math.floor((xpdrcode-digit1*1000-digit2*100)/10)
+	local digit4 = math.floor((xpdrcode-digit1*1000-digit2*100-digit3*10))
+	set("AirbusFBW/XPDR1",digit4)
+	set("AirbusFBW/XPDR2",digit3)
+	set("AirbusFBW/XPDR3",digit2)
+	set("AirbusFBW/XPDR4",digit1)
 end
 
 return sysMacros

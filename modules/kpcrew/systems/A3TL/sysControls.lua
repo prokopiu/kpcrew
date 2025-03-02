@@ -24,6 +24,20 @@ sysControls.flaps_pos = {[0] =   0, [1] =  0.25, [2] =  0.5, [3] =  0.75, [4] = 
 sysControls.flaps_spd = {[0] = 230, [1] =   215, [2] =  200, [3] =   185, [4] =    177, [5] =   177, [6] =  177, [7] =   177, [8] = 177}
 sysControls.flaps_name= {[0] = "0", [1] =   "1", [2] =  "2", [3] =   "3", [4] = "FULL", [5] ="FULL", [6] =  "FULL", [7] =   "FULL", [8] = "FULL"}
 
+-- ** Flaps 
+sysControls.flapsSwitch 	= TwoStateCustomSwitch:new("flaps","AirbusFBW/FlapLeverRatio",0,
+	function () 
+		command_once("sim/flight_controls/flaps_down")
+	end,
+	function () 
+		command_once("sim/flight_controls/flaps_up")
+	end,
+	nil,
+	function () 
+		return get("AirbusFBW/FlapLeverRatio")
+	end
+)
+
 -- YAW Damper
 sysControls.yawDamper	= InopSwitch:new("yawdamper")
 
@@ -46,5 +60,9 @@ function ()
 		return 0
 	end
 end)
+
+sysControls.pitchTrimSwitch = TwoStateDrefSwitch:new("pitchtrim","AirbusFBW/PitchTrimPosition",0)
+
+sysControls.rudderDeflection	= SimpleAnnunciator:new("rudderdeflection","sim/flightmodel2/wing/rudder1_deg",10)
 
 return sysControls

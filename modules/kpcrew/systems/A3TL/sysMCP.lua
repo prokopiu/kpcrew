@@ -20,7 +20,7 @@ sysMCP = require("kpcrew.systems.DFLT.sysMCP")
 
 logMsg("A3TL sysMCP")
 
--- Flight Directors (DFLT only one supported)
+-- Flight Directors 
 sysMCP.fdirPilotSwitch 		= TwoStateDrefSwitch:new("fdir left","AirbusFBW/FD1Engage",0)
 sysMCP.fdirCoPilotSwitch 	= TwoStateDrefSwitch:new("fdir right","AirbusFBW/FD2Engage",0)
 sysMCP.fdirGroup 			= SwitchGroup:new("fdirs")
@@ -28,6 +28,10 @@ sysMCP.fdirGroup:addSwitch(sysMCP.fdirPilotSwitch)
 sysMCP.fdirGroup:addSwitch(sysMCP.fdirCoPilotSwitch)
 
 sysMCP.fdirAnc 				= SimpleAnnunciator:new("fdiranc","AirbusFBW/FD1Engage",0)
+
+-- AUTOPILOT
+sysMCP.ap1Switch 			= TwoStateToggleSwitch:new("autopilot1","AirbusFBW/AP1Engage",0,
+	"toliss_airbus/ap1_push")
 
 -- YAW DAMPER
 sysMCP.yawDamper			= TwoStateCustomSwitch:new("yawdamper","",0,

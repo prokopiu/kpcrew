@@ -22,5 +22,26 @@ logMsg("A3TL sysEFIS")
 
 -- MINS SET
 sysEFIS.minsPilot 			= InopSwitch:new("minspilot")
+
+-- WX 
+sysEFIS.wxrPilot 			= TwoStateCustomSwitch:new("wxrpilot","AirbusFBW/WXPowerSwitch",0,
+	function ()
+		set("AirbusFBW/WXPowerSwitch",0)
+		set("AirbusFBW/WXSwitchPWS",2)
+	end,
+	function ()
+		set("AirbusFBW/WXPowerSwitch",1)
+		set("AirbusFBW/WXSwitchPWS",0)
+	end,
+	function ()
+	end,
+	function ()
+		if get("AirbusFBW/WXPowerSwitch") ~= 1 then
+			return 1
+		else
+			return 0
+		end
+	end)
+sysEFIS.wxrCopilot 			= InopSwitch:new("wxrcopilot")
 	
 return sysEFIS

@@ -40,15 +40,15 @@ sysAice.probeHeatGroup:addSwitch(sysAice.probeHeatBSwitch)
 
 -- ENG anti ice
 sysAice.engAntiIceGroup 	= SwitchGroup:new("engantiice")
-sysAice.engAntiIce1 		= TwoStateCmdSwitch:new("eng1aice","AirbusFBW/ATA30SwitchAnims",3,
+sysAice.engAntiIce1 		= TwoStateCmdSwitch:new("eng1aice","AirbusFBW/ATA30SwitchAnims",2,
 	"toliss_airbus/antiicecommands/ENG1On","toliss_airbus/antiicecommands/ENG1Off","nocommand")
-sysAice.engAntiIce2 		= TwoStateCmdSwitch:new("eng2aice","AirbusFBW/ATA30SwitchAnims",4,
-	"toliss_airbus/antiicecommands/ENG2On","toliss_airbus/antiicecommands/ENG1Off","nocommand")
+sysAice.engAntiIce2 		= TwoStateCmdSwitch:new("eng2aice","AirbusFBW/ATA30SwitchAnims",3,
+	"toliss_airbus/antiicecommands/ENG2On","toliss_airbus/antiicecommands/ENG2Off","nocommand")
 if PLANE_ICAO == "A346" then
 	sysAice.engAntiIce3 		= TwoStateCmdSwitch:new("eng3aice","AirbusFBW/ATA30SwitchAnims",5,
-		"toliss_airbus/antiicecommands/ENG3On","toliss_airbus/antiicecommands/ENG1Off","nocommand")
+		"toliss_airbus/antiicecommands/ENG3On","toliss_airbus/antiicecommands/ENG3Off","nocommand")
 	sysAice.engAntiIce4 		= TwoStateCmdSwitch:new("eng4aice","AirbusFBW/ATA30SwitchAnims",6,
-		"toliss_airbus/antiicecommands/ENG4On","toliss_airbus/antiicecommands/ENG1Off","nocommand")
+		"toliss_airbus/antiicecommands/ENG4On","toliss_airbus/antiicecommands/ENG4Off","nocommand")
 else
 	sysAice.engAntiIce3 		= InopSwitch:new("eng3aice")
 	sysAice.engAntiIce4 		= InopSwitch:new("eng4aice")
@@ -59,7 +59,7 @@ sysAice.engAntiIceGroup:addSwitch(sysAice.engAntiIce3)
 sysAice.engAntiIceGroup:addSwitch(sysAice.engAntiIce4)
 
 -- Wing anti ice
-sysAice.wingAntiIce 		= TwoStateDrefSwitch:new("wingaice","AirbusFBW/ATA30SwitchAnims",2,
+sysAice.wingAntiIce 		= TwoStateCmdSwitch:new("wingaice","AirbusFBW/ATA30SwitchAnims",1,
 	"toliss_airbus/antiicecommands/WingOn","toliss_airbus/antiicecommands/WingOff","nocommand")
 sysAice.wingAntiIce2 		= InopSwitch:new("wingaice2")
 sysAice.wingAiceGroup 		= SwitchGroup:new("wingaice")

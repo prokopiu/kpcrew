@@ -156,10 +156,10 @@ function ()
 end)
 
 -- Taxi/Nose Lights, single onoff command driven
-sysLights.taxiSwitch 		= TwoStateDrefSwitch:new("taxi","AirbusFBW/OHPLightSwitches",3)
+sysLights.taxiSwitch 		= TwoStateDrefSwitch:new("taxi","sim/cockpit2/switches/landing_lights_switch",1)
 
 -- Taxi Light(s) status
-sysLights.taxiAnc 			= SimpleAnnunciator:new("strobelights","AirbusFBW/OHPLightSwitches",3)
+sysLights.taxiAnc 			= SimpleAnnunciator:new("strobelights","sim/cockpit2/switches/landing_lights_switch",1)
 
 -- Logo Light
 sysLights.logoSwitch 		= TwoStateCustomSwitch:new("logo","AirbusFBW/OHPLightSwitches",2,

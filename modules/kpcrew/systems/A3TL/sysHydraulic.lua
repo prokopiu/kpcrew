@@ -22,7 +22,7 @@ logMsg("A3TL sysHydraulic")
 
 -- ----- HYD Electric Pumps
 sysHydraulic.elecHydPumpGroup = SwitchGroup:new("elechydpumps")
-sysHydraulic.elecHydPump1	= TwoStateDrefSwitch:new("elechydpump1","sim/cockpit2/hydraulics/actuators/engine_pump",-1)
+sysHydraulic.elecHydPump1	= TwoStateDrefSwitch:new("elechydpump1","AirbusFBW/HydOHPArray",3)
 sysHydraulic.elecHydPumpGroup:addSwitch(sysHydraulic.elecHydPump1)
 
 -- ----- HYD Engine Pumps

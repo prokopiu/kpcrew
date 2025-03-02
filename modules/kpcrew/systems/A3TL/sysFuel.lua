@@ -36,6 +36,6 @@ sysFuel.allFuelPumpGroup:addSwitch(sysFuel.fuelPump4)
 sysFuel.allFuelPumpGroup:addSwitch(sysFuel.fuelPump5)
 sysFuel.allFuelPumpGroup:addSwitch(sysFuel.fuelPump6)
 
-sysFuel.crossFeed = InopSwitch:new("crossfeed")
+sysFuel.crossFeed = TwoStateDrefSwitch:new("crossfeed","AirbusFBW/FuelOHPArray",7)
 
 return sysFuel

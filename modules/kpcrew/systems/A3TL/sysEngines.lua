@@ -21,54 +21,10 @@ sysEngines = require("kpcrew.systems.DFLT.sysEngines")
 logMsg("A3TL sysEngines")
 
 -- Starter Switches
-sysEngines.engStart1Switch	= TwoStateCustomSwitch:new("starter1","",0,
-function () 
-	kc_procvar_set("engstart1",true)
-end,
-function () 
-	kc_procvar_set("engstart1",false)
-end,
-function () 
-end,
-function () 
-	return get("AirbusFBW/ENG1MasterSwitch")
-end)
-sysEngines.engStart2Switch	= TwoStateCustomSwitch:new("starter2","",0,
-function () 
-	kc_procvar_set("engstart2",true)
-end,
-function () 
-	kc_procvar_set("engstart2",false)
-end,
-function () 
-end,
-function () 
-	return get("AirbusFBW/ENG2MasterSwitch")
-end)
-sysEngines.engStart3Switch	= TwoStateCustomSwitch:new("starter3","",0,
-function () 
-	kc_procvar_set("engstart3",true)
-end,
-function () 
-	kc_procvar_set("engstart3",false)
-end,
-function () 
-end,
-function () 
-	return get("AirbusFBW/ENG3MasterSwitch")
-end)
-sysEngines.engStart4Switch	= TwoStateCustomSwitch:new("starter4","",0,
-function () 
-	kc_procvar_set("engstart4",true)
-end,
-function () 
-	kc_procvar_set("engstart4",false)
-end,
-function () 
-end,
-function () 
-	return get("AirbusFBW/ENG4MasterSwitch",0)
-end)
+sysEngines.engStart1Switch	= TwoStateDrefSwitch:new("starter1","AirbusFBW/ENG1MasterSwitch",0)
+sysEngines.engStart2Switch	= TwoStateDrefSwitch:new("starter2","AirbusFBW/ENG2MasterSwitch",0)
+sysEngines.engStart3Switch	= TwoStateDrefSwitch:new("starter3","AirbusFBW/ENG3MasterSwitch",0)
+sysEngines.engStart4Switch	= TwoStateDrefSwitch:new("starter4","AirbusFBW/ENG4MasterSwitch",0)
 sysEngines.engStarterGroup 	= SwitchGroup:new("engstarters")
 sysEngines.engStarterGroup:addSwitch(sysEngines.engStart1Switch)
 sysEngines.engStarterGroup:addSwitch(sysEngines.engStart2Switch)

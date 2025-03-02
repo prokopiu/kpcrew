@@ -20,8 +20,12 @@ sysGeneral = require("kpcrew.systems.DFLT.sysGeneral")
 
 logMsg("A3TL sysGeneral")
 
+-- Optional Gound objects
+sysGeneral.groundObjects = TwoStateDrefSwitch:new("ground objects","xcraft/other/ground_objects",0)
+
 -- Parking Brake
-sysGeneral.parkBrakeSwitch 	= TwoStateDrefSwitch:new("parkbrake","AirbusFBW/ParkBrake",0)
+sysGeneral.parkBrakeSwitch 	= TwoStateCmdSwitch:new("parkbrake","AirbusFBW/ParkBrake",0,
+		"toliss_airbus/park_brake_set","toliss_airbus/park_brake_release","toliss_airbus/park_brake_toggle")
 sysGeneral.parkbrakeAnc 	= SimpleAnnunciator:new("parkbrake","AirbusFBW/ParkBrake",0)
 
 -- Wiper Switches
@@ -39,6 +43,15 @@ sysGeneral.irsUnitGroup 	= SwitchGroup:new("irsunits")
 sysGeneral.irsUnitGroup:addSwitch(sysGeneral.irsUnit1Switch)
 sysGeneral.irsUnitGroup:addSwitch(sysGeneral.irsUnit2Switch)
 sysGeneral.irsUnitGroup:addSwitch(sysGeneral.irsUnit3Switch)
+
+-- Baro standard toggle
+sysGeneral.barostdPilot 	= TwoStateDrefSwitch:new("barostdpilot","AirbusFBW/BaroStdCapt",0)
+sysGeneral.barostdCopilot 	= TwoStateDrefSwitch:new("barostdcopilot","AirbusFBW/BaroStdFO",0)
+sysGeneral.barostdStandby 	= TwoStateDrefSwitch:new("barostdstandby","AirbusFBW/ISIBaroStd",0)
+sysGeneral.barostdGroup 	= SwitchGroup:new("barostdgroup")
+sysGeneral.barostdGroup:addSwitch(sysGeneral.barostdPilot)
+sysGeneral.barostdGroup:addSwitch(sysGeneral.barostdCopilot)
+sysGeneral.barostdGroup:addSwitch(sysGeneral.barostdStandby)
 
 -- Doors
 sysGeneral.doorL1			= TwoStateCustomSwitch:new("doorl1","AirbusFBW/PaxDoorModeArray",-1,
@@ -219,5 +232,18 @@ function ()
 		return 0
 	end
 end)
+
+
+sysGeneral.noSmokingSwitch	= TwoStateDrefSwitch:new("nosmoke","AirbusFBW/OHPLightSwitches",12)
+
+sysGeneral.seatBeltSwitch	= TwoStateDrefSwitch:new("seatbelts","AirbusFBW/OHPLightSwitches",11)
+
+sysGeneral.chrono			= TwoStateToggleSwitch:new("chrono","AirbusFBW/ChronoTimeND1",0,
+	"AirbusFBW/CaptChronoButton")
+	
+sysGeneral.clock			= TwoStateDrefSwitch:new("clock","AirbusFBW/ClockETSwitch",0)
+
+sysGeneral.tocheck		 = TwoStateToggleSwitch:new("tockeck","AirbusFBW/ATA31ECPAnimations",25,
+	"AirbusFBW/TOConfigPress")
 
 return sysGeneral
