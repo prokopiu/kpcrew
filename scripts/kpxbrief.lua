@@ -1,8 +1,11 @@
 --[[
 	*** KPBRIEF 1.0
 	Simbrief based briefing
-	Kosta Prokopiu, December 2024
+	Kosta Prokopiu, December 2025
 --]]
+
+-- actions:
+-- turn off alternate
 
 require "kpcrew.genutils"
 
@@ -2470,7 +2473,7 @@ function kb_brief_builder(kb_brief_wnd, x, y)
 						imgui.PopStyleColor()
 						imgui.SameLine()
 						imgui.PushItemWidth(80*kb_font_scale);
-						imgui.PushID("land Stand/Gate:")
+						imgui.PushID("land Ext Pwr:")
 						imgui.PushStyleColor(imgui.constant.Col.Text, 0xFF1b9af8)
 							if imgui.BeginCombo("", kc_split(kc_APP_power_at_stand,"|")[activeBriefings:get("approach:powerAtGate")]) then
 								local options = kc_split(kc_APP_power_at_stand,"|")
@@ -2528,487 +2531,487 @@ function kb_brief_builder(kb_brief_wnd, x, y)
 		end
 
 -- Alternate
-		if imgui.BeginTabItem("ALTERNATE ".. activeBriefings:get("flight:alternateIcao")) then
+		-- if imgui.BeginTabItem("ALTERNATE ".. activeBriefings:get("flight:alternateIcao")) then
 
-			imgui.BeginChild("altnapptab")
+			-- imgui.BeginChild("altnapptab")
 
-				if imgui.Button("METAR", 70*kb_font_scale, 20*kb_font_scale) then
-					if activePrefSet:get("general:askyMetar") then
-						origmetar = kb_get_asky_metar(activeBriefings:get("flight:alternateIcao"))
-					else
-						origmetar = kb_get_xp_metar(activeBriefings:get("flight:alternateIcao"))
-					end
-				end
-				imgui.SameLine()
-				imgui.PushStyleColor(imgui.constant.Col.Text, color_green)
-					imgui.TextUnformatted(altnmetar)
-				imgui.PopStyleColor()
+				-- if imgui.Button("METAR", 70*kb_font_scale, 20*kb_font_scale) then
+					-- if activePrefSet:get("general:askyMetar") then
+						-- origmetar = kb_get_asky_metar(activeBriefings:get("flight:alternateIcao"))
+					-- else
+						-- origmetar = kb_get_xp_metar(activeBriefings:get("flight:alternateIcao"))
+					-- end
+				-- end
+				-- imgui.SameLine()
+				-- imgui.PushStyleColor(imgui.constant.Col.Text, color_green)
+					-- imgui.TextUnformatted(altnmetar)
+				-- imgui.PopStyleColor()
 
-				imgui.Columns(4,"altncolumns",true)
+				-- imgui.Columns(4,"altncolumns",true)
 
-					imgui.BeginChild("altn1")
+					-- imgui.BeginChild("altn1")
 
-						imgui.PushStyleColor(imgui.constant.Col.Text, color_yellow)
-							imgui.TextUnformatted(activeBriefings:get("flight:alternateIcao") .. "/" .. activeBriefings:get("flight:alternateIata") .. " " .. activeBriefings:get("flight:alternateName"))
-						imgui.PopStyleColor()
+						-- imgui.PushStyleColor(imgui.constant.Col.Text, color_yellow)
+							-- imgui.TextUnformatted(activeBriefings:get("flight:alternateIcao") .. "/" .. activeBriefings:get("flight:alternateIata") .. " " .. activeBriefings:get("flight:alternateName"))
+						-- imgui.PopStyleColor()
 
-						imgui.PushStyleColor(imgui.constant.Col.Text, color_white)
-							imgui.TextUnformatted("ELEV     :")
-						imgui.PopStyleColor()
-						imgui.SameLine()
-						imgui.PushStyleColor(imgui.constant.Col.Text, color_green)
-							imgui.TextUnformatted(activeBriefings:get("arrival:altnElevation") .. " ft")
-						imgui.PopStyleColor()
+						-- imgui.PushStyleColor(imgui.constant.Col.Text, color_white)
+							-- imgui.TextUnformatted("ELEV     :")
+						-- imgui.PopStyleColor()
+						-- imgui.SameLine()
+						-- imgui.PushStyleColor(imgui.constant.Col.Text, color_green)
+							-- imgui.TextUnformatted(activeBriefings:get("arrival:altnElevation") .. " ft")
+						-- imgui.PopStyleColor()
 			
-						imgui.PushStyleColor(imgui.constant.Col.Text, color_white)
-							imgui.TextUnformatted("TRANS LVL:")
-						imgui.PopStyleColor()
-						imgui.SameLine()
-						imgui.PushStyleColor(imgui.constant.Col.Text, color_green)
-							imgui.TextUnformatted("FL " .. activeBriefings:get("arrival:alttranslvl")/100)
-						imgui.PopStyleColor()
+						-- imgui.PushStyleColor(imgui.constant.Col.Text, color_white)
+							-- imgui.TextUnformatted("TRANS LVL:")
+						-- imgui.PopStyleColor()
+						-- imgui.SameLine()
+						-- imgui.PushStyleColor(imgui.constant.Col.Text, color_green)
+							-- imgui.TextUnformatted("FL " .. activeBriefings:get("arrival:alttranslvl")/100)
+						-- imgui.PopStyleColor()
 
-						imgui.PushStyleColor(imgui.constant.Col.Text, color_white)
-							imgui.TextUnformatted("TRANS ALT:")
-						imgui.PopStyleColor()
-						imgui.SameLine()
-						imgui.PushStyleColor(imgui.constant.Col.Text, color_green)
-							imgui.TextUnformatted(altntransalt)
-						imgui.PopStyleColor()
+						-- imgui.PushStyleColor(imgui.constant.Col.Text, color_white)
+							-- imgui.TextUnformatted("TRANS ALT:")
+						-- imgui.PopStyleColor()
+						-- imgui.SameLine()
+						-- imgui.PushStyleColor(imgui.constant.Col.Text, color_green)
+							-- imgui.TextUnformatted(altntransalt)
+						-- imgui.PopStyleColor()
 						
-						imgui.PushStyleColor(imgui.constant.Col.Text, color_white)
-							imgui.TextUnformatted("ARR TYPE  :")
-						imgui.PopStyleColor()
-						imgui.SameLine()
-						imgui.PushItemWidth(60*kb_font_scale);
-						imgui.PushID("Altn Arrival Type:")
-						imgui.PushStyleColor(imgui.constant.Col.Text, color_orange)
-							if imgui.BeginCombo("", kc_split(kc_APP_proctype_list,"|")[activeBriefings:get("arrival:altnarrType")]) then
-								local options = kc_split(kc_APP_proctype_list,"|")
-								for i = 1, #options do
-									if imgui.Selectable(options[i], activeBriefings:get("arrival:altnarrType") == i) then
-										activeBriefings:set("arrival:altnarrType",i)
-									end
-								end
-							imgui.EndCombo()
-							end
-						imgui.PopStyleColor()
-						imgui.PopItemWidth()
-						imgui.PopID()
+						-- imgui.PushStyleColor(imgui.constant.Col.Text, color_white)
+							-- imgui.TextUnformatted("ARR TYPE  :")
+						-- imgui.PopStyleColor()
+						-- imgui.SameLine()
+						-- imgui.PushItemWidth(60*kb_font_scale);
+						-- imgui.PushID("Altn Arrival Type:")
+						-- imgui.PushStyleColor(imgui.constant.Col.Text, color_orange)
+							-- if imgui.BeginCombo("", kc_split(kc_APP_proctype_list,"|")[activeBriefings:get("arrival:altnarrType")]) then
+								-- local options = kc_split(kc_APP_proctype_list,"|")
+								-- for i = 1, #options do
+									-- if imgui.Selectable(options[i], activeBriefings:get("arrival:altnarrType") == i) then
+										-- activeBriefings:set("arrival:altnarrType",i)
+									-- end
+								-- end
+							-- imgui.EndCombo()
+							-- end
+						-- imgui.PopStyleColor()
+						-- imgui.PopItemWidth()
+						-- imgui.PopID()
 
-						imgui.PushStyleColor(imgui.constant.Col.Text, color_white)
-							imgui.TextUnformatted("ARR ROUTE :")
-						imgui.PopStyleColor()
-						imgui.SameLine()
-						imgui.PushItemWidth(55*kb_font_scale);
-						imgui.PushID("altn Arr Route:")
-						imgui.PushStyleColor(imgui.constant.Col.Text, color_orange)
-							local changed, textin = imgui.InputText("", activeBriefings:get("arrival:altnarrroute"), 255)
-							if changed then
-								activeBriefings:set("arrival:altnarrroute",textin)
-							end
-						imgui.PopStyleColor()
-						imgui.PopItemWidth()
-						imgui.PopID()
+						-- imgui.PushStyleColor(imgui.constant.Col.Text, color_white)
+							-- imgui.TextUnformatted("ARR ROUTE :")
+						-- imgui.PopStyleColor()
+						-- imgui.SameLine()
+						-- imgui.PushItemWidth(55*kb_font_scale);
+						-- imgui.PushID("altn Arr Route:")
+						-- imgui.PushStyleColor(imgui.constant.Col.Text, color_orange)
+							-- local changed, textin = imgui.InputText("", activeBriefings:get("arrival:altnarrroute"), 255)
+							-- if changed then
+								-- activeBriefings:set("arrival:altnarrroute",textin)
+							-- end
+						-- imgui.PopStyleColor()
+						-- imgui.PopItemWidth()
+						-- imgui.PopID()
 
-						imgui.PushStyleColor(imgui.constant.Col.Text, color_white)
-							imgui.TextUnformatted("TRANSITION:")
-						imgui.PopStyleColor()
-						imgui.SameLine()
-						imgui.PushItemWidth(55*kb_font_scale);
-						imgui.PushID("AltnTransition:")
-						imgui.PushStyleColor(imgui.constant.Col.Text, color_orange)
-							local changed, textin = imgui.InputText("", activeBriefings:get("arrival:altnarrtransition"), 255)
-							if changed then
-								activeBriefings:set("arrival:altnarrtransition",textin)
-							end
-						imgui.PopStyleColor()
-						imgui.PopItemWidth()
-						imgui.PopID()
-
-
-						imgui.PushStyleColor(imgui.constant.Col.Text, color_white)
-							imgui.TextUnformatted("RUNWAY    :")
-						imgui.PopStyleColor()
-						imgui.SameLine()
-						imgui.PushItemWidth(28*kb_font_scale);
-						imgui.PushID("altn Runway:")
-						imgui.PushStyleColor(imgui.constant.Col.Text, color_orange)
-							local changed, textin = imgui.InputText("", activeBriefings:get("flight:altnrwy"), 255)
-							if changed then
-								activeBriefings:set("flight:altnrwy",textin)
-							end
-						imgui.PopStyleColor()
-						imgui.PopItemWidth()
-						imgui.PopID()
-
-						imgui.PushStyleColor(imgui.constant.Col.Text, color_white)
-							imgui.TextUnformatted("CONDITION :")
-						imgui.PopStyleColor()
-						imgui.SameLine()
-						imgui.PushItemWidth(80*kb_font_scale);
-						imgui.PushID("Alternate condition:")
-						imgui.PushStyleColor(imgui.constant.Col.Text, color_orange)
-							if imgui.BeginCombo("", kc_split(kc_APP_rwystate_list,"|")[activeBriefings:get("arrival:altnrwyCond")]) then
-								local options = kc_split(kc_APP_rwystate_list,"|")
-								for i = 1, #options do
-									if imgui.Selectable(options[i], activeBriefings:get("arrival:altnrwyCond") == i) then
-										activeBriefings:set("arrival:altnrwyCond",i)
-									end
-								end
-							imgui.EndCombo()
-							end
-						imgui.PopStyleColor()
-						imgui.PopItemWidth()
-						imgui.PopID()
-
-						imgui.PushStyleColor(imgui.constant.Col.Text, color_white)
-							imgui.TextUnformatted("BARO QNH  :")
-						imgui.PopStyleColor()
-						imgui.SameLine()
-						imgui.PushItemWidth(40*kb_font_scale);
-						imgui.PushID("altnqnh:")
-						imgui.PushStyleColor(imgui.constant.Col.Text, color_orange)
-							local changed, textin = imgui.InputInt("", activeBriefings:get("arrival:altnatisQNH"), 0)
-							if changed then
-								activeBriefings:set("arrival:altnatisQNH",textin)
-							end
-						imgui.PopStyleColor()
-						imgui.PopItemWidth()
-						imgui.PopID()
+						-- imgui.PushStyleColor(imgui.constant.Col.Text, color_white)
+							-- imgui.TextUnformatted("TRANSITION:")
+						-- imgui.PopStyleColor()
+						-- imgui.SameLine()
+						-- imgui.PushItemWidth(55*kb_font_scale);
+						-- imgui.PushID("AltnTransition:")
+						-- imgui.PushStyleColor(imgui.constant.Col.Text, color_orange)
+							-- local changed, textin = imgui.InputText("", activeBriefings:get("arrival:altnarrtransition"), 255)
+							-- if changed then
+								-- activeBriefings:set("arrival:altnarrtransition",textin)
+							-- end
+						-- imgui.PopStyleColor()
+						-- imgui.PopItemWidth()
+						-- imgui.PopID()
 
 
-					imgui.EndChild()
+						-- imgui.PushStyleColor(imgui.constant.Col.Text, color_white)
+							-- imgui.TextUnformatted("RUNWAY    :")
+						-- imgui.PopStyleColor()
+						-- imgui.SameLine()
+						-- imgui.PushItemWidth(28*kb_font_scale);
+						-- imgui.PushID("altn Runway:")
+						-- imgui.PushStyleColor(imgui.constant.Col.Text, color_orange)
+							-- local changed, textin = imgui.InputText("", activeBriefings:get("flight:altnrwy"), 255)
+							-- if changed then
+								-- activeBriefings:set("flight:altnrwy",textin)
+							-- end
+						-- imgui.PopStyleColor()
+						-- imgui.PopItemWidth()
+						-- imgui.PopID()
+
+						-- imgui.PushStyleColor(imgui.constant.Col.Text, color_white)
+							-- imgui.TextUnformatted("CONDITION :")
+						-- imgui.PopStyleColor()
+						-- imgui.SameLine()
+						-- imgui.PushItemWidth(80*kb_font_scale);
+						-- imgui.PushID("Alternate condition:")
+						-- imgui.PushStyleColor(imgui.constant.Col.Text, color_orange)
+							-- if imgui.BeginCombo("", kc_split(kc_APP_rwystate_list,"|")[activeBriefings:get("arrival:altnrwyCond")]) then
+								-- local options = kc_split(kc_APP_rwystate_list,"|")
+								-- for i = 1, #options do
+									-- if imgui.Selectable(options[i], activeBriefings:get("arrival:altnrwyCond") == i) then
+										-- activeBriefings:set("arrival:altnrwyCond",i)
+									-- end
+								-- end
+							-- imgui.EndCombo()
+							-- end
+						-- imgui.PopStyleColor()
+						-- imgui.PopItemWidth()
+						-- imgui.PopID()
+
+						-- imgui.PushStyleColor(imgui.constant.Col.Text, color_white)
+							-- imgui.TextUnformatted("BARO QNH  :")
+						-- imgui.PopStyleColor()
+						-- imgui.SameLine()
+						-- imgui.PushItemWidth(40*kb_font_scale);
+						-- imgui.PushID("altnqnh:")
+						-- imgui.PushStyleColor(imgui.constant.Col.Text, color_orange)
+							-- local changed, textin = imgui.InputInt("", activeBriefings:get("arrival:altnatisQNH"), 0)
+							-- if changed then
+								-- activeBriefings:set("arrival:altnatisQNH",textin)
+							-- end
+						-- imgui.PopStyleColor()
+						-- imgui.PopItemWidth()
+						-- imgui.PopID()
+
+
+					-- imgui.EndChild()
 					
-				imgui.NextColumn()
-					imgui.BeginChild("altn2")
+				-- imgui.NextColumn()
+					-- imgui.BeginChild("altn2")
 
-						imgui.PushStyleColor(imgui.constant.Col.Text, 0xFFCCCCCC)
-							imgui.TextUnformatted("APPR TYPE :")
-						imgui.PopStyleColor()
-						imgui.SameLine()
-						imgui.PushItemWidth(100*kb_font_scale);
-						imgui.PushID("tapproch type altn:")
-						imgui.PushStyleColor(imgui.constant.Col.Text, 0xFF1b9af8)
-						if imgui.BeginCombo("", kc_split(kc_apptypes,"|")[activeBriefings:get("approach:altnappType")]) then
-							local options = kc_split(kc_apptypes,"|")
-							for i = 1, #options do
-								if imgui.Selectable(options[i], activeBriefings:get("approach:altnappType") == i) then
-									activeBriefings:set("approach:altnappType",i)
-								end
-							end
-						imgui.EndCombo()
-						end
-						imgui.PopStyleColor()
-						imgui.PopItemWidth()
-						imgui.PopID()
+						-- imgui.PushStyleColor(imgui.constant.Col.Text, 0xFFCCCCCC)
+							-- imgui.TextUnformatted("APPR TYPE :")
+						-- imgui.PopStyleColor()
+						-- imgui.SameLine()
+						-- imgui.PushItemWidth(100*kb_font_scale);
+						-- imgui.PushID("tapproch type altn:")
+						-- imgui.PushStyleColor(imgui.constant.Col.Text, 0xFF1b9af8)
+						-- if imgui.BeginCombo("", kc_split(kc_apptypes,"|")[activeBriefings:get("approach:altnappType")]) then
+							-- local options = kc_split(kc_apptypes,"|")
+							-- for i = 1, #options do
+								-- if imgui.Selectable(options[i], activeBriefings:get("approach:altnappType") == i) then
+									-- activeBriefings:set("approach:altnappType",i)
+								-- end
+							-- end
+						-- imgui.EndCombo()
+						-- end
+						-- imgui.PopStyleColor()
+						-- imgui.PopItemWidth()
+						-- imgui.PopID()
 
-						imgui.PushStyleColor(imgui.constant.Col.Text, 0xFFCCCCCC)
-							imgui.TextUnformatted("FAF ALT   :")
-						imgui.PopStyleColor()
-						imgui.SameLine()
-						imgui.PushItemWidth(40*kb_font_scale);
-						imgui.PushID("altnFAFAlt:")
-						imgui.PushStyleColor(imgui.constant.Col.Text, 0xFF1b9af8)
-							local changed, textin = imgui.InputInt("", activeBriefings:get("approach:altnfafAltitude"), 0)
-							if changed then
-								activeBriefings:set("approach:altnfafAltitude",textin)
-							end
-						imgui.PopStyleColor()
-						imgui.PopItemWidth()
-						imgui.PopID()
+						-- imgui.PushStyleColor(imgui.constant.Col.Text, 0xFFCCCCCC)
+							-- imgui.TextUnformatted("FAF ALT   :")
+						-- imgui.PopStyleColor()
+						-- imgui.SameLine()
+						-- imgui.PushItemWidth(40*kb_font_scale);
+						-- imgui.PushID("altnFAFAlt:")
+						-- imgui.PushStyleColor(imgui.constant.Col.Text, 0xFF1b9af8)
+							-- local changed, textin = imgui.InputInt("", activeBriefings:get("approach:altnfafAltitude"), 0)
+							-- if changed then
+								-- activeBriefings:set("approach:altnfafAltitude",textin)
+							-- end
+						-- imgui.PopStyleColor()
+						-- imgui.PopItemWidth()
+						-- imgui.PopID()
 
-						imgui.PushStyleColor(imgui.constant.Col.Text, 0xFFCCCCCC)
-							imgui.TextUnformatted("DH        :")
-						imgui.PopStyleColor()
-						imgui.SameLine()
-						imgui.PushItemWidth(30*kb_font_scale);
-						imgui.PushID("altndecisionheight:")
-						imgui.PushStyleColor(imgui.constant.Col.Text, 0xFF1b9af8)
-							local changed, textin = imgui.InputInt("", activeBriefings:get("approach:altndecision"), 0)
-							if changed then
-								activeBriefings:set("approach:altndecision",textin)
-							end
-						imgui.PopStyleColor()
-						imgui.PopItemWidth()
-						imgui.PopID()
+						-- imgui.PushStyleColor(imgui.constant.Col.Text, 0xFFCCCCCC)
+							-- imgui.TextUnformatted("DH        :")
+						-- imgui.PopStyleColor()
+						-- imgui.SameLine()
+						-- imgui.PushItemWidth(30*kb_font_scale);
+						-- imgui.PushID("altndecisionheight:")
+						-- imgui.PushStyleColor(imgui.constant.Col.Text, 0xFF1b9af8)
+							-- local changed, textin = imgui.InputInt("", activeBriefings:get("approach:altndecision"), 0)
+							-- if changed then
+								-- activeBriefings:set("approach:altndecision",textin)
+							-- end
+						-- imgui.PopStyleColor()
+						-- imgui.PopItemWidth()
+						-- imgui.PopID()
 
-						imgui.PushStyleColor(imgui.constant.Col.Text, 0xFFCCCCCC)
-							imgui.TextUnformatted("VREF      :")
-						imgui.PopStyleColor()
-						imgui.SameLine()
-						imgui.PushItemWidth(30*kb_font_scale);
-						imgui.PushID("altnvref:")
-						imgui.PushStyleColor(imgui.constant.Col.Text, 0xFF1b9af8)
-							local changed, textin = imgui.InputInt("", activeBriefings:get("approach:altnvref"), 0)
-							if changed then
-								activeBriefings:set("approach:altnvref",textin)
-							end
-						imgui.PopStyleColor()
-						imgui.PopItemWidth()
-						imgui.PopID()
+						-- imgui.PushStyleColor(imgui.constant.Col.Text, 0xFFCCCCCC)
+							-- imgui.TextUnformatted("VREF      :")
+						-- imgui.PopStyleColor()
+						-- imgui.SameLine()
+						-- imgui.PushItemWidth(30*kb_font_scale);
+						-- imgui.PushID("altnvref:")
+						-- imgui.PushStyleColor(imgui.constant.Col.Text, 0xFF1b9af8)
+							-- local changed, textin = imgui.InputInt("", activeBriefings:get("approach:altnvref"), 0)
+							-- if changed then
+								-- activeBriefings:set("approach:altnvref",textin)
+							-- end
+						-- imgui.PopStyleColor()
+						-- imgui.PopItemWidth()
+						-- imgui.PopID()
 
-						imgui.PushStyleColor(imgui.constant.Col.Text, 0xFFCCCCCC)
-							imgui.TextUnformatted("VAPP      :")
-						imgui.PopStyleColor()
-						imgui.SameLine()
-						imgui.PushItemWidth(30*kb_font_scale);
-						imgui.PushID("altnvapp:")
-						imgui.PushStyleColor(imgui.constant.Col.Text, 0xFF1b9af8)
-							local changed, textin = imgui.InputInt("", activeBriefings:get("approach:altnvapp"), 0)
-							if changed then
-								activeBriefings:set("approach:altnvapp",textin)
-							end
-						imgui.PopStyleColor()
-						imgui.PopItemWidth()
-						imgui.PopID()
+						-- imgui.PushStyleColor(imgui.constant.Col.Text, 0xFFCCCCCC)
+							-- imgui.TextUnformatted("VAPP      :")
+						-- imgui.PopStyleColor()
+						-- imgui.SameLine()
+						-- imgui.PushItemWidth(30*kb_font_scale);
+						-- imgui.PushID("altnvapp:")
+						-- imgui.PushStyleColor(imgui.constant.Col.Text, 0xFF1b9af8)
+							-- local changed, textin = imgui.InputInt("", activeBriefings:get("approach:altnvapp"), 0)
+							-- if changed then
+								-- activeBriefings:set("approach:altnvapp",textin)
+							-- end
+						-- imgui.PopStyleColor()
+						-- imgui.PopItemWidth()
+						-- imgui.PopID()
 
-						imgui.PushStyleColor(imgui.constant.Col.Text, 0xFFCCCCCC)
-							imgui.TextUnformatted("Flaps     :")
-						imgui.PopStyleColor()
-						imgui.SameLine()
-						imgui.PushItemWidth(45*kb_font_scale);
-						imgui.PushID("altntakeoff flaps:")
-						imgui.PushStyleColor(imgui.constant.Col.Text, 0xFF1b9af8)
-							if imgui.BeginCombo("", kc_split(kc_LandingFlaps,"|")[activeBriefings:get("approach:altnflaps")]) then
-								local options = kc_split(kc_LandingFlaps,"|")
-								for i = 1, #options do
-									if imgui.Selectable(options[i], activeBriefings:get("approach:altnflaps") == i) then
-										activeBriefings:set("approach:altnflaps",i)
-									end
-								end
-							imgui.EndCombo()
-							end
-						imgui.PopStyleColor()
-						imgui.PopItemWidth()
-						imgui.PopID()
+						-- imgui.PushStyleColor(imgui.constant.Col.Text, 0xFFCCCCCC)
+							-- imgui.TextUnformatted("Flaps     :")
+						-- imgui.PopStyleColor()
+						-- imgui.SameLine()
+						-- imgui.PushItemWidth(45*kb_font_scale);
+						-- imgui.PushID("altntakeoff flaps:")
+						-- imgui.PushStyleColor(imgui.constant.Col.Text, 0xFF1b9af8)
+							-- if imgui.BeginCombo("", kc_split(kc_LandingFlaps,"|")[activeBriefings:get("approach:altnflaps")]) then
+								-- local options = kc_split(kc_LandingFlaps,"|")
+								-- for i = 1, #options do
+									-- if imgui.Selectable(options[i], activeBriefings:get("approach:altnflaps") == i) then
+										-- activeBriefings:set("approach:altnflaps",i)
+									-- end
+								-- end
+							-- imgui.EndCombo()
+							-- end
+						-- imgui.PopStyleColor()
+						-- imgui.PopItemWidth()
+						-- imgui.PopID()
 
-						imgui.PushStyleColor(imgui.constant.Col.Text, 0xFFCCCCCC)
-							imgui.TextUnformatted("AUTO BRAKE:")
-						imgui.PopStyleColor()
-						imgui.SameLine()
-						imgui.PushItemWidth(40*kb_font_scale);
-						imgui.PushID("altn autobrake:")
-						imgui.PushStyleColor(imgui.constant.Col.Text, 0xFF1b9af8)
-							if imgui.BeginCombo("", kc_split(kc_LandingAutoBrake,"|")[activeBriefings:get("approach:altnautobrake")]) then
-								local options = kc_split(kc_LandingAutoBrake,"|")
-								for i = 1, #options do
-									if imgui.Selectable(options[i], activeBriefings:get("approach:altnautobrake") == i) then
-										activeBriefings:set("approach:altnautobrake",i)
-									end
-								end
-							imgui.EndCombo()
-							end
-						imgui.PopStyleColor()
-						imgui.PopItemWidth()
-						imgui.PopID()
+						-- imgui.PushStyleColor(imgui.constant.Col.Text, 0xFFCCCCCC)
+							-- imgui.TextUnformatted("AUTO BRAKE:")
+						-- imgui.PopStyleColor()
+						-- imgui.SameLine()
+						-- imgui.PushItemWidth(40*kb_font_scale);
+						-- imgui.PushID("altn autobrake:")
+						-- imgui.PushStyleColor(imgui.constant.Col.Text, 0xFF1b9af8)
+							-- if imgui.BeginCombo("", kc_split(kc_LandingAutoBrake,"|")[activeBriefings:get("approach:altnautobrake")]) then
+								-- local options = kc_split(kc_LandingAutoBrake,"|")
+								-- for i = 1, #options do
+									-- if imgui.Selectable(options[i], activeBriefings:get("approach:altnautobrake") == i) then
+										-- activeBriefings:set("approach:altnautobrake",i)
+									-- end
+								-- end
+							-- imgui.EndCombo()
+							-- end
+						-- imgui.PopStyleColor()
+						-- imgui.PopItemWidth()
+						-- imgui.PopID()
 
-						imgui.PushStyleColor(imgui.constant.Col.Text, 0xFFCCCCCC)
-							imgui.TextUnformatted("PACKS     :")
-						imgui.PopStyleColor()
-						imgui.SameLine()
-						imgui.PushItemWidth(35*kb_font_scale);
-						imgui.PushID("altnpacks:")
-						imgui.PushStyleColor(imgui.constant.Col.Text, 0xFF1b9af8)
-							if imgui.BeginCombo("", kc_split(kc_LandingPacks,"|")[activeBriefings:get("approach:altnpacks")]) then
-								local options = kc_split(kc_LandingPacks,"|")
-								for i = 1, #options do
-									if imgui.Selectable(options[i], activeBriefings:get("approach:altnpacks") == i) then
-										activeBriefings:set("approach:altnpacks",i)
-									end
-								end
-							imgui.EndCombo()
-							end
-						imgui.PopStyleColor()
-						imgui.PopItemWidth()
-						imgui.PopID()
+						-- imgui.PushStyleColor(imgui.constant.Col.Text, 0xFFCCCCCC)
+							-- imgui.TextUnformatted("PACKS     :")
+						-- imgui.PopStyleColor()
+						-- imgui.SameLine()
+						-- imgui.PushItemWidth(35*kb_font_scale);
+						-- imgui.PushID("altnpacks:")
+						-- imgui.PushStyleColor(imgui.constant.Col.Text, 0xFF1b9af8)
+							-- if imgui.BeginCombo("", kc_split(kc_LandingPacks,"|")[activeBriefings:get("approach:altnpacks")]) then
+								-- local options = kc_split(kc_LandingPacks,"|")
+								-- for i = 1, #options do
+									-- if imgui.Selectable(options[i], activeBriefings:get("approach:altnpacks") == i) then
+										-- activeBriefings:set("approach:altnpacks",i)
+									-- end
+								-- end
+							-- imgui.EndCombo()
+							-- end
+						-- imgui.PopStyleColor()
+						-- imgui.PopItemWidth()
+						-- imgui.PopID()
 
-						imgui.PushStyleColor(imgui.constant.Col.Text, 0xFFCCCCCC)
-							imgui.TextUnformatted("ANTI-ICE  :")
-						imgui.PopStyleColor()
-						imgui.SameLine()
-						imgui.PushItemWidth(125*kb_font_scale);
-						imgui.PushID("altn land antiice:")
-						imgui.PushStyleColor(imgui.constant.Col.Text, 0xFF1b9af8)
-							if imgui.BeginCombo("", kc_split(kc_LandingAntiice,"|")[activeBriefings:get("approach:altnantiice")]) then
-								local options = kc_split(kc_LandingAntiice,"|")
-								for i = 1, #options do
-									if imgui.Selectable(options[i], activeBriefings:get("approach:altnantiice") == i) then
-										activeBriefings:set("approach:altnantiice",i)
-									end
-								end
-							imgui.EndCombo()
-							end
-						imgui.PopStyleColor()
-						imgui.PopItemWidth()
-						imgui.PopID()
+						-- imgui.PushStyleColor(imgui.constant.Col.Text, 0xFFCCCCCC)
+							-- imgui.TextUnformatted("ANTI-ICE  :")
+						-- imgui.PopStyleColor()
+						-- imgui.SameLine()
+						-- imgui.PushItemWidth(125*kb_font_scale);
+						-- imgui.PushID("altn land antiice:")
+						-- imgui.PushStyleColor(imgui.constant.Col.Text, 0xFF1b9af8)
+							-- if imgui.BeginCombo("", kc_split(kc_LandingAntiice,"|")[activeBriefings:get("approach:altnantiice")]) then
+								-- local options = kc_split(kc_LandingAntiice,"|")
+								-- for i = 1, #options do
+									-- if imgui.Selectable(options[i], activeBriefings:get("approach:altnantiice") == i) then
+										-- activeBriefings:set("approach:altnantiice",i)
+									-- end
+								-- end
+							-- imgui.EndCombo()
+							-- end
+						-- imgui.PopStyleColor()
+						-- imgui.PopItemWidth()
+						-- imgui.PopID()
 		
-					imgui.EndChild()
+					-- imgui.EndChild()
 					
-				imgui.NextColumn()
-					imgui.BeginChild("altn3")
+				-- imgui.NextColumn()
+					-- imgui.BeginChild("altn3")
 
-						imgui.PushStyleColor(imgui.constant.Col.Text, 0xFFCCCCCC)
-							imgui.TextUnformatted("GA ALT    :")
-						imgui.PopStyleColor()
-						imgui.SameLine()
-						imgui.PushItemWidth(40*kb_font_scale);
-						imgui.PushID("altngaalt:")
-						imgui.PushStyleColor(imgui.constant.Col.Text, 0xFF1b9af8)
-							local changed, textin = imgui.InputInt("", activeBriefings:get("approach:altngaaltitude"), 0)
-							if changed then
-								activeBriefings:set("approach:altngaaltitude",textin)
-							end
-						imgui.PopStyleColor()
-						imgui.PopItemWidth()
-						imgui.PopID()
+						-- imgui.PushStyleColor(imgui.constant.Col.Text, 0xFFCCCCCC)
+							-- imgui.TextUnformatted("GA ALT    :")
+						-- imgui.PopStyleColor()
+						-- imgui.SameLine()
+						-- imgui.PushItemWidth(40*kb_font_scale);
+						-- imgui.PushID("altngaalt:")
+						-- imgui.PushStyleColor(imgui.constant.Col.Text, 0xFF1b9af8)
+							-- local changed, textin = imgui.InputInt("", activeBriefings:get("approach:altngaaltitude"), 0)
+							-- if changed then
+								-- activeBriefings:set("approach:altngaaltitude",textin)
+							-- end
+						-- imgui.PopStyleColor()
+						-- imgui.PopItemWidth()
+						-- imgui.PopID()
 
-						imgui.PushStyleColor(imgui.constant.Col.Text, 0xFFCCCCCC)
-							imgui.TextUnformatted("GA HDG    :")
-						imgui.PopStyleColor()
-						imgui.SameLine()
-						imgui.PushItemWidth(20*kb_font_scale);
-						imgui.PushID("altngahdh:")
-						imgui.PushStyleColor(imgui.constant.Col.Text, 0xFF1b9af8)
-							local changed, textin = imgui.InputInt("", activeBriefings:get("approach:altngaheading"), 0)
-							if changed then
-								activeBriefings:set("approach:altngaheading",textin)
-							end
-						imgui.PopStyleColor()
-						imgui.PopItemWidth()
-						imgui.PopID()
+						-- imgui.PushStyleColor(imgui.constant.Col.Text, 0xFFCCCCCC)
+							-- imgui.TextUnformatted("GA HDG    :")
+						-- imgui.PopStyleColor()
+						-- imgui.SameLine()
+						-- imgui.PushItemWidth(20*kb_font_scale);
+						-- imgui.PushID("altngahdh:")
+						-- imgui.PushStyleColor(imgui.constant.Col.Text, 0xFF1b9af8)
+							-- local changed, textin = imgui.InputInt("", activeBriefings:get("approach:altngaheading"), 0)
+							-- if changed then
+								-- activeBriefings:set("approach:altngaheading",textin)
+							-- end
+						-- imgui.PopStyleColor()
+						-- imgui.PopItemWidth()
+						-- imgui.PopID()
 
-						imgui.PushStyleColor(imgui.constant.Col.Text, 0xFFCCCCCC)
-							imgui.TextUnformatted("CRS 1     :")
-						imgui.PopStyleColor()
-						imgui.SameLine()
-						imgui.PushItemWidth(30*kb_font_scale);
-						imgui.PushID("altncrs1:")
-						imgui.PushStyleColor(imgui.constant.Col.Text, 0xFF1b9af8)
-							local changed, textin = imgui.InputInt("", activeBriefings:get("approach:altnnav1Course"), 0)
-							if changed then
-								activeBriefings:set("approach:altnnav1Course",textin)
-							end
-						imgui.PopStyleColor()
-						imgui.PopItemWidth()
-						imgui.PopID()
+						-- imgui.PushStyleColor(imgui.constant.Col.Text, 0xFFCCCCCC)
+							-- imgui.TextUnformatted("CRS 1     :")
+						-- imgui.PopStyleColor()
+						-- imgui.SameLine()
+						-- imgui.PushItemWidth(30*kb_font_scale);
+						-- imgui.PushID("altncrs1:")
+						-- imgui.PushStyleColor(imgui.constant.Col.Text, 0xFF1b9af8)
+							-- local changed, textin = imgui.InputInt("", activeBriefings:get("approach:altnnav1Course"), 0)
+							-- if changed then
+								-- activeBriefings:set("approach:altnnav1Course",textin)
+							-- end
+						-- imgui.PopStyleColor()
+						-- imgui.PopItemWidth()
+						-- imgui.PopID()
 
-						imgui.PushStyleColor(imgui.constant.Col.Text, 0xFFCCCCCC)
-							imgui.TextUnformatted("CRS 2     :")
-						imgui.PopStyleColor()
-						imgui.SameLine()
-						imgui.PushItemWidth(30*kb_font_scale);
-						imgui.PushID("altncrs2:")
-						imgui.PushStyleColor(imgui.constant.Col.Text, 0xFF1b9af8)
-							local changed, textin = imgui.InputInt("", activeBriefings:get("approach:altnnav2Course"), 0)
-							if changed then
-								activeBriefings:set("approach:altnnav2Course",textin)
-							end
-						imgui.PopStyleColor()
-						imgui.PopItemWidth()
-						imgui.PopID()
+						-- imgui.PushStyleColor(imgui.constant.Col.Text, 0xFFCCCCCC)
+							-- imgui.TextUnformatted("CRS 2     :")
+						-- imgui.PopStyleColor()
+						-- imgui.SameLine()
+						-- imgui.PushItemWidth(30*kb_font_scale);
+						-- imgui.PushID("altncrs2:")
+						-- imgui.PushStyleColor(imgui.constant.Col.Text, 0xFF1b9af8)
+							-- local changed, textin = imgui.InputInt("", activeBriefings:get("approach:altnnav2Course"), 0)
+							-- if changed then
+								-- activeBriefings:set("approach:altnnav2Course",textin)
+							-- end
+						-- imgui.PopStyleColor()
+						-- imgui.PopItemWidth()
+						-- imgui.PopID()
 
-					imgui.EndChild()
+					-- imgui.EndChild()
 					
-				imgui.NextColumn()
-					imgui.BeginChild("altn4")
+				-- imgui.NextColumn()
+					-- imgui.BeginChild("altn4")
 
-						imgui.PushStyleColor(imgui.constant.Col.Text, 0xFFCCCCCC)
-							imgui.TextUnformatted("STAND/GATE:")
-						imgui.PopStyleColor()
-						imgui.SameLine()
-						imgui.PushItemWidth(120*kb_font_scale);
-						imgui.PushID("altn Stand/Gate:")
-						imgui.PushStyleColor(imgui.constant.Col.Text, 0xFF1b9af8)
-							if imgui.BeginCombo("", kc_split(kc_APP_gatestand_list,"|")[activeBriefings:get("approach:altngateStand")]) then
-								local options = kc_split(kc_APP_gatestand_list,"|")
-								for i = 1, #options do
-									if imgui.Selectable(options[i], activeBriefings:get("approach:altngateStand") == i) then
-										activeBriefings:set("approach:altngateStand",i)
-									end
-								end
-							imgui.EndCombo()
-							end
-						imgui.PopStyleColor()
-						imgui.PopItemWidth()
-						imgui.PopID()
+						-- imgui.PushStyleColor(imgui.constant.Col.Text, 0xFFCCCCCC)
+							-- imgui.TextUnformatted("STAND/GATE:")
+						-- imgui.PopStyleColor()
+						-- imgui.SameLine()
+						-- imgui.PushItemWidth(120*kb_font_scale);
+						-- imgui.PushID("altn Stand/Gate:")
+						-- imgui.PushStyleColor(imgui.constant.Col.Text, 0xFF1b9af8)
+							-- if imgui.BeginCombo("", kc_split(kc_APP_gatestand_list,"|")[activeBriefings:get("approach:altngateStand")]) then
+								-- local options = kc_split(kc_APP_gatestand_list,"|")
+								-- for i = 1, #options do
+									-- if imgui.Selectable(options[i], activeBriefings:get("approach:altngateStand") == i) then
+										-- activeBriefings:set("approach:altngateStand",i)
+									-- end
+								-- end
+							-- imgui.EndCombo()
+							-- end
+						-- imgui.PopStyleColor()
+						-- imgui.PopItemWidth()
+						-- imgui.PopID()
 
-						imgui.PushStyleColor(imgui.constant.Col.Text, 0xFFCCCCCC)
-							imgui.TextUnformatted("PARKING   :")
-						imgui.PopStyleColor()
-						imgui.SameLine()
-						imgui.PushItemWidth(30*kb_font_scale);
-						imgui.PushID("altn: Parked:")
-						imgui.PushStyleColor(imgui.constant.Col.Text, 0xFF1b9af8)
-							local changed, textin = imgui.InputText("", activeBriefings:get("approach:altnparkingPosition"), 255)
-							if changed then
-								activeBriefings:set("approach:altnparkingPosition",textin)
-							end
-						imgui.PopStyleColor()
-						imgui.PopItemWidth()
-						imgui.PopID()
+						-- imgui.PushStyleColor(imgui.constant.Col.Text, 0xFFCCCCCC)
+							-- imgui.TextUnformatted("PARKING   :")
+						-- imgui.PopStyleColor()
+						-- imgui.SameLine()
+						-- imgui.PushItemWidth(30*kb_font_scale);
+						-- imgui.PushID("altn: Parked:")
+						-- imgui.PushStyleColor(imgui.constant.Col.Text, 0xFF1b9af8)
+							-- local changed, textin = imgui.InputText("", activeBriefings:get("approach:altnparkingPosition"), 255)
+							-- if changed then
+								-- activeBriefings:set("approach:altnparkingPosition",textin)
+							-- end
+						-- imgui.PopStyleColor()
+						-- imgui.PopItemWidth()
+						-- imgui.PopID()
 
-						imgui.PushStyleColor(imgui.constant.Col.Text, 0xFFCCCCCC)
-							imgui.TextUnformatted("EXT PWR   :")
-						imgui.PopStyleColor()
-						imgui.SameLine()
-						imgui.PushItemWidth(80*kb_font_scale);
-						imgui.PushID("land Stand/Gate:")
-						imgui.PushStyleColor(imgui.constant.Col.Text, 0xFF1b9af8)
-							if imgui.BeginCombo("", kc_split(kc_APP_power_at_stand,"|")[activeBriefings:get("approach:powerAtGate")]) then
-								local options = kc_split(kc_APP_power_at_stand,"|")
-								for i = 1, #options do
-									if imgui.Selectable(options[i], activeBriefings:get("approach:powerAtGate") == i) then
-										activeBriefings:set("approach:powerAtGate",i)
-									end
-								end
-							imgui.EndCombo()
-							end
-						imgui.PopStyleColor()
-						imgui.PopItemWidth()
-						imgui.PopID()
+						-- imgui.PushStyleColor(imgui.constant.Col.Text, 0xFFCCCCCC)
+							-- imgui.TextUnformatted("EXT PWR   :")
+						-- imgui.PopStyleColor()
+						-- imgui.SameLine()
+						-- imgui.PushItemWidth(80*kb_font_scale);
+						-- imgui.PushID("alt Stand/Gate:")
+						-- imgui.PushStyleColor(imgui.constant.Col.Text, 0xFF1b9af8)
+							-- if imgui.BeginCombo("", kc_split(kc_APP_power_at_stand,"|")[activeBriefings:get("approach:powerAtGate")]) then
+								-- local options = kc_split(kc_APP_power_at_stand,"|")
+								-- for i = 1, #options do
+									-- if imgui.Selectable(options[i], activeBriefings:get("approach:powerAtGate") == i) then
+										-- activeBriefings:set("approach:powerAtGate",i)
+									-- end
+								-- end
+							-- imgui.EndCombo()
+							-- end
+						-- imgui.PopStyleColor()
+						-- imgui.PopItemWidth()
+						-- imgui.PopID()
 
-						imgui.PushStyleColor(imgui.constant.Col.Text, 0xFFCCCCCC)
-							imgui.TextUnformatted("APU       :")
-						imgui.PopStyleColor()
-						imgui.SameLine()
-						imgui.PushItemWidth(85*kb_font_scale);
-						imgui.PushID("land apu:")
-						imgui.PushStyleColor(imgui.constant.Col.Text, 0xFF1b9af8)
-							if imgui.BeginCombo("", kc_split("Start|Not needed","|")[activeBriefings:get("approach:activateAPUafterLand")]) then
-								local options = kc_split("Start|Not needed","|")
-								for i = 1, #options do
-									if imgui.Selectable(options[i], activeBriefings:get("approach:activateAPUafterLand") == i) then
-										activeBriefings:set("approach:activateAPUafterLand",i)
-									end
-								end
-							imgui.EndCombo()
-							end
-						imgui.PopStyleColor()
-						imgui.PopItemWidth()
-						imgui.PopID()
+						-- imgui.PushStyleColor(imgui.constant.Col.Text, 0xFFCCCCCC)
+							-- imgui.TextUnformatted("APU       :")
+						-- imgui.PopStyleColor()
+						-- imgui.SameLine()
+						-- imgui.PushItemWidth(85*kb_font_scale);
+						-- imgui.PushID("land apu:")
+						-- imgui.PushStyleColor(imgui.constant.Col.Text, 0xFF1b9af8)
+							-- if imgui.BeginCombo("", kc_split("Start|Not needed","|")[activeBriefings:get("approach:activateAPUafterLand")]) then
+								-- local options = kc_split("Start|Not needed","|")
+								-- for i = 1, #options do
+									-- if imgui.Selectable(options[i], activeBriefings:get("approach:activateAPUafterLand") == i) then
+										-- activeBriefings:set("approach:activateAPUafterLand",i)
+									-- end
+								-- end
+							-- imgui.EndCombo()
+							-- end
+						-- imgui.PopStyleColor()
+						-- imgui.PopItemWidth()
+						-- imgui.PopID()
 
-						imgui.PushStyleColor(imgui.constant.Col.Text, 0xFFCCCCCC)
-							imgui.TextUnformatted("TAXI ROUTE:")
-						imgui.PopStyleColor()
-						imgui.PushItemWidth(670*kb_font_scale);
-						imgui.PushID("altn taxi in Route:")
-						imgui.PushStyleColor(imgui.constant.Col.Text, 0xFF1b9af8)
-							local changed, textin = imgui.InputText("", activeBriefings:get("approach:altntaxiIn"), 255)
-							if changed then
-								activeBriefings:set("approach:altntaxiIn",textin)
-							end
-						imgui.PopStyleColor()
-						imgui.PopItemWidth()
-						imgui.PopID()
+						-- imgui.PushStyleColor(imgui.constant.Col.Text, 0xFFCCCCCC)
+							-- imgui.TextUnformatted("TAXI ROUTE:")
+						-- imgui.PopStyleColor()
+						-- imgui.PushItemWidth(670*kb_font_scale);
+						-- imgui.PushID("altn taxi in Route:")
+						-- imgui.PushStyleColor(imgui.constant.Col.Text, 0xFF1b9af8)
+							-- local changed, textin = imgui.InputText("", activeBriefings:get("approach:altntaxiIn"), 255)
+							-- if changed then
+								-- activeBriefings:set("approach:altntaxiIn",textin)
+							-- end
+						-- imgui.PopStyleColor()
+						-- imgui.PopItemWidth()
+						-- imgui.PopID()
 						
-					imgui.EndChild()
-				imgui.Columns()
+					-- imgui.EndChild()
+				-- imgui.Columns()
 				
-			imgui.EndChild()
+			-- imgui.EndChild()
 
-		imgui.EndTabItem()
-		end
+		-- imgui.EndTabItem()
+		-- end
 
 -- Alternate
 		if imgui.BeginTabItem("DEBUG") then
