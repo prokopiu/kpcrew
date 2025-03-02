@@ -20,4 +20,14 @@ sysAir = require("kpcrew.systems.DFLT.sysAir")
 
 logMsg("A33L sysAir")
 
+
+-- BLEED AIR
+sysAir.engBleedGroup 		= SwitchGroup:new("EngBleeds")
+sysAir.bleedEng1Switch 		= TwoStateToggleSwitch:new("bleed1","laminar/A333/buttons/eng_bleed_1_pos",0,
+	"sim/bleed_air/engine_1_toggle")
+sysAir.bleedEng2Switch 		= TwoStateToggleSwitch:new("bleed2","laminar/A333/buttons/eng_bleed_2_pos",0,
+	"sim/bleed_air/engine_2_toggle")
+sysAir.engBleedGroup:addSwitch(sysAir.bleedEng1Switch)
+sysAir.engBleedGroup:addSwitch(sysAir.bleedEng2Switch)
+
 return sysAir

@@ -45,4 +45,46 @@ SOP_A33L = require("kpcrew.sops.SOP_DFLT")
 
 activeSOP:setName("LAMINAR A330 & VARIANTS SOP")
 
+-- Power up addons
+activeSOP:getFlow(1):addItem(ProcedureItem:new("EMER LTS","ARM",FlowItem.actorFO,0,
+	function () return get("laminar/a333/switches/emer_exit_lt_pos") == 1 end,
+	function () 
+		if get("laminar/a333/switches/emer_exit_lt_pos") == 0 then
+			command_once("laminar/A333/toggle_switch/emer_exit_lt_up")
+		end
+	end))
+activeSOP:getFlow(1):addItem(ProcedureItem:new("CREW SUPPLY","AUTO",FlowItem.actorFO,0,
+	function () return get("laminar/A333/annun/oxygen/crew_supply_off") == 0 end,
+	function () 
+		if get("laminar/A333/annun/oxygen/crew_supply_off") == 1 then
+			command_once("sim/oxy/crew_valve_toggle")
+		end
+	end))
+activeSOP:getFlow(1):addItem(ProcedureItem:new("PACK FLOW","AUTO",FlowItem.actorFO,0,
+	function () return get("laminar/A333/pressurization/knobs/pack_flow_pos") == 0 end,
+	function () 
+		if get("laminar/A333/pressurization/knobs/pack_flow_pos") == -1 then
+			command_once("laminar/A333/knobs/press_press_flow_right")
+		elseif get("laminar/A333/pressurization/knobs/pack_flow_pos") == 1 then
+			command_once("laminar/A333/knobs/press_press_flow_left")
+		end
+	end))	
+activeSOP:getFlow(1):addItem(ProcedureItem:new("RMPS","ON",FlowItem.actorFO,0,
+	function () return 
+		get("laminar/A333/annun/comm/rtp_L/vhf_1_active") == 1 and
+		get("laminar/A333/annun/comm/rtp_R/vhf_2_active") == 1 and
+		get("laminar/A333/annun/comm/rtp_C/vhf_3_active") == 1
+	end,
+	function () 
+		if get("laminar/A333/annun/comm/rtp_L/vhf_1_active") == 0 then
+			command_once("laminar/A333/rtp_L/off_switch")
+		end
+		if get("laminar/A333/annun/comm/rtp_R/vhf_2_active") == 0 then
+			command_once("laminar/A333/rtp_R/off_switch")
+		end
+		if get("laminar/A333/annun/comm/rtp_C/vhf_3_active") == 0 then
+			command_once("laminar/A333/rtp_C/off_switch")
+		end
+	end))	
+	
 return SOP_A33L

@@ -23,6 +23,19 @@ sysGeneral = require("kpcrew.systems.DFLT.sysGeneral")
 
 logMsg("A33L sysGeneral")
 
+-- Parking Brake
+sysGeneral.parkBrakeSwitch 	= TwoStateCmdSwitch:new("parkbrake","laminar/A333/switches/park_brake_pos",0,
+	"laminar/A333/switch/parking_brake_right","laminar/A333/switch/parking_brake_left","nocommand")
+
+sysGeneral.parkbrakeAnc 	= CustomAnnunciator:new("parkbrake",
+function ()
+	if get("laminar/A333/switches/park_brake_pos") > 0 then
+		return 1
+	else
+		return 0
+	end
+end)
+
 sysGeneral.doorL1			= TwoStateDrefSwitch:new("doorl1","sim/cockpit2/switches/door_open",-1)
 sysGeneral.doorL2			= TwoStateDrefSwitch:new("doorl2","sim/cockpit2/switches/door_open",6)
 sysGeneral.doorR1			= TwoStateDrefSwitch:new("doorr1","sim/cockpit2/switches/door_open",1)
@@ -50,5 +63,28 @@ sysGeneral.doorGroup:addSwitch(sysGeneral.doorex2)
 sysGeneral.doorGroup:addSwitch(sysGeneral.doorex3)	 
 sysGeneral.doorGroup:addSwitch(sysGeneral.doorex4)	 
 
+-- IRS/ADIRU
+sysGeneral.irsUnit1Switch 	= SimpleAnnunciator:new("irsunit1","laminar/A333/buttons/adirs/ir1_knob_pos",0)
+sysGeneral.irsUnit2Switch 	= SimpleAnnunciator:new("irsunit2","laminar/A333/buttons/adirs/ir2_knob_pos",0)
+sysGeneral.irsUnit3Switch 	= SimpleAnnunciator:new("irsunit3","laminar/A333/buttons/adirs/ir3_knob_pos",0)
+sysGeneral.irsUnitGroup 	= SwitchGroup:new("irsunits")
+sysGeneral.irsUnitGroup:addSwitch(sysGeneral.irsUnit1Switch)
+sysGeneral.irsUnitGroup:addSwitch(sysGeneral.irsUnit2Switch)
+sysGeneral.irsUnitGroup:addSwitch(sysGeneral.irsUnit3Switch)
 
+sysGeneral.noSmokingSwitch	= MultiStateCmdSwitch:new("seatbelts","laminar/A333/switches/no_smoking",0,
+	"laminar/A333/switches/smoking_signs_dn", "laminar/A333/switches/smoking_signs_up",0,2,true)
+
+sysGeneral.seatBeltSwitch	= MultiStateCmdSwitch:new("seatbelts","laminar/A333/switches/fasten_seatbelts",0,
+	"laminar/A333/switches/seatbelt_signs_dn", "laminar/A333/switches/seatbelt_signs_up",0,2,true)
+
+sysGeneral.chrono			= TwoStateToggleSwitch:new("chrono","sim/cockpit2/clock_timer/chrono_running",1,
+	"sim/instruments/chrono2_cycle")
+	
+sysGeneral.clock			= TwoStateCmdSwitch:new("clock","laminar/A333/clock/ET_run_stop_reset_pos",0,
+	"laminar/A333/clock/ET_run_stop_reset_up","laminar/A333/clock/ET_run_stop_reset_dn","nocommand")
+
+sysGeneral.tocheck		 = TwoStateToggleSwitch:new("tockeck","laminar/A333/buttons/ecam/to_config_pos",0,
+	"laminar/A333/button/ecam/to_config_test")
+	
 return sysGeneral
