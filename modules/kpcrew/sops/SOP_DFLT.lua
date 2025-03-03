@@ -309,8 +309,12 @@ beforeStart:addItem(ProcedureItem:new("PARKING BRAKE","SET",FlowItem.actorFO,0,
 	function () return sysGeneral.parkBrakeSwitch:getStatus() == 1 end,
 	function () sysGeneral.parkBrakeSwitch:actuate(1) end))
 beforeStart:addItem(ProcedureItem:new("FLIGHT DIRECTOR","SET",FlowItem.actorFO,0,
-	function () return sysMCP.fdirPilotSwitch:getStatus() == 1 end,
-	function () sysMCP.fdirPilotSwitch:actuate(1) end))
+	function () return sysMCP.fdirAnc:getStatus() > 0 end,
+	function () 
+		if sysMCP.fdirAnc:getStatus() == 0 then
+			sysMCP.fdirGroup:actuate(1) 
+		end
+	end))
 beforeStart:addItem(ProcedureItem:new("FUEL PUMPS","ALL ON",FlowItem.actorFO,0,
 	function () return sysFuel.allFuelPumpGroup:getStatus() > 0 end,
 	function () sysFuel.allFuelPumpGroup:actuate(1) end))
@@ -405,11 +409,11 @@ prePushStartProc:addItem(ProcedureItem:new("NO SMOKING LIGHTS","ARM",FlowItem.ac
 	function () return sysGeneral.noSmokingSwitch:getStatus() > 0 end,
 	function () sysGeneral.noSmokingSwitch:setValue(1) end))
 prePushStartProc:addItem(ProcedureItem:new("TRANSPONDER","STBY",FlowItem.actorFO,0,
-	function () return get("sim/cockpit2/radios/actuators/transponder_mode") == 1 end,
+	function () return sysRadios.xpdrSwitch:getStatus() == sysRadios.stby end,
 	function () 
-		set("sim/cockpit2/radios/actuators/transponder_mode",1)	
+		 kc_macro_set_xpdrmode(sysRadios.stby)	
 		local xpdrcode = activeBriefings:get("departure:squawk")
-		set("sim/cockpit2/radios/actuators/transponder_code",xpdrcode)
+		sysRadios.xpdrCode:setValue(xpdrcode)
 	end))
 if kc_has_press_cab == true then
 	prePushStartProc:addItem(ProcedureItem:new("PACK SWITCHES","OFF",FlowItem.actorFO,0,
@@ -925,7 +929,7 @@ flapsUpProc:addItem(ProcedureItem:new("FLAPS ".. kc_pref_split(kc_TakeoffFlaps)[
 		kc_macro_set_flap(0)
 		kc_speakNoText(0,"speed check flaps " .. kc_pref_split(kc_TakeoffFlaps)[1]) 
 	end))
-
+flapsUpProc:addItem(HoldProcedureItem:new("A/P 1","ACTIVATE",FlowItem.actorCPT))
 flapsUpProc:addItem(HoldProcedureItem:new("A/P","ON",FlowItem.actorPF,
 	function () 
 		sysMCP.ap1Switch:actuate(1) 
@@ -1312,7 +1316,7 @@ shutdownProc:addItem(ProcedureItem:new("PARKING BRAKE","SET",FlowItem.actorFO,0,
 	function () return sysGeneral.parkBrakeSwitch:getStatus() == 1 end,
 	function () sysGeneral.parkBrakeSwitch:actuate(1) end))
 if kc_is_airbus == true then
-	shutdownProc:addItem(IndirectProcedureItem:new("ENGINE MASTERS","OFF",FlowItem.actorCAPT,0,"throttlescutland",
+	shutdownProc:addItem(IndirectProcedureItem:new("ENGINE MASTERS","OFF",FlowItem.actorCAPT,10,"throttlescutland",
 		function () return sysEngines.engStarterGroup:getStatus() == 0 end,
 		function () sysEngines.engStarterGroup:actuate(0) end))
 else

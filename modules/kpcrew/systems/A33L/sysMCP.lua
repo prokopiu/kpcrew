@@ -20,4 +20,15 @@ sysMCP = require("kpcrew.systems.DFLT.sysMCP")
 
 logMsg("A33L sysMCP")
 
+-- Flight Directors (DFLT only one supported)
+sysMCP.fdirPilotSwitch 		= TwoStateToggleSwitch:new("fdir left","laminar/A333/annun/capt_flight_director_on",0,
+	"sim/autopilot/fdir_command_bars_toggle")
+sysMCP.fdirCoPilotSwitch 	= TwoStateToggleSwitch:new("fdir right","laminar/A333/annun/fo_flight_director_on",0,
+	"sim/autopilot/fdir2_command_bars_toggle")
+sysMCP.fdirGroup 			= SwitchGroup:new("fdirs")
+sysMCP.fdirGroup:addSwitch(sysMCP.fdirPilotSwitch)
+sysMCP.fdirGroup:addSwitch(sysMCP.fdirCoPilotSwitch)
+
+sysMCP.fdirAnc 				= SimpleAnnunciator:new("fdiranc","laminar/A333/annun/capt_flight_director_on",0)
+
 return sysMCP

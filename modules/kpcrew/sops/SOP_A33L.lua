@@ -54,11 +54,11 @@ activeSOP:getFlow(1):addItem(ProcedureItem:new("EMER LTS","ARM",FlowItem.actorFO
 		end
 	end))
 activeSOP:getFlow(1):addItem(ProcedureItem:new("CREW SUPPLY","AUTO",FlowItem.actorFO,0,
-	function () return get("laminar/A333/annun/oxygen/crew_supply_off") == 0 end,
+	function () return get("laminar/A333/buttons/oxy/crew_valve_pos") == 1 end,
 	function () 
-		if get("laminar/A333/annun/oxygen/crew_supply_off") == 1 then
+		if get("laminar/A333/buttons/oxy/crew_valve_pos") == 0 then
 			command_once("sim/oxy/crew_valve_toggle")
-		end
+		end 
 	end))
 activeSOP:getFlow(1):addItem(ProcedureItem:new("PACK FLOW","AUTO",FlowItem.actorFO,0,
 	function () return get("laminar/A333/pressurization/knobs/pack_flow_pos") == 0 end,
@@ -71,20 +71,33 @@ activeSOP:getFlow(1):addItem(ProcedureItem:new("PACK FLOW","AUTO",FlowItem.actor
 	end))	
 activeSOP:getFlow(1):addItem(ProcedureItem:new("RMPS","ON",FlowItem.actorFO,0,
 	function () return 
-		get("laminar/A333/annun/comm/rtp_L/vhf_1_active") == 1 and
-		get("laminar/A333/annun/comm/rtp_R/vhf_2_active") == 1 and
-		get("laminar/A333/annun/comm/rtp_C/vhf_3_active") == 1
+		get("laminar/A333/comm/rtp_L/off_status") +
+		get("laminar/A333/comm/rtp_R/off_status") + 
+		get("laminar/A333/comm/rtp_C/off_status") == 0
 	end,
 	function () 
-		if get("laminar/A333/annun/comm/rtp_L/vhf_1_active") == 0 then
+		if get("laminar/A333/comm/rtp_L/off_status") == 1 then
 			command_once("laminar/A333/rtp_L/off_switch")
 		end
-		if get("laminar/A333/annun/comm/rtp_R/vhf_2_active") == 0 then
+		if get("laminar/A333/comm/rtp_R/off_status") == 1 then
 			command_once("laminar/A333/rtp_R/off_switch")
 		end
-		if get("laminar/A333/annun/comm/rtp_C/vhf_3_active") == 0 then
+		if get("laminar/A333/comm/rtp_C/off_status") == 1 then
 			command_once("laminar/A333/rtp_C/off_switch")
 		end
 	end))	
 	
+-- flapsup
+activeSOP:getFlow(14):addItem(HoldProcedureItem:new("A/P 1","DISCONNECT",FlowItem.actorCPT))
+activeSOP:getFlow(14):addItem(ProcedureItem:new("A/P","DISCONNECT",FlowItem.actorFO,0,
+	function () return get("laminar/A333/annun/autopilot/ap1_mode") == 0 end,
+	function () 
+			command_once("sim/autopilot/priority_pb_left")
+	end))
+activeSOP:getFlow(14):addItem(ProcedureItem:new("A/P","DISCONNECTED",FlowItem.actorFO,0,
+	function () return true end,
+	function () 
+			command_once("sim/annunciator/clear_master_warning")
+	end))
+
 return SOP_A33L

@@ -19,5 +19,13 @@ local KeepPressedSwitchCmd	= require "kpcrew.systems.KeepPressedSwitchCmd"
 sysEngines = require("kpcrew.systems.DFLT.sysEngines")
 
 logMsg("A33L sysEngines")
-	
+
+-- Starter Switches
+sysEngines.engStart1Switch	= TwoStateDrefSwitch:new("starter1","laminar/A333/switches/engine1_start_pos",0)
+sysEngines.engStart2Switch	= TwoStateDrefSwitch:new("starter2","laminar/A333/switches/engine2_start_pos",0)
+sysEngines.engStarterGroup 	= SwitchGroup:new("engstarters")
+sysEngines.engStarterGroup:addSwitch(sysEngines.engStart1Switch)
+sysEngines.engStarterGroup:addSwitch(sysEngines.engStart2Switch)
+
+
 return sysEngines

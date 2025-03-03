@@ -361,7 +361,7 @@ end
 
 -- autobrake
 function kc_macro_set_autobrake(index)
-	if index > 0 then
+	if index ~= kc_AutoBrakeOff then
 		if index == 1 and get("laminar/A333/annun/auto_brake/lo_on") == 0 then
 			command_once("sim/flight_controls/brakes_1_auto")
 		elseif index == 2 and get("laminar/A333/annun/auto_brake/med_on") == 0 then
@@ -370,13 +370,13 @@ function kc_macro_set_autobrake(index)
 			command_once("sim/flight_controls/brakes_rto_auto")
 		end
 	else
-		if get("laminar/A333/annun/auto_brake/lo_on") == 1 then
+		if get("laminar/A333/annun/auto_brake/lo_on") > 0 then
 			command_once("sim/flight_controls/brakes_1_auto")
 		end
-		if get("laminar/A333/annun/auto_brake/med_on") == 1 then
+		if get("laminar/A333/annun/auto_brake/med_on") > 0 then
 			command_once("sim/flight_controls/brakes_2_auto")
 		end
-		if get("laminar/A333/annun/auto_brake/max_on") == 1 then
+		if get("laminar/A333/annun/auto_brake/max_on") > 0 then
 			command_once("sim/flight_controls/brakes_rto_auto")
 		end
 	end
