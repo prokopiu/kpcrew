@@ -2,7 +2,7 @@
 	*** KPCREW 2.3
 	Virtual copilot for X-PLane 11/12
 	Kosta Prokopiu, July 2023
-	Changed December 2024
+	Changed March 2025
 --]]
 
 require "kpcrew.genutils"
@@ -88,15 +88,15 @@ elseif PLANE_ICAO == "E190" and PLANE_TAILNUMBER == "E195" then
 	
 -- ToLiss Airbusses
 -- elseif PLANE_ICAO == "A321" then
-	-- kc_acf_icao = "A20N"
+	-- kc_acf_icao = "A3TL"
 -- elseif PLANE_ICAO == "A339" then
-	-- kc_acf_icao = "A20N"
+	-- kc_acf_icao = "A3TL"
 elseif PLANE_ICAO == "A319" and PLANE_TAILNUMBER == "C-GTLS" then
 	kc_acf_icao = "A3TL"
 -- elseif PLANE_ICAO == "A20N" and PLANE_TAILNUMBER == "C-GTLT" then
-	-- kc_acf_icao = "A20N"
+	-- kc_acf_icao = "A3TL"
 -- elseif PLANE_ICAO == "A346" then
-	-- kc_acf_icao = "A20N"
+	-- kc_acf_icao = "A3TL"
 	
 -- Laminar MD-82
 -- elseif PLANE_ICAO == "MD82" and PLANE_TAILNUMBER == "N552AA" then
