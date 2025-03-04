@@ -20,8 +20,7 @@ sysRadios = require("kpcrew.systems.DFLT.sysRadios")
 
 logMsg("A33L sysRadios")
 
-sysRadios.xpdrSwitch 		= MultiStateCmdSwitch:new("xpdrmode","laminar/A333/transponder/ta_ra_knob_pos",0,
-	"laminar/A333/transponder/ta_ra_left","laminar/A333/transponder/ta_ra_right",0,2,true)
+sysRadios.xpdrSwitch 		= TwoStateDrefSwitch:new("xpdrmode","laminar/A333/transponder/ta_ra_knob_pos",0)
 sysRadios.stby				= 0
 sysRadios.alt				= 0
 sysRadios.ta				= 1

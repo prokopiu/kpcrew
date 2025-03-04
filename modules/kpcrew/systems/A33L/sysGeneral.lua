@@ -81,8 +81,25 @@ sysGeneral.seatBeltSwitch	= MultiStateCmdSwitch:new("seatbelts","laminar/A333/sw
 sysGeneral.chrono			= TwoStateToggleSwitch:new("chrono","sim/cockpit2/clock_timer/chrono_running",1,
 	"sim/instruments/chrono2_cycle")
 	
-sysGeneral.clock			= TwoStateCmdSwitch:new("clock","laminar/A333/clock/ET_run_stop_reset_pos",0,
-	"laminar/A333/clock/ET_run_stop_reset_up","laminar/A333/clock/ET_run_stop_reset_dn","nocommand")
+sysGeneral.clock			= TwoStateCustomSwitch:new("clock","laminar/A333/clock/ET_run_stop_reset_pos",0,
+	function ()
+		command_once("laminar/A333/clock/ET_run_stop_reset_up")
+		command_once("laminar/A333/clock/ET_run_stop_reset_up")
+	end,
+	function ()
+		command_once("laminar/A333/clock/ET_run_stop_reset_dn")
+	end,
+	function ()
+		command_once("laminar/A333/clock/ET_run_stop_reset_dn")
+		command_once("laminar/A333/clock/ET_run_stop_reset_dn")
+	end,
+	function ()
+		if get("laminar/A333/clock/ET_run_stop_reset_pos") == -1 then
+			return 1
+		else
+			return 0
+		end
+	end)
 
 sysGeneral.tocheck		 = TwoStateToggleSwitch:new("tockeck","laminar/A333/buttons/ecam/to_config_pos",0,
 	"laminar/A333/button/ecam/to_config_test")

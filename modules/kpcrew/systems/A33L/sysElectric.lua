@@ -42,5 +42,15 @@ sysElectric.gpuGenBusGroup:addSwitch(sysElectric.gpuGenBus2)
 -- DC Bus Tie
 sysElectric.dcBusTie				= TwoStateToggleSwitch:new("dcbustie","laminar/A333/buttons/bus_tie_pos",0,
 	"sim/electrical/cross_tie_toggle")
-
+	
+-- APU RUNNING annunciator
+sysElectric.apuRunningAnc 	= CustomAnnunciator:new("apurunning",
+	function () 
+		if get("sim/cockpit/engine/APU_N1") == 100 then
+			return 1
+		else
+			return 0
+		end
+	end)
+	
 return sysElectric

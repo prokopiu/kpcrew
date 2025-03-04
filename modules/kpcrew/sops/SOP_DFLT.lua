@@ -850,7 +850,7 @@ end
 if kc_has_clock == true then
 	runwayEntryProc:addItem(ProcedureItem:new("CLOCK","START",FlowItem.actorFO,0,
 		function () return sysGeneral.clock:getStatus() == kc_et_timer_on end,
-		function () sysGeneral.clock:setValue(kc_et_timer_on) end))
+		function () sysGeneral.clock:actuate(kc_et_timer_on) end))
 end
 
 -- =====================================================================================================================
@@ -1518,5 +1518,3 @@ end
 
 
 return SOP_DFLT
-
--- A33L

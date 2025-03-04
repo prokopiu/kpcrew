@@ -69,7 +69,14 @@ sysElectric.apuGenBusGroup:addSwitch(sysElectric.apuGenBus1)
 sysElectric.apuGenBusGroup:addSwitch(sysElectric.apuGenBus2)
 
 -- APU RUNNING annunciator
-sysElectric.apuRunningAnc 	= SimpleAnnunciator:new("apurunning","sim/cockpit2/electrical/APU_running",0)
+sysElectric.apuRunningAnc 	= CustomAnnunciator:new("apurunning",
+	function () 
+		if get("laminar/A333/annun/apu_avail") == 1 then
+			return 1
+		else
+			return 0
+		end
+	end)
 
 -- ---- Engine Generators
 sysElectric.genSwitchGroup 	= SwitchGroup:new("generators")

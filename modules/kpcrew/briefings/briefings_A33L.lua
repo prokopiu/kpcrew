@@ -34,3 +34,6 @@ kc_has_toc			= true		-- Airctaft has a takeof config check button
 kc_has_hyd_elec_pmps= true		-- Aircraft has electric hydraulic pumps
 kc_has_hyd_eng_pmps = true		-- Aircraft has engine hydraulic pumps
 kc_has_chrono		= true		-- Aircraft has a chrono stopwatch
+kc_has_clock		= true
+kc_et_timer_on		= 1
+kc_et_timer_off		= 0
