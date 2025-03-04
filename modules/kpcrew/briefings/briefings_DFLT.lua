@@ -84,6 +84,10 @@ kc_has_bus_ties		= true		-- Aircraft has bus ties for AC & DC
 kc_has_window_heat	= true		-- Aircraft has dedicated window heat
 kc_has_wx_radar		= true		-- Aircraft has weather radar
 kc_has_toc			= false		-- Airctaft has a takeof config check button
+kc_has_chrono		= false		-- Aircraft has a chrono stopwatch
+kc_has_clock		= true		-- Aircraft has a clock stopwatch
+kc_et_timer_on		= -1
+kc_et_timer_off		= 0
 
 kc_is_airbus		= false		-- Aircraft is an Airbus
 kc_is_boeing		= false		-- Aircraft is a Boeing

@@ -33,3 +33,4 @@ kc_pld_ld_button	= false		-- Load the aircraft payload from kpxbrief
 kc_has_toc			= true		-- Airctaft has a takeof config check button
 kc_has_hyd_elec_pmps= true		-- Aircraft has electric hydraulic pumps
 kc_has_hyd_eng_pmps = true		-- Aircraft has engine hydraulic pumps
+kc_has_chrono		= true		-- Aircraft has a chrono stopwatch

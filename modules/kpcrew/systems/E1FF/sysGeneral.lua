@@ -45,5 +45,6 @@ sysGeneral.doorGroup:addSwitch(sysGeneral.doorACargo)
 sysGeneral.doorGroup:addSwitch(sysGeneral.cockpitDoor)
 sysGeneral.doorGroup:addSwitch(sysGeneral.stairsL1)
 
+sysGeneral.clock			= TwoStateDrefSwitch:new("clock","sim/cockpit2/clock_timer/chrono_running",-1)
 
 return sysGeneral

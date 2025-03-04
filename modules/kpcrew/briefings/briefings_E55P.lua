@@ -16,6 +16,10 @@ kc_has_hyd_elec_pmps= false		-- Aircraft has electric hydraulic pumps
 kc_has_beacon		= false
 kc_has_autobrake	= false		-- Aircraft has autobrake
 kc_has_reversers	= false		-- Aircraft has reversers
+kc_has_chrono		= false		-- Aircraft has a chrono stopwatch
+kc_has_clock		= false		-- Aircraft has a clock stopwatch
+kc_et_timer_on		= -1
+kc_et_timer_off		= 0
 
 kc_NumFlapsTO		= 3
 kc_TakeoffFlaps 	= "0|1|2"

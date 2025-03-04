@@ -159,7 +159,7 @@ if kc_has_apu == true then
 			kc_procvar_set("apustart",true)
 			kc_procvar_set("apuonline",true)
 		end,
-		function () return activeBriefings:get("departure:activateAPUPowerUp") == 2 end))
+		function () return activeBriefings:get("departure:activateAPUPowerUp") == 2 or sysElectric.apuRunningAnc:getStatus() > 0 end))
 end
 
 if kc_has_retractgear == true then
@@ -486,13 +486,15 @@ if kc_is_airbus == false then
 		function () sysEngines.engIgnitionGroup:actuate(1) end))
 end
 engStartProc:addItem(HoldProcedureItem:new("START FIRST ENGINE","START ENGINE %s|activeBriefings:get(\"taxi:startSequence\") == 1 and \"RH\" or \"LH\"",FlowItem.actorCPT))
-engStartProc:addItem(ProcedureItem:new("CHRONO","START",FlowItem.actorCPT,0,
-	function () return sysGeneral.chrono:getStatus() > 0 end,
-	function () 
-		if sysGeneral.chrono:getStatus() == 0 then 
-			sysGeneral.chrono:actuate(1)
-		end
-	end))
+if kc_has_chrono == true then
+	engStartProc:addItem(ProcedureItem:new("CHRONO","START",FlowItem.actorCPT,0,
+		function () return sysGeneral.chrono:getStatus() > 0 end,
+		function () 
+			if sysGeneral.chrono:getStatus() == 0 then 
+				sysGeneral.chrono:actuate(1)
+			end
+		end))
+end
 engStartProc:addItem(IndirectProcedureItem:new("POWER LEVER","LEVER %s IDLE|activeBriefings:get(\"taxi:startSequence\") == 1 and \"RH\" or \"LH\"",FlowItem.actorCPT,3,"eng_start_1_lever",
 	function () return sysEngines.throttlePos:getStatus() == 0	end,
 	function () 
@@ -524,13 +526,15 @@ engStartProc:addItem(ProcedureItem:new("1ST ENGINE N2","INCREASING",FlowItem.act
 	end))
 
 engStartProc:addItem(HoldProcedureItem:new("START SECOND ENGINE","START ENGINE %s|activeBriefings:get(\"taxi:startSequence\") == 1 and \"LH\" or \"RH\"",FlowItem.actorCPT))
-engStartProc:addItem(ProcedureItem:new("CHRONO","START",FlowItem.actorCPT,0,
-	function () return sysGeneral.chrono:getStatus() > 0 end,
-	function () 
-		if sysGeneral.chrono:getStatus() == 0 then 
-			sysGeneral.chrono:actuate(1)
-		end
-	end))
+if kc_has_chrono == true then
+	engStartProc:addItem(ProcedureItem:new("CHRONO","START",FlowItem.actorCPT,0,
+		function () return sysGeneral.chrono:getStatus() > 0 end,
+		function () 
+			if sysGeneral.chrono:getStatus() == 0 then 
+				sysGeneral.chrono:actuate(1)
+			end
+		end))
+end
 engStartProc:addItem(IndirectProcedureItem:new("POWER LEVER","LEVER %s IDLE|activeBriefings:get(\"taxi:startSequence\") == 1 and \"RH\" or \"LH\"",FlowItem.actorCPT,3,"eng_start_2_lever",
 	function () return sysEngines.throttlePos:getStatus() == 0	end,
 	function () 
@@ -632,7 +636,12 @@ afterStartProc:addItem(ProcedureItem:new("PACKS","ON",FlowItem.actorFO,0,
 	end,
 	function () 
 		kc_macro_packs_on()
-	end))	
+	end))
+if kc_is_airbus == false then	
+	afterStartProc:addItem(ProcedureItem:new("ISOLATION VALVES","ON/AUTO",FlowItem.actorFO,0,
+		function () return sysAir.isoValveSwitch:getStatus() == 1 end,
+		function () sysAir.isoValveSwitch:actuate(1) end))
+end
 if kc_has_apu == true then
 	afterStartProc:addItem(ProcedureItem:new("APU GENERATOR","OFF",FlowItem.actorFO,0,
 		function () return sysElectric.apuStartSwitch:getStatus() == 0 end,
@@ -655,11 +664,6 @@ end
 afterStartProc:addItem(ProcedureItem:new("SPEED BRAKES & GROUND SPOILERS","DOWN",FlowItem.actorFO,0,
 	function () return sysControls.Speedbrake:getStatus() == 0 end,
 	function () sysControls.Speedbrake:setValue(0) end))
-if kc_is_airbus == false then	
-	afterStartProc:addItem(ProcedureItem:new("ISOLATION VALVES","ON/AUTO",FlowItem.actorFO,0,
-		function () return sysAir.isoValveSwitch:getStatus() == 1 end,
-		function () sysAir.isoValveSwitch:actuate(1) end))
-end
 afterStartProc:addItem(ProcedureItem:new("ENGINE ANTI-ICE","OFF",FlowItem.actorFO,0,
 	function () return sysAice.engAntiIceGroup:getStatus() == 0 end,
 	function () sysAice.engAntiIceGroup:actuate(0) end,
@@ -843,10 +847,11 @@ if kc_has_wx_radar == true then
 		function () return sysEFIS.wxrPilot:getStatus() ~= 0 end,
 		function () sysEFIS.wxrPilot:actuate(1) end))
 end
-runwayEntryProc:addItem(ProcedureItem:new("CLOCK","START",FlowItem.actorFO,0,
-	function () return sysGeneral.clock:getStatus() == -1 end,
-	function () sysGeneral.clock:actuate(1) end))
-
+if kc_has_clock == true then
+	runwayEntryProc:addItem(ProcedureItem:new("CLOCK","START",FlowItem.actorFO,0,
+		function () return sysGeneral.clock:getStatus() == kc_et_timer_on end,
+		function () sysGeneral.clock:setValue(kc_et_timer_on) end))
+end
 
 -- =====================================================================================================================
 
@@ -930,7 +935,7 @@ flapsUpProc:addItem(ProcedureItem:new("FLAPS ".. kc_pref_split(kc_TakeoffFlaps)[
 		kc_speakNoText(0,"speed check flaps " .. kc_pref_split(kc_TakeoffFlaps)[1]) 
 	end))
 flapsUpProc:addItem(HoldProcedureItem:new("A/P 1","ACTIVATE",FlowItem.actorCPT))
-flapsUpProc:addItem(HoldProcedureItem:new("A/P","ON",FlowItem.actorPF,
+flapsUpProc:addItem(ProcedureItem:new("A/P 1","ON",FlowItem.actorPF,0,true,
 	function () 
 		sysMCP.ap1Switch:actuate(1) 
 	end))
@@ -1179,9 +1184,11 @@ end
 local afterLandingProc = Procedure:new("AFTER LANDING","")
 afterLandingProc:setFlightPhase(15)
 
-afterLandingProc:addItem(ProcedureItem:new("CLOCK","STOP",FlowItem.actorFO,0,
-	function () return sysGeneral.clock:getStatus() == 0 end,
-	function () sysGeneral.clock:actuate(0) end))
+if kc_has_clock == true then
+	afterLandingProc:addItem(ProcedureItem:new("CLOCK","STOP",FlowItem.actorFO,0,
+		function () return sysGeneral.clock:getStatus() == kc_et_timer_off end,
+		function () sysGeneral.clock:actuate(kc_et_timer_off) end))
+end
 afterLandingProc:addItem(ProcedureItem:new("AILERON & RUDDER TRIM","RESET",FlowItem.actorFO,0,
 	function () return 
 		get("sim/cockpit2/controls/aileron_trim") == 0 and
@@ -1237,7 +1244,7 @@ if kc_has_apu == true then
 			kc_procvar_set("apustart",true)
 			kc_procvar_set("apuonline",true)
 		end,
-		function () return activeBriefings:get("approach:activateAPUafterLand") == 2 end))
+		function () return activeBriefings:get("approach:activateAPUafterLand") == 2 or sysElectric.apuRunningAnc:getStatus() > 0 end))
 end
 afterLandingProc:addItem(ProcedureItem:new("ENGINE ANTI-ICE","OFF",FlowItem.actorFO,0,
 	function () return sysAice.engAntiIceGroup:getStatus() == 0 end,
@@ -1324,13 +1331,15 @@ else
 		function () return get("sim/cockpit2/engine/actuators/mixture_ratio_all") <= 0 end,
 		function () set("sim/cockpit2/engine/actuators/mixture_ratio_all",0) end))
 end
-shutdownProc:addItem(ProcedureItem:new("CHRONO","STOP",FlowItem.actorCPT,0,
-	function () return sysGeneral.chrono:getStatus() > 0 end,
-	function () 
-		if sysGeneral.chrono:getStatus() > 0 then 
-			sysGeneral.chrono:actuate(1)
-		end
-	end))
+if kc_has_chrono == true then
+	shutdownProc:addItem(ProcedureItem:new("CHRONO","STOP",FlowItem.actorCPT,0,
+		function () return sysGeneral.chrono:getStatus() > 0 end,
+		function () 
+			if sysGeneral.chrono:getStatus() > 0 then 
+				sysGeneral.chrono:actuate(1)
+			end
+		end))
+end
 
 shutdownProc:addItem(ProcedureItem:new("SEAT BELT SIGNS","OFF",FlowItem.actorFO,0,
 	function () return sysGeneral.seatBeltSwitch:getStatus() == 0 end,
@@ -1381,7 +1390,12 @@ if kc_has_hyd_elec_pmps == true then
 		function () sysHydraulic.elecHydPumpGroup:actuate(0) end))
 end
 if kc_has_apu == true then
-	shutdownProc:addItem(ProcedureItem:new("APU","SHUTDOWN",FlowItem.actorFO,0,
+	shutdownProc:addItem(HoldProcedureItem:new("APU","SHUTDOWN",FlowItem.actorCAPT,nil,
+		function () return 
+			activeBriefings:get("approach:activateAPUafterLand") == 2 or
+			activeBriefings:get("approach:powerAtGate") == 2 
+		end))
+	shutdownProc:addItem(ProcedureItem:new("APU","SHUTTING DOWN",FlowItem.actorFO,0,
 		function () return sysElectric.apuRunningAnc:getStatus() == 0 end,
 		function () sysElectric.apuStartSwitch:actuate(0) end,
 		function () return 
@@ -1392,7 +1406,6 @@ end
 shutdownProc:addItem(ProcedureItem:new("DOOR","OPEN",FlowItem.actorFO,0,
 	function () return sysGeneral.doorGroup:getStatus() > 0 end,
 	function () sysGeneral.doorL1:actuate(1) end))	
-	
 	
 -- ======== STATES =============
 
@@ -1507,4 +1520,3 @@ end
 return SOP_DFLT
 
 -- A33L
--- beacon gets turned off befroe takeoff

@@ -47,5 +47,26 @@ sysElectric.gpuGenBus2 		= InopSwitch:new("gpubus2")
 sysElectric.gpuGenBusGroup	= SwitchGroup:new("gpubussgroup")
 sysElectric.gpuGenBusGroup:addSwitch(sysElectric.gpuGenBus1)
 sysElectric.gpuGenBusGroup:addSwitch(sysElectric.gpuGenBus2)
-	
+
+-- ----- APU
+sysElectric.apuGenBusGroup	= SwitchGroup:new("apubussgroup")
+sysElectric.apuMaster	 	= TwoStateDrefSwitch:new("apuswitch","sim/cockpit2/electrical/APU_starter_switch",0)
+sysElectric.apuStartSwitch 	= TwoStateDrefSwitch:new("apuswitch","sim/cockpit2/electrical/APU_starter_switch",0)
+sysElectric.apuGenBus1 		= TwoStateDrefSwitch:new("apubus1","sim/cockpit/electrical/generator_apu_on",0)
+sysElectric.apuGenBus2 		= InopSwitch:new("apubus2")
+sysElectric.apuGenBusGroup:addSwitch(sysElectric.apuGenBus1)
+sysElectric.apuGenBusGroup:addSwitch(sysElectric.apuGenBus2)
+
+-- APU RUNNING annunciator
+sysElectric.apuRunningAnc 	= CustomAnnunciator:new("apurunning",
+	function () 
+		if get("sim/cockpit/engine/APU_N1") == 100 then
+			return 1
+		else
+			return 0
+		end
+	end)
+sysElectric.gpuOnBus = SimpleAnnunciator:new("","xcraft/electric/GPU_sw",0)
+
+
 return sysElectric

@@ -28,7 +28,7 @@ local drefNav1Flip 			= "sim/cockpit2/radios/actuators/nav1_right_is_selected"
 local drefNav2Flip 			= "sim/cockpit2/radios/actuators/nav2_right_is_selected"
 local drefAdf1Flip 			= "sim/cockpit2/radios/actuators/adf1_right_is_selected"
 local drefAdf2Flip 			= "sim/cockpit2/radios/actuators/adf2_right_is_selected"
-local drefXpdrSwitch 		= "sim/cockpit/radios/transponder_mode"
+local drefXpdrSwitch 		= "sim/cockpit2/radios/actuators/transponder_mode"
 local drefXpdrCode 			= "sim/cockpit2/radios/actuators/transponder_code"
 
 --------- Annunciator datarefs common

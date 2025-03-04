@@ -32,3 +32,7 @@ kc_has_avionics_sw  = false		-- Aircraft has Avionics switch
 kc_fuel_ld_button	= false		-- Load the aircraft fuel from kpxbrief	
 kc_pld_ld_button	= false		-- Load the aircraft payload from kpxbrief	
 kc_has_toc			= true		-- Airctaft has a takeof config check button
+kc_has_chrono		= true		-- Aircraft has a chrono stopwatch
+kc_has_clock		= true		-- Aircraft has a clock stopwatch
+kc_et_timer_on		= -1
+kc_et_timer_off		= 0
