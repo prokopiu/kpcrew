@@ -423,6 +423,21 @@ function kc_macro_set_xpdrmode(mode)
 	end
 end
 
+-- Airbus set EngineMode 0=off 1=ign/start 2=crank
+function kc_macro_set_eng_mode(mode)
+	if mode == 0 then
+		command_once("laminar/A333/switch/eng_mode_right")
+		command_once("laminar/A333/switch/eng_mode_right")
+		command_once("laminar/A333/switch/eng_mode_left")
+	elseif mode == 1 then
+		command_once("laminar/A333/switch/eng_mode_right")
+		command_once("laminar/A333/switch/eng_mode_right")
+	elseif mode == 2 then
+		command_once("laminar/A333/switch/eng_mode_left")
+		command_once("laminar/A333/switch/eng_mode_left")
+	end
+end
+
 -- Start engines 
 function kc_bck_start_engine(trigger)
 	local delayvar = trigger .. "delay"
@@ -431,7 +446,7 @@ function kc_bck_start_engine(trigger)
 	end
 	if kc_procvar_get(delayvar) == -1 then
 		kc_procvar_set(delayvar,20)
-		command_once("laminar/A333/switch/eng_mode_right")
+		
 		if trigger == "engstart1" then
 			set("laminar/A333/switches/engine1_start_pos",1)
 		end
@@ -440,7 +455,6 @@ function kc_bck_start_engine(trigger)
 		end
 	else
 		if kc_procvar_get(delayvar) <= 0 then
-			command_once("laminar/A333/switch/eng_mode_left")
 			kc_procvar_set(trigger,false)
 			kc_procvar_set(delayvar,-1)
 		else

@@ -824,9 +824,7 @@ end
 function kc_macro_mcp_preflight()
 	sysMCP.fdirGroup:actuate(1)
 	sysMCP.athrSwitch:actuate(0)
-	sysMCP.iasSelector:setValue(activePrefSet:get("aircraft:mcp_def_spd"))
-	sysMCP.hdgSelector:setValue(activePrefSet:get("aircraft:mcp_def_hdg"))
-	sysMCP.altSelector:setValue(activePrefSet:get("aircraft:mcp_def_alt"))
+	sysMCP.altSelector:setValue(activeBriefings:get("departure:initAlt"))
 	sysMCP.vspSelector:actuate(0)
 	sysMCP.discAPSwitch:actuate(0)
 end
@@ -900,6 +898,17 @@ function kc_bck_apuonline(trigger)
 	end
 end
 
+-- Airbus set EngineMode 0=off 1=ign/start 2=crank
+function kc_macro_set_eng_mode(mode)
+	if mode == 0 then
+		command_once("toliss_airbus/engcommands/EngineModeSwitchToNorm")
+	elseif mode == 1 then
+		command_once("toliss_airbus/engcommands/EngineModeSwitchToStart")
+	elseif mode == 2 then
+		command_once("toliss_airbus/engcommands/EngineModeSwitchToCrank")
+	end
+end
+
 -- Start engines 
 function kc_bck_start_engine(trigger)
 	local delayvar = trigger .. "delay"
@@ -908,7 +917,6 @@ function kc_bck_start_engine(trigger)
 	end
 	if kc_procvar_get(delayvar) == -1 then
 		kc_procvar_set(delayvar,20)
-		command_once("toliss_airbus/engcommands/EngineModeSwitchToStart")
 		if trigger == "engstart1" then
 			command_once("toliss_airbus/engcommands/Master1On")
 		end
@@ -923,7 +931,6 @@ function kc_bck_start_engine(trigger)
 		end
 	else
 		if kc_procvar_get(delayvar) <= 0 then
-			command_once("toliss_airbus/engcommands/EngineModeSwitchToNorm")
 			kc_procvar_set(trigger,false)
 			kc_procvar_set(delayvar,-1)
 		else

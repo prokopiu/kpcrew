@@ -56,7 +56,19 @@ activeSOP:getFlow(1):addItem(ProcedureItem:new("CREW SUPPLY","AUTO",FlowItem.act
 	function () set("AirbusFBW/CrewOxySwitch",1) end))
 activeSOP:getFlow(1):addItem(ProcedureItem:new("PACK FLOW","NORMAL",FlowItem.actorFO,0,
 	function () return get("ckpt/oh/packFlow") == 1 end,
-	function () set("ckpt/oh/packFlow",1) end))	
+	function () set("ckpt/oh/packFlow",1) end))
+activeSOP:getFlow(1):addItem(ProcedureItem:new("RMPS","ON",FlowItem.actorFO,0,
+	function () return 
+		get("AirbusFBW/RMP1Switch") +
+		get("AirbusFBW/RMP2Switch") + 
+		get("AirbusFBW/RMP3Switch") == 3
+	end,
+	function () 
+		set("AirbusFBW/RMP1Switch",1) 
+		set("AirbusFBW/RMP2Switch",1) 
+		set("AirbusFBW/RMP3Switch",1) 
+	end))	
+	
 
 -- before start
 activeSOP:getFlow(2):addItem(ProcedureItem:new("ELEC HYD PUMP","OFF",FlowItem.actorFO,0,
@@ -74,3 +86,6 @@ activeSOP:getFlow(16):addItem(ProcedureItem:new("EMER LTS","OFF",FlowItem.actorF
 	function () set_array("AirbusFBW/OHPLightSwitches",10,0) end))
 	
 return SOP_A3TL
+
+-- toliss Airbusses
+-- engines do not start immediately.

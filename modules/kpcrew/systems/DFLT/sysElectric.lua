@@ -71,7 +71,7 @@ sysElectric.apuGenBusGroup:addSwitch(sysElectric.apuGenBus2)
 -- APU RUNNING annunciator
 sysElectric.apuRunningAnc 	= CustomAnnunciator:new("apurunning",
 	function () 
-		if get("laminar/A333/annun/apu_avail") == 1 then
+		if get("sim/aircraft/electrical/bus_apu_is_on") == 1 then
 			return 1
 		else
 			return 0

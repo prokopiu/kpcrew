@@ -87,13 +87,13 @@ elseif PLANE_ICAO == "E190" and PLANE_TAILNUMBER == "E195" then
 	kh_acf_icao = "E1FF"
 
 -- ToLiss Airbusses
--- elseif PLANE_ICAO == "A321" then
-	-- kc_acf_icao = "A3TL"
--- elseif PLANE_ICAO == "A339" then
-	-- kc_acf_icao = "A3TL"
 elseif PLANE_ICAO == "A319" and PLANE_TAILNUMBER == "C-GTLS" then
 	kc_acf_icao = "A3TL"
--- elseif PLANE_ICAO == "A20N" and PLANE_TAILNUMBER == "C-GTLT" then
+elseif PLANE_ICAO == "A20N" and PLANE_TAILNUMBER == "C-GTLT" then
+	kc_acf_icao = "A3TL"
+elseif PLANE_ICAO == "A321" then
+	kc_acf_icao = "A3TL"
+-- elseif PLANE_ICAO == "A339" then
 	-- kc_acf_icao = "A3TL"
 -- elseif PLANE_ICAO == "A346" then
 	-- kc_acf_icao = "A3TL"

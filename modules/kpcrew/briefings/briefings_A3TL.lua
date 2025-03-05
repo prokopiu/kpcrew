@@ -36,3 +36,6 @@ kc_has_chrono		= true		-- Aircraft has a chrono stopwatch
 kc_has_clock		= true		-- Aircraft has a clock stopwatch
 kc_et_timer_on		= -1
 kc_et_timer_off		= 0
+kc_ab_engm_norm		= 1			-- Airbus engine mode norm
+kc_ab_engm_strt		= 2			-- Airbus engine mode start
+kc_ab_engm_crnk		= 0			-- Airbus engine mode crank

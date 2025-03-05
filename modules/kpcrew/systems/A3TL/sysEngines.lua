@@ -31,4 +31,7 @@ sysEngines.engStarterGroup:addSwitch(sysEngines.engStart2Switch)
 sysEngines.engStarterGroup:addSwitch(sysEngines.engStart3Switch)
 sysEngines.engStarterGroup:addSwitch(sysEngines.engStart4Switch)
 
+sysEngines.engIgnitionGroup	= TwoStateCmdSwitch:new("engmode","AirbusFBW/anim/ENGModeSwitch",0,
+	"toliss_airbus/engcommands/EngineModeSwitchToStart","toliss_airbus/engcommands/EngineModeSwitchToNorm","nocommand")
+
 return sysEngines

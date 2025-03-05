@@ -584,9 +584,9 @@ afterStartProc:addItem(ProcedureItem:new("EXTERNAL LIGHTS","AS REQUIRED",FlowIte
 	function () kc_macro_lights_before_taxi() end))	
 afterStartProc:addItem(ProcedureItem:new("AIRCOND PANEL","SET",FlowItem.actorFO,0,
 	function () return 
-		get("aerobask/airco/sw_ckpt_fan") == 0 and 
-		get("aerobask/airco/sw_cabin_fan") == 0 and 
-		get("aerobask/airco/sw_mode") == 0
+		get("aerobask/airco/sw_ckpt_fan") == 1 and 
+		get("aerobask/airco/sw_cabin_fan") == 1 and 
+		get("aerobask/airco/sw_mode") == 1
 	end,
 	function () 
 		set("aerobask/airco/knob_ckpt_temp",0.5)
@@ -880,8 +880,7 @@ landingCheck:addItem(ChecklistItem:new("LANDING GEAR","DOWN",FlowItem.actorPM,0,
 		sysGeneral.GearSwitch:actuate(1) 
 	end))
 landingCheck:addItem(ChecklistItem:new("FLAPS","SET FOR LANDING",FlowItem.actorPM,0,
-	function () return get("sim/cockpit2/controls/flap_ratio") > 0.666 end,
-	function () kc_macro_set_flap(activeBriefings:get("approach:flaps")-1) end))
+	function () return get("sim/cockpit2/controls/flap_ratio") > 0.666 end))
 landingCheck:addItem(ChecklistItem:new("YAW DAMPER","OFF",FlowItem.actorPM,0,
 	function () return get("sim/cockpit2/switches/yaw_damper_on") == 0 end,
 	function () set("sim/cockpit2/switches/yaw_damper_on",0) end))

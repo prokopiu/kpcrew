@@ -92,6 +92,10 @@ kc_et_timer_off		= 0
 kc_is_airbus		= false		-- Aircraft is an Airbus
 kc_is_boeing		= false		-- Aircraft is a Boeing
 
+kc_ab_engm_norm		= 1			-- Airbus engine mode norm
+kc_ab_engm_strt		= 2			-- Airbus engine mode start
+kc_ab_engm_crnk		= 0			-- Airbus engine mode crank
+
 kc_fuel_ld_button	= true		-- Load the aircraft fuel from kpxbrief	
 kc_pld_ld_button	= true		-- Load the aircraft payload from kpxbrief	
 

@@ -480,7 +480,11 @@ if kc_has_press_cab == true then
 		function () return sysAir.packSwitchGroup:getStatus() == 0 end,
 		function () sysAir.packSwitchGroup:actuate(0) end))
 end
-if kc_is_airbus == false then
+if kc_is_airbus == true then
+	engStartProc:addItem(IndirectProcedureItem:new("ENGINE MODE","IGN/START",FlowItem.actorFO,0,"ignitionstart",
+		function () return sysEngines.engIgnitionGroup:getStatus() == kc_ab_engm_strt end,
+		function () kc_macro_set_eng_mode(1) end))
+else
 	engStartProc:addItem(IndirectProcedureItem:new("IGNITION","BOTH AUTO",FlowItem.actorFO,0,"ignitionstart",
 		function () return sysEngines.engIgnitionGroup:getStatus() > 0 end,
 		function () sysEngines.engIgnitionGroup:actuate(1) end))
@@ -580,6 +584,11 @@ engStartProc:addItem(ProcedureItem:new("PARKING BRAKE","SET",FlowItem.actorFO,0,
 			kc_speakNoText(0,"Set parking brake when push finished")
 		end
 	end))
+if kc_is_airbus == true then
+	engStartProc:addItem(ProcedureItem:new("ENGINE MODE","NORM",FlowItem.actorFO,0,
+		function () return sysEngines.engIgnitionGroup:getStatus() == kc_ab_engm_norm end,
+		function () kc_macro_set_eng_mode(0) end))
+end
 if kc_has_press_cab == true then
 	engStartProc:addItem(ProcedureItem:new("PACK SWITCHES","ON",FlowItem.actorFO,0,
 		function () 
@@ -1296,6 +1305,7 @@ taxiLightOff:addItem(ProcedureItem:new("TAXI LIGHT","OFF",FlowItem.actorFO,0,
 local shutdownProc = Procedure:new("SHUTDOWN PROCEDURE","","")
 shutdownProc:setFlightPhase(17)
 
+shutdownProc:addItem(HoldProcedureItem:new("ELECTRIC POWER ESTABLISHED","SET AND CHECK",FlowItem.actorCPT))
 shutdownProc:addItem(IndirectProcedureItem:new("THROTTLES","IDLE",FlowItem.actorFO,0,"throttleidleend",
 	function ()
 		return get("sim/cockpit2/engine/actuators/throttle_ratio_all") < 0.3
@@ -1389,20 +1399,20 @@ if kc_has_hyd_elec_pmps == true then
 		function () return sysHydraulic.elecHydPumpGroup:getStatus() == 0 end,
 		function () sysHydraulic.elecHydPumpGroup:actuate(0) end))
 end
-if kc_has_apu == true then
-	shutdownProc:addItem(HoldProcedureItem:new("APU","SHUTDOWN",FlowItem.actorCAPT,nil,
-		function () return 
-			activeBriefings:get("approach:activateAPUafterLand") == 2 or
-			activeBriefings:get("approach:powerAtGate") == 2 
-		end))
-	shutdownProc:addItem(ProcedureItem:new("APU","SHUTTING DOWN",FlowItem.actorFO,0,
-		function () return sysElectric.apuRunningAnc:getStatus() == 0 end,
-		function () sysElectric.apuStartSwitch:actuate(0) end,
-		function () return 
-			activeBriefings:get("approach:activateAPUafterLand") == 2 or
-			activeBriefings:get("approach:powerAtGate") == 2 
-		end))
-end
+-- if kc_has_apu == true then
+	-- shutdownProc:addItem(HoldProcedureItem:new("APU","SHUTDOWN",FlowItem.actorCAPT,nil,
+		-- function () return 
+			-- activeBriefings:get("approach:activateAPUafterLand") == 2 or
+			-- activeBriefings:get("approach:powerAtGate") == 2 
+		-- end))
+	-- shutdownProc:addItem(ProcedureItem:new("APU","SHUTTING DOWN",FlowItem.actorFO,0,
+		-- function () return sysElectric.apuRunningAnc:getStatus() == 0 end,
+		-- function () sysElectric.apuStartSwitch:actuate(0) end,
+		-- function () return 
+			-- activeBriefings:get("approach:activateAPUafterLand") == 2 or
+			-- activeBriefings:get("approach:powerAtGate") == 2 
+		-- end))
+-- end
 shutdownProc:addItem(ProcedureItem:new("DOOR","OPEN",FlowItem.actorFO,0,
 	function () return sysGeneral.doorGroup:getStatus() > 0 end,
 	function () sysGeneral.doorL1:actuate(1) end))	
