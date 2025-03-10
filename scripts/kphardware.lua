@@ -32,10 +32,18 @@ if PLANE_ICAO == "B738" then
 		kh_acf_icao = "B738" -- Zibo Mod and variants
 	end
 
+-- Epic Victory Aerobask
+elseif PLANE_ICAO == "EVIC" then
+	kh_acf_icao = "EVIC"
+	
 -- FF A350
 -- elseif PLANE_ICAO == "A359" then
 	-- kh_acf_icao = "A359"
-
+	
+-- Laminar SF50
+elseif PLANE_ICAO == "SF50" then
+	kh_acf_icao = "SF50"
+	
 -- XP12 Citation X
 elseif PLANE_ICAO == "C750" and PLANE_TAILNUMBER == "N750XP" then
 	kh_acf_icao = "C750"
@@ -956,8 +964,8 @@ end
 
 -- regularly update the drefs for annunciators and lights (every 1 second)
 do_often("xsp_set_light_drefs()")
-add_macro("KPHardware Toggle MCP Bar", "show_mcp_panel = not show_mcp_panel\nif show_mcp_panel then kh_init_mcp_window() else kh_hide_mcp_wnd() end")
-add_macro("KPHardware Toggle Light Bar", "show_light_panel = not show_light_panel\nif show_light_panel then kh_init_light_window() else kh_hide_light_wnd() end")
-add_macro("KPHardware Toggle Radio Bar", "show_radio_panel = not show_radio_panel\nif show_radio_panel then kh_init_radio_window() else kh_hide_radio_wnd() end")
-add_macro("KPHardware Toggle EFIS Bar", "show_efis_panel = not show_efis_panel\nif show_efis_panel then kh_init_efis_window() else kh_hide_efis_wnd() end")
+-- add_macro("KPHardware Toggle MCP Bar", "show_mcp_panel = not show_mcp_panel\nif show_mcp_panel then kh_init_mcp_window() else kh_hide_mcp_wnd() end")
+-- add_macro("KPHardware Toggle Light Bar", "show_light_panel = not show_light_panel\nif show_light_panel then kh_init_light_window() else kh_hide_light_wnd() end")
+-- add_macro("KPHardware Toggle Radio Bar", "show_radio_panel = not show_radio_panel\nif show_radio_panel then kh_init_radio_window() else kh_hide_radio_wnd() end")
+-- add_macro("KPHardware Toggle EFIS Bar", "show_efis_panel = not show_efis_panel\nif show_efis_panel then kh_init_efis_window() else kh_hide_efis_wnd() end")
 
