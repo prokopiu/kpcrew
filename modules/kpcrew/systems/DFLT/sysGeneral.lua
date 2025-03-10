@@ -300,7 +300,8 @@ sysGeneral.wiperGroup:addSwitch(sysGeneral.wiperLeft)
 sysGeneral.wiperGroup:addSwitch(sysGeneral.wiperRight)
 
 -- Baro standard toggle
-sysGeneral.barostdPilot 	= InopSwitch:new("barostdpilot")
+sysGeneral.barostdPilot 	= TwoStateToggleSwitch:new("barostdpilot","sim/cockpit/misc/barometer_setting",0,
+	"sim/instruments/barometer_std")
 sysGeneral.barostdCopilot 	= InopSwitch:new("barostdcopilot")
 sysGeneral.barostdStandby 	= InopSwitch:new("barostdstandby")
 sysGeneral.barostdGroup 	= SwitchGroup:new("barostdgroup")
@@ -367,6 +368,22 @@ function ()
 end)
 
 sysGeneral.chrono			= InopSwitch:new("chrono")
-sysGeneral.clock			= InopSwitch:new("clock")
+sysGeneral.clock			= TwoStateCustomSwitch:new("clock","sim/cockpit2/clock_timer/chrono_running",-1,
+	function ()
+		set_array("sim/cockpit2/clock_timer/chrono_running",0,kc_et_timer_on)
+	end,
+	function ()
+		set_array("sim/cockpit2/clock_timer/chrono_running",0,kc_et_timer_off)
+	end,
+	function ()
+		set_array("sim/cockpit2/clock_timer/chrono_time",0,0)
+	end,
+	function ()
+		if get("sim/cockpit2/clock_timer/chrono_running",0) == kc_et_timer_on then
+			return 1
+		else
+			return 0
+		end
+	end)
 
 return sysGeneral

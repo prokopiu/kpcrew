@@ -3,7 +3,8 @@
 
 -- @classmod sysRadio
 -- @author Kosta Prokopiu
--- @copyright 2022 Kosta Prokopiu
+-- @copyright 2025 Kosta Prokopiu
+
 local sysRadios = {
 }
 
@@ -147,58 +148,38 @@ sysRadios.adf2StandbyFreq 	= SimpleAnnunciator:new("",drefAdf2StandbyFreq,0)
 sysRadios.xpdrSwitch 		= TwoStateDrefSwitch:new ("xpdrmode",drefXpdrSwitch,0)
 sysRadios.xpdrCode 			= TwoStateDrefSwitch:new ("xpdrcode",drefXpdrCode,0)
 
--- render the MCP part
-function sysRadios:render(ypos,height)
+-- ===== UI related functions =====
 
-	-- reposition when screen size changes
-	if  kh_radio_wnd_state < 0 then
-		float_wnd_set_position(kh_radio_wnd, 0, kh_scrn_height - ypos)
-		float_wnd_set_geometry(kh_radio_wnd,  0, ypos, 25, ypos-height)
-		kh_radio_wnd_state = 0
-	end
-	
-	imgui.SetCursorPosY(10)
-	imgui.SetCursorPosX(2)
-	
-	if kh_radio_wnd_state == 1 then
-		imgui.Button("<", 17, 60)
-		if imgui.IsItemActive() then 
-			kh_radio_wnd_state = 0
-			float_wnd_set_geometry(kh_radio_wnd, 0, ypos, 25, ypos-height)
+function sysRadios:panel_render()
+	imgui.BeginGroup()
+		imgui.TextUnformatted("  RADIOS ")
+		kc_imgui_label_mcp(" ",10)
+		imgui.SameLine()		kc_imgui_com_radio("COM1:",sysRadios.com1StbyCourse,sysRadios.com1StbyFine,sysRadios.com1StandbyFreq,sysRadios.com1ActiveFreq,sysRadios.com1Flip,10,21)
+		kc_imgui_label_mcp(" ",10)
+		imgui.SameLine()
+		kc_imgui_com_radio("COM2:",sysRadios.com2StbyCourse,sysRadios.com2StbyFine,sysRadios.com2StandbyFreq,sysRadios.com2ActiveFreq,sysRadios.com2Flip,45,31)
+		kc_imgui_label_mcp(" ",10)
+		imgui.SameLine()
+		kc_imgui_nav_radio("NAV1:",sysRadios.nav1StbyCourse,sysRadios.nav1StbyFine,sysRadios.nav1StandbyFreq,sysRadios.nav1ActiveFreq,sysRadios.nav1Flip,10,22)
+		kc_imgui_label_mcp(" ",10)
+		imgui.SameLine()
+		kc_imgui_nav_radio("NAV2:",sysRadios.nav2StbyCourse,sysRadios.nav2StbyFine,sysRadios.nav2StandbyFreq,sysRadios.nav2ActiveFreq,sysRadios.nav2Flip,45,32)
+		kc_imgui_label_mcp(" ",10)
+		imgui.SameLine()
+		kc_imgui_adf_radio("ADF1:",sysRadios.adf1StbyCourse,sysRadios.adf1StbyFine,sysRadios.adf1StandbyFreq,sysRadios.adf1ActiveFreq,sysRadios.adf1Flip,10,23)
+		kc_imgui_label_mcp(" ",10)
+		imgui.SameLine()
+		kc_imgui_adf_radio("ADF2:",sysRadios.adf2StbyCourse,sysRadios.adf2StbyFine,sysRadios.adf2StandbyFreq,sysRadios.adf2ActiveFreq,sysRadios.adf2Flip,45,33)
+		
+		if kc_has_transponder then
+			kc_imgui_label_mcp(" ",10)
+			imgui.SameLine()
+			kc_imgui_number_mcp("XPDR: %04d",sysRadios.xpdrCode,10,11)
+			imgui.SameLine()
+			kc_imgui_simple_button_mcp("OFF",sysRadios.xpdrSwitch,10,42,25)
 		end
-	end
-
-	if kh_radio_wnd_state == 0 then
-		imgui.Button("R", 17, 60)
-		if imgui.IsItemActive() then 
-			kh_radio_wnd_state = 1
-			float_wnd_set_geometry(kh_radio_wnd, 0, ypos, 840, ypos-height)
-		end
-	end
-
-	imgui.SameLine()
-	kc_imgui_com_radio("COM1:",sysRadios.com1StbyCourse,sysRadios.com1StbyFine,sysRadios.com1StandbyFreq,sysRadios.com1ActiveFreq,sysRadios.com1Flip,10,21)
-	imgui.SameLine()
-	kc_imgui_label_mcp("|",10)
-	imgui.SameLine()
-	kc_imgui_nav_radio("NAV1:",sysRadios.nav1StbyCourse,sysRadios.nav1StbyFine,sysRadios.nav1StandbyFreq,sysRadios.nav1ActiveFreq,sysRadios.nav1Flip,10,22)
-	imgui.SameLine()
-	kc_imgui_label_mcp("|",10)
-	imgui.SameLine()
-	kc_imgui_adf_radio("ADF1:",sysRadios.adf1StbyCourse,sysRadios.adf1StbyFine,sysRadios.adf1StandbyFreq,sysRadios.adf1ActiveFreq,sysRadios.adf1Flip,10,23)
-	
-	imgui.SetCursorPosX(25)
-	kc_imgui_com_radio("COM2:",sysRadios.com2StbyCourse,sysRadios.com2StbyFine,sysRadios.com2StandbyFreq,sysRadios.com2ActiveFreq,sysRadios.com2Flip,45,31)
-	imgui.SameLine()
-	kc_imgui_label_mcp("|",45)
-	imgui.SameLine()
-	kc_imgui_nav_radio("NAV2:",sysRadios.nav2StbyCourse,sysRadios.nav2StbyFine,sysRadios.nav2StandbyFreq,sysRadios.nav2ActiveFreq,sysRadios.nav2Flip,45,32)
-	imgui.SameLine()
-	kc_imgui_label_mcp("|",45)
-	imgui.SameLine()
-	kc_imgui_adf_radio("ADF2:",sysRadios.adf2StbyCourse,sysRadios.adf2StbyFine,sysRadios.adf2StandbyFreq,sysRadios.adf2ActiveFreq,sysRadios.adf2Flip,45,33)
-	imgui.SameLine()
-
+		imgui.Separator()
+	imgui.EndGroup()
 end
 
 return sysRadios

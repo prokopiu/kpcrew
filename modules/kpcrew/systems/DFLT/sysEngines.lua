@@ -97,7 +97,8 @@ function ()
 end)
 
 -- ignition
-sysEngines.engIgnition1	= TwoStateDrefSwitch:new("ignition1","sim/cockpit2/engine/actuators/auto_ignite_on",-1)
+sysEngines.engIgnition1	= TwoStateDrefSwitch:new("ignition1","sim/cockpit2/engine/actuators/auto_ignite_on",-1,
+	"aerobask/igniter_toggle")
 sysEngines.engIgnition2	= TwoStateDrefSwitch:new("ignition2","sim/cockpit2/engine/actuators/auto_ignite_on",1)
 sysEngines.engIgnition3	= TwoStateDrefSwitch:new("ignition3","sim/cockpit2/engine/actuators/auto_ignite_on",2)
 sysEngines.engIgnition4	= TwoStateDrefSwitch:new("ignition4","sim/cockpit2/engine/actuators/auto_ignite_on",3)

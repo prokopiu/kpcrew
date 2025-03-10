@@ -45,6 +45,22 @@ sysGeneral.doorGroup:addSwitch(sysGeneral.doorACargo)
 sysGeneral.doorGroup:addSwitch(sysGeneral.cockpitDoor)
 sysGeneral.doorGroup:addSwitch(sysGeneral.stairsL1)
 
-sysGeneral.clock			= TwoStateDrefSwitch:new("clock","sim/cockpit2/clock_timer/chrono_running",-1)
+sysGeneral.clock			= TwoStateCustomSwitch:new("clock","sim/cockpit2/clock_timer/chrono_running",-1,
+	function ()
+		set_array("sim/cockpit2/clock_timer/chrono_running",0,kc_et_timer_on)
+	end,
+	function ()
+		set_array("sim/cockpit2/clock_timer/chrono_running",0,kc_et_timer_off)
+	end,
+	function ()
+		set_array("sim/cockpit2/clock_timer/chrono_time",0,0)
+	end,
+	function ()
+		if get("sim/cockpit2/clock_timer/chrono_running",0) == kc_et_timer_on then
+			return 1
+		else
+			return 0
+		end
+	end)
 
 return sysGeneral

@@ -3,7 +3,7 @@
 
 -- @classmod sysRadios
 -- @author Kosta Prokopiu
--- @copyright 2024 Kosta Prokopiu
+-- @copyright 2025 Kosta Prokopiu
 
 local TwoStateDrefSwitch 	= require "kpcrew.systems.TwoStateDrefSwitch"
 local TwoStateCmdSwitch	 	= require "kpcrew.systems.TwoStateCmdSwitch"
@@ -18,7 +18,7 @@ local KeepPressedSwitchCmd	= require "kpcrew.systems.KeepPressedSwitchCmd"
 
 sysRadios = require("kpcrew.systems.DFLT.sysRadios")
 
-logMsg("TMPL sysRadios")
+logMsg("E1FF sysRadios")
 
 sysRadios.stby				= 1
 sysRadios.alt				= 2

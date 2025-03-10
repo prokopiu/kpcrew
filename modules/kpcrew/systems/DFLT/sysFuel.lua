@@ -45,6 +45,10 @@ sysFuel.allFuelPumpGroup:addSwitch(sysFuel.fuelPump4)
 sysFuel.crossFeed = TwoStateCmdSwitch:new("crossfeed","sim/cockpit2/fuel/auto_crossfeed",0,
 	"sim/fuel/auto_crossfeed_on_open","sim/fuel/auto_crossfeed_off")
 
+sysFuel.fuelSwitch1			= InopSwitch:new("fuelswitch1")
+sysFuel.fuelSwitchGroup 	= SwitchGroup:new("fuelswitches")
+sysFuel.fuelSwitchGroup:addSwitch(sysFuel.fuelSwitch1)
+
 ------------ Annunciators
 
 -- FUEL PRESSURE LOW annunciator

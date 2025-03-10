@@ -54,6 +54,9 @@ sysAir.engBleedGroup:addSwitch(sysAir.bleedEng2Switch)
 -- APU Bleed
 sysAir.apuBleedSwitch 		= TwoStateDrefSwitch:new("apubleed","sim/cockpit2/bleedair/actuators/apu_bleed",0)
 
+-- Oxygen Supply
+sysAir.oxygenMaster			= TwoStateDrefSwitch:new("oxygen","sim/cockpit2/oxygen/actuators/demand_flow_setting",0)
+
 -- ======= Annunciators
 
 -- ** VACUUM annunciator
