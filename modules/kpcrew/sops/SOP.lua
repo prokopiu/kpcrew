@@ -3,7 +3,8 @@
 --
 -- @classmod kcSOP
 -- @author Kosta Prokopiu
--- @copyright 2022 Kosta Prokopiu
+-- @copyright 2025 Kosta Prokopiu
+
 local kcSOP = {
 	phaseColdAndDark 	= 1,
 	phasePrelPreflight 	= 2,
@@ -305,7 +306,8 @@ end
 
 -- get the calculated height for the window
 function kcSOP:getWndHeight()
-	return self:getNumberOfFlows() * 23 + 12 + 27
+	return (kc_num_visible_sop_items +2 ) * 23 + 12 + 27
+	-- return self:getNumberOfFlows() * 23 + 12 + 27
 end
 
 -- get the max width of buttons in the list based on labels

@@ -4,7 +4,7 @@
 -- @author Kosta Prokopiu
 -- @copyright 2022 Kosta Prokopiu
 local khMultiStateCmdSwitch = { 
-	defaultDelay = 3 
+	defaultDelay = 10
 }
 
 local Switch = require "kpcrew.systems.Switch"
