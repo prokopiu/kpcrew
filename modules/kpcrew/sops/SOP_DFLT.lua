@@ -172,7 +172,15 @@ electricalPowerUpProc:addItem(ProcedureItem:new("LIGHTS","AS REQUIRED",FlowItem.
 	function () kc_macro_lights_preflight() end))
 electricalPowerUpProc:addItem(ProcedureItem:new("POWER LEVERS","IDLE",FlowItem.actorFO,0,
 	function () return sysEngines.throttlePos:getStatus() == 0 end,
-	function () sysEngines.throttlePos:actuate(0) end))
+	function () 
+		sysEngines.throttlePos:actuate(0) 
+		if kc_is_turboprop or kc_is_ga then
+			sysEngines.mixtureLever:actuate(kc_mixture_off)
+		end
+		if kc_has_proplever then
+			sysEngines.propLever:setValue(kc_prop_lvr_feather)
+		end	
+	end))
 if kc_has_hyd_eng_pmps then
 	electricalPowerUpProc:addItem(ProcedureItem:new("HYDRAULIC PUMPS","AS REQUIRED",FlowItem.actorFO,0,true,
 		function () kc_macro_hydraulic_initial() end))
@@ -299,7 +307,7 @@ end
 local beforeStart = Procedure:new("ENGINE START CHECKS","","")
 beforeStart:setFlightPhase(SOP.phaseBeforeStart)
 
-beforeStart:addItem(ProcedureItem:new("ELECTRICAL POWER UP","COMPLETE",FlowItem.actorFO,0,
+beforeStart:addItem(ProcedureItem:new("ELECTRICAL POWER UP (SKIP IF BATT ONLY)","COMPLETE",FlowItem.actorFO,0,
 	function () 
 		if kc_has_apu == false and kc_has_gpu == false then
 			return true
@@ -481,8 +489,16 @@ prePushStartProc:addItem(ProcedureItem:new("PARKING BRAKE","RELEASED",FlowItem.a
 	function () activeBckVars:set("general:timesOFF",kc_dispTimeHHMM(get("sim/time/zulu_time_sec"))) end,
 	function () return activeBriefings:get("taxi:pushDirection") == 1 end))
 prePushStartProc:addItem(ProcedureItem:new("THRUST LEVERS","IDLE",FlowItem.actorFO,0,
-	function () return get("sim/cockpit2/engine/actuators/throttle_ratio_all") == 0 end,
-	function () set("sim/cockpit2/engine/actuators/throttle_ratio_all",0) end))
+	function () return sysEngines.throttlePos:getStatus() == 0 end,
+	function () 
+		sysEngines.throttlePos:actuate(0) 
+		if kc_is_turboprop or kc_is_ga then
+			sysEngines.mixtureLever:actuate(kc_mixture_min)
+		end
+		if kc_has_proplever then
+			sysEngines.propLever:setValue(kc_prop_lvr_max)
+		end	
+	end))
 	
 -- =====================================================================================================================
 
@@ -518,9 +534,11 @@ engStartProc:addItem(ProcedureItem:new("START SEQUENCE","%s then %s|activeBriefi
 		kc_speakNoText(0,stext)
 	end))
 end
-engStartProc:addItem(ProcedureItem:new("FUEL SWITCH","ON",FlowItem.actorFO,0,
-	function () return sysFuel.fuelSwitchGroup:getStatus() == 1 end,
-	function () sysFuel.fuelSwitchGroup:actuate(1) end))
+if kc_has_fuel_select then
+	engStartProc:addItem(ProcedureItem:new("FUEL SWITCH","ON",FlowItem.actorFO,0,
+		function () return sysFuel.fuelSwitchGroup:getStatus() == 1 end,
+		function () sysFuel.fuelSwitchGroup:actuate(1) end))
+end
 if kc_has_press_cab == true then
 	engStartProc:addItem(IndirectProcedureItem:new("AIR CONDITIONING PACK SWITCHES","OFF",FlowItem.actorFO,0,"engstartpackoff",
 		function () return sysAir.packSwitchGroup:getStatus() == 0 end,
@@ -559,9 +577,15 @@ else
 	end
 end
 engStartProc:addItem(IndirectProcedureItem:new("POWER LEVERS","IDLE",FlowItem.actorCPT,3,"eng_start_1_lever",
-	function () return sysEngines.throttlePos:getStatus() == 0	end,
+	function () return sysEngines.throttlePos:getStatus() == 0 end,
 	function () 
-		command_once("sim/engines/throttle_idle")
+		sysEngines.throttlePos:actuate(0) 
+		if kc_is_turboprop or kc_is_ga then
+			sysEngines.mixtureLever:actuate(kc_mixture_min)
+		end
+		if kc_has_proplever then
+			sysEngines.propLever:setValue(kc_prop_lvr_max)
+		end	
 	end))
 if kc_get_nr_engines() == 1 then
 	engStartProc:addItem(IndirectProcedureItem:new("ENGINE START SWITCH","ENGAGE",FlowItem.actorFO,20,"eng_start_1_grd",
@@ -1543,6 +1567,22 @@ else
 	shutdownProc:addItem(IndirectProcedureItem:new("ENGINES","OFF",FlowItem.actorCPT,0,"throttlescutland",
 		function () return get("sim/cockpit2/engine/indicators/engine_speed_rpm",0) < 1500 end,
 		function () kc_macro_stop_engine() end))
+end
+shutdownProc:addItem(ProcedureItem:new("POWER LEVERS","CUT OFF",FlowItem.actorFO,0,
+	function () return sysEngines.throttlePos:getStatus() == 0 end,
+	function () 
+		sysEngines.throttlePos:actuate(0) 
+		if kc_is_turboprop or kc_is_ga then
+			sysEngines.mixtureLever:actuate(kc_mixture_off)
+		end
+		if kc_has_proplever then
+			sysEngines.propLever:setValue(kc_prop_lvr_feather)
+		end	
+	end))
+if kc_has_fuel_select then
+	shutdownProc:addItem(ProcedureItem:new("FUEL SWITCH","OFF",FlowItem.actorFO,0,
+		function () return sysFuel.fuelSwitchGroup:getStatus() == 0 end,
+		function () sysFuel.fuelSwitchGroup:actuate(0) end))
 end
 if kc_has_chrono == true then
 	shutdownProc:addItem(ProcedureItem:new("CHRONO","STOP",FlowItem.actorCPT,0,

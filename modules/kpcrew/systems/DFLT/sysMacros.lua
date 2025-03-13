@@ -22,6 +22,14 @@ function kc_macro_state_cold_and_dark()
 	kc_macro_lights_cold_dark()
 	kc_macro_doors_cold_dark()
 	kc_macro_mcp_cold_dark()
+
+	if kc_is_turboprop or kc_is_ga then
+		sysEngines.mixtureLever:actuate(0)
+	end
+
+	if kc_has_proplever then
+		sysEngines.propLever:setValue(kc_prop_lvr_feather)
+	end
 	
 	if kc_has_irs == true then
 		kc_macro_set_irs(0)
@@ -59,8 +67,10 @@ function kc_macro_state_cold_and_dark()
 	kc_macro_hydraulic_off()
 	
 	kc_macro_fuelpumps_off()
-	sysFuel.fuelSwitchGroup:actuate(0)
-
+	if kc_has_fuel_select then
+		sysFuel.fuelSwitchGroup:actuate(0)
+	end
+	
 	if kc_has_press_cab == true then
 		sysAir.packSwitchGroup:actuate(0)
 		sysAir.engBleedGroup:actuate(0)
@@ -78,6 +88,10 @@ function kc_macro_state_cold_and_dark()
 	end
 	if kc_has_window_heat == true then
 		sysAice.windowHeatGroup:actuate(0)
+	end
+	
+	if kc_has_pitot_heat then 
+		sysAice.probeHeatGroup:actuate(0)
 	end
 	
 	if kc_has_seatbelt_sgn then
@@ -161,7 +175,9 @@ function kc_macro_state_turnaround()
 	end
 
 	kc_macro_fuelpumps_off()
-	sysFuel.fuelSwitchGroup:actuate(0)
+	if kc_has_fuel_select then
+		sysFuel.fuelSwitchGroup:actuate(0)
+	end
 	
 	if kc_has_press_cab == true then
 		sysAir.packSwitchGroup:actuate(1)
@@ -191,16 +207,12 @@ function kc_macro_state_turnaround()
 		sysGeneral.noSmokingSwitch:actuate(1)
 	end
 
-	if kc_has_window_heat == true then
-		sysAice.windowHeatGroup:actuate(1)
+	if kc_has_pitot_heat then 
+		sysAice.probeHeatGroup:actuate(0)
 	end
-
-	if kc_has_window_heat == true then 
-		if kc_is_airbus == true then	
-			sysAice.probeHeatGroup:actuate(0)
-		else	
-			sysAice.probeHeatGroup:actuate(1)
-		end 	
+	
+	if kc_has_window_heat  then
+		sysAice.windowHeatGroup:actuate(1)
 	end
 
 	kc_macro_set_local_baro()
@@ -214,6 +226,14 @@ function kc_macro_state_turnaround()
 	
 	kc_macro_doors_preflight()
 	kc_macro_mcp_preflight()	
+	
+	if kc_is_turboprop or kc_is_ga then
+		sysEngines.mixtureLever:actuate(0)
+	end
+
+	if kc_has_proplever then
+		sysEngines.propLever:setValue(kc_prop_lvr_feather)
+	end	
 end
 
 -- ====================================== Lights related functions

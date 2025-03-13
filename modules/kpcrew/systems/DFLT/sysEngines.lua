@@ -214,6 +214,9 @@ sysEngines.magnetoStartStop		= TwoStateCustomSwitch:new("magnetoStart","",0,
 sysEngines.throttlePos			= TwoStateDrefSwitch:new("throttlepos",
 "sim/cockpit2/engine/actuators/throttle_ratio_all",0)
 
+sysEngines.mixtureLever			= TwoStateDrefSwitch:new("mixturelever","sim/cockpit2/engine/actuators/mixture_ratio_all",0)
+sysEngines.propLever			= TwoStateDrefSwitch:new("proplever","sim/cockpit2/engine/actuators/prop_rotation_speed_rad_sec_all",0)
+
 ----------- Annunciators
 
 -- ** ENGINE FIRE annunciator
