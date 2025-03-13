@@ -1,0 +1,31 @@
+-- EPIC airplane 
+-- Engine related functionality
+
+-- @classmod sysEngines
+-- @author Kosta Prokopiu
+-- @copyright 2025 Kosta Prokopiu
+
+local TwoStateDrefSwitch 	= require "kpcrew.systems.TwoStateDrefSwitch"
+local TwoStateCmdSwitch	 	= require "kpcrew.systems.TwoStateCmdSwitch"
+local TwoStateCustomSwitch 	= require "kpcrew.systems.TwoStateCustomSwitch"
+local SwitchGroup  			= require "kpcrew.systems.SwitchGroup"
+local SimpleAnnunciator 	= require "kpcrew.systems.SimpleAnnunciator"
+local CustomAnnunciator 	= require "kpcrew.systems.CustomAnnunciator"
+local TwoStateToggleSwitch	= require "kpcrew.systems.TwoStateToggleSwitch"
+local MultiStateCmdSwitch 	= require "kpcrew.systems.MultiStateCmdSwitch"
+local InopSwitch 			= require "kpcrew.systems.InopSwitch"
+local KeepPressedSwitchCmd	= require "kpcrew.systems.KeepPressedSwitchCmd"
+
+sysEngines = require("kpcrew.systems.DFLT.sysEngines")
+
+logMsg("EPIC sysEngines")
+
+-- ignition
+sysEngines.engIgnition1	= TwoStateToggleSwitch:new("ignition1","aerobask/pb_igniter",0,
+	"aerobask/igniter_toggle")
+-- sysEngines.engIgnition1	= TwoStateToggleSwitch:new("ignition1","sim/cockpit2/engine/actuators/auto_ignite_on",-1,
+	-- "aerobask/igniter_toggle")
+sysEngines.engIgnitionGroup 	= SwitchGroup:new("ignitions")
+sysEngines.engIgnitionGroup:addSwitch(sysEngines.engIgnition1)
+
+return sysEngines

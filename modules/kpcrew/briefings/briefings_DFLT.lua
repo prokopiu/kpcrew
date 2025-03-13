@@ -9,6 +9,7 @@ kc_acf_name 		= "X-Plane Default Aircraft"
 kc_is_airbus		= false		-- Aircraft is an Airbus
 kc_is_boeing		= false		-- Aircraft is a Boeing
 kc_is_ga			= false		-- Aircraft is general aviation
+kc_is_turboprop		= false		-- Aircraft is turbo prop
 
 -- === Electric system
 kc_NumBatteries		= -1		-- Number of batteries from acf
@@ -43,6 +44,14 @@ kc_ab_engm_norm		= 1			-- Airbus engine mode norm
 kc_ab_engm_strt		= 2			-- Airbus engine mode start
 kc_ab_engm_crnk		= 0			-- Airbus engine mode crank
 kc_TakeoffThrust 	= "RATED|DE-RATED|ASSUMED TEMPERATURE|RATED AND ASSUMED|DE-RATED AND ASSUMED"
+kc_has_proplever	= false		-- Aircraft has prop lever
+kc_prop_lvr_min		= 125		-- Prop lever Minimum
+kc_prop_lvr_feather	= 105		-- Prop lever feather
+kc_prop_lvr_max		= 178		-- Prop lever maximum
+kc_has_mixlever		= true		-- Airctaft has mixture lever
+kc_mixture_off		= 0
+kc_mixture_min		= 0.4
+kc_mixture_rich		= 1
 
 -- === Fuel
 kc_NumTanks			= -1		-- Number of tanks from acf
@@ -52,7 +61,8 @@ kc_MFL				= {[0]=-1,[1]=-1,[2]=-1,[3]=-1,[4]=-1,[5]=-1,[6]=-1,[7]=-1,[8]=-1}
 kc_FFPH 			= -1		-- Fuel Flow per hour from acf
 kc_has_fuel_pumps   = true		-- Aircraft has switchable fuel pumps
 kc_has_fuel_xfeed	= true		-- Aircraft has fuel crossfeed
-kc_fuel_ld_button	= true		-- Load the aircraft fuel from kpxbrief	
+kc_fuel_ld_button	= true		-- Load the aircraft fuel from kpxbrief
+kc_has_fuel_select	= false		-- Aircraft has fuel tank selector
 
 -- === Hydraulics
 kc_has_hyd_elec_pmps= true		-- Aircraft has electric hydraulic pumps
