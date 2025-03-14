@@ -89,7 +89,7 @@ kc_has_eng_antiice	= true		-- Aircraft has engine antiice measures
 kc_has_pitot_heat	= true		-- Aircraft has pitot heat
 
 -- === Lights
-kc_NumLandingLts	= 2			-- NUmber of landing light switches
+kc_NumLandingLts	= 2			-- Number of landing light switches
 kc_has_beacon		= true		-- Aircraft has beacon
 kc_has_strb_as_bcn	= false		-- Aircraft uses strobe lights for beacon 
 kc_has_taxi_light	= true		-- Aircraft has taxi light

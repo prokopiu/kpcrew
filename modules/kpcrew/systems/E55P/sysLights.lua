@@ -30,6 +30,8 @@ sysLights.taxiSwitch 		= TwoStateCustomSwitch:new("taxi","aerobask/lights/sw_ldg
 function ()
 	if get("aerobask/lights/sw_ldg_taxi") == 0 then
 		command_once("aerobask/lights/ldg_taxi_up")
+	elseif get("aerobask/lights/sw_ldg_taxi") == 2 then
+		command_once("aerobask/lights/ldg_taxi_dn")
 	end
 end,
 function ()
@@ -38,7 +40,7 @@ function ()
 end,
 nil,
 function ()
-	if get("aerobask/lights/sw_ldg_taxi") > 0 then
+	if get("aerobask/lights/sw_ldg_taxi") == 1 then
 		return 1
 	else
 		return 0
@@ -48,7 +50,7 @@ end)
 -- Taxi Light(s) status
 sysLights.taxiAnc 			= CustomAnnunciator:new("taxilights",
 function ()
-	if get("aerobask/lights/sw_ldg_taxi") > 0 then
+	if get("aerobask/lights/sw_ldg_taxi") == 1 then
 		return 1
 	else
 		return 0
@@ -98,6 +100,16 @@ sysLights.domeLightGroup:addSwitch(sysLights.domeLightSwitch)
 sysLights.domeLightGroup:addSwitch(sysLights.domeLightSwitch2)
 sysLights.domeLightGroup:addSwitch(sysLights.domeLightSwitch3)
 
+-- Dome Light(s) status
+sysLights.domeAnc 			= CustomAnnunciator:new("domelights",
+function () 
+	if get( "sim/cockpit2/switches/generic_lights_switch",1) ~= 0 then
+		return 1
+	else
+		return 0
+	end
+end)
+
 -- Instrument Lights
 sysLights.instr1Light		= TwoStateDrefSwitch:new("","aerobask/lights/knob_panel",0)
 sysLights.instrLightGroup 	= SwitchGroup:new("instrumentlights")
@@ -107,5 +119,8 @@ sysLights.instrLightGroup:addSwitch(sysLights.instr1Light)
 sysLights.panel1Light		= TwoStateDrefSwitch:new("panellight1","sim/cockpit2/switches/generic_lights_switch",0)
 sysLights.panelLightGroup 	= SwitchGroup:new("panellights")
 sysLights.panelLightGroup:addSwitch(sysLights.panel1Light)
+
+sysLights.emerLights		= TwoStateCmdSwitch:new("emerlights","aerobask/elt/elt_on",0,
+	"aerobask/lights/emer_lt_up","aerobask/lights/emer_lt_dn","nocommand")
 
 return sysLights

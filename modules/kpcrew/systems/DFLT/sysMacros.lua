@@ -45,7 +45,7 @@ function kc_macro_state_cold_and_dark()
 		sysGeneral.GearSwitch:actuate(1)
 	end
 	if kc_has_speedbrake then
-		sysControls.Speedbrake:setValue(0)
+		sysControls.Speedbrake:actuate(0)
 	end
 	
 	kc_macro_set_flap(0)
@@ -71,6 +71,9 @@ function kc_macro_state_cold_and_dark()
 	end
 	
 	kc_macro_fuelpumps_off()
+	if kc_has_fuel_xfeed then
+		sysFuel.crossFeed:actuate(0)
+	end
 	if kc_has_fuel_select then
 		sysFuel.fuelSwitchGroup:actuate(0)
 	end
@@ -447,15 +450,15 @@ function kc_macro_lights_cleanup()
 	if kc_has_rwy_lights then
 		sysLights.rwyLightGroup:actuate(0)
 	end
-	if kc_has_taxi_light then
-		sysLights.taxiSwitch:actuate(1)
-	end
 	if kc_has_ll_as_taxi then
 		sysLights.landLightGroup:actuate(1)
 	end
 	if kc_has_strobe_lights then
 		sysLights.strobesSwitch:actuate(0)
 	end
+	if kc_has_taxi_light then
+		sysLights.taxiSwitch:actuate(1)
+	end	
 end
 
 function kc_macro_lights_arrive_parking()
@@ -924,7 +927,7 @@ function kc_macro_hydraulic_initial()
 		sysHydraulic.elecHydPumpGroup:actuate(1)
 	end 
 	if kc_has_hyd_eng_pmps == true then
-		sysHydraulic.engHydPumpGroup:actuate(0)
+		sysHydraulic.engHydPumpGroup:actuate(1)
 	end
 end
 

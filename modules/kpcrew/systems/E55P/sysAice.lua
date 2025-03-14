@@ -63,5 +63,23 @@ end)
 sysAice.wingAiceGroup 		= SwitchGroup:new("wingaice")
 sysAice.wingAiceGroup:addSwitch(sysAice.wingAntiIce)
 
+-- Probe heat
+sysAice.probeHeatASwitch 	= TwoStateCustomSwitch:new("probeheat1","aerobask/iceprot/knob_ads_probes",0,
+function () 
+	command_once("aerobask/iceprot/ads_probes_lt")
+	command_once("aerobask/iceprot/ads_probes_lt")
+	command_once("aerobask/iceprot/ads_probes_rt")
+end,
+function () 
+	command_once("aerobask/iceprot/ads_probes_lt")
+	command_once("aerobask/iceprot/ads_probes_lt")
+end,
+function () 
+end,
+function () 
+	return get("aerobask/iceprot/knob_ads_probes")
+end)
+sysAice.probeHeatGroup 		= SwitchGroup:new("probeHeat")
+sysAice.probeHeatGroup:addSwitch(sysAice.probeHeatASwitch)
 
 return sysAice

@@ -182,7 +182,7 @@ electricalPowerUpProc:addItem(ProcedureItem:new("POWER LEVERS","IDLE",FlowItem.a
 		end	
 	end))
 if kc_has_hyd_eng_pmps then
-	electricalPowerUpProc:addItem(ProcedureItem:new("HYDRAULIC PUMPS","AS REQUIRED",FlowItem.actorFO,0,true,
+	electricalPowerUpProc:addItem(ProcedureItem:new("HYDRAULIC PUMPS","ON",FlowItem.actorFO,0,true,
 		function () kc_macro_hydraulic_initial() end))
 end		
 if kc_has_avionics_sw then
@@ -207,8 +207,8 @@ if kc_has_fuel_xfeed then
 		function ()  sysFuel.crossFeed:actuate(0) end))
 end
 if kc_has_press_cab then
-	electricalPowerUpProc:addItem(ProcedureItem:new("AIR CONDITIONING PACK SWITCHES","AUTO",FlowItem.actorPM,0,
-		function () return sysAir.packSwitchGroup:getStatus() >= 1 end,
+	electricalPowerUpProc:addItem(ProcedureItem:new("AIR CONDITIONING PACK SWITCHES","AUTO/ON",FlowItem.actorPM,0,
+		function () return sysAir.packSwitchGroup:getStatus() == 1 end,
 		function () sysAir.packSwitchGroup:actuate(1) end))
 end
 if kc_has_pos_lights then
@@ -342,7 +342,13 @@ if kc_has_doors then
 		function () sysGeneral.doorGroup:actuate(0) end))
 end
 beforeStart:addItem(ProcedureItem:new("COCKPIT LIGHTS","%s|(kc_is_daylight()) and \"OFF\" or \"ON\"",FlowItem.actorFO,0,
-	function () return sysLights.domeAnc:getStatus() == (kc_is_daylight() and 0 or 1) end,
+	function () 
+		if kc_is_daylight() then
+			return sysLights.domeAnc:getStatus() == 0
+		else
+			return sysLights.domeAnc:getStatus() > 0
+		end
+	end,
 	function () 
 		kc_macro_lights_before_start() 
 	end))
@@ -1311,8 +1317,8 @@ if kc_is_airbus == false and kc_has_ils then
 		function() sysMCP.crs2Selector:setValue(activeBriefings:get("approach:nav2Course")) end))
 end
 if kc_has_press_cab then
-	landingProc:addItem(ProcedureItem:new("AIR CONDITIONING PACK SWITCHES","AUTO",FlowItem.actorPM,0,
-		function () return sysAir.packSwitchGroup:getStatus() > 1 end,
+	landingProc:addItem(ProcedureItem:new("AIR CONDITIONING PACK SWITCHES","AUTO/ON",FlowItem.actorPM,0,
+		function () return sysAir.packSwitchGroup:getStatus() > 0 end,
 		function () sysAir.packSwitchGroup:actuate(1) end,
 		function () return activeBriefings:get("approach:packs") == 1 end))
 	landingProc:addItem(ProcedureItem:new("AIR CONDITIONING PACK SWITCHES","OFF",FlowItem.actorPM,0,
@@ -1386,7 +1392,7 @@ if kc_has_retractgear == true then
 		end))
 end
 LandingCheck:addItem(ChecklistItem:new("LANDING LIGHTS","ON",FlowItem.actorPM,0,
-	function () return sysLights.landLightGroup:getStatus() > 1 end,
+	function () return sysLights.landLightGroup:getStatus() > 0 end,
 	function () sysLights.landLightGroup:actuate(1) end))
 if kc_has_autobrake then
 	LandingCheck:addItem(ChecklistItem:new("AUTOBRAKE","%s|kc_pref_split(kc_LandingAutoBrake)[activeBriefings:get(\"approach:autobrake\")]",FlowItem.actorPM,0,
@@ -1480,6 +1486,11 @@ afterLandingProc:addItem(ProcedureItem:new("FLAPS UP","SET",FlowItem.actorFO,0,t
 afterLandingProc:addItem(ProcedureItem:new("EXTERNAL LIGHTS","AS REQUIRED",FlowItem.actorFO,0,
 	function () return sysLights.strobesSwitch:getStatus() == 0 end,
 	function () kc_macro_lights_cleanup() end))
+if kc_has_taxi_light then
+	afterLandingProc:addItem(ProcedureItem:new("TAXI LIGHT","ON",FlowItem.actorFO,0,
+		function () return sysLights.taxiSwitch:getStatus() == 1 end,
+		function () sysLights.taxiSwitch:actuate(1) end))
+end
 afterLandingProc:addItem(ProcedureItem:new("WING ANTI-ICE","OFF",FlowItem.actorFO,0,
 	function () return sysAice.wingAiceGroup:getStatus() == 0 end,
 	function () sysAice.wingAiceGroup:actuate(0) end))

@@ -5,10 +5,6 @@
 -- @author Kosta Prokopiu
 -- @copyright 2024 Kosta Prokopiu
 
-local sysAir = {
-}
-
-
 local TwoStateDrefSwitch 	= require "kpcrew.systems.TwoStateDrefSwitch"
 local TwoStateCmdSwitch	 	= require "kpcrew.systems.TwoStateCmdSwitch"
 local TwoStateCustomSwitch 	= require "kpcrew.systems.TwoStateCustomSwitch"
@@ -62,5 +58,10 @@ sysAir.engBleedGroup:addSwitch(sysAir.bleedEng2Switch)
 -- ISOLATION VLV
 sysAir.isoValveSwitch 		= TwoStateCmdSwitch:new("isolation","aerobask/bleed/sw_xbleed",0,
 	"aerobask/bleed/xbleed_auto","aerobask/bleed/xbleed_off","nocommand")
+
+-- Oxygen Supply
+sysAir.oxygenMaster			= TwoStateToggleSwitch:new("oxygen","aerobask/oxygen/sw_cut_out",0,
+	"aerobask/oxygen/cut_out")
+	
 
 return sysAir

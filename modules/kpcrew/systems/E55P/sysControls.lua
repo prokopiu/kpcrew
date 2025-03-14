@@ -3,7 +3,7 @@
 
 -- @classmod sysControls
 -- @author Kosta Prokopiu
--- @copyright 2024 Kosta Prokopiu
+-- @copyright 2025 Kosta Prokopiu
 
 local TwoStateDrefSwitch 	= require "kpcrew.systems.TwoStateDrefSwitch"
 local TwoStateCmdSwitch	 	= require "kpcrew.systems.TwoStateCmdSwitch"
@@ -42,5 +42,7 @@ sysControls.flapsSwitch 	= TwoStateCustomSwitch:new("flaps","sim/cockpit2/contro
 -- Speedbrake lever
 sysControls.Speedbrake	= TwoStateCmdSwitch:new("speedbrake","aerobask/anim/sw_speedbrake",0,
 	"aerobask/speedbrakes_open","aerobask/speedbrakes_close","nocommand")
-	
+
+sysControls.rudderDeflection	= SimpleAnnunciator:new("rudderdeflection","sim/flightmodel2/wing/rudder1_deg",10)
+
 return sysControls
