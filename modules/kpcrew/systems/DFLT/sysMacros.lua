@@ -73,11 +73,13 @@ function kc_macro_state_cold_and_dark()
 	
 	if kc_has_press_cab then
 		sysAir.packSwitchGroup:actuate(0)
-		sysAir.engBleedGroup:actuate(0)
 		sysAir.isoValveSwitch:actuate(0)
 	end
 	if kc_has_oxygen then
 		sysAir.oxygenMaster:actuate(0)
+	end
+	if kc_has_engine_bleed then
+		sysAir.engBleedGroup:actuate(0)
 	end
 	
 	if kc_has_eng_antiice then
@@ -109,7 +111,17 @@ function kc_macro_state_cold_and_dark()
 		sysEngines.engIgnitionGroup:actuate(0)	
 	end 
 	
-	sysElectric.genSwitchGroup:actuate(0)
+	sysElectric.gen1Switch:actuate(0)
+	if kc_get_nr_generators() > 1 then
+		sysElectric.gen2Switch:actuate(0)
+	end
+	if kc_get_nr_generators() > 2 then
+		sysElectric.gen3Switch:actuate(0)
+	end
+	if kc_get_nr_generators() > 3 then
+		sysElectric.gen4Switch:actuate(0)
+	end
+
 	if kc_has_apu then
 		sysElectric.apuStartSwitch:actuate(0)
 	end
@@ -158,6 +170,17 @@ function kc_macro_state_turnaround()
 	
 	kc_macro_lights_preflight()
 	
+	sysElectric.gen1Switch:actuate(0)
+	if kc_get_nr_generators() > 1 then
+		sysElectric.gen2Switch:actuate(0)
+	end
+	if kc_get_nr_generators() > 2 then
+		sysElectric.gen3Switch:actuate(0)
+	end
+	if kc_get_nr_generators() > 3 then
+		sysElectric.gen4Switch:actuate(0)
+	end
+			
 	if kc_has_gpu and activeBriefings:get("departure:activateAPUPowerUp") == 2 then
 		sysElectric.gpuConnect:actuate(1)
 		sysElectric.gpuGenBusGroup:actuate(1)
@@ -184,14 +207,14 @@ function kc_macro_state_turnaround()
 	
 	if kc_has_press_cab then
 		sysAir.packSwitchGroup:actuate(1)
-		sysAir.engBleedGroup:actuate(1)
 		sysAir.isoValveSwitch:actuate(0)
 	end
 	if kc_has_oxygen then
 		sysAir.oxygenMaster:actuate(0)
 	end
-	
-	sysElectric.genSwitchGroup:actuate(1)
+	if kc_has_engine_bleed then
+		sysAir.engBleedGroup:actuate(0)
+	end
 	
 	if kc_has_avionics_sw then
 		sysElectric.avionicsSwitchGroup:actuate(1)

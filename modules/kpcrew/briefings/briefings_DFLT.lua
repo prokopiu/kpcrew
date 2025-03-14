@@ -36,6 +36,7 @@ kc_TakeoffFlapsInd 	= "0|1|3"
 kc_NumFlapsLDG		= 3
 kc_LandingFlaps 	= "3|4|5"
 kc_LandingFlapsInd 	= "5|6|8"
+kc_gear_ext_index	= 2			-- When to extend gear in flaps extend
 
 -- === engines
 kc_NumEngines		= -1		-- Number of engines from acf
@@ -153,8 +154,8 @@ kc_has_cockpit_door	= true		-- Aircraft has cockpit door
 kc_has_oxygen		= false		-- Aircraft has oxygen supply
 
 kc_has_autobrake	= true		-- Aircraft has autobrake
-kc_LandingAutoBrake = "RTO|OFF|1|2|3|MAX"
-kc_LandingAutoBrInd = "0|1|2|3|4|5"
+kc_LandingAutoBrake = "OFF|1|2|3|MAX"
+kc_LandingAutoBrInd = "1|2|3|4|5"
 kc_AutoBrakeOff		= 1
 kc_AutoBrakeRTO		= 0
 

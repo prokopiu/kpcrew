@@ -223,7 +223,18 @@ if kc_is_airbus then
 else
 	electricalPowerUpProc:addItem(ProcedureItem:new("ENGINE GENERATORS","OFF",FlowItem.actorFO,0,
 		function () return sysElectric.genSwitchGroup:getStatus() == 0 end,
-		function () sysElectric.genSwitchGroup:actuate(0) end))
+		function () 
+			sysElectric.gen1Switch:actuate(0)
+			if kc_get_nr_generators() > 1 then
+				sysElectric.gen2Switch:actuate(0)
+			end
+			if kc_get_nr_generators() > 2 then
+				sysElectric.gen3Switch:actuate(0)
+			end
+			if kc_get_nr_generators() > 3 then
+				sysElectric.gen4Switch:actuate(0)
+			end
+		end))
 end
 if kc_has_inv_ess_bus then
 	if kc_is_airbus then
@@ -732,8 +743,17 @@ afterStartProc:addItem(ProcedureItem:new("GENERATORS","ON",FlowItem.actorFO,0,
 	function () 
 		return sysElectric.genSwitchGroup:getStatus() > 0
 	end,
-	function ()
-		sysElectric.genSwitchGroup:actuate(1)
+	function () 
+		sysElectric.gen1Switch:actuate(1)
+		if kc_get_nr_generators() > 1 then
+			sysElectric.gen2Switch:actuate(1)
+		end
+		if kc_get_nr_generators() > 2 then
+			sysElectric.gen3Switch:actuate(1)
+		end
+		if kc_get_nr_generators() > 3 then
+			sysElectric.gen4Switch:actuate(1)
+		end
 	end))
 if kc_has_press_cab then
 	afterStartProc:addItem(ProcedureItem:new("PACKS","ON",FlowItem.actorFO,0,
@@ -939,8 +959,7 @@ beforeTakeoffProc:addItem(ProcedureItem:new("MCP","INITIALIZE",FlowItem.actorFO,
 		kc_macro_mcp_takeoff()
 	end))
 if kc_has_toc then
-	beforeTakeoffProc:addItem(IndirectProcedureItem:new("TAKEOFF CONFIG","CHECK",FlowItem.actorFO,0,"tocheck",
-	function () return sysGeneral.tocheck:getStatus() > 0 end))
+	beforeTakeoffProc:addItem(HoldProcedureItem:new("TAKEOFF CONFIG","CHECK",FlowItem.actorCPT))
 end
 beforeTakeoffProc:addItem(HoldProcedureItem:new("ELEVATOR TRIM","SET FOR TAKEOFF & CHECK",FlowItem.actorCPT))
 if kc_has_speedbrake and kc_spdbrk_can_arm then
@@ -1305,7 +1324,7 @@ for ldgflapidx=1,kc_get_nr_flapdetents(),1 do
 	flapsProc:addItem(ProcedureItem:new("FLAPS " .. sysControls.flaps_name[ldgflapidx],"SET",FlowItem.actorPNF,0,
 		function () return true end,
 		-- function () return sysControls.flapsSwitch:getStatus() >= sysControls.flaps_pos[ldgflapidx] end,
-		function () sysControls.flapsSwitch:setValue(sysControls.flaps_pos[ldgflapidx]) end,
+		function () kc_macro_set_flap(ldgflapidx) end,
 		function () return tonumber(kc_pref_split(kc_LandingFlapsInd)[activeBriefings:get("approach:flaps")]) < ldgflapidx end))
 	if ldgflapidx == 2 then
 		if kc_has_retractgear == true then
@@ -1347,7 +1366,7 @@ LandingCheck:setFlightPhase(SOP.phaseApproach)
 
 LandingCheck:addItem(ChecklistItem:new("FLAPS","LANDING FLAPS %s|kc_pref_split(kc_LandingFlaps)[activeBriefings:get(\"approach:flaps\")]",FlowItem.actorPM,0,
 	function () return sysControls.flapsSwitch:getStatus() >= sysControls.flaps_pos[tonumber(kc_pref_split(kc_LandingFlapsInd)[activeBriefings:get("approach:flaps")])] end,
-	function () kc_macro_set_flap(activeBriefings:get("approach:flaps")) end))
+	function () kc_macro_set_flap(tonumber(kc_pref_split(kc_LandingFlapsInd)[activeBriefings:get("approach:flaps")])) end))
 if kc_has_retractgear == true then
 	LandingCheck:addItem(ChecklistItem:new("LANDING GEAR","DOWN",FlowItem.actorPM,0,
 		function () return sysGeneral.GearSwitch:getStatus() == 1 end,
@@ -1356,7 +1375,7 @@ if kc_has_retractgear == true then
 		end))
 end
 LandingCheck:addItem(ChecklistItem:new("LANDING LIGHTS","ON",FlowItem.actorPM,0,
-	function () return sysLights.landLightGroup:getStatus() == 1 end,
+	function () return sysLights.landLightGroup:getStatus() > 1 end,
 	function () sysLights.landLightGroup:actuate(1) end))
 if kc_has_autobrake then
 	LandingCheck:addItem(ChecklistItem:new("AUTOBRAKE","%s|kc_pref_split(kc_LandingAutoBrake)[activeBriefings:get(\"approach:autobrake\")]",FlowItem.actorPM,0,
@@ -1608,13 +1627,13 @@ if kc_is_airbus == false then
 		function () return sysElectric.genSwitchGroup:getStatus() == 0 end,
 		function ()
 			sysElectric.gen1Switch:actuate(0)
-			if kc_get_nr_engines() > 1 then
+			if kc_get_nr_generators() > 1 then
 				sysElectric.gen2Switch:actuate(0)
 			end
-			if kc_get_nr_engines() > 2 then
+			if kc_get_nr_generators() > 2 then
 				sysElectric.gen3Switch:actuate(0)
 			end
-			if kc_get_nr_engines() > 3 then
+			if kc_get_nr_generators() > 3 then
 				sysElectric.gen4Switch:actuate(0)
 			end
 		end))

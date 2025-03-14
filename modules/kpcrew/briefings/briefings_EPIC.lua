@@ -27,6 +27,7 @@ kc_TakeoffFlapsInd 	= "0|1"
 kc_NumFlapsLDG		= 2
 kc_LandingFlaps 	= "TO|LAND"
 kc_LandingFlapsInd 	= "1|2"
+kc_gear_ext_index	= 1			-- When to extend gear in flaps extend
 
 -- === engines
 kc_StartSequence 	= "|1 THEN 2"

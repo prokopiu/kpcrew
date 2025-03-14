@@ -35,8 +35,7 @@ sysLights.beaconSwitch 		= TwoStateCmdSwitch:new("beacon","sim/cockpit/electrica
 sysLights.beaconAnc 		= SimpleAnnunciator:new("beaconlights","sim/cockpit/electrical/beacon_lights_on",0)
 
 -- Position Lights, single onoff command driven
-sysLights.positionSwitch 	= TwoStateCmdSwitch:new("position","sim/cockpit2/switches/navigation_lights_on",0,
-	"sim/lights/nav_lights_on","sim/lights/nav_lights_off","sim/lights/nav_lights_toggle")
+sysLights.positionSwitch 	= TwoStateDrefSwitch:new("position","sim/cockpit2/switches/navigation_lights_on",0)
 
 -- Position Light(s) status
 sysLights.positionAnc 		= SimpleAnnunciator:new("positionlights","sim/cockpit2/switches/navigation_lights_on",0)
