@@ -54,6 +54,7 @@ kc_has_mixlever		= true		-- Airctaft has mixture lever
 kc_mixture_off		= 0
 kc_mixture_min		= 0.4
 kc_mixture_rich		= 1
+kc_n2_after_start	= 40
 
 -- === Fuel
 kc_NumTanks			= -1		-- Number of tanks from acf
@@ -104,6 +105,7 @@ kc_has_instr_lights	= true		-- Aircraft has instrument Lights
 kc_has_panel_lights = true		-- Aircraft has panel lights
 kc_has_seatbelt_sgn	= true		-- Aircraft has seatbelt signs
 kc_has_nosmoke_sgn	= true		-- Aircraft has no smoking signs
+kc_has_emer_lights	= false		-- Aircraft has emergency lights
 
 -- === Payload & weights
 kc_MaxRamp			= -1		-- Max Ramp weight

@@ -254,5 +254,7 @@ function ()
 	end
 end)
 
+sysLights.emerLights		= TwoStateCmdSwitch:new("emerlights","ckpt/oh/emerExitLight/anim",0,
+"toliss_airbus/lightcommands/EmerExitLightUp","toliss_airbus/lightcommands/EmerExitLightDown","nocommand")
 
 return sysLights

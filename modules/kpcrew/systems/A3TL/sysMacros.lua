@@ -12,59 +12,9 @@ sysMacros = require("kpcrew.systems.DFLT.sysMacros")
 
 logMsg("A3TL sysMacros")
 
--- c&d setup
-function kc_macro_state_cold_and_dark()
-	logMsg("A3TL kc_macro_state_cold_and_dark")
 
-	activeBckVars:set("general:timesOFF","==:==")
-	activeBckVars:set("general:timesOUT","==:==")
-	activeBckVars:set("general:timesIN","==:==")
-	activeBckVars:set("general:timesON","==:==")
-	
-	kc_macro_lights_cold_dark()
-	kc_macro_doors_cold_dark()
-	-- kc_macro_mcp_cold_dark()
-
-	kc_macro_set_irs(0)
-	
-	sysGeneral.parkBrakeSwitch:actuate(1) 
-	kc_macro_set_groundobjects(1)
-	
-	sysGeneral.GearSwitch:actuate(1)
-
-	sysControls.Speedbrake:setValue(0)
-
-	kc_macro_set_flap(0)
-
-	sysGeneral.wiperGroup:actuate(0)
-
-	sysEngines.throttlePos:actuate(0)
-	
-	sysControls.aileronReset:actuate(1)
-	sysControls.rudderReset:actuate(1)
-
-	kc_macro_hydraulic_off()	
-
-	kc_macro_fuelpumps_off()
-
-	sysAir.packSwitchGroup:actuate(0)
-	sysAir.engBleedGroup:actuate(0)
-	sysAir.isoValveSwitch:actuate(0)
-	kc_macro_aircond_all_white_off()
-
-	sysAice.engAntiIceGroup:actuate(0)
-	sysAice.wingAntiIce:actuate(0)
-	sysAice.windowHeatGroup:actuate(0)
-
-	sysGeneral.seatBeltSwitch:actuate(0)
-	sysGeneral.noSmokingSwitch:actuate(0)
-
-	if kc_has_autobrake == true then
-		sysControls.Autobrake:setValue(sysControls.autobrk_off)
-	end
-
-	kc_macro_elec_cold_dark()
-	
+-- custom cold & dark activities
+function kc_macro_custom_cold_dark()
 	set("AirbusFBW/RMP1Switch",0)
 	set("AirbusFBW/RMP2Switch",0)
 	set("AirbusFBW/RMP3Switch",0)
@@ -84,8 +34,6 @@ function kc_macro_state_cold_and_dark()
 	end
 	
 	set("AirbusFBW/XBleedSwitch",0)
-
--- yellow elec pump off
 
 	command_once("toliss_airbus/engcommands/Master1Off")
 	command_once("toliss_airbus/engcommands/Master2Off")
@@ -128,17 +76,10 @@ function kc_macro_state_cold_and_dark()
 		command_once("toliss_airbus/eleccommands/ExtPowOff") 
 	end
 	set("AirbusFBW/EnableExternalPower",0)
-	
-	kc_macro_set_xpdrcode(2000)
-	kc_macro_elec_cold_dark()	
-	
 end
 
-function kc_macro_state_turnaround()
-	logMsg("A3TL kc_macro_state_turnaround")
-
-	kc_macro_doors_preflight()
-
+-- custom turnaround items
+function kc_macro_custom_turnaround()
 	command_once("toliss_airbus/engcommands/Master1Off")
 	command_once("toliss_airbus/engcommands/Master2Off")
 	if PLANE_ICAO == "A346" then
@@ -174,11 +115,10 @@ function kc_macro_state_turnaround()
 	set("AirbusFBW/RMP2Switch",1)
 	set("AirbusFBW/RMP3Switch",1)
 	
-	kc_macro_set_xpdrcode(1234)
-	
 	set("sim/cockpit2/controls/flap_ratio",0)
 	set("sim/cockpit2/controls/speedbrake_ratio",0)
 	set("AirbusFBW/Chocks",1)
+	
 	command_once("toliss_airbus/park_brake_set")
 	command_once("toliss_airbus/adirucommands/ADIRU1SwitchDown")
 	command_once("toliss_airbus/adirucommands/ADIRU1SwitchDown")
@@ -189,8 +129,6 @@ function kc_macro_state_turnaround()
 	command_once("toliss_airbus/adirucommands/ADIRU3SwitchDown")
 	command_once("toliss_airbus/adirucommands/ADIRU3SwitchDown")
 	command_once("toliss_airbus/adirucommands/ADIRU3SwitchUp")
-
-	kc_macro_lights_preflight()
 
 	set("AirbusFBW/XBleedSwitch",0)
 	-- if PLANE_ICAO == "A321" then
@@ -215,16 +153,12 @@ function kc_macro_state_turnaround()
 		command_once("toliss_airbus/antiicecommands/ENG3Off")
 		command_once("toliss_airbus/antiicecommands/ENG4Off")
 	end 
-	
 	set("AirbusFBW/ProbeHeatSwitch",0)
 
 	set("AirbusFBW/LandElev",-3)
 	set("AirbusFBW/APUBleedSwitch",1)
 	set("AirbusFBW/XBleedSwitch",1)
-	
-	kc_macro_fuelpumps_stand()
-	kc_macro_hydraulic_initial()
-	
+
 	set("AirbusFBW/NWSnAntiSkid",1)
 	set("AirbusFBW/WXSwitchPWS",0)
 	if PLANE_ICAO == "A339" or PLANE_ICAO == "A346" then
@@ -238,21 +172,9 @@ function kc_macro_state_turnaround()
 	set("AirbusFBW/CockpitTemp",22)
 	set("AirbusFBW/FwdCabinTemp",22)
 	set("AirbusFBW/AftCabinTemp",22)
-		set("AirbusFBW/BlowerSwitch",0)
-		set("AirbusFBW/ExtractSwitch",0)
-		set("AirbusFBW/CabinFanSwitch",1)
-	-- set_array("AirbusFBW/HydOHPArray",3,1)
-	
-	kc_macro_aircond_all_white_off()
-	kc_macro_elec_all_white_off()		
-	-- kc_macro_fuel_all_white_off()
-	kc_macro_mcp_preflight()
-	
-	activeBckVars:set("general:timesOFF","==:==")
-	activeBckVars:set("general:timesOUT","==:==")
-	activeBckVars:set("general:timesIN","==:==")
-	activeBckVars:set("general:timesON","==:==")
-
+	set("AirbusFBW/BlowerSwitch",0)
+	set("AirbusFBW/ExtractSwitch",0)
+	set("AirbusFBW/CabinFanSwitch",1)
 end
 
 -- ========= air conditioning

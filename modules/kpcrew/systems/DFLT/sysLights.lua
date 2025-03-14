@@ -160,6 +160,8 @@ sysLights.panelLightGroup:addSwitch(sysLights.panel2Light)
 sysLights.panelLightGroup:addSwitch(sysLights.panel3Light)
 sysLights.panelLightGroup:addSwitch(sysLights.panel4Light)
 
+sysLights.emerLights		= InopSwitch:new("emerlights")
+
 -- ===== UI related functions =====
 
 -- new kppanels light panel

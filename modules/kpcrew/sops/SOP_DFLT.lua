@@ -631,8 +631,8 @@ if kc_get_nr_engines() == 1 then
 else
 	engStartProc:addItem(ProcedureItem:new("1ST ENGINE N2","INCREASING",FlowItem.actorCPT,0,
 		function () if activeBriefings:get("taxi:startSequence") == 1 and kc_get_nr_engines() > 1 then
-			return get("sim/cockpit2/engine/indicators/N2_percent",1) > 8 else 
-			return get("sim/cockpit2/engine/indicators/N2_percent",0) > 8 end 
+			return get("sim/cockpit2/engine/indicators/N2_percent",1) > kc_n2_after_start else 
+			return get("sim/cockpit2/engine/indicators/N2_percent",0) > kc_n2_after_start end 
 		end,
 		function () end))	
 end
@@ -671,8 +671,8 @@ if kc_get_nr_engines() >= 2 then
 		end))
 	engStartProc:addItem(ProcedureItem:new("2ND ENGINE N2","INCREASING",FlowItem.actorCPT,0,
 		function () if activeBriefings:get("taxi:startSequence") == 1 then
-			return get("sim/cockpit2/engine/indicators/N2_percent",0) > 8 else 
-			return get("sim/cockpit2/engine/indicators/N2_percent",1) > 8 end 
+			return get("sim/cockpit2/engine/indicators/N2_percent",0) > kc_n2_after_start else 
+			return get("sim/cockpit2/engine/indicators/N2_percent",1) > kc_n2_after_start end 
 		end,
 		function () 
 		end))
@@ -1205,6 +1205,17 @@ descentProc:setFlightPhase(SOP.phaseDescent)
 
 descentProc:addItem(HoldProcedureItem:new("VREF","CHECK IN FMC",FlowItem.actorPF,nil))
 if kc_is_airbus then
+	descentProc:addItem(ProcedureItem:new("LANDING DATA","VREF %i, MINIMUMS %i|activeBriefings:get(\"approach:vref\")|activeBriefings:get(\"approach:decision\")",FlowItem.actorPM,0,
+		function () 
+			return true end,
+		function ()
+			-- sysEFIS.minsPilot:setValue(activeBriefings:get("approach:decision")) 
+			kc_procvar_set("below10k",true) -- background 10.000 ft activities
+			kc_procvar_set("attranslvl",true) -- background transition level activities
+			kc_procvar_set("above10k",false) 
+			kc_procvar_set("attransalt",false) 
+		end))
+else
 	descentProc:addItem(ProcedureItem:new("LANDING DATA","VREF %i, MINIMUMS %i|activeBriefings:get(\"approach:vref\")|activeBriefings:get(\"approach:decision\")",FlowItem.actorPM,0,
 		function () 
 			return get("sim/cockpit/misc/radio_altimeter_minimum") == activeBriefings:get("approach:decision") end,

@@ -66,6 +66,10 @@ function kc_macro_state_cold_and_dark()
 	
 	kc_macro_hydraulic_off()
 	
+	if kc_has_emer_lights then
+		sysLights.emerLights:actuate(0)
+	end
+	
 	kc_macro_fuelpumps_off()
 	if kc_has_fuel_select then
 		sysFuel.fuelSwitchGroup:actuate(0)
@@ -170,17 +174,30 @@ function kc_macro_state_turnaround()
 	
 	kc_macro_lights_preflight()
 	
-	sysElectric.gen1Switch:actuate(0)
-	if kc_get_nr_generators() > 1 then
-		sysElectric.gen2Switch:actuate(0)
-	end
-	if kc_get_nr_generators() > 2 then
-		sysElectric.gen3Switch:actuate(0)
-	end
-	if kc_get_nr_generators() > 3 then
-		sysElectric.gen4Switch:actuate(0)
-	end
-			
+	if kc_is_airbus then
+		sysElectric.gen1Switch:actuate(1)
+		if kc_get_nr_generators() > 1 then
+			sysElectric.gen2Switch:actuate(1)
+		end
+		if kc_get_nr_generators() > 2 then
+			sysElectric.gen3Switch:actuate(1)
+		end
+		if kc_get_nr_generators() > 3 then
+			sysElectric.gen4Switch:actuate(1)
+		end
+	else
+		sysElectric.gen1Switch:actuate(0)
+		if kc_get_nr_generators() > 1 then
+			sysElectric.gen2Switch:actuate(0)
+		end
+		if kc_get_nr_generators() > 2 then
+			sysElectric.gen3Switch:actuate(0)
+		end
+		if kc_get_nr_generators() > 3 then
+			sysElectric.gen4Switch:actuate(0)
+		end
+	end	
+	
 	if kc_has_gpu and activeBriefings:get("departure:activateAPUPowerUp") == 2 then
 		sysElectric.gpuConnect:actuate(1)
 		sysElectric.gpuGenBusGroup:actuate(1)
@@ -192,7 +209,15 @@ function kc_macro_state_turnaround()
 	end 
 	
 	kc_macro_hydraulic_initial()
-
+	
+	if kc_has_irs then
+		if kc_is_airbus == true then 
+			kc_macro_set_irs(1)
+		else
+			kc_macro_set_irs(2)
+		end
+	end
+	
 	if kc_has_seatbelt_sgn then
 		sysGeneral.seatBeltSwitch:actuate(1)
 	end
@@ -200,6 +225,10 @@ function kc_macro_state_turnaround()
 		sysGeneral.noSmokingSwitch:actuate(1)
 	end
 
+	if kc_has_emer_lights then
+		sysLights.emerLights:actuate(1)
+	end
+	
 	kc_macro_fuelpumps_off()
 	if kc_has_fuel_select then
 		sysFuel.fuelSwitchGroup:actuate(0)
@@ -220,7 +249,11 @@ function kc_macro_state_turnaround()
 		sysElectric.avionicsSwitchGroup:actuate(1)
 	end
 	if kc_has_inv_ess_bus then
-		sysElectric.inverterSwitchGroup:actuate(1)
+		if kc_is_airbus then
+			sysElectric.inverterSwitchGroup:actuate(0)
+		else
+			sysElectric.inverterSwitchGroup:actuate(1)
+		end
 	end
 	if kc_has_bus_ties then
 		sysElectric.dcBusTie:actuate(1)

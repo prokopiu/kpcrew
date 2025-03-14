@@ -89,3 +89,4 @@ return SOP_A3TL
 
 -- toliss Airbusses
 -- engines do not start immediately.
+-- custom c&d/turnaround

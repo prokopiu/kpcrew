@@ -38,10 +38,20 @@ sysElectric.genSwitchGroup 	= SwitchGroup:new("generators")
 sysElectric.gen1Switch 		= TwoStateDrefSwitch:new("gen1",
 	"AirbusFBW/ElecOHPArray",-1)
 sysElectric.genSwitchGroup:addSwitch(sysElectric.gen1Switch)
-if kc_get_nr_engines() > 1 then
+if kc_get_nr_generators() > 1 then
 	sysElectric.gen2Switch 	= TwoStateDrefSwitch:new("gen2",
 		"AirbusFBW/ElecOHPArray",1)
 	sysElectric.genSwitchGroup:addSwitch(sysElectric.gen2Switch)
+end
+if kc_get_nr_generators() > 2 then
+	sysElectric.gen3Switch 	= TwoStateDrefSwitch:new("gen3",
+		"AirbusFBW/ElecOHPArray",2)
+	sysElectric.genSwitchGroup:addSwitch(sysElectric.gen3Switch)
+end
+if kc_get_nr_generators() > 3 then
+	sysElectric.gen4Switch 	= TwoStateDrefSwitch:new("gen4",
+		"AirbusFBW/ElecOHPArray",3)
+	sysElectric.genSwitchGroup:addSwitch(sysElectric.gen4Switch)
 end
 
 -- de-/activate GPU
@@ -94,6 +104,13 @@ sysElectric.inverterSwitchGroup:addSwitch(sysElectric.inverter2Switch)
 sysElectric.dcBusTie				= TwoStateDrefSwitch:new("dcbustie","AirbusFBW/ElecOHPArray",4)
 
 -- APU RUNNING annunciator
-sysElectric.apuRunningAnc 	= SimpleAnnunciator:new("apurunning","AirbusFBW/APUAvail",0)
+sysElectric.apuRunningAnc 	= CustomAnnunciator:new("apurunning",
+	function () 
+		if get("AirbusFBW/APUEGT") > 400 then
+			return 1
+		else
+			return 0
+		end
+	end)
 
 return sysElectric
