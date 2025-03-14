@@ -86,6 +86,15 @@ activeSOP:getFlow(1):addItem(ProcedureItem:new("RMPS","ON",FlowItem.actorFO,0,
 			command_once("laminar/A333/rtp_C/off_switch")
 		end
 	end))	
+
+-- landing Procedure
+activeSOP:getFlow(12):addItem(ProcedureItem:new("LS","ON",FlowItem.actorFO,0,
+	function () return get("laminar/A333/annun/captain_ls_bars_on") == 1 end,
+	function () 
+		if get("laminar/A333/annun/captain_ls_bars_on") == 0 then
+			command_once("laminar/A333/buttons/capt_ils_bars_push")
+		end
+	end))
 	
 -- flapsup
 activeSOP:getFlow(14):addItem(HoldProcedureItem:new("A/P 1","DISCONNECT",FlowItem.actorCPT))
@@ -101,3 +110,5 @@ activeSOP:getFlow(14):addItem(ProcedureItem:new("A/P","DISCONNECTED",FlowItem.ac
 	end))
 
 return SOP_A33L
+
+-- custom c&d/turnaround

@@ -160,7 +160,7 @@ if kc_has_apu then
 			kc_procvar_set("apustart",true)
 			kc_procvar_set("apuonline",true)
 		end,
-		function () return activeBriefings:get("departure:activateAPUPowerUp") > 1 or sysElectric.apuRunningAnc:getStatus() > 0 end))
+		function () return activeBriefings:get("departure:activateAPUPowerUp") > 1 end))
 end
 
 if kc_has_retractgear then
@@ -208,7 +208,7 @@ if kc_has_fuel_xfeed then
 end
 if kc_has_press_cab then
 	electricalPowerUpProc:addItem(ProcedureItem:new("AIR CONDITIONING PACK SWITCHES","AUTO/ON",FlowItem.actorPM,0,
-		function () return sysAir.packSwitchGroup:getStatus() == 1 end,
+		function () return sysAir.packSwitchGroup:getStatus() > 0 end,
 		function () sysAir.packSwitchGroup:actuate(1) end))
 end
 if kc_has_pos_lights then
@@ -375,8 +375,7 @@ if kc_has_apu == true then
 			function () 
 				kc_procvar_set("apustart",true)
 				kc_procvar_set("apuonline",true)
-			end,
-			function () return sysElectric.apuRunningAnc:getStatus() > 0 end))
+			end))
 end
 if kc_has_engine_bleed then
 beforeStart:addItem(ProcedureItem:new("ENGINE BLEED SWITCHES","ON",FlowItem.actorFO,0,
@@ -1501,7 +1500,7 @@ if kc_has_apu == true then
 			kc_procvar_set("apustart",true)
 			kc_procvar_set("apuonline",true)
 		end,
-		function () return activeBriefings:get("approach:activateAPUafterLand") == 2 or sysElectric.apuRunningAnc:getStatus() > 0 end))
+		function () return activeBriefings:get("approach:activateAPUafterLand") == 2 end))
 end
 afterLandingProc:addItem(ProcedureItem:new("ENGINE ANTI-ICE","OFF",FlowItem.actorFO,0,
 	function () return sysAice.engAntiIceGroup:getStatus() == 0 end,

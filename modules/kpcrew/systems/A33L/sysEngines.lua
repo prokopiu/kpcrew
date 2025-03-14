@@ -27,5 +27,10 @@ sysEngines.engStarterGroup 	= SwitchGroup:new("engstarters")
 sysEngines.engStarterGroup:addSwitch(sysEngines.engStart1Switch)
 sysEngines.engStarterGroup:addSwitch(sysEngines.engStart2Switch)
 
+-- ignition
+sysEngines.engIgnition1	= TwoStateCmdSwitch:new("ignition1","laminar/A333/ecam/ign_mode",0,
+	"laminar/A333/switch/eng_mode_right","laminar/A333/switch/eng_mode_left","nocommand")
+sysEngines.engIgnitionGroup 	= SwitchGroup:new("ignitions")
+sysEngines.engIgnitionGroup:addSwitch(sysEngines.engIgnition1)
 
 return sysEngines
