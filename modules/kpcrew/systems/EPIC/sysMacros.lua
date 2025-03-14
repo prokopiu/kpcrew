@@ -12,6 +12,14 @@ sysMacros = require("kpcrew.systems.DFLT.sysMacros")
 
 logMsg("EPIC sysMacros")
 
+-- custom cold & dark activities
+function kc_macro_custom_cold_dark()
+end
+
+-- custom turnaround items
+function kc_macro_custom_turnaround()
+end
+
 -- Start engines 
 function kc_bck_start_engine(trigger)
 	local delayvar = "engstartdelay"

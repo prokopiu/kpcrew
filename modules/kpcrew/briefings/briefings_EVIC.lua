@@ -21,10 +21,10 @@ kc_has_aileron_trim	= false		-- Aircraft has aileron trim
 kc_has_rudder_trim	= false		-- Aircraft has rudder trim
 kc_full_rgt_rudder	= -14.9		-- Threshold where the rudder is almost fully to the right
 kc_NumFlapsTO		= 2
-kc_TakeoffFlaps 	= "UP|TO"
+kc_TakeoffFlaps 	= "UP|T/O"
 kc_TakeoffFlapsInd 	= "0|1"
 kc_NumFlapsLDG		= 2
-kc_LandingFlaps 	= "TO|LAND"
+kc_LandingFlaps 	= "T/O|FULL"
 kc_LandingFlapsInd 	= "1|2"
 
 -- === engines
@@ -35,6 +35,7 @@ kc_TakeoffThrust 	= "RATED|"
 -- === Fuel
 kc_has_fuel_xfeed	= false		-- Aircraft has fuel crossfeed
 kc_fuel_ld_button	= true		-- Load the aircraft fuel from kpxbrief	
+kc_has_fuel_select	= true		-- Aircraft has fuel tank selector
 
 -- === Hydraulics
 kc_has_hyd_elec_pmps= false		-- Aircraft has electric hydraulic pumps
@@ -87,7 +88,7 @@ kc_speeds_vy		= 300		-- Best Rate of Climb - set for aircraft
 kc_speeds_vr		= 125		-- Rotation speed - set for each aircraft
 
 -- === Altitudes
-kc_max_altitude		= 40000 	-- Max Altitude
+kc_max_altitude		= 28000 	-- Max Altitude
 
 
 

@@ -21,7 +21,7 @@ sysControls = require("kpcrew.systems.DFLT.sysControls")
 logMsg("EVIC sysControls")
 
 sysControls.flaps_pos = {[0] =   0, [1] = 0.5, [2] = 1, [3] = 1,   [4] = 1, [5] = 1, [6] = 1,       [7] = 1, [8] = 1}
-sysControls.flaps_spd = {[0] = 190, [1] =   190, [2] =  150, [3] =   150,  [4] = 150,   [5] =   150, [6] =  150,    [7] =   150, [8] = 150}
-sysControls.flaps_name= {[0] = "UP", [1] =  "TO", [2] = "LAND", [3] =   "35", [4] = "35",   [5] =   "35", [6] =  "35", [7] =   "35", [8] = "35"}
+sysControls.flaps_spd = {[0] = 180, [1] =   180, [2] =  130, [3] =   130,  [4] = 130,   [5] =   130, [6] =  130,    [7] =   130, [8] = 130}
+sysControls.flaps_name= {[0] = "UP", [1] =  "T/O", [2] = "FULL", [3] =   "35", [4] = "35",   [5] =   "35", [6] =  "35", [7] =   "35", [8] = "35"}
 
 return sysControls

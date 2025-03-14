@@ -5,12 +5,17 @@
 -- @author Kosta Prokopiu
 -- @copyright 2025 Kosta Prokopiu
 
-local sysMacros = {
-}
-
 sysMacros = require("kpcrew.systems.DFLT.sysMacros")
 
 logMsg("EVIC sysMacros")
+
+-- custom cold & dark activities
+function kc_macro_custom_cold_dark()
+end
+
+-- custom turnaround items
+function kc_macro_custom_turnaround()
+end
 
 -- Start engines 
 function kc_bck_start_engine(trigger)

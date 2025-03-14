@@ -45,6 +45,22 @@ SOP_EVIC = require("kpcrew.sops.SOP_DFLT")
 
 activeSOP:setName("AEROBASK EPIC E1000 SOP")
 
--- activeSOP:getFlow(1):addItem(HoldProcedureItem:new("KPCREW DEPARTURE BRIEF","PERFORM",FlowItem.actorCPT))
+activeSOP:getFlow(5):addItem(ProcedureItem:new("AUTO FUEL SELECT","ON",FlowItem.actorCPT,0,
+		function () return get("aerobask/lt_fuel_auto") == 1 end,
+		function () 
+			if get("aerobask/lt_fuel_auto") == 0 then
+				command_once("aerobask/fuel_auto_toggle")
+			end
+		end))
+activeSOP:getFlow(5):addItem(HoldProcedureItem:new("AIRCONDITIONING","SET",FlowItem.actorCPT))
+
+activeSOP:getFlow(18):addItem(ProcedureItem:new("AUTO FUEL SELECT","OFF",FlowItem.actorCPT,0,
+		function () return get("aerobask/lt_fuel_auto") == 0 end,
+		function () 
+			if get("aerobask/lt_fuel_auto") == 1 then
+				command_once("aerobask/fuel_auto_toggle")
+			end
+		end))
+activeSOP:getFlow(18):addItem(HoldProcedureItem:new("AIRCONDITIONING","OFF",FlowItem.actorCPT))
 
 return SOP_EPIC
