@@ -31,26 +31,26 @@ function kc_macro_state_cold_and_dark()
 		sysEngines.propLever:setValue(kc_prop_lvr_feather)
 	end
 	
-	if kc_has_irs == true then
+	if kc_has_irs then
 		kc_macro_set_irs(0)
 	end
 	
 	sysGeneral.parkBrakeSwitch:actuate(1) 
 	
-	if kc_has_ground_obj == true then
+	if kc_has_ground_obj then
 		kc_macro_set_groundobjects(1)
 	end
 	
-	if kc_has_retractgear == true then
+	if kc_has_retractgear then
 		sysGeneral.GearSwitch:actuate(1)
 	end
-	if kc_has_speedbrake == true then
+	if kc_has_speedbrake then
 		sysControls.Speedbrake:setValue(0)
 	end
 	
 	kc_macro_set_flap(0)
 	
-	if kc_has_wipers == true then
+	if kc_has_wipers then
 		sysGeneral.wiperGroup:actuate(0)
 	end
 	
@@ -71,7 +71,7 @@ function kc_macro_state_cold_and_dark()
 		sysFuel.fuelSwitchGroup:actuate(0)
 	end
 	
-	if kc_has_press_cab == true then
+	if kc_has_press_cab then
 		sysAir.packSwitchGroup:actuate(0)
 		sysAir.engBleedGroup:actuate(0)
 		sysAir.isoValveSwitch:actuate(0)
@@ -86,7 +86,7 @@ function kc_macro_state_cold_and_dark()
 	if kc_has_wing_antiice then
 		sysAice.wingAntiIce:actuate(0)
 	end
-	if kc_has_window_heat == true then
+	if kc_has_window_heat then
 		sysAice.windowHeatGroup:actuate(0)
 	end
 	
@@ -101,7 +101,7 @@ function kc_macro_state_cold_and_dark()
 		sysGeneral.noSmokingSwitch:actuate(0)
 	end
 
-	if kc_has_autobrake == true then
+	if kc_has_autobrake then
 		kc_macro_set_autobrake(0)
 	end
 	
@@ -110,14 +110,17 @@ function kc_macro_state_cold_and_dark()
 	end 
 	
 	sysElectric.genSwitchGroup:actuate(0)
-	if kc_has_apu == true then
+	if kc_has_apu then
 		sysElectric.apuStartSwitch:actuate(0)
 	end
-	if kc_has_gpu == true then
+	if kc_has_gpu then
 		sysElectric.gpuConnect:actuate(0)
 	end
 	
 	kc_macro_elec_cold_dark()
+	
+	kc_macro_custom_cold_dark()
+
 end
 
 function kc_macro_state_turnaround()
@@ -130,23 +133,23 @@ function kc_macro_state_turnaround()
 
 	sysGeneral.parkBrakeSwitch:actuate(1) 
 
-	if kc_has_retractgear == true then
+	if kc_has_retractgear then
 		sysGeneral.GearSwitch:actuate(1)
 	end
-	if kc_has_speedbrake == true then
+	if kc_has_speedbrake then
 		sysControls.Speedbrake:setValue(0)
 	end
 	
 	kc_macro_set_flap(0)
 	
-	if kc_has_wipers == true then
+	if kc_has_wipers then
 		sysGeneral.wiperGroup:actuate(0)
 	end
 	
 	sysEngines.throttlePos:actuate(0)
 	kc_macro_stop_engine()
 	
-	if kc_has_autobrake == true then
+	if kc_has_autobrake then
 		kc_macro_set_autobrake(0)
 	end
 	
@@ -155,12 +158,12 @@ function kc_macro_state_turnaround()
 	
 	kc_macro_lights_preflight()
 	
-	if kc_has_gpu == true then
+	if kc_has_gpu and activeBriefings:get("departure:activateAPUPowerUp") == 2 then
 		sysElectric.gpuConnect:actuate(1)
 		sysElectric.gpuGenBusGroup:actuate(1)
 	end
 	
-	if kc_has_apu == true and activeBriefings:get("departure:activateAPUPowerUp") == 1 then
+	if kc_has_apu and activeBriefings:get("departure:activateAPUPowerUp") == 1 then
 		kc_procvar_set("apustart",true)
 		kc_procvar_set("apuonline",true)
 	end 
@@ -179,7 +182,7 @@ function kc_macro_state_turnaround()
 		sysFuel.fuelSwitchGroup:actuate(0)
 	end
 	
-	if kc_has_press_cab == true then
+	if kc_has_press_cab then
 		sysAir.packSwitchGroup:actuate(1)
 		sysAir.engBleedGroup:actuate(1)
 		sysAir.isoValveSwitch:actuate(0)
@@ -190,13 +193,13 @@ function kc_macro_state_turnaround()
 	
 	sysElectric.genSwitchGroup:actuate(1)
 	
-	if kc_has_avionics_sw == true then
+	if kc_has_avionics_sw then
 		sysElectric.avionicsSwitchGroup:actuate(1)
 	end
-	if kc_has_inv_ess_bus == true then
+	if kc_has_inv_ess_bus then
 		sysElectric.inverterSwitchGroup:actuate(1)
 	end
-	if kc_has_bus_ties == true then
+	if kc_has_bus_ties then
 		sysElectric.dcBusTie:actuate(1)
 	end
 
@@ -234,6 +237,8 @@ function kc_macro_state_turnaround()
 	if kc_has_proplever then
 		sysEngines.propLever:setValue(kc_prop_lvr_feather)
 	end	
+	
+	kc_macro_custom_turnaround()
 end
 
 -- ====================================== Lights related functions

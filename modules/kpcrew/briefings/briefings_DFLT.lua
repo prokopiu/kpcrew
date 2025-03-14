@@ -20,6 +20,7 @@ kc_has_gpu			= true		-- Aircraft has GPU connection
 kc_has_inv_ess_bus	= true		-- Aircraft has inverters and essential busses
 kc_has_bus_ties		= true		-- Aircraft has bus ties for AC & DC
 kc_has_avionics_sw  = true		-- Aircraft has Avionics switch
+kc_remove_gpu_after	= true		-- remove GPU after start
 
 -- === Controls
 kc_Numflap_detents	= -1 		-- Number of flap detents from acf
