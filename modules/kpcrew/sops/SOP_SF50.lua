@@ -47,6 +47,4 @@ activeSOP:setName("LAMINAR SF50 SOP")
 
 -- activeSOP:getFlow(1):addItem(HoldProcedureItem:new("KPCREW DEPARTURE BRIEF","PERFORM",FlowItem.actorCPT))
 
--- Oxygen an!
-
 return SOP_SF50

@@ -8,6 +8,7 @@ require("kpcrew.briefings.briefings_DFLT")
 kc_acf_name 		= "Laminar SF50"
 
 -- === Electric system
+kc_NumGenerators	= 2			-- Number of generators from acf
 kc_has_apu			= false		-- Aircraft has an APU
 kc_has_gpu			= false		-- Aircraft has GPU connection
 kc_has_inv_ess_bus	= false		-- Aircraft has inverters and essential busses

@@ -12,96 +12,18 @@ sysMacros = require("kpcrew.systems.DFLT.sysMacros")
 
 logMsg("SF50 sysMacros")
 
--- c&d setup
-function kc_macro_state_cold_and_dark()
-	logMsg("SF50 kc_macro_state_cold_and_dark")
-	
-	activeBckVars:set("general:timesOFF","==:==")
-	activeBckVars:set("general:timesOUT","==:==")
-	activeBckVars:set("general:timesIN","==:==")
-	activeBckVars:set("general:timesON","==:==")
-	
-	kc_macro_lights_cold_dark()
-	kc_macro_doors_cold_dark()
-	kc_macro_mcp_cold_dark()
-	
-	sysGeneral.parkBrakeSwitch:actuate(1) 
-
-	sysGeneral.GearSwitch:actuate(1)
-
-	kc_macro_set_flap(0)
-	
-	sysEngines.throttlePos:actuate(0)
-
-	sysControls.aileronReset:actuate(1)
-	sysControls.rudderReset:actuate(1)
-
-	sysAice.engAntiIceGroup:actuate(0)
-	sysAice.wingAntiIce:actuate(0)
-	sysAice.windowHeatGroup:actuate(0)
-	sysAir.engBleedGroup:actuate(0)
-	sysAice.probeHeatGroup:actuate(0)
-	
-	sysGeneral.seatBeltSwitch:actuate(0)
-	sysGeneral.noSmokingSwitch:actuate(0)
-
-	sysElectric.genSwitchGroup:actuate(0)
-	
-	kc_macro_elec_cold_dark()
-	
+-- custom cold & dark activities
+function kc_macro_custom_cold_dark()
 	set("sim/cockpit2/oxygen/actuators/demand_flow_setting",0)
 	set_array("sim/cockpit2/switches/custom_slider_on",21,0)
 	set_array("sim/cockpit2/switches/custom_slider_on",22,0)
-	
-	kc_macro_stop_engine()
 end
 
-function kc_macro_state_turnaround()
-	logMsg("SF50 kc_macro_state_turnaround")
-	
-	activeBckVars:set("general:timesOFF","==:==")
-	activeBckVars:set("general:timesOUT","==:==")
-	activeBckVars:set("general:timesIN","==:==")
-	activeBckVars:set("general:timesON","==:==")
-
-	sysGeneral.parkBrakeSwitch:actuate(1) 
-
-	sysGeneral.GearSwitch:actuate(1)
-	
-	kc_macro_set_flap(0)
-	
-	sysEngines.throttlePos:actuate(0)
-
-	sysElectric.batterySwitch:actuate(1) 
-	sysElectric.battery2Switch:actuate(1)
-	
-	-- kc_macro_lights_preflight()
-	
-	-- sysControls.aileronReset:actuate(1)
-	-- sysControls.rudderReset:actuate(1)
-	
-	-- sysElectric.genSwitchGroup:actuate(1)
-
-	-- sysGeneral.seatBeltSwitch:actuate(1)
-	-- sysGeneral.noSmokingSwitch:actuate(1)
-
-	sysAice.windowHeatGroup:actuate(1)
-	sysAice.probeHeatGroup:actuate(0)
-	sysAir.engBleedGroup:actuate(0)
-	
-	kc_macro_set_local_baro()
-
-	kc_macro_set_xpdrcode(sysRadios.stby)
-	kc_macro_set_xpdrcode(2000)
-	
-	kc_macro_doors_preflight()
-	kc_macro_mcp_preflight()
-	
+-- custom turnaround items
+function kc_macro_custom_turnaround()
 	set("sim/cockpit2/oxygen/actuators/demand_flow_setting",0)
 	set_array("sim/cockpit2/switches/custom_slider_on",21,0)
 	set_array("sim/cockpit2/switches/custom_slider_on",22,0)
-	
-	kc_macro_stop_engine()
 end
 
 -- Start engines 
