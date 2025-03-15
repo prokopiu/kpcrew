@@ -1,7 +1,7 @@
 --[[
 	*** KPBRIEF 1.0
 	Simbrief based briefing
-	Kosta Prokopiu, December 2025
+	Kosta Prokopiu, March 2025
 --]]
 
 -- actions:
@@ -35,7 +35,15 @@ if PLANE_ICAO == "B738" then
 -- Epic Victory Aerobask
 elseif PLANE_ICAO == "EVIC" then
 	kc_acf_icao = "EVIC"
+
+-- Epic E1000 Aerobask
+elseif PLANE_ICAO == "EPIC" then
+	kc_acf_icao = "EPIC"
 	
+-- Thranda PC12
+elseif PLANE_ICAO == "PC12" then
+	kc_acf_icao = "PC12"
+
 -- FF A350
 -- elseif PLANE_ICAO == "A359" then
 	-- kc_acf_icao = "A359"
@@ -101,10 +109,10 @@ elseif PLANE_ICAO == "A20N" and PLANE_TAILNUMBER == "C-GTLT" then
 	kc_acf_icao = "A3TL"
 elseif PLANE_ICAO == "A321" then
 	kc_acf_icao = "A3TL"
--- elseif PLANE_ICAO == "A339" then
-	-- kc_acf_icao = "A3TL"
--- elseif PLANE_ICAO == "A346" then
-	-- kc_acf_icao = "A3TL"
+elseif PLANE_ICAO == "A339" then
+	kc_acf_icao = "A3TL"
+elseif PLANE_ICAO == "A346" then
+	kc_acf_icao = "A3TL"
 	
 -- Laminar MD-82
 -- elseif PLANE_ICAO == "MD82" and PLANE_TAILNUMBER == "N552AA" then
@@ -652,8 +660,8 @@ function kb_brief_builder(kb_brief_wnd, x, y)
 	imgui.PushItemWidth(125*kb_font_scale);
 	imgui.PushID("apupwrup:")
     imgui.PushStyleColor(imgui.constant.Col.Text, color_orange)
-		if imgui.BeginCombo("", kc_split("Power up APU|Power Up GPU","|")[activeBriefings:get("departure:activateAPUPowerUp")]) then
-			local options = kc_split("Power up APU|Power Up GPU","|")
+		if imgui.BeginCombo("", kc_split("Power up APU|Power Up GPU|Battery Only","|")[activeBriefings:get("departure:activateAPUPowerUp")]) then
+			local options = kc_split("Power up APU|Power Up GPU|Battery Only","|")
 			for i = 1, #options do
 				if imgui.Selectable(options[i], activeBriefings:get("departure:activateAPUPowerUp") == i) then
 					activeBriefings:set("departure:activateAPUPowerUp",i)

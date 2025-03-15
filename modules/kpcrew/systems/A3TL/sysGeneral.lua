@@ -180,7 +180,7 @@ sysGeneral.doorACargo 		= TwoStateCustomSwitch:new("dooracargo","AirbusFBW/Cargo
 			return 0
 		end
 	end)
-if PLANE_ICAO ~= "A339" then
+if PLANE_ICAO ~= "A339" and PLANE_ICAO ~= "A346" then
 	sysGeneral.cockpitDoor 		= TwoStateCustomSwitch:new("cockpitdoor","ckpt/door",0,
 		function () 
 				set("ckpt/doorLock",0)
@@ -200,7 +200,7 @@ if PLANE_ICAO ~= "A339" then
 			end
 		end)
 else
-	sysGeneral.cockpitDoor 		= TwoStateCustomSwitch:new("cockpitdoor","ckpt/door",0,
+	sysGeneral.cockpitDoor 		= TwoStateCustomSwitch:new("cockpitdoor","AirbusFBW/CockpitDoorAngle",0,
 		function () 
 				set("AirbusFBW/CockpitDoorSwitch",2)
 				set("AirbusFBW/CockpitDoorAngle",90)

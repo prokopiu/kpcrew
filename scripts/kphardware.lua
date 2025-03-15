@@ -35,6 +35,14 @@ if PLANE_ICAO == "B738" then
 -- Epic Victory Aerobask
 elseif PLANE_ICAO == "EVIC" then
 	kh_acf_icao = "EVIC"
+
+-- Epic E1000 Aerobask
+elseif PLANE_ICAO == "EPIC" then
+	kh_acf_icao = "EPIC"
+
+-- Thranda PC12
+elseif PLANE_ICAO == "PC12" then
+	kh_acf_icao = "PC12"
 	
 -- FF A350
 -- elseif PLANE_ICAO == "A359" then
@@ -101,10 +109,10 @@ elseif PLANE_ICAO == "A20N" and PLANE_TAILNUMBER == "C-GTLT" then
 	kc_acf_icao = "A3TL"
 elseif PLANE_ICAO == "A321" then
 	kc_acf_icao = "A3TL"
--- elseif PLANE_ICAO == "A339" then
-	-- kc_acf_icao = "A3TL"
--- elseif PLANE_ICAO == "A346" then
-	-- kc_acf_icao = "A3TL"
+elseif PLANE_ICAO == "A339" then
+	kc_acf_icao = "A3TL"
+elseif PLANE_ICAO == "A346" then
+	kc_acf_icao = "A3TL"
 	
 -- Laminar MD-82
 -- elseif PLANE_ICAO == "MD82" and PLANE_TAILNUMBER == "N552AA" then

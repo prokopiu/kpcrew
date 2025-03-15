@@ -48,20 +48,25 @@ require("kpcrew.briefings.briefings_" .. kc_acf_icao)
 activeSOP:setName("ToLiss Airbuses SOP")
 
 -- Power up addons
-if PLANE_ICAO == "A339" then
+if PLANE_ICAO == "A339" or PLANE_ICAO == "A346" then
 	activeSOP:getFlow(1):addItem(ProcedureItem:new("APU BATT","ON",FlowItem.actorFO,0,
 		function () return sysElectric.battery3Switch:getStatus() > 0 end,
 		function () sysElectric.battery3Switch:actuate(1) end))
 end 	
-if PLANE_ICAO == "A339" then
-	activeSOP:getFlow(1):addItem(ProcedureItem:new("GALLEY POWER","ON",FlowItem.actorFO,0,
+if PLANE_ICAO == "A339" or PLANE_ICAO == "A346" then
+	activeSOP:getFlow(1):addItem(ProcedureItem:new("GALLEY POWER","AUTO",FlowItem.actorFO,0,
 		function () return get("AirbusFBW/ElecOHPArray",9) > 0 end,
 		function () set_array("AirbusFBW/ElecOHPArray",9,1) end))
 end 
-if PLANE_ICAO == "A339" then
+if PLANE_ICAO == "A339" or PLANE_ICAO == "A346" then
 	activeSOP:getFlow(1):addItem(ProcedureItem:new("COMMERCIAL","ON",FlowItem.actorFO,0,
 		function () return get("AirbusFBW/ElecOHPArray",8) > 0 end,
 		function () set_array("AirbusFBW/ElecOHPArray",8,1) end))
+end 
+if PLANE_ICAO == "A346" then
+	activeSOP:getFlow(1):addItem(ProcedureItem:new("ELMU","ON",FlowItem.actorFO,0,
+		function () return get("AirbusFBW/ElecOHPArray",18) > 0 end,
+		function () set_array("AirbusFBW/ElecOHPArray",18,1) end))
 end 
 activeSOP:getFlow(1):addItem(ProcedureItem:new("EMER LTS","ARM",FlowItem.actorFO,0,
 	function () return get("AirbusFBW/OHPLightSwitches",10) == 1 end,
@@ -69,7 +74,7 @@ activeSOP:getFlow(1):addItem(ProcedureItem:new("EMER LTS","ARM",FlowItem.actorFO
 activeSOP:getFlow(1):addItem(ProcedureItem:new("CREW SUPPLY","AUTO",FlowItem.actorFO,0,
 	function () return get("AirbusFBW/CrewOxySwitch") == 1 end,
 	function () set("AirbusFBW/CrewOxySwitch",1) end))
-if PLANE_ICAO ~= "A339" then
+if PLANE_ICAO ~= "A339" and PLANE_ICAO ~= "A346" then
 	activeSOP:getFlow(1):addItem(ProcedureItem:new("PACK FLOW","NORMAL",FlowItem.actorFO,0,
 		function () return get("ckpt/oh/packFlow") == 1 end,
 		function () set("ckpt/oh/packFlow",1) end))
@@ -103,7 +108,3 @@ activeSOP:getFlow(18):addItem(ProcedureItem:new("EMER LTS","OFF",FlowItem.actorF
 	function () set_array("AirbusFBW/OHPLightSwitches",10,0) end))
 	
 return SOP_A3TL
-
--- toliss Airbusses
--- engines do not start immediately.
--- custom c&d/turnaround

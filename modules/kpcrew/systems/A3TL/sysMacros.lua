@@ -296,7 +296,9 @@ function kc_macro_lights_cold_dark()
 	-- set the lights for cold & dark mode
 	-- external
 	command_once("toliss_airbus/lightcommands/LLandLightDown")
-	command_once("toliss_airbus/lightcommands/RLandLightDown")
+	if PLANE_ICAO ~= "A346" then
+		command_once("toliss_airbus/lightcommands/RLandLightDown")
+	end
 	command_once("toliss_airbus/lightcommands/TurnoffLightOff")
 	command_once("toliss_airbus/lightcommands/NoseLightDown")
 	command_once("toliss_airbus/lightcommands/NoseLightDown")
@@ -333,7 +335,9 @@ function kc_macro_lights_preflight()
 	-- set the lights as needed during preflight/turnaround
 	-- external
 	command_once("toliss_airbus/lightcommands/LLandLightDown")
-	command_once("toliss_airbus/lightcommands/RLandLightDown")
+	if PLANE_ICAO ~= "A346" then
+		command_once("toliss_airbus/lightcommands/RLandLightDown")
+	end
 	command_once("toliss_airbus/lightcommands/TurnoffLightOff")
 	command_once("toliss_airbus/lightcommands/NoseLightDown")
 	command_once("toliss_airbus/lightcommands/NoseLightDown")
@@ -385,7 +389,9 @@ end
 function kc_macro_lights_for_takeoff()
 
 	command_once("toliss_airbus/lightcommands/LLandLightUp")
-	command_once("toliss_airbus/lightcommands/RLandLightUp")
+	if PLANE_ICAO ~= "A346" then
+		command_once("toliss_airbus/lightcommands/RLandLightUp")
+	end
 	command_once("toliss_airbus/lightcommands/TurnoffLightOn")
 	command_once("toliss_airbus/lightcommands/NoseLightUp")
 	command_once("toliss_airbus/lightcommands/NoseLightUp")

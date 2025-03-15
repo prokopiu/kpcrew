@@ -22,7 +22,7 @@ logMsg("A3TL sysHydraulic")
 
 -- ----- HYD Electric Pumps
 sysHydraulic.elecHydPumpGroup = SwitchGroup:new("elechydpumps")
-if PLANE_ICAO ~= "A339" then
+if PLANE_ICAO ~= "A339" and PLANE_ICAO ~= "A346" then
 	sysHydraulic.elecHydPump1	= TwoStateDrefSwitch:new("elechydpump1","AirbusFBW/HydOHPArray",3)
 else
 	sysHydraulic.elecHydPump1	= TwoStateDrefSwitch:new("elechydpump1","AirbusFBW/HydOHPArray",9)
@@ -35,7 +35,7 @@ sysHydraulic.engHydPump1	= TwoStateDrefSwitch:new("enghydpump1","AirbusFBW/HydOH
 sysHydraulic.engHydPumpGroup:addSwitch(sysHydraulic.engHydPump1)
 sysHydraulic.engHydPump2	= TwoStateDrefSwitch:new("enghydpump2","AirbusFBW/HydOHPArray",1)
 sysHydraulic.engHydPumpGroup:addSwitch(sysHydraulic.engHydPump2)
-if PLANE_ICAO == "A339" then
+if PLANE_ICAO ~= "A339" and PLANE_ICAO ~= "A346" then
 	sysHydraulic.engHydPump3	= TwoStateDrefSwitch:new("enghydpump3","AirbusFBW/HydOHPArray",2)
 	sysHydraulic.engHydPumpGroup:addSwitch(sysHydraulic.engHydPump1)
 	sysHydraulic.engHydPump4	= TwoStateDrefSwitch:new("enghydpump4","AirbusFBW/HydOHPArray",3)
