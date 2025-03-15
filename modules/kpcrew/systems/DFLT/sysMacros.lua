@@ -9,6 +9,11 @@ local sysMacros = {
 }
 
 logMsg("DFLT sysMacros")
+function kc_macro_custom_cold_dark()
+end
+
+function kc_macro_custom_turnaround()
+end
 
 -- ====================================== States related macros
 function kc_macro_state_cold_and_dark()
@@ -136,6 +141,9 @@ function kc_macro_state_cold_and_dark()
 		sysElectric.gpuConnect:actuate(0)
 	end
 	
+	sysElectric.batterySwitch:actuate(0) 
+	sysElectric.battery2Switch:actuate(0)
+	
 	kc_macro_elec_cold_dark()
 	
 	kc_macro_custom_cold_dark()
@@ -262,13 +270,6 @@ function kc_macro_state_turnaround()
 		sysElectric.dcBusTie:actuate(1)
 	end
 
-	if kc_has_seatbelt_sgn then
-		sysGeneral.seatBeltSwitch:actuate(1)
-	end
-	if kc_has_nosmoke_sgn then
-		sysGeneral.noSmokingSwitch:actuate(1)
-	end
-
 	if kc_has_pitot_heat then 
 		sysAice.probeHeatGroup:actuate(0)
 	end
@@ -326,7 +327,7 @@ function kc_macro_lights_preflight()
 	end
 	if kc_is_daylight() then
 		if kc_has_dome_lights then
-			sysLights.domeLightSwitch:actuate(0)
+			sysLights.domeLightGroup:actuate(0)
 		end
 		if kc_has_logo_lights then
 			sysLights.logoSwitch:actuate(0)
@@ -342,7 +343,7 @@ function kc_macro_lights_preflight()
 		end
 	else
 		if kc_has_dome_lights then
-			sysLights.domeLightSwitch:actuate(1)
+			sysLights.domeLightGroup:actuate(1)
 		end
 		if kc_has_logo_lights then
 			sysLights.logoSwitch:actuate(1)
@@ -387,7 +388,7 @@ function kc_macro_lights_before_taxi()
 		sysLights.landLightGroup:actuate(1)
 	end
 	if kc_has_dome_lights then
-		sysLights.domeLightSwitch:actuate(0)
+		sysLights.domeLightGroup:actuate(0)
 	end
 end
 
@@ -486,7 +487,7 @@ function kc_macro_lights_after_shutdown()
 	end
 	if kc_is_daylight() then		
 		if kc_has_dome_lights then
-			sysLights.domeLightSwitch:actuate(0)
+			sysLights.domeLightGroup:actuate(0)
 		end
 		if kc_has_logo_lights then
 			sysLights.logoSwitch:actuate(0)
@@ -502,7 +503,7 @@ function kc_macro_lights_after_shutdown()
 		end
 	else
 		if kc_has_dome_lights then
-			sysLights.domeLightSwitch:actuate(1)
+			sysLights.domeLightGroup:actuate(1)
 		end
 		if kc_has_logo_lights then
 			sysLights.logoSwitch:actuate(1)
@@ -543,7 +544,7 @@ function kc_macro_lights_cold_dark()
 		sysLights.instrLightGroup:actuate(0)
 	end
 	if kc_has_dome_lights then
-		sysLights.domeLightSwitch:actuate(0)
+		sysLights.domeLightGroup:actuate(0)
 	end
 	if kc_has_logo_lights then
 		sysLights.logoSwitch:actuate(0)
@@ -581,7 +582,7 @@ function kc_macro_lights_all_on()
 		sysLights.instrLightGroup:actuate(1)
 	end
 	if kc_has_dome_lights then
-		sysLights.domeLightSwitch:actuate(1)
+		sysLights.domeLightGroup:actuate(1)
 	end
 	if kc_has_logo_lights then
 		sysLights.logoSwitch:actuate(1)
@@ -979,8 +980,8 @@ function kc_macro_elec_preflight()
 	if kc_has_bus_ties == true then
 		sysElectric.dcBusTie:actuate(0)
 	end
-	sysElectric.batterySwitch:actuate(0) 
-	sysElectric.battery2Switch:actuate(0) 	
+	sysElectric.batterySwitch:actuate(1) 
+	sysElectric.battery2Switch:actuate(1) 	
 end
 
 -- ===========

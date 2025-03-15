@@ -48,15 +48,32 @@ require("kpcrew.briefings.briefings_" .. kc_acf_icao)
 activeSOP:setName("ToLiss Airbuses SOP")
 
 -- Power up addons
+if PLANE_ICAO == "A339" then
+	activeSOP:getFlow(1):addItem(ProcedureItem:new("APU BATT","ON",FlowItem.actorFO,0,
+		function () return sysElectric.battery3Switch:getStatus() > 0 end,
+		function () sysElectric.battery3Switch:actuate(1) end))
+end 	
+if PLANE_ICAO == "A339" then
+	activeSOP:getFlow(1):addItem(ProcedureItem:new("GALLEY POWER","ON",FlowItem.actorFO,0,
+		function () return get("AirbusFBW/ElecOHPArray",9) > 0 end,
+		function () set_array("AirbusFBW/ElecOHPArray",9,1) end))
+end 
+if PLANE_ICAO == "A339" then
+	activeSOP:getFlow(1):addItem(ProcedureItem:new("COMMERCIAL","ON",FlowItem.actorFO,0,
+		function () return get("AirbusFBW/ElecOHPArray",8) > 0 end,
+		function () set_array("AirbusFBW/ElecOHPArray",8,1) end))
+end 
 activeSOP:getFlow(1):addItem(ProcedureItem:new("EMER LTS","ARM",FlowItem.actorFO,0,
 	function () return get("AirbusFBW/OHPLightSwitches",10) == 1 end,
 	function () set_array("AirbusFBW/OHPLightSwitches",10,1) end))
 activeSOP:getFlow(1):addItem(ProcedureItem:new("CREW SUPPLY","AUTO",FlowItem.actorFO,0,
 	function () return get("AirbusFBW/CrewOxySwitch") == 1 end,
 	function () set("AirbusFBW/CrewOxySwitch",1) end))
-activeSOP:getFlow(1):addItem(ProcedureItem:new("PACK FLOW","NORMAL",FlowItem.actorFO,0,
-	function () return get("ckpt/oh/packFlow") == 1 end,
-	function () set("ckpt/oh/packFlow",1) end))
+if PLANE_ICAO ~= "A339" then
+	activeSOP:getFlow(1):addItem(ProcedureItem:new("PACK FLOW","NORMAL",FlowItem.actorFO,0,
+		function () return get("ckpt/oh/packFlow") == 1 end,
+		function () set("ckpt/oh/packFlow",1) end))
+end 
 activeSOP:getFlow(1):addItem(ProcedureItem:new("RMPS","ON",FlowItem.actorFO,0,
 	function () return 
 		get("AirbusFBW/RMP1Switch") +
@@ -68,12 +85,12 @@ activeSOP:getFlow(1):addItem(ProcedureItem:new("RMPS","ON",FlowItem.actorFO,0,
 		set("AirbusFBW/RMP2Switch",1) 
 		set("AirbusFBW/RMP3Switch",1) 
 	end))	
-	
+
 
 -- before start
 activeSOP:getFlow(2):addItem(ProcedureItem:new("ELEC HYD PUMP","OFF",FlowItem.actorFO,0,
-	function () return get("AirbusFBW/HydOHPArray",3) == 0 end,
-	function () set_array("AirbusFBW/HydOHPArray",3,0) end))	
+	function () return sysHydraulic.elecHydPumpGroup:getStatus() == 0 end,
+	function () sysHydraulic.elecHydPumpGroup:actuate(0) end))
 
 -- landing Procedure
 activeSOP:getFlow(12):addItem(ProcedureItem:new("LS","ON",FlowItem.actorFO,0,
@@ -81,7 +98,7 @@ activeSOP:getFlow(12):addItem(ProcedureItem:new("LS","ON",FlowItem.actorFO,0,
 	function () set("AirbusFBW/ILSonCapt",1) end))
 	
 -- Shutdown addons
-activeSOP:getFlow(16):addItem(ProcedureItem:new("EMER LTS","OFF",FlowItem.actorFO,0,
+activeSOP:getFlow(18):addItem(ProcedureItem:new("EMER LTS","OFF",FlowItem.actorFO,0,
 	function () return get("AirbusFBW/OHPLightSwitches",10) == 0 end,
 	function () set_array("AirbusFBW/OHPLightSwitches",10,0) end))
 	

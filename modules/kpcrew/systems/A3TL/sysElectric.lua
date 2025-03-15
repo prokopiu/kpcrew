@@ -29,7 +29,7 @@ sysElectric.battery2Switch 	= TwoStateCmdSwitch:new("battery2","AirbusFBW/BatOHP
 	"toliss_airbus/eleccommands/Bat2On","toliss_airbus/eleccommands/Bat2Off","toliss_airbus/eleccommands/Bat2Toggle")
 sysElectric.batteryGroup:addSwitch(battery2Switch)
 if PLANE_ICAO == "A339" or PLANE_ICAO == "A346" then
-	sysElectric.battery3Switch 	= TwoStateDrefSwitch:new("battery3","AirbusFBW/ElecOHPArray",2)
+	sysElectric.battery3Switch 	= TwoStateDrefSwitch:new("battery3","AirbusFBW/ElecOHPArray",16)
 	sysElectric.batteryGroup:addSwitch(battery3Switch)
 end
 
@@ -55,7 +55,35 @@ if kc_get_nr_generators() > 3 then
 end
 
 -- de-/activate GPU
-sysElectric.gpuConnect 		= TwoStateDrefSwitch:new("GPU","AirbusFBW/EnableExternalPower",0)
+if PLANE_ICAO ~= "A339" then
+	sysElectric.gpuConnect 		= TwoStateDrefSwitch:new("GPU","AirbusFBW/EnableExternalPower",0)
+else
+	sysElectric.gpuConnect 		= TwoStateCustomSwitch:new("GPU","AirbusFBW/EnableExternalPower",0,
+	function ()
+		set("AirbusFBW/EnableExternalPower",1)
+		set("AirbusFBW/EnableExternalPowerB",1)
+	end,
+	function ()
+		set("AirbusFBW/EnableExternalPower",0)
+		set("AirbusFBW/EnableExternalPowerB",0)
+	end,
+	function ()
+		if get("AirbusFBW/EnableExternalPower") == 0 then
+			set("AirbusFBW/EnableExternalPower",1)
+			set("AirbusFBW/EnableExternalPowerB",1)
+		else
+			set("AirbusFBW/EnableExternalPower",0)
+			set("AirbusFBW/EnableExternalPowerB",0)
+		end
+	end,
+	function ()
+		if get("AirbusFBW/EnableExternalPower") ~= 0 then
+			return 1
+		else
+			return 0
+		end
+	end)
+end
 -- ----- GPU
 sysElectric.gpuGenBusGroup	= SwitchGroup:new("gpubussgroup")
 sysElectric.gpuGenBus1 		= TwoStateCmdSwitch:new("gpubus1","AirbusFBW/ExtPowOHPArray",-1,
@@ -106,7 +134,7 @@ sysElectric.dcBusTie				= TwoStateDrefSwitch:new("dcbustie","AirbusFBW/ElecOHPAr
 -- APU RUNNING annunciator
 sysElectric.apuRunningAnc 	= CustomAnnunciator:new("apurunning",
 	function () 
-		if get("AirbusFBW/APUEGT") > 400 then
+		if get("AirbusFBW/APUN") > 98 then
 			return 1
 		else
 			return 0

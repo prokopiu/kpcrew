@@ -370,7 +370,7 @@ if kc_has_fuel_pumps then
 		function () sysFuel.allFuelPumpGroup:actuate(1) end))
 end
 if kc_has_apu == true then
-	beforeStart:addItem(ProcedureItem:new("APU START","PERFORM",FlowItem.actorFO,35,
+	beforeStart:addItem(ProcedureItem:new("APU START","PERFORM",FlowItem.actorFO,15,
 			function () return sysElectric.apuRunningAnc:getStatus() > 0 end,
 			function () 
 				kc_procvar_set("apustart",true)
@@ -479,15 +479,15 @@ if kc_has_transponder then
 			sysRadios.xpdrCode:setValue(xpdrcode)
 		end))
 end
-if kc_has_press_cab == true then
-	prePushStartProc:addItem(ProcedureItem:new("PACK SWITCHES","OFF",FlowItem.actorFO,0,
-		function () 
-			return sysAir.packSwitchGroup:getStatus() == 0
-		end,
-		function () 
-			kc_macro_packs_off()
-		end))
-end
+-- if kc_has_press_cab == true then
+	-- prePushStartProc:addItem(ProcedureItem:new("PACK SWITCHES","OFF",FlowItem.actorFO,0,
+		-- function () 
+			-- return sysAir.packSwitchGroup:getStatus() == 0
+		-- end,
+		-- function () 
+			-- kc_macro_packs_off()
+		-- end))
+-- end
 prePushStartProc:addItem(HoldProcedureItem:new("PUSHBACK SERVICE","ENGAGE IF NEEDED",FlowItem.actorCPT,nil,
 	function () return activeBriefings:get("taxi:pushDirection") == 1 end))
 if kc_has_gpu == true and kc_remove_gpu_after == false then
@@ -1075,7 +1075,7 @@ end
 local flapsUpProc = Procedure:new("RETRACT FLAPS","")
 flapsUpProc:setFlightPhase(0-SOP.phaseTakeoff)
 
-if kc_is_airbus then
+if kc_is_airbus == false then
 	flapsUpProc:addItem(ProcedureItem:new("YAW DAMPER","ON",FlowItem.actorPF,0,
 		function () return sysControls.yawDamper:getStatus() == 1 end,
 		function () sysControls.yawDamper:actuate(1) end))

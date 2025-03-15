@@ -180,24 +180,45 @@ sysGeneral.doorACargo 		= TwoStateCustomSwitch:new("dooracargo","AirbusFBW/Cargo
 			return 0
 		end
 	end)
-sysGeneral.cockpitDoor 		= TwoStateCustomSwitch:new("cockpitdoor","ckpt/door",0,
-	function () 
-			set("ckpt/doorLock",0)
-			set("ckpt/door",80)
-	end,
-	function () 
-			set("ckpt/doorLock",1)
-			set("ckpt/door",0)
-	end,
-	function () 
-	end,
-	function () 
-		if get("ckpt/door") > 0 then
-			return 1
-		else
-			return 0
-		end
-	end)
+if PLANE_ICAO ~= "A339" then
+	sysGeneral.cockpitDoor 		= TwoStateCustomSwitch:new("cockpitdoor","ckpt/door",0,
+		function () 
+				set("ckpt/doorLock",0)
+				set("ckpt/door",80)
+		end,
+		function () 
+				set("ckpt/doorLock",1)
+				set("ckpt/door",0)
+		end,
+		function () 
+		end,
+		function () 
+			if get("ckpt/door") > 0 then
+				return 1
+			else
+				return 0
+			end
+		end)
+else
+	sysGeneral.cockpitDoor 		= TwoStateCustomSwitch:new("cockpitdoor","ckpt/door",0,
+		function () 
+				set("AirbusFBW/CockpitDoorSwitch",2)
+				set("AirbusFBW/CockpitDoorAngle",90)
+		end,
+		function () 
+				set("AirbusFBW/CockpitDoorAngle",0)
+				set("AirbusFBW/CockpitDoorSwitch",0)
+		end,
+		function () 
+		end,
+		function () 
+			if get("AirbusFBW/CockpitDoorAngle") > 80 then
+				return 1
+			else
+				return 0
+			end
+		end)
+end
 sysGeneral.stairsL1 		= InopSwitch:new("stairs1")
 
 sysGeneral.doorGroup = SwitchGroup:new("doors")

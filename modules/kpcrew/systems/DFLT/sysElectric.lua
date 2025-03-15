@@ -83,17 +83,17 @@ sysElectric.genSwitchGroup 	= SwitchGroup:new("generators")
 sysElectric.gen1Switch 		= TwoStateDrefSwitch:new("gen1",
 	"sim/cockpit/electrical/generator_on",-1)
 sysElectric.genSwitchGroup:addSwitch(sysElectric.gen1Switch)
-if kc_get_nr_engines() > 1 then
+if kc_get_nr_generators() > 1 then
 	sysElectric.gen2Switch 	= TwoStateDrefSwitch:new("gen2",
 		"sim/cockpit/electrical/generator_on",1)
 	sysElectric.genSwitchGroup:addSwitch(sysElectric.gen2Switch)
 end
-if kc_get_nr_engines() > 2 then
+if kc_get_nr_generators() > 2 then
 	sysElectric.gen3Switch 		= TwoStateDrefSwitch:new("gen3",
 		"sim/cockpit/electrical/generator_on",2)
 	sysElectric.genSwitchGroup:addSwitch(sysElectric.gen3Switch)
 end
-if kc_get_nr_engines() > 3 then
+if kc_get_nr_generators() > 3 then
 	sysElectric.gen4Switch 		= TwoStateDrefSwitch:new("gen4",
 		"sim/cockpit/electrical/generator_on",3)
 	sysElectric.genSwitchGroup:addSwitch(sysElectric.gen4Switch)

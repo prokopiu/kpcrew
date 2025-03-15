@@ -76,6 +76,10 @@ function kc_macro_custom_cold_dark()
 		command_once("toliss_airbus/eleccommands/ExtPowOff") 
 	end
 	set("AirbusFBW/EnableExternalPower",0)
+	set_array("AirbusFBW/ElecOHPArray",16,0)
+	set_array("AirbusFBW/ElecOHPArray",18,0)
+	set_array("AirbusFBW/ElecOHPArray",8,0)
+	set_array("AirbusFBW/ElecOHPArray",9,0)
 end
 
 -- custom turnaround items
@@ -142,8 +146,6 @@ function kc_macro_custom_turnaround()
 	set_array("AirbusFBW/GPWSSwitchArray",2,1)
 	set_array("AirbusFBW/GPWSSwitchArray",3,0)
 	set_array("AirbusFBW/GPWSSwitchArray",4,1)
-	set_array("AirbusFBW/OHPLightSwitches",11,0)
-	set_array("AirbusFBW/OHPLightSwitches",12,1)
 	set_array("AirbusFBW/OHPLightSwitches",10,1) 
 
 	command_once("toliss_airbus/antiicecommands/WingOff")

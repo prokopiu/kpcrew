@@ -29,6 +29,7 @@ kc_LandingFlaps 	= "3|FULL"
 kc_LandingFlapsInd 	= "3|4"
 
 -- === engines
+kc_n2_after_start	= 50
 
 -- === Fuel
 kc_has_fuel_pumps   = true		-- Aircraft has switchable fuel pumps

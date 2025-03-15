@@ -156,10 +156,10 @@ function ()
 end)
 
 -- Taxi/Nose Lights, single onoff command driven
-sysLights.taxiSwitch 		= TwoStateDrefSwitch:new("taxi","sim/cockpit2/switches/landing_lights_switch",1)
+sysLights.taxiSwitch 		= TwoStateDrefSwitch:new("taxi","AirbusFBW/OHPLightSwitches",3)
 
 -- Taxi Light(s) status
-sysLights.taxiAnc 			= SimpleAnnunciator:new("strobelights","sim/cockpit2/switches/landing_lights_switch",1)
+sysLights.taxiAnc 			= SimpleAnnunciator:new("strobelights","AirbusFBW/OHPLightSwitches",3)
 
 -- Logo Light
 sysLights.logoSwitch 		= TwoStateCustomSwitch:new("logo","AirbusFBW/OHPLightSwitches",2,
@@ -215,44 +215,80 @@ sysLights.rwyLightGroup:addSwitch(sysLights.rwyRightSwitch)
 sysLights.runwayAnc 		= SimpleAnnunciator:new("runwaylights","AirbusFBW/OHPLightSwitches",6)
 
 -- Dome Light
-sysLights.domeLightSwitch 	= TwoStateCustomSwitch:new("dome","ckpt/oh/domeLight/anim",0,
-function () 
-	command_once("toliss_airbus/lightcommands/DomeLightDown")
-	command_once("toliss_airbus/lightcommands/DomeLightDown")
-	command_once("toliss_airbus/lightcommands/DomeLightUp")
-end,
-function ()
-	command_once("toliss_airbus/lightcommands/DomeLightDown")
-	command_once("toliss_airbus/lightcommands/DomeLightDown")
-end,
-function () 
-	if get("AirbusFBW/OHPLightSwitches",2) == 0 then
-		set_array("AirbusFBW/OHPLightSwitches",2,2)
-	else
-		set_array("AirbusFBW/OHPLightSwitches",2,1)
-	end
-end,
-function ()
-	if get("AirbusFBW/OHPLightSwitches",2) == 2 then 
-		return 1
-	else
-		return 0
-	end
-end)
+if PLANE_ICAO ~= "A339" then
+	sysLights.domeLightSwitch 	= TwoStateCustomSwitch:new("dome","ckpt/oh/domeLight/anim",0,
+	function () 
+		command_once("toliss_airbus/lightcommands/DomeLightDown")
+		command_once("toliss_airbus/lightcommands/DomeLightDown")
+		command_once("toliss_airbus/lightcommands/DomeLightUp")
+	end,
+	function ()
+		command_once("toliss_airbus/lightcommands/DomeLightDown")
+		command_once("toliss_airbus/lightcommands/DomeLightDown")
+	end,
+	function () 
+		if get("AirbusFBW/OHPLightSwitches",2) == 0 then
+			set_array("AirbusFBW/OHPLightSwitches",2,2)
+		else
+			set_array("AirbusFBW/OHPLightSwitches",2,1)
+		end
+	end,
+	function ()
+		if get("AirbusFBW/OHPLightSwitches",2) == 2 then 
+			return 1
+		else
+			return 0
+		end
+	end)
+else
+	sysLights.domeLightSwitch 	= TwoStateCustomSwitch:new("dome","AirbusFBW/OHPLightSwitches",13,
+	function () 
+		set_array("AirbusFBW/OHPLightSwitches",13,1)
+	end,
+	function ()
+		set_array("AirbusFBW/OHPLightSwitches",13,0)
+	end,
+	function () 
+		if get("AirbusFBW/OHPLightSwitches",13) == 0 then
+			set_array("AirbusFBW/OHPLightSwitches",13,1)
+		else
+			set_array("AirbusFBW/OHPLightSwitches",13,0)
+		end
+	end,
+	function ()
+		if get("AirbusFBW/OHPLightSwitches",13) > 0 then 
+			return 1
+		else
+			return 0
+		end
+	end)
+end
+
 sysLights.domeLightSwitch2 	= InopSwitch:new("dome2")
 sysLights.domeLightGroup 	= SwitchGroup:new("dome lights")
-sysLights.rwyLightGroup:addSwitch(sysLights.domeLightSwitch)
-sysLights.rwyLightGroup:addSwitch(sysLights.domeLightSwitch2)
+sysLights.domeLightGroup:addSwitch(sysLights.domeLightSwitch)
+sysLights.domeLightGroup:addSwitch(sysLights.domeLightSwitch2)
 
 -- Dome Light(s) status
-sysLights.domeAnc 			= CustomAnnunciator:new("domelights",
-function () 
-	if get( "sim/cockpit/electrical/cockpit_lights",0) ~= 0 then
-		return 1
-	else
-		return 0
-	end
-end)
+if PLANE_ICAO ~= "A339" then
+	sysLights.domeAnc 			= CustomAnnunciator:new("domelights",
+	function () 
+		if get( "sim/cockpit/electrical/cockpit_lights",0) ~= 0 then
+			return 1
+		else
+			return 0
+		end
+	end)
+else
+	sysLights.domeAnc 			= CustomAnnunciator:new("domelights",
+	function () 
+		if get("AirbusFBW/OHPLightSwitches",13) ~= 0 then
+			return 1
+		else
+			return 0
+		end
+	end)
+end
 
 sysLights.emerLights		= TwoStateCmdSwitch:new("emerlights","ckpt/oh/emerExitLight/anim",0,
 "toliss_airbus/lightcommands/EmerExitLightUp","toliss_airbus/lightcommands/EmerExitLightDown","nocommand")

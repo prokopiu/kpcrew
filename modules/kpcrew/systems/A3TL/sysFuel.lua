@@ -22,19 +22,25 @@ sysFuel = require("kpcrew.systems.DFLT.sysFuel")
 logMsg("A3TL sysFuel")
 
 -- Fuel pumps
-sysFuel.fuelPumpLeftAft 	= TwoStateDrefSwitch:new ("fuelpmp1","AirbusFBW/FuelOHPArray",-1)
-sysFuel.fuelPumpRightAft 	= TwoStateDrefSwitch:new ("fuelpmp2","AirbusFBW/FuelOHPArray",1)
-sysFuel.fuelPump3		 	= TwoStateDrefSwitch:new ("fuelpmp3","AirbusFBW/FuelOHPArray",2)
-sysFuel.fuelPump4		 	= TwoStateDrefSwitch:new ("fuelpmp4","AirbusFBW/FuelOHPArray",3)
-sysFuel.fuelPump5		 	= TwoStateDrefSwitch:new ("fuelpmp5","AirbusFBW/FuelOHPArray",4)
-sysFuel.fuelPump6		 	= TwoStateDrefSwitch:new ("fuelpmp6","AirbusFBW/FuelOHPArray",5)
 sysFuel.allFuelPumpGroup 		= SwitchGroup:new("fuelpumpgroup")
+sysFuel.fuelPumpLeftAft 	= TwoStateDrefSwitch:new ("fuelpmp1","AirbusFBW/FuelOHPArray",-1)
 sysFuel.allFuelPumpGroup:addSwitch(sysFuel.fuelPumpLeftAft)
+sysFuel.fuelPumpRightAft 	= TwoStateDrefSwitch:new ("fuelpmp2","AirbusFBW/FuelOHPArray",1)
 sysFuel.allFuelPumpGroup:addSwitch(sysFuel.fuelPumpRightAft)
+sysFuel.fuelPump3		 	= TwoStateDrefSwitch:new ("fuelpmp3","AirbusFBW/FuelOHPArray",2)
 sysFuel.allFuelPumpGroup:addSwitch(sysFuel.fuelPump3)
+sysFuel.fuelPump4		 	= TwoStateDrefSwitch:new ("fuelpmp4","AirbusFBW/FuelOHPArray",3)
 sysFuel.allFuelPumpGroup:addSwitch(sysFuel.fuelPump4)
+sysFuel.fuelPump5		 	= TwoStateDrefSwitch:new ("fuelpmp5","AirbusFBW/FuelOHPArray",4)
 sysFuel.allFuelPumpGroup:addSwitch(sysFuel.fuelPump5)
+sysFuel.fuelPump6		 	= TwoStateDrefSwitch:new ("fuelpmp6","AirbusFBW/FuelOHPArray",5)
 sysFuel.allFuelPumpGroup:addSwitch(sysFuel.fuelPump6)
+if PLANE_ICAO == "A339" then
+	sysFuel.fuelPump7		 	= TwoStateDrefSwitch:new ("fuelpmp7","AirbusFBW/FuelOHPArray",8)
+	sysFuel.allFuelPumpGroup:addSwitch(sysFuel.fuelPump7)
+	sysFuel.fuelPump8		 	= TwoStateDrefSwitch:new ("fuelpmp8","AirbusFBW/FuelOHPArray",9)
+	sysFuel.allFuelPumpGroup:addSwitch(sysFuel.fuelPump8)
+end
 
 sysFuel.crossFeed = TwoStateDrefSwitch:new("crossfeed","AirbusFBW/FuelOHPArray",7)
 
