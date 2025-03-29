@@ -54,10 +54,8 @@ kcSopFlightPhase = { [1] = "Cold & Dark", 	[2] = "Prel Preflight", [3] = "Prefli
 -- Set up SOP =========================================================================
 
 activeSOP = SOP:new("Zibo Mod SOP")
-set("sim/private/controls/shadow/cockpit_near_adjust",1)
 
-local testProc = Procedure:new("TEST","","")
-testProc:setFlightPhase(1)
+kc_num_visible_sop_items = 27
 
 -- ============ Electrical Power Up Procedure ============
 -- All paper work on board and checked

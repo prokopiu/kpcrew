@@ -55,6 +55,8 @@ kcSopFlightPhase = { [1] = "Cold & Dark", 	[2] = "Prel Cockpit Prep", [3] = "Coc
 
 activeSOP = SOP:new("IXEG B733 SOP")
 
+kc_num_visible_sop_items = 12
+
 local testProc = Checklist:new("TEST","","")
 testProc:addItem(ChecklistItem:new("APU","ON",FlowItem.actorFO,3,
 	function () 

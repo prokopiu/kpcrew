@@ -54,6 +54,8 @@ kcSopFlightPhase = { [1] = "Cold & Dark", 	[2] = "Prel Preflight", [3] = "Prefli
 
 activeSOP = SOP:new("FF A350 SOP")
 
+kc_num_visible_sop_items = 12
+
 local testProc = Procedure:new("TEST","","")
 
 testProc:addItem(SimpleProcedureItem:new("=== Batteries on"))

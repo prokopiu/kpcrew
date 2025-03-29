@@ -54,6 +54,8 @@ kcSopFlightPhase = { [1] = "Cold & Dark", 	[2] = "Prel Preflight", [3] = "Prefli
 
 activeSOP = SOP:new("FlightFactor B757/B767")
 
+kc_num_visible_sop_items = 12
+
 local testProc = Procedure:new("TEST","","")
 testProc:setFlightPhase(1)
 testProc:addItem(ProcedureItem:new("BATTERY SWITCH","ON",FlowItem.actorFO,0,true,

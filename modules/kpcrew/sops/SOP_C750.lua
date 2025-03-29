@@ -51,6 +51,8 @@ kcSopFlightPhase = { [1] = "Cold & Dark", 	[2] = "Prel Preflight", [3] = "Prefli
 
 activeSOP = SOP:new("Laminar Citation X SOP")
 
+kc_num_visible_sop_items = 21
+
 -- =====================================================================================================================
 
 -- ================== ORIGINATING CHECK ==================
