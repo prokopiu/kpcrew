@@ -3,7 +3,7 @@
 
 -- @classmod sysFuel
 -- @author Kosta Prokopiu
--- @copyright 2024 Kosta Prokopiu
+-- @copyright 2025 Kosta Prokopiu
 
 local TwoStateDrefSwitch 	= require "kpcrew.systems.TwoStateDrefSwitch"
 local TwoStateCmdSwitch	 	= require "kpcrew.systems.TwoStateCmdSwitch"
@@ -19,6 +19,24 @@ local drefFuelPressLow 		= "sim/cockpit2/annunciators/fuel_pressure_low"
 
 sysFuel = require("kpcrew.systems.DFLT.sysFuel")
 
-logMsg("TMPL sysFuel")
+logMsg("E1FF sysFuel")
+
+sysFuel.fuelCrossFeed = TwoStateCustomSwitch:new("crossfeed","sim/cockpit2/fuel/fuel_tank_transfer_to",0,
+	function () 
+		set("sim/cockpit2/fuel/fuel_tank_transfer_to",1)
+	end,
+	function () 
+		set("sim/cockpit2/fuel/fuel_tank_transfer_to",0)
+	end,
+	function () 
+		set("sim/cockpit2/fuel/fuel_tank_transfer_to",3)
+	end,
+	function () 
+		if get("sim/cockpit2/fuel/fuel_tank_transfer_to") ~= 0 then
+			return 1
+		else
+			return 0
+		end
+	end)
 
 return sysFuel

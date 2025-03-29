@@ -25,6 +25,7 @@ kc_full_rgt_rudder	= -14.9		-- Threshold where the rudder is almost fully to the
 -- === engines
 
 -- === Fuel
+kc_has_fuel_xfeed	= true		-- Aircraft has fuel crossfeed
 
 -- === Hydraulics
 
