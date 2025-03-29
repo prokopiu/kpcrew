@@ -9,25 +9,54 @@ local sysMacros = {
 }
 
 logMsg("DFLT sysMacros")
+
+-- ====================================== States related macros
+
+-- aircraft specific custom steps not covered in default cold and dark flow
 function kc_macro_custom_cold_dark()
 end
 
+-- aircraft specific custom steps not covered in default turnaround flow
 function kc_macro_custom_turnaround()
 end
 
--- ====================================== States related macros
+-- set the aircraft into cold and dark state
 function kc_macro_state_cold_and_dark()
 	logMsg("DFLT kc_macro_state_cold_and_dark")
 	
+	-- clear kpcrew internal timers
 	activeBckVars:set("general:timesOFF","==:==")
 	activeBckVars:set("general:timesOUT","==:==")
 	activeBckVars:set("general:timesIN","==:==")
 	activeBckVars:set("general:timesON","==:==")
-	
-	kc_macro_lights_cold_dark()
-	kc_macro_doors_cold_dark()
-	kc_macro_mcp_cold_dark()
 
+	-- doors and external objects
+	kc_macro_doors_ext(kc_phase_colddark)
+
+	-- internal and external lights
+	kc_macro_lights(kc_phase_colddark)
+
+	sysGeneral.parkBrakeSwitch:actuate(1) 
+	
+	-- electric system settings
+	kc_macro_elec_system(kc_phase_colddark)
+
+	-- fuel system settings
+	kc_macro_fuel(kc_phase_colddark)
+
+	-- air system settings
+	kc_macro_air(kc_phase_colddark)
+
+	-- hyd system settings
+	kc_macro_hyd(kc_phase_colddark)
+
+	-- anti-ice settings
+	kc_macro_aice(kc_phase_colddark)
+	
+	-- MCP settings
+	kc_macro_mcp(kc_phase_colddark)
+
+	
 	if kc_is_turboprop or kc_is_ga then
 		sysEngines.mixtureLever:actuate(0)
 	end
@@ -38,12 +67,6 @@ function kc_macro_state_cold_and_dark()
 	
 	if kc_has_irs then
 		kc_macro_set_irs(0)
-	end
-	
-	sysGeneral.parkBrakeSwitch:actuate(1) 
-	
-	if kc_has_ground_obj then
-		kc_macro_set_groundobjects(1)
 	end
 	
 	if kc_has_retractgear then
@@ -69,82 +92,30 @@ function kc_macro_state_cold_and_dark()
 		sysControls.rudderReset:actuate(1)
 	end
 	
-	kc_macro_hydraulic_off()
-	
-	if kc_has_emer_lights then
-		sysLights.emerLights:actuate(0)
-	end
-	
-	kc_macro_fuelpumps_off()
-	if kc_has_fuel_xfeed then
-		sysFuel.crossFeed:actuate(0)
-	end
-	if kc_has_fuel_select then
-		sysFuel.fuelSwitchGroup:actuate(0)
-	end
-	
-	if kc_has_press_cab then
-		sysAir.packSwitchGroup:actuate(0)
-		sysAir.isoValveSwitch:actuate(0)
-	end
-	if kc_has_oxygen then
-		sysAir.oxygenMaster:actuate(0)
-	end
-	if kc_has_engine_bleed then
-		sysAir.engBleedGroup:actuate(0)
-	end
-	
-	if kc_has_eng_antiice then
-		sysAice.engAntiIceGroup:actuate(0)
-	end
-	if kc_has_wing_antiice then
-		sysAice.wingAntiIce:actuate(0)
-	end
-	if kc_has_window_heat then
-		sysAice.windowHeatGroup:actuate(0)
-	end
-	
-	if kc_has_pitot_heat then 
-		sysAice.probeHeatGroup:actuate(0)
-	end
-	
 	if kc_has_seatbelt_sgn then
-		sysGeneral.seatBeltSwitch:actuate(0)
+		sysGeneral.passSignsSwitch:actuate(0)
 	end
 	if kc_has_nosmoke_sgn then
 		sysGeneral.noSmokingSwitch:actuate(0)
 	end
 
 	if kc_has_autobrake then
-		kc_macro_set_autobrake(0)
+		kc_macro_set_autobrake(kc_AutoBrakeOff)
 	end
 	
-	if kc_is_airbus == false then
+	if kc_is_airbus == false and kc_has_ignition then
 		sysEngines.engIgnitionGroup:actuate(0)	
 	end 
 	
-	sysElectric.gen1Switch:actuate(0)
-	if kc_get_nr_generators() > 1 then
-		sysElectric.gen2Switch:actuate(0)
-	end
-	if kc_get_nr_generators() > 2 then
-		sysElectric.gen3Switch:actuate(0)
-	end
-	if kc_get_nr_generators() > 3 then
-		sysElectric.gen4Switch:actuate(0)
-	end
-
 	if kc_has_apu then
 		sysElectric.apuStartSwitch:actuate(0)
+		sysAir.apuBleedSwitch:actuate(0)
 	end
 	if kc_has_gpu then
 		sysElectric.gpuConnect:actuate(0)
 	end
+
 	
-	sysElectric.batterySwitch:actuate(0) 
-	sysElectric.battery2Switch:actuate(0)
-	
-	kc_macro_elec_cold_dark()
 	
 	kc_macro_custom_cold_dark()
 
@@ -158,7 +129,28 @@ function kc_macro_state_turnaround()
 	activeBckVars:set("general:timesIN","==:==")
 	activeBckVars:set("general:timesON","==:==")
 
+	-- doors and external objects
+	kc_macro_doors_ext(kc_phase_turnaround)
+	
+	-- internal and external lights
+	kc_macro_lights(kc_phase_turnaround)
+
 	sysGeneral.parkBrakeSwitch:actuate(1) 
+
+	-- electric system settings
+	kc_macro_elec_system(kc_phase_turnaround)
+
+	-- air system settings
+	kc_macro_air(kc_phase_turnaround)
+
+	-- hyd system settings
+	kc_macro_hyd(kc_phase_turnaround)
+
+	-- anti-ice settings
+	kc_macro_aice(kc_phase_turnaround)
+	
+	-- MCP settings
+	kc_macro_mcp(kc_phase_turnaround)
 
 	if kc_has_retractgear then
 		sysGeneral.GearSwitch:actuate(1)
@@ -177,37 +169,8 @@ function kc_macro_state_turnaround()
 	kc_macro_stop_engine()
 	
 	if kc_has_autobrake then
-		kc_macro_set_autobrake(0)
+		kc_macro_set_autobrake(kc_AutoBrakeOff)
 	end
-	
-	sysElectric.batterySwitch:actuate(1) 
-	sysElectric.battery2Switch:actuate(1)
-	
-	kc_macro_lights_preflight()
-	
-	if kc_is_airbus then
-		sysElectric.gen1Switch:actuate(1)
-		if kc_get_nr_generators() > 1 then
-			sysElectric.gen2Switch:actuate(1)
-		end
-		if kc_get_nr_generators() > 2 then
-			sysElectric.gen3Switch:actuate(1)
-		end
-		if kc_get_nr_generators() > 3 then
-			sysElectric.gen4Switch:actuate(1)
-		end
-	else
-		sysElectric.gen1Switch:actuate(0)
-		if kc_get_nr_generators() > 1 then
-			sysElectric.gen2Switch:actuate(0)
-		end
-		if kc_get_nr_generators() > 2 then
-			sysElectric.gen3Switch:actuate(0)
-		end
-		if kc_get_nr_generators() > 3 then
-			sysElectric.gen4Switch:actuate(0)
-		end
-	end	
 	
 	if kc_has_gpu and activeBriefings:get("departure:activateAPUPowerUp") == 2 then
 		sysElectric.gpuConnect:actuate(1)
@@ -219,8 +182,6 @@ function kc_macro_state_turnaround()
 		kc_procvar_set("apuonline",true)
 	end 
 	
-	kc_macro_hydraulic_initial()
-	
 	if kc_has_irs then
 		if kc_is_airbus == true then 
 			kc_macro_set_irs(1)
@@ -230,52 +191,10 @@ function kc_macro_state_turnaround()
 	end
 	
 	if kc_has_seatbelt_sgn then
-		sysGeneral.seatBeltSwitch:actuate(1)
+		sysGeneral.passSignsSwitch:actuate(1)
 	end
 	if kc_has_nosmoke_sgn then
 		sysGeneral.noSmokingSwitch:actuate(1)
-	end
-
-	if kc_has_emer_lights then
-		sysLights.emerLights:actuate(1)
-	end
-	
-	kc_macro_fuelpumps_off()
-	if kc_has_fuel_select then
-		sysFuel.fuelSwitchGroup:actuate(0)
-	end
-	
-	if kc_has_press_cab then
-		sysAir.packSwitchGroup:actuate(1)
-		sysAir.isoValveSwitch:actuate(0)
-	end
-	if kc_has_oxygen then
-		sysAir.oxygenMaster:actuate(0)
-	end
-	if kc_has_engine_bleed then
-		sysAir.engBleedGroup:actuate(0)
-	end
-	
-	if kc_has_avionics_sw then
-		sysElectric.avionicsSwitchGroup:actuate(1)
-	end
-	if kc_has_inv_ess_bus then
-		if kc_is_airbus then
-			sysElectric.inverterSwitchGroup:actuate(0)
-		else
-			sysElectric.inverterSwitchGroup:actuate(1)
-		end
-	end
-	if kc_has_bus_ties then
-		sysElectric.dcBusTie:actuate(1)
-	end
-
-	if kc_has_pitot_heat then 
-		sysAice.probeHeatGroup:actuate(0)
-	end
-	
-	if kc_has_window_heat  then
-		sysAice.windowHeatGroup:actuate(1)
 	end
 
 	kc_macro_set_local_baro()
@@ -286,10 +205,7 @@ function kc_macro_state_turnaround()
 	if kc_is_airbus == false then
 		sysEngines.engIgnitionGroup:actuate(0)	
 	end 
-	
-	kc_macro_doors_preflight()
-	kc_macro_mcp_preflight()	
-	
+
 	if kc_is_turboprop or kc_is_ga then
 		sysEngines.mixtureLever:actuate(0)
 	end
@@ -301,229 +217,124 @@ function kc_macro_state_turnaround()
 	kc_macro_custom_turnaround()
 end
 
--- ====================================== Lights related functions
-
-function kc_macro_lights_preflight()
-	logMsg("DFLT kc_macro_lights_preflight")
-	-- set the lights as needed during preflight/turnaround
-	sysLights.landLightGroup:actuate(0)
-	if kc_has_rwy_lights then
-		sysLights.rwyLightGroup:actuate(0)
-	end
-	if kc_has_taxi_light then
-		sysLights.taxiSwitch:actuate(0)
-	end
-	if kc_has_pos_lights then
-		sysLights.positionSwitch:actuate(1)
-	end
-	if kc_has_beacon then
-		sysLights.beaconSwitch:actuate(0)
-	end
-	if kc_has_strobe_lights then
-		sysLights.strobesSwitch:actuate(0)
-	end
-	if kc_has_instr_lights then
-		sysLights.instrLightGroup:actuate(1)
-	end
-	if kc_is_daylight() then
-		if kc_has_dome_lights then
-			sysLights.domeLightGroup:actuate(0)
-		end
-		if kc_has_logo_lights then
-			sysLights.logoSwitch:actuate(0)
-		end
-		if kc_has_wing_lights then
-			sysLights.wingSwitch:actuate(0)
-		end
-		if kc_has_wheel_lights then
-			sysLights.wheelSwitch:actuate(0)
-		end
-		if kc_has_panel_lights then
-			sysLights.panelLightGroup:actuate(0)
-		end
-	else
-		if kc_has_dome_lights then
-			sysLights.domeLightGroup:actuate(1)
-		end
-		if kc_has_logo_lights then
-			sysLights.logoSwitch:actuate(1)
-		end
-		if kc_has_wing_lights then
-			sysLights.wingSwitch:actuate(1)
-		end
-		if kc_has_wheel_lights then
-			sysLights.wheelSwitch:actuate(1)
-		end
-		if kc_has_panel_lights then
-			sysLights.panelLightGroup:actuate(1)
-		end
-	end
-end
-
-function kc_macro_lights_before_start()
-	-- set the lights as needed when preparing for push and engine start
-	kc_macro_lights_preflight()
-	if kc_has_beacon then
-		sysLights.beaconSwitch:actuate(1)
-	end
-	if kc_has_strb_as_bcn then
-		sysLights.strobesSwitch:actuate(1)
-	end
-	if kc_is_daylight() == false then		
-		if kc_has_wing_lights then
-			sysLights.wingSwitch:actuate(0)
-		end
-		if kc_has_wheel_lights then
-			sysLights.wheelSwitch:actuate(0)
-		end
-	end
-end
-
-function kc_macro_lights_before_taxi()
-	kc_macro_lights_before_start()
-	if kc_has_taxi_light then
-		sysLights.taxiSwitch:actuate(1)
-	end
-	if kc_has_ll_as_taxi then
-		sysLights.landLightGroup:actuate(1)
-	end
-	if kc_has_dome_lights then
-		sysLights.domeLightGroup:actuate(0)
-	end
-end
-
-function kc_macro_lights_for_takeoff()
-	-- set the lights when entering the runway
-	kc_macro_lights_before_taxi()
-	if kc_has_taxi_light then
-		sysLights.taxiSwitch:actuate(0)
-	end
-	sysLights.landLightGroup:actuate(1)
-	if kc_has_rwy_lights then
-		sysLights.rwyLightGroup:actuate(1)
-	end
-	if kc_has_strobe_lights then
-		sysLights.strobesSwitch:actuate(1)
-	end
-end
-
-function kc_macro_lights_climb_10k()
-	-- set the lights when reaching 10.000 ft
-	kc_macro_lights_for_takeoff()
-	sysLights.landLightGroup:actuate(0)
-	if kc_has_rwy_lights then
-		sysLights.rwyLightGroup:actuate(0)
-	end
-	if kc_has_logo_lights then
-		sysLights.logoSwitch:actuate(0)
-	end
-end
-
-function kc_macro_lights_descend_10k()
-	-- set the lights when sinking through 10.000 ft
-	kc_macro_lights_climb_10k()
-	sysLights.landLightGroup:actuate(1)
-	if kc_is_daylight() == false then		
-		if kc_has_logo_lights then
-			sysLights.logoSwitch:actuate(1)
-		end
-	end
-end
-
-function kc_macro_lights_approach()
-	-- set the lights when in the approach
-	kc_macro_lights_descend_10k()
-	if kc_has_rwy_lights then
-		sysLights.rwyLightGroup:actuate(1)
-	end
-	sysLights.landLightGroup:actuate(1)
-	if kc_is_daylight() == false then		
-		if kc_has_logo_lights then
-			sysLights.logoSwitch:actuate(1)
-		end
-	end	
-end
-
-function kc_macro_lights_cleanup()
-	-- set the lights on cleaning up after landing
-	kc_macro_lights_approach()
-	sysLights.landLightGroup:actuate(0)
-	if kc_has_rwy_lights then
-		sysLights.rwyLightGroup:actuate(0)
-	end
-	if kc_has_ll_as_taxi then
-		sysLights.landLightGroup:actuate(1)
-	end
-	if kc_has_strobe_lights then
-		sysLights.strobesSwitch:actuate(0)
-	end
-	if kc_has_taxi_light then
-		sysLights.taxiSwitch:actuate(1)
-	end	
-end
-
-function kc_macro_lights_arrive_parking()
-	-- set the lights when arriving the parking position
-	kc_macro_lights_cleanup()
-	if kc_has_taxi_light then
-		sysLights.taxiSwitch:actuate(0)
-	end
-	if kc_has_ll_as_taxi then
-		sysLights.landLightGroup:actuate(0)
-	end
-end
-
-function kc_macro_lights_after_shutdown()
-	-- set the lights when engines are stopped
-	kc_macro_lights_arrive_parking()
-	if kc_has_pos_lights then
-		sysLights.positionSwitch:actuate(1)
-	end
-	if kc_has_beacon then
-		sysLights.beaconSwitch:actuate(0)
-	end
-	if kc_has_strobe_lights then
-		sysLights.strobesSwitch:actuate(0)
-	end
-	if kc_is_daylight() then		
-		if kc_has_dome_lights then
-			sysLights.domeLightGroup:actuate(0)
-		end
-		if kc_has_logo_lights then
-			sysLights.logoSwitch:actuate(0)
-		end
-		if kc_has_wing_lights then
-			sysLights.wingSwitch:actuate(0)
-		end
-		if kc_has_wheel_lights then
-			sysLights.wheelSwitch:actuate(0)
-		end
-		if kc_has_panel_lights then
-			sysLights.panelLightGroup:actuate(0)
-		end
-	else
-		if kc_has_dome_lights then
-			sysLights.domeLightGroup:actuate(1)
-		end
-		if kc_has_logo_lights then
-			sysLights.logoSwitch:actuate(1)
-		end
-		if kc_has_wing_lights then
-			sysLights.wingSwitch:actuate(1)
-		end
-		if kc_has_wheel_lights then
-			sysLights.wheelSwitch:actuate(1)
-		end
-		if kc_has_panel_lights then
-			sysLights.panelLightGroup:actuate(1)
-		end
-	end
-
-end
-
-function kc_macro_lights_cold_dark()
-	-- set the lights for cold & dark mode
+-- ====================================== General settings like doors and external objects
+function kc_macro_doors_ext(flightphase)
+	logMsg("Doors flight phase: " .. kcSopFlightPhase[flightphase])
 	
+	-- Cold & dark
+	if flightphase == kc_phase_colddark then
+		if kc_has_doors then
+			sysGeneral.doorL1:actuate(1)
+			sysGeneral.doorL2:actuate(0)
+			sysGeneral.doorR1:actuate(0)
+			sysGeneral.doorR2:actuate(0)
+		end
+		if kc_has_cargo_doors then
+			sysGeneral.doorFCargo:actuate(0)
+			sysGeneral.doorACargo:actuate(0)
+		end
+		if kc_has_cockpit_door then
+			sysGeneral.cockpitDoor:actuate(1)
+		end
+		if kc_has_stairs then
+			if activeBriefings:get("taxi:gateStand") > 1 then
+				sysGeneral.stairsL1:actuate(1)
+			else
+				sysGeneral.stairsL1:actuate(0)
+			end
+		end
+		if kc_has_ground_obj then
+			kc_macro_set_groundobjects(1)
+		end
+	elseif flightphase == kc_phase_turnaround then
+	-- Turnaround
+		if kc_has_doors then
+			sysGeneral.doorL1:actuate(1)
+			sysGeneral.doorL2:actuate(0)
+			sysGeneral.doorR1:actuate(0)
+			sysGeneral.doorR2:actuate(0)
+		end
+		if kc_has_cargo_doors then
+			sysGeneral.doorFCargo:actuate(1)
+			sysGeneral.doorACargo:actuate(1)
+		end
+		if kc_has_cockpit_door then
+			sysGeneral.cockpitDoor:actuate(1)
+		end
+		if kc_has_stairs then
+			if activeBriefings:get("taxi:gateStand") > 1 then
+				sysGeneral.stairsL1:actuate(1)
+			else
+				sysGeneral.stairsL1:actuate(0)
+			end
+		end
+		if kc_has_ground_obj then
+			kc_macro_set_groundobjects(1)
+		end
+	elseif flightphase == kc_phase_before_start then
+	-- Before start
+		if kc_has_doors then
+			sysGeneral.doorL1:actuate(0)
+			sysGeneral.doorL2:actuate(0)
+			sysGeneral.doorR1:actuate(0)
+			sysGeneral.doorR2:actuate(0)
+		end
+		if kc_has_cargo_doors then
+			sysGeneral.doorFCargo:actuate(0)
+			sysGeneral.doorACargo:actuate(0)
+		end
+		if kc_has_cockpit_door then
+			sysGeneral.cockpitDoor:actuate(0)
+		end
+		if kc_has_stairs then
+			sysGeneral.stairsL1:actuate(0)
+		end
+		if kc_has_ground_obj then
+			kc_macro_set_groundobjects(0)
+		end
+	elseif flightphase == kc_phase_shutdown then
+	-- Shutdown
+		if kc_has_doors then
+			sysGeneral.doorL1:actuate(1)
+			sysGeneral.doorL2:actuate(0)
+			sysGeneral.doorR1:actuate(0)
+			sysGeneral.doorR2:actuate(0)
+		end
+		if kc_has_cargo_doors then
+			sysGeneral.doorFCargo:actuate(1)
+			sysGeneral.doorACargo:actuate(1)
+		end
+		if kc_has_cockpit_door then
+			sysGeneral.cockpitDoor:actuate(1)
+		end
+		if kc_has_stairs then
+			if activeBriefings:get("taxi:gateStand") > 1 then
+				sysGeneral.stairsL1:actuate(1)
+			else
+				sysGeneral.stairsL1:actuate(0)
+			end
+		end
+		if kc_has_ground_obj then
+			kc_macro_set_groundobjects(1)
+		end
+	else
+		logMsg("Invalid flightphase")
+	end
+end
+
+-- Set ground objects 1=on 0=off
+function kc_macro_set_groundobjects(state)
+	if state == 1 then
+		-- nothing for DFLT; replace for other aircraft
+	else
+		-- nothing for DFLT; replace for other aircraft
+	end
+end
+
+-- ====================================== Lights related functions
+function kc_macro_lights(flightphase)
+	logMsg("Lights flight phase: " .. kcSopFlightPhase[flightphase])
+
 	sysLights.landLightGroup:actuate(0)
 	if kc_has_rwy_lights then
 		sysLights.rwyLightGroup:actuate(0)
@@ -557,311 +368,788 @@ function kc_macro_lights_cold_dark()
 	end
 	if kc_has_panel_lights then
 		sysLights.panelLightGroup:actuate(0)
+	end	
+	if kc_has_emer_lights then
+		sysLights.emerLights:actuate(0)
 	end
+	
+	-- Cold & dark
+	if flightphase == kc_phase_colddark then
+		-- all off
+	elseif flightphase == kc_phase_turnaround then
+		-- turnaround
+		if kc_has_pos_lights then
+			sysLights.positionSwitch:actuate(1)
+		end
+		if kc_has_instr_lights then
+			sysLights.instrLightGroup:actuate(1)
+		end
+		if kc_has_emer_lights then
+			sysLights.emerLights:actuate(1)
+		end
+		if kc_is_daylight() == false then
+			if kc_has_dome_lights then
+				sysLights.domeLightGroup:actuate(1)
+			end
+			if kc_has_logo_lights then
+				sysLights.logoSwitch:actuate(1)
+			end
+			if kc_has_wing_lights then
+				sysLights.wingSwitch:actuate(1)
+			end
+			if kc_has_wheel_lights then
+				sysLights.wheelSwitch:actuate(1)
+			end
+			if kc_has_panel_lights then
+				sysLights.panelLightGroup:actuate(1)
+			end
+		end
+	elseif flightphase == kc_phase_before_start then
+		if kc_has_pos_lights then
+			sysLights.positionSwitch:actuate(1)
+		end
+		if kc_has_instr_lights then
+			sysLights.instrLightGroup:actuate(1)
+		end
+		if kc_has_beacon then
+			sysLights.beaconSwitch:actuate(1)
+		end
+		if kc_has_strb_as_bcn then
+			sysLights.strobesSwitch:actuate(1)
+		end
+		if kc_has_emer_lights then
+			sysLights.emerLights:actuate(1)
+		end
+		if kc_is_daylight() == false then
+			if kc_has_dome_lights then
+				sysLights.domeLightGroup:actuate(1)
+			end
+			if kc_has_logo_lights then
+				sysLights.logoSwitch:actuate(1)
+			end
+			if kc_has_panel_lights then
+				sysLights.panelLightGroup:actuate(1)
+			end
+		end
+	elseif flightphase == kc_phase_taxi_rwy then
+		if kc_has_pos_lights then
+			sysLights.positionSwitch:actuate(1)
+		end
+		if kc_has_instr_lights then
+			sysLights.instrLightGroup:actuate(1)
+		end
+		if kc_has_beacon then
+			sysLights.beaconSwitch:actuate(1)
+		end
+		if kc_has_strb_as_bcn then
+			sysLights.strobesSwitch:actuate(1)
+		end
+		if kc_has_taxi_light then
+			sysLights.taxiSwitch:actuate(1)
+		end
+		if kc_has_ll_as_taxi then
+			sysLights.landLightGroup:actuate(1)
+		end
+		if kc_has_emer_lights then
+			sysLights.emerLights:actuate(1)
+		end
+		if kc_is_daylight() == false then
+			if kc_has_logo_lights then
+				sysLights.logoSwitch:actuate(1)
+			end
+			if kc_has_panel_lights then
+				sysLights.panelLightGroup:actuate(1)
+			end
+		end	
+	elseif flightphase == kc_phase_before_takeoff then
+		if kc_has_pos_lights then
+			sysLights.positionSwitch:actuate(1)
+		end
+		if kc_has_instr_lights then
+			sysLights.instrLightGroup:actuate(1)
+		end
+		if kc_has_beacon then
+			sysLights.beaconSwitch:actuate(1)
+		end
+		if kc_has_strobe_lights then
+			sysLights.strobesSwitch:actuate(1)
+		end
+		if kc_has_strb_as_bcn then
+			sysLights.strobesSwitch:actuate(1)
+		end
+		if kc_has_emer_lights then
+			sysLights.emerLights:actuate(1)
+		end
+		if kc_is_daylight() == false then
+			if kc_has_logo_lights then
+				sysLights.logoSwitch:actuate(1)
+			end
+			if kc_has_panel_lights then
+				sysLights.panelLightGroup:actuate(1)
+			end
+		end	
+		sysLights.landLightGroup:actuate(1)
+		if kc_has_rwy_lights then
+			sysLights.rwyLightGroup:actuate(1)
+		end
+	elseif flightphase == kc_phase_approach then
+		if kc_has_emer_lights then
+			sysLights.emerLights:actuate(1)
+		end
+		kc_macro_lights_descend_10k()
+		if kc_has_rwy_lights then
+			sysLights.rwyLightGroup:actuate(1)
+		end
+		sysLights.landLightGroup:actuate(1)
+		if kc_is_daylight() == false then		
+			if kc_has_logo_lights then
+				sysLights.logoSwitch:actuate(1)
+			end
+		end
+	elseif flightphase == kc_phase_afterland then
+		if kc_has_pos_lights then
+			sysLights.positionSwitch:actuate(1)
+		end
+		if kc_has_instr_lights then
+			sysLights.instrLightGroup:actuate(1)
+		end
+		if kc_has_beacon then
+			sysLights.beaconSwitch:actuate(1)
+		end
+		if kc_has_taxi_light then
+			sysLights.taxiSwitch:actuate(1)
+		end	
+		if kc_has_ll_as_taxi then
+			sysLights.landLightGroup:actuate(1)
+		end
+		if kc_has_emer_lights then
+			sysLights.emerLights:actuate(1)
+		end
+		if kc_is_daylight() == false then
+			if kc_has_logo_lights then
+				sysLights.logoSwitch:actuate(1)
+			end
+			if kc_has_panel_lights then
+				sysLights.panelLightGroup:actuate(1)
+			end
+		end	
+	else
+		logMsg("Invalid flightphase")
+	end	
+
 end
 
-function kc_macro_lights_all_on()
-	-- set the lights all on for test and checks
-	sysLights.landLightGroup:actuate(1)
+-- background switch lights at reaching 10000 ft in climb
+function kc_macro_lights_climb_10k()
+	-- set the lights when reaching 10.000 ft
+	kc_macro_lights(kc_phase_before_takeoff)
+	sysLights.landLightGroup:actuate(0)
 	if kc_has_rwy_lights then
-		sysLights.rwyLightGroup:actuate(1)
-	end
-	if kc_has_taxi_light then
-		sysLights.taxiSwitch:actuate(1)
-	end
-	if kc_has_pos_lights then
-		sysLights.positionSwitch:actuate(1)
-	end
-	if kc_has_beacon then
-		sysLights.beaconSwitch:actuate(1)
-	end
-	if kc_has_strobe_lights then
-		sysLights.strobesSwitch:actuate(1)
-	end
-	if kc_has_instr_lights then
-		sysLights.instrLightGroup:actuate(1)
-	end
-	if kc_has_dome_lights then
-		sysLights.domeLightGroup:actuate(1)
+		sysLights.rwyLightGroup:actuate(0)
 	end
 	if kc_has_logo_lights then
-		sysLights.logoSwitch:actuate(1)
-	end
-	if kc_has_wing_lights then
-		sysLights.wingSwitch:actuate(1)
-	end
-	if kc_has_wheel_lights then
-		sysLights.wheelSwitch:actuate(1)
-	end
-	if kc_has_panel_lights then
-		sysLights.panelLightGroup:actuate(1)
+		sysLights.logoSwitch:actuate(0)
 	end
 end
 
--- ====================================== Door related functions
-function kc_macro_doors_preflight()
-	if kc_has_doors then
-		sysGeneral.doorL1:actuate(1)
-		if kc_has_stairs then
-			if activeBriefings:get("taxi:gateStand") > 1 then
-				sysGeneral.stairsL1:actuate(1)
+-- background switch lights at reaching 10000 ft in descend
+function kc_macro_lights_descend_10k()
+	-- set the lights when sinking through 10.000 ft
+	kc_macro_lights_climb_10k()
+	sysLights.landLightGroup:actuate(1)
+	if kc_is_daylight() == false then		
+		if kc_has_logo_lights then
+			sysLights.logoSwitch:actuate(1)
+		end
+	end
+end
+
+-- ====================================== Electric system flight phase 
+function kc_macro_elec_system(flightphase)
+	logMsg("Electric flight phase: " .. kcSopFlightPhase[flightphase])
+	
+	if flightphase == kc_phase_colddark then
+		sysElectric.genSwitchGroup:actuate(0)
+		if kc_has_avionics_sw == true then
+			sysElectric.avionicsSwitchGroup:actuate(0)
+		end
+		if kc_has_inv_ess_bus then
+			sysElectric.inverterSwitchGroup:actuate(0)
+		end
+		if kc_has_bus_ties == true then
+			sysElectric.dcBusTie:actuate(0)
+		end
+		sysElectric.batterySwitch:actuate(0) 
+		if kc_NumBatteries > 1 then
+			sysElectric.battery2Switch:actuate(0) 
+		end
+		if kc_get_nr_batteries() > 2 then
+			sysElectric.battery3Switch:actuate(0) 
+		end
+		if kc_has_standby_pwr then
+			sysElectric.stbyPowerSwitch:actuate(0)
+		end
+		if kc_is_airbus then
+			sysElectric.gen1Switch:actuate(1)
+			if kc_get_nr_generators() > 1 then
+				sysElectric.gen2Switch:actuate(1)
+			end
+			if kc_get_nr_generators() > 2 then
+				sysElectric.gen3Switch:actuate(1)
+			end
+			if kc_get_nr_generators() > 3 then
+				sysElectric.gen4Switch:actuate(1)
+			end
+		else
+			sysElectric.gen1Switch:actuate(0)
+			if kc_get_nr_generators() > 1 then
+				sysElectric.gen2Switch:actuate(0)
+			end
+			if kc_get_nr_generators() > 2 then
+				sysElectric.gen3Switch:actuate(0)
+			end
+			if kc_get_nr_generators() > 3 then
+				sysElectric.gen4Switch:actuate(0)
+			end
+		end	
+	elseif flightphase == kc_phase_turnaround then
+		sysElectric.genSwitchGroup:actuate(0)
+		if kc_has_avionics_sw == true then
+			sysElectric.avionicsSwitchGroup:actuate(0)
+		end
+		if kc_has_inv_ess_bus then
+			if kc_is_airbus == true then
+				sysElectric.inverterSwitchGroup:actuate(0)
 			else
-				sysGeneral.stairsL1:actuate(0)
+				sysElectric.inverterSwitchGroup:actuate(1)
 			end
 		end
-		sysGeneral.doorL2:actuate(0)
-		sysGeneral.doorR1:actuate(0)
-		sysGeneral.doorR2:actuate(0)
-		if kc_has_cargo_doors then
-			sysGeneral.doorFCargo:actuate(1)
-			sysGeneral.doorACargo:actuate(1)
+		if kc_has_bus_ties == true then
+			sysElectric.dcBusTie:actuate(1)
 		end
-		if kc_has_cockpit_door then
-			sysGeneral.cockpitDoor:actuate(1)
+		sysElectric.batterySwitch:actuate(1) 
+		if kc_NumBatteries > 1 then
+			sysElectric.battery2Switch:actuate(1) 
 		end
-	end
+		if kc_get_nr_batteries() > 2 then
+			sysElectric.battery3Switch:actuate(1) 
+		end
+		if kc_has_standby_pwr then
+			sysElectric.stbyPowerSwitch:actuate(1)
+		end
+		if kc_is_airbus then
+			sysElectric.gen1Switch:actuate(1)
+			if kc_get_nr_generators() > 1 then
+				sysElectric.gen2Switch:actuate(1)
+			end
+			if kc_get_nr_generators() > 2 then
+				sysElectric.gen3Switch:actuate(1)
+			end
+			if kc_get_nr_generators() > 3 then
+				sysElectric.gen4Switch:actuate(1)
+			end
+		else
+			sysElectric.gen1Switch:actuate(1)
+			if kc_get_nr_generators() > 1 then
+				sysElectric.gen2Switch:actuate(1)
+			end
+			if kc_get_nr_generators() > 2 then
+				sysElectric.gen3Switch:actuate(1)
+			end
+			if kc_get_nr_generators() > 3 then
+				sysElectric.gen4Switch:actuate(1)
+			end
+		end	
+	elseif flightphase == kc_phase_after_start then
+		if kc_is_airbus then
+			sysElectric.gen1Switch:actuate(1)
+			if kc_get_nr_generators() > 1 then
+				sysElectric.gen2Switch:actuate(1)
+			end
+			if kc_get_nr_generators() > 2 then
+				sysElectric.gen3Switch:actuate(1)
+			end
+			if kc_get_nr_generators() > 3 then
+				sysElectric.gen4Switch:actuate(1)
+			end
+		else
+			sysElectric.gen1Switch:actuate(1)
+			if kc_get_nr_generators() > 1 then
+				sysElectric.gen2Switch:actuate(1)
+			end
+			if kc_get_nr_generators() > 2 then
+				sysElectric.gen3Switch:actuate(1)
+			end
+			if kc_get_nr_generators() > 3 then
+				sysElectric.gen4Switch:actuate(1)
+			end	
+		end
+	elseif flightphase == kc_phase_shutdown then
+		if kc_is_airbus then
+			sysElectric.gen1Switch:actuate(1)
+			if kc_get_nr_generators() > 1 then
+				sysElectric.gen2Switch:actuate(1)
+			end
+			if kc_get_nr_generators() > 2 then
+				sysElectric.gen3Switch:actuate(1)
+			end
+			if kc_get_nr_generators() > 3 then
+				sysElectric.gen4Switch:actuate(1)
+			end
+		else
+			sysElectric.gen1Switch:actuate(0)
+			if kc_get_nr_generators() > 1 then
+				sysElectric.gen2Switch:actuate(0)
+			end
+			if kc_get_nr_generators() > 2 then
+				sysElectric.gen3Switch:actuate(0)
+			end
+			if kc_get_nr_generators() > 3 then
+				sysElectric.gen4Switch:actuate(0)
+			end	
+		end
+	else
+		logMsg("Invalid flightphase")
+	end	
 end
 
-function kc_macro_doors_before_start()
-	if kc_has_doors then
-		sysGeneral.doorL1:actuate(0)
-		if kc_has_stairs then
-			sysGeneral.stairsL1:actuate(0)
+-- ====================================== Fuel system flight phase 
+function kc_macro_fuel(flightphase)
+	logMsg("Fuel flight phase: " .. kcSopFlightPhase[flightphase])
+
+	if flightphase == kc_phase_colddark then
+		if kc_has_fuel_pumps then
+			sysFuel.allFuelPumpGroup:actuate(0)
 		end
-		sysGeneral.doorL2:actuate(0)
-		sysGeneral.doorR1:actuate(0)
-		sysGeneral.doorR2:actuate(0)
-		if kc_has_cargo_doors then
-			sysGeneral.doorFCargo:actuate(0)
-			sysGeneral.doorACargo:actuate(0)
+		if kc_has_fuel_xfeed then
+			sysFuel.fuelCrossFeed:actuate(0)
 		end
-		if kc_has_cockpit_door then
-			sysGeneral.cockpitDoor:actuate(0)
+		if kc_has_fuel_select then
+			sysFuel.fuelSwitchGroup:actuate(0)
 		end
-	end
+	elseif flightphase == kc_phase_turnaround then
+		if kc_has_fuel_pumps then
+			sysFuel.allFuelPumpGroup:actuate(0)
+		end
+		if kc_has_fuel_xfeed then
+			sysFuel.fuelCrossFeed:actuate(0)
+		end
+		if kc_has_fuel_select then
+			sysFuel.fuelSwitchGroup:actuate(0)
+		end
+	elseif flightphase == kc_phase_before_start then
+		if kc_has_fuel_pumps then
+			sysFuel.allFuelPumpGroup:actuate(1)
+		end
+		if kc_has_fuel_xfeed then
+			sysFuel.fuelCrossFeed:actuate(0)
+		end
+		if kc_has_fuel_select then
+			sysFuel.fuelSwitchGroup:actuate(1)
+		end
+	elseif flightphase == kc_phase_shutdown then
+		if kc_has_fuel_pumps then
+			sysFuel.allFuelPumpGroup:actuate(0)
+		end
+		if kc_has_fuel_xfeed then
+			sysFuel.fuelCrossFeed:actuate(0)
+		end
+		if kc_has_fuel_select then
+			sysFuel.fuelSwitchGroup:actuate(0)
+		end
+	else
+		logMsg("Invalid flightphase")
+	end	
 end
 
-function kc_macro_doors_after_shutdown()
-	if kc_has_doors then
-		sysGeneral.doorL1:actuate(1)
-		if kc_has_stairs then
-			if activeBriefings:get("taxi:gateStand") > 1 then
-				sysGeneral.stairsL1:actuate(1)
+-- ====================================== Air system flight phase 
+function kc_macro_air(flightphase)
+	logMsg("Fuel flight phase: " .. kcSopFlightPhase[flightphase])
+
+	if flightphase == kc_phase_colddark then
+		if kc_has_press_cab then
+			sysAir.packSwitchGroup:actuate(0)
+		end
+		if kc_is_airbus == false and kc_has_iso_valvle then	
+			sysAir.isoValveSwitch:actuate(0)
+		end
+		if kc_has_oxygen then
+			sysAir.oxygenMaster:actuate(0)
+		end
+		if kc_has_engine_bleed then
+			sysAir.engBleedGroup:actuate(0)
+		end
+		if kc_has_oxygen then 
+			sysAir.oxygenMaster:actuate(0)
+		end
+	elseif flightphase == kc_phase_turnaround then
+		if kc_has_press_cab then
+			sysAir.packSwitchGroup:actuate(1)
+			sysAir.isoValveSwitch:actuate(0)
+		end
+		if kc_has_oxygen then
+			sysAir.oxygenMaster:actuate(0)
+		end
+		if kc_has_engine_bleed then
+			sysAir.engBleedGroup:actuate(0)
+		end
+	elseif flightphase == kc_phase_before_start then
+		if kc_has_press_cab then
+			sysAir.packSwitchGroup:actuate(0)
+		end
+		if kc_is_airbus == false and kc_has_iso_valvle then	
+			sysAir.isoValveSwitch:actuate(1)
+		end
+		if kc_has_oxygen then
+			sysAir.oxygenMaster:actuate(0)
+		end
+		if kc_has_engine_bleed then
+			sysAir.engBleedGroup:actuate(1)
+		end
+	elseif flightphase == kc_phase_after_start then
+		if kc_has_press_cab then
+			sysAir.packSwitchGroup:actuate(1)
+		end
+		if kc_is_airbus == false and kc_has_iso_valvle then	
+			sysAir.isoValveSwitch:actuate(1)
+		end
+		if kc_has_engine_bleed then
+			sysAir.engBleedGroup:actuate(1)
+		end
+		if kc_has_oxygen then 
+			sysAir.oxygenMaster:actuate(0)
+		end
+	elseif flightphase == kc_phase_before_takeoff then
+		if kc_has_press_cab then
+			if activeBriefings:get("takeoff:packs") < 2 then 
+				sysAir.packSwitchGroup:setValue(1)
 			else
-				sysGeneral.stairsL1:actuate(0)
+				sysAir.packSwitchGroup:setValue(0)
 			end
 		end
-		sysGeneral.doorL2:actuate(0)
-		sysGeneral.doorR1:actuate(0)
-		sysGeneral.doorR2:actuate(0)
-		if kc_has_cargo_doors then
-			sysGeneral.doorFCargo:actuate(1)
-			sysGeneral.doorACargo:actuate(1)
+		if kc_is_airbus == false and kc_has_iso_valvle then	
+			sysAir.isoValveSwitch:actuate(1)
+		end		
+		if activeBriefings:get("takeoff:bleeds") > 1 then 
+			sysAir.engBleedGroup:actuate(1) 
+		else
+			sysAir.engBleedGroup:actuate(0) 
 		end
-		if kc_has_cockpit_door then
-			sysGeneral.cockpitDoor:actuate(1)
+		if kc_has_apu then
+			sysAir.apuBleedSwitch:actuate(0)
 		end
-	end
-end
-
-function kc_macro_doors_cold_dark()
-	if kc_has_doors then
-		sysGeneral.doorL1:actuate(1)
-		if kc_has_stairs then
-			if activeBriefings:get("taxi:gateStand") > 1 then
-				sysGeneral.stairsL1:actuate(1)
+		if kc_has_oxygen then 
+			sysAir.oxygenMaster:actuate(1)
+		end
+	elseif flightphase == kc_phase_takeoff then
+		if kc_has_press_cab then
+			sysAir.packSwitchGroup:setValue(1)
+		end
+		if kc_has_engine_bleed then
+			sysAir.engBleedGroup:actuate(1)
+		end
+		if kc_has_oxygen then 
+			sysAir.oxygenMaster:actuate(1)
+		end	
+	elseif flightphase == kc_phase_approach then
+		if kc_has_engine_bleed then
+			sysAir.engBleedGroup:actuate(1)
+		end
+		if kc_has_oxygen then 
+			sysAir.oxygenMaster:actuate(1)
+		end	
+		if kc_has_press_cab then
+			if activeBriefings:get("approach:packs") == 1 then
+				sysAir.packSwitchGroup:actuate(0)
 			else
-				sysGeneral.stairsL1:actuate(0)
+				sysAir.packSwitchGroup:actuate(1)
 			end
 		end
-		sysGeneral.doorL2:actuate(0)
-		sysGeneral.doorR1:actuate(0)
-		sysGeneral.doorR2:actuate(0)
-		if kc_has_cargo_doors then
-			sysGeneral.doorFCargo:actuate(0)
-			sysGeneral.doorACargo:actuate(0)
+	elseif flightphase == kc_phase_shutdown then
+		if kc_has_press_cab then
+			sysAir.packSwitchGroup:setValue(1)
 		end
-		if kc_has_cockpit_door then
-			sysGeneral.cockpitDoor:actuate(1)
+		if kc_has_engine_bleed then
+			sysAir.engBleedGroup:actuate(0)
 		end
-	end
+		if kc_has_oxygen then 
+			sysAir.oxygenMaster:actuate(0)
+		end	
+	else
+		logMsg("Invalid flightphase")
+	end	
 end
 
-function kc_macro_doors_all_open()
-	if kc_has_doors then
-		sysGeneral.doorGroup:actuate(1)
-	end
+-- ====================================== Hydraulic system flight phase 
+function kc_macro_hyd(flightphase)
+	logMsg("Hydraulic flight phase: " .. kcSopFlightPhase[flightphase])
+
+	if flightphase == kc_phase_colddark then
+		if kc_has_hyd_elec_pmps == true then
+			sysHydraulic.elecHydPumpGroup:actuate(0)
+		end 
+		if kc_has_hyd_eng_pmps == true then
+			sysHydraulic.engHydPumpGroup:actuate(0)
+		end
+	elseif flightphase == kc_phase_turnaround then
+		if kc_has_hyd_elec_pmps == true then
+			sysHydraulic.elecHydPumpGroup:actuate(1)
+		end 
+		if kc_has_hyd_eng_pmps == true then
+			sysHydraulic.engHydPumpGroup:actuate(1)
+		end
+	elseif flightphase == kc_phase_before_start then
+		if kc_has_hyd_elec_pmps == true then
+			sysHydraulic.elecHydPumpGroup:actuate(1)
+		end 
+		if kc_has_hyd_eng_pmps == true then
+			sysHydraulic.engHydPumpGroup:actuate(1)
+		end
+	elseif flightphase == kc_phase_after_start then
+		if kc_has_hyd_elec_pmps == true then
+			sysHydraulic.elecHydPumpGroup:actuate(0)
+		end 
+		if kc_has_hyd_eng_pmps == true then
+			sysHydraulic.engHydPumpGroup:actuate(1)
+		end
+	else
+		logMsg("Invalid flightphase")
+	end	
 end
 
-function kc_macro_doors_all_closed()
-	if kc_has_doors then
-		sysGeneral.doorGroup:actuate(0)
+-- ====================================== anti-ice system flight phase 
+function kc_macro_aice(flightphase)
+	logMsg("Anti-Ice flight phase: " .. kcSopFlightPhase[flightphase])
+
+	if flightphase == kc_phase_colddark then
+		if kc_has_eng_antiice then
+			sysAice.engAntiIceGroup:actuate(0)
+		end
+		if kc_has_wing_antiice then
+			sysAice.wingAntiIce:actuate(0)
+		end
+		if kc_has_window_heat then
+			sysAice.windowHeatGroup:actuate(0)
+		end		
+		if kc_has_pitot_heat then 
+			sysAice.probeHeatGroup:actuate(0)
+		end
+	elseif flightphase == kc_phase_turnaround then
+		if kc_has_pitot_heat then 
+			sysAice.probeHeatGroup:actuate(0)
+		end
+		if kc_has_window_heat  then
+			sysAice.windowHeatGroup:actuate(1)
+		end
+		if kc_has_eng_antiice then
+			sysAice.engAntiIceGroup:actuate(0)
+		end
+		if kc_has_wing_antiice then
+			sysAice.wingAntiIce:actuate(0)
+		end
+	elseif flightphase == kc_phase_after_start then
+		if kc_has_window_heat  then
+			if kc_is_airbus then	
+				sysAice.windowHeatGroup:actuate(0)
+			else
+				sysAice.windowHeatGroup:actuate(1)
+			end
+		end
+		if kc_has_eng_antiice then
+			if activeBriefings:get("takeoff:antiice") == 1 then
+				sysAice.engAntiIceGroup:actuate(0)
+			else
+				sysAice.engAntiIceGroup:actuate(1)
+			end
+		end
+		if kc_has_wing_antiice then
+			if activeBriefings:get("takeoff:antiice") ~= 3 then
+				sysAice.wingAntiIce:actuate(1)
+			else
+				sysAice.wingAntiIce:actuate(0)
+			end
+		end
+		if kc_has_pitot_heat then
+			if kc_is_airbus then	
+				sysAice.probeHeatGroup:actuate(0)
+			else	
+				sysAice.probeHeatGroup:actuate(1)
+			end
+		end 
+	elseif flightphase == kc_phase_descent then
+		if kc_has_window_heat  then
+			if kc_is_airbus then	
+				sysAice.windowHeatGroup:actuate(0)
+			else
+				sysAice.windowHeatGroup:actuate(1)
+			end
+		end
+		if kc_has_eng_antiice then
+			if activeBriefings:get("approach:antiice") == 1 then
+				sysAice.engAntiIceGroup:actuate(0)
+			else
+				sysAice.engAntiIceGroup:actuate(1)
+			end
+		end
+		if kc_has_wing_antiice then
+			if activeBriefings:get("approach:antiice") ~= 3 then
+				sysAice.wingAntiIce:actuate(1)
+			else
+				sysAice.wingAntiIce:actuate(0)
+			end
+		end
+		if kc_has_pitot_heat then
+			if kc_is_airbus then	
+				sysAice.probeHeatGroup:actuate(0)
+			else	
+				sysAice.probeHeatGroup:actuate(1)
+			end
+		end		
+	elseif flightphase == kc_phase_afterland then
+		if kc_has_window_heat  then
+			if kc_is_airbus then	
+				sysAice.windowHeatGroup:actuate(0)
+			else
+				sysAice.windowHeatGroup:actuate(1)
+			end
+		end
+		if kc_has_eng_antiice then
+			sysAice.engAntiIceGroup:actuate(0)
+		end
+		if kc_has_wing_antiice then
+			sysAice.wingAntiIce:actuate(0)
+		end
+		if kc_has_pitot_heat then
+			sysAice.probeHeatGroup:actuate(0)
+		end	
+	else 
+		logMsg("Invalid flightphase")
 	end
 end
 
 -- ====================================== A/P & Glareshield related functions
+function kc_macro_mcp(flightphase)
+	logMsg("MCP flight phase: " .. kcSopFlightPhase[flightphase])
 
-function kc_macro_mcp_cold_dark()
-	if kc_has_flightdir then
-		sysMCP.fdirGroup:actuate(0)
-	end
-	if kc_has_autothrottle then
-		sysMCP.athrSwitch:actuate(0)
-	end
-	if kc_has_ils then
-		sysMCP.crs1Selector:setValue(1)
-		sysMCP.crs2Selector:setValue(1)
-	end
-	if kc_has_ias_sel then
-		sysMCP.iasSelector:setValue(activePrefSet:get("aircraft:mcp_def_spd"))
-	end
-	if kc_has_hdg_sel then
-		sysMCP.hdgSelector:setValue(activePrefSet:get("aircraft:mcp_def_hdg"))
-	end
-	if kc_has_alt_sel then
-		sysMCP.altSelector:setValue(activePrefSet:get("aircraft:mcp_def_alt"))
-	end
-	if kc_has_vsp_sel then
-		sysMCP.vspSelector:setValue(0)
-	end
-	if kc_has_autopilot then
-		sysMCP.discAPSwitch:actuate(0)
-		sysMCP.ap1Switch:actuate(0)
-	end
-	if kc_has_yawdamper then
-		sysMCP.yawDamper:actuate(0)
-	end
-end
-
-function kc_macro_mcp_preflight()
-	if kc_has_flightdir then
-		sysMCP.fdirGroup:actuate(1)
-	end
-	if kc_has_autothrottle then
-		sysMCP.athrSwitch:actuate(0)
-	end
-	if kc_has_yawdamper then
-		sysMCP.yawDamper:actuate(0)
-	end
-	if kc_has_ias_sel then
-		sysMCP.iasSelector:setValue(activeBriefings:get("takeoff:v2"))
-	end
-	if kc_has_hdg_sel then
-		sysMCP.hdgSelector:setValue(activeBriefings:get("departure:initHeading"))
-	end
-	if kc_has_alt_sel then
-		sysMCP.altSelector:setValue(activeBriefings:get("departure:initAlt"))
-	end
-	if kc_has_vsp_sel then
-		sysMCP.vspSelector:actuate(0)
-	end
-	if kc_has_autopilot then
-		sysMCP.discAPSwitch:actuate(0)
-	end
-end
-
-function kc_macro_mcp_takeoff()
-	if kc_has_flightdir then
-		sysMCP.fdirGroup:actuate(1)
-	end
-	if kc_has_autothrottle then
-		sysMCP.athrSwitch:actuate(1)
-	end
-	if kc_has_ias_sel then
-		sysMCP.iasSelector:setValue(activeBriefings:get("takeoff:v2"))
-	end
-	if kc_has_hdg_sel then
-		sysMCP.hdgSelector:setValue(activeBriefings:get("departure:initHeading"))
-	end
-	if kc_has_alt_sel then
-		sysMCP.altSelector:setValue(activeBriefings:get("departure:initAlt"))
-	end
-	if activeBriefings:get("takeoff:apMode") > 1 then
-		if kc_has_vnav and kc_has_lnav then
-			sysMCP.lnavSwitch:actuate(1)
-			sysMCP.vnavSwitch:actuate(1)
-		else
-			sysMCP.vorlocSwitch:actuate(1)
+	if flightphase == kc_phase_colddark then
+		if kc_has_flightdir then
+			sysMCP.fdirGroup:actuate(0)
 		end
-	else
-		sysMCP.hdgselSwitch:actuate(1)
-		if kc_has_flch_ias then
-			sysMCP.iasSelector:setValue(1)
-		else
-			sysMCP.vsSwitch:actuate(1)
+		if kc_has_autothrottle then
+			sysMCP.athrSwitch:actuate(0)
 		end
-	end
-	if kc_has_ils then
-		sysMCP.crs1Selector:actuate(activeBriefings:get("departure:nav1Course"))
-		sysMCP.crs2Selector:actuate(activeBriefings:get("departure:nav2Course"))
-	end
-	if kc_has_vsp_sel then
-		sysMCP.vspSelector:actuate(0)
-	end
-	if kc_has_autopilot then
-		sysMCP.discAPSwitch:actuate(0)
-	end
-end
-
-function kc_macro_mcp_goaround()
-	if kc_has_flightdir then
-		sysMCP.fdirGroup:actuate(1)
-	end
-	if kc_has_autothrottle then
-		sysMCP.athrSwitch:actuate(1)
-	end
-	if kc_has_ias_sel then
-		sysMCP.iasSelector:setValue(activeBriefings:get("approach:gav2"))
-	end
-	if kc_has_hdg_sel then
-		sysMCP.hdgSelector:setValue(activeBriefings:get("approach:gaheading"))
-	end
-	if kc_has_alt_sel then
-		sysMCP.altSelector:setValue(activeBriefings:get("approach:gaaltitude"))
-	end
-	if activeBriefings:get("takeoff:apMode") > 1 then
-		if kc_has_vnav and kc_has_lnav then
-			sysMCP.lnavSwitch:actuate(1)
-			sysMCP.vnavSwitch:actuate(1)
-		else
-			sysMCP.vorlocSwitch:actuate(1)
+		if kc_has_ils then
+			sysMCP.crs1Selector:setValue(1)
+			sysMCP.crs2Selector:setValue(1)
 		end
-	else
-		sysMCP.hdgselSwitch:actuate(1)
-		if kc_has_flch_ias then
-			sysMCP.iasSelector:setValue(1)
-		else
-			sysMCP.vsSwitch:actuate(1)
+		if kc_has_ias_sel then
+			sysMCP.iasSelector:setValue(activePrefSet:get("aircraft:mcp_def_spd"))
 		end
+		if kc_has_hdg_sel then
+			sysMCP.hdgSelector:setValue(activePrefSet:get("aircraft:mcp_def_hdg"))
+		end
+		if kc_has_alt_sel then
+			sysMCP.altSelector:setValue(activePrefSet:get("aircraft:mcp_def_alt"))
+		end
+		if kc_has_vsp_sel then
+			sysMCP.vspSelector:setValue(0)
+		end
+		if kc_has_autopilot then
+			sysMCP.discAPSwitch:actuate(0)
+			sysMCP.ap1Switch:actuate(0)
+		end
+		if kc_has_yawdamper then
+			sysMCP.yawDamper:actuate(0)
+		end
+	elseif flightphase == kc_phase_turnaround then
+		if kc_has_flightdir then
+			sysMCP.fdirGroup:actuate(1)
+		end
+		if kc_has_autothrottle then
+			sysMCP.athrSwitch:actuate(0)
+		end
+		if kc_has_yawdamper then
+			sysMCP.yawDamper:actuate(0)
+		end
+		if kc_has_ias_sel then
+			sysMCP.iasSelector:setValue(activeBriefings:get("takeoff:v2"))
+		end
+		if kc_has_hdg_sel then
+			sysMCP.hdgSelector:setValue(activeBriefings:get("departure:initHeading"))
+		end
+		if kc_has_alt_sel then
+			sysMCP.altSelector:setValue(activeBriefings:get("departure:initAlt"))
+		end
+		if kc_has_vsp_sel then
+			sysMCP.vspSelector:actuate(0)
+		end
+		if kc_has_autopilot then
+			sysMCP.discAPSwitch:actuate(0)
+		end
+	elseif flightphase == kc_phase_before_takeoff then
+		if kc_has_flightdir then
+			sysMCP.fdirGroup:actuate(1)
+		end
+		if kc_has_autothrottle then
+			sysMCP.athrSwitch:actuate(1)
+		end
+		if kc_has_ias_sel then
+			sysMCP.iasSelector:setValue(activeBriefings:get("takeoff:v2"))
+		end
+		if kc_has_hdg_sel then
+			sysMCP.hdgSelector:setValue(activeBriefings:get("departure:initHeading"))
+		end
+		if kc_has_alt_sel then
+			sysMCP.altSelector:setValue(activeBriefings:get("departure:initAlt"))
+		end
+		if activeBriefings:get("takeoff:apMode") > 1 then
+			if kc_has_vnav and kc_has_lnav then
+				sysMCP.lnavSwitch:actuate(1)
+				sysMCP.vnavSwitch:actuate(1)
+			else
+				sysMCP.vorlocSwitch:actuate(1)
+			end
+		else
+			sysMCP.hdgselSwitch:actuate(1)
+			if kc_has_flch_ias then
+				sysMCP.iasSelector:setValue(1)
+			else
+				sysMCP.vsSwitch:actuate(1)
+			end
+		end
+		if kc_has_ils then
+			sysMCP.crs1Selector:actuate(activeBriefings:get("departure:nav1Course"))
+			sysMCP.crs2Selector:actuate(activeBriefings:get("departure:nav2Course"))
+		end
+		if kc_has_vsp_sel then
+			sysMCP.vspSelector:actuate(0)
+		end
+		if kc_has_autopilot then
+			sysMCP.discAPSwitch:actuate(0)
+		end
+	elseif flightphase == kc_phase_afterland then
+		if kc_has_flightdir then
+			sysMCP.fdirGroup:actuate(0)
+		end
+		if kc_has_autothrottle then
+			sysMCP.athrSwitch:actuate(0)
+		end
+		if kc_has_hdg_sel then
+			sysMCP.hdgSelector:setValue(0)
+		end
+		if kc_has_ias_sel then
+			sysMCP.speedSwitch:actuate(0)
+		end
+		if kc_has_autopilot then
+			sysMCP.discAPSwitch:actuate(0)
+		end
+		if kc_has_yawdamper then
+			sysMCP.yawDamper:actuate(0)
+		end
+	else 
+		logMsg("Invalid flightphase")
 	end
-	if kc_has_ias_sel then
-		sysMCP.speedSwitch:actuate(1)
-	end
-	if kc_has_yawdamper then
-		sysMCP.yawDamper:actuate(1)
-	end
-end
-
-function kc_macro_mcp_after_landing()
-	if kc_has_flightdir then
-		sysMCP.fdirGroup:actuate(0)
-	end
-	if kc_has_autothrottle then
-		sysMCP.athrSwitch:actuate(0)
-	end
-	if kc_has_hdg_sel then
-		sysMCP.hdgSelector:setValue(0)
-	end
-	if kc_has_ias_sel then
-		sysMCP.speedSwitch:actuate(0)
-	end
-	if kc_has_autopilot then
-		sysMCP.discAPSwitch:actuate(0)
-	end
-	if kc_has_yawdamper then
-		sysMCP.yawDamper:actuate(0)
-	end
-end
+end 
 
 -- set baros to local pressure at departure airport
 function kc_macro_set_local_baro()
@@ -869,131 +1157,16 @@ function kc_macro_set_local_baro()
 	set("sim/cockpit/misc/barometer_setting2",math.floor(get("sim/weather/barometer_sealevel_inhg")*100)/100) 
 end
 
--- packs all on
-function kc_macro_packs_on()
-	if kc_has_press_cab then
-		sysAir.packSwitchGroup:actuate(1)
-	end
-end
-
--- packs all on
-function kc_macro_packs_off()
-	if kc_has_press_cab then
-		sysAir.packSwitchGroup:actuate(0)
-	end
-end
-
--- packs for takeoff
-function kc_macro_packs_takeoff()
-	if kc_has_press_cab then
-		if activeBriefings:get("takeoff:packs") < 2 then 
-			sysAir.packSwitchGroup:setValue(1)
-		else
-			sysAir.packSwitchGroup:setValue(0)
-		end
-	end
-end
-
--- bleeds on
-function kc_macro_bleeds_on()
-	if kc_has_press_cab then
-		sysAir.engBleedGroup:actuate(1)
-	end
-end
-
--- bleeds off
-function kc_macro_bleeds_off()
-	if kc_has_press_cab then
-		sysAir.engBleedGroup:actuate(0) 
-	end
-end
-
--- bleeds takeoff 
-function kc_macro_bleeds_takeoff()
-	if activeBriefings:get("takeoff:bleeds") > 1 then 
-		sysAir.engBleedGroup:actuate(1) 
-	else
-		sysAir.engBleedGroup:actuate(0) 
-	end
-	if kc_has_apu then
-		sysAir.apuBleedSwitch:actuate(0)
-	end
-end
-
--- =============
-
--- hyd pumps initial setup
-function kc_macro_hydraulic_initial()
-	if kc_has_hyd_elec_pmps == true then
-		sysHydraulic.elecHydPumpGroup:actuate(1)
-	end 
-	if kc_has_hyd_eng_pmps == true then
-		sysHydraulic.engHydPumpGroup:actuate(1)
-	end
-end
-
--- hyd pumps all off
-function kc_macro_hydraulic_off()
-	if kc_has_hyd_elec_pmps == true then
-		sysHydraulic.elecHydPumpGroup:actuate(0)
-	end
-	if kc_has_hyd_eng_pmps == true then
-		sysHydraulic.engHydPumpGroup:actuate(0)
-	end
-end
-
--- hyd pumps all on
-function kc_macro_hydraulic_on()
-	if kc_has_hyd_elec_pmps == true then
-		sysHydraulic.elecHydPumpGroup:actuate(1)
-	end
-	if kc_has_hyd_eng_pmps == true then
-		sysHydraulic.engHydPumpGroup:actuate(1)
-	end
-end
-
--- cold & dark electric
-function kc_macro_elec_cold_dark()
-	sysElectric.genSwitchGroup:actuate(0)
-	if kc_has_avionics_sw == true then
-		sysElectric.avionicsSwitchGroup:actuate(0)
-	end
-	if kc_has_inv_ess_bus == true then
-		sysElectric.inverterSwitchGroup:actuate(0)
-	end
-	if kc_has_bus_ties == true then
-		sysElectric.dcBusTie:actuate(0)
-	end
-	sysElectric.batterySwitch:actuate(0) 
-	sysElectric.battery2Switch:actuate(0) 	
-end
-
--- preflight electric
-function kc_macro_elec_preflight()
-	sysElectric.genSwitchGroup:actuate(0)
-	if kc_has_avionics_sw == true then
-		sysElectric.avionicsSwitchGroup:actuate(0)
-	end
-	if kc_has_inv_ess_bus == true then
-		sysElectric.inverterSwitchGroup:actuate(0)
-	end
-	if kc_has_bus_ties == true then
-		sysElectric.dcBusTie:actuate(0)
-	end
-	sysElectric.batterySwitch:actuate(1) 
-	sysElectric.battery2Switch:actuate(1) 	
-end
-
 -- ===========
 function kc_macro_below_10000_ft()
 	kc_macro_lights_descend_10k()
-	sysGeneral.seatBeltSwitch:actuate(1)
+	sysGeneral.passSignsSwitch:actuate(1)
 end
 
 -- 10000 feet activities up and down
 function kc_macro_above_10000_ft()
 	kc_macro_lights_climb_10k()
-	sysGeneral.seatBeltSwitch:actuate(0)
+	sysGeneral.passSignsSwitch:actuate(0)
 end
 
 function kc_macro_at_trans_alt()
@@ -1154,46 +1327,6 @@ function kc_macro_set_irs(mode)
 		-- do nothing in DFLT
 	elseif mode == 2 then -- NAV 
 		-- do nothing in DFLT
-	end
-end
-
--- ground objects 1=on 0=off
-function kc_macro_set_groundobjects(state)
-	if state == 1 then
-		-- nothing for DFLT
-	else
-		-- nothing for DFLT
-	end
-end
-
--- ======== fuel
-function kc_macro_fuelpumps_off()
-	if kc_has_fuel_pumps then
-		sysFuel.allFuelPumpGroup:actuate(0)
-	end
-	if kc_has_fuel_xfeed then
-		sysFuel.crossFeed:actuate(0)
-	end
-end
-
-function kc_macro_fuelpumps_on()
-	if kc_has_fuel_pumps then
-		sysFuel.allFuelPumpGroup:actuate(1)
-	end
-	if kc_has_fuel_xfeed then
-		sysFuel.crossFeed:actuate(0)
-	end
-end
-
-function kc_macro_fuelpumps_stand()
-	if kc_has_fuel_pumps then
-		kc_macro_fuelpumps_off()
-	end
-end
-
-function kc_macro_fuelpumps_shutdown()
-	if kc_has_fuel_pumps then
-		kc_macro_fuelpumps_off()
 	end
 end
 

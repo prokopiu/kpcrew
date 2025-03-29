@@ -341,7 +341,7 @@ sysGeneral.irsUnitGroup:addSwitch(sysGeneral.irsUnit3Switch)
 
 sysGeneral.noSmokingSwitch	= TwoStateDrefSwitch:new("nosmoke","sim/cockpit2/switches/no_smoking",0)
 
-sysGeneral.seatBeltSwitch	= TwoStateDrefSwitch:new("seatbelts","sim/cockpit/switches/fasten_seat_belts",0)
+sysGeneral.passSignsSwitch	= TwoStateDrefSwitch:new("seatbelts","sim/cockpit/switches/fasten_seat_belts",0)
 
 -- Optional Gound objects
 sysGeneral.groundObjects = InopSwitch:new("ground objects")

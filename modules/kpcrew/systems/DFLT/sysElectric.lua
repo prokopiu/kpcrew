@@ -41,7 +41,19 @@ sysElectric.batt2Amp 		= SimpleAnnunciator:new("BATT2 Amps","sim/cockpit2/electr
 sysElectric.gpuGenBusGroup	= SwitchGroup:new("gpubussgroup")
 -- de-/activate GPU
 if kc_has_gpu then
-	sysElectric.gpuConnect 		= TwoStateDrefSwitch:new("GPU","sim/cockpit/electrical/gpu_on",0)
+	sysElectric.gpuConnect 		= TwoStateCustomSwitch:new("GPU","sim/cockpit/electrical/gpu_on",0,
+	function ()
+		set("sim/cockpit/electrical/gpu_on",1)
+		command_once("sim/ground_ops/service_plane")
+	end,
+	function ()
+		set("sim/cockpit/electrical/gpu_on",0)
+	end,
+	function ()
+	end,
+	function ()
+		return get("sim/cockpit/electrical/gpu_on")
+	end)	
 	sysElectric.gpuGenBus1 		= TwoStateDrefSwitch:new("gpubus1","sim/cockpit2/electrical/GPU_generator_on",0)
 	sysElectric.gpuGenBus2 		= InopSwitch:new("gpubus2")
 else

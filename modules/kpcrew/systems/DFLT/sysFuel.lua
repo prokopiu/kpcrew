@@ -42,7 +42,7 @@ sysFuel.allFuelPumpGroup:addSwitch(sysFuel.fuelPumpRightAft)
 sysFuel.allFuelPumpGroup:addSwitch(sysFuel.fuelPump3)
 sysFuel.allFuelPumpGroup:addSwitch(sysFuel.fuelPump4)
 
-sysFuel.crossFeed = TwoStateCmdSwitch:new("crossfeed","sim/cockpit2/fuel/auto_crossfeed",0,
+sysFuel.fuelCrossFeed = TwoStateCmdSwitch:new("crossfeed","sim/cockpit2/fuel/auto_crossfeed",0,
 	"sim/fuel/auto_crossfeed_on_open","sim/fuel/auto_crossfeed_off")
 
 sysFuel.fuelSwitch1			= InopSwitch:new("fuelswitch1")

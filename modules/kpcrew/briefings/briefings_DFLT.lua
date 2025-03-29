@@ -8,6 +8,7 @@ kc_acf_name 		= "X-Plane Default Aircraft"
 -- === aircraft type
 kc_is_airbus		= false		-- Aircraft is an Airbus
 kc_is_boeing		= false		-- Aircraft is a Boeing
+kc_is_zibo			= false
 kc_is_ga			= false		-- Aircraft is general aviation
 kc_is_turboprop		= false		-- Aircraft is turbo prop
 
@@ -21,6 +22,7 @@ kc_has_inv_ess_bus	= true		-- Aircraft has inverters and essential busses
 kc_has_bus_ties		= true		-- Aircraft has bus ties for AC & DC
 kc_has_avionics_sw  = true		-- Aircraft has Avionics switch
 kc_remove_gpu_after	= true		-- remove GPU after start
+kc_has_standby_pwr	= false		-- Aircraft has standby power
 
 -- === Controls
 kc_Numflap_detents	= -1 		-- Number of flap detents from acf
@@ -55,6 +57,7 @@ kc_mixture_off		= 0
 kc_mixture_min		= 0.4
 kc_mixture_rich		= 1
 kc_n2_after_start	= 40
+kc_has_ignition		= true		-- has ignition switch
 
 -- === Fuel
 kc_NumTanks			= -1		-- Number of tanks from acf
@@ -121,6 +124,10 @@ kc_TakeoffApModes 	= "HDG/FLCH|LNAV/VNAV"
 kc_apptypes 		= "ILS CAT 1|ILS CAT 2 OR 3|VOR|NDB|RNAV|VISUAL|TOUCH AND GO|CIRCLING"
 kc_has_irs			= false		-- Aircraft has IRS that must be aligned
 kc_NumIRS			= 3			-- Number of IRS systems
+kc_irs_off			= 0
+kc_irs_align		= 0
+kc_irs_nav			= 1
+kc_irs_att			= 0
 kc_has_flightdir	= true		-- Aircraft has flight director
 kc_has_autopilot	= true		-- Aircraft has autopilot
 kc_has_autothrottle = true		-- Aircraft has autothrottle
