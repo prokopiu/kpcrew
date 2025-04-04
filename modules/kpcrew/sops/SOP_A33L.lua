@@ -46,21 +46,21 @@ SOP_A33L = require("kpcrew.sops.SOP_DFLT")
 activeSOP:setName("LAMINAR A330 & VARIANTS SOP")
 
 -- Power up addons
-activeSOP:getFlow(1):addItem(ProcedureItem:new("EMER LTS","ARM",FlowItem.actorFO,0,
+activeSOP:getFlow(proc_ind_electrical):addItem(ProcedureItem:new("EMER LTS","ARM",FlowItem.actorFO,0,
 	function () return get("laminar/a333/switches/emer_exit_lt_pos") == 1 end,
 	function () 
 		if get("laminar/a333/switches/emer_exit_lt_pos") == 0 then
 			command_once("laminar/A333/toggle_switch/emer_exit_lt_up")
 		end
 	end))
-activeSOP:getFlow(1):addItem(ProcedureItem:new("CREW SUPPLY","AUTO",FlowItem.actorFO,0,
+activeSOP:getFlow(proc_ind_electrical):addItem(ProcedureItem:new("CREW SUPPLY","AUTO",FlowItem.actorFO,0,
 	function () return get("laminar/A333/buttons/oxy/crew_valve_pos") == 1 end,
 	function () 
 		if get("laminar/A333/buttons/oxy/crew_valve_pos") == 0 then
 			command_once("sim/oxy/crew_valve_toggle")
 		end 
 	end))
-activeSOP:getFlow(1):addItem(ProcedureItem:new("PACK FLOW","AUTO",FlowItem.actorFO,0,
+activeSOP:getFlow(proc_ind_electrical):addItem(ProcedureItem:new("PACK FLOW","AUTO",FlowItem.actorFO,0,
 	function () return get("laminar/A333/pressurization/knobs/pack_flow_pos") == 0 end,
 	function () 
 		if get("laminar/A333/pressurization/knobs/pack_flow_pos") == -1 then
@@ -69,7 +69,7 @@ activeSOP:getFlow(1):addItem(ProcedureItem:new("PACK FLOW","AUTO",FlowItem.actor
 			command_once("laminar/A333/knobs/press_press_flow_left")
 		end
 	end))	
-activeSOP:getFlow(1):addItem(ProcedureItem:new("RMPS","ON",FlowItem.actorFO,0,
+activeSOP:getFlow(proc_ind_electrical):addItem(ProcedureItem:new("RMPS","ON",FlowItem.actorFO,0,
 	function () return 
 		get("laminar/A333/comm/rtp_L/off_status") +
 		get("laminar/A333/comm/rtp_R/off_status") + 
@@ -87,8 +87,12 @@ activeSOP:getFlow(1):addItem(ProcedureItem:new("RMPS","ON",FlowItem.actorFO,0,
 		end
 	end))	
 
+activeSOP:getFlow(proc_ind_climbCheck):addItem(ProcedureItem:new("SPEED BRAKES","DOWN",FlowItem.actorFO,0,
+		function () return sysControls.Speedbrake:getStatus() == 0 end,
+		function () sysControls.Speedbrake:setValue(0) end))
+
 -- landing Procedure
-activeSOP:getFlow(12):addItem(ProcedureItem:new("LS","ON",FlowItem.actorFO,0,
+activeSOP:getFlow(proc_ind_landing):addItem(ProcedureItem:new("LS","ON",FlowItem.actorFO,0,
 	function () return get("laminar/A333/annun/captain_ls_bars_on") == 1 end,
 	function () 
 		if get("laminar/A333/annun/captain_ls_bars_on") == 0 then
@@ -96,19 +100,15 @@ activeSOP:getFlow(12):addItem(ProcedureItem:new("LS","ON",FlowItem.actorFO,0,
 		end
 	end))
 	
--- flapsup
-activeSOP:getFlow(14):addItem(HoldProcedureItem:new("A/P 1","DISCONNECT",FlowItem.actorCPT))
-activeSOP:getFlow(14):addItem(ProcedureItem:new("A/P","DISCONNECT",FlowItem.actorFO,0,
-	function () return get("laminar/A333/annun/autopilot/ap1_mode") == 0 end,
-	function () 
-			command_once("sim/autopilot/priority_pb_left")
-	end))
-activeSOP:getFlow(14):addItem(ProcedureItem:new("A/P","DISCONNECTED",FlowItem.actorFO,0,
+activeSOP:getFlow(proc_ind_ap1off):addItem(ProcedureItem:new("A/P","DISCONNECTED",FlowItem.actorFO,0,
 	function () return true end,
 	function () 
 			command_once("sim/annunciator/clear_master_warning")
 	end))
-
+activeSOP:getFlow(proc_ind_ap1off):addItem(ProcedureItem:new("A/P","DISCONNECTED",FlowItem.actorFO,0,
+	function () return true end,
+	function () 
+			command_once("sim/annunciator/clear_master_warning")
+	end))
+			
 return SOP_A33L
-
--- custom c&d/turnaround

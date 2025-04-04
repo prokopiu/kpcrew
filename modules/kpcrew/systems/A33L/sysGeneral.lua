@@ -75,8 +75,31 @@ sysGeneral.irsUnitGroup:addSwitch(sysGeneral.irsUnit3Switch)
 sysGeneral.noSmokingSwitch	= MultiStateCmdSwitch:new("seatbelts","laminar/A333/switches/no_smoking",0,
 	"laminar/A333/switches/smoking_signs_dn", "laminar/A333/switches/smoking_signs_up",0,2,true)
 
-sysGeneral.seatBeltSwitch	= MultiStateCmdSwitch:new("seatbelts","laminar/A333/switches/fasten_seatbelts",0,
-	"laminar/A333/switches/seatbelt_signs_dn", "laminar/A333/switches/seatbelt_signs_up",0,2,true)
+sysGeneral.passSignsSwitch	= TwoStateCustomSwitch:new("seatbelts","laminar/A333/switches/fasten_seatbelts",0,
+	function ()
+		command_once("laminar/A333/switches/seatbelt_signs_up")
+		command_once("laminar/A333/switches/seatbelt_signs_up")
+	end,
+	function ()
+		command_once("laminar/A333/switches/seatbelt_signs_dn")
+		command_once("laminar/A333/switches/seatbelt_signs_dn")
+	end,
+	function ()
+		if get("laminar/A333/switches/fasten_seatbelts") == 0 then
+			command_once("laminar/A333/switches/seatbelt_signs_up")
+			command_once("laminar/A333/switches/seatbelt_signs_up")
+		else
+			command_once("laminar/A333/switches/seatbelt_signs_dn")
+			command_once("laminar/A333/switches/seatbelt_signs_dn")
+		end
+	end,
+	function ()
+		if get("laminar/A333/switches/fasten_seatbelts") ~= 0 then
+			return 1
+		else
+			return 0
+		end
+	end)
 
 sysGeneral.chrono			= TwoStateToggleSwitch:new("chrono","sim/cockpit2/clock_timer/chrono_running",1,
 	"sim/instruments/chrono2_cycle")

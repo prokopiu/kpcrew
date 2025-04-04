@@ -216,7 +216,7 @@ if kc_has_rudder_trim then
 		function () sysControls.rudderReset:actuate(1) end))
 end
 electricalPowerUpProc:addItem(ProcedureItem:new("AIR CONDITIONING","AS REQUIRED",FlowItem.actorPM,0,
-	function () return sysAir.packSwitchGroup:getStatus() > 0 end,
+	function () return true end,
 	function () kc_macro_air(kc_phase_turnaround) end))
 electricalPowerUpProc:addItem(ProcedureItem:new("ALTIMETERS","ALL SET QNH",FlowItem.actorBOTH,0,
 	function () return true end,
@@ -307,7 +307,7 @@ beforeStart:addItem(ProcedureItem:new("PARKING BRAKE","SET",FlowItem.actorFO,0,
 	function () return sysGeneral.parkBrakeSwitch:getStatus() == 1 end,
 	function () sysGeneral.parkBrakeSwitch:actuate(1) end))
 beforeStart:addItem(ProcedureItem:new("FUEL SYSTEM","AS REQUIRED",FlowItem.actorFO,0,
-	function () return sysFuel.allFuelPumpGroup:getStatus() > 0 end,
+	function () return true end,
 	function () kc_macro_fuel(kc_phase_before_start) end))
 if kc_has_apu == true then
 	beforeStart:addItem(ProcedureItem:new("APU START","PERFORM",FlowItem.actorFO,15,
@@ -430,7 +430,7 @@ if kc_has_gpu == true and kc_remove_gpu_after == false then
 		end))	
 end
 prePushStartProc:addItem(HoldProcedureItem:new("COMMUNICATION WITH GROUND CREW","ESTABLISH",FlowItem.actorCPT))
-prePushStartProc:addItem(HoldProcedureItem:new("START CLEARANCE FROM GROUND CREW","RECEIVED",FlowItem.actorCPT))
+prePushStartProc:addItem(HoldProcedureItem:new("START CLEARANCE","RECEIVED",FlowItem.actorCPT))
 prePushStartProc:addItem(ProcedureItem:new("PARKING BRAKE","RELEASED",FlowItem.actorFO,0,
 	function () return sysGeneral.parkBrakeSwitch:getStatus() == 0 end,
 	function () activeBckVars:set("general:timesOFF",kc_dispTimeHHMM(get("sim/time/zulu_time_sec"))) end,
@@ -561,7 +561,7 @@ if kc_get_nr_engines() == 1 then
 		function () return sysEngines.engStart1Switch:getStatus() > 0 end,
 		function () 
 			kc_procvar_set("engstart1",true)
-			kc_speakNoText(0,"starting left hand engine")
+			kc_speakNoText(0,"starting engine")
 		end))
 else
 	engStartProc:addItem(IndirectProcedureItem:new("START SWITCH FIRST ENGINE","ENGAGE",FlowItem.actorFO,20,"eng_start_1_grd",
@@ -577,7 +577,8 @@ else
 				kc_procvar_set("engstart2",true)
 			else 
 				kc_procvar_set("engstart1",true)
-			end 
+			kc_speakNoText(0,"starting first engine")
+		end 
 	end))
 end
 if kc_get_nr_engines() == 1 then
@@ -619,11 +620,10 @@ if kc_get_nr_engines() >= 2 then
 		function () 
 			if activeBriefings:get("taxi:startSequence") == 1 then
 				kc_procvar_set("engstart1",true)
-				kc_speakNoText(0,"starting left hand engine")
 			else 
 				kc_procvar_set("engstart2",true)
-				kc_speakNoText(0,"starting right hand engine")
 			end 
+			kc_speakNoText(0,"starting second engine")
 		end))
 	engStartProc:addItem(ProcedureItem:new("2ND ENGINE N2","INCREASING",FlowItem.actorCPT,0,
 		function () if activeBriefings:get("taxi:startSequence") == 1 then
@@ -653,6 +653,7 @@ if kc_get_nr_engines() >= 3 then
 		function () return sysEngines.engStart3Switch:getStatus() == 1 end,
 		function () 
 			kc_procvar_set("engstart3",true)
+			kc_speakNoText(0,"starting third engine")
 		end))
 	engStartProc:addItem(ProcedureItem:new("3RD ENGINE N2","INCREASING",FlowItem.actorCPT,0,
 		function () return get("sim/cockpit2/engine/indicators/N2_percent",2) > kc_n2_after_start end,
@@ -679,6 +680,7 @@ if kc_get_nr_engines() >= 4 then
 		function () return sysEngines.engStart4Switch:getStatus() == 1 end,
 		function () 
 			kc_procvar_set("engstart4",true)
+			kc_speakNoText(0,"starting fourth engine")
 		end))
 	engStartProc:addItem(ProcedureItem:new("4TH ENGINE N2","INCREASING",FlowItem.actorCPT,0,
 		function () return get("sim/cockpit2/engine/indicators/N2_percent",3) > kc_n2_after_start end,
@@ -1033,7 +1035,7 @@ local climbCheck = Procedure:new("CLIMB CHECKS","","")
 climbCheck:setFlightPhase(kc_phase_climb)
 
 climbCheck:addItem(ProcedureItem:new("PACKS / BLEEDS","ON",FlowItem.actorFO,0,
-	function () return sysAir.packSwitchGroup:getStatus() > 0 end,
+	function () return true end,
 	function () kc_macro_air(kc_phase_takeoff) end))
 if kc_has_oxygen then 
 	climbCheck:addItem(ProcedureItem:new("OXYGEN SUPPLY","ON",FlowItem.actorFO,0,
@@ -1189,8 +1191,10 @@ if kc_has_hdg_sel then
 end
 if kc_has_speedbrake and kc_spdbrk_can_arm then
 	flapsProc:addItem(IndirectProcedureItem:new("SPEEDBRAKE","ARM",FlowItem.actorFO,0,"armspdbrk",
-	function () return sysControls.Speedbrake:getStatus() == kc_spdbrk_arm_pos end))
+	function () return sysControls.Speedbrake:getStatus() == kc_spdbrk_arm_pos end,
+	function () sysControls.Speedbrake:setValue(kc_spdbrk_arm_pos) end))
 end 
+
 
 -- =====================================================================================================================
 
@@ -1225,7 +1229,8 @@ if kc_has_autobrake then
 end
 if kc_has_speedbrake and kc_spdbrk_can_arm then
 	LandingCheck:addItem(ChecklistItem:new("SPEEDBRAKE","ARM",FlowItem.actorPM,0,
-	function () return sysControls.Speedbrake:getStatus() == kc_spdbrk_arm_pos end))
+	function () return sysControls.Speedbrake:getStatus() == kc_spdbrk_arm_pos end,
+	function () sysControls.Speedbrake:setValue(kc_spdbrk_arm_pos) end))
 end 
 
 -- =====================================================================================================================
@@ -1457,13 +1462,8 @@ if kc_has_seatbelt_sgn then
 		function () sysGeneral.passSignsSwitch:actuate(0) end))
 end
 shutdownProc:addItem(ProcedureItem:new("ELECTRIC SYSTEM","AS REQUIRED",FlowItem.actorFO,0,
-	function () return sysElectric.genSwitchGroup:getStatus() == 0 end,
+	function () return true end,
 	function () kc_macro_elec_system(kc_phase_shutdown) end))
-if kc_has_window_heat and kc_is_airbus == false then
-	shutdownProc:addItem(ProcedureItem:new("WINDSHIELD HEAT","OFF",FlowItem.actorFO,0,
-		function () return sysAice.windowHeatGroup:getStatus() == 0 end,
-		function () sysAice.windowHeatGroup:actuate(0) end))
-end
 shutdownProc:addItem(ProcedureItem:new("PACK/BLEED AIR/OXYGEN","AS REQUIRED",FlowItem.actorFO,0,
 	function () return sysAir.engBleedGroup:getStatus() == 0 end,
 	function () kc_macro_air(kc_phase_shutdown)	end))
@@ -1472,9 +1472,9 @@ shutdownProc:addItem(ProcedureItem:new("FUEL BOOST BOTH","OFF",FlowItem.actorFO,
 	function () sysFuel.allFuelPumpGroup:actuate(0)	end))
 shutdownProc:addItem(ProcedureItem:new("ANTI-ICE SETTINGS","AS REQUIRED",FlowItem.actorPM,0,
 	function () return true end,
-	function () kc_macro_aice(kc_phase_turnaround) end))
+	function () kc_macro_aice(kc_phase_colddark) end))
 shutdownProc:addItem(ProcedureItem:new("HYDRAULIC PUMPS","OFF",FlowItem.actorFO,0,
-	function () return sysHydraulic.engHydPumpGroup:getStatus() == 0 end,
+	function () return true end,
 	function () kc_macro_hyd(kc_phase_colddark) end)) 
 if kc_has_doors then
 	shutdownProc:addItem(ProcedureItem:new("DOOR","OPEN",FlowItem.actorFO,0,
@@ -1513,6 +1513,26 @@ turnAroundProc:addItem(ProcedureItem:new("TURNAROUND","SET","SYS",0,true,
 -- ============  =============
 -- add the checklists and procedures to the active sop
 local nopeProc = Procedure:new("NO PROCEDURES AVAILABLE")
+
+proc_ind_electrical 		= 1
+proc_ind_beforeStart 		= 2
+proc_ind_prePushStart 		= 3
+proc_ind_engStart 			= 4
+proc_ind_afterStart 		= 5
+proc_ind_beforeTakeoff 		= 6
+proc_ind_runwayEntry 		= 7
+proc_ind_gearUp 			= 8
+proc_ind_flapsUp 			= 9
+proc_ind_afterTakeoff 		= 10
+proc_ind_climbCheck 		= 11
+proc_ind_descent 			= 12
+proc_ind_landing 			= 13
+proc_ind_flapsland			= 14
+proc_ind_LandingCheck 		= 15
+proc_ind_ap1off 			= 16
+proc_ind_afterLandingProc	= 17
+proc_ind_taxiLightOff 		= 18
+proc_ind_shutdownProc 		= 19
 
 activeSOP:addProcedure(electricalPowerUpProc)
 activeSOP:addProcedure(beforeStart)

@@ -24,7 +24,7 @@ sysAice = require("kpcrew.systems.DFLT.sysAice")
 logMsg("A33L sysAice")
 
 -- Window Heat
-sysAice.windowHeat1 		= TwoStateToggleSwitch:new("winheat1","laminar/A333/buttons/window_probe_ice",0,
+sysAice.windowHeat1 		= TwoStateToggleSwitch:new("winheat1","laminar/A333/annun/window_probe_on",0,
 	"laminar/A333/buttons/probe_window_heat_toggle")
 sysAice.windowHeat2 		= InopSwitch:new("winheat2")
 sysAice.windowHeat3 		= InopSwitch:new("winheat3")
@@ -45,15 +45,15 @@ sysAice.probeHeatGroup:addSwitch(sysAice.probeHeatBSwitch)
 
 -- ENG anti ice
 sysAice.engAntiIceGroup 	= SwitchGroup:new("engantiice")
-sysAice.engAntiIce1 		= TwoStateToggleSwitch:new("eng1aice","laminar/A333/buttons/engine_anti_ice1",0,
+sysAice.engAntiIce1 		= TwoStateToggleSwitch:new("eng1aice","laminar/A333/annun/engine1_anti_ice",0,
 	"sim/ice/inlet_heat0_tog")
-sysAice.engAntiIce2 		= TwoStateToggleSwitch:new("eng2aice","laminar/A333/buttons/engine_anti_ice2",0,
+sysAice.engAntiIce2 		= TwoStateToggleSwitch:new("eng2aice","laminar/A333/annun/engine2_anti_ice",0,
 	"sim/ice/inlet_heat1_tog")
 sysAice.engAntiIceGroup:addSwitch(sysAice.engAntiIce1)
 sysAice.engAntiIceGroup:addSwitch(sysAice.engAntiIce2)
 
 -- Wing anti ice
-sysAice.wingAntiIce 		= TwoStateToggleSwitch:new("wingaice","laminar/A333/buttons/wing_anti_ice",0,
+sysAice.wingAntiIce 		= TwoStateToggleSwitch:new("wingaice","laminar/A333/annun/wing_anti_ice",0,
 	"sim/ice/wing_heat_tog")
 sysAice.wingAntiIce2 		= InopSwitch:new("wingaice2")
 sysAice.wingAiceGroup 		= SwitchGroup:new("wingaice")

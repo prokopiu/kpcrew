@@ -31,4 +31,29 @@ sysMCP.fdirGroup:addSwitch(sysMCP.fdirCoPilotSwitch)
 
 sysMCP.fdirAnc 				= SimpleAnnunciator:new("fdiranc","laminar/A333/annun/capt_flight_director_on",0)
 
+-- AUTOPILOT
+sysMCP.ap1Switch 			= TwoStateCustomSwitch:new("autopilot1","laminar/A333/annun/autopilot/ap1_mode",0,
+	function ()
+		command_once("sim/autopilot/servos_on")
+	end,
+	function ()
+		command_once("sim/autopilot/servos_off_any")
+		command_once("sim/annunciator/clear_master_warning")
+	end,
+	function ()
+		if get("laminar/A333/annun/autopilot/ap1_mode") == 0 then
+			command_once("sim/autopilot/servos_on")
+		else
+			command_once("sim/autopilot/servos_off_any")
+			command_once("sim/annunciator/clear_master_warning")
+		end
+	end,
+	function ()
+		if get("laminar/A333/annun/autopilot/ap1_mode") == 0 then 
+			return 0
+		else
+			return 1
+		end
+	end)
+	
 return sysMCP

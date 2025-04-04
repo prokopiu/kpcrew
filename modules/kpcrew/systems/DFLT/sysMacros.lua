@@ -112,13 +112,10 @@ function kc_macro_state_cold_and_dark()
 		sysAir.apuBleedSwitch:actuate(0)
 	end
 	if kc_has_gpu then
-		sysElectric.gpuConnect:actuate(0)
+		sysElectric.gpuGenBusGroup:actuate(0)
 	end
-
-	
 	
 	kc_macro_custom_cold_dark()
-
 end
 
 function kc_macro_state_turnaround()
@@ -570,13 +567,13 @@ function kc_macro_elec_system(flightphase)
 	
 	if flightphase == kc_phase_colddark then
 		sysElectric.genSwitchGroup:actuate(0)
-		if kc_has_avionics_sw == true then
+		if kc_has_avionics_sw then
 			sysElectric.avionicsSwitchGroup:actuate(0)
 		end
 		if kc_has_inv_ess_bus then
 			sysElectric.inverterSwitchGroup:actuate(0)
 		end
-		if kc_has_bus_ties == true then
+		if kc_has_bus_ties then
 			sysElectric.dcBusTie:actuate(0)
 		end
 		sysElectric.batterySwitch:actuate(0) 
@@ -614,17 +611,17 @@ function kc_macro_elec_system(flightphase)
 		end	
 	elseif flightphase == kc_phase_turnaround then
 		sysElectric.genSwitchGroup:actuate(0)
-		if kc_has_avionics_sw == true then
-			sysElectric.avionicsSwitchGroup:actuate(0)
+		if kc_has_avionics_sw then
+			sysElectric.avionicsSwitchGroup:actuate(1)
 		end
 		if kc_has_inv_ess_bus then
-			if kc_is_airbus == true then
+			if kc_is_airbus then
 				sysElectric.inverterSwitchGroup:actuate(0)
 			else
 				sysElectric.inverterSwitchGroup:actuate(1)
 			end
 		end
-		if kc_has_bus_ties == true then
+		if kc_has_bus_ties then
 			sysElectric.dcBusTie:actuate(1)
 		end
 		sysElectric.batterySwitch:actuate(1) 
@@ -707,6 +704,9 @@ function kc_macro_elec_system(flightphase)
 			if kc_get_nr_generators() > 3 then
 				sysElectric.gen4Switch:actuate(0)
 			end	
+		end
+		if kc_has_avionics_sw then
+			sysElectric.avionicsSwitchGroup:actuate(0)
 		end
 	else
 		logMsg("Invalid flightphase")
@@ -955,63 +955,47 @@ function kc_macro_aice(flightphase)
 				sysAice.windowHeatGroup:actuate(1)
 			end
 		end
-		if kc_has_eng_antiice then
+		if kc_has_eng_antiice and kc_is_airbus ~= true then
 			if activeBriefings:get("takeoff:antiice") == 1 then
 				sysAice.engAntiIceGroup:actuate(0)
 			else
 				sysAice.engAntiIceGroup:actuate(1)
 			end
 		end
-		if kc_has_wing_antiice then
+		if kc_has_wing_antiice and kc_is_airbus ~= true then
 			if activeBriefings:get("takeoff:antiice") ~= 3 then
 				sysAice.wingAntiIce:actuate(1)
 			else
 				sysAice.wingAntiIce:actuate(0)
 			end
 		end
-		if kc_has_pitot_heat then
-			if kc_is_airbus then	
-				sysAice.probeHeatGroup:actuate(0)
-			else	
-				sysAice.probeHeatGroup:actuate(1)
-			end
+		if kc_has_pitot_heat and kc_is_airbus ~= true  then
+			sysAice.probeHeatGroup:actuate(1)
 		end 
 	elseif flightphase == kc_phase_descent then
-		if kc_has_window_heat  then
-			if kc_is_airbus then	
-				sysAice.windowHeatGroup:actuate(0)
-			else
-				sysAice.windowHeatGroup:actuate(1)
-			end
+		if kc_has_window_heat and kc_is_airbus ~= true then
+			sysAice.windowHeatGroup:actuate(1)
 		end
-		if kc_has_eng_antiice then
+		if kc_has_eng_antiice and kc_is_airbus ~= true then
 			if activeBriefings:get("approach:antiice") == 1 then
 				sysAice.engAntiIceGroup:actuate(0)
 			else
 				sysAice.engAntiIceGroup:actuate(1)
 			end
 		end
-		if kc_has_wing_antiice then
+		if kc_has_wing_antiice and kc_is_airbus ~= true then
 			if activeBriefings:get("approach:antiice") ~= 3 then
 				sysAice.wingAntiIce:actuate(1)
 			else
 				sysAice.wingAntiIce:actuate(0)
 			end
 		end
-		if kc_has_pitot_heat then
-			if kc_is_airbus then	
-				sysAice.probeHeatGroup:actuate(0)
-			else	
-				sysAice.probeHeatGroup:actuate(1)
-			end
+		if kc_has_pitot_heat and kc_is_airbus ~= true then
+			sysAice.probeHeatGroup:actuate(1)
 		end		
 	elseif flightphase == kc_phase_afterland then
 		if kc_has_window_heat  then
-			if kc_is_airbus then	
-				sysAice.windowHeatGroup:actuate(0)
-			else
-				sysAice.windowHeatGroup:actuate(1)
-			end
+			sysAice.windowHeatGroup:actuate(0)
 		end
 		if kc_has_eng_antiice then
 			sysAice.engAntiIceGroup:actuate(0)
