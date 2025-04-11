@@ -11,7 +11,11 @@ kc_acf_name 		= "ToLiss Airbus"
 kc_is_airbus		= true		-- Aircraft is an Airbus
 
 -- === Electric system
-kc_NumBatteries		= 2			-- Number of batteries
+if PLANE_ICAO ~= "A339" and PLANE_ICAO ~= "A346" then
+	kc_NumBatteries		= 2			-- Number of batteries
+else
+	kc_NumBatteries		= 3			-- Number of batteries
+end
 kc_has_inv_ess_bus	= true		-- Aircraft has inverters and essential busses
 kc_has_bus_ties		= true		-- Aircraft has bus ties for AC & DC
 kc_has_avionics_sw  = false		-- Aircraft has Avionics switch

@@ -15,16 +15,36 @@ logMsg("A3TL sysMacros")
 
 -- custom cold & dark activities
 function kc_macro_custom_cold_dark()
+	if PLANE_ICAO == "A339" or PLANE_ICAO == "A346" then
+		set_array("AirbusFBW/ElecOHPArray",16,0)
+		set_array("AirbusFBW/ElecOHPArray",18,0)
+		set_array("AirbusFBW/ElecOHPArray",8,0)
+		set_array("AirbusFBW/ElecOHPArray",9,0)
+	end	
+	if PLANE_ICAO == "A339" or PLANE_ICAO == "A346" then
+		command_once("toliss_airbus/eleccommands/ExtPowAOff") 
+		command_once("toliss_airbus/eleccommands/ExtPowBOff") 
+	else
+		command_once("toliss_airbus/eleccommands/ExtPowOff") 
+	end
+	set("AirbusFBW/EnableExternalPower",0)
+	
 	set("AirbusFBW/RMP1Switch",0)
 	set("AirbusFBW/RMP2Switch",0)
 	set("AirbusFBW/RMP3Switch",0)
 	set("sim/cockpit/radios/com2_freq_hz",12150)
+	
 	set("AirbusFBW/XPDRSystem",1)
 	set("AirbusFBW/XPDRPower",0)
 	set("AirbusFBW/XPDR4",2)
 	set("AirbusFBW/XPDR3",0)
 	set("AirbusFBW/XPDR2",0)
 	set("AirbusFBW/XPDR1",0)
+
+	set("AirbusFBW/XBleedSwitch",1)
+	
+	set("AirbusFBW/APUMaster",0)
+	set("AirbusFBW/APUStarter",0)
 
 	if (get("AirbusFBW/WXPowerSwitch") == 0) then
 		command_once("toliss_airbus/WXRadarSwitchRight")
@@ -33,8 +53,6 @@ function kc_macro_custom_cold_dark()
 		command_once("toliss_airbus/WXRadarSwitchLeft")
 	end
 	
-	set("AirbusFBW/XBleedSwitch",0)
-
 	command_once("toliss_airbus/engcommands/Master1Off")
 	command_once("toliss_airbus/engcommands/Master2Off")
 	if PLANE_ICAO == "A346" then
@@ -42,6 +60,7 @@ function kc_macro_custom_cold_dark()
 		command_once("toliss_airbus/engcommands/Master4Off")
 	end
 	command_once("toliss_airbus/engcommands/EngineModeSwitchToNorm")
+
 	command_once("sim/flight_controls/landing_gear_down")
 
 	set("AirbusFBW/CrewOxySwitch",0)
@@ -55,7 +74,6 @@ function kc_macro_custom_cold_dark()
 	
 	set("AirbusFBW/LandElev",-3)
 	set("AirbusFBW/APUBleedSwitch",0)
-	
 	set("AirbusFBW/XBleedSwitch",1)
 
 	set("AirbusFBW/NWSnAntiSkid",1)
@@ -69,21 +87,38 @@ function kc_macro_custom_cold_dark()
 
 	set("AirbusFBW/APUMaster",0)
 	set("AirbusFBW/APUStarter",0)
-	if PLANE_ICAO == "A339" or PLANE_ICAO == "A346" then
-		command_once("toliss_airbus/eleccommands/ExtPowAOff") 
-		command_once("toliss_airbus/eleccommands/ExtPowBOff") 
-	else
-		command_once("toliss_airbus/eleccommands/ExtPowOff") 
-	end
-	set("AirbusFBW/EnableExternalPower",0)
-	set_array("AirbusFBW/ElecOHPArray",16,0)
-	set_array("AirbusFBW/ElecOHPArray",18,0)
-	set_array("AirbusFBW/ElecOHPArray",8,0)
-	set_array("AirbusFBW/ElecOHPArray",9,0)
+	
 end
 
--- custom turnaround items
+-- aircraft specific custom steps not covered in default turnaround flow
 function kc_macro_custom_turnaround()
+	if PLANE_ICAO == "A339" or PLANE_ICAO == "A346" then
+		set_array("AirbusFBW/ElecOHPArray",16,1)
+		set_array("AirbusFBW/ElecOHPArray",18,1)
+		set_array("AirbusFBW/ElecOHPArray",8,1)
+		set_array("AirbusFBW/ElecOHPArray",9,1)
+	end	
+	set("AirbusFBW/EnableExternalPower",1)
+	if PLANE_ICAO == "A339" or PLANE_ICAO == "A346" then
+		command_once("toliss_airbus/eleccommands/ExtPowAOn") 
+	else
+		command_once("toliss_airbus/eleccommands/ExtPowOn") 
+	end
+
+	set("AirbusFBW/RMP1Switch",1)
+	set("AirbusFBW/RMP2Switch",1)
+	set("AirbusFBW/RMP3Switch",1)
+	set("sim/cockpit/radios/com2_freq_hz",12150)
+
+	set("AirbusFBW/XPDRSystem",1)
+	set("AirbusFBW/XPDRPower",0)
+	set("AirbusFBW/XPDR4",2)
+	set("AirbusFBW/XPDR3",0)
+	set("AirbusFBW/XPDR2",0)
+	set("AirbusFBW/XPDR1",0)
+
+	set("AirbusFBW/XBleedSwitch",1)
+
 	command_once("toliss_airbus/engcommands/Master1Off")
 	command_once("toliss_airbus/engcommands/Master2Off")
 	if PLANE_ICAO == "A346" then
@@ -94,59 +129,30 @@ function kc_macro_custom_turnaround()
 	if (get("AirbusFBW/WXPowerSwitch") == 0) then
 		command_once("toliss_airbus/WXRadarSwitchRight")
 	end
+
 	if (get("AirbusFBW/WXPowerSwitch") == 2) then
 		command_once("toliss_airbus/WXRadarSwitchLeft")
 	end
+	
 	command_once("sim/flight_controls/landing_gear_down")
 	set("AirbusFBW/LeftWiperSwitch",0) 
 	set("AirbusFBW/RightWiperSwitch",0)
-	set("AirbusFBW/EnableExternalPower",1)
-	if PLANE_ICAO == "A339" or PLANE_ICAO == "A346" then
-		command_once("toliss_airbus/eleccommands/ExtPowAOn") 
-	else
-		command_once("toliss_airbus/eleccommands/ExtPowOn") 
-	end
-	command_once("toliss_airbus/eleccommands/Bat1On")
-	command_once("toliss_airbus/eleccommands/Bat2On")
-	if PLANE_ICAO == "A339" or PLANE_ICAO == "A346" then
-		set_array("AirbusFBW/ElecOHPArray",16,1)
-		set_array("AirbusFBW/ElecOHPArray",18,1)
-		set_array("AirbusFBW/ElecOHPArray",8,1)
-		set_array("AirbusFBW/ElecOHPArray",9,1)
-	end	
-
-	set("AirbusFBW/RMP1Switch",1)
-	set("AirbusFBW/RMP2Switch",1)
-	set("AirbusFBW/RMP3Switch",1)
 	
 	set("sim/cockpit2/controls/flap_ratio",0)
 	set("sim/cockpit2/controls/speedbrake_ratio",0)
 	set("AirbusFBW/Chocks",1)
-	
-	command_once("toliss_airbus/park_brake_set")
-	command_once("toliss_airbus/adirucommands/ADIRU1SwitchDown")
-	command_once("toliss_airbus/adirucommands/ADIRU1SwitchDown")
-	command_once("toliss_airbus/adirucommands/ADIRU1SwitchUp")
-	command_once("toliss_airbus/adirucommands/ADIRU2SwitchDown")
-	command_once("toliss_airbus/adirucommands/ADIRU2SwitchDown")
-	command_once("toliss_airbus/adirucommands/ADIRU2SwitchUp")
-	command_once("toliss_airbus/adirucommands/ADIRU3SwitchDown")
-	command_once("toliss_airbus/adirucommands/ADIRU3SwitchDown")
-	command_once("toliss_airbus/adirucommands/ADIRU3SwitchUp")
 
-	set("AirbusFBW/XBleedSwitch",0)
-	-- if PLANE_ICAO == "A321" then
-		set("AirbusFBW/PackFlowSel",1)
-	-- end
-
+	set("AirbusFBW/PackFlowSel",1)
 	set("AirbusFBW/CrewOxySwitch",1)
 	set("AirbusFBW/CvrGndCtrl",1)
+
 	set_array("AirbusFBW/GPWSSwitchArray",0,1)
 	set_array("AirbusFBW/GPWSSwitchArray",1,1)
 	set_array("AirbusFBW/GPWSSwitchArray",2,1)
 	set_array("AirbusFBW/GPWSSwitchArray",3,0)
 	set_array("AirbusFBW/GPWSSwitchArray",4,1)
-	set_array("AirbusFBW/OHPLightSwitches",10,1) 
+
+	set_array("AirbusFBW/OHPLightSwitches",10,1)
 
 	command_once("toliss_airbus/antiicecommands/WingOff")
 	command_once("toliss_airbus/antiicecommands/ENG1Off")
@@ -155,11 +161,10 @@ function kc_macro_custom_turnaround()
 		command_once("toliss_airbus/antiicecommands/ENG3Off")
 		command_once("toliss_airbus/antiicecommands/ENG4Off")
 	end 
+
 	set("AirbusFBW/ProbeHeatSwitch",0)
 
 	set("AirbusFBW/LandElev",-3)
-	set("AirbusFBW/APUBleedSwitch",1)
-	set("AirbusFBW/XBleedSwitch",1)
 
 	set("AirbusFBW/NWSnAntiSkid",1)
 	set("AirbusFBW/WXSwitchPWS",0)
@@ -168,8 +173,7 @@ function kc_macro_custom_turnaround()
 	else
 		set("ckpt/gravityGearOn/anim",0) 
 	end
-	set("AirbusFBW/XPDRSystem",1)
-	set("AirbusFBW/XPDRPower",0)
+
 	set("AirbusFBW/FwdCargoTemp",15.5)
 	set("AirbusFBW/CockpitTemp",22)
 	set("AirbusFBW/FwdCabinTemp",22)
@@ -177,6 +181,7 @@ function kc_macro_custom_turnaround()
 	set("AirbusFBW/BlowerSwitch",0)
 	set("AirbusFBW/ExtractSwitch",0)
 	set("AirbusFBW/CabinFanSwitch",1)
+
 end
 
 -- ========= air conditioning
@@ -201,241 +206,6 @@ function kc_macro_aircond_all_white_off()
 	set("AirbusFBW/BlowerSwitch",0)
 	set("AirbusFBW/ExtractSwitch",0)
 	set("AirbusFBW/CabinFanSwitch",1)
-end
-
--- ========= doors
-
-function kc_macro_doors_preflight()
-	set_array("AirbusFBW/PaxDoorModeArray",0,2)
-	set_array("AirbusFBW/PaxDoorModeArray",1,0)
-	set_array("AirbusFBW/PaxDoorModeArray",2,0)
-	set_array("AirbusFBW/PaxDoorModeArray",3,0)
-	set_array("AirbusFBW/PaxDoorModeArray",4,0)
-	set_array("AirbusFBW/PaxDoorModeArray",5,0)
-	set_array("AirbusFBW/PaxDoorModeArray",6,0)
-	set_array("AirbusFBW/PaxDoorModeArray",7,0)
-	set_array("AirbusFBW/CargoDoorModeArray",0,2)
-	set_array("AirbusFBW/CargoDoorModeArray",1,2)
-	set_array("AirbusFBW/CargoDoorModeArray",2,0)
-end
-
-function kc_macro_doors_before_start()
-	set_array("AirbusFBW/PaxDoorModeArray",0,0)
-	set_array("AirbusFBW/PaxDoorModeArray",1,0)
-	set_array("AirbusFBW/PaxDoorModeArray",2,0)
-	set_array("AirbusFBW/PaxDoorModeArray",3,0)
-	set_array("AirbusFBW/PaxDoorModeArray",4,0)
-	set_array("AirbusFBW/PaxDoorModeArray",5,0)
-	set_array("AirbusFBW/PaxDoorModeArray",6,0)
-	set_array("AirbusFBW/PaxDoorModeArray",7,0)
-	set_array("AirbusFBW/CargoDoorModeArray",0,0)
-	set_array("AirbusFBW/CargoDoorModeArray",1,0)
-	set_array("AirbusFBW/CargoDoorModeArray",2,0)
-end
-
-function kc_macro_doors_after_shutdown()
-	set_array("AirbusFBW/PaxDoorModeArray",0,2)
-	set_array("AirbusFBW/PaxDoorModeArray",1,0)
-	set_array("AirbusFBW/PaxDoorModeArray",2,0)
-	set_array("AirbusFBW/PaxDoorModeArray",3,0)
-	set_array("AirbusFBW/PaxDoorModeArray",4,0)
-	set_array("AirbusFBW/PaxDoorModeArray",5,0)
-	set_array("AirbusFBW/PaxDoorModeArray",6,0)
-	set_array("AirbusFBW/PaxDoorModeArray",7,0)
-	set_array("AirbusFBW/CargoDoorModeArray",0,2)
-	set_array("AirbusFBW/CargoDoorModeArray",1,2)
-	set_array("AirbusFBW/CargoDoorModeArray",2,0)
-end
-
-function kc_macro_doors_cold_dark()
-	set_array("AirbusFBW/PaxDoorModeArray",0,2)
-	set_array("AirbusFBW/PaxDoorModeArray",1,0)
-	set_array("AirbusFBW/PaxDoorModeArray",2,0)
-	set_array("AirbusFBW/PaxDoorModeArray",3,0)
-	set_array("AirbusFBW/PaxDoorModeArray",4,0)
-	set_array("AirbusFBW/PaxDoorModeArray",5,0)
-	set_array("AirbusFBW/PaxDoorModeArray",6,0)
-	set_array("AirbusFBW/PaxDoorModeArray",7,0)
-	set_array("AirbusFBW/CargoDoorModeArray",0,0)
-	set_array("AirbusFBW/CargoDoorModeArray",1,0)
-	set_array("AirbusFBW/CargoDoorModeArray",2,0)
-end
-
-function kc_macro_doors_all_open()
-	set_array("AirbusFBW/PaxDoorModeArray",0,2)
-	set_array("AirbusFBW/PaxDoorModeArray",1,2)
-	set_array("AirbusFBW/PaxDoorModeArray",2,2)
-	set_array("AirbusFBW/PaxDoorModeArray",3,2)
-	set_array("AirbusFBW/PaxDoorModeArray",4,2)
-	set_array("AirbusFBW/PaxDoorModeArray",5,2)
-	set_array("AirbusFBW/PaxDoorModeArray",6,2)
-	set_array("AirbusFBW/PaxDoorModeArray",7,2)
-	set_array("AirbusFBW/CargoDoorModeArray",0,2)
-	set_array("AirbusFBW/CargoDoorModeArray",1,2)
-	set_array("AirbusFBW/CargoDoorModeArray",2,2)
-
-end
-
-function kc_macro_doors_all_closed()
-	set_array("AirbusFBW/PaxDoorModeArray",0,0)
-	set_array("AirbusFBW/PaxDoorModeArray",1,0)
-	set_array("AirbusFBW/PaxDoorModeArray",2,0)
-	set_array("AirbusFBW/PaxDoorModeArray",3,0)
-	set_array("AirbusFBW/PaxDoorModeArray",4,0)
-	set_array("AirbusFBW/PaxDoorModeArray",5,0)
-	set_array("AirbusFBW/PaxDoorModeArray",6,0)
-	set_array("AirbusFBW/PaxDoorModeArray",7,0)
-	set_array("AirbusFBW/CargoDoorModeArray",0,0)
-	set_array("AirbusFBW/CargoDoorModeArray",1,0)
-	set_array("AirbusFBW/CargoDoorModeArray",2,0)
-end
-
--- ====================================== Lights related functions
-
-function kc_macro_lights_cold_dark()
-	-- set the lights for cold & dark mode
-	-- external
-	command_once("toliss_airbus/lightcommands/LLandLightDown")
-	if PLANE_ICAO ~= "A346" then
-		command_once("toliss_airbus/lightcommands/RLandLightDown")
-	end
-	command_once("toliss_airbus/lightcommands/TurnoffLightOff")
-	command_once("toliss_airbus/lightcommands/NoseLightDown")
-	command_once("toliss_airbus/lightcommands/NoseLightDown")
-	command_once("toliss_airbus/lightcommands/NavLightDown")
-	command_once("toliss_airbus/lightcommands/NavLightDown")
-	command_once("toliss_airbus/lightcommands/BeaconOff")
-	command_once("toliss_airbus/lightcommands/StrobeLightDown")
-	command_once("toliss_airbus/lightcommands/StrobeLightDown")
-	command_once("toliss_airbus/lightcommands/WingLightOff")
-	
-	-- internal
-	command_once("toliss_airbus/lightcommands/DomeLightDown")
-	command_once("toliss_airbus/lightcommands/DomeLightDown")
-	set("AirbusFBW/OHPBrightnessLevel",0)
-	set("AirbusFBW/PanelFloodBrightnessLevel",0)
-	set("AirbusFBW/PanelBrightnessLevel",0)
-	set("AirbusFBW/PedestalFloodBrightnessLevel",0)
-	set_array("AirbusFBW/DUBrightness",0,1)
-	set_array("AirbusFBW/DUBrightness",0,1)
-	set_array("AirbusFBW/DUBrightness",0,1)
-	set_array("AirbusFBW/DUBrightness",0,1)
-	set_array("AirbusFBW/DUBrightness",0,1)
-	set_array("AirbusFBW/DUBrightness",0,1)
-	set_array("AirbusFBW/SupplLightLevelRehostats",0,0)
-	set_array("AirbusFBW/SupplLightLevelRehostats",1,0)
-	set_array("AirbusFBW/OHPLightSwitches",11,0)
-	set_array("AirbusFBW/OHPLightSwitches",12,0)
-	set_array("AirbusFBW/OHPLightSwitches",10,0)
-	
-end
-
-function kc_macro_lights_preflight()
-
-	-- set the lights as needed during preflight/turnaround
-	-- external
-	command_once("toliss_airbus/lightcommands/LLandLightDown")
-	if PLANE_ICAO ~= "A346" then
-		command_once("toliss_airbus/lightcommands/RLandLightDown")
-	end
-	command_once("toliss_airbus/lightcommands/TurnoffLightOff")
-	command_once("toliss_airbus/lightcommands/NoseLightDown")
-	command_once("toliss_airbus/lightcommands/NoseLightDown")
-	command_once("toliss_airbus/lightcommands/NavLightDown")
-	command_once("toliss_airbus/lightcommands/NavLightDown")
-	command_once("toliss_airbus/lightcommands/NavLightUp")
-	command_once("toliss_airbus/lightcommands/BeaconOff")
-	command_once("toliss_airbus/lightcommands/StrobeLightDown")
-	command_once("toliss_airbus/lightcommands/StrobeLightDown")
-	command_once("toliss_airbus/lightcommands/WingLightOff")
-	
-	-- internal
-	command_once("toliss_airbus/lightcommands/DomeLightDown")
-	command_once("toliss_airbus/lightcommands/DomeLightDown")
-	if kc_is_daylight() then		
-		command_once("toliss_airbus/lightcommands/DomeLightDown")
-		command_once("toliss_airbus/lightcommands/DomeLightDown")
-		set("AirbusFBW/OHPBrightnessLevel",0)
-		set("AirbusFBW/PanelFloodBrightnessLevel",0)
-		set("AirbusFBW/PanelBrightnessLevel",0)
-		set("AirbusFBW/PedestalFloodBrightnessLevel",0)
-		set_array("AirbusFBW/DUBrightness",0,1)
-		set_array("AirbusFBW/DUBrightness",0,1)
-		set_array("AirbusFBW/DUBrightness",0,1)
-		set_array("AirbusFBW/DUBrightness",0,1)
-		set_array("AirbusFBW/DUBrightness",0,1)
-		set_array("AirbusFBW/DUBrightness",0,1)
-		set_array("AirbusFBW/SupplLightLevelRehostats",0,0)
-		set_array("AirbusFBW/SupplLightLevelRehostats",1,0)
-	else
-		command_once("toliss_airbus/lightcommands/DomeLightUp")
-		command_once("toliss_airbus/lightcommands/NavLightUp")
-		command_once("toliss_airbus/lightcommands/WingLightOn")
-		set("AirbusFBW/OHPBrightnessLevel",1)
-		set("AirbusFBW/PanelFloodBrightnessLevel",1)
-		set("AirbusFBW/PanelBrightnessLevel",1)
-		set("AirbusFBW/PedestalFloodBrightnessLevel",0.6)
-		set_array("AirbusFBW/SupplLightLevelRehostats",0,1)
-		set_array("AirbusFBW/SupplLightLevelRehostats",1,1)
-		set_array("AirbusFBW/DUBrightness",0,0.8)
-		set_array("AirbusFBW/DUBrightness",0,0.8)
-		set_array("AirbusFBW/DUBrightness",0,0.8)
-		set_array("AirbusFBW/DUBrightness",0,0.8)
-		set_array("AirbusFBW/DUBrightness",0,0.8)
-		set_array("AirbusFBW/DUBrightness",0,0.8)
-	end
-end
-
-function kc_macro_lights_for_takeoff()
-
-	command_once("toliss_airbus/lightcommands/LLandLightUp")
-	if PLANE_ICAO ~= "A346" then
-		command_once("toliss_airbus/lightcommands/RLandLightUp")
-	end
-	command_once("toliss_airbus/lightcommands/TurnoffLightOn")
-	command_once("toliss_airbus/lightcommands/NoseLightUp")
-	command_once("toliss_airbus/lightcommands/NoseLightUp")
-	command_once("toliss_airbus/lightcommands/NavLightDown")
-	command_once("toliss_airbus/lightcommands/NavLightDown")
-	command_once("toliss_airbus/lightcommands/NavLightUp")
-	command_once("toliss_airbus/lightcommands/BeaconOn")
-	command_once("toliss_airbus/lightcommands/StrobeLightUp")
-	command_once("toliss_airbus/lightcommands/StrobeLightUp")
-	command_once("toliss_airbus/lightcommands/WingLightOff")
-	
-	-- internal
-	command_once("toliss_airbus/lightcommands/DomeLightDown")
-	command_once("toliss_airbus/lightcommands/DomeLightDown")
-	if kc_is_daylight() then		
-		command_once("toliss_airbus/lightcommands/DomeLightDown")
-		command_once("toliss_airbus/lightcommands/DomeLightDown")
-		set("AirbusFBW/OHPBrightnessLevel",0)
-		set("AirbusFBW/PanelFloodBrightnessLevel",0)
-		set("AirbusFBW/PanelBrightnessLevel",0)
-		set("AirbusFBW/PedestalFloodBrightnessLevel",0)
-		set_array("AirbusFBW/DUBrightness",0,1)
-		set_array("AirbusFBW/DUBrightness",0,1)
-		set_array("AirbusFBW/DUBrightness",0,1)
-		set_array("AirbusFBW/DUBrightness",0,1)
-		set_array("AirbusFBW/DUBrightness",0,1)
-		set_array("AirbusFBW/DUBrightness",0,1)
-		set_array("AirbusFBW/SupplLightLevelRehostats",0,0)
-		set_array("AirbusFBW/SupplLightLevelRehostats",1,0)
-	else
-		command_once("toliss_airbus/lightcommands/NavLightUp")
-		set("AirbusFBW/OHPBrightnessLevel",0.4)
-		set("AirbusFBW/PanelFloodBrightnessLevel",0.1)
-		set("AirbusFBW/PanelBrightnessLevel",0.1)
-		set("AirbusFBW/PedestalFloodBrightnessLevel",0.1)
-		set_array("AirbusFBW/SupplLightLevelRehostats",0,1)
-		set_array("AirbusFBW/SupplLightLevelRehostats",1,1)
-		set_array("AirbusFBW/DUBrightness",0,0.8)
-		set_array("AirbusFBW/DUBrightness",0,0.8)
-		set_array("AirbusFBW/DUBrightness",0,0.8)
-		set_array("AirbusFBW/DUBrightness",0,0.8)
-		set_array("AirbusFBW/DUBrightness",0,0.8)
-		set_array("AirbusFBW/DUBrightness",0,0.8)
-	end
 end
 
 -- ========= fuel
@@ -740,7 +510,7 @@ end
 
 -- mcp
 
-function kc_macro_mcp_cold_dark()
+function xkc_macro_mcp_cold_dark()
 	sysMCP.fdirGroup:actuate(0)
 	sysMCP.athrSwitch:actuate(0)
 	sysMCP.iasSelector:setValue(activePrefSet:get("aircraft:mcp_def_spd"))
@@ -751,7 +521,7 @@ function kc_macro_mcp_cold_dark()
 	sysMCP.ap1Switch:actuate(0)
 end
 
-function kc_macro_mcp_preflight()
+function xkc_macro_mcp_preflight()
 	sysMCP.fdirGroup:actuate(1)
 	sysMCP.athrSwitch:actuate(0)
 	sysMCP.altSelector:setValue(activeBriefings:get("departure:initAlt"))
@@ -759,7 +529,7 @@ function kc_macro_mcp_preflight()
 	sysMCP.discAPSwitch:actuate(0)
 end
 
-function kc_macro_mcp_takeoff()
+function xkc_macro_mcp_takeoff()
 	sysMCP.fdirGroup:actuate(1)
 	sysMCP.athrSwitch:actuate(1)
 	sysMCP.altSelector:setValue(activeBriefings:get("departure:initAlt"))
@@ -767,13 +537,13 @@ function kc_macro_mcp_takeoff()
 	sysMCP.discAPSwitch:actuate(0)
 end
 
-function kc_macro_mcp_goaround()
+function xkc_macro_mcp_goaround()
 	sysMCP.fdirGroup:actuate(1)
 	sysMCP.athrSwitch:actuate(1)
 	sysMCP.altSelector:setValue(activeBriefings:get("approach:gaaltitude"))
 end
 
-function kc_macro_mcp_after_landing()
+function xkc_macro_mcp_after_landing()
 	sysMCP.fdirGroup:actuate(0)
 	sysMCP.athrSwitch:actuate(0)
 	sysMCP.hdgselSwitch:actuate(0)

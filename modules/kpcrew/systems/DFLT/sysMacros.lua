@@ -1077,28 +1077,21 @@ function kc_macro_mcp(flightphase)
 		if kc_has_autothrottle then
 			sysMCP.athrSwitch:actuate(1)
 		end
-		if kc_has_ias_sel then
+		if kc_has_ias_sel and kc_is_airbus == false then
 			sysMCP.iasSelector:setValue(activeBriefings:get("takeoff:v2"))
 		end
-		if kc_has_hdg_sel then
+		if kc_has_hdg_sel and kc_is_airbus == false then
 			sysMCP.hdgSelector:setValue(activeBriefings:get("departure:initHeading"))
 		end
 		if kc_has_alt_sel then
 			sysMCP.altSelector:setValue(activeBriefings:get("departure:initAlt"))
 		end
-		if activeBriefings:get("takeoff:apMode") > 1 then
+		if kc_is_airbus == false then
 			if kc_has_vnav and kc_has_lnav then
 				sysMCP.lnavSwitch:actuate(1)
 				sysMCP.vnavSwitch:actuate(1)
 			else
 				sysMCP.vorlocSwitch:actuate(1)
-			end
-		else
-			sysMCP.hdgselSwitch:actuate(1)
-			if kc_has_flch_ias then
-				sysMCP.iasSelector:setValue(1)
-			else
-				sysMCP.vsSwitch:actuate(1)
 			end
 		end
 		if kc_has_ils then
@@ -1154,13 +1147,12 @@ function kc_macro_above_10000_ft()
 end
 
 function kc_macro_at_trans_alt()
-	command_once("sim/instruments/barometer_std")
-	command_once("sim/instruments/barometer_copilot_std")
+	sysGeneral.barostdGroup:actuate(1)
 end
 
 function kc_macro_at_trans_lvl()
 	if math.abs(get("sim/cockpit2/gauges/actuators/barometer_setting_in_hg_pilot")-29.921249) < 0.01 then 
-		command_once("sim/instruments/barometer_std")
+		sysGeneral.barostdGroup:actuate(0)
 	end
 	if activeBriefings:get("arrival:atisQNH") ~= "" then
 		if activePrefSet:get("general:baro_mode_hpa") then

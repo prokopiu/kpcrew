@@ -257,7 +257,7 @@ end)
 
 sysGeneral.noSmokingSwitch	= TwoStateDrefSwitch:new("nosmoke","AirbusFBW/OHPLightSwitches",12)
 
-sysGeneral.seatBeltSwitch	= TwoStateDrefSwitch:new("seatbelts","AirbusFBW/OHPLightSwitches",11)
+sysGeneral.passSignsSwitch	= TwoStateDrefSwitch:new("seatbelts","AirbusFBW/OHPLightSwitches",11)
 
 sysGeneral.chrono			= TwoStateToggleSwitch:new("chrono","AirbusFBW/ChronoTimeND1",0,
 	"AirbusFBW/CaptChronoButton")

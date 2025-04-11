@@ -135,7 +135,7 @@ if kc_has_retractgear then
 		function () sysGeneral.GearSwitch:actuate(1) end))
 end
 if kc_has_speedbrake then
-	electricalPowerUpProc:addItem(ProcedureItem:new("SPEED BRAKES / GROUND SPOILERS","DOWN",FlowItem.actorFO,0,
+	electricalPowerUpProc:addItem(ProcedureItem:new("SPEEDBRAKES","DOWN",FlowItem.actorFO,0,
 		function () return sysControls.Speedbrake:getStatus() == 0 end,
 		function () sysControls.Speedbrake:setValue(0) end))
 end
@@ -777,9 +777,9 @@ if kc_has_speedbrake then
 		function () return sysControls.Speedbrake:getStatus() == 0 end,
 		function () sysControls.Speedbrake:setValue(0) end))
 end
-afterStartProc:addItem(ProcedureItem:new("WING / ENGINE ANTI-ICE","AS REQUIRED",FlowItem.actorFO,0,
-	function () return sysAice.engAntiIceGroup:getStatus() == 0 end,
-	function () sysAice.engAntiIceGroup:actuate(0) end))
+afterStartProc:addItem(ProcedureItem:new("ANTI-ICE SYSTEMS","AS REQUIRED",FlowItem.actorFO,0,
+		function () return true end,
+		function () kc_macro_aice(kc_phase_after_start) end))
 afterStartProc:addItem(ProcedureItem:new("HYDRAULIC PUMPS","AS REQUIRED",FlowItem.actorFO,0,
 	function () return true end,
 	function () kc_macro_hyd(kc_phase_after_start) end)) 
@@ -860,16 +860,15 @@ end
 beforeTakeoffProc:addItem(ProcedureItem:new("MCP","INITIALIZE",FlowItem.actorFO,0,
 	function () return sysMCP.altSelector:getStatus() == activeBriefings:get("departure:initAlt") end,
 	function () kc_macro_mcp(kc_phase_before_takeoff) end))
-if kc_has_toc then
-	beforeTakeoffProc:addItem(HoldProcedureItem:new("TAKEOFF CONFIG","CHECK",FlowItem.actorCPT))
-end
 beforeTakeoffProc:addItem(HoldProcedureItem:new("ELEVATOR TRIM","SET FOR TAKEOFF & CHECK",FlowItem.actorCPT))
 if kc_has_speedbrake and kc_spdbrk_can_arm then
 	beforeTakeoffProc:addItem(ProcedureItem:new("SPEEDBRAKE","ARM",FlowItem.actorFO,0,
 	function () return sysControls.Speedbrake:getStatus() == kc_spdbrk_arm_pos end,
 	function () sysControls.Speedbrake:setValue(kc_spdbrk_arm_pos) end))
 end 
-
+if kc_has_toc then
+	beforeTakeoffProc:addItem(HoldProcedureItem:new("TAKEOFF CONFIG","CHECK",FlowItem.actorCPT))
+end
 -- =====================================================================================================================
 
 -- =================== RUNWAY ENTRY  =====================
@@ -1042,7 +1041,9 @@ if kc_has_oxygen then
 		function () return sysAir.oxygenMaster:getStatus() > 0 end,
 		function () sysAir.oxygenMaster:actuate(1) end))
 end
-climbCheck:addItem(HoldProcedureItem:new("ANTI-ICE","OFF",FlowItem.actorCPT))
+if kc_has_eng_antiice or kc_has_wing_antiice then
+	climbCheck:addItem(HoldProcedureItem:new("ANTI-ICE","OFF",FlowItem.actorCPT))
+end
 if kc_has_eng_antiice then
 	climbCheck:addItem(ProcedureItem:new("ENGINE ANTI-ICE","OFF",FlowItem.actorFO,0,
 		function () return sysAice.engAntiIceGroup:getStatus() == 0 end,
@@ -1224,8 +1225,7 @@ LandingCheck:addItem(ChecklistItem:new("LANDING LIGHTS","ON",FlowItem.actorPM,0,
 	function () kc_macro_lights(kc_phase_approach)end))
 if kc_has_autobrake then
 	LandingCheck:addItem(ChecklistItem:new("AUTOBRAKE","%s|kc_pref_split(kc_LandingAutoBrake)[activeBriefings:get(\"approach:autobrake\")]",FlowItem.actorPM,0,
-		function () return sysControls.Autobrake:getStatus() == tonumber(kc_pref_split(kc_LandingAutoBrInd)[activeBriefings:get("approach:autobrake")]) end,
-		function () kc_macro_set_autobrake(tonumber(kc_pref_split(kc_LandingAutoBrInd)[activeBriefings:get("approach:autobrake")])) end))
+		function () return sysControls.Autobrake:getStatus() == tonumber(kc_pref_split(kc_LandingAutoBrInd)[activeBriefings:get("approach:autobrake")]) end))
 end
 if kc_has_speedbrake and kc_spdbrk_can_arm then
 	LandingCheck:addItem(ChecklistItem:new("SPEEDBRAKE","ARM",FlowItem.actorPM,0,
@@ -1308,7 +1308,7 @@ if kc_has_wx_radar then
 		function () sysEFIS.wxrPilot:actuate(0) end))
 end
 if kc_has_speedbrake then
-	afterLandingProc:addItem(ProcedureItem:new("GROUND SPOILERS","RETRACT",FlowItem.actorFO,0,
+	afterLandingProc:addItem(ProcedureItem:new("SPEEDBRAKES","DOWN",FlowItem.actorFO,0,
 		function () return sysControls.Speedbrake:getStatus() == 0 end,
 		function () sysControls.Speedbrake:setValue(0) end))
 end
@@ -1496,8 +1496,8 @@ coldAndDarkProc:addItem(ProcedureItem:new("GPU DISCONNECT","SET","SYS",0,true,
 		if kc_has_gpu then
 			sysElectric.gpuConnect:actuate(0)
 		end
-		getActiveSOP():setActiveFlowIndex(1)
 		getActiveSOP():reset()
+		getActiveSOP():setActiveFlowIndex(1)
 	end))
 		
 -- ================= Turn Around State ==================
@@ -1506,8 +1506,8 @@ turnAroundProc:setFlightPhase(SOP.phaseTurnAround)
 turnAroundProc:addItem(ProcedureItem:new("TURNAROUND","SET","SYS",0,true,
 	function () 
 		kc_macro_state_turnaround()
-		getActiveSOP():setActiveFlowIndex(2)
 		getActiveSOP():reset()
+		getActiveSOP():setActiveFlowIndex(2)
 	end))
 
 -- ============  =============
