@@ -3,7 +3,7 @@
 
 -- @classmod sysControls
 -- @author Kosta Prokopiu
--- @copyright 2024 Kosta Prokopiu
+-- @copyright 2025 Kosta Prokopiu
 
 local TwoStateDrefSwitch 	= require "kpcrew.systems.TwoStateDrefSwitch"
 local TwoStateCmdSwitch	 	= require "kpcrew.systems.TwoStateCmdSwitch"
@@ -16,21 +16,6 @@ local MultiStateCmdSwitch 	= require "kpcrew.systems.MultiStateCmdSwitch"
 local InopSwitch 			= require "kpcrew.systems.InopSwitch"
 local KeepPressedSwitchCmd	= require "kpcrew.systems.KeepPressedSwitchCmd"
 
-local sysControls = {
-	trimCenter 	= 2,
-	trimLeft 	= 1,
-	trimRight 	= 0,
-	
-	flapsUp 	= 0,
-	flapsDown 	= 1,
-	
-	trimUp 		= 0,
-	trimDown 	= 1,
-
-	flaps_pos = {[0] =   0, [1] = 0.2, [2] = 0.4, [3] = 0.6, [4] = 0.8, [5] = 1, [6] = 1, [7] = 1, [8] = 1},
-	flaps_spd = {[0] = 999, [1] =   999, [2] =  999, [3] =   999, [4] = 999, [5] =   999, [6] =  999, [7] =   999, [8] = 999}
-}
-
 sysControls = require("kpcrew.systems.DFLT.sysControls")
 
 logMsg("MD82 sysControls")
@@ -38,5 +23,6 @@ logMsg("MD82 sysControls")
 sysControls.flaps_pos = {[0] =   0, [1] = 0.2, [2] = 0.4, [3] = 0.6, [4] = 0.8, [5] = 1, [6] = 1, [7] = 1, [8] = 1}
 -- sysControls.flaps_pos = {[0] =   0, [1] = 0.2, [2] = 0.4, [3] = 0.6, [4] = 0.8, [5] = 1, [6] = 1, [7] = 1, [8] = 1}
 sysControls.flaps_spd = {[0] = 999, [1] =   999, [2] =  999, [3] =   999, [4] = 999, [5] =   999, [6] =  999, [7] =   999, [8] = 999}
+sysControls.flaps_name= {[0] = "UP", [1] =  "0", [2] = "11", [3] =   "15", [4] = "28",   [5] =   "40", [6] =  "40", [7] =   "40", [8] = "40"}
 
 return sysControls

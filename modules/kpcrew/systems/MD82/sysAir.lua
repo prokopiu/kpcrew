@@ -25,8 +25,21 @@ sysAir = require("kpcrew.systems.DFLT.sysAir")
 logMsg("MD82 sysAir")
 
 -- APU Bleed
-sysAir.apuBleedSwitch 		= TwoStateCmdSwitch:new("apubleed","laminar/md82/bleedair/APU_on",0,
-	"laminar/md82cmd/bleedair/APU_dwn","laminar/md82cmd/bleedair/APU_up","nocommand")
+sysAir.apuBleedSwitch 		= TwoStateCustomSwitch:new("apubleed","laminar/md82/bleedair/APU_on",0,
+	function ()
+		command_once("laminar/md82cmd/bleedair/APU_up")
+		command_once("laminar/md82cmd/bleedair/APU_up")
+		command_once("laminar/md82cmd/bleedair/APU_dwn")
+	end,
+	function ()
+		command_once("laminar/md82cmd/bleedair/APU_up")
+		command_once("laminar/md82cmd/bleedair/APU_up")
+	end,
+	function ()
+	end,
+	function ()
+		return get("laminar/md82/bleedair/APU_on")
+	end)
 
 -- BLEED AIR
 sysAir.bleedEng1Switch 		= TwoStateToggleSwitch:new("bleed1","laminar/md82/bleedair/engineL_xfeed_lever",0,

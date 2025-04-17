@@ -25,6 +25,52 @@ sysLights = require("kpcrew.systems.DFLT.sysLights")
 
 logMsg("MD82 sysLights")
 
+-- Position Lights, single onoff command driven
+sysLights.positionSwitch 	= TwoStateCustomSwitch:new("position","laminar/md82/switches/navstrobe_lights_switch",0,
+	function () 
+		if get("laminar/md82/switches/navstrobe_lights_switch") == 0 then
+			command_once("laminar/md82cmd/switches/navstrobe_lights_switch_dwn")
+		end
+	end,
+	function () 
+		if get("laminar/md82/switches/navstrobe_lights_switch") == 1 then
+			command_once("laminar/md82cmd/switches/navstrobe_lights_switch_up")
+		end
+	end,
+	function () 
+	end,
+	function () 
+		if get("laminar/md82/switches/navstrobe_lights_switch") > 0 then
+			return 1
+		else
+			return 0
+		end
+
+	end)
+
+-- Strobe Lights, single onoff command driven
+sysLights.strobesSwitch 	= TwoStateCustomSwitch:new("strobes","laminar/md82/switches/navstrobe_lights_switch",0,
+	function () 
+		command_once("laminar/md82cmd/switches/navstrobe_lights_switch_dwn")
+		command_once("laminar/md82cmd/switches/navstrobe_lights_switch_dwn")
+	end,
+	function () 
+		if get("laminar/md82/switches/navstrobe_lights_switch") == 2 then
+			command_once("laminar/md82cmd/switches/navstrobe_lights_switch_up")
+		end
+	end,
+	function () 
+	end,
+	function () 
+		if get("laminar/md82/switches/navstrobe_lights_switch") > 1 then
+			return 1
+		else
+			return 0
+		end
+
+	end)
+
+	
 -- Landing Lights, single onoff command driven
 sysLights.llLeftSwitch = TwoStateCustomSwitch:new("llleft",drefLandingLights,1,
 function () 

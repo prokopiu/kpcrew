@@ -3,7 +3,7 @@
 
 -- @classmod sysMCP
 -- @author Kosta Prokopiu
--- @copyright 2024 Kosta Prokopiu
+-- @copyright 2025 Kosta Prokopiu
 
 local TwoStateDrefSwitch 	= require "kpcrew.systems.TwoStateDrefSwitch"
 local TwoStateCmdSwitch	 	= require "kpcrew.systems.TwoStateCmdSwitch"
@@ -33,5 +33,8 @@ sysMCP.turnRateSelector 	= MultiStateCmdSwitch:new("turnrate","sim/cockpit2/auto
 	
 -- ATHR
 sysMCP.athrSwitch = TwoStateToggleSwitch:new("athr","laminar/md82/autopilot/autothrottle_switch",0,"laminar/md82cmd/autopilot/autothrottle_switch")
+
+-- YAW DAMPER
+sysMCP.yawDamper			= TwoStateDrefSwitch:new("yawdamper","sim/cockpit/switches/yaw_damper_on",0)
 
 return sysMCP

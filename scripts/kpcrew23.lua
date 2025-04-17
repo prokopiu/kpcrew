@@ -26,9 +26,10 @@ kc_acf_icao = "DFLT" -- active addon aircraft ICAO code (DFLT when nothing found
 -- ====== Select the addon modules based on ICAO code
 if PLANE_ICAO == "B738" then
 	if PLANE_TAILNUMBER ~= "ZB738" then
-		kc_acf_icao = "DFLT" 
+		kc_acf_icao = "B737" 
 	else
 		kc_acf_icao = "B738" -- Zibo Mod
+		-- kc_acf_icao = "B737"
 	end
 
 -- Epic Victory Aerobask
@@ -114,8 +115,8 @@ elseif PLANE_ICAO == "A346" then
 	kc_acf_icao = "A3TL"
 	
 -- Laminar MD-82
--- elseif PLANE_ICAO == "MD82" and PLANE_TAILNUMBER == "N552AA" then
-	-- kc_acf_icao = "MD82"
+elseif PLANE_ICAO == "MD82" and PLANE_TAILNUMBER == "N552AA" then
+	kc_acf_icao = "MD82"
 	
 -- RotateSim MD-88
 -- elseif PLANE_ICAO == "MD88" then

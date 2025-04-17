@@ -29,12 +29,12 @@ sysFuel.fuelPumpRightFwd 	= TwoStateDrefSwitch:new("fuelpumprightfwd","sim/cockp
 sysFuel.fuelPumpCtrLeft 	= TwoStateDrefSwitch:new("fuelpumpctrleft","sim/cockpit2/fuel/fuel_tank_pump_on",-1)
 sysFuel.fuelPumpCtrRight 	= TwoStateDrefSwitch:new("fuelpumpctrright","sim/cockpit2/fuel/fuel_tank_pump_on",-1)
 
-sysFuel.fuelPumpGroup 		= SwitchGroup:new("fuelpumpgroup")
-sysFuel.fuelPumpGroup:addSwitch(sysFuel.fuelPumpLeftAft)
+sysFuel.allFuelPumpGroup 		= SwitchGroup:new("fuelpumpgroup")
+sysFuel.allFuelPumpGroup:addSwitch(sysFuel.fuelPumpLeftAft)
 -- sysFuel.fuelPumpGroup:addSwitch(sysFuel.fuelPumpLeftFwd)
-sysFuel.fuelPumpGroup:addSwitch(sysFuel.fuelPumpRightAft)
+sysFuel.allFuelPumpGroup:addSwitch(sysFuel.fuelPumpRightAft)
 -- sysFuel.fuelPumpGroup:addSwitch(sysFuel.fuelPumpRightFwd)
-sysFuel.fuelPumpGroup:addSwitch(sysFuel.fuelPumpCtrLeft)
+sysFuel.allFuelPumpGroup:addSwitch(sysFuel.fuelPumpCtrLeft)
 -- sysFuel.fuelPumpGroup:addSwitch(sysFuel.fuelPumpCtrRight)
 
 -- sysFuel.ctrFuelPumpGroup 	= SwitchGroup:new("ctrfuelpumpgroup")

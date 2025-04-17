@@ -27,7 +27,7 @@ kh_acf_icao = "DFLT" -- active addon aircraft ICAO code (DFLT when nothing found
 -- Zibo B738 - use different module for default Laminar B738
 if PLANE_ICAO == "B738" then
 	if PLANE_TAILNUMBER ~= "ZB738" then
-		kh_acf_icao = "DFLT" 
+		kh_acf_icao = "B737" 
 	else
 		kh_acf_icao = "B738" -- Zibo Mod and variants
 	end
@@ -115,8 +115,8 @@ elseif PLANE_ICAO == "A346" then
 	kc_acf_icao = "A3TL"
 	
 -- Laminar MD-82
--- elseif PLANE_ICAO == "MD82" and PLANE_TAILNUMBER == "N552AA" then
-	-- kh_acf_icao = "MD82"
+elseif PLANE_ICAO == "MD82" and PLANE_TAILNUMBER == "N552AA" then
+	kh_acf_icao = "MD82"
 	
 -- RotateSim MD-88
 -- elseif PLANE_ICAO == "MD88" then

@@ -293,13 +293,7 @@ if kc_has_doors then
 		function () kc_macro_doors_ext(kc_phase_before_start) end))
 end
 beforeStart:addItem(ProcedureItem:new("LIGHTS","AS REQUIRED",FlowItem.actorFO,0,
-	function () 
-		if kc_is_daylight() then
-			return sysLights.domeAnc:getStatus() == 0
-		else
-			return sysLights.domeAnc:getStatus() > 0
-		end
-	end,
+	function () return true end,
 	function () 
 		kc_macro_lights(kc_phase_before_start) 
 	end))
@@ -314,13 +308,15 @@ if kc_has_apu == true then
 			function () return sysElectric.apuRunningAnc:getStatus() > 0 end,
 			function () 
 				kc_procvar_set("apustart",true)
-				kc_procvar_set("apuonline",true)
 			end))
 end
 if kc_has_engine_bleed then
 	beforeStart:addItem(ProcedureItem:new("ENGINE BLEED SWITCHES","ON",FlowItem.actorFO,0,
 		function () return sysAir.engBleedGroup:getStatus() > 0 end,
-		function () kc_macro_air(kc_phase_before_start) end))
+		function () 
+			kc_procvar_set("apuonline",true)
+			kc_macro_air(kc_phase_before_start) 
+		end))
 end
 if kc_has_flightdir then
 	beforeStart:addItem(ProcedureItem:new("FLIGHT DIRECTOR","SET",FlowItem.actorFO,0,
@@ -1244,6 +1240,11 @@ if kc_has_autopilot then
 		function () sysMCP.ap1Switch:actuate(0) end))
 end
 
+if kc_has_autothrottle then
+	ap1off:addItem(ProcedureItem:new("A/T","OFF",FlowItem.actorFO,0,
+		function () return sysMCP.athrSwitch:getStatus() == 0 end,
+		function () sysMCP.athrSwitch:actuate(0) end))
+end
 -- =====================================================================================================================
 
 -- ============== AFTER LANDING PROCEDURE ===============

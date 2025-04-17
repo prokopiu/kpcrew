@@ -115,8 +115,8 @@ elseif PLANE_ICAO == "A346" then
 	kc_acf_icao = "A3TL"
 	
 -- Laminar MD-82
--- elseif PLANE_ICAO == "MD82" and PLANE_TAILNUMBER == "N552AA" then
-	-- kc_acf_icao = "MD82"
+elseif PLANE_ICAO == "MD82" and PLANE_TAILNUMBER == "N552AA" then
+	kc_acf_icao = "MD82"
 	
 -- RotateSim MD-88
 -- elseif PLANE_ICAO == "MD88" then
