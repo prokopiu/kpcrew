@@ -2,7 +2,7 @@
 
 -- @classmod SOP_DFLT
 -- @author Kosta Prokopiu
--- @copyright 2025 Kosta Prokopiu
+-- @copyright 2025 alpha11 Kosta Prokopiu
 
 local SOP_DFLT = {
 }

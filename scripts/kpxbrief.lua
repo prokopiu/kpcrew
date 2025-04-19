@@ -9,7 +9,7 @@
 
 require "kpcrew.genutils"
 
-kc_VERSION = "2.3-alpha10"
+kc_VERSION = "2.3-alpha11"
 kc_simversion = get("sim/version/xplane_internal_version")
 
 logMsg ( "FWL: ** Starting KPBrief version " .. kc_VERSION .. " on XP " .. kc_simversion .. " **" )
