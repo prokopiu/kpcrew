@@ -126,7 +126,7 @@ elseif PLANE_ICAO == "MD82" and PLANE_TAILNUMBER == "N552AA" then
 -- Aerobask Phenom 300
 -- elseif PLANE_ICAO == "E55P" then
 	-- kc_acf_icao = "E55P"
--- end
+end
 
 -- Aircraft Specific SOP/Checklist/Procedure Definitions
 kcPreferenceSet 		= require("kpcrew.preferences.PreferenceSet")

@@ -44,7 +44,7 @@ function ks_switch_mute()
 			-- set("sim/operation/sound/weather_volume_ratio",0.7)
 			-- ks_mute_state = false
 		-- end
-	end
+	-- end
 end
 
 function ks_auto_switch()

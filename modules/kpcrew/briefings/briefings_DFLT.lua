@@ -33,11 +33,11 @@ kc_spdbrk_can_arm	= false		-- Aircraft's speedbrake can be armed
 kc_spdbrk_arm_pos	= -1
 kc_full_rgt_rudder	= 14.9		-- Threshold where the rudder is almost fully to the right
 kc_NumFlapsTO		= 3
-kc_TakeoffFlaps 	= "0|1|2"
-kc_TakeoffFlapsInd 	= "0|1|3"
+kc_TakeoffFlaps 	= "0|1|2|2|2|2|2"
+kc_TakeoffFlapsInd 	= "0|1|2|2|2|2|2"
 kc_NumFlapsLDG		= 3
-kc_LandingFlaps 	= "3|4|5"
-kc_LandingFlapsInd 	= "5|6|8"
+kc_LandingFlaps 	= "0|1|2|2|2|2|2"
+kc_LandingFlapsInd 	= "0|1|2|2|2|2|2"
 kc_gear_ext_index	= 2			-- When to extend gear in flaps extend
 
 -- === engines

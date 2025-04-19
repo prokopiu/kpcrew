@@ -1240,7 +1240,7 @@ if kc_has_autopilot then
 		function () sysMCP.ap1Switch:actuate(0) end))
 end
 
-if kc_has_autothrottle then
+if kc_has_autothrottle and kc_is_airbus == false then
 	ap1off:addItem(ProcedureItem:new("A/T","OFF",FlowItem.actorFO,0,
 		function () return sysMCP.athrSwitch:getStatus() == 0 end,
 		function () sysMCP.athrSwitch:actuate(0) end))
@@ -1322,7 +1322,7 @@ afterLandingProc:addItem(ProcedureItem:new("ANTI ICE SETTINGS","AS REQUIRED",Flo
 afterLandingProc:addItem(ProcedureItem:new("FLAPS","UP",FlowItem.actorFO,0,true,
 	function () sysControls.flapsSwitch:setValue(sysControls.flaps_pos[0]) end))
 afterLandingProc:addItem(ProcedureItem:new("EXTERNAL LIGHTS","AS REQUIRED",FlowItem.actorFO,0,
-	function () return sysLights.strobesSwitch:getStatus() == 0 end,
+	function () return true end,
 	function () kc_macro_lights(kc_phase_afterland) end))
 if kc_has_apu == true then
 	afterLandingProc:addItem(ProcedureItem:new("APU START","PERFORM",FlowItem.actorFO,0,

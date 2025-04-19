@@ -7,7 +7,7 @@ kc_baro_units = "HPA|IN"
 local generalGroup = kcPreferenceGroup:new("general","GENERAL PREFERENCES")
 generalGroup:setInitialOpen(true)
 -- generalGroup:add(kcPreference:new("test",1,kcPreference.typeInfo,"TEST|"))
-generalGroup:add(kcPreference:new("assistance",1,kcPreference.typeList,"Assistance Level|" .. kc_assistance_levels))
+generalGroup:add(kcPreference:new("assistance",4,kcPreference.typeList,"Assistance Level|" .. kc_assistance_levels))
 generalGroup:add(kcPreference:new("weight_kgs",true,kcPreference.typeToggle,"Weight Units|" .. kc_weight_units))
 generalGroup:add(kcPreference:new("baro_mode_hpa",true,kcPreference.typeToggle,"EFIS Default Baro Mode (Both)|" .. kc_baro_units))
 

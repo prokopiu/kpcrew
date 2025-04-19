@@ -11,10 +11,49 @@ logMsg("A33L sysMacros")
 
 -- custom cold & dark activities
 function kc_macro_custom_cold_dark()
+	command_once("laminar/A333/toggle_switch/emer_exit_lt_dn")
+	command_once("laminar/A333/toggle_switch/emer_exit_lt_dn")
+	if get("laminar/A333/buttons/oxy/crew_valve_pos") == 1 then
+		command_once("sim/oxy/crew_valve_toggle")
+	end 
+	if get("laminar/A333/pressurization/knobs/pack_flow_pos") == -1 then
+		command_once("laminar/A333/knobs/press_press_flow_right")
+	elseif get("laminar/A333/pressurization/knobs/pack_flow_pos") == 1 then
+		command_once("laminar/A333/knobs/press_press_flow_left")
+	end
+	if get("laminar/A333/comm/rtp_L/off_status") == 0 then
+		command_once("laminar/A333/rtp_L/off_switch")
+	end
+	if get("laminar/A333/comm/rtp_R/off_status") == 0 then
+		command_once("laminar/A333/rtp_R/off_switch")
+	end
+	if get("laminar/A333/comm/rtp_C/off_status") == 0 then
+		command_once("laminar/A333/rtp_C/off_switch")
+	end
 end
 
 -- custom turnaround items
 function kc_macro_custom_turnaround()
+	if get("laminar/a333/switches/emer_exit_lt_pos") == 0 then
+		command_once("laminar/A333/toggle_switch/emer_exit_lt_up")
+	end
+	if get("laminar/A333/buttons/oxy/crew_valve_pos") == 0 then
+		command_once("sim/oxy/crew_valve_toggle")
+	end 
+	if get("laminar/A333/pressurization/knobs/pack_flow_pos") == -1 then
+		command_once("laminar/A333/knobs/press_press_flow_right")
+	elseif get("laminar/A333/pressurization/knobs/pack_flow_pos") == 1 then
+		command_once("laminar/A333/knobs/press_press_flow_left")
+	end
+	if get("laminar/A333/comm/rtp_L/off_status") == 1 then
+		command_once("laminar/A333/rtp_L/off_switch")
+	end
+	if get("laminar/A333/comm/rtp_R/off_status") == 1 then
+		command_once("laminar/A333/rtp_R/off_switch")
+	end
+	if get("laminar/A333/comm/rtp_C/off_status") == 1 then
+		command_once("laminar/A333/rtp_C/off_switch")
+	end
 end
 
 -- autobrake
