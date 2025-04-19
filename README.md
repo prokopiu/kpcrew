@@ -1,4 +1,4 @@
-# KPCrew 2.3-alpha11 (04/2025)
+# KPCrew 2.3-alpha11 (04/2025) WIP
 FlyWithLua scripts to simulate a virtual first officer in X-Plane 12 (not testing in in XP11 any more). 
 THIS IS A COMPLETE REWRITE AND STILL IN ALPHA. PLEASE REMOVE ANY OLDER KPCREW FILES FROM SCRIPTS AND MODULES FOLDER!
 
