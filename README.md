@@ -1,14 +1,19 @@
-# KPCrew 2.3-alpha9 (06/2024)
-FlyWithLua scripts to simulate a virtual first officer in X-Plane 11/12. 
+# KPCrew 2.3-alpha10 (04/2025)
+FlyWithLua scripts to simulate a virtual first officer in X-Plane 12 (not testing in in XP11 any more). 
 THIS IS A COMPLETE REWRITE AND STILL IN ALPHA. PLEASE REMOVE ANY OLDER KPCREW FILES FROM SCRIPTS AND MODULES FOLDER!
-
-** do not use the DEPARTURE BRIEFING section and do not press the SPEAK button or X-Plane will crash!!** 
-I will fix it in the next release.
 
 ## Introduction
 Coming from the FSX/P3D world I know the FS2Crew products which I had for all payware aircraft if available. I always wished that I could get something like that for X-Plane. FlyWithLua turned out to be a great programming environment for X-Plane and I decided to try replicating something like FS2Crew for the Zibo B738. 
 
 Why the Zibo? Because it is the most accessible and function-rich freeware aircraft in X-Plane and I love the Boeing 737s.
+
+In the meantime, I did a complete rewrite of many SOPs to follow a default, abbreviated flow to be able to add more aircraft much quicker than before. You now have the following aircraft supported, more to come:
+ - Zibo B738 full SOP
+ - XP12 CitationX individual SOP
+ - XP12 A330-300 DFLT SOP
+ - X-Crafts freeware E-Jets (go to X-Crafts website) DFLT SOP
+ - Laminar MD-82 DFLT SOP
+ - ToLiss A319, A320 & A321 DFLT Flow (A330 and A340 coming)
 
 ### What does it do? 
 
@@ -20,12 +25,12 @@ Having said that, KPCrew is one big programming exercise and I can understand th
 
 ### Other Aircraft Supported?
 
-Will there be other aircraft? Yes, it will also contain the FJS B737-200 and many other planes if I have the addon and find the time to research it.
+Will there be other aircraft? Yes, due to the new approach you will see more supported aircraft soon such as Aerobask jets, larger ToLiss Airbusses etc...
 
 ### History of KPCrew
 KPCrew went through several iterations, initially I called it Zibocrew. The initial concept was clunky and inflexible. I think I now have a good enough concept to easily extend the scripts. I even have now background events. As it is with Lua, you can see all that I did but when you change code you are on your own – I will not have the time to support this or hold hands with the installation. This is one of the reasons why I hesitated to release this publicly.
 
-**[Go to the manual](https://github.com/prokopiu/kpcrew/wiki/%23-KPCrew-2.3-alpha3-(10-2022))**
+**[Go to the manual](https://github.com/prokopiu/kpcrew/wiki/%23-KPCrew-2.3-alpha10-(04.2025))**
 
 ---------------------
 ### Code from other developers used in KPCrew:
