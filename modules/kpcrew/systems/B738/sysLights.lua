@@ -124,7 +124,7 @@ sysLights.wheelAnc 			= SimpleAnnunciator:new("wheellights",drefGenericLights,5)
 sysLights.domeLightSwitch 	= TwoStateCmdSwitch:new("dome","laminar/B738/toggle_switch/cockpit_dome_pos",0,
 	"laminar/B738/toggle_switch/cockpit_dome_up","laminar/B738/toggle_switch/cockpit_dome_dn")
 sysLights.domeLightGroup 	= SwitchGroup:new("dome lights")
-sysLights.rwyLightGroup:addSwitch(sysLights.domeLightSwitch)
+sysLights.domeLightGroup:addSwitch(sysLights.domeLightSwitch)
 
 -- ** Dome Light(s) status
 sysLights.domeAnc 			= CustomAnnunciator:new("domelights",

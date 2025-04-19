@@ -110,7 +110,7 @@ sysGeneral.doorGroup:addSwitch(sysGeneral.stairs)
 
 -- Passenger Signs
 
-sysGeneral.seatBeltSwitch 	= MultiStateCmdSwitch:new("","laminar/B738/toggle_switch/seatbelt_sign_pos",0,
+sysGeneral.seatBeltSwitch 	= MultiStateCmdSwitch:new("seatbelts","laminar/B738/toggle_switch/seatbelt_sign_pos",0,
 	"laminar/B738/toggle_switch/seatbelt_sign_dn","laminar/B738/toggle_switch/seatbelt_sign_up",0,2,true)
 sysGeneral.noSmokingSwitch 	= MultiStateCmdSwitch:new("","laminar/B738/toggle_switch/no_smoking_pos",0,
 	"laminar/B738/toggle_switch/no_smoking_dn","laminar/B738/toggle_switch/no_smoking_up",0,2,true)
@@ -239,7 +239,7 @@ sysGeneral.terrainInhibitCover 	= TwoStateToggleSwitch:new("","laminar/B738/togg
 	"laminar/B738/toggle_switch/gpws_terr_cover")
 
 -- Autobrake
-sysGeneral.autobrake = MultiStateCmdSwitch:new("","laminar/B738/autobrake/autobrake_pos",0,
+sysGeneral.autobrake = MultiStateCmdSwitch:new("autobrake","laminar/B738/autobrake/autobrake_pos",0,
 	"laminar/B738/knob/autobrake_dn","laminar/B738/knob/autobrake_up",0,5,true)
 
 -- Lights Test
