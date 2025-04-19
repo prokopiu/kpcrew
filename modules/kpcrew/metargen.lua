@@ -250,14 +250,14 @@ function kp_create_airport_metar(airport_icao)
 	
 		airport_metar = airport_metar .. " "
 		-- io.write(" ")
-		if tonumber(temperatures_aloft_deg_c) < 0 then
+		if tonumber(temperatures_aloft_deg_c[0]) < 0 then
 			airport_metar = airport_metar .. "M"
 			-- io.write("M")
-			temperatures_aloft_deg_c = temperatures_aloft_deg_c * -1
+			temperatures_aloft_deg_c[0] = temperatures_aloft_deg_c[0] * -1
 		end
-		temperatures_aloft_deg_c = string.format("%02.0f", temperatures_aloft_deg_c)
-			airport_metar = airport_metar .. temperatures_aloft_deg_c
-		-- io.write(temperatures_aloft_deg_c)
+		temperatures_aloft_deg_c[0] = string.format("%02.0f", temperatures_aloft_deg_c[0])
+			airport_metar = airport_metar .. temperatures_aloft_deg_c[0]
+		-- io.write(temperatures_aloft_deg_c[0])
 		airport_metar = airport_metar .. "/"
 		-- io.write("/")
 		if tonumber(dewpoint_deg_c) < 0 then
