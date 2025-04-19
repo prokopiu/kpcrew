@@ -4,11 +4,13 @@
 
 -- @classmod sysLights
 -- @author Kosta Prokopiu
--- @copyright 2024 Kosta Prokopiu
+-- @copyright 2025 Kosta Prokopiu
+
 local sysLights = {
 }
 
-logMsg("Loading DFLT sysLights")
+logMsg("DFLT sysLights")
+
 
 local TwoStateDrefSwitch 	= require "kpcrew.systems.TwoStateDrefSwitch"
 local TwoStateCmdSwitch	 	= require "kpcrew.systems.TwoStateCmdSwitch"
@@ -33,8 +35,7 @@ sysLights.beaconSwitch 		= TwoStateCmdSwitch:new("beacon","sim/cockpit/electrica
 sysLights.beaconAnc 		= SimpleAnnunciator:new("beaconlights","sim/cockpit/electrical/beacon_lights_on",0)
 
 -- Position Lights, single onoff command driven
-sysLights.positionSwitch 	= TwoStateCmdSwitch:new("position","sim/cockpit2/switches/navigation_lights_on",0,
-	"sim/lights/nav_lights_on","sim/lights/nav_lights_off","sim/lights/nav_lights_toggle")
+sysLights.positionSwitch 	= TwoStateDrefSwitch:new("position","sim/cockpit2/switches/navigation_lights_on",0)
 
 -- Position Light(s) status
 sysLights.positionAnc 		= SimpleAnnunciator:new("positionlights","sim/cockpit2/switches/navigation_lights_on",0)
@@ -56,9 +57,14 @@ sysLights.taxiAnc 			= SimpleAnnunciator:new("strobelights","sim/cockpit2/switch
 -- Landing Lights, single onoff command driven
 sysLights.llLeftSwitch 		= TwoStateDrefSwitch:new("llleft",drefLandingLights,-1)
 sysLights.llRightSwitch 	= TwoStateDrefSwitch:new("llright",drefLandingLights,1)
+sysLights.ll3rdSwitch 		= TwoStateDrefSwitch:new("ll3rd",drefLandingLights,2)
+sysLights.ll4thSwitch 		= TwoStateDrefSwitch:new("ll3rd",drefLandingLights,3)
 sysLights.landLightGroup 	= SwitchGroup:new("landinglights")
 sysLights.landLightGroup:addSwitch(sysLights.llLeftSwitch)
 sysLights.landLightGroup:addSwitch(sysLights.llRightSwitch)
+sysLights.landLightGroup:addSwitch(sysLights.ll3rdSwitch)
+sysLights.landLightGroup:addSwitch(sysLights.ll4thSwitch)
+
 
 -- annunciator to mark any landing lights on
 sysLights.landingAnc 		= CustomAnnunciator:new("landinglights",
@@ -71,17 +77,21 @@ function ()
 end)
 
 -- Logo Light
-sysLights.logoSwitch 		= TwoStateDrefSwitch:new("logo",drefGenericLights,-1)
+sysLights.logoSwitch 		= TwoStateDrefSwitch:new("logo",drefGenericLights,10)
 
 -- Logo Light(s) status
-sysLights.logoAnc 			= SimpleAnnunciator:new("logolights","sim/cockpit2/switches/generic_lights_switch",0)
+sysLights.logoAnc 			= SimpleAnnunciator:new("logolights","sim/cockpit2/switches/generic_lights_switch",10)
 
 -- RWY Turnoff Lights (2)
 sysLights.rwyLeftSwitch 	= TwoStateDrefSwitch:new("rwyleft",drefGenericLights,1)
 sysLights.rwyRightSwitch 	= TwoStateDrefSwitch:new("rwyright",drefGenericLights,2)
+sysLights.e1x5xcSwitch		= TwoStateDrefSwitch:new("side light xce1x5",drefGenericLights,12)
 sysLights.rwyLightGroup 	= SwitchGroup:new("runwaylights")
 sysLights.rwyLightGroup:addSwitch(sysLights.rwyLeftSwitch)
 sysLights.rwyLightGroup:addSwitch(sysLights.rwyRightSwitch)
+if PLANE_ICAO == "E170" or PLANE_ICAO == "E190" then
+	sysLights.rwyLightGroup:addSwitch(sysLights.e1x5xcSwitch)
+end
 
 -- runway turnoff lights
 sysLights.runwayAnc 		= CustomAnnunciator:new("runwaylights",
@@ -100,17 +110,17 @@ sysLights.wingSwitch 		= TwoStateDrefSwitch:new("wing",drefGenericLights,3)
 sysLights.wingAnc 			= SimpleAnnunciator:new("winglights",drefGenericLights, 3)
 
 -- Wheel well Lights
-sysLights.wheelSwitch 		= TwoStateDrefSwitch:new("wheel",drefGenericLights,5)
+sysLights.wheelSwitch 		= TwoStateDrefSwitch:new("wheel",drefGenericLights,11)
 
 -- Wheel well Light(s) status
-sysLights.wheelAnc 			= SimpleAnnunciator:new("wheellights",drefGenericLights,5)
+sysLights.wheelAnc 			= SimpleAnnunciator:new("wheellights",drefGenericLights,11)
 
 -- Dome Light
 sysLights.domeLightSwitch 	= TwoStateDrefSwitch:new("dome","sim/cockpit/electrical/cockpit_lights",0)
 sysLights.domeLightSwitch2 	= InopSwitch:new("dome2")
 sysLights.domeLightGroup 	= SwitchGroup:new("dome lights")
-sysLights.rwyLightGroup:addSwitch(sysLights.domeLightSwitch)
-sysLights.rwyLightGroup:addSwitch(sysLights.domeLightSwitch2)
+sysLights.domeLightGroup:addSwitch(sysLights.domeLightSwitch)
+sysLights.domeLightGroup:addSwitch(sysLights.domeLightSwitch2)
 
 -- Dome Light(s) status
 sysLights.domeAnc 			= CustomAnnunciator:new("domelights",
@@ -124,77 +134,113 @@ end)
 
 -- Instrument Lights
 sysLights.instr1Light		= TwoStateDrefSwitch:new("","sim/cockpit/electrical/instrument_brightness",-1)
-sysLights.instr2Light		= TwoStateDrefSwitch:new("","sim/cockpit2/switches/panel_brightness_ratio",-1)
-sysLights.instr3Light		= TwoStateDrefSwitch:new("","sim/cockpit2/switches/instrument_brightness_ratio",2)
-sysLights.instr4Light		= TwoStateDrefSwitch:new("","sim/cockpit2/switches/instrument_brightness_ratio",-1)
+sysLights.instr2Light		= TwoStateDrefSwitch:new("","sim/cockpit2/switches/instrument_brightness_ratio",-1)
+sysLights.instr3Light		= TwoStateDrefSwitch:new("","sim/cockpit2/switches/instrument_brightness_ratio",1)
+sysLights.instr4Light		= TwoStateDrefSwitch:new("","sim/cockpit2/switches/instrument_brightness_ratio",2)
 sysLights.instr5Light		= TwoStateDrefSwitch:new("","sim/cockpit2/switches/instrument_brightness_ratio",3)
-sysLights.instr6Light		= TwoStateDrefSwitch:new("","sim/cockpit2/switches/instrument_brightness_ratio",1)
-sysLights.instr7Light		= TwoStateDrefSwitch:new("","sim/cockpit2/switches/panel_brightness_ratio",1)
-sysLights.instr8Light		= TwoStateDrefSwitch:new("","sim/cockpit2/switches/panel_brightness_ratio",2)
-sysLights.instr9Light		= TwoStateDrefSwitch:new("","sim/cockpit2/switches/panel_brightness_ratio",3)
+sysLights.instr6Light		= TwoStateDrefSwitch:new("","sim/cockpit2/switches/instrument_brightness_ratio",3)
 sysLights.instrLightGroup 	= SwitchGroup:new("instrumentlights")
 sysLights.instrLightGroup:addSwitch(sysLights.instr1Light)
 sysLights.instrLightGroup:addSwitch(sysLights.instr2Light)
 sysLights.instrLightGroup:addSwitch(sysLights.instr3Light)
 sysLights.instrLightGroup:addSwitch(sysLights.instr4Light)
 sysLights.instrLightGroup:addSwitch(sysLights.instr5Light)
-sysLights.instrLightGroup:addSwitch(sysLights.instr6Light)
-sysLights.instrLightGroup:addSwitch(sysLights.instr7Light)
-sysLights.instrLightGroup:addSwitch(sysLights.instr8Light)
-sysLights.instrLightGroup:addSwitch(sysLights.instr9Light)
 
 -- Instrument Light(s) status
 sysLights.instrumentAnc = SimpleAnnunciator:new("instrumentlights", "sim/cockpit2/switches/instrument_brightness_ratio",0)
 
+-- panel lights
+sysLights.panel1Light		= TwoStateDrefSwitch:new("panellight1","sim/cockpit2/switches/panel_brightness_ratio",-1)
+sysLights.panel2Light		= TwoStateDrefSwitch:new("panellight2","sim/cockpit2/switches/panel_brightness_ratio",1)
+sysLights.panel3Light		= TwoStateDrefSwitch:new("panellight3","sim/cockpit2/switches/panel_brightness_ratio",2)
+sysLights.panel4Light		= TwoStateDrefSwitch:new("panellight4","sim/cockpit2/switches/panel_brightness_ratio",3)
+sysLights.panelLightGroup 	= SwitchGroup:new("panellights")
+sysLights.panelLightGroup:addSwitch(sysLights.panel1Light)
+sysLights.panelLightGroup:addSwitch(sysLights.panel2Light)
+sysLights.panelLightGroup:addSwitch(sysLights.panel3Light)
+sysLights.panelLightGroup:addSwitch(sysLights.panel4Light)
+
+sysLights.emerLights		= InopSwitch:new("emerlights")
+
 -- ===== UI related functions =====
 
--- render the MCP part
-function sysLights:render(ypos,height)
+-- new kppanels light panel
+function sysLights:panel_render()
+	imgui.BeginGroup()
 
-	-- reposition when screen size changes
-	if kh_light_wnd_state < 0 then
-		float_wnd_set_position(kh_light_wnd, 0, kh_scrn_height - ypos)
-		float_wnd_set_geometry(kh_light_wnd, 0, ypos, 25, ypos-height)
-		kh_light_wnd_state = 0
-	end
-	
-	imgui.SetCursorPosY(10)
-	imgui.SetCursorPosX(2)
-	
-	if kh_light_wnd_state == 1 then
-		imgui.Button("<", 17, 25)
-		if imgui.IsItemActive() then 
-			kh_light_wnd_state = 0
-			float_wnd_set_geometry(kh_light_wnd, 0, ypos, 25, ypos-height)
+		imgui.TextUnformatted("  LIGHTS ")
+		kc_imgui_label_mcp(" ",10)
+		if kc_has_logo_lights then
+			imgui.SameLine()
+			kc_imgui_toggle_button_mcp("LOGO",sysLights.logoSwitch,10,42,25)
 		end
-	end
-
-	if kh_light_wnd_state == 0 then
-		imgui.Button("L", 17, 25)
-		if imgui.IsItemActive() then 
-			kh_light_wnd_state = 1
-			float_wnd_set_geometry(kh_light_wnd, 0, ypos, 815, ypos-height)
+		if kc_has_strobe_lights then
+			imgui.SameLine()
+			kc_imgui_toggle_button_mcp("STRB",sysLights.strobesSwitch,10,42,25)
 		end
-	end
+		if kc_has_pos_lights then
+			imgui.SameLine()
+			kc_imgui_toggle_button_mcp("POS",sysLights.positionSwitch,10,42,25)
+		end
+		if kc_has_beacon then
+			imgui.SameLine()
+			kc_imgui_toggle_button_mcp("BEAC",sysLights.beaconSwitch,10,42,25)
+		end
+		if kc_has_wing_lights then
+			imgui.SameLine()
+			kc_imgui_toggle_button_mcp("WING",sysLights.wingSwitch,10,42,25)
+		end
+		imgui.SameLine()
+		kc_imgui_label_mcp("|",10)
+		if kc_has_dome_lights then
+			imgui.SameLine()
+			kc_imgui_toggle_button_mcp("DOME",sysLights.domeLightSwitch,10,42,25)
+		end
+		if kc_has_instr_lights then
+			imgui.SameLine()
+			kc_imgui_toggle_button_mcp("INSTR",sysLights.instrLightGroup,10,45,25)
+		end
 
-	kc_imgui_label_mcp("LIGHTS:",10)
-	kc_imgui_label_mcp("LAND:",10)
-	kc_imgui_toggle_button_mcp("LEFT",sysLights.llLeftSwitch,10,42,25)
-	kc_imgui_toggle_button_mcp("RIGHT",sysLights.llRightSwitch,10,42,25)
-	kc_imgui_simple_button_mcp("ALL",sysLights.landLightGroup,10,42,25)
-	kc_imgui_label_mcp("|",10)
-	kc_imgui_toggle_button_mcp("RWYs",sysLights.rwyLightGroup,10,42,25)
-	kc_imgui_toggle_button_mcp("TAXI",sysLights.taxiSwitch,10,42,25)
-	kc_imgui_toggle_button_mcp("LOGO",sysLights.logoSwitch,10,42,25)
-	kc_imgui_toggle_button_mcp("STRB",sysLights.strobesSwitch,10,42,25)
-	kc_imgui_toggle_button_mcp("POS",sysLights.positionSwitch,10,42,25)
-	kc_imgui_toggle_button_mcp("BEAC",sysLights.beaconSwitch,10,42,25)
-	kc_imgui_toggle_button_mcp("WING",sysLights.wingSwitch,10,42,25)
-	kc_imgui_toggle_button_mcp("WHL",sysLights.wheelSwitch,10,42,25)
-	kc_imgui_label_mcp("|",10)
-	kc_imgui_toggle_button_mcp("DOME",sysLights.domeLightSwitch,10,42,25)
-	kc_imgui_toggle_button_mcp("INSTR",sysLights.instrLightGroup,10,45,25)
+		kc_imgui_label_mcp(" ",10)
+		if kc_has_rwy_lights then
+			imgui.SameLine()		
+			kc_imgui_toggle_button_mcp("RWY",sysLights.rwyLightGroup,10,42,25)
+		end
+		if kc_NumLandingLts > 0 then
+			imgui.SameLine()
+			kc_imgui_toggle_button_mcp("LL 1",sysLights.llLeftSwitch,10,42,25)
+		end
+		if kc_NumLandingLts > 1 then
+			imgui.SameLine()
+			kc_imgui_toggle_button_mcp("LL 2",sysLights.llRightSwitch,10,42,25)
+		end
+		if kc_NumLandingLts > 2 then
+			imgui.SameLine()
+			kc_imgui_toggle_button_mcp("LL 2",sysLights.ll3rdSwitch,10,42,25)
+		end
+		if kc_NumLandingLts > 3 then
+			imgui.SameLine()
+			kc_imgui_toggle_button_mcp("LL 2",sysLights.ll4thSwitch,10,42,25)
+		end
+		imgui.SameLine()
+		kc_imgui_simple_button_mcp("ALL",sysLights.landLightGroup,10,42,25)
+		if kc_has_taxi_light then
+			imgui.SameLine()
+			kc_imgui_toggle_button_mcp("TAXI",sysLights.taxiSwitch,10,42,25)
+		end
+		imgui.SameLine()
+		kc_imgui_label_mcp("|",10)
+		if kc_has_seatbelt_sgn then
+			imgui.SameLine()
+			kc_imgui_toggle_button_mcp("SEAT",sysGeneral.seatBeltSwitch,10,42,25)
+		end
+		imgui.SameLine()
+		if kc_has_nosmoke_sgn then
+			kc_imgui_toggle_button_mcp("SMOKE",sysGeneral.noSmokingSwitch,10,45,25)
+			imgui.Separator()
+		end
 
+	imgui.EndGroup()
 end
 
 return sysLights

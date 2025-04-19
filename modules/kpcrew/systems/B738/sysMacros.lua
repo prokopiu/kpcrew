@@ -3,7 +3,8 @@
 
 -- @classmod sysMacros
 -- @author Kosta Prokopiu
--- @copyright 2022 Kosta Prokopiu
+-- @copyright 2025 Kosta Prokopiu
+
 local sysMacros = {
 	spd_mode = 0,
 	alt_mode = 0,
@@ -12,97 +13,76 @@ local sysMacros = {
 	alt_arm = 0
 }
 
--- preflight events app 30 minutes
-function kc_bck_preflight_events()
--- 	if SGES installed then
- 	command_once("Simple_Ground_Equipment_and_Services/Window/Show")
-	command_once("sges/sequence/start")
--- 	end
+sysMacros = require("kpcrew.systems.DFLT.sysMacros")
 
--- +25 minutes
--- Connect jetways (default scenery) or stair out, Door 1L open, cargo doors open, set chocks
--- if counter == 25 and done counter ~= 25 then
-	if get("laminar/B738/fms/chock_status") ~= 1 then
-		command_once("laminar/B738/toggle_switch/chock")
-	end
-
--- end
--- +24 run Electrical power up if not yet done
-
--- +23 FO starte pre-peflight
-
--- +21 Minuten FO starts walkaround, at night turn on wheel well lights
-
--- +18 Minutes Boarding ask start 
-
--- +14 minuten FO from walk around starts preflight
-
--- +10 preflight checklist
-
--- +8 departure briefing
-
--- +7 Load sheet
-
--- +6 Start APU?
-
--- +5 CPT arm authothrottle, set v2 in MCP, arm lnav/vnav
-
--- +3 cargo doors closed
-
--- +2 permission to powr hyd
-
--- +1 boading complete Before start procedure
-
--- + 0 , wheel chocks remove all carts removed when APU running
-end
-
+sysMacros.spd_mode = 0
+sysMacros.alt_mode = 0
+sysMacros.hdg_mode = 0
+sysMacros.hdg_arm  = 0
+sysMacros.alt_arm  = 0
+	
 -- ====================================== States related macros
 
 function kc_macro_state_cold_and_dark()
-	-- set aircraft to cold & dark
-	kc_macro_doors_cold_dark()
+	logMsg("B738 kc_macro_state_cold_and_dark")
 
-	set("sim/private/controls/shadow/cockpit_near_adjust",0.09)
 	activeBckVars:set("general:timesOFF","==:==")
 	activeBckVars:set("general:timesOUT","==:==")
 	activeBckVars:set("general:timesIN","==:==")
 	activeBckVars:set("general:timesON","==:==")
-	sysGeneral.fdrSwitch:actuate(modeOff) 
-	sysGeneral.fdrCover:actuate(modeOn)
-	sysGeneral.vcrSwitch:actuate(modeOff)
-	sysEngines.eecSwitchGroup:actuate(modeOn)
-	sysEngines.eecGuardGroup:actuate(modeOff)
-	sysGeneral.irsUnitGroup:actuate(sysGeneral.irsUnitOFF)
 
+	kc_macro_doors_cold_dark()
 	kc_macro_lights_cold_dark()
-
 	kc_macro_b738_navswitches_init()
+
+	sysGeneral.parkBrakeSwitch:actuate(1)
+	set("laminar/B738/fms/chock_status",1)
+	sysGeneral.GearSwitch:actuate(1)
+	set("laminar/B738/flt_ctrls/speedbrake_lever",0)
+	sysGeneral.wiperGroup:actuate(0)
+	sysEngines.throttlePos:actuate(0)
+	command_once("sim/flight_controls/aileron_trim_center")
+	command_once("sim/flight_controls/rudder_trim_center")
 	
-	sysControls.yawDamper:actuate(modeOff)
+	kc_macro_set_flap(1)
 	
+	kc_macro_hydraulic_off()
+
 	kc_macro_fuelpumps_off()
 
-	sysElectric.dcPowerSwitch:actuate(sysElectric.dcPwrBAT)
-	sysElectric.stbyPowerSwitch:actuate(modeOn)
-	sysElectric.stbyPowerCover:actuate(modeOn) 
-	sysElectric.ifePwr:actuate(modeOff)
-	sysElectric.cabUtilPwr:actuate(modeOff)
-	sysElectric.acPowerSwitch:actuate(sysElectric.acPwrGRD)
-	sysGeneral.wiperGroup:actuate(modeOff)
-	set("laminar/B738/toggle_switch/eq_cool_exhaust",0)
-	set("laminar/B738/toggle_switch/eq_cool_supply",0)
-	sysGeneral.emerExitLightsCover:actuate(1)
-	sysGeneral.emerExitLightsSwitch:actuate(0)
-	command_once("laminar/B738/toggle_switch/seatbelt_sign_up") 
-	command_once("laminar/B738/toggle_switch/seatbelt_sign_up") 
-	sysGeneral.noSmokingSwitch:setValue(0)
+	kc_macro_packs_off()
+	kc_macro_bleeds_off()
+
 	sysAice.windowHeatGroup:actuate(0)
 	sysAice.probeHeatGroup:actuate(0)
 	sysAice.wingAntiIce:actuate(0)
 	sysAice.engAntiIceGroup:actuate(0)
+	
+	command_once("laminar/B738/toggle_switch/seatbelt_sign_up") 
+	command_once("laminar/B738/toggle_switch/seatbelt_sign_up") 
+	sysGeneral.noSmokingSwitch:setValue(0)
 
-	kc_macro_hydraulic_off()
+	sysGeneral.autobrake:actuate(kc_AutoBrakeOff) -- OFF
 
+	sysEngines.eecSwitchGroup:actuate(1)
+	sysEngines.eecGuardGroup:actuate(0)
+	sysEngines.startLever1:actuate(0) 
+	sysEngines.startLever2:actuate(0)
+	sysEngines.engStarterGroup:actuate(1)
+	
+	sysGeneral.fdrSwitch:actuate(0) 
+	sysGeneral.fdrCover:actuate(1)
+	sysGeneral.vcrSwitch:actuate(0)
+
+	sysGeneral.irsUnitGroup:actuate(sysGeneral.irsUnitOFF)
+	
+	sysControls.yawDamper:actuate(0)
+	set("laminar/B738/toggle_switch/eq_cool_exhaust",0)
+	set("laminar/B738/toggle_switch/eq_cool_supply",0)
+	sysGeneral.emerExitLightsCover:actuate(1)
+	sysGeneral.emerExitLightsSwitch:actuate(0)
+	sysRadios.xpdrSwitch:actuate(sysRadios.stby)
+	
 	set("laminar/B738/toggle_switch/air_temp_source",3)
 	sysAir.contCabTemp:setValue(0.5) 
 	sysAir.fwdCabTemp:setValue(0.5) 
@@ -110,51 +90,36 @@ function kc_macro_state_cold_and_dark()
 	set("laminar/B738/air/trim_air_pos",1)
 	sysAir.recircFanLeft:actuate(modeOff) 
 	sysAir.recircFanRight:actuate(modeOff)
-	
-	kc_macro_packs_off()
-	kc_macro_bleeds_off()
-
 	sysAir.maxCruiseAltitude:setValue(0)
 	sysAir.landingAltitude:setValue(0)
 	command_once("laminar/B738/toggle_switch/air_valve_ctrl_left")
-	command_once("laminar/B738/toggle_switch/air_valve_ctrl_left")		
-
-
-
-	command_once("laminar/B738/spring_toggle_switch/APU_start_pos_up")
-	command_once("laminar/B738/spring_toggle_switch/APU_start_pos_up")
-
-	if activePrefSet:get("aircraft:powerup_apu") == false then
-		sysElectric.gpuSwitch:actuate(cmdUp)
-		kc_macro_gpu_disconnect()
-	end
-
-	command_once("laminar/B738/push_button/flaps_0")
-	set("laminar/B738/flt_ctrls/speedbrake_lever",0)
-	sysGeneral.parkBrakeSwitch:actuate(modeOn)
-	sysEngines.startLever1:actuate(0) 
-	sysEngines.startLever2:actuate(0)
-	set("laminar/B738/fms/chock_status",1)
-	sysEngines.engStarterGroup:actuate(1)
-	sysRadios.xpdrSwitch:actuate(sysRadios.xpdrStby)
-	sysGeneral.autobrake:actuate(1)
-
+	command_once("laminar/B738/toggle_switch/air_valve_ctrl_left")
+	
 	kc_macro_mcp_cold_dark()
 	kc_macro_efis_initial()
 	kc_macro_b738_lowerdu_off()
 	
-	sysElectric.batteryCover:actuate(modeOn)
-	sysElectric.batterySwitch:actuate(modeOff)
-	command_once("sim/electrical/APU_off")
-	command_once("sim/electrical/GPU_off")
-	sysGeneral.emerExitLightsCover:actuate(1)
-	sysGeneral.emerExitLightsSwitch:actuate(0)
-
 	if activeBriefings:get("taxi:gateStand") > 1 then
 		if get("laminar/B738/airstairs_hide") == 1  then
 			command_once("laminar/B738/airstairs_toggle")
 		end
 	end
+	
+	sysElectric.dcPowerSwitch:actuate(sysElectric.dcPwrBAT)
+	sysElectric.stbyPowerSwitch:actuate(1)
+	sysElectric.stbyPowerCover:actuate(1) 
+	sysElectric.ifePwr:actuate(0)
+	sysElectric.cabUtilPwr:actuate(0)
+	sysElectric.acPowerSwitch:actuate(sysElectric.acPwrGRD)
+	command_once("sim/electrical/APU_off")
+	command_once("sim/electrical/GPU_off")
+	if activePrefSet:get("aircraft:powerup_apu") == false then
+		sysElectric.gpuSwitch:actuate(cmdUp)
+		kc_macro_gpu_disconnect()
+	end
+	sysElectric.batteryCover:actuate(1)
+	sysElectric.batterySwitch:actuate(0)
+
 end
 
 function kc_macro_state_turnaround()
@@ -228,27 +193,20 @@ function kc_macro_state_turnaround()
 	activeBckVars:set("general:timesOUT","==:==")
 	activeBckVars:set("general:timesIN","==:==")
 	activeBckVars:set("general:timesON","==:==")
-	command_once("laminar/B738/push_button/flaps_0")
+	kc_macro_set_flap(0)
 	set("laminar/B738/flt_ctrls/speedbrake_lever",0)
 	sysGeneral.parkBrakeSwitch:actuate(modeOn)
 	sysEngines.startLever1:actuate(0) 
 	sysEngines.startLever2:actuate(0)
 	set("laminar/B738/fms/chock_status",1)
 	sysEngines.engStarterGroup:actuate(1)
-	sysRadios.xpdrSwitch:actuate(sysRadios.xpdrStby)
-	sysGeneral.autobrake:actuate(1)
+	sysRadios.xpdrSwitch:actuate(sysRadios.stby)
+	sysGeneral.autobrake:actuate(kc_AutoBrakeOff)
 
 	kc_macro_mcp_preflight()
 
 	kc_macro_efis_initial()
 
-end
-
--- start SGES start sequence
-function kc_macro_start_sges_sequence()
-		-- show_windoz()
-		show_Automatic_sequence_start = true
-		SGES_Automatic_sequence_start_flight_time_sec = SGES_total_flight_time_sec
 end
 
 -- ====================================== Lights related functions
@@ -778,7 +736,7 @@ end
 function kc_macro_fuelpumps_stand()
 	sysFuel.allFuelPumpGroup:actuate(0)
 	sysFuel.crossFeed:actuate(0)
-	if activePrefSet:get("aircraft:powerup_apu") == true then
+	if activeBriefings:get("departure:activateAPUPowerUp") == 1 then
 		sysFuel.fuelPumpLeftFwd:actuate(1)
 	end
 end
@@ -988,13 +946,13 @@ end
 
 -- set the autobrake value depending on the briefing setting
 function kc_macro_b738_set_autobrake()
-	if activeBriefings:get("approach:autobrake") == 2 then
+	if activeBriefings:get("approach:autobrake") == 1 then
 		command_once("laminar/B738/knob/autobrake_1")
-	elseif activeBriefings:get("approach:autobrake") == 3 then
+	elseif activeBriefings:get("approach:autobrake") == 2 then
 		command_once("laminar/B738/knob/autobrake_2")
-	elseif activeBriefings:get("approach:autobrake") == 4 then
+	elseif activeBriefings:get("approach:autobrake") == 3 then
 		command_once("laminar/B738/knob/autobrake_3")
-	elseif activeBriefings:get("approach:autobrake") == 5 then
+	elseif activeBriefings:get("approach:autobrake") == 4 then
 		command_once("laminar/B738/knob/autobrake_max")
 	end
 end
@@ -1443,6 +1401,26 @@ function kc_bck_fma_callouts(trigger)
 		end
 		sysMacros.spd_mode = spdmode
 		return
+	end
+
+end
+
+function kc_macro_set_flap(flapindex)
+
+-- {[0] = "UP",[1] =   "1", [2] =  "2", [3] =   "5", [4] ="10", [5] =  "15", [6] = "25", [7] =  "30", [8] = "40"}
+
+	-- retract flaps 8 steps
+	command_once("sim/flight_controls/flaps_up")
+	command_once("sim/flight_controls/flaps_up")
+	command_once("sim/flight_controls/flaps_up")
+	command_once("sim/flight_controls/flaps_up")
+	command_once("sim/flight_controls/flaps_up")
+	command_once("sim/flight_controls/flaps_up")
+	command_once("sim/flight_controls/flaps_up")
+	command_once("sim/flight_controls/flaps_up")
+
+	for i = 1, flapindex do
+		command_once("sim/flight_controls/flaps_down")
 	end
 
 end

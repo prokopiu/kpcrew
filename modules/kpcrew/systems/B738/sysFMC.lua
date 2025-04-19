@@ -3,9 +3,7 @@
 
 -- @classmod sysFMC
 -- @author Kosta Prokopiu
--- @copyright 2022 Kosta Prokopiu
-local sysFMC = {
-}
+-- @copyright 2025 Kosta Prokopiu
 
 local TwoStateDrefSwitch 	= require "kpcrew.systems.TwoStateDrefSwitch"
 local TwoStateCmdSwitch	 	= require "kpcrew.systems.TwoStateCmdSwitch"
@@ -16,6 +14,8 @@ local CustomAnnunciator 	= require "kpcrew.systems.CustomAnnunciator"
 local TwoStateToggleSwitch	= require "kpcrew.systems.TwoStateToggleSwitch"
 local MultiStateCmdSwitch 	= require "kpcrew.systems.MultiStateCmdSwitch"
 local InopSwitch 			= require "kpcrew.systems.InopSwitch"
+
+sysFMC = require("kpcrew.systems.DFLT.sysFMC")
 
 sysFMC.initref 				= TwoStateToggleSwitch:new("","laminar/B738/fmod/fms_key",0,"laminar/B738/button/fmc1_init_ref")
 sysFMC.rte 					= TwoStateToggleSwitch:new("","laminar/B738/fmod/fms_key",0,"laminar/B738/button/fmc1_rte")

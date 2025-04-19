@@ -3,19 +3,7 @@
 
 -- @classmod sysAir
 -- @author Kosta Prokopiu
--- @copyright 2022 Kosta Prokopiu
-local sysAir = {
-	packModeOff 	= 0,
-	packModeAuto 	= 1,
-	packModeOn 		= 2,
-	
-	isoVlvClosed 	= 0,
-	isoVlvAuto 		= 1,
-	isoVlvOpen 		= 2,
-	airVlvAuto 		= 0,
-	airVlvAltn 		= 1,
-	airVlvMan 		= 2
-}
+-- @copyright 2025 Kosta Prokopiu
 
 local TwoStateDrefSwitch 	= require "kpcrew.systems.TwoStateDrefSwitch"
 local TwoStateCmdSwitch	 	= require "kpcrew.systems.TwoStateCmdSwitch"
@@ -29,6 +17,19 @@ local InopSwitch 			= require "kpcrew.systems.InopSwitch"
 
 local drefPackLeftANC 		= "laminar/B738/annunciator/pack_left"
 local drefPackRightANC 		= "laminar/B738/annunciator/pack_right"
+
+sysAir = require("kpcrew.systems.DFLT.sysAir")
+
+sysAir.packModeOff	 	= 0
+sysAir.packModeAuto 	= 1
+sysAir.packModeOn 		= 2
+
+sysAir.isoVlvClosed 	= 0
+sysAir.isoVlvAuto 		= 1
+sysAir.isoVlvOpen 		= 2
+sysAir.airVlvAuto 		= 0
+sysAir.airVlvAltn 		= 1
+sysAir.airVlvMan 		= 2
 
 -- ======= Switches
 

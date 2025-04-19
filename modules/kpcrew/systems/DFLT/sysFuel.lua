@@ -7,6 +7,8 @@
 local sysFuel = {
 }
 
+logMsg("DFLT sysFuel")
+
 local TwoStateDrefSwitch 	= require "kpcrew.systems.TwoStateDrefSwitch"
 local TwoStateCmdSwitch	 	= require "kpcrew.systems.TwoStateCmdSwitch"
 local TwoStateCustomSwitch 	= require "kpcrew.systems.TwoStateCustomSwitch"
@@ -20,22 +22,32 @@ local KeepPressedSwitchCmd	= require "kpcrew.systems.KeepPressedSwitchCmd"
 
 local drefFuelPressLow 		= "sim/cockpit2/annunciators/fuel_pressure_low"
 
+-- Check if fuel is inbalanced
+function sysFuel.fuel_balanced()
+	local tank1 = get("sim/cockpit2/fuel/fuel_quantity",0) 
+	local tank2 = get("sim/cockpit2/fuel/fuel_quantity",1) 
+	return math.abs(tank1-tank2) < 100
+end
+	
 ---------- Switches
 
 -- Fuel pumps
-sysFuel.fuelPumpLeftAft 	= TwoStateCmdSwitch:new ("fuelpumpleftaft","sim/cockpit/engine/fuel_pump_on",-1,
-	"sim/fuel/fuel_pump_1_on","sim/fuel/fuel_pump_1_off","sim/fuel/fuel_pump_1_tog")
-sysFuel.fuelPumpRightAft 	= TwoStateCmdSwitch:new("fuelpumprightaft","sim/cockpit/engine/fuel_pump_on",1,
-	"sim/fuel/fuel_pump_2_on","sim/fuel/fuel_pump_2_off","sim/fuel/fuel_pump_2_tog")
-sysFuel.fuelPumpCtrLeft 	= InopSwitch:new ("fuelpumpctrleft","sim/cockpit/engine/fuel_pump_on",2,
-	"sim/fuel/fuel_pump_3_on","sim/fuel/fuel_pump_3_off","sim/fuel/fuel_pump_3_tog")
+sysFuel.fuelPumpLeftAft 	= TwoStateDrefSwitch:new ("fuelpumpleftaft","sim/cockpit/engine/fuel_pump_on",-1)
+sysFuel.fuelPumpRightAft 	= TwoStateDrefSwitch:new("fuelpumprightaft","sim/cockpit/engine/fuel_pump_on",1)
+sysFuel.fuelPump3		 	= TwoStateDrefSwitch:new ("fuelpumpctrleft","sim/cockpit/engine/fuel_pump_on",2)
+sysFuel.fuelPump4		 	= TwoStateDrefSwitch:new ("fuelpumpctrleft","sim/cockpit/engine/fuel_pump_on",3)
 sysFuel.allFuelPumpGroup 		= SwitchGroup:new("fuelpumpgroup")
 sysFuel.allFuelPumpGroup:addSwitch(sysFuel.fuelPumpLeftAft)
 sysFuel.allFuelPumpGroup:addSwitch(sysFuel.fuelPumpRightAft)
-sysFuel.allFuelPumpGroup:addSwitch(sysFuel.fuelPumpCtrLeft)
+sysFuel.allFuelPumpGroup:addSwitch(sysFuel.fuelPump3)
+sysFuel.allFuelPumpGroup:addSwitch(sysFuel.fuelPump4)
 
-sysFuel.crossFeed = TwoStateCmdSwitch:new("crossfeed","sim/cockpit2/fuel/auto_crossfeed",0,
+sysFuel.fuelCrossFeed = TwoStateCmdSwitch:new("crossfeed","sim/cockpit2/fuel/auto_crossfeed",0,
 	"sim/fuel/auto_crossfeed_on_open","sim/fuel/auto_crossfeed_off")
+
+sysFuel.fuelSwitch1			= InopSwitch:new("fuelswitch1")
+sysFuel.fuelSwitchGroup 	= SwitchGroup:new("fuelswitches")
+sysFuel.fuelSwitchGroup:addSwitch(sysFuel.fuelSwitch1)
 
 ------------ Annunciators
 

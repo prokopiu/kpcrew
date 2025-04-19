@@ -3,30 +3,7 @@
 
 -- @classmod sysElectric
 -- @author Kosta Prokopiu
--- @copyright 2022 Kosta Prokopiu
-local sysElectric = {
-	acPwrMin = 0,
-	acPwrMax = 6,
-	
-	acPwrSTBY = 0,
-	acPwrGRD = 1,
-	acPwrGEN1 = 2,
-	acPwrAPU = 3,
-	acPwrGEN2 = 4,
-	acPwrINV = 5,
-	acPwrTEST = 6,
-	
-	dcPwrMin = 0,
-	dcPwrMax = 6,
-	
-	dcPwrSTBY = 0,
-	dcPwrBBUS = 1,
-	dcPwrBAT = 2,
-	dcPwrTR1 = 3,
-	dcPwrTR2 = 4,
-	dcPwrTR3 = 5,
-	dcPwrTEST = 6
-}
+-- @copyright 2025 Kosta Prokopiu
 
 local TwoStateDrefSwitch 	= require "kpcrew.systems.TwoStateDrefSwitch"
 local TwoStateCmdSwitch	 	= require "kpcrew.systems.TwoStateCmdSwitch"
@@ -37,6 +14,30 @@ local CustomAnnunciator 	= require "kpcrew.systems.CustomAnnunciator"
 local TwoStateToggleSwitch	= require "kpcrew.systems.TwoStateToggleSwitch"
 local MultiStateCmdSwitch 	= require "kpcrew.systems.MultiStateCmdSwitch"
 local InopSwitch 			= require "kpcrew.systems.InopSwitch"
+
+sysElectric = require("kpcrew.systems.DFLT.sysElectric")
+
+sysElectric.acPwrMin 	= 0
+sysElectric.acPwrMax 	= 6
+
+sysElectric.acPwrSTBY 	= 0
+sysElectric.acPwrGRD 	= 1
+sysElectric.acPwrGEN1 	= 2
+sysElectric.acPwrAPU 	= 3
+sysElectric.acPwrGEN2 	= 4
+sysElectric.acPwrINV 	= 5
+sysElectric.acPwrTEST 	= 6
+
+sysElectric.dcPwrMin 	= 0
+sysElectric.dcPwrMax 	= 6
+
+sysElectric.dcPwrSTBY 	= 0
+sysElectric.dcPwrBBUS 	= 1
+sysElectric.dcPwrBAT 	= 2
+sysElectric.dcPwrTR1 	= 3
+sysElectric.dcPwrTR2 	= 4
+sysElectric.dcPwrTR3 	= 5
+sysElectric.dcPwrTEST 	= 6
 
 ------------- Switches
 
@@ -133,12 +134,6 @@ sysElectric.avionicsSwitchGroup:addSwitch(sysElectric.avionics2Bus)
 
 -- ======== Annunciators
 
--- LOW VOLTAGE annunciator
-sysElectric.lowVoltageAnc 	= SimpleAnnunciator:new("lowvoltage","sim/cockpit2/annunciators/low_voltage",0)
-
--- APU RUNNING annunciator
-sysElectric.apuRunningAnc 	= SimpleAnnunciator:new("apurunning","sim/cockpit2/electrical/APU_running",0)
-
 -- GPU AVAILABLE annunciator
 sysElectric.gpuAvailAnc 	= CustomAnnunciator:new("gpuavail",function (self) 
 if get("laminar/B738/annunciator/ground_power_avail") > 0 or 
@@ -146,8 +141,6 @@ if get("laminar/B738/annunciator/ground_power_avail") > 0 or
 	(get("laminar/B738/electrical/apu_power_bus1") == 1 or 
 	get("laminar/B738/electrical/apu_power_bus2") == 1)) then return 1 else return 0 end end)
 	
-sysElectric.gpuOnBus = SimpleAnnunciator:new("gpubus","sim/cockpit/electrical/gpu_on",0)
-
 -- APU GEN BUS OFF
 sysElectric.apuGenBusOff 	= CustomAnnunciator:new("apubus",function (self) 
 if get("laminar/B738/annunciator/apu_gen_off_bus") > 0 then return 1 else return 0 end end)
@@ -163,8 +156,5 @@ sysElectric.stbyPwrOff 		= SimpleAnnunciator:new("stbypwroff","laminar/B738/annu
 
 sysElectric.gen1off 		= SimpleAnnunciator:new("gen1off","sim/cockpit2/annunciators/generator_off",0)
 sysElectric.gen2off 		= SimpleAnnunciator:new("gen2off","sim/cockpit2/annunciators/generator_off",1)
-
-sysElectric.batt1Volt 		= SimpleAnnunciator:new("bat1volt","sim/cockpit2/electrical/battery_voltage_actual_volts",0)
-sysElectric.batt2Volt 		= SimpleAnnunciator:new("bat2volt","sim/cockpit2/electrical/battery_voltage_actual_volts",1)
 
 return sysElectric

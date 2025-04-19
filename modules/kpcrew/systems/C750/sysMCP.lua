@@ -3,9 +3,7 @@
 
 -- @classmod sysMCP
 -- @author Kosta Prokopiu
--- @copyright 2022 Kosta Prokopiu
-local sysMCP = {
-}
+-- @copyright 2024 Kosta Prokopiu
 
 local TwoStateDrefSwitch 	= require "kpcrew.systems.TwoStateDrefSwitch"
 local TwoStateCmdSwitch	 	= require "kpcrew.systems.TwoStateCmdSwitch"
@@ -16,6 +14,9 @@ local CustomAnnunciator 	= require "kpcrew.systems.CustomAnnunciator"
 local TwoStateToggleSwitch	= require "kpcrew.systems.TwoStateToggleSwitch"
 local MultiStateCmdSwitch 	= require "kpcrew.systems.MultiStateCmdSwitch"
 local InopSwitch 			= require "kpcrew.systems.InopSwitch"
+local KeepPressedSwitchCmd	= require "kpcrew.systems.KeepPressedSwitchCmd"
+
+sysMCP = require("kpcrew.systems.DFLT.sysMCP")
 
 local drefVORLocLight 		= "laminar/CitX/autopilot/nav_mode_on"
 local drefHDGLight			= "sim/cockpit2/autopilot/heading_mode"
@@ -28,11 +29,6 @@ local drefBCLight			= "laminar/CitX/autopilot/bc_mode_on"
 local drefAPLight			= "laminar/CitX/autopilot/left_ap"
 
 --------- Switches
-
--- Flight Directors 
-sysMCP.fdirPilotSwitch 		= TwoStateDrefSwitch:new("","sim/cockpit2/autopilot/flight_director_mode",0)
-sysMCP.fdirGroup 			= SwitchGroup:new("fdirs")
-sysMCP.fdirGroup:addSwitch(sysMCP.fdirPilotSwitch)
 
 -- HDG SEL
 sysMCP.hdgselSwitch 		= TwoStateToggleSwitch:new("hdgsel",drefHDGLight,0,
@@ -70,71 +66,9 @@ sysMCP.backcourse 			= TwoStateToggleSwitch:new("backcourse",drefBCLight,0,
 sysMCP.togaPilotSwitch 		= TwoStateToggleSwitch:new("togapilot","sim/cockpit2/autopilot/TOGA_status",0,
 	"sim/autopilot/take_off_go_around")
 
--- ATHR
-sysMCP.athrSwitch 			= InopSwitch:new("athr")
-
-
--- CRS 1&2
-sysMCP.crs1Selector 		= MultiStateCmdSwitch:new("crs1","sim/cockpit2/radios/actuators/nav1_obs_deg_mag_pilot",0,
-	"sim/radios/obs1_down","sim/radios/obs1_up",0,359,false)
-sysMCP.crs2Selector 		= MultiStateCmdSwitch:new("crs2","sim/cockpit2/radios/actuators/nav2_obs_deg_mag_pilot",0,
-	"sim/radios/obs2_down","sim/radios/obs2_up",0,359,false)
-sysMCP.crsSelectorGroup	 	= SwitchGroup:new("crs")
-sysMCP.crsSelectorGroup:addSwitch(sysMCP.crs1Selector)
-sysMCP.crsSelectorGroup:addSwitch(sysMCP.crs2Selector)
-
--- N1 Boeing
-sysMCP.n1Switch 			= InopSwitch:new("n1")
-
--- IAS
-sysMCP.iasSelector 			= MultiStateCmdSwitch:new("ias","sim/cockpit/autopilot/airspeed",0,
-	"sim/autopilot/airspeed_down","sim/autopilot/airspeed_up",100,340,false)
-
--- KTS/MACH C/O
-sysMCP.machSwitch 			= InopSwitch:new("mach")
-
--- SPD INTV
-sysMCP.spdIntvSwitch 		= InopSwitch:new("spdintv")
-
 -- VNAV
 sysMCP.vnavSwitch 			= TwoStateToggleSwitch:new("vnav",drefVNAVLight,0,
 	"laminar/CitX/autopilot/cmd_vnav_mode")
-
--- LVL CHG
-sysMCP.lvlchgSwitch 		= InopSwitch:new("lvlchg")
-
--- HDG
-sysMCP.hdgSelector 			= MultiStateCmdSwitch:new("hdg","sim/cockpit2/autopilot/heading_dial_deg_mag_pilot",0,
-	"sim/autopilot/heading_down","sim/autopilot/heading_up",0,359,false)
-
--- TURNRATE
-sysMCP.turnRateSelector 	= InopSwitch:new("turnrate")
-
--- LNAV
-sysMCP.lnavSwitch 			= InopSwitch:new("lnav")
-
--- ALT
-sysMCP.altSelector 			= MultiStateCmdSwitch:new("alt","sim/cockpit2/autopilot/altitude_dial_ft",0,
-	"sim/autopilot/altitude_down","sim/autopilot/altitude_up",0,50000,false)
-
--- ALT INTV
-sysMCP.altintvSwitch 		= InopSwitch:new("altintv")
-
--- VSP
-sysMCP.vspSelector 			= MultiStateCmdSwitch:new("vsp","sim/cockpit2/autopilot/vvi_dial_fpm",0,
-	"sim/autopilot/vertical_speed_down","sim/autopilot/vertical_speed_up",-7900,7900,true)
-
--- A/P DISENGAGE
-sysMCP.discAPSwitch 		= TwoStateToggleSwitch:new("apdisc","sim/cockpit2/annunciators/autopilot_disconnect",0,
-	"sim/autopilot/disconnect")
-sysMCP.apDiscYoke 			= TwoStateToggleSwitch:new("discapyoke","sim/cockpit2/annunciators/autopilot_disconnect",0,
-	"sim/autopilot/disconnect")
-
-
-------- Annunciators
-
--- Flight Directors annunciator
-sysMCP.fdirAnc 				= SimpleAnnunciator:new("fdiranc","sim/cockpit2/autopilot/flight_director_mode",0)
 
 -- HDG Select/mode annunciator
 sysMCP.hdgAnc 				= CustomAnnunciator:new("hdganc",
@@ -216,63 +150,5 @@ function ()
 		return 0
 	end
 end)
-
--- ===== UI related functions =====
-
--- render the MCP part
-function sysMCP:render(ypos,height)
-
-	-- reposition when screen size changes
-	if kh_mcp_wnd_state < 0 then
-		float_wnd_set_position(kh_mcp_wnd, 0, kh_scrn_height - ypos)
-		float_wnd_set_geometry(kh_mcp_wnd, 0, ypos, 25, ypos-height)
-		kh_mcp_wnd_state = 0
-	end
-	
-	imgui.SetCursorPosY(10)
-	imgui.SetCursorPosX(2)
-	
-	if kh_mcp_wnd_state == 1 then
-		imgui.Button("<", 17, 25)
-		if imgui.IsItemActive() then 
-			kh_mcp_wnd_state = 0
-			float_wnd_set_geometry(kh_mcp_wnd, 0, ypos, 25, ypos-height)
-		end
-	end
-
-	if kh_mcp_wnd_state == 0 then
-		imgui.Button("M", 17, 25)
-		if imgui.IsItemActive() then 
-			kh_mcp_wnd_state = 1
-			float_wnd_set_geometry(kh_mcp_wnd, 0, ypos, 920, ypos-height)
-		end
-	end
-
-	sysMCP.crs1Selector:setDefaultDelay(3)
-	sysMCP.iasSelector:setDefaultDelay(4)
-	sysMCP.hdgSelector:setDefaultDelay(3)
-	sysMCP.altSelector:setDefaultDelay(4)
-	sysMCP.vspSelector:setDefaultDelay(8)
-
-	kc_imgui_rotary_mcp("CRS:%03d",sysMCP.crs1Selector,10,11)
-	kc_imgui_toggle_button_mcp("FD",sysMCP.fdirGroup,10,22,25)
-	kc_imgui_toggle_button_mcp("AT",sysMCP.athrSwitch,10,22,25)
-	-- kc_imgui_toggle_button_mcp("N1",sysMCP.n1Switch,10,22,25)
-	kc_imgui_toggle_button_mcp("SP",sysMCP.speedSwitch,10,22,25)
-	kc_imgui_rotary_mcp("SPD:%03d",sysMCP.iasSelector,10,12)
-	kc_imgui_toggle_button_mcp("VN",sysMCP.vnavSwitch,10,22,25)
-	-- kc_imgui_toggle_button_mcp("LC",sysMCP.lvlchgSwitch,10,22,25)
-	kc_imgui_rotary_mcp("HDG:%03d",sysMCP.hdgSelector,10,13)
-	kc_imgui_toggle_button_mcp("HD",sysMCP.hdgselSwitch,10,22,25)
-	-- kc_imgui_toggle_button_mcp("LN",sysMCP.lnavSwitch,10,22,25)
-	kc_imgui_toggle_button_mcp("LO",sysMCP.vorlocSwitch,10,22,25)
-	kc_imgui_toggle_button_mcp("AP",sysMCP.approachSwitch,10,22,25)
-	kc_imgui_rotary_mcp("ALT:%05d",sysMCP.altSelector,10,14)
-	kc_imgui_toggle_button_mcp("AL",sysMCP.altholdSwitch,10,22,25)
-	kc_imgui_rotary_mcp((sysMCP.vspSelector:getStatus() >= 0) and "VSP:+%04d" or "VSP:%05d",sysMCP.vspSelector,10,15)
-	kc_imgui_toggle_button_mcp("VS",sysMCP.vsSwitch,10,22,25)
-	kc_imgui_toggle_button_mcp("A/P",sysMCP.ap1Switch,10,59,25)
-
-end
 
 return sysMCP

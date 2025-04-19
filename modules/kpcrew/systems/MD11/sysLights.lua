@@ -1,32 +1,38 @@
--- DFLT airplane (X-Plane 11 default)
+-- Rotate MD-11
 -- aircraft lights specific functionality
 
+-- @classmod sysLights
+-- @author Kosta Prokopiu
+-- @copyright 2024 Kosta Prokopiu
 local sysLights = {
 }
 
-local TwoStateDrefSwitch = require "kpcrew.systems.TwoStateDrefSwitch"
-local TwoStateCmdSwitch = require "kpcrew.systems.TwoStateCmdSwitch"
-local TwoStateCustomSwitch = require "kpcrew.systems.TwoStateCustomSwitch"
-local SwitchGroup  = require "kpcrew.systems.SwitchGroup"
-local SimpleAnnunciator = require "kpcrew.systems.SimpleAnnunciator"
-local CustomAnnunciator = require "kpcrew.systems.CustomAnnunciator"
-local TwoStateToggleSwitch = require "kpcrew.systems.TwoStateToggleSwitch"
-local MultiStateCmdSwitch = require "kpcrew.systems.MultiStateCmdSwitch"
-local InopSwitch = require "kpcrew.systems.InopSwitch"
+local TwoStateDrefSwitch 	= require "kpcrew.systems.TwoStateDrefSwitch"
+local TwoStateCmdSwitch	 	= require "kpcrew.systems.TwoStateCmdSwitch"
+local TwoStateCustomSwitch 	= require "kpcrew.systems.TwoStateCustomSwitch"
+local SwitchGroup  			= require "kpcrew.systems.SwitchGroup"
+local SimpleAnnunciator 	= require "kpcrew.systems.SimpleAnnunciator"
+local CustomAnnunciator 	= require "kpcrew.systems.CustomAnnunciator"
+local TwoStateToggleSwitch	= require "kpcrew.systems.TwoStateToggleSwitch"
+local MultiStateCmdSwitch 	= require "kpcrew.systems.MultiStateCmdSwitch"
+local InopSwitch 			= require "kpcrew.systems.InopSwitch"
 
 ----------- Switches
 
 -- Beacons or Anticollision Lights, single, onoff, command driven
-sysLights.beaconSwitch = TwoStateToggleSwitch:new("beacon","Rotate/aircraft/controls/beacon_lts",0,"Rotate/aircraft/controls_c/beacon_lts")
+sysLights.beaconSwitch 		= TwoStateToggleSwitch:new("beacon","Rotate/aircraft/controls/beacon_lts",0,
+	"Rotate/aircraft/controls_c/beacon_lts")
 
 -- Position Lights, single onoff command driven
-sysLights.positionSwitch = TwoStateToggleSwitch:new("position","sim/cockpit/electrical/nav_lights_on",0,"Rotate/aircraft/controls_c/nav_lts")
+sysLights.positionSwitch 	= TwoStateToggleSwitch:new("position","sim/cockpit/electrical/nav_lights_on",0,
+	"Rotate/aircraft/controls_c/nav_lts")
 
 -- Strobe Lights, single onoff command driven
-sysLights.strobesSwitch = TwoStateToggleSwitch:new("strobes","Rotate/aircraft/controls/strobe_lts",0,"Rotate/aircraft/controls_c/strobe_lts")
+sysLights.strobesSwitch 	= TwoStateToggleSwitch:new("strobes","Rotate/aircraft/controls/strobe_lts",0,
+	"Rotate/aircraft/controls_c/strobe_lts")
 
 -- Taxi/Nose Lights, single onoff command driven
-sysLights.taxiSwitch = TwoStateCustomSwitch:new("llleft","Rotate/aircraft/controls/nose_lts",0,
+sysLights.taxiSwitch 		= TwoStateCustomSwitch:new("llleft","Rotate/aircraft/controls/nose_lts",0,
 function () 
 	set("Rotate/aircraft/controls/nose_lts",2)
 end,
@@ -41,10 +47,9 @@ function ()
 	end
 end
 )
--- MultiStateCmdSwitch:new("taxi","Rotate/aircraft/controls/nose_lts",0,"Rotate/aircraft/controls_c/nose_lts_dn","Rotate/aircraft/controls_c/nose_lts_up")
 
 -- Landing Lights, single onoff command driven
-sysLights.llLeftSwitch = TwoStateCustomSwitch:new("llleft","Rotate/aircraft/controls/ldg_l_lts",0,
+sysLights.llLeftSwitch 		= TwoStateCustomSwitch:new("llleft","Rotate/aircraft/controls/ldg_l_lts",0,
 function () 
 	set("Rotate/aircraft/controls/ldg_l_lts",2)
 end,
@@ -59,7 +64,7 @@ function ()
 	end
 end
 )
-sysLights.llRightSwitch = TwoStateCustomSwitch:new("llleft","Rotate/aircraft/controls/ldg_r_lts",0,
+sysLights.llRightSwitch 	= TwoStateCustomSwitch:new("llleft","Rotate/aircraft/controls/ldg_r_lts",0,
 function () 
 	set("Rotate/aircraft/controls/ldg_r_lts",2)
 end,
@@ -74,43 +79,42 @@ function ()
 	end
 end
 )
--- sysLights.llLeftSwitch = MultiStateCmdSwitch:new("llleft","Rotate/aircraft/controls/ldg_l_lts",0,"Rotate/aircraft/controls_c/ldg_l_lts_dn","Rotate/aircraft/controls_c/ldg_l_lts_up")
--- sysLights.llRightSwitch = MultiStateCmdSwitch:new("llright","Rotate/aircraft/controls/ldg_r_lts",0,"Rotate/aircraft/controls_c/ldg_r_lts_dn","Rotate/aircraft/controls_c/ldg_r_lts_up")
-
-sysLights.landLightGroup = SwitchGroup:new("landinglights")
+sysLights.landLightGroup 	= SwitchGroup:new("landinglights")
 sysLights.landLightGroup:addSwitch(sysLights.llLeftSwitch)
 sysLights.landLightGroup:addSwitch(sysLights.llRightSwitch)
 
 -- Logo Light
-sysLights.logoSwitch = TwoStateToggleSwitch:new("logo","Rotate/aircraft/controls/logo_lts",0,"Rotate/aircraft/controls_c/logo_lts")
+sysLights.logoSwitch 		= TwoStateToggleSwitch:new("logo","Rotate/aircraft/controls/logo_lts",0,
+	"Rotate/aircraft/controls_c/logo_lts")
 
 -- RWY Turnoff Lights (2)
-sysLights.rwyLeftSwitch = TwoStateToggleSwitch:new("rwyleft","Rotate/aircraft/controls/wing_l_lts",0,"Rotate/aircraft/controls_c/wing_l_lts")
-sysLights.rwyRightSwitch = TwoStateToggleSwitch:new("rwyright","Rotate/aircraft/controls/wing_r_lts",0,"Rotate/aircraft/controls_c/wing_r_lts")
-
-sysLights.rwyLightGroup = SwitchGroup:new("runwaylights")
+sysLights.rwyLeftSwitch 	= TwoStateToggleSwitch:new("rwyleft","Rotate/aircraft/controls/wing_l_lts",0,
+	"Rotate/aircraft/controls_c/wing_l_lts")
+sysLights.rwyRightSwitch 	= TwoStateToggleSwitch:new("rwyright","Rotate/aircraft/controls/wing_r_lts",0,
+	"Rotate/aircraft/controls_c/wing_r_lts")
+sysLights.rwyLightGroup 	= SwitchGroup:new("runwaylights")
 sysLights.rwyLightGroup:addSwitch(sysLights.rwyLeftSwitch)
 sysLights.rwyLightGroup:addSwitch(sysLights.rwyRightSwitch)
 
 -- Wing Lights
-sysLights.wingSwitch = InopSwitch:new("wing")
+sysLights.wingSwitch 		= InopSwitch:new("wing")
 
 -- Wheel well Lights
-sysLights.wheelSwitch = InopSwitch:new("wheel")
+sysLights.wheelSwitch 		= InopSwitch:new("wheel")
 
 -- Dome Light
-sysLights.domeLightSwitch = TwoStateToggleSwitch:new("dome","sim/cockpit2/switches/generic_lights_switch",25,"Rotate/aircraft/controls_c/dome_lts")
+sysLights.domeLightSwitch 	= TwoStateToggleSwitch:new("dome","sim/cockpit2/switches/generic_lights_switch",25,
+	"Rotate/aircraft/controls_c/dome_lts")
 
 -- Instrument Lights
-sysLights.instr1Light = TwoStateDrefSwitch:new("","Rotate/aircraft/controls/fgs_flood_lts",0)
-sysLights.instr2Light = TwoStateDrefSwitch:new("","Rotate/aircraft/controls/fgs_panel_lts",0)
-sysLights.instr3Light = TwoStateDrefSwitch:new("","Rotate/aircraft/controls/ovhd_panel_lts",0)
-sysLights.instr4Light = TwoStateDrefSwitch:new("","Rotate/aircraft/controls/instr_panel_lts",0)
-sysLights.instr5Light = TwoStateDrefSwitch:new("","Rotate/aircraft/controls/avncs_panel_lts",0)
-sysLights.instr6Light = TwoStateDrefSwitch:new("","Rotate/aircraft/controls/ovhd_flood_lts",0)
-sysLights.instr7Light = TwoStateDrefSwitch:new("","Rotate/aircraft/controls/instr_flood_lts",0)
-
-sysLights.instrLightGroup = SwitchGroup:new("instrumentlights")
+sysLights.instr1Light 		= TwoStateDrefSwitch:new("","Rotate/aircraft/controls/fgs_flood_lts",0)
+sysLights.instr2Light 		= TwoStateDrefSwitch:new("","Rotate/aircraft/controls/fgs_panel_lts",0)
+sysLights.instr3Light 		= TwoStateDrefSwitch:new("","Rotate/aircraft/controls/ovhd_panel_lts",0)
+sysLights.instr4Light 		= TwoStateDrefSwitch:new("","Rotate/aircraft/controls/instr_panel_lts",0)
+sysLights.instr5Light 		= TwoStateDrefSwitch:new("","Rotate/aircraft/controls/avncs_panel_lts",0)
+sysLights.instr6Light 		= TwoStateDrefSwitch:new("","Rotate/aircraft/controls/ovhd_flood_lts",0)
+sysLights.instr7Light 		= TwoStateDrefSwitch:new("","Rotate/aircraft/controls/instr_flood_lts",0)
+sysLights.instrLightGroup 	= SwitchGroup:new("instrumentlights")
 sysLights.instrLightGroup:addSwitch(sysLights.instr1Light)
 sysLights.instrLightGroup:addSwitch(sysLights.instr2Light)
 sysLights.instrLightGroup:addSwitch(sysLights.instr3Light)
@@ -120,8 +124,9 @@ sysLights.instrLightGroup:addSwitch(sysLights.instr6Light)
 sysLights.instrLightGroup:addSwitch(sysLights.instr7Light)
 
 --------- Annunciators
+
 -- annunciator to mark any landing lights on
-sysLights.landingAnc = CustomAnnunciator:new("landinglights",
+sysLights.landingAnc 		= CustomAnnunciator:new("landinglights",
 function () 
 	if sysLights.landLightGroup:getStatus() > 0 then
 		return 1
@@ -131,22 +136,22 @@ function ()
 end)
 
 -- Beacons or Anticollision Light(s) status
-sysLights.beaconAnc = SimpleAnnunciator:new("beaconlights","Rotate/aircraft/controls/beacon_lts",0)
+sysLights.beaconAnc 		= SimpleAnnunciator:new("beaconlights","Rotate/aircraft/controls/beacon_lts",0)
 
 -- Position Light(s) status
-sysLights.positionAnc = SimpleAnnunciator:new("positionlights","sim/cockpit/electrical/nav_lights_on",0)
+sysLights.positionAnc 		= SimpleAnnunciator:new("positionlights","sim/cockpit/electrical/nav_lights_on",0)
 
 -- Strobe Light(s) status
-sysLights.strobesAnc = SimpleAnnunciator:new("strobelights","Rotate/aircraft/controls/strobe_lts",0)
+sysLights.strobesAnc 		= SimpleAnnunciator:new("strobelights","Rotate/aircraft/controls/strobe_lts",0)
 
 -- Taxi Light(s) status
-sysLights.taxiAnc = SimpleAnnunciator:new("strobelights","Rotate/aircraft/controls/nose_lts",0)
+sysLights.taxiAnc 			= SimpleAnnunciator:new("strobelights","Rotate/aircraft/controls/nose_lts",0)
 
 -- Logo Light(s) status
-sysLights.logoAnc = SimpleAnnunciator:new("logolights","Rotate/aircraft/controls/logo_lts",0)
+sysLights.logoAnc 			= SimpleAnnunciator:new("logolights","Rotate/aircraft/controls/logo_lts",0)
 
 -- runway turnoff lights
-sysLights.runwayAnc = CustomAnnunciator:new("runwaylights",
+sysLights.runwayAnc 		= CustomAnnunciator:new("runwaylights",
 function () 
 	if sysLights.rwyLightGroup:getStatus() > 0 then
 		return 1
@@ -156,13 +161,13 @@ function ()
 end)
 
 -- Wing Light(s) status
-sysLights.wingAnc = InopSwitch:new("wingLights")
+sysLights.wingAnc 			= InopSwitch:new("wingLights")
 
 -- Wheel well Light(s) status
-sysLights.wheelAnc = InopSwitch:new("wheellights")
+sysLights.wheelAnc 			= InopSwitch:new("wheellights")
 
 -- Dome Light(s) status
-sysLights.domeAnc = CustomAnnunciator:new("domelights",
+sysLights.domeAnc 			= CustomAnnunciator:new("domelights",
 function () 
 	if sysLights.domeLightSwitch:getStatus() ~= 0 then
 		return 1
@@ -172,7 +177,7 @@ function ()
 end)
 
 -- Instrument Light(s) status
-sysLights.instrumentAnc = SimpleAnnunciator:new("instrumentlights", "sim/cockpit2/switches/instrument_brightness_ratio",0)
+sysLights.instrumentAnc 	= SimpleAnnunciator:new("instrumentlights", "sim/cockpit2/switches/instrument_brightness_ratio",0)
 
 -- ===== UI related functions =====
 

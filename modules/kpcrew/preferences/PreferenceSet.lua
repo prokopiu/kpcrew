@@ -78,7 +78,13 @@ end
 function kcPreferenceSet:get(inkey)
 	local pref = self:find(inkey)
 	if pref ~= nil then
-		return pref:getValue()
+		if pref:getType() == pref.typeInt then
+			return tonumber(pref:getValue())
+		elseif pref:getType() == pref.typeFloat then
+			return pref:getValue() + 0.0
+		else
+			return pref:getValue()
+		end
 	end
 end
 

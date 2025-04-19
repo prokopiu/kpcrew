@@ -3,9 +3,7 @@
 
 -- @classmod sysHydraulic
 -- @author Kosta Prokopiu
--- @copyright 2022 Kosta Prokopiu
-local sysHydraulic = {
-}
+-- @copyright 2025 Kosta Prokopiu
 
 local TwoStateDrefSwitch 	= require "kpcrew.systems.TwoStateDrefSwitch"
 local TwoStateCmdSwitch	 	= require "kpcrew.systems.TwoStateCmdSwitch"
@@ -16,6 +14,9 @@ local CustomAnnunciator 	= require "kpcrew.systems.CustomAnnunciator"
 local TwoStateToggleSwitch	= require "kpcrew.systems.TwoStateToggleSwitch"
 local MultiStateCmdSwitch 	= require "kpcrew.systems.MultiStateCmdSwitch"
 local InopSwitch 			= require "kpcrew.systems.InopSwitch"
+local KeepPressedSwitchCmd	= require "kpcrew.systems.KeepPressedSwitchCmd"
+
+sysHydraulic = require("kpcrew.systems.DFLT.sysHydraulic")
 
 local drefHydPressure1 		= "sim/cockpit2/annunciators/hydraulic_pressure"
 

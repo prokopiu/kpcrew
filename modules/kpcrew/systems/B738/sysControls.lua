@@ -3,21 +3,7 @@
 
 -- @classmod sysControls
 -- @author Kosta Prokopiu
--- @copyright 2022 Kosta Prokopiu
-local sysControls = {
-	trimCenter 	= 2,
-	trimLeft 	= 1,
-	trimRight 	= 0,
-	
-	flapsUp 	= 0,
-	flapsDown 	= 1,
-	
-	trimUp 		= 0,
-	trimDown 	= 1,
-	
-	flaps_pos = {[0] =   0, [1] = 0.125, [2] = 0.25, [3] = 0.375, [4] = 0.5, [5] = 0.625, [6] = 0.75, [7] = 0.875, [8] = 1},
-	flaps_spd = {[0] = 999,	[1] =   230, [2] =  230, [3] =   230, [4] = 210, [5] =   190, [6] =  170, [7] =   150, [8] = 150}
-}
+-- @copyright 2025 Kosta Prokopiu
 
 local TwoStateDrefSwitch 	= require "kpcrew.systems.TwoStateDrefSwitch"
 local TwoStateCmdSwitch	 	= require "kpcrew.systems.TwoStateCmdSwitch"
@@ -29,88 +15,24 @@ local TwoStateToggleSwitch	= require "kpcrew.systems.TwoStateToggleSwitch"
 local MultiStateCmdSwitch 	= require "kpcrew.systems.MultiStateCmdSwitch"
 local InopSwitch 			= require "kpcrew.systems.InopSwitch"
 
---------- Switches
+sysControls = require("kpcrew.systems.DFLT.sysControls")
 
--- Flaps 
-sysControls.flapsSwitch 	= TwoStateCustomSwitch:new("flaps","laminar/B738/flt_ctrls/flap_lever",0,
-	function () 
-		command_once("sim/flight_controls/flaps_down")
-	end,
-	function () 
-		command_once("sim/flight_controls/flaps_up")
-	end,
-	function () 
-		-- do nothing
-	end
-)
+sysControls.flaps_pos = {[0] = 0, 	[1] = 0.125, [2] = 0.25, [3] = 0.375, [4] = 0.5, [5] = 0.625, [6] = 0.75, [7] = 0.875, [8] = 1.0}
+sysControls.flaps_spd = {[0] = 230, [1] = 230,   [2] =  230, [3] =   230, [4] = 210, [5] =   190, [6] =  170, [7] =   150, [8] = 150}
+sysControls.flaps_name= {[0] = "UP",[1] =   "1", [2] =  "2", [3] =   "5", [4] ="10", [5] =  "15", [6] = "25", [7] =  "30", [8] = "40"}
 
--- Pitch Trim
-sysControls.pitchTrimSwitch = TwoStateCustomSwitch:new("pitchtrim","sim/cockpit2/controls/elevator_trim",0,
-	function () 
-		command_once("sim/flight_controls/pitch_trim_down")
-	end,
-	function () 
-		command_once("sim/flight_controls/pitch_trim_up")
-	end,
-	function () 
-		return
-	end
-)
-sysControls.pitchTrimDownRepeat = TwoStateCustomSwitch:new("pitchtrim","sim/cockpit2/controls/elevator_trim",0,
-	function () 
-		command_begin("sim/flight_controls/pitch_trim_down")
-	end,
-	function () 
-		command_end("sim/flight_controls/pitch_trim_down")
-	end,
-	function () 
-		return
-	end
-)
-sysControls.pitchTrimUpRepeat = TwoStateCustomSwitch:new("pitchtrim","sim/cockpit2/controls/elevator_trim",0,
-	function () 
-		command_begin("sim/flight_controls/pitch_trim_up")
-	end,
-	function () 
-		command_end("sim/flight_controls/pitch_trim_up")
-	end,
-	function () 
-		return
-	end
-)
+sysControls.trimCenter 	= 2
+sysControls.trimLeft 	= 1
+sysControls.trimRight 	= 0
 
--- Aileron Trim
-sysControls.aileronTrimSwitch = TwoStateCustomSwitch:new("ailerontrim","sim/cockpit2/controls/aileron_trim",0,
-	function () 
-		command_once("sim/flight_controls/aileron_trim_right")
-	end,
-	function () 
-		command_once("sim/flight_controls/aileron_trim_left")
-	end,
-	function () 
-		return
-	end
-)
+sysControls.flapsUp 	= 0
+sysControls.flapsDown 	= 1
 
-sysControls.aileronReset 	= TwoStateToggleSwitch:new("aileronreset","sim/cockpit2/controls/aileron_trim",0,
-	"sim/flight_controls/aileron_trim_center")
+sysControls.trimUp 		= 0
+sysControls.trimDown 	= 1
 
--- Rudder Trim
-sysControls.rudderTrimSwitch = TwoStateCustomSwitch:new("ruddertrim","sim/cockpit2/controls/rudder_trim",0,
-	function () 
-		command_once("sim/flight_controls/rudder_trim_right")
-	end,
-	function () 
-		command_once("sim/flight_controls/rudder_trim_left")
-	end,
-	function () 
-		return
-	end
-)
-
--- ruder reset
-sysControls.rudderReset 	= TwoStateToggleSwitch:new("rudderreset","sim/cockpit2/controls/rudder_trim",0,
-	"sim/flight_controls/rudder_trim_center")
+sysControls.flapsSwitch	= MultiStateCmdSwitch:new ("flaps","sim/cockpit2/controls/flap_ratio",0,
+	"sim/flight_controls/flaps_up","sim/flight_controls/flaps_down",0,8,true)
 
 -- Yaw damper
 sysControls.yawDamper 		= TwoStateToggleSwitch:new("yawdamper","laminar/B738/toggle_switch/yaw_dumper_pos",0,
@@ -158,7 +80,6 @@ sysControls.spoilerCovers 	= SwitchGroup:new("spoilerCovers")
 sysControls.spoilerCovers:addSwitch(sysControls.spoilerACover) 
 sysControls.spoilerCovers:addSwitch(sysControls.spoilerBCover) 
 
-
 --------- Annunciators
 
 -- spoiler lever position
@@ -179,6 +100,5 @@ function ()
 		return 0
 	end
 end)
-
 
 return sysControls

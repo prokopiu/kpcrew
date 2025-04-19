@@ -535,7 +535,13 @@ end
 
 -- get daylight 0=dark 1=bright
 function kc_is_daylight()
-	if get("sim/private/stats/skyc/sun_amb_b") < 0.1 then
+	local lightthreshold = 0
+	if kc_simversion > 120000 then
+		lightthreshold = 0.4
+	else
+		lightthreshold = 0.1
+	end
+	if get("sim/private/stats/skyc/sun_amb_b") < lightthreshold then
 		return false
 	else
 		return true
@@ -567,8 +573,8 @@ end
 
 -- render a toggle button with green/grey status (label) for MCP
 function kc_imgui_toggle_button_mcp(label,system,ypos,width,height)
-    imgui.SameLine()
-	imgui.SetCursorPosY(ypos)
+    -- imgui.SameLine()
+	-- imgui.SetCursorPosY(ypos)
 	imgui.PushStyleColor(imgui.constant.Col.Button, color_mcp_button)
 	imgui.PushStyleColor(imgui.constant.Col.ButtonActive, color_mcp_active)
 	imgui.PushStyleColor(imgui.constant.Col.ButtonHovered, color_mcp_hover)
@@ -590,8 +596,8 @@ end
 
 -- render a rotary with + and - clickspots and value display for mcp
 function kc_imgui_rotary_mcp(label,system,ypos,id)
-    imgui.SameLine()
-	imgui.SetCursorPosY(ypos)
+    -- imgui.SameLine()
+	-- imgui.SetCursorPosY(ypos)
 	imgui.PushStyleColor(imgui.constant.Col.Button, color_mcp_button)
 	imgui.PushStyleColor(imgui.constant.Col.ButtonActive, color_mcp_active)
 	imgui.PushStyleColor(imgui.constant.Col.ButtonHovered, color_mcp_hover)
@@ -605,11 +611,11 @@ function kc_imgui_rotary_mcp(label,system,ypos,id)
 	imgui.PopID()
 	
 	imgui.SameLine()
-	imgui.SetCursorPosY(ypos + 2)
+	-- imgui.SetCursorPosY(ypos + 2)
 	imgui.TextUnformatted(string.format(label,system:getStatus()))
 
 	imgui.SameLine()
-	imgui.SetCursorPosY(ypos)
+	-- imgui.SetCursorPosY(ypos)
 	
     imgui.PushID(id)
 	imgui.Button("+", 15, 25)
@@ -624,9 +630,34 @@ function kc_imgui_rotary_mcp(label,system,ypos,id)
 	imgui.PopStyleColor()
 end
 
+-- render a value as input field
+function kc_imgui_number_mcp(label,system,ypos,id,width)
+	imgui.PushStyleColor(imgui.constant.Col.Button, color_mcp_button)
+	imgui.PushStyleColor(imgui.constant.Col.ButtonActive, color_mcp_active)
+	imgui.PushStyleColor(imgui.constant.Col.ButtonHovered, color_mcp_hover)
+	imgui.PushStyleColor(imgui.constant.Col.Text,color_mcp_text)
+
+	imgui.TextUnformatted("XPDR:")
+	imgui.SameLine()
+	imgui.PushItemWidth(38);
+	imgui.PushID("XPDRCODE:")
+		imgui.PushStyleColor(imgui.constant.Col.Text,color_bright_green)
+		local changed, textin = imgui.InputText("", system:getStatus(), 255)
+		if changed then
+			system:setValue(textin)
+		end
+	imgui.PopStyleColor()
+	imgui.PopID()
+
+	imgui.PopStyleColor()
+	imgui.PopStyleColor()
+	imgui.PopStyleColor()
+	imgui.PopStyleColor()
+end
+
 function kc_imgui_selector_mcp(label,system,ypos,sarray,id)
-    imgui.SameLine()
-	imgui.SetCursorPosY(ypos)
+    -- imgui.SameLine()
+	-- imgui.SetCursorPosY(ypos)
 	imgui.PushStyleColor(imgui.constant.Col.Button, color_mcp_button)
 	imgui.PushStyleColor(imgui.constant.Col.ButtonActive, color_mcp_active)
 	imgui.PushStyleColor(imgui.constant.Col.ButtonHovered, color_mcp_hover)
@@ -640,11 +671,11 @@ function kc_imgui_selector_mcp(label,system,ypos,sarray,id)
 	imgui.PopID()
 	
 	imgui.SameLine()
-	imgui.SetCursorPosY(ypos + 2)
+	-- imgui.SetCursorPosY(ypos + 2)
 	imgui.TextUnformatted(string.format(label,sarray[system:getStatus()]))
 
 	imgui.SameLine()
-	imgui.SetCursorPosY(ypos)
+	-- imgui.SetCursorPosY(ypos)
 	
     imgui.PushID(id)
 	imgui.Button("+", 15, 25)
@@ -662,32 +693,30 @@ end
 
 -- enter any value
 function kc_imgui_value(label,system,ypos)
-    imgui.SameLine()
-	imgui.SetCursorPosY(ypos)
+    -- imgui.SameLine()
+	-- imgui.SetCursorPosY(ypos)
 	imgui.PushStyleColor(imgui.constant.Col.Text,color_mcp_text)
 
-	imgui.SetCursorPosY(ypos + 2)
+	-- imgui.SetCursorPosY(ypos + 2)
 	imgui.TextUnformatted(string.format(label,system:getStatus()))
 
-	imgui.SetCursorPosY(ypos)
+	-- imgui.SetCursorPosY(ypos)
 	
 	imgui.PopStyleColor()
 end
 
 -- render a label /also used as separator stroke)
 function kc_imgui_label_mcp(label,ypos)
-    imgui.SameLine()
-	imgui.SetCursorPosY(ypos+2)
+    -- imgui.SameLine()
+	-- imgui.SetCursorPosY(ypos+2)
 	imgui.PushStyleColor(imgui.constant.Col.Text,color_mcp_text)
 	imgui.TextUnformatted(label)
 	imgui.PopStyleColor()
-	imgui.SetCursorPosY(ypos)
+	-- imgui.SetCursorPosY(ypos)
 end
 
 -- render a simple button without status light
 function kc_imgui_simple_button_mcp(label,system,ypos,width,height)
-    imgui.SameLine()
-	imgui.SetCursorPosY(ypos)
 	imgui.PushStyleColor(imgui.constant.Col.Button, color_mcp_button)
 	imgui.PushStyleColor(imgui.constant.Col.ButtonActive, color_mcp_active)
 	imgui.PushStyleColor(imgui.constant.Col.ButtonHovered, color_mcp_hover)
@@ -701,9 +730,23 @@ function kc_imgui_simple_button_mcp(label,system,ypos,width,height)
 	imgui.PopStyleColor()
 end
 
+function kc_imgui_cmd_button(label,command,ypos,width,height)
+	imgui.PushStyleColor(imgui.constant.Col.Button, color_mcp_button)
+	imgui.PushStyleColor(imgui.constant.Col.ButtonActive, color_mcp_active)
+	imgui.PushStyleColor(imgui.constant.Col.ButtonHovered, color_mcp_hover)
+	imgui.PushStyleColor(imgui.constant.Col.Text,color_mcp_text)
+	if imgui.Button(label, width, height) then
+		command_once(command)
+	end
+	imgui.PopStyleColor()
+	imgui.PopStyleColor()
+	imgui.PopStyleColor()
+	imgui.PopStyleColor()
+end
+
 function kc_imgui_simple_actuator(label,system,action,ypos,width,height)
-    imgui.SameLine()
-	imgui.SetCursorPosY(ypos)
+    -- imgui.SameLine()
+	-- imgui.SetCursorPosY(ypos)
 	imgui.PushStyleColor(imgui.constant.Col.Button, color_mcp_button)
 	imgui.PushStyleColor(imgui.constant.Col.ButtonActive, color_mcp_active)
 	imgui.PushStyleColor(imgui.constant.Col.ButtonHovered, color_mcp_hover)
@@ -721,7 +764,7 @@ end
 function kc_imgui_radio(radio,label,course,fine,standby,active,flip,ypos,id)
 
     -- imgui.SameLine()
-	imgui.SetCursorPosY(ypos)
+	-- imgui.SetCursorPosY(ypos)
 	imgui.PushStyleColor(imgui.constant.Col.Button, color_mcp_button)
 	imgui.PushStyleColor(imgui.constant.Col.ButtonActive, color_mcp_active)
 	imgui.PushStyleColor(imgui.constant.Col.ButtonHovered, color_mcp_hover)
@@ -744,11 +787,6 @@ function kc_imgui_radio(radio,label,course,fine,standby,active,flip,ypos,id)
 	
 	if radio == 1 then
 		imgui.SameLine()
-		imgui.SetCursorPosY(ypos + 2)
-		imgui.TextUnformatted(string.format(label .. "%06.3f",standby:getStatus()/1000))
-
-		imgui.SameLine()
-		imgui.SetCursorPosY(ypos)
 		imgui.PushStyleColor(imgui.constant.Col.Text,color_bright_green)
 		imgui.Button(string.format("%06.3f",active:getStatus()/1000), 55, 25)
 		if imgui.IsItemActive() then
@@ -758,11 +796,6 @@ function kc_imgui_radio(radio,label,course,fine,standby,active,flip,ypos,id)
 	end
 	if radio == 2 then
 		imgui.SameLine()
-		imgui.SetCursorPosY(ypos + 2)
-		imgui.TextUnformatted(string.format(label .. "%05.2f",standby:getStatus()/100))
-
-		imgui.SameLine()
-		imgui.SetCursorPosY(ypos)
 		imgui.PushStyleColor(imgui.constant.Col.Text,color_bright_green)
 		imgui.Button(string.format("%05.2f",active:getStatus()/100), 55, 25)
 		if imgui.IsItemActive() then
@@ -772,11 +805,6 @@ function kc_imgui_radio(radio,label,course,fine,standby,active,flip,ypos,id)
 	end
 	if radio == 3 then
 		imgui.SameLine()
-		imgui.SetCursorPosY(ypos + 2)
-		imgui.TextUnformatted(string.format(label .. "%03.0f",standby:getStatus()))
-
-		imgui.SameLine()
-		imgui.SetCursorPosY(ypos)
 		imgui.PushStyleColor(imgui.constant.Col.Text,color_bright_green)
 		imgui.Button(string.format("%03.0f",active:getStatus()), 55, 25)
 		if imgui.IsItemActive() then
@@ -800,6 +828,19 @@ function kc_imgui_radio(radio,label,course,fine,standby,active,flip,ypos,id)
 		course:step(slowUp)
 	end
 	imgui.PopID()
+
+	if radio == 1 then
+		imgui.SameLine()
+		imgui.TextUnformatted(string.format(label .. "%06.3f",standby:getStatus()/1000))
+	end
+	if radio == 2 then
+		imgui.SameLine()
+		imgui.TextUnformatted(string.format(label .. "%05.2f",standby:getStatus()/100))
+	end
+	if radio == 3 then
+		imgui.SameLine()
+		imgui.TextUnformatted(string.format(label .. "%03.0f",standby:getStatus()))
+	end
 
 	imgui.PopStyleColor()
 	imgui.PopStyleColor()
@@ -921,7 +962,7 @@ end
 
 function kc_pushback_call()
 	if activePrefSet:get("general:betterPushback") == true then
-		command_once("BetterPushback/connect_first")
+		command_once("BetterPushback/start")
 	end
 end
 
@@ -940,4 +981,13 @@ end
 
 function kc_show_sges_window()
 	show_windoz()
+end
+
+-- find latest file in folder for XP12 weather
+function kb_get_latest_filename(folder)
+    local command = 'dir /a-d /o-n /tc /b "'.. folder ..'" 2>nul:'
+    local pipe = io.popen(command)
+    local filename = pipe:read()
+    pipe:close()
+    return filename
 end

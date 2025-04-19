@@ -3,29 +3,7 @@
 
 -- @classmod sysEFIS
 -- @author Kosta Prokopiu
--- @copyright 2022 Kosta Prokopiu
-local sysEFIS = {
-	mapRange_5 		= 0,
-	mapRange10 		= 1,
-	mapRange20 		= 2,
-	mapRange40 		= 3,
-	mapRange80 		= 4,
-	mapRange160 	= 5,
-	mapRange320 	= 6,
-	mapRange640 	= 7,
-	
-	mapModeAPP 		= 0,
-	mapModeVOR 		= 1,
-	mapModeMAP 		= 2,
-	mapModePLAN 	= 3,
-	
-	voradfVOR 		= 1,
-	voradfOFF 		= 0,
-	voradfADF 		= -1,
-	
-	minsTypeRadio 	= 0,
-	minsTypeBaro 	= 1
-}
+-- @copyright 2025 Kosta Prokopiu
 
 local TwoStateDrefSwitch 	= require "kpcrew.systems.TwoStateDrefSwitch"
 local TwoStateCmdSwitch	 	= require "kpcrew.systems.TwoStateCmdSwitch"
@@ -36,6 +14,29 @@ local CustomAnnunciator 	= require "kpcrew.systems.CustomAnnunciator"
 local TwoStateToggleSwitch	= require "kpcrew.systems.TwoStateToggleSwitch"
 local MultiStateCmdSwitch 	= require "kpcrew.systems.MultiStateCmdSwitch"
 local InopSwitch 			= require "kpcrew.systems.InopSwitch"
+
+sysEFIS = require("kpcrew.systems.DFLT.sysEFIS")
+
+sysEFIS.mapRange_5 		= 0
+sysEFIS.mapRange10 		= 1
+sysEFIS.mapRange20 		= 2
+sysEFIS.mapRange40 		= 3
+sysEFIS.mapRange80 		= 4
+sysEFIS.mapRange160 	= 5
+sysEFIS.mapRange320 	= 6
+sysEFIS.mapRange640 	= 7
+
+sysEFIS.mapModeAPP 		= 0
+sysEFIS.mapModeVOR 		= 1
+sysEFIS.mapModeMAP 		= 2
+sysEFIS.mapModePLAN 	= 3
+
+sysEFIS.voradfVOR 		= 1
+sysEFIS.voradfOFF 		= 0
+sysEFIS.voradfADF 		= -1
+
+sysEFIS.minsTypeRadio 	= 0
+sysEFIS.minsTypeBaro 	= 1
 
 ------------- Switches
 

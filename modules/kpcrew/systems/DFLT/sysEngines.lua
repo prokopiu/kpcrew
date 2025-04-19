@@ -3,9 +3,12 @@
 
 -- @classmod sysEngines
 -- @author Kosta Prokopiu
--- @copyright 2022 Kosta Prokopiu
+-- @copyright 2024 Kosta Prokopiu
+
 local sysEngines = {
 }
+
+logMsg("DFLT sysEngines")
 
 local TwoStateDrefSwitch 	= require "kpcrew.systems.TwoStateDrefSwitch"
 local TwoStateCmdSwitch	 	= require "kpcrew.systems.TwoStateCmdSwitch"
@@ -26,15 +29,57 @@ local drefEngine2Oil 		= "sim/cockpit/warnings/annunciators/oil_pressure_low"
 local drefEngine1Fire 		= "sim/cockpit2/annunciators/engine_fires"
 local drefEngine2Fire 		= "sim/cockpit2/annunciators/engine_fires"
 
-logMsg ("Engine DFLT")
-
 ----------- Switches
 
 -- Starter Switches
-sysEngines.engStart1Switch	= InopSwitch:new("starter1")
-sysEngines.engStart2Switch	= InopSwitch:new("starter2")
-sysEngines.engStart3Switch	= InopSwitch:new("starter3")
-sysEngines.engStart4Switch	= InopSwitch:new("starter4")
+sysEngines.engStart1Switch	= TwoStateCustomSwitch:new("starter1","",0,
+function () 
+	kc_procvar_set("engstart1",true)
+end,
+function () 
+	kc_procvar_set("engstart1",false)
+end,
+function () 
+end,
+function () 
+	return get("sim/flightmodel2/engines/starter_is_running",0)
+end)
+sysEngines.engStart2Switch	= TwoStateCustomSwitch:new("starter2","",0,
+function () 
+	kc_procvar_set("engstart2",true)
+end,
+function () 
+	kc_procvar_set("engstart2",false)
+end,
+function () 
+end,
+function () 
+	return get("sim/flightmodel2/engines/starter_is_running",1)
+end)
+sysEngines.engStart3Switch	= TwoStateCustomSwitch:new("starter3","",0,
+function () 
+	kc_procvar_set("engstart3",true)
+end,
+function () 
+	kc_procvar_set("engstart3",false)
+end,
+function () 
+end,
+function () 
+	return get("sim/flightmodel2/engines/starter_is_running",2)
+end)
+sysEngines.engStart4Switch	= TwoStateCustomSwitch:new("starter4","",0,
+function () 
+	kc_procvar_set("engstart4",true)
+end,
+function () 
+	kc_procvar_set("engstart4",false)
+end,
+function () 
+end,
+function () 
+	return get("sim/flightmodel2/engines/starter_is_running",3)
+end)
 sysEngines.engStarterGroup 	= SwitchGroup:new("engstarters")
 sysEngines.engStarterGroup:addSwitch(sysEngines.engStart1Switch)
 sysEngines.engStarterGroup:addSwitch(sysEngines.engStart2Switch)
@@ -51,6 +96,17 @@ function ()
 	-- end
 end)
 
+-- ignition
+sysEngines.engIgnition1	= TwoStateDrefSwitch:new("ignition1","sim/cockpit2/engine/actuators/auto_ignite_on",-1,
+	"aerobask/igniter_toggle")
+sysEngines.engIgnition2	= TwoStateDrefSwitch:new("ignition2","sim/cockpit2/engine/actuators/auto_ignite_on",1)
+sysEngines.engIgnition3	= TwoStateDrefSwitch:new("ignition3","sim/cockpit2/engine/actuators/auto_ignite_on",2)
+sysEngines.engIgnition4	= TwoStateDrefSwitch:new("ignition4","sim/cockpit2/engine/actuators/auto_ignite_on",3)
+sysEngines.engIgnitionGroup 	= SwitchGroup:new("ignitions")
+sysEngines.engIgnitionGroup:addSwitch(sysEngines.engIgnition1)
+sysEngines.engIgnitionGroup:addSwitch(sysEngines.engIgnition2)
+sysEngines.engIgnitionGroup:addSwitch(sysEngines.engIgnition3)
+sysEngines.engIgnitionGroup:addSwitch(sysEngines.engIgnition4)
 
 -- Reversers
 sysEngines.reverser1 		= TwoStateCustomSwitch:new("reverse1",drefReverserState,-1,
@@ -155,6 +211,11 @@ sysEngines.magnetoStartStop		= TwoStateCustomSwitch:new("magnetoStart","",0,
 	end	
 )
 
+sysEngines.throttlePos			= TwoStateDrefSwitch:new("throttlepos",
+"sim/cockpit2/engine/actuators/throttle_ratio_all",0)
+
+sysEngines.mixtureLever			= TwoStateDrefSwitch:new("mixturelever","sim/cockpit2/engine/actuators/mixture_ratio_all",0)
+sysEngines.propLever			= TwoStateDrefSwitch:new("proplever","sim/cockpit2/engine/actuators/prop_rotation_speed_rad_sec_all",0)
 
 ----------- Annunciators
 

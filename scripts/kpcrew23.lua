@@ -2,7 +2,7 @@
 	*** KPCREW 2.3
 	Virtual copilot for X-PLane 11/12
 	Kosta Prokopiu, July 2023
-	Changed January 2024
+	Changed March 2025
 --]]
 
 require "kpcrew.genutils"
@@ -11,10 +11,14 @@ require "kpcrew.systems.activities"
 local Flow = require "kpcrew.Flow"
 local FlowItem = require "kpcrew.FlowItem"
 
-kc_VERSION = "2.3-alpha9"
+kc_VERSION = "2.3-alpha10"
 kc_simversion = get("sim/version/xplane_internal_version")
 
-logMsg ( "FWL: ** Starting KPCrew version " .. kc_VERSION .." **" )
+logMsg ( "FWL: ** Starting KPCrew version " .. kc_VERSION .. " on XP " .. kc_simversion .. " **" )
+
+if kc_simversion > 120000 then
+require "kpcrew.metargen"
+end 
 
 -- ====== Global variables =======
 kc_acf_icao = "DFLT" -- active addon aircraft ICAO code (DFLT when nothing found)
@@ -22,35 +26,106 @@ kc_acf_icao = "DFLT" -- active addon aircraft ICAO code (DFLT when nothing found
 -- ====== Select the addon modules based on ICAO code
 if PLANE_ICAO == "B738" then
 	if PLANE_TAILNUMBER ~= "ZB738" then
-		kc_acf_icao = "DFLT" 
+		kc_acf_icao = "B737" 
 	else
 		kc_acf_icao = "B738" -- Zibo Mod
+		-- change the icao if you want the abbreviated DFLT SOP
+		-- kc_acf_icao = "B737"
 	end
+
+-- Epic Victory Aerobask
+-- elseif PLANE_ICAO == "EVIC" then
+	-- kc_acf_icao = "EVIC"
+
+-- Epic E1000 Aerobask
+-- elseif PLANE_ICAO == "EPIC" then
+	-- kc_acf_icao = "EPIC"
+
+-- Thranda PC12
+-- elseif PLANE_ICAO == "PC12" then
+	-- kc_acf_icao = "PC12"
+	
+-- FF A350
 -- elseif PLANE_ICAO == "A359" then
 	-- kc_acf_icao = "A359"
+
+-- Laminar SF50
+-- elseif PLANE_ICAO == "SF50" then
+	-- kc_acf_icao = "SF50"
+	
 -- XP12 Citation X
 elseif PLANE_ICAO == "C750" and PLANE_TAILNUMBER == "N750XP" then
 	kc_acf_icao = "C750"
--- elseif PLANE_ICAO == "C172" and PLANE_TAILNUMBER ~= "OK-AFL" then
-	-- kc_acf_icao = "C172"
+	
 -- XP12 A330-300 Laminar
 elseif PLANE_ICAO == "A333" then
-	kc_acf_icao = "A333"
--- elseif PLANE_ICAO == "C172" and PLANE_TAILNUMBER == "OK-AFL" then
-	-- kc_acf_icao = "C17D"
+	kc_acf_icao = "A33L"
+	
+-- Inibuilds A300
 -- elseif PLANE_ICAO == "A306" then
 	-- kc_acf_icao = "A306"
+
+-- FF 7x7
+-- elseif PLANE_ICAO == "B762" or PLANE_ICAO == "B763" or PLANE_ICAO == "B764" then
+	-- kc_acf_icao = "B7x7"
+	
+-- Rotate MD-11
 -- elseif PLANE_ICAO == "MD11" then
 	-- kc_acf_icao = "MD11"
+	
+-- FJsim 737	
 -- elseif PLANE_ICAO == "B732" then
 	-- kc_acf_icao = "B732"
+
+-- IXEG 737
 -- elseif PLANE_ICAO == "B733" then
 	-- kc_acf_icao = "B733"
--- elseif PLANE_ICAO == "A320" and PLANE_TAILNUMBER == "A320" then
-	-- kc_acf_icao = "A20N"
+	
+-- X-CRAFTS E-JET FAMILIY XP12 (E1XX)
+-- E-JET FAM 170  170/170
+-- E-JET FAM 175  175/175
+-- E-JET FAM 190  190/190
+-- E-JET FAM 195  195/195
+-- elseif PLANE_ICAO == "E170" and PLANE_TAILNUMBER == "E170" then
+	-- kc_acf_icao = "E1XX"
+-- elseif PLANE_ICAO == "E175" and PLANE_TAILNUMBER == "E175" then
+	-- kc_acf_icao = "E1XX"
+-- elseif PLANE_ICAO == "E190" and PLANE_TAILNUMBER == "E190" then
+	-- kc_acf_icao = "E1XX"
+-- elseif PLANE_ICAO == "E195" and PLANE_TAILNUMBER == "E195" then
+	-- kc_acf_icao = "E1XX"
+	
+-- X-CRAFTS FREE E-JETS XP12 (E1FF)
+-- Free 175       170/175
+-- Free 195       190/195
+elseif PLANE_ICAO == "E170" and PLANE_TAILNUMBER == "E175" then
+	kc_acf_icao = "E1FF"
+elseif PLANE_ICAO == "E190" and PLANE_TAILNUMBER == "E195" then
+	kc_acf_icao = "E1FF"
+	
+-- ToLiss Airbusses
+elseif PLANE_ICAO == "A319" and PLANE_TAILNUMBER == "C-GTLS" then
+	kc_acf_icao = "A3TL"
+elseif PLANE_ICAO == "A20N" and PLANE_TAILNUMBER == "C-GTLT" then
+	kc_acf_icao = "A3TL"
+elseif PLANE_ICAO == "A321" then
+	kc_acf_icao = "A3TL"
+-- elseif PLANE_ICAO == "A339" then
+	-- kc_acf_icao = "A3TL"
+-- elseif PLANE_ICAO == "A346" then
+	-- kc_acf_icao = "A3TL"
+	
 -- Laminar MD-82
--- elseif PLANE_ICAO == "MD82" and PLANE_TAILNUMBER == "N552AA" then
-	-- kc_acf_icao = "MD82"
+elseif PLANE_ICAO == "MD82" and PLANE_TAILNUMBER == "N552AA" then
+	kc_acf_icao = "MD82"
+	
+-- RotateSim MD-88
+-- elseif PLANE_ICAO == "MD88" then
+	-- kc_acf_icao = "MD88"
+	
+-- Aerobask Phenom 300
+-- elseif PLANE_ICAO == "E55P" then
+	-- kc_acf_icao = "E55P"
 end
 
 -- Aircraft Specific SOP/Checklist/Procedure Definitions
@@ -229,7 +304,7 @@ kc_ctrl_wnd_state = 0
 function kc_master_button()
 	if getActivePrefs():get("general:assistance") == 1 and kc_ctrl_wnd_state == 0 then
 		kc_ctrl_wnd_state = 1
-		local xpos = kc_scrn_width - 755
+		local xpos = kc_scrn_width - 705
 		float_wnd_set_geometry(kc_ctrl_wnd, xpos, 46, kc_scrn_width, 1)
 	end
 	if kc_mstr_button_state == kc_mstr_state_new_flow then
@@ -288,7 +363,7 @@ end
 function kc_init_ctrl_window()
 	if kc_ctrl_wnd == 0 or kc_ctrl_wnd == nil then	
 		kc_ctrl_wnd = float_wnd_create(25, 45, 2, true)
-		local xpos = kc_scrn_width - 755
+		local xpos = kc_scrn_width - 705
 		if kc_ctrl_wnd_state == 0 then
 			xpos = kc_scrn_width - 25
 		end
@@ -348,7 +423,7 @@ function kc_ctrl_builder()
 	if get("sim/graphics/view/window_width") ~= kc_scrn_width or get("sim/graphics/view/window_height") ~= kc_scrn_height then
 		kc_scrn_width = get("sim/graphics/view/window_width")
 		kc_scrn_height = get("sim/graphics/view/window_height")
-		local xpos = kc_scrn_width - 755
+		local xpos = kc_scrn_width - 705
 		if kc_ctrl_wnd_state == 0 then
 			xpos = kc_scrn_width - 25
 		end
@@ -363,7 +438,7 @@ function kc_ctrl_builder()
 		imgui.Button("<", 15, 25)
 		if imgui.IsItemActive() then
 			kc_ctrl_wnd_state = 1
-			local xpos = kc_scrn_width - 755
+			local xpos = kc_scrn_width - 705
 			float_wnd_set_geometry(kc_ctrl_wnd, xpos, 46, kc_scrn_width, 1)
 		end
 		imgui.SameLine()
@@ -431,10 +506,13 @@ function kc_ctrl_builder()
 		getActiveSOP():getActiveFlow():reset()
 	end
 	imgui.PopStyleColor()
-    imgui.SameLine()
-	if imgui.Button("BRIEF", 45, 25) then
-		kc_wnd_brief_action = 1
-	end
+    -- imgui.SameLine()
+	-- if imgui.Button("BRIEF", 45, 25) then
+		-- kb_show_only_once = 0
+		-- kb_hide_only_once = 0
+		-- kb_brief_toggle_wnd()
+		-- command_once("kpbrief/window/open")
+	-- end
     imgui.SameLine()
 	if imgui.Button("PREF", 35, 25) then
 		kc_wnd_pref_action = 1
@@ -527,51 +605,52 @@ if kc_file_exists(SCRIPT_DIRECTORY .. "..\\Modules\\kpcrew_prefs\\" .. kc_acf_ic
 end
 
 -- ===== Briefings window =====
-kc_show_brief_once = 0
-kc_hide_brief_once = 0
-kc_brief_wnd = nil
+-- kc_show_brief_once = 0
+-- kc_hide_brief_once = 0
+-- kc_brief_wnd = nil
 
-function kc_init_brief_window(briefing)
-	local height = briefing:getWndHeight()
-	local width = briefing:getWndWidth()
-	kc_brief_wnd = float_wnd_create(width, height, 1, true)
-	float_wnd_set_title(kc_brief_wnd, briefing:getName())
-	float_wnd_set_imgui_builder(kc_brief_wnd, "kc_brief_builder")
-	float_wnd_set_position(kc_brief_wnd, briefing:getWndXPos(), briefing:getWndYPos())
-end
+-- function kc_init_brief_window(briefing)
+	-- local height = briefing:getWndHeight()
+	-- local width = briefing:getWndWidth()
+	-- kc_brief_wnd = float_wnd_create(width, height, 1, true)
+	-- float_wnd_set_title(kc_brief_wnd, briefing:getName())
+	-- float_wnd_set_imgui_builder(kc_brief_wnd, "kc_brief_builder")
+	-- float_wnd_set_position(kc_brief_wnd, briefing:getWndXPos(), briefing:getWndYPos())
+-- end
 
-function kc_brief_builder()
-	getActiveBriefings():render()
-end
+-- function kc_brief_builder()
+	-- getActiveBriefings():render()
+-- end
 
-function kc_hide_brief_wnd()
-	if kc_brief_wnd then 
-		float_wnd_destroy(kc_brief_wnd)
-	end
-end
+-- function kc_hide_brief_wnd()
+	-- if kc_brief_wnd then 
+		-- float_wnd_destroy(kc_brief_wnd)
+	-- end
+-- end
 
-function kc_toggle_brief_window()
-	kc_show_brief = not kc_show_brief
-	if kc_show_brief then
-		if kc_show_brief_once == 0 then
-			kc_init_brief_window(getActiveBriefings())
-			kc_show_brief_once = 1
-			kc_hide_brief_once = 0
-		end
-	else
-		if kc_hide_brief_once == 0 then
-			kc_hide_brief_wnd()
-			kc_show_brief_once = 0
-			kc_hide_brief_once = 1
-		end
-	end
-end
+-- function kc_toggle_brief_window()
+	-- kc_show_brief = not kc_show_brief
+	-- if kc_show_brief then
+		-- if kc_show_brief_once == 0 then
+			-- kc_init_brief_window(getActiveBriefings())
+			-- kc_show_brief_once = 1
+			-- kc_hide_brief_once = 0
+		-- end
+	-- else
+		-- if kc_hide_brief_once == 0 then
+			-- kc_hide_brief_wnd()
+			-- kc_show_brief_once = 0
+			-- kc_hide_brief_once = 1
+		-- end
+	-- end
+-- end
 
 -- ===== Background  Window control - direct window commands do not work as expected =====
 kc_wnd_sop_action = 0
 kc_wnd_flow_action = 0
 kc_wnd_pref_action = 0
-kc_wnd_brief_action = 0
+-- kc_wnd_brief_action = 0
+
 
 function bckWindowOpen()
 	if kc_wnd_sop_action == 1 then
@@ -590,10 +669,10 @@ function bckWindowOpen()
 		kc_wnd_pref_action = 0
 		kc_toggle_pref_window()
 	end
-	if kc_wnd_brief_action == 1 then
-		kc_wnd_brief_action = 0
-		kc_toggle_brief_window()
-	end
+	-- if kc_wnd_brief_action == 1 then
+		-- kc_wnd_brief_action = 0
+		-- kc_toggle_brief_window()
+	-- end
 end
 
 if kc_file_exists(SCRIPT_DIRECTORY .. "..\\Modules\\kpcrew_prefs\\briefings.preferences") then
@@ -615,7 +694,7 @@ create_command("kp/crew/next", "KPCrew Nextbutton","kc_next_button()","","")
 create_command("kp/crew/prev", "KPCrew Prevbutton","kc_prev_button()","","")
 create_command("kp/crew/flowwindow", "KPCrew Toggle Flow Window","kc_wnd_flow_action=1","","")
 create_command("kp/crew/sopwindow", "KPCrew Toggle SOP Window","kc_wnd_sop_action=1","","")
-create_command("kp/crew/openmaster", "KPCrew Open Master Window","kc_ctrl_wnd_state = 1 kc_ctrl_wnd_off=false local xpos = kc_scrn_width - 755 float_wnd_set_geometry(kc_ctrl_wnd, xpos, 46, kc_scrn_width, 1)","","")
-create_command("kp/crew/briefwindow", "KPCrew Toggle Briefing Window","kc_wnd_brief_action=1","","")
+create_command("kp/crew/openmaster", "KPCrew Open Master Window","kc_ctrl_wnd_state = 1 kc_ctrl_wnd_off=false local xpos = kc_scrn_width - 705 float_wnd_set_geometry(kc_ctrl_wnd, xpos, 46, kc_scrn_width, 1)","","")
+-- create_command("kp/crew/briefwindow", "KPCrew Toggle Briefing Window","kb_brief_toggle_wnd()","","")
 
-add_macro("KPCrew Toggle Control Window", "kc_ctrl_wnd_state = 1 kc_ctrl_wnd_off=false local xpos = kc_scrn_width - 755 float_wnd_set_geometry(kc_ctrl_wnd, xpos, 46, kc_scrn_width, 1)")
+add_macro("KPCrew Toggle Control Window", "kc_ctrl_wnd_state = 1 kc_ctrl_wnd_off=false local xpos = kc_scrn_width - 705 float_wnd_set_geometry(kc_ctrl_wnd, xpos, 46, kc_scrn_width, 1)")

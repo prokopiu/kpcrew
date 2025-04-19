@@ -4,9 +4,7 @@
 
 -- @classmod sysLights
 -- @author Kosta Prokopiu
--- @copyright 2022 Kosta Prokopiu
-local sysLights = {
-}
+-- @copyright 2025 Kosta Prokopiu
 
 local TwoStateDrefSwitch 	= require "kpcrew.systems.TwoStateDrefSwitch"
 local TwoStateCmdSwitch	 	= require "kpcrew.systems.TwoStateCmdSwitch"
@@ -27,12 +25,7 @@ local drefRWYRight 			= "laminar/B738/toggle_switch/rwy_light_right"
 local drefPanelBright 		= "laminar/B738/electric/panel_brightness"
 local drefGenericLights 	= "laminar/B738/electric/generic_brightness"
 
--- ** Beacons or Anticollision Lights, single, onoff, command driven
-sysLights.beaconSwitch 		= TwoStateCmdSwitch:new("beacon","sim/cockpit/electrical/beacon_lights_on",0,
-	"sim/lights/beacon_lights_on","sim/lights/beacon_lights_off","sim/lights/beacon_lights_toggle")
-
--- ** Beacons or Anticollision Light(s) status
-sysLights.beaconAnc 		= SimpleAnnunciator:new("beaconlights","sim/cockpit/electrical/beacon_lights_on",0)
+sysLights = require("kpcrew.systems.DFLT.sysLights")
 
 -- ** Position Lights, single onoff command driven
 sysLights.positionSwitch 	= TwoStateCmdSwitch:new("position","laminar/B738/toggle_switch/position_light_pos",0,
@@ -131,7 +124,7 @@ sysLights.wheelAnc 			= SimpleAnnunciator:new("wheellights",drefGenericLights,5)
 sysLights.domeLightSwitch 	= TwoStateCmdSwitch:new("dome","laminar/B738/toggle_switch/cockpit_dome_pos",0,
 	"laminar/B738/toggle_switch/cockpit_dome_up","laminar/B738/toggle_switch/cockpit_dome_dn")
 sysLights.domeLightGroup 	= SwitchGroup:new("dome lights")
-sysLights.rwyLightGroup:addSwitch(sysLights.domeLightSwitch)
+sysLights.domeLightGroup:addSwitch(sysLights.domeLightSwitch)
 
 -- ** Dome Light(s) status
 sysLights.domeAnc 			= CustomAnnunciator:new("domelights",

@@ -3,7 +3,8 @@
 
 -- @classmod sysAice
 -- @author Kosta Prokopiu
--- @copyright 2022 Kosta Prokopiu
+-- @copyright 2025 Kosta Prokopiu
+
 local sysAice = {
 }
 
@@ -21,6 +22,8 @@ local drefAiceWingLeft 		= "laminar/B738/annunciator/wing_ice_on_L"
 local drefAiceWingRight 	= "laminar/B738/annunciator/wing_ice_on_R"
 local drefAiceEng1 			= "laminar/B738/annunciator/cowl_ice_on_0"
 local drefAiceEng2 			= "laminar/B738/annunciator/cowl_ice_on_1"
+
+sysAice = require("kpcrew.systems.DFLT.sysAice")
 
 -- ===== Switches
 

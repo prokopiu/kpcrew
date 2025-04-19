@@ -2,11 +2,10 @@
 
 -- @classmod SOP_C750
 -- @author Kosta Prokopiu
--- @copyright 2024 Kosta Prokopiu
-local SOP_C750 = {
-}
+-- @copyright 2025 Kosta Prokopiu
 
 -- SOP related imports
+
 local SOP					= require "kpcrew.sops.SOP"
 
 local Flow					= require "kpcrew.Flow"
@@ -50,18 +49,10 @@ kcSopFlightPhase = { [1] = "Cold & Dark", 	[2] = "Prel Preflight", [3] = "Prefli
 					 [13] = "Approach", 	[14] = "Landing", 		[15] = "Turnoff", 		[16] = "Taxi to Stand", 
 					 [17] = "Shutdown", 	[18] = "Turnaround",	[19] = "Flightplanning", [20] = "Go Around", [0] = "" }
 
--- Set up SOP =========================================================================
-
 activeSOP = SOP:new("Laminar Citation X SOP")
 
--- test procedure not used in SOP
-local testProc = Procedure:new("TEST","","")
-testProc:setFlightPhase(1)
-testProc:addItem(ProcedureItem:new("LIGHTS","ALL ON",FlowItem.actorFO,5,false,
-	function () 
-	  kc_macro_lights_all_on()
-	end))
-	
+kc_num_visible_sop_items = 21
+
 -- =====================================================================================================================
 
 -- ================== ORIGINATING CHECK ==================
@@ -111,10 +102,6 @@ testProc:addItem(ProcedureItem:new("LIGHTS","ALL ON",FlowItem.actorFO,5,false,
 
 local electricalPowerUpProc = Procedure:new("ORIGINATING CHECK","","")
 electricalPowerUpProc:setFlightPhase(1)
-electricalPowerUpProc:addItem(SimpleProcedureItem:new("== Initial Checks"))
-electricalPowerUpProc:addItem(SimpleProcedureItem:new("All paper work on board and checked"))
-electricalPowerUpProc:addItem(SimpleProcedureItem:new("Circuit breakers checked (not coded)"))
-electricalPowerUpProc:addItem(SimpleProcedureItem:new("Fire extinguisher  checked (not coded)"))
 
 electricalPowerUpProc:addItem(ProcedureItem:new("BATTERY SWITCH 1 & 2","ON",FlowItem.actorFO,0,
 	function () return sysElectric.batterySwitch:getStatus() == 1 and sysElectric.battery2Switch:getStatus() == 1 end,
@@ -176,7 +163,10 @@ electricalPowerUpProc:addItem(IndirectProcedureItem:new("BATTERIES, 23 VOLTS","C
 	end))
 electricalPowerUpProc:addItem(ProcedureItem:new("EXT PWR","AS REQUIRED",FlowItem.actorFO,0,
 	function () return sysElectric.gpuSwitch:getStatus() == 1 end,
-	function () sysElectric.gpuSwitch:actuate(1) end,
+	function () 
+		command_once("sim/ground_ops/service_plane")
+		sysElectric.gpuSwitch:actuate(1) 
+	end,
 	function () return activePrefSet:get("aircraft:powerup_ext") == false end))
 
 
@@ -227,38 +217,44 @@ electricalPowerUpProc:addItem(ProcedureItem:new("BLEED ISOL VALVE","OPEN",FlowIt
 	function ()
 		sysAir.isoValveSwitch:actuate(0)
 	end))
-electricalPowerUpProc:addItem(IndirectProcedureItem:new("PRESSURIZATION ALT","(%i) %i FT|get(\"laminar/CitX/pressurization/altitude\")|get(\"sim/cockpit2/autopilot/altitude_readout_preselector\")",FlowItem.actorCPT,0,"pressalt",
+electricalPowerUpProc:addItem(IndirectProcedureItem:new("PRESSURIZATION ALT","(%i) %i FT|get(\"laminar/CitX/pressurization/altitude\")|activeBriefings:get(\"departure:aptElevation\")",FlowItem.actorCPT,0,"pressalt",
 	function () 
 		return math.abs(get("laminar/CitX/pressurization/altitude") - 
-			get("sim/cockpit2/autopilot/altitude_readout_preselector")) < 100 
+			activeBriefings:get("departure:aptElevation")) < 100 
 	end))
 
-electricalPowerUpProc:addItem(SimpleProcedureItem:new("== APU ON"))
 electricalPowerUpProc:addItem(ProcedureItem:new("#spell|APU# SYSTEM MASTER","ON",FlowItem.actorFO,0,
 	function () return sysElectric.apuMasterSwitch:getStatus() == 1 end,
-	function () sysElectric.apuMasterSwitch:actuate(1) end))
+	function () sysElectric.apuMasterSwitch:actuate(1) end,
+	function () return activeBriefings:get("departure:activateAPUPowerUp") == 2 end))	
 electricalPowerUpProc:addItem(IndirectProcedureItem:new("#spell|APU# TEST","PUSH",FlowItem.actorFO,2,"aputest",
 	function () return get("laminar/CitX/APU/test_button") == 1 end,
-	function () command_begin("laminar/CitX/APU/test_button") end))
+	function () command_begin("laminar/CitX/APU/test_button") end,
+	function () return activeBriefings:get("departure:activateAPUPowerUp") == 2 end))
 electricalPowerUpProc:addItem(ProcedureItem:new("#spell|APU# STARTER","ON",FlowItem.actorFO,0,
 	function () return get("sim/cockpit2/electrical/APU_starter_switch") > 0 end,
 	function () 
 		command_end("laminar/CitX/APU/test_button")
 		command_begin("laminar/CitX/APU/starter_switch_up") 
-	end))
+	end,
+	function () return activeBriefings:get("departure:activateAPUPowerUp") == 2 end))
 electricalPowerUpProc:addItem(IndirectProcedureItem:new("#spell|APU#","STARTING",FlowItem.actorFO,0,"apustarting",
-	function () return get("sim/cockpit/engine/APU_N1") > 3 end))
+	function () return get("sim/cockpit/engine/APU_N1") > 3 end,nil,
+	function () return activeBriefings:get("departure:activateAPUPowerUp") == 2 end))
 electricalPowerUpProc:addItem(IndirectProcedureItem:new("#spell|APU#","STARTED",FlowItem.actorFO,0,"apurunning",
 	function () return get("sim/cockpit/engine/APU_N1") == 100 end,
-	function () command_end("laminar/CitX/APU/starter_switch_up") end))
+	function () command_end("laminar/CitX/APU/starter_switch_up") end,
+	function () return activeBriefings:get("departure:activateAPUPowerUp") == 2 end))
 electricalPowerUpProc:addItem(ProcedureItem:new("#spell|APU# GEN","ON",FlowItem.actorFO,0,
 	function () return get("laminar/CitX/APU/gen_switch") == 1 end,
 	function () 
 		command_once("laminar/CitX/APU/gen_switch_up") 
 		command_once("laminar/CitX/APU/gen_switch_up") 
-	end))
+	end,
+	function () return activeBriefings:get("departure:activateAPUPowerUp") == 2 end))
 electricalPowerUpProc:addItem(IndirectProcedureItem:new("#spell|APU# AMPS","< 200 A",FlowItem.actorFO,0,"apubelow200",
-	function () return get("sim/cockpit/electrical/generator_apu_amps") < 200 end))
+	function () return get("sim/cockpit/electrical/generator_apu_amps") < 200 end,nil,
+	function () return activeBriefings:get("departure:activateAPUPowerUp") == 2 end))
 
 electricalPowerUpProc:addItem(ProcedureItem:new("AVIONICS SWITCH","ON",FlowItem.actorFO,0,
 	function () return sysElectric.avionicsSwitchGroup:getStatus() == 1 end,
@@ -287,74 +283,6 @@ electricalPowerUpProc:addItem(ProcedureItem:new("NAV LIGHTS","ON",FlowItem.actor
 	function () return sysLights.positionSwitch:getStatus() ~= 0 end,
 	function () sysLights.positionSwitch:actuate(1) end))
 
--- =====================================================================================================================
-
--- ================ ORIGINATING CHECKLIST ================
--- BATTERY SWITCH 1 & 2...........................ON (F/O)
--- LEFT & RIGHT GENERATOR........................OFF (F/O)
--- EXTERNAL POWER OR APU..........................ON (F/O)
--- AVIONICS SWITCH................................ON (F/O)
--- EICAS SWITCH...................................ON (F/O)
--- AUX HYD PUMP A.................................ON (F/O)
--- PARKING BRAKE.................................SET (F/O)
--- STANDBY POWER..................................ON (F/O)
--- =======================================================
-
-local preflightChkl = Checklist:new("ORIGINATING CHECKLIST","","originating checklist completed")
-preflightChkl:setFlightPhase(3)
-preflightChkl:addItem(ChecklistItem:new("BATTERY SWITCH 1 & 2","ON",FlowItem.actorFO,0,
-	function () return sysElectric.batterySwitch:getStatus() == 1 and sysElectric.battery2Switch:getStatus() == 1 end,
-	function () 
-		sysElectric.batterySwitch:actuate(1) 
-		sysElectric.battery2Switch:actuate(1) 
-	end))
-preflightChkl:addItem(ChecklistItem:new("LEFT & RIGHT GENERATOR","OFF",FlowItem.actorFO,0,
-	function () 
-		return sysElectric.gen1Switch:getStatus() == 0 and 
-			sysElectric.gen2Switch:getStatus() == 0
-	end,
-	function ()
-		sysElectric.gen1Switch:actuate(0)
-		sysElectric.gen2Switch:actuate(0)
-	end))
-preflightChkl:addItem(ChecklistItem:new("EXTERNAL POWER OR #spell|APU#","ON",FlowItem.actorFO,0,
-	function () return get("sim/cockpit/electrical/generator_apu_amps") > 0 or sysElectric.gpuSwitch:getStatus() == 1 end))
-preflightChkl:addItem(ChecklistItem:new("AVIONICS SWITCH","ON",FlowItem.actorFO,0,
-	function () return sysElectric.avionicsSwitchGroup:getStatus() == 1 end,
-	function () sysElectric.avionicsSwitchGroup:actuate(1) end))
-preflightChkl:addItem(ChecklistItem:new("EICAS SWITCH","ON",FlowItem.actorFO,0,
-	function () return get("laminar/CitX/electrical/avionics_eicas") == 1 end,
-	function () 
-		if get("laminar/CitX/electrical/avionics_eicas") == 0 then
-			command_once("laminar/CitX/electrical/cmd_avionics_eicas_toggle")
-		end
-	end))
-preflightChkl:addItem(ChecklistItem:new("AUXILIARY HYDRAULIC PUMP A","ON",FlowItem.actorFO,0,
-	function () return sysHydraulic.elecHydPumpA:getStatus() == 1 end,
-	function () sysHydraulic.elecHydPumpA:actuate(1) end))
-preflightChkl:addItem(ChecklistItem:new("PARKING BRAKE","SET",FlowItem.actorFO,0,
-	function () return sysGeneral.parkBrakeSwitch:getStatus() == 1 end,
-	function () sysGeneral.parkBrakeSwitch:actuate(1) end))
-preflightChkl:addItem(ChecklistItem:new("STANDBY POWER","ON",FlowItem.actorFO,0,
-	function () return get("laminar/CitX/electrical/battery_stby_pwr") == 1 end,
-	function () 
-		command_end("laminar/CitX/electrical/cmd_stby_pwr_dwn")
-		command_once("laminar/CitX/electrical/cmd_stby_pwr_up")
-		command_once("laminar/CitX/electrical/cmd_stby_pwr_up")
-	end))
--- =====================================================================================================================
-
--- ==================== CDU Preflight ====================
--- FILL OUT KPCREW DEPARTURE BRIEFING
--- SET UP FMS
--- =======================================================
-
-local cduPreflightProc = Procedure:new("CDU PREFLIGHT BY CAPTAIN")
-cduPreflightProc:setFlightPhase(-2)
-cduPreflightProc:addItem(ProcedureItem:new("KPCREW BRIEFING WINDOW","OPEN",FlowItem.actorFO,0,true,
-	function () kc_wnd_brief_action = 1 end))
-cduPreflightProc:addItem(HoldProcedureItem:new("KPCREW DEPARTURE BRIEFING","FILLED OUT",FlowItem.actorCPT))
-cduPreflightProc:addItem(HoldProcedureItem:new("FMS SETUP","FINISHED",FlowItem.actorCPT))
 -- =====================================================================================================================
 
 -- ================= ENGINE START CHECK ===================
@@ -432,7 +360,39 @@ beforeStart:addItem(ProcedureItem:new("IGNITION SWITCHES","NORMAL",FlowItem.acto
 		command_once("laminar/CitX/engine/cmd_ignition_switch_right_dwn")
 		command_once("laminar/CitX/engine/cmd_ignition_switch_right_dwn")
 	end))
-
+beforeStart:addItem(ProcedureItem:new("#spell|APU# SYSTEM MASTER","ON",FlowItem.actorFO,0,
+	function () return sysElectric.apuMasterSwitch:getStatus() == 1 end,
+	function () sysElectric.apuMasterSwitch:actuate(1) end,
+	function () return activeBriefings:get("departure:activateAPUPowerUp") == 1 end))	
+beforeStart:addItem(IndirectProcedureItem:new("#spell|APU# TEST","PUSH",FlowItem.actorFO,2,"aputest",
+	function () return get("laminar/CitX/APU/test_button") == 1 end,
+	function () command_begin("laminar/CitX/APU/test_button") end,
+	function () return activeBriefings:get("departure:activateAPUPowerUp") == 1 end))
+beforeStart:addItem(ProcedureItem:new("#spell|APU# STARTER","ON",FlowItem.actorFO,0,
+	function () return get("sim/cockpit2/electrical/APU_starter_switch") > 0 end,
+	function () 
+		command_end("laminar/CitX/APU/test_button")
+		command_begin("laminar/CitX/APU/starter_switch_up") 
+	end,
+	function () return activeBriefings:get("departure:activateAPUPowerUp") == 1 end))
+beforeStart:addItem(IndirectProcedureItem:new("#spell|APU#","STARTING",FlowItem.actorFO,0,"apustarting",
+	function () return get("sim/cockpit/engine/APU_N1") > 3 end,nil,
+	function () return activeBriefings:get("departure:activateAPUPowerUp") == 1 end))
+beforeStart:addItem(IndirectProcedureItem:new("#spell|APU#","STARTED",FlowItem.actorFO,0,"apurunning",
+	function () return get("sim/cockpit/engine/APU_N1") == 100 end,
+	function () command_end("laminar/CitX/APU/starter_switch_up") end,
+	function () return activeBriefings:get("departure:activateAPUPowerUp") == 1 end))
+beforeStart:addItem(ProcedureItem:new("#spell|APU# GEN","ON",FlowItem.actorFO,0,
+	function () return get("laminar/CitX/APU/gen_switch") == 1 end,
+	function () 
+		command_once("laminar/CitX/APU/gen_switch_up") 
+		command_once("laminar/CitX/APU/gen_switch_up") 
+	end,
+	function () return activeBriefings:get("departure:activateAPUPowerUp") == 1 end))
+beforeStart:addItem(IndirectProcedureItem:new("#spell|APU# AMPS","< 200 A",FlowItem.actorFO,0,"apubelow200",
+	function () return get("sim/cockpit/electrical/generator_apu_amps") < 200 end,nil,
+	function () return activeBriefings:get("departure:activateAPUPowerUp") == 1 end))
+	
 -- =====================================================================================================================
 
 -- ================== PUSHBACK (BOTH) ====================
@@ -470,7 +430,9 @@ pushProc:addItem(IndirectProcedureItem:new("PARKING BRAKE","SET",FlowItem.actorC
 	end))
 pushProc:addItem(ProcedureItem:new("EXT PWR","OFF/DISCONNECT",FlowItem.actorFO,0,
 	function () return sysElectric.gpuSwitch:getStatus() == 0 end,
-	function () sysElectric.gpuSwitch:actuate(0) end))
+	function () 
+		sysElectric.gpuSwitch:actuate(0) 
+	end))
 pushProc:addItem(ProcedureItem:new("AUX PUMP A","OFF",FlowItem.actorFO,0,
 	function () return sysHydraulic.elecHydPumpGroup:getStatus() == 0 end,
 	function () sysHydraulic.elecHydPumpGroup:actuate(0) end))
@@ -733,9 +695,6 @@ pushstartProc:addItem(IndirectProcedureItem:new("HYDRAULICS","CHECKED",FlowItem.
 		get("sim/cockpit2/hydraulics/indicators/hydraulic_pressure_1") > 2000 and
 		get("sim/cockpit2/hydraulics/indicators/hydraulic_pressure_2") > 2000 
 	end))
-pushstartProc:addItem(ProcedureItem:new("YAW DAMPER","ON",FlowItem.actorCPT,0,
-	function () return sysControls.yawDamper:getStatus() end,
-	function () sysControls.yawDamper:actuate(1) end))
 
 -- =====================================================================================================================
 
@@ -843,12 +802,12 @@ afterStartProc:addItem(ProcedureItem:new("ENGINE ANTI-ICE","ON",FlowItem.actorFO
 	function () sysAice.engAntiIceGroup:actuate(1) end,
 	function () return activeBriefings:get("takeoff:antiice") == 1 end))
 afterStartProc:addItem(ProcedureItem:new("STABILIZER ANTI-ICE","OFF",FlowItem.actorFO,0,
-	function () return sysAice.wingAntiIce:getStatus() == 0 end,
-	function () sysAice.wingAntiIce:actuate(0) end,
+	function () return sysAice.wingAiceGroup:getStatus() == 0 end,
+	function () sysAice.wingAiceGroup:actuate(0) end,
 	function () return activeBriefings:get("takeoff:antiice") == 3 end))
 afterStartProc:addItem(ProcedureItem:new("STABILIZER ANTI-ICE","ON",FlowItem.actorFO,0,
-	function () return sysAice.wingAntiIce:getStatus() == 1 end,
-	function () sysAice.wingAntiIce:actuate(1) end,
+	function () return sysAice.wingAiceGroup:getStatus() == 1 end,
+	function () sysAice.wingAiceGroup:actuate(1) end,
 	function () return activeBriefings:get("takeoff:antiice") < 3 end))
 afterStartProc:addItem(IndirectProcedureItem:new("FUEL QUANTITY","CHECK BAL IN EICAS",FlowItem.actorFO,0,"fuelbalanced2",
 	function () return sysFuel.fuel_balanced() end))
@@ -864,25 +823,10 @@ afterStartProc:addItem(HoldProcedureItem:new("V SPEEDS","SET AND CHECKED",FlowIt
 afterStartProc:addItem(HoldProcedureItem:new("TAKEOFF BRIEFING","COMPLETED",FlowItem.actorPF))
 afterStartProc:addItem(IndirectProcedureItem:new("FLIGHT CONTROLS","CHECKED",FlowItem.actorBOTH,0,"fccheck",
 	function () return get("sim/flightmodel2/wing/rudder1_deg") > 14.9 end))
-
-
--- =====================================================================================================================
-
--- ================= PRE-TAXI CHECKLIST ==================
--- FLAPS............................SET AS REQUIRED  (PF)
--- TRANSPONDER..........................AS REQUIRED  (F/O)
--- STABILIZER TRIM........................SET GREEN  (CPT)
--- INTERNAL LIGHTS..............................SET  (F/O)
--- TAXI LIGHT....................................ON  (CPT)	
--- PARKING BRAKE...........................RELEASED  (CPT)
--- =======================================================
-
-local preTaxiProc = Checklist:new("PRE-TAXI CHECKLIST","","")
-preTaxiProc:setFlightPhase(6)
-preTaxiProc:addItem(ChecklistItem:new("FLAPS","SET TAKEOFF FLAPS %s|kc_pref_split(kc_TakeoffFlaps)[activeBriefings:get(\"takeoff:flaps\")]",FlowItem.actorPF,0,
+afterStartProc:addItem(ProcedureItem:new("FLAPS","SET TAKEOFF FLAPS %s|kc_pref_split(kc_TakeoffFlaps)[activeBriefings:get(\"takeoff:flaps\")]",FlowItem.actorPF,0,
 	function () return sysControls.flapsSwitch:getStatus() == sysControls.flaps_pos[activeBriefings:get("takeoff:flaps")] end,
 	function () sysControls.flapsSwitch:setValue(sysControls.flaps_pos[activeBriefings:get("takeoff:flaps")]) end)) 
-preTaxiProc:addItem(ChecklistItem:new("TRANSPONDER","ON",FlowItem.actorFO,0,
+afterStartProc:addItem(ProcedureItem:new("TRANSPONDER","ON",FlowItem.actorFO,0,
 	function () return get("sim/cockpit2/radios/actuators/transponder_mode") == 3 end,
 	function () 
 		set("sim/cockpit2/radios/actuators/transponder_mode",3)	
@@ -894,7 +838,7 @@ preTaxiProc:addItem(ChecklistItem:new("TRANSPONDER","ON",FlowItem.actorFO,0,
 		end
 	end,
 	function () return activePrefSet:get("general:xpdrusa") == false end))
-preTaxiProc:addItem(ChecklistItem:new("TRANSPONDER","STBY",FlowItem.actorFO,0,
+afterStartProc:addItem(ProcedureItem:new("TRANSPONDER","STBY",FlowItem.actorFO,0,
 	function () return get("sim/cockpit2/radios/actuators/transponder_mode") == 1 end,
 	function () 
 		set("sim/cockpit2/radios/actuators/transponder_mode",1)	
@@ -906,26 +850,14 @@ preTaxiProc:addItem(ChecklistItem:new("TRANSPONDER","STBY",FlowItem.actorFO,0,
 		end
 	end,
 	function () return activePrefSet:get("general:xpdrusa") == true end))
-preTaxiProc:addItem(ChecklistItem:new("STABILIZER TRIM","IN GREEN BAND",FlowItem.actorCPT,0,
-	function () 
-		local trimwheel = get("sim/cockpit2/controls/elevator_trim")
-		if get("sim/cockpit2/controls/flap_system_deploy_ratio") == 0.5 then
-			return trimwheel >= -0.43 and trimwheel <= 0 
-		elseif get("sim/cockpit2/controls/flap_system_deploy_ratio") == 0.75 then
-			return trimwheel >= -0.21 and trimwheel <= 0.42 
-		else
-			return false
-		end
-	end))
-preTaxiProc:addItem(IndirectChecklistItem:new("INTERNAL & EXTERNAL LIGHTS","SET",FlowItem.actorFO,0,"pretaxiintlight",
-	function () return true end,
-	function () kc_macro_lights_before_taxi() end))
-preTaxiProc:addItem(ProcedureItem:new("PARKING BRAKE","RELEASE",FlowItem.actorFO,0,
+afterStartProc:addItem(ProcedureItem:new("STABILIZER TRIM","IN GREEN BAND",FlowItem.actorCPT,0,
+	function () return 
+			get("sim/cockpit2/controls/elevator_trim") > -0.19 and 
+			get("sim/cockpit2/controls/elevator_trim") < 0.42 
+	end,
+	function () set("sim/cockpit2/controls/elevator_trim",0) end))
+afterStartProc:addItem(ProcedureItem:new("PARKING BRAKE","RELEASE",FlowItem.actorFO,0,
 	function () return sysGeneral.parkBrakeSwitch:getStatus() == 0 end))
-preTaxiProc:addItem(IndirectProcedureItem:new("BRAKE CHECK","PERFORMED",FlowItem.actorCPT,0,"brakecheck",
-	function () return get("sim/cockpit2/controls/left_brake_ratio") > 0.1 and
-					   get("sim/cockpit2/controls/right_brake_ratio") > 0.1
-	end)) 
 
 -- =====================================================================================================================
 
@@ -990,12 +922,12 @@ beforeTakeoffProc:addItem(ProcedureItem:new("ENGINE ANTI-ICE","ON",FlowItem.acto
 	function () sysAice.engAntiIceGroup:actuate(1) end,
 	function () return activeBriefings:get("takeoff:antiice") == 1 end))
 beforeTakeoffProc:addItem(ProcedureItem:new("STABILIZER ANTI-ICE","OFF",FlowItem.actorFO,0,
-	function () return sysAice.wingAntiIce:getStatus() == 0 end,
-	function () sysAice.wingAntiIce:actuate(0) end,
+	function () return sysAice.wingAiceGroup:getStatus() == 0 end,
+	function () sysAice.wingAiceGroup:actuate(0) end,
 	function () return activeBriefings:get("takeoff:antiice") == 3 end))
 beforeTakeoffProc:addItem(ProcedureItem:new("STABILIZER ANTI-ICE","ON",FlowItem.actorFO,0,
-	function () return sysAice.wingAntiIce:getStatus() == 1 end,
-	function () sysAice.wingAntiIce:actuate(1) end,
+	function () return sysAice.wingAiceGroup:getStatus() == 1 end,
+	function () sysAice.wingAiceGroup:actuate(1) end,
 	function () return activeBriefings:get("takeoff:antiice") < 3 end))
 beforeTakeoffProc:addItem(ProcedureItem:new("WINDSHIELD HEAT LH & RH","ON",FlowItem.actorFO,0,
 	function () return sysAice.windowHeatGroup:getStatus() == 2 end,
@@ -1077,8 +1009,8 @@ runwayEntryProc:addItem(ProcedureItem:new("WEATHER RADAR","ON",FlowItem.actorFO,
 local takeoffClimbProc = Procedure:new("TAKEOFF & INITIAL CLIMB","")
 takeoffClimbProc:setFlightPhase(8)
 takeoffClimbProc:addItem(HoldProcedureItem:new("TAKEOFF","ANNOUNCE",FlowItem.actorPF))
-takeoffClimbProc:addItem(IndirectProcedureItem:new("THRUST SETTING","T/O",FlowItem.actorPM,0,"tomode",
-	function () return get("laminar/CitX/throttle/ratio_ALL") > 0.98 end,
+takeoffClimbProc:addItem(IndirectProcedureItem:new("THRUST SETTING","FAN% 80",FlowItem.actorPM,0,"tomode",
+	function () return get("laminar/CitX/throttle/ratio_ALL") > 0.70 end,
 	function () 
 		activeBckVars:set("general:timesOUT",kc_dispTimeHHMM(get("sim/time/zulu_time_sec"))) 
 		kc_procvar_set("above10k",true) -- background 10.000 ft activities
@@ -1100,42 +1032,30 @@ gearUpProc:addItem(IndirectProcedureItem:new("GEAR","UP",FlowItem.actorPM,0,"gea
 
 local flapsUpProc = Procedure:new("RETRACT FLAPS","")
 flapsUpProc:setFlightPhase(-8)
-flapsUpProc:addItem(SimpleProcedureItem:new("Retract Flaps when Speed reached"))
-flapsUpProc:addItem(HoldProcedureItem:new("FLAPS 5","COMMAND AT >200 KTS",FlowItem.actorPF,nil,
-	function () return activeBriefings:get("takeoff:flaps") < 3 end))
-flapsUpProc:addItem(ProcedureItem:new("FLAPS 5","SET",FlowItem.actorPM,0,true,
-	function () sysControls.flapsSwitch:setValue(sysControls.flaps_pos[2]) kc_speakNoText(0,"speed check flaps 5") end,
-	function () return activeBriefings:get("takeoff:flaps") < 3 end))
-flapsUpProc:addItem(HoldProcedureItem:new("FLAPS UP","COMMAND AT >230 KTS",FlowItem.actorPF))
-flapsUpProc:addItem(ProcedureItem:new("FLAPS UP","SET",FlowItem.actorPNF,0,true,
-	function () sysControls.flapsSwitch:setValue(sysControls.flaps_pos[0]) kc_speakNoText(0,"speed check flaps up") end))
-flapsUpProc:addItem(HoldProcedureItem:new("A/P","ON",FlowItem.actorPF))
-flapsUpProc:addItem(ProcedureItem:new("YAW DAMPER","ON",FlowItem.actorPF,0,
-	function () return sysControls.yawDamper:getStatus() end,
-	function () sysControls.yawDamper:actuate(1) end))
 
-flapsUpProc:addItem(ProcedureItem:new("A/P","ON",FlowItem.actorPNF,0,true,
+flapsUpProc:addItem(ProcedureItem:new("YAW DAMPER","ON",FlowItem.actorPF,0,
+	function () return sysControls.yawDamper:getStatus() == 1 end,
+	function () sysControls.yawDamper:actuate(1) end))
+	
+for toflapidx=kc_NumFlapsTO-1, 2, -1 do
+	flapsUpProc:addItem(HoldProcedureItem:new("FLAPS " .. kc_pref_split(kc_TakeoffFlaps)[toflapidx],"RETRACT AT " .. sysControls.flaps_spd[tonumber(kc_pref_split(kc_TakeoffFlapsInd)[toflapidx])] .. " KTS",FlowItem.actorPF,nil,
+		function () return sysControls.flapsSwitch:getStatus() < sysControls.flaps_pos[tonumber(kc_pref_split(kc_TakeoffFlapsInd)[toflapidx+1])]-0.01 end))
+	
+	flapsUpProc:addItem(ProcedureItem:new("FLAPS ".. kc_pref_split(kc_TakeoffFlaps)[toflapidx],"SET",FlowItem.actorPF,0,true,
+		function () 
+			set("sim/cockpit2/controls/flap_ratio",sysControls.flaps_pos[tonumber(kc_pref_split(kc_TakeoffFlapsInd)[toflapidx])])
+			kc_speakNoText(0,"speed check flaps " .. kc_pref_split(kc_TakeoffFlaps)[toflapidx]) 
+		end,
+		function () return sysControls.flapsSwitch:getStatus() < sysControls.flaps_pos[tonumber(kc_pref_split(kc_TakeoffFlapsInd)[toflapidx])]-0.01 end))
+end
+flapsUpProc:addItem(HoldProcedureItem:new("FLAPS " .. kc_pref_split(kc_TakeoffFlaps)[1],"RETRACT AT " .. sysControls.flaps_spd[tonumber(kc_pref_split(kc_TakeoffFlapsInd)[1])] .. " KTS",FlowItem.actorPF))
+flapsUpProc:addItem(ProcedureItem:new("FLAPS ".. kc_pref_split(kc_TakeoffFlaps)[1],"SET",FlowItem.actorPF,0,true,
 	function () 
-		sysMCP.ap1Switch:actuate(1) 
+		set("sim/cockpit2/controls/flap_ratio",0)
+		kc_speakNoText(0,"speed check flaps " .. kc_pref_split(kc_TakeoffFlaps)[1]) 
 	end))
 flapsUpProc:addItem(ProcedureItem:new("POWER LEVERS","SET CLIMB",FlowItem.actorPF,0,
-	function () return get("laminar/CitX/throttle/ratio_ALL") > .935 and get("laminar/CitX/throttle/ratio_ALL") < .96 end))
-flapsUpProc:addItem(ProcedureItem:new("PACKS & BLEEDS","ON",FlowItem.actorPM,0,true,
-	function ()
-		kc_macro_packs_on() 
-		kc_macro_bleeds_on()
-	end))
-flapsUpProc:addItem(ProcedureItem:new("#spell|APU# STARTER","PRESS DOWN TO STOP",FlowItem.actorPM,2,
-	function () return get("sim/cockpit2/electrical/APU_starter_switch") == 0 end,
-	function () 
-		command_begin("laminar/CitX/APU/starter_switch_dwn") 
-	end))
-flapsUpProc:addItem(IndirectProcedureItem:new("#spell|APU#","STOPPED",FlowItem.actorPM,0,"apustopped",
-	function () return get("sim/cockpit/engine/APU_N1") < 2 end,
-	function () command_end("laminar/CitX/APU/starter_switch_dwn") end))
-flapsUpProc:addItem(ProcedureItem:new("#spell|APU# SYSTEM MASTER","OFF",FlowItem.actorPM,0,
-	function () return sysElectric.apuMasterSwitch:getStatus() == 0 end,
-	function () sysElectric.apuMasterSwitch:actuate(0) end))
+	function () return get("laminar/CitX/throttle/ratio_ALL") > .7 and get("laminar/CitX/throttle/ratio_ALL") < .80 end))
 
 -- =====================================================================================================================
 
@@ -1155,15 +1075,51 @@ afterTakeoffCheck:addItem(ChecklistItem:new("GEAR","UP",FlowItem.actorPM,0,
 afterTakeoffCheck:addItem(ChecklistItem:new("FLAPS","UP",FlowItem.actorPM,0,
 	function () return sysControls.flapsSwitch:getStatus() == 0 end,
 	function () sysControls.flapsSwitch:setValue(sysControls.flaps_pos[0]) end))
-afterTakeoffCheck:addItem(ChecklistItem:new("CLB THRUST","SET",FlowItem.actorPM,0,
-	function () return get("laminar/CitX/throttle/ratio_ALL") > .935 and get("laminar/CitX/throttle/ratio_ALL") < .96 end))
+afterTakeoffCheck:addItem(ChecklistItem:new("YAW DAMPER","ON",FlowItem.actorPM,0,
+	function () return get("sim/cockpit2/switches/yaw_damper_on") == 1 end,
+	function () set("sim/cockpit2/switches/yaw_damper_on",1) end))
+afterTakeoffCheck:addItem(ChecklistItem:new("CLIMB THRUST","SET",FlowItem.actorPM,0,
+	function () return get("laminar/CitX/throttle/ratio_ALL") > .7 and get("laminar/CitX/throttle/ratio_ALL") < .8 end))
 afterTakeoffCheck:addItem(ChecklistItem:new("TAXI LIGHT","OFF",FlowItem.actorPM,0,
 	function () return sysLights.taxiSwitch:getStatus() == 0 end,
 	function () sysLights.taxiSwitch:actuate(0) end))
-
+	
 -- =====================================================================================================================
+
+local climbCheck = Procedure:new("CLIMB CHECKS","","")
+climbCheck:setFlightPhase(9)
+
+climbCheck:addItem(ProcedureItem:new("CLIMB POWER","CON/CLB",FlowItem.actorFO,0,
+	function () return get("laminar/CitX/throttle/ratio_ALL") > .7 and get("laminar/CitX/throttle/ratio_ALL") < .8 end))
+climbCheck:addItem(HoldProcedureItem:new("ANTI-ICE","OFF",FlowItem.actorCPT))
+climbCheck:addItem(ProcedureItem:new("ENGINE ANTI-ICE","OFF",FlowItem.actorFO,0,
+	function () return sysAice.engAntiIceGroup:getStatus() == 0 end,
+	function () sysAice.engAntiIceGroup:actuate(0) end))
+climbCheck:addItem(ProcedureItem:new("WING ANTI-ICE","OFF",FlowItem.actorFO,0,
+	function () return sysAice.wingAiceGroup:getStatus() == 0 end,
+	function () sysAice.wingAiceGroup:actuate(0) end))
+climbCheck:addItem(ProcedureItem:new("PSG BELT & SAFETY LT","OFF",FlowItem.actorFO,0,
+	function () return get("laminar/CitX/lights/seat_belt_pass_safety") == 0 end,
+	function () 
+		command_once("laminar/CitX/lights/cmd_seat_belt_pass_safety_dwn") 
+		command_once("laminar/CitX/lights/cmd_seat_belt_pass_safety_dwn") 
+		command_once("laminar/CitX/lights/cmd_seat_belt_pass_safety_up") 
+	end))	
+climbCheck:addItem(ProcedureItem:new("#spell|APU# STARTER","PRESS DOWN TO STOP",FlowItem.actorPM,2,
+	function () return get("sim/cockpit2/electrical/APU_starter_switch") == 0 end,
+	function () 
+		command_begin("laminar/CitX/APU/starter_switch_dwn") 
+	end))
+climbCheck:addItem(IndirectProcedureItem:new("#spell|APU#","STOPPED",FlowItem.actorPM,0,"apustopped",
+	function () return get("sim/cockpit/engine/APU_N1") < 2 end,
+	function () command_end("laminar/CitX/APU/starter_switch_dwn") end))
+climbCheck:addItem(ProcedureItem:new("#spell|APU# SYSTEM MASTER","OFF",FlowItem.actorPM,0,
+	function () return sysElectric.apuMasterSwitch:getStatus() == 0 end,
+	function () sysElectric.apuMasterSwitch:actuate(0) end))
+	
+-- =====================================================================================================================
+
 -- ================= DESCENT CHECK ======================
--- KPCREW APPROACH BRIEFING................PERFORM   (PF)
 -- VREF...............................CHECK IN FMC   (PF)
 -- LANDING DATA...............VREF __, MINIMUMS __   (PF)
 -- PRESSURIZATION...............SET LAND ALT __ FT   (PM)
@@ -1182,9 +1138,6 @@ afterTakeoffCheck:addItem(ChecklistItem:new("TAXI LIGHT","OFF",FlowItem.actorPM,
 
 local descentProc = Procedure:new("DESCENT CHECK","","")
 descentProc:setFlightPhase(11)
-descentProc:addItem(ProcedureItem:new("KPCREW BRIEFING WINDOW","OPEN",FlowItem.actorFO,0,true,
-	function () kc_wnd_brief_action = 1 end))
-descentProc:addItem(HoldProcedureItem:new("KPCREW APPROACH BRIEFING","PERFORM",FlowItem.actorPF))
 
 descentProc:addItem(HoldProcedureItem:new("VREF","CHECK IN FMC",FlowItem.actorPF,nil))
 descentProc:addItem(ProcedureItem:new("LANDING DATA","VREF %i, MINIMUMS %i|activeBriefings:get(\"approach:vref\")|activeBriefings:get(\"approach:decision\")",FlowItem.actorPM,0,
@@ -1214,12 +1167,12 @@ descentProc:addItem(ProcedureItem:new("ENGINE ANTI-ICE","ON",FlowItem.actorPM,0,
 	function () sysAice.engAntiIceGroup:actuate(1) end,
 	function () return activeBriefings:get("approach:antiice") == 1 end))
 descentProc:addItem(ProcedureItem:new("STABILIZER ANTI-ICE","OFF",FlowItem.actorPM,0,
-	function () return sysAice.wingAntiIce:getStatus() == 0 end,
-	function () sysAice.wingAntiIce:actuate(0) end,
+	function () return sysAice.wingAiceGroup:getStatus() == 0 end,
+	function () sysAice.wingAiceGroup:actuate(0) end,
 	function () return activeBriefings:get("approach:antiice") == 3 end))
 descentProc:addItem(ProcedureItem:new("STABILIZER ANTI-ICE","ON",FlowItem.actorPM,0,
-	function () return sysAice.wingAntiIce:getStatus() == 1 end,
-	function () sysAice.wingAntiIce:actuate(1) end,
+	function () return sysAice.wingAiceGroup:getStatus() == 1 end,
+	function () sysAice.wingAiceGroup:actuate(1) end,
 	function () return activeBriefings:get("approach:antiice") < 3 end))
 descentProc:addItem(ProcedureItem:new("CTR WING XFER LH & RH","BOTH OFF",FlowItem.actorPM,0,
 	function () 
@@ -1235,54 +1188,13 @@ descentProc:addItem(ProcedureItem:new("CTR WING XFER LH & RH","BOTH OFF",FlowIte
 descentProc:addItem(ProcedureItem:new("WINDSHIELD HEAT LH & RH","BOTH ON",FlowItem.actorPM,0,
 	function () return sysAice.windowHeatGroup:getStatus() == 2 end,
 	function () sysAice.windowHeatGroup:actuate(1) end))
-
--- =====================================================================================================================
-
--- ================== DESCENT CHECKLIST ==================
--- APPROACH BRIEFING......................COMPLETED   (PF)
--- NAVIGATION RADIOS...........SET FOR THE APPROACH   (PF)
--- MINIMUMS.....................................SET   (PF)
--- FMS..........................PROGRAMMED/VERIFIED   (PF)
--- LANDING DATA...........................CONFIRMED   (PF)
--- V SPEEDS.....................................SET   (PF)
--- TRANSITION LEVEL DESCENT FORECAST............SET   (PF)
--- PRESSURIZATION...............................SET   (PF)
--- PASSEMGER BRIEFING.....................COMPLETED   (PM)
--- SEAT BELT LTS........................PASS SAFETY   (PM)
--- =======================================================
-
-local descentChecklist = Checklist:new("DESCENT CHECKLIST","descent checklist","")
-descentChecklist:setFlightPhase(11)
-descentChecklist:addItem(ManualChecklistItem:new("APPROACH BRIEFING","COMPLETED",FlowItem.actorPF,0,"approachbrief"))
-descentChecklist:addItem(ManualChecklistItem:new("NAVIGATION RADIOS","SET FOR THE APPROACH",FlowItem.actorPF,0,"navradioland"))
-descentChecklist:addItem(ChecklistItem:new("MINIMUMS","%i|activeBriefings:get(\"approach:decision\")",FlowItem.actorPF,0,
-	function () 
-		return get("sim/cockpit/misc/radio_altimeter_minimum") == activeBriefings:get("approach:decision") end,
-	function ()
-		local flag = 0 
-		if 
-			activePrefSet:get("aircraft:efis_mins_dh") then flag=0 else flag=1 end
-			sysEFIS.minsTypePilot:actuate(flag) 
-			sysEFIS.minsPilot:setValue(activeBriefings:get("approach:decision")) 
-			sysEFIS.minsResetPilot:actuate(1) 
-		end))
-descentChecklist:addItem(ManualChecklistItem:new("FMS","PROGRAMMED/VERIFIED",FlowItem.actorPF,0,"fmsprogramland"))
-descentChecklist:addItem(ManualChecklistItem:new("LANDING DATA","CONFIRMED",FlowItem.actorPF,0,"landingdata"))
-descentChecklist:addItem(ManualChecklistItem:new("V SPEEDS","SET VAPP %i, VREF %i|activeBriefings:get(\"approach:vapp\")|activeBriefings:get(\"approach:vref\")",FlowItem.actorPF,0,"vrefvapp"))
-descentChecklist:addItem(ManualChecklistItem:new("TRANSITION LEVEL DESCENT FORECAST","SET",FlowItem.actorPF,0,"translevelset"))
-descentChecklist:addItem(IndirectChecklistItem:new("PRESSURIZATION","LAND ALT (%i) %i FT SET|get(\"laminar/CitX/pressurization/altitude\")|activeBriefings:get(\"arrival:aptElevation\")",FlowItem.actorPM,0,"landalt",
-	function () 
-		return math.abs(get("laminar/CitX/pressurization/altitude") - 
-			kc_round_step(activeBriefings:get("arrival:aptElevation"),50)) < 100 
-	end))
-descentChecklist:addItem(ManualChecklistItem:new("PASSENGER BRIEFING","COMPLETED",FlowItem.actorPF,0,"paxbrief"))
-descentChecklist:addItem(ChecklistItem:new("SEAT BELT LTS","PASS SAFETY",FlowItem.actorPM,0,
+descentProc:addItem(ProcedureItem:new("SEAT BELT LTS","PASS SAFETY",FlowItem.actorPM,0,
 	function () return get("laminar/CitX/lights/seat_belt_pass_safety") == 1 end,
 	function () 
 		command_once("laminar/CitX/lights/cmd_seat_belt_pass_safety_dwn") 
 		command_once("laminar/CitX/lights/cmd_seat_belt_pass_safety_dwn") 
 	end))
-
+	
 -- =====================================================================================================================
 
 -- ================== LANDING PROCEDURE ==================
@@ -1349,61 +1261,43 @@ landingProc:addItem(ProcedureItem:new("AIR CONDITIONING PACK SWITCHES","AUTO",Fl
 	function () return activeBriefings:get("approach:packs") > 1 end))
 landingProc:addItem(ProcedureItem:new("AIR CONDITIONING PACK SWITCHES","OFF",FlowItem.actorPM,0,
 	function () return sysAir.packSwitchGroup:getStatus() == 0 end,
-	function () sysAir.packSwitchGroup:setValue(0) end,
+	function () sysAir.packSwitchGroup:actuate(0) end,
 	function () return activeBriefings:get("approach:packs") == 1 end))
 landingProc:addItem(ProcedureItem:new("LANDING LIGHTS","ON",FlowItem.actorPF,0,
 	function () return sysLights.landLightGroup:getStatus() > 0 end,
 	function () kc_macro_lights_approach() end))
 
 -- =====================================================================================================================
-	
-local gearDownProc = Procedure:new("GEAR DOWN","","")
-gearDownProc:setFlightPhase(-13)
-gearDownProc:addItem(ProcedureItem:new("LANDING GEAR HANDLE","DOWN",FlowItem.actorPM,0,
-	function () return sysGeneral.GearSwitch:getStatus() == 1 end,
-	function () sysGeneral.GearSwitch:actuate(1) end))
-gearDownProc:addItem(ProcedureItem:new("GREEN LANDING GEAR LIGHT","CHECK ILLUMINATED",FlowItem.actorPM,0,
-	function () return sysGeneral.gearLightsAnc:getStatus() == 1 end))
 
--- =====================================================================================================================
+local flapsProc = Procedure:new("EXTEND FLAPS","","")
+flapsProc:setFlightPhase(-13)
 
-local flaps5Proc = Procedure:new("FLAPS 5 (<245 kts)","","")
-flaps5Proc:setFlightPhase(-13)
-flaps5Proc:addItem(ProcedureItem:new("FLAPS 5","SET",FlowItem.actorPNF,0,
-	function () return sysControls.flapsSwitch:getStatus() >= 0.5 end,
-	function () sysControls.flapsSwitch:setValue(sysControls.flaps_pos[2]) end))
-
--- =====================================================================================================================
-
-local flaps15Proc = Procedure:new("FLAPS 15 (<205 kts)","","")
-flaps15Proc:setFlightPhase(-13)
-flaps15Proc:addItem(ProcedureItem:new("FLAPS 15","SET",FlowItem.actorPNF,0,
-	function () return sysControls.flapsSwitch:getStatus() >= 0.75 end,
-	function () sysControls.flapsSwitch:setValue(sysControls.flaps_pos[3]) end))
-
--- =====================================================================================================================
-
-local flapsFullProc = Procedure:new("FLAPS Full (<180 kts)","","")
-flapsFullProc:setFlightPhase(-13)
-flapsFullProc:addItem(ProcedureItem:new("FLAPS FULL","SET",FlowItem.actorPNF,0,
-	function () return sysControls.flapsSwitch:getStatus() == 1 end,
-	function () sysControls.flapsSwitch:setValue(sysControls.flaps_pos[4]) end))
-flapsFullProc:addItem(ProcedureItem:new("GO AROUND ALTITUDE","SET %s|activeBriefings:get(\"approach:gaaltitude\")",FlowItem.actorPM,0,
+for ldgflapidx=1,kc_Numflap_detents,1 do
+	flapsProc:addItem(HoldProcedureItem:new("FLAPS " .. sysControls.flaps_name[ldgflapidx],"EXTEND AT " .. sysControls.flaps_spd[ldgflapidx] .. " KTS",FlowItem.actorPF,nil,
+		function () return tonumber(kc_pref_split(kc_LandingFlapsInd)[activeBriefings:get("approach:flaps")]) < ldgflapidx end))
+	flapsProc:addItem(ProcedureItem:new("FLAPS " .. sysControls.flaps_name[ldgflapidx],"SET",FlowItem.actorPNF,0,
+		function () return sysControls.flapsSwitch:getStatus() == sysControls.flaps_pos[ldgflapidx] end,
+		function () set("sim/cockpit2/controls/flap_ratio",sysControls.flaps_pos[ldgflapidx]) end,
+		function () return tonumber(kc_pref_split(kc_LandingFlapsInd)[activeBriefings:get("approach:flaps")]) < ldgflapidx end))
+	if ldgflapidx == 2 then
+		if kc_has_retractgear == true then
+			flapsProc:addItem(HoldProcedureItem:new("LANDING GEAR DOWN","COMMAND",FlowItem.actorPF))
+			flapsProc:addItem(ProcedureItem:new("GEAR ","DOWN",FlowItem.actorPNF,0,true,
+				function () sysGeneral.GearSwitch:actuate(1) end))
+			flapsProc:addItem(ProcedureItem:new("GREEN LANDING GEAR LIGHT","CHECK ILLUMINATED",FlowItem.actorPM,0,
+			function () return sysGeneral.gearLightsAnc:getStatus() == 1 end))
+		end
+	end
+end
+flapsProc:addItem(ProcedureItem:new("GO AROUND ALTITUDE","SET %s|activeBriefings:get(\"approach:gaaltitude\")",FlowItem.actorPM,0,
 	function() return sysMCP.altSelector:getStatus()  == activeBriefings:get("approach:gaaltitude") end,
 	function() sysMCP.altSelector:setValue(activeBriefings:get("approach:gaaltitude")) end))
-flapsFullProc:addItem(ProcedureItem:new("GO AROUND HEADING","SET %s|activeBriefings:get(\"approach:gaheading\")",FlowItem.actorPM,0,
+flapsProc:addItem(ProcedureItem:new("GO AROUND HEADING","SET %s|activeBriefings:get(\"approach:gaheading\")",FlowItem.actorPM,0,
 	function() return sysMCP.hdgSelector:getStatus() == activeBriefings:get("approach:gaheading") end,
-	function() sysMCP.hdgSelector:setValue(activeBriefings:get("approach:gaheading")) end))
-
--- =====================================================================================================================
-
-local APLandOffProc = Procedure:new("AUTOPILOT OFF","","")
-APLandOffProc:setFlightPhase(-13)
-APLandOffProc:addItem(HoldProcedureItem:new("AUTOPILOT","OFF",FlowItem.actorPF))
-APLandOffProc:addItem(ProcedureItem:new("AUTOPILOT","OFF",FlowItem.actorPNF,0,true,
-	function () 
-		sysMCP.ap1Switch:actuate(0) 
-	end))
+	function() sysMCP.hdgSelector:setValue(activeBriefings:get("approach:gaheading")) end))	
+flapsProc:addItem(ProcedureItem:new("YAW DAMPER","OFF",FlowItem.actorPM,0,
+	function () return get("sim/cockpit2/switches/yaw_damper_on") == 0 end,
+	function () set("sim/cockpit2/switches/yaw_damper_on",0) end))
 
 -- =====================================================================================================================
 
@@ -1413,24 +1307,27 @@ APLandOffProc:addItem(ProcedureItem:new("AUTOPILOT","OFF",FlowItem.actorPNF,0,tr
 -- FLAPS........................................35   (PF)
 -- AUTOPILOT...................................OFF   (PF)
 -- ======================================================
+
 local landingChecklist = Checklist:new("FINAL DESCENT CHECKS","","")
 landingChecklist:setFlightPhase(13)
-landingChecklist:addItem(ChecklistItem:new("GEAR","DOWN 3 GREEN",FlowItem.actorPF,0,
+
+landingChecklist:addItem(ChecklistItem:new("GEAR","DOWN 3 GREEN",FlowItem.actorPM,0,
 	function () return sysGeneral.GearSwitch:getStatus() == 1 end,
 	function () 
 		sysGeneral.GearSwitch:actuate(1) 
 	end))
-landingChecklist:addItem(ChecklistItem:new("SPEED BRAKES","RETRACTED",FlowItem.actorPF,0,
+landingChecklist:addItem(ChecklistItem:new("SPEED BRAKES","RETRACTED",FlowItem.actorPM,0,
 	function () return get("sim/cockpit2/controls/speedbrake_ratio") == 0 end,
 	function () set("sim/cockpit2/controls/speedbrake_ratio",0) end))
-landingChecklist:addItem(ChecklistItem:new("FLAPS","35",FlowItem.actorPF,0,
-	function () return sysControls.flapsSwitch:getStatus() == 1 end,
+landingChecklist:addItem(ChecklistItem:new("FLAPS","SET FOR LANDING",FlowItem.actorPM,0,
+	function () return sysControls.flapsSwitch:getStatus() >= 0.75 end,
 	function () sysControls.flapsSwitch:setValue(sysControls.flaps_pos[4]) end))
-landingChecklist:addItem(ChecklistItem:new("AUTOPILOT","OFF",FlowItem.actorPF,0,
-	function () return sysMCP.ap1Switch:getStatus() == 0 end,
-	function () 
-		sysMCP.ap1Switch:actuate(0) 
-	end))
+landingChecklist:addItem(ChecklistItem:new("YAW DAMPER","OFF",FlowItem.actorPM,0,
+	function () return get("sim/cockpit2/switches/yaw_damper_on") == 0 end,
+	function () set("sim/cockpit2/switches/yaw_damper_on",0) end))
+landingChecklist:addItem(ChecklistItem:new("GO AROUND ALTITUDE","SET %s|activeBriefings:get(\"approach:gaaltitude\")",FlowItem.actorPM,0,
+	function() return sysMCP.altSelector:getStatus()  == activeBriefings:get("approach:gaaltitude") end,
+	function() sysMCP.altSelector:setValue(activeBriefings:get("approach:gaaltitude")) end))
 
 -- =====================================================================================================================
 
@@ -1499,8 +1396,8 @@ afterLandingProc:addItem(ProcedureItem:new("EXTERNAL LIGHTS","AS REQUIRED",FlowI
 	function () return sysLights.landLightGroup:getStatus() == 0 end,
 	function () kc_macro_lights_cleanup() end))
 afterLandingProc:addItem(ProcedureItem:new("STABILIZER ANTI-ICE","OFF",FlowItem.actorFO,0,
-	function () return sysAice.wingAntiIce:getStatus() == 0 end,
-	function () sysAice.wingAntiIce:actuate(0) end))
+	function () return sysAice.wingAiceGroup:getStatus() == 0 end,
+	function () sysAice.wingAiceGroup:actuate(0) end))
 afterLandingProc:addItem(ProcedureItem:new("#spell|APU# SYSTEM MASTER","ON",FlowItem.actorFO,0,
 	function () return sysElectric.apuMasterSwitch:getStatus() == 1 end,
 	function () sysElectric.apuMasterSwitch:actuate(1) end))
@@ -1647,87 +1544,42 @@ shutdownProc:addItem(ProcedureItem:new("ENGINE ANTI-ICE","OFF",FlowItem.actorFO,
 	function () return sysAice.engAntiIceGroup:getStatus() == 0 end,
 	function () sysAice.engAntiIceGroup:actuate(0) end))
 shutdownProc:addItem(ProcedureItem:new("STABILIZER ANTI-ICE","OFF",FlowItem.actorFO,0,
-	function () return sysAice.wingAntiIce:getStatus() == 0 end,
-	function () sysAice.wingAntiIce:actuate(0) end))
+	function () return sysAice.wingAiceGroup:getStatus() == 0 end,
+	function () sysAice.wingAiceGroup:actuate(0) end))
 shutdownProc:addItem(ProcedureItem:new("HYD PUMP A & B","OFF",FlowItem.actorFO,0,
 	function () return sysHydraulic.engHydPumpGroup:getStatus() == 0 end,
 	function () sysHydraulic.engHydPumpGroup:actuate(0) end)) 
 shutdownProc:addItem(ProcedureItem:new("AUX PUMP A","OFF",FlowItem.actorFO,0,
 	function () return sysHydraulic.elecHydPumpGroup:getStatus() == 0 end,
 	function () sysHydraulic.elecHydPumpGroup:actuate(0) end))
-
-
-
-
-
--- STANDBY ATTITUDE ADI|CAGED
--- shutdownProc:addItem(ProcedureItem:new("AVIONICS SWITCH","OFF",FlowItem.actorFO,0,
-	-- function () return sysElectric.avionicsSwitchGroup:getStatus() == 0 end,
-	-- function () sysElectric.avionicsSwitchGroup:actuate(0) end))
--- shutdownProc:addItem(ProcedureItem:new("EICAS SWITCH","OFF",FlowItem.actorFO,0,
-	-- function () return get("laminar/CitX/electrical/avionics_eicas") == 0 end,
-	-- function () 
-		-- if get("laminar/CitX/electrical/avionics_eicas") == 1 then
-			-- command_once("laminar/CitX/electrical/cmd_avionics_eicas_toggle")
-		-- end
-	-- end))
--- shutdownProc:addItem(ProcedureItem:new("STANDBY POWER","OFF",FlowItem.actorFO,0,
-	-- function () return get("laminar/CitX/electrical/battery_stby_pwr") == 0 end,
-	-- function () 
-		-- command_end("laminar/CitX/electrical/cmd_stby_pwr_dwn")
-	-- end))
--- shutdownProc:addItem(ProcedureItem:new("BATTERY SWITCH 1 & 2","OFF",FlowItem.actorFO,0,
-	-- function () return sysElectric.batterySwitch:getStatus() == 0 and sysElectric.battery2Switch:getStatus() == 0 end,
-	-- function () 
-		-- sysElectric.batterySwitch:actuate(0) 
-		-- sysElectric.battery2Switch:actuate(0) 
-	-- end))
-
--- PARKING:
--- Parking Brake ............... As Required
--- Anti Ice System ............. OFF
--- Throttle .................... IDLE
--- Fuel Control Switches ....... OFF
--- Beacon ...................... OFF
-
--- TERMINATION:
--- Parking Brake ............... OFF
--- IRS Mode .................... OFF
--- Passenger Advisory Lights ... OFF
--- STBY Power .................. OFF
--- Avionics Switch ............. OFF
--- Emergency Lgiths ............ OFF
--- GRVTY XFlow Switch .......... OFF
--- APU ......................... OFF
+shutdownProc:addItem(ProcedureItem:new("DOOR","OPEN",FlowItem.actorFO,0,
+	function () return get("sim/cockpit2/switches/door_open") > 0 end,
+	function () command_once("sim/flight_controls/door_open_1") end))
+		
 
 -- ============  =============
 -- add the checklists and procedures to the active sop
 -- local nopeProc = Procedure:new("NO PROCEDURES AVAILABLE")
 
--- activeSOP:addProcedure(testProc)
 activeSOP:addProcedure(electricalPowerUpProc)
-activeSOP:addProcedure(preflightChkl)
-activeSOP:addProcedure(cduPreflightProc)
+-- activeSOP:addProcedure(preflightChkl)
 activeSOP:addProcedure(beforeStart)
 activeSOP:addProcedure(pushProc)
 activeSOP:addProcedure(preStartProc)
 activeSOP:addProcedure(pushstartProc)
 activeSOP:addProcedure(afterStartProc)
-activeSOP:addProcedure(preTaxiProc)
+-- activeSOP:addProcedure(preTaxiProc)
 activeSOP:addProcedure(beforeTakeoffProc)
 activeSOP:addProcedure(runwayEntryProc)
 activeSOP:addProcedure(takeoffClimbProc)
 activeSOP:addProcedure(gearUpProc)
 activeSOP:addProcedure(flapsUpProc)
 activeSOP:addProcedure(afterTakeoffCheck)
+activeSOP:addProcedure(climbCheck)
 activeSOP:addProcedure(descentProc)
-activeSOP:addProcedure(descentChecklist)
 activeSOP:addProcedure(landingProc)
 activeSOP:addProcedure(gearDownProc)
-activeSOP:addProcedure(flaps5Proc)
-activeSOP:addProcedure(flaps15Proc)
-activeSOP:addProcedure(flapsFullProc)
-activeSOP:addProcedure(APLandOffProc)
+activeSOP:addProcedure(flapsProc)
 activeSOP:addProcedure(landingChecklist)
 activeSOP:addProcedure(afterLandingProc)
 activeSOP:addProcedure(taxiLightOff)
@@ -1796,9 +1648,10 @@ backgroundFlow:addItem(BackgroundProcedureItem:new("","","SYS",0,
 -- ==== Background Flow ====
 activeSOP:addBackground(backgroundFlow)
 
+kc_procvar_initialize_bool("waitformaster", false) 
+
 function getActiveSOP()
 	return activeSOP
 end
-
 
 return SOP_C750

@@ -3,9 +3,12 @@
 
 -- @classmod sysGeneral
 -- @author Kosta Prokopiu
--- @copyright 2022 Kosta Prokopiu
+-- @copyright 2025 Kosta Prokopiu
+
 local sysGeneral = {
 }
+
+logMsg("DFLT sysGeneral")
 
 local TwoStateDrefSwitch 	= require "kpcrew.systems.TwoStateDrefSwitch"
 local TwoStateCmdSwitch	 	= require "kpcrew.systems.TwoStateCmdSwitch"
@@ -42,6 +45,9 @@ local cmdBaroRightDown		= "sim/instruments/barometer_copilot_down"
 local cmdBaroRightUp		= "sim/instruments/barometer_copilot_up"
 local cmdBaroStbyDown		= "sim/instruments/barometer_stby_down"
 local cmdBaroStbyUp			= "sim/instruments/barometer_stby_up"
+
+-- Optional Gound objects
+sysGeneral.groundObjects = InopSwitch:new("ground objects")
 
 -- Parking Brake
 sysGeneral.parkBrakeSwitch 	= TwoStateToggleSwitch:new("parkbrake","sim/cockpit2/controls/parking_brake_ratio",0,
@@ -251,6 +257,7 @@ sysGeneral.doorACargo 		= TwoStateCustomSwitch:new("dooracargo",drefSlider,5,
 		end
 	end)
 sysGeneral.cockpitDoor 		= InopSwitch:new("cockpitdoor")
+sysGeneral.stairsL1 		= InopSwitch:new("stairs1")
 
 sysGeneral.doorGroup = SwitchGroup:new("doors")
 sysGeneral.doorGroup:addSwitch(sysGeneral.doorL1)
@@ -260,6 +267,7 @@ sysGeneral.doorGroup:addSwitch(sysGeneral.doorR2)
 sysGeneral.doorGroup:addSwitch(sysGeneral.doorFCargo)
 sysGeneral.doorGroup:addSwitch(sysGeneral.doorACargo)
 sysGeneral.doorGroup:addSwitch(sysGeneral.cockpitDoor)
+sysGeneral.doorGroup:addSwitch(sysGeneral.stairsL1)
 
 -- Door annunciators
 sysGeneral.doorL1Anc 		= SimpleAnnunciator:new("doorl1",drefSlider,0)
@@ -286,13 +294,14 @@ end)
 
 -- Wiper Switches
 sysGeneral.wiperLeft = TwoStateDrefSwitch:new("wiperleft","sim/cockpit2/switches/wiper_speed_switch",-1)
-sysGeneral.wiperRight = TwoStateDrefSwitch:new("wiperleft","sim/cockpit2/switches/wiper_speed_switch",1)
+sysGeneral.wiperRight = TwoStateDrefSwitch:new("wiperright","sim/cockpit2/switches/wiper_speed_switch",1)
 sysGeneral.wiperGroup = SwitchGroup:new("wipers")
 sysGeneral.wiperGroup:addSwitch(sysGeneral.wiperLeft)
 sysGeneral.wiperGroup:addSwitch(sysGeneral.wiperRight)
 
 -- Baro standard toggle
-sysGeneral.barostdPilot 	= InopSwitch:new("barostdpilot")
+sysGeneral.barostdPilot 	= TwoStateToggleSwitch:new("barostdpilot","sim/cockpit/misc/barometer_setting",0,
+	"sim/instruments/barometer_std")
 sysGeneral.barostdCopilot 	= InopSwitch:new("barostdcopilot")
 sysGeneral.barostdStandby 	= InopSwitch:new("barostdstandby")
 sysGeneral.barostdGroup 	= SwitchGroup:new("barostdgroup")
@@ -330,12 +339,16 @@ sysGeneral.irsUnitGroup:addSwitch(sysGeneral.irsUnit1Switch)
 sysGeneral.irsUnitGroup:addSwitch(sysGeneral.irsUnit2Switch)
 sysGeneral.irsUnitGroup:addSwitch(sysGeneral.irsUnit3Switch)
 
+sysGeneral.noSmokingSwitch	= TwoStateDrefSwitch:new("nosmoke","sim/cockpit2/switches/no_smoking",0)
 
+sysGeneral.passSignsSwitch	= TwoStateDrefSwitch:new("seatbelts","sim/cockpit/switches/fasten_seat_belts",0)
 
------------- Annunciators
+-- Optional Gound objects
+sysGeneral.groundObjects = InopSwitch:new("ground objects")
 
+sysGeneral.tocheck		 = InopSwitch:new("tockeck")
 
-
+-- ---------- Annunciators
 
 -- Master Caution
 sysGeneral.masterCautionAnc = SimpleAnnunciator:new("mastercaution", "sim/cockpit2/annunciators/master_caution",0)
@@ -354,5 +367,23 @@ function ()
 	return get("sim/cockpit2/gauges/actuators/barometer_setting_in_hg_pilot") 
 end)
 
+sysGeneral.chrono			= InopSwitch:new("chrono")
+sysGeneral.clock			= TwoStateCustomSwitch:new("clock","sim/cockpit2/clock_timer/chrono_running",-1,
+	function ()
+		set_array("sim/cockpit2/clock_timer/chrono_running",0,kc_et_timer_on)
+	end,
+	function ()
+		set_array("sim/cockpit2/clock_timer/chrono_running",0,kc_et_timer_off)
+	end,
+	function ()
+		set_array("sim/cockpit2/clock_timer/chrono_time",0,0)
+	end,
+	function ()
+		if get("sim/cockpit2/clock_timer/chrono_running",0) == kc_et_timer_on then
+			return 1
+		else
+			return 0
+		end
+	end)
 
 return sysGeneral

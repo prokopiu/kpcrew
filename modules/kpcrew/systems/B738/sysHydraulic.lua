@@ -3,9 +3,7 @@
 
 -- @classmod sysHydraulic
 -- @author Kosta Prokopiu
--- @copyright 2022 Kosta Prokopiu
-local sysHydraulic = {
-}
+-- @copyright 2025 Kosta Prokopiu
 
 local TwoStateDrefSwitch 	= require "kpcrew.systems.TwoStateDrefSwitch"
 local TwoStateCmdSwitch	 	= require "kpcrew.systems.TwoStateCmdSwitch"
@@ -21,6 +19,8 @@ local drefElHydPressure1 	= "laminar/B738/annunciator/hyd_el_press_a"
 local drefElHydPressure2 	= "laminar/B738/annunciator/hyd_el_press_b"
 local drefHydPressure1 		= "laminar/B738/annunciator/hyd_press_a"
 local drefHydPressure2 		= "laminar/B738/annunciator/hyd_press_b"
+
+sysHydraulic = require("kpcrew.systems.DFLT.sysHydraulic")
 
 -- ===== Switches
 

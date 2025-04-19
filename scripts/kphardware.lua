@@ -27,45 +27,105 @@ kh_acf_icao = "DFLT" -- active addon aircraft ICAO code (DFLT when nothing found
 -- Zibo B738 - use different module for default Laminar B738
 if PLANE_ICAO == "B738" then
 	if PLANE_TAILNUMBER ~= "ZB738" then
-		kh_acf_icao = "DFLT" 
+		kh_acf_icao = "B737" 
 	else
 		kh_acf_icao = "B738" -- Zibo Mod and variants
 	end
-end
-if PLANE_ICAO == "A333" then
-	kh_acf_icao = "A333"
-end
--- if PLANE_ICAO == "A320" and PLANE_TAILNUMBER == "A320" then
-	-- kc_acf_icao = "A20N"
--- end
--- if PLANE_ICAO == "A359" then
-	-- kh_acf_icao = "A359"
--- end
--- XP12 Citation X
-if PLANE_ICAO == "C750" and PLANE_TAILNUMBER == "N750XP" then
-	kh_acf_icao = "C750"
-end
--- if PLANE_ICAO == "MD11" then
-	-- kh_acf_icao = "MD11"
--- end
--- if PLANE_ICAO == "B732" then
-	-- kh_acf_icao = "B732"
--- end
--- if PLANE_ICAO == "B733" then
-	-- kh_acf_icao = "B733"
--- end
--- if PLANE_ICAO == "E135" or PLANE_ICAO == "E140" or PLANE_ICAO == "E145" or PLANE_ICAO == "E45X" then
-	-- kh_acf_icao = "ERJF"
--- end
--- Laminar MD-82
--- if PLANE_ICAO == "MD82" and PLANE_TAILNUMBER == "N552AA" then
-	-- kh_acf_icao = "MD82"
--- end
--- if PLANE_ICAO == "B744" then
-	-- kh_acf_icao = "B744"
--- end
 
--- set("sim/private/controls/shadow/cockpit_near_adjust",0.09)
+-- Epic Victory Aerobask
+-- elseif PLANE_ICAO == "EVIC" then
+	-- kh_acf_icao = "EVIC"
+
+-- Epic E1000 Aerobask
+-- elseif PLANE_ICAO == "EPIC" then
+	-- kh_acf_icao = "EPIC"
+
+-- Thranda PC12
+-- elseif PLANE_ICAO == "PC12" then
+	-- kh_acf_icao = "PC12"
+	
+-- FF A350
+-- elseif PLANE_ICAO == "A359" then
+	-- kh_acf_icao = "A359"
+	
+-- Laminar SF50
+-- elseif PLANE_ICAO == "SF50" then
+	-- kh_acf_icao = "SF50"
+	
+-- XP12 Citation X
+elseif PLANE_ICAO == "C750" and PLANE_TAILNUMBER == "N750XP" then
+	kh_acf_icao = "C750"
+
+-- XP12 A330-300 Laminar
+elseif PLANE_ICAO == "A333" then
+	kh_acf_icao = "A33L"
+
+-- Inibuilds A300
+-- elseif PLANE_ICAO == "A306" then
+	-- kh_acf_icao = "A306"
+
+-- FF 7x7
+-- elseif PLANE_ICAO == "B762" or PLANE_ICAO == "B763" or PLANE_ICAO == "B764" then
+	-- kh_acf_icao = "B7x7"
+
+-- Rotate MD-11
+-- elseif PLANE_ICAO == "MD11" then
+	-- kh_acf_icao = "MD11"
+
+-- FJsim 737
+-- elseif PLANE_ICAO == "B732" then
+	-- kh_acf_icao = "B732"
+
+-- IXEG 737
+-- elseif PLANE_ICAO == "B733" then
+	-- kh_acf_icao = "B733"
+
+-- X-CRAFTS E-JET FAMILIY XP12 (E1XX)
+-- E-JET FAM 170  170/170
+-- E-JET FAM 175  175/175
+-- E-JET FAM 190  190/190
+-- E-JET FAM 195  195/195
+-- elseif PLANE_ICAO == "E170" and PLANE_TAILNUMBER == "E170" then
+	-- kh_acf_icao = "E1XX"
+-- elseif PLANE_ICAO == "E175" and PLANE_TAILNUMBER == "E175" then
+	-- kh_acf_icao = "E1XX"
+-- elseif PLANE_ICAO == "E190" and PLANE_TAILNUMBER == "E190" then
+	-- kh_acf_icao = "E1XX"
+-- elseif PLANE_ICAO == "E195" and PLANE_TAILNUMBER == "E195" then
+	-- kh_acf_icao = "E1XX"
+	
+-- X-CRAFTS FREE E-JETS XP12 (E1FF)
+-- Free 175       170/175
+-- Free 195       190/195
+elseif PLANE_ICAO == "E170" and PLANE_TAILNUMBER == "E175" then
+	kh_acf_icao = "E1FF"
+elseif PLANE_ICAO == "E190" and PLANE_TAILNUMBER == "E195" then
+	kh_acf_icao = "E1FF"
+
+-- ToLiss Airbusses
+elseif PLANE_ICAO == "A319" and PLANE_TAILNUMBER == "C-GTLS" then
+	kc_acf_icao = "A3TL"
+elseif PLANE_ICAO == "A20N" and PLANE_TAILNUMBER == "C-GTLT" then
+	kc_acf_icao = "A3TL"
+elseif PLANE_ICAO == "A321" then
+	kc_acf_icao = "A3TL"
+-- elseif PLANE_ICAO == "A339" then
+	-- kc_acf_icao = "A3TL"
+-- elseif PLANE_ICAO == "A346" then
+	-- kc_acf_icao = "A3TL"
+	
+-- Laminar MD-82
+elseif PLANE_ICAO == "MD82" and PLANE_TAILNUMBER == "N552AA" then
+	kh_acf_icao = "MD82"
+	
+-- RotateSim MD-88
+-- elseif PLANE_ICAO == "MD88" then
+	-- kh_acf_icao = "MD88"
+
+-- Aerobask Phenom 300
+-- elseif PLANE_ICAO == "E55P" then
+	-- kh_acf_icao = "E55P"
+end
 
 -- load aircraft specific systems
 
@@ -212,15 +272,15 @@ create_command("kp/xsp/systems/door_cf_toggle",		"Toggle door FWD CARGO","sysGen
 create_command("kp/xsp/systems/door_ca_toggle",		"Toggle door AFT CARGO","sysGeneral.doorACargo:actuate(modeToggle)","","")
 
 ----------------- Electric --------------------
-create_command("kp/xsp/electric/bat1_master_on",	"Battery Master 1 On","sysElectric.battery1HwSwitch:actuate(modeOn)","","")
-create_command("kp/xsp/electric/bat1_master_off",	"Battery Master 1 Off","sysElectric.battery1HwSwitch:actuate(modeOff)","","")
-create_command("kp/xsp/electric/bat1_master_tgl",	"Battery Master 1 Toggle","sysElectric.battery1HwSwitch:actuate(modeToggle)","","")
-create_command("kp/xsp/electric/bat2_master_on",	"Battery Master 2 On","sysElectric.battery2HwSwitch:actuate(modeOn)","","")
-create_command("kp/xsp/electric/bat2_master_off",	"Battery Master 2 Off","sysElectric.battery2HwSwitch:actuate(modeOff)","","")
-create_command("kp/xsp/electric/bat2_master_tgl",	"Battery Master 2 Toggle","sysElectric.battery2HwSwitch:actuate(modeToggle)","","")
-create_command("kp/xsp/electric/bat_all_master_on",	"Battery Master All On","sysElectric.batteryHwGroup:actuate(modeOn)","","")
-create_command("kp/xsp/electric/bat_all_master_off","Battery Master All Off","sysElectric.batteryHwGroup:actuate(modeOff)","","")
-create_command("kp/xsp/electric/bat_all_master_tgl","Battery Master All Toggle","sysElectric.batteryHwGroup:actuate(modeToggle)","","")
+create_command("kp/xsp/electric/bat1_master_on",	"Battery Master 1 On","sysElectric.batterySwitch:actuate(modeOn)","","")
+create_command("kp/xsp/electric/bat1_master_off",	"Battery Master 1 Off","sysElectric.batterySwitch:actuate(modeOff)","","")
+create_command("kp/xsp/electric/bat1_master_tgl",	"Battery Master 1 Toggle","sysElectric.batterySwitch:actuate(modeToggle)","","")
+create_command("kp/xsp/electric/bat2_master_on",	"Battery Master 2 On","sysElectric.battery2Switch:actuate(modeOn)","","")
+create_command("kp/xsp/electric/bat2_master_off",	"Battery Master 2 Off","sysElectric.battery2Switch:actuate(modeOff)","","")
+create_command("kp/xsp/electric/bat2_master_tgl",	"Battery Master 2 Toggle","sysElectric.battery2Switch:actuate(modeToggle)","","")
+create_command("kp/xsp/electric/bat_all_master_on",	"Battery Master All On","sysElectric.batteryGroup:actuate(modeOn)","","")
+create_command("kp/xsp/electric/bat_all_master_off","Battery Master All Off","sysElectric.batteryGroup:actuate(modeOff)","","")
+create_command("kp/xsp/electric/bat_all_master_tgl","Battery Master All Toggle","sysElectric.batteryGroup:actuate(modeToggle)","","")
 
 create_command("kp/xsp/electric/alt1_on",			"Alternator 1 On","sysElectric.alternator1Switch:actuate(modeOn)","","")
 create_command("kp/xsp/electric/alt1_off",			"Alternator 1 Off","sysElectric.alternator1Switch:actuate(modeOff)","","")
@@ -420,7 +480,7 @@ create_command("kp/xsp/bravo/button_vsp","Bravo VSP Button","sysMCP.vsSwitch:act
 create_command("kp/xsp/bravo/button_ias","Bravo IAS Button","sysMCP.speedSwitch:actuate(2)", "", "")
 
 -- larger AUTO PILOT switch
-create_command("kp/xsp/bravo/button_ap", "Bravo Autopilot Button",	"sysMCP.ap1Switch:actuate(2)", "", "")
+create_command("kp/xsp/bravo/button_ap", "Bravo Autopilot Button",	"sysMCP.ap1Switch:actuate(1)", "", "")
 
 create_command("kp/xsp/bravo/toga_press", "Bravo Press Left TOGA", "sysMCP.togaPilotSwitch:actuate(modeToggle)","","")
 
@@ -577,7 +637,7 @@ function xsp_set_light_drefs()
 	xsp_gear_status[0] 		= sysGeneral.gearLightsAnc:getStatus()
 
 	-- FLIGHT DIRECTOR annunciator
-	xsp_mcp_fdir[0] 		= sysMCP.fdirAnc:getStatus()
+	-- xsp_mcp_fdir[0] 		= sysMCP.fdirAnc:getStatus()
 	
 	---------- Lights -----------
 	
@@ -912,8 +972,8 @@ end
 
 -- regularly update the drefs for annunciators and lights (every 1 second)
 do_often("xsp_set_light_drefs()")
-add_macro("KPHardware Toggle MCP Bar", "show_mcp_panel = not show_mcp_panel\nif show_mcp_panel then kh_init_mcp_window() else kh_hide_mcp_wnd() end")
-add_macro("KPHardware Toggle Light Bar", "show_light_panel = not show_light_panel\nif show_light_panel then kh_init_light_window() else kh_hide_light_wnd() end")
-add_macro("KPHardware Toggle Radio Bar", "show_radio_panel = not show_radio_panel\nif show_radio_panel then kh_init_radio_window() else kh_hide_radio_wnd() end")
-add_macro("KPHardware Toggle EFIS Bar", "show_efis_panel = not show_efis_panel\nif show_efis_panel then kh_init_efis_window() else kh_hide_efis_wnd() end")
+-- add_macro("KPHardware Toggle MCP Bar", "show_mcp_panel = not show_mcp_panel\nif show_mcp_panel then kh_init_mcp_window() else kh_hide_mcp_wnd() end")
+-- add_macro("KPHardware Toggle Light Bar", "show_light_panel = not show_light_panel\nif show_light_panel then kh_init_light_window() else kh_hide_light_wnd() end")
+-- add_macro("KPHardware Toggle Radio Bar", "show_radio_panel = not show_radio_panel\nif show_radio_panel then kh_init_radio_window() else kh_hide_radio_wnd() end")
+-- add_macro("KPHardware Toggle EFIS Bar", "show_efis_panel = not show_efis_panel\nif show_efis_panel then kh_init_efis_window() else kh_hide_efis_wnd() end")
 

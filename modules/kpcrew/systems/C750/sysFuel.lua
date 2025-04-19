@@ -3,9 +3,7 @@
 
 -- @classmod sysFuel
 -- @author Kosta Prokopiu
--- @copyright 2022 Kosta Prokopiu
-local sysFuel = {
-}
+-- @copyright 2025 Kosta Prokopiu
 
 local TwoStateDrefSwitch 	= require "kpcrew.systems.TwoStateDrefSwitch"
 local TwoStateCmdSwitch	 	= require "kpcrew.systems.TwoStateCmdSwitch"
@@ -16,17 +14,18 @@ local CustomAnnunciator 	= require "kpcrew.systems.CustomAnnunciator"
 local TwoStateToggleSwitch	= require "kpcrew.systems.TwoStateToggleSwitch"
 local MultiStateCmdSwitch 	= require "kpcrew.systems.MultiStateCmdSwitch"
 local InopSwitch 			= require "kpcrew.systems.InopSwitch"
-
+local KeepPressedSwitchCmd	= require "kpcrew.systems.KeepPressedSwitchCmd"
 local drefFuelPressLow 		= "sim/cockpit2/annunciators/fuel_pressure_low"
 
+sysFuel = require("kpcrew.systems.DFLT.sysFuel")
+
+-- Check if fuel is inbalanced
 function sysFuel.fuel_balanced()
 	local tank1 = get("sim/cockpit2/fuel/fuel_quantity",1) 
 	local tank2 = get("sim/cockpit2/fuel/fuel_quantity",2) 
 	return math.abs(tank1-tank2) < 100
 end
 	
----------- Switches
-
 -- Fuel pumps
 sysFuel.fuelPumpLeftAft 	= TwoStateCustomSwitch:new ("fuelpumpleftaft","laminar/CitX/fuel/boost_left",0,
 	function () 
@@ -62,37 +61,11 @@ sysFuel.fuelPumpRightAft 	= TwoStateCustomSwitch:new("fuelpumprightaft","laminar
 		command_once("laminar/CitX/fuel/cmd_boost_right_dwn")
 	end	
 )
-sysFuel.fuelPumpCtrLeft 	= InopSwitch:new ("fuelpumpctrleft")
-sysFuel.fuelPumpCtrRight 	= InopSwitch:new ("fuelpumpctrright")
 sysFuel.allFuelPumpGroup 	= SwitchGroup:new("fuelpumpgroup")
 sysFuel.allFuelPumpGroup:addSwitch(sysFuel.fuelPumpLeftAft)
 sysFuel.allFuelPumpGroup:addSwitch(sysFuel.fuelPumpRightAft)
--- sysFuel.allFuelPumpGroup:addSwitch(sysFuel.fuelPumpCtrLeft)
--- sysFuel.allFuelPumpGroup:addSwitch(sysFuel.fuelPumpCtrRight)
 
 sysFuel.crossFeed = MultiStateCmdSwitch:new("crossfeed","laminar/CitX/fuel/crossfeed",0,
 	"laminar/CitX/oxygen/cmd_pass_oxy_dwn","laminar/CitX/oxygen/cmd_pass_oxy_up",-1,1,false)
-	
------------- Annunciators
-
--- FUEL PRESSURE LOW annunciator
-sysFuel.fuelLowAnc = CustomAnnunciator:new("fuellow",
-function ()
-	if get(drefFuelPressLow,0) > 0 or get(drefFuelPressLow,1) > 0 or get(drefFuelPressLow,2) > 0 or get(drefFuelPressLow,3) > 0 then
-		return 1
-	else
-		return 0
-	end
-end)
-
--- AUX FUEL PUMP ANC
-sysFuel.auxFuelPumpsAnc = CustomAnnunciator:new("auxfuel",
-function ()
-	if sysFuel.allFuelPumpGroup:getStatus() > 0 then 
-		return 1
-	else
-		return 0
-	end
-end)
 
 return sysFuel

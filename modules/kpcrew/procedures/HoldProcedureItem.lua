@@ -21,13 +21,13 @@ local FlowItem 			= require "kpcrew.FlowItem"
 -- @tparam string challengeText is the left hand text 
 -- @tparam string responseText is specific state of the item
 -- @tparam string actor is the actor for the item; see list below
--- @tparam function reference  skipFunc if true will skip the item and not diaply in list
+-- @tparam function reference  skipFunc if true will skip the item and not disply in list
 function kcHoldProcedureItem:new(challengeText,responseText,actor,actionFunc,skipFunc)
     kcHoldProcedureItem.__index = kcHoldProcedureItem
     setmetatable(kcHoldProcedureItem, {
         __index = FlowItem
     })
-    local obj = FlowItem:new(challengeText,responseText,actor,0,nil,actionFunc,skipFunc)
+    local obj = FlowItem:new(challengeText,responseText,actor,0,true,actionFunc,skipFunc)
     setmetatable(obj, kcHoldProcedureItem)
 
 	obj.valid = false
@@ -43,6 +43,7 @@ end
 function kcHoldProcedureItem:getWaitTime()
 	return 0
 end
+
 -- reset the item to its initial state
 function kcHoldProcedureItem:reset()
     self:setState(FlowItem.INIT)
@@ -80,7 +81,7 @@ function kcHoldProcedureItem:getStateColor()
 end
 
 -- get the current state of this checklist item
--- @treturn int get state id
+-- @return int get state id
 function kcHoldProcedureItem:getState()
 	if type(self.skipFunc) == 'function' then
 		if self.skipFunc() then

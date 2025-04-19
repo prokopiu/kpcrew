@@ -48,6 +48,7 @@ kcSopFlightPhase = { [1] = "Cold & Dark", 	[2] = "Prel Preflight", [3] = "Prefli
 -- Set up SOP =========================================================================
 
 activeSOP = SOP:new("Default Aircraft SOP")
+kc_num_visible_sop_items = 12
 
 -- ============  =============
 -- add the checklists and procedures to the active sop

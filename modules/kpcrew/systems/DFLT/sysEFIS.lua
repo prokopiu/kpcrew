@@ -3,7 +3,8 @@
 
 -- @classmod sysEFIS
 -- @author Kosta Prokopiu
--- @copyright 2022 Kosta Prokopiu
+-- @copyright 2025 Kosta Prokopiu
+
 local sysEFIS = {
 	mapRange_5 		= 0,
 	mapRange10 		= 1,
@@ -26,6 +27,8 @@ local sysEFIS = {
 	minsTypeRadio 	= 0,
 	minsTypeBaro 	= 1
 }
+
+logMsg("DFLT sysEFIS")
 
 local TwoStateDrefSwitch 	= require "kpcrew.systems.TwoStateDrefSwitch"
 local TwoStateCmdSwitch	 	= require "kpcrew.systems.TwoStateCmdSwitch"
@@ -167,6 +170,51 @@ function sysEFIS:render(ypos,height)
 	kc_imgui_value("%04d ",sysGeneral.baroMbar,10)
 	kc_imgui_value("%5.2f",sysGeneral.baroInhg,10)
 	kc_imgui_simple_actuator("UP",sysGeneral.baroGroup,cmdUp,10,23,25)
+end
+
+function sysEFIS.panel_render()
+	imgui.BeginGroup()
+		imgui.TextUnformatted("  EFIS ")
+		imgui.TextUnformatted("  ND:")
+		imgui.TextUnformatted(" ")	
+		imgui.SameLine()	
+		kc_imgui_simple_actuator("MODE <",sysEFIS.mapModePilot,cmdDown,10,47,25)
+		imgui.SameLine()
+		kc_imgui_simple_actuator("MODE >",sysEFIS.mapModePilot,cmdUp,10,47,25)
+		imgui.SameLine()
+		kc_imgui_simple_actuator("ZOOM <",sysEFIS.mapZoomPilot,cmdDown,10,47,25)
+		imgui.SameLine()
+		kc_imgui_simple_actuator("ZOOM >",sysEFIS.mapZoomPilot,cmdUp,10,47,25)
+		imgui.TextUnformatted(" ")	
+		imgui.SameLine()
+		kc_imgui_toggle_button_mcp("WXR",sysEFIS.wxrPilot,10,47,25)
+		imgui.SameLine()
+		kc_imgui_toggle_button_mcp("APT",sysEFIS.arptPilot,10,47,25)
+		imgui.SameLine()
+		kc_imgui_toggle_button_mcp("NAV",sysEFIS.staPilot,10,47,25)
+		imgui.SameLine()
+		kc_imgui_toggle_button_mcp("WPT",sysEFIS.wptPilot,10,47,25)
+		imgui.TextUnformatted("  MINIMUMS:")	
+		imgui.TextUnformatted(" ")	
+		imgui.SameLine()
+		kc_imgui_rotary_mcp("%04d",sysEFIS.minsPilot,10,31)
+		imgui.TextUnformatted("  BARO:")	
+		imgui.TextUnformatted(" ")	
+		imgui.SameLine()
+		kc_imgui_simple_actuator("DN",sysGeneral.baroGroup,cmdDown,10,23,25)
+		imgui.SameLine()
+		kc_imgui_value("%04d |",sysGeneral.baroMbar,10)
+		imgui.SameLine()
+		kc_imgui_value("%5.2f",sysGeneral.baroInhg,10)
+		imgui.SameLine()
+		kc_imgui_simple_actuator("UP",sysGeneral.baroGroup,slowUp,10,23,25)
+		
+		imgui.SameLine()
+		kc_imgui_cmd_button("STD","sim/instruments/barometer_std",10,40,25)
+
+		imgui.Separator()
+		
+	imgui.EndGroup()	
 end
 
 return sysEFIS

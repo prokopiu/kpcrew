@@ -3,8 +3,11 @@
 
 -- @classmod sysControls
 -- @author Kosta Prokopiu
--- @copyright 2022 Kosta Prokopiu
+-- @copyright 2025 Kosta Prokopiu
+
 local sysControls = {
+	autobrk_off = 1,
+	
 	trimCenter 	= 2,
 	trimLeft 	= 1,
 	trimRight 	= 0,
@@ -16,8 +19,11 @@ local sysControls = {
 	trimDown 	= 1,
 
 	flaps_pos = {[0] =   0, [1] = 0.125, [2] = 0.25, [3] = 0.375, [4] = 0.5, [5] = 0.625, [6] = 0.75, [7] = 0.875, [8] = 1},
-	flaps_spd = {[0] = 999, [1] =   999, [2] =  999, [3] =   999, [4] = 999, [5] =   999, [6] =  999, [7] =   999, [8] = 999}
+	flaps_spd = {[0] = 230, [1] =   200, [2] =  180, [3] =   160, [4] = 155, [5] =   155, [6] =  150, [7] =   150, [8] = 150},
+	flaps_name= {[0] = "UP", [1] =   "1", [2] =  "2", [3] =   "3", [4] = "4", [5] =   "5", [6] =  "6", [7] =   "7", [8] = "FULL"}
 }
+
+logMsg("DFLT sysControls")
 
 local TwoStateDrefSwitch 	= require "kpcrew.systems.TwoStateDrefSwitch"
 local TwoStateCmdSwitch	 	= require "kpcrew.systems.TwoStateCmdSwitch"
@@ -38,9 +44,9 @@ sysControls.flapsSwitch 	= TwoStateCustomSwitch:new("flaps","sim/cockpit2/contro
 	end,
 	function () 
 		command_once("sim/flight_controls/flaps_up")
-	end,
+	end,nil,
 	function () 
-		return
+		return get("sim/cockpit2/controls/flap_ratio")
 	end
 )
 
@@ -51,9 +57,9 @@ sysControls.pitchTrimSwitch = TwoStateCustomSwitch:new("pitchtrim","sim/cockpit2
 	end,
 	function () 
 		command_once("sim/flight_controls/pitch_trim_up")
-	end,
+	end,nil,
 	function () 
-		return
+		return get("sim/cockpit2/controls/elevator_trim")
 	end
 )
 sysControls.pitchTrimDownRepeat = TwoStateCustomSwitch:new("pitchtrim","sim/cockpit2/controls/elevator_trim",0,
@@ -62,20 +68,21 @@ sysControls.pitchTrimDownRepeat = TwoStateCustomSwitch:new("pitchtrim","sim/cock
 	end,
 	function () 
 		command_end("sim/flight_controls/pitch_trim_down")
-	end,
+	end,nil,
 	function () 
-		return
+		return get("sim/cockpit2/controls/elevator_trim")
 	end
 )
+
 sysControls.pitchTrimUpRepeat = TwoStateCustomSwitch:new("pitchtrim","sim/cockpit2/controls/elevator_trim",0,
 	function () 
 		command_begin("sim/flight_controls/pitch_trim_up")
 	end,
 	function () 
 		command_end("sim/flight_controls/pitch_trim_up")
-	end,
+	end,nil,
 	function () 
-		return
+		return get("sim/cockpit2/controls/elevator_trim")
 	end
 )
 
@@ -86,9 +93,9 @@ sysControls.aileronTrimSwitch = TwoStateCustomSwitch:new("ailerontrim","sim/cock
 	end,
 	function () 
 		command_once("sim/flight_controls/aileron_trim_left")
-	end,
+	end,nil,
 	function () 
-		return
+		return get("sim/cockpit2/controls/aileron_trim")
 	end
 )
 
@@ -102,19 +109,26 @@ sysControls.rudderTrimSwitch = TwoStateCustomSwitch:new("ruddertrim","sim/cockpi
 	end,
 	function () 
 		command_once("sim/flight_controls/rudder_trim_left")
-	end,
+	end,nil,
 	function () 
-		return
+		return get("sim/cockpit2/controls/rudder_trim")
 	end
 )
 
-sysControls.rudderReset = TwoStateToggleSwitch:new("rudderreset","sim/cockpit2/controls/rudder_trim",0,
+sysControls.rudderReset	= TwoStateToggleSwitch:new("rudderreset","sim/cockpit2/controls/rudder_trim",0,
 	"sim/flight_controls/rudder_trim_center")
 
 -- YAW Damper
-sysControls.yawDamper = TwoStateToggleSwitch:new("yawdamper","sim/cockpit2/switches/yaw_damper_on",0,
-	"sim/systems/yaw_damper_toggle")
+sysControls.yawDamper	= TwoStateDrefSwitch:new("yawdamper","sim/cockpit2/switches/yaw_damper_on",0)
+
+-- Speedbrake lever
+sysControls.Speedbrake	= TwoStateDrefSwitch:new("speedbrake","sim/cockpit2/controls/speedbrake_ratio",0)
+
+-- Autobrake
+sysControls.Autobrake	= TwoStateDrefSwitch:new("autobrake","sim/cockpit2/switches/auto_brake_level",0)
 
 --------- Annunciators
+
+sysControls.rudderDeflection	= SimpleAnnunciator:new("rudderdeflection","sim/flightmodel2/wing/rudder1_deg",0)
 
 return sysControls

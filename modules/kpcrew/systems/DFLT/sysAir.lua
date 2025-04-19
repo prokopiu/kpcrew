@@ -3,9 +3,12 @@
 
 -- @classmod sysAir
 -- @author Kosta Prokopiu
--- @copyright 2022 Kosta Prokopiu
+-- @copyright 2025 Kosta Prokopiu
+
 local sysAir = {
 }
+
+logMsg("DFLT sysAir")
 
 local TwoStateDrefSwitch 	= require "kpcrew.systems.TwoStateDrefSwitch"
 local TwoStateCmdSwitch	 	= require "kpcrew.systems.TwoStateCmdSwitch"
@@ -27,8 +30,8 @@ sysAir.recircFanLeft 		= InopSwitch:new("recirc1")
 sysAir.recircFanRight 		= InopSwitch:new("recirc2")
 
 -- PACK switches
-sysAir.packLeftSwitch 		= InopSwitch:new("pack1")
-sysAir.packRightSwitch 		= InopSwitch:new("pack2")
+sysAir.packLeftSwitch 		= TwoStateDrefSwitch:new("pack1","sim/cockpit2/bleedair/actuators/pack_left",0)
+sysAir.packRightSwitch 		= TwoStateDrefSwitch:new("pack2","sim/cockpit2/bleedair/actuators/pack_right",0)
 sysAir.packSwitchGroup 		= SwitchGroup:new("PackBleeds")
 sysAir.packSwitchGroup:addSwitch(sysAir.packLeftSwitch)
 sysAir.packSwitchGroup:addSwitch(sysAir.packRightSwitch)
@@ -48,7 +51,10 @@ sysAir.engBleedGroup:addSwitch(sysAir.bleedEng2Switch)
 -- sysAir.engBleedGroup:addSwitch(sysAir.bleedEng4Switch)
 
 -- APU Bleed
-sysAir.apuBleedSwitch 		= InopSwitch:new("apubleed")
+sysAir.apuBleedSwitch 		= TwoStateDrefSwitch:new("apubleed","sim/cockpit2/bleedair/actuators/apu_bleed",0)
+
+-- Oxygen Supply
+sysAir.oxygenMaster			= TwoStateDrefSwitch:new("oxygen","sim/cockpit2/oxygen/actuators/demand_flow_setting",0)
 
 -- ======= Annunciators
 

@@ -2,12 +2,20 @@
 
 -- @classmod sysMacros
 -- @author Kosta Prokopiu
--- @copyright 2024 Kosta Prokopiu
-local sysMacros = {
-}
+-- @copyright 2025 Kosta Prokopiu
+
+sysMacros = require("kpcrew.systems.DFLT.sysMacros")
 
 -- ====================================== States related macros
 function kc_macro_state_cold_and_dark()
+
+	logMsg("C750 kc_macro_state_cold_and_dark")
+
+	activeBckVars:set("general:timesOFF","==:==")
+	activeBckVars:set("general:timesOUT","==:==")
+	activeBckVars:set("general:timesIN","==:==")
+	activeBckVars:set("general:timesON","==:==")
+	
 	kc_macro_lights_cold_dark()
 	kc_macro_bleeds_off()
 	kc_macro_packs_off()
@@ -109,6 +117,9 @@ function kc_macro_state_cold_and_dark()
 	sysLights.dispLightGroup:actuate(0)
 	sysElectric.gpuSwitch:actuate(0)
 	sysGeneral.GearSwitch:actuate(1)
+	command_once("laminar/CitX/electrical/cmd_stby_pwr_dwn")
+	command_once("laminar/CitX/electrical/cmd_stby_pwr_dwn")
+	
 	sysElectric.batterySwitch:actuate(0)
 	sysElectric.battery2Switch:actuate(0) 
 	while get("laminar/CitX/controls/split_pull") ~= 0 do
@@ -954,6 +965,37 @@ function kc_bck_transition_level(trigger)
 		kc_speakNoText(0,"transition level")
 		kc_macro_at_trans_lvl()
 		kc_procvar_set(trigger,false)
+	end
+end
+
+-- set the takeoff details v-speeds, trim
+function kc_set_takeoff_details()
+	command_once("sim/FMS/clb")
+	command_once("sim/FMS/ls_2r")
+	command_once("sim/FMS/ls_4r")
+	local line = get("sim/cockpit2/radios/indicators/fms_cdu1_text_line0") 
+	command_once("sim/FMS/next")
+	activeBriefings:set("takeoff:v1",string.sub(get("sim/cockpit2/radios/indicators/fms_cdu1_text_line2"),1,3)) 
+	activeBriefings:set("takeoff:vr",string.sub(get("sim/cockpit2/radios/indicators/fms_cdu1_text_line4"),1,3)) 
+	activeBriefings:set("takeoff:v2",string.sub(get("sim/cockpit2/radios/indicators/fms_cdu1_text_line6"),1,3)) 
+	-- activeBriefings:set("takeoff:elevatorTrim",get("laminar/B738/FMS/trim_calc"))
+end
+
+-- set the landing details v-speeds, trim
+function kc_set_landing_details()
+	command_once("sim/FMS/clb")
+	command_once("sim/FMS/ls_4r")
+	command_once("sim/FMS/next")
+	command_once("sim/FMS/next")
+	command_once("sim/FMS/next")
+	local vrefline = get("sim/cockpit2/radios/indicators/fms_cdu1_text_line2")
+	print(vrefline)
+	if vrefline ~= "" then 
+		activeBriefings:set("approach:vref",string.sub(get("sim/cockpit2/radios/indicators/fms_cdu1_text_line2"),1,3))
+	end
+	local vappline = get("sim/cockpit2/radios/indicators/fms_cdu1_text_line4")
+	if vappline ~= "" then 
+		activeBriefings:set("approach:vapp",string.sub(get("sim/cockpit2/radios/indicators/fms_cdu1_text_line4"),1,3))
 	end
 end
 

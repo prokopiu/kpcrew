@@ -3,7 +3,8 @@
 
 -- @classmod sysAir
 -- @author Kosta Prokopiu
--- @copyright 2022 Kosta Prokopiu
+-- @copyright 2025 Kosta Prokopiu
+
 local sysAir = {
 }
 
@@ -16,15 +17,9 @@ local CustomAnnunciator 	= require "kpcrew.systems.CustomAnnunciator"
 local TwoStateToggleSwitch	= require "kpcrew.systems.TwoStateToggleSwitch"
 local MultiStateCmdSwitch 	= require "kpcrew.systems.MultiStateCmdSwitch"
 local InopSwitch 			= require "kpcrew.systems.InopSwitch"
+local KeepPressedSwitchCmd	= require "kpcrew.systems.KeepPressedSwitchCmd"
 
-local drefAirANC 			= "sim/cockpit2/annunciators/low_vacuum"
-
--- TRIM/RAM air
-sysAir.trimAirSwitch 		= InopSwitch:new("trimair")
-
--- RECIRC fans
-sysAir.recircFanLeft 		= InopSwitch:new("recirc1")
-sysAir.recircFanRight 		= InopSwitch:new("recirc2")
+sysAir = require("kpcrew.systems.DFLT.sysAir")
 
 -- PACK switches
 sysAir.packLeftSwitch 		= TwoStateCustomSwitch:new("pack1","laminar/CitX/bleedair/air_cond_cockpit",0,
@@ -146,28 +141,12 @@ sysAir.bleedEng2Switch 		= TwoStateCustomSwitch:new("bleed2","laminar/CitX/bleed
 			return 0
 		end
 	end)
--- sysAir.bleedEng3Switch 		= InopSwitch:new("bleed3")
--- sysAir.bleedEng4Switch 		= InopSwitch:new("bleed4")
 sysAir.engBleedGroup 		= SwitchGroup:new("EngBleeds")
 sysAir.engBleedGroup:addSwitch(sysAir.bleedEng1Switch)
 sysAir.engBleedGroup:addSwitch(sysAir.bleedEng2Switch)
--- sysAir.engBleedGroup:addSwitch(sysAir.bleedEng3Switch)
--- sysAir.engBleedGroup:addSwitch(sysAir.bleedEng4Switch)
 
 -- APU Bleed
 sysAir.apuBleedSwitch 		= TwoStateCmdSwitch:new("apubleed","laminar/CitX/APU/bleed_air_switch",0,
 	"laminar/CitX/APU/bleed_switch_up","laminar/CitX/APU/bleed_switch_dwn","nocommand")
-
--- ======= Annunciators
-
--- ** VACUUM annunciator
-sysAir.vacuumAnc 			= CustomAnnunciator:new("vacuum",
-function ()
-	if get(drefAirANC,0) == 1 or get(drefAirANC,1) == 1 then
-		return 1
-	else
-		return 0
-	end
-end)
 
 return sysAir

@@ -158,7 +158,7 @@ function kcFlowItem:setState(state)
 end
 
 -- get the current state of this checklist item
--- @treturn int get state id
+-- @return int get state id
 function kcFlowItem:getState()
 	if type(self.skipFunc) == 'function' then
 		if self.skipFunc() then
