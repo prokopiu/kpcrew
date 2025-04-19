@@ -22,7 +22,7 @@ kc_acf_icao = "DFLT" -- active addon aircraft ICAO code (DFLT when nothing found
 -- ====== Select the addon modules based on ICAO code
 if PLANE_ICAO == "B738" then
 	if PLANE_TAILNUMBER ~= "ZB738" then
-		kc_acf_icao = "DFLT" 
+		kc_acf_icao = "B737" 
 	else
 		kc_acf_icao = "B738" -- Zibo Mod
 	end
