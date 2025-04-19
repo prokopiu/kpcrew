@@ -64,6 +64,9 @@ kc_NumTanks			= -1		-- Number of tanks from acf
 kc_MaxFuel 			= -1		-- Maximum Fuel Capacity from ACF
 -- Max Fuel per tank
 kc_MFL				= {[0]=-1,[1]=-1,[2]=-1,[3]=-1,[4]=-1,[5]=-1,[6]=-1,[7]=-1,[8]=-1}
+kc_FuelTankLeftInd	= 0
+kc_FuelTankRghtInd	= 1
+kc_FuelTankCntrInd  = 2
 kc_FFPH 			= -1		-- Fuel Flow per hour from acf
 kc_has_fuel_pumps   = true		-- Aircraft has switchable fuel pumps
 kc_has_fuel_xfeed	= true		-- Aircraft has fuel crossfeed
@@ -496,20 +499,28 @@ function kc_set_fuel(totalfuel)
 	if totalfuel > kc_get_MaxFuel() then 
 		totalfuel = kc_get_MaxFuel()
 	end
+	set_array("sim/flightmodel/weight/m_fuel",0,0)
+	set_array("sim/flightmodel/weight/m_fuel",1,0)
+	set_array("sim/flightmodel/weight/m_fuel",2,0)
+	set_array("sim/flightmodel/weight/m_fuel",3,0)
+	set_array("sim/flightmodel/weight/m_fuel",4,0)
 	if kc_get_nr_tanks() == 1 then 
-		set_array("sim/flightmodel/weight/m_fuel",0,totalfuel)
+		set_array("sim/flightmodel/weight/m_fuel",kc_FuelTankCntrInd,totalfuel)
+		set_array("sim/flightmodel/weight/m_fuel",kc_FuelTankLeftInd,0)
+		set_array("sim/flightmodel/weight/m_fuel",kc_FuelTankRghtInd,0)
 	elseif kc_get_nr_tanks() == 2 then 
-		set_array("sim/flightmodel/weight/m_fuel",0,totalfuel/2)
-		set_array("sim/flightmodel/weight/m_fuel",1,totalfuel/2)
+		set_array("sim/flightmodel/weight/m_fuel",kc_FuelTankLeftInd,totalfuel/2)
+		set_array("sim/flightmodel/weight/m_fuel",kc_FuelTankRghtInd,totalfuel/2)
+		set_array("sim/flightmodel/weight/m_fuel",kc_FuelTankCntrInd,0)
 	elseif kc_get_nr_tanks() == 3 then 
-		if kc_MFL[0] + kc_MFL[1] < totalfuel then 
-			set_array("sim/flightmodel/weight/m_fuel",0,kc_MFL[0])
-			set_array("sim/flightmodel/weight/m_fuel",1,kc_MFL[1])
-			set_array("sim/flightmodel/weight/m_fuel",3,totalfuel - kc_MFL[0] + kc_MFL[1])
+		if kc_get_MFL(kc_FuelTankLeftInd) + kc_get_MFL(kc_FuelTankRghtInd) < totalfuel then 
+			set_array("sim/flightmodel/weight/m_fuel",kc_FuelTankLeftInd,kc_get_MFL(kc_FuelTankLeftInd))
+			set_array("sim/flightmodel/weight/m_fuel",kc_FuelTankRghtInd,kc_get_MFL(kc_FuelTankRghtInd))
+			set_array("sim/flightmodel/weight/m_fuel",kc_FuelTankCntrInd,totalfuel - (kc_get_MFL(kc_FuelTankLeftInd) + kc_get_MFL(kc_FuelTankRghtInd)))
 		else
-			set_array("sim/flightmodel/weight/m_fuel",0,totalfuel/2)
-			set_array("sim/flightmodel/weight/m_fuel",1,totalfuel/2)
-			set_array("sim/flightmodel/weight/m_fuel",3,0)
+			set_array("sim/flightmodel/weight/m_fuel",kc_FuelTankLeftInd,totalfuel/2)
+			set_array("sim/flightmodel/weight/m_fuel",kc_FuelTankRghtInd,totalfuel/2)
+			set_array("sim/flightmodel/weight/m_fuel",kc_FuelTankCntrInd,0)
 		end
 	end
 end
