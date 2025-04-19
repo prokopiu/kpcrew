@@ -138,6 +138,9 @@ sysElectric.avionicsSwitchGroup = SwitchGroup:new("altswitches")
 sysElectric.avionicsSwitchGroup:addSwitch(sysElectric.avionics1Bus)
 sysElectric.avionicsSwitchGroup:addSwitch(sysElectric.avionics2Bus)
 
+-- standby power
+sysElectric.stbyPowerSwitch = InopSwitch:new("stbySwitch")
+
 --------- Annunciators
 
 -- LOW VOLTAGE annunciator

@@ -332,57 +332,77 @@ end
 function kc_macro_lights(flightphase)
 	logMsg("Lights flight phase: " .. kcSopFlightPhase[flightphase])
 
-	sysLights.landLightGroup:actuate(0)
-	if kc_has_rwy_lights then
-		sysLights.rwyLightGroup:actuate(0)
-	end
-	if kc_has_taxi_light then
-		sysLights.taxiSwitch:actuate(0)
-	end
-	if kc_has_pos_lights then
-		sysLights.positionSwitch:actuate(0)
-	end
-	if kc_has_beacon then
-		sysLights.beaconSwitch:actuate(0)
-	end
-	if kc_has_strobe_lights then
-		sysLights.strobesSwitch:actuate(0)
-	end
-	if kc_has_instr_lights then
-		sysLights.instrLightGroup:actuate(0)
-	end
-	if kc_has_dome_lights then
-		sysLights.domeLightGroup:actuate(0)
-	end
-	if kc_has_logo_lights then
-		sysLights.logoSwitch:actuate(0)
-	end
-	if kc_has_wing_lights then
-		sysLights.wingSwitch:actuate(0)
-	end
-	if kc_has_wheel_lights then
-		sysLights.wheelSwitch:actuate(0)
-	end
-	if kc_has_panel_lights then
-		sysLights.panelLightGroup:actuate(0)
-	end	
-	if kc_has_emer_lights then
-		sysLights.emerLights:actuate(0)
-	end
-	
 	-- Cold & dark
 	if flightphase == kc_phase_colddark then
-		-- all off
+		sysLights.landLightGroup:actuate(0)
+		if kc_has_rwy_lights then
+			sysLights.rwyLightGroup:actuate(0)
+		end
+		if kc_has_taxi_light then
+			sysLights.taxiSwitch:actuate(0)
+		end
+		if kc_has_pos_lights then
+			sysLights.positionSwitch:actuate(0)
+		end
+		if kc_has_beacon then
+			sysLights.beaconSwitch:actuate(0)
+		end
+		if kc_has_strobe_lights then
+			sysLights.strobesSwitch:actuate(0)
+		end
+		if kc_has_instr_lights then
+			sysLights.instrLightGroup:actuate(0)
+		end
+		if kc_has_dome_lights then
+			sysLights.domeLightGroup:actuate(0)
+		end
+		if kc_has_logo_lights then
+			sysLights.logoSwitch:actuate(0)
+		end
+		if kc_has_wing_lights then
+			sysLights.wingSwitch:actuate(0)
+		end
+		if kc_has_wheel_lights then
+			sysLights.wheelSwitch:actuate(0)
+		end
+		if kc_has_panel_lights then
+			sysLights.panelLightGroup:actuate(0)
+		end	
+		if kc_has_emer_lights then
+			sysLights.emerLights:actuate(0)
+		end
 	elseif flightphase == kc_phase_turnaround then
 		-- turnaround
+		sysLights.landLightGroup:actuate(0)
+		if kc_has_rwy_lights then
+			sysLights.rwyLightGroup:actuate(0)
+		end
+		if kc_has_taxi_light then
+			sysLights.taxiSwitch:actuate(0)
+		end
 		if kc_has_pos_lights then
 			sysLights.positionSwitch:actuate(1)
+		end
+		if kc_has_beacon then
+			sysLights.beaconSwitch:actuate(0)
+		end
+		if kc_has_strobe_lights then
+			sysLights.strobesSwitch:actuate(0)
 		end
 		if kc_has_instr_lights then
 			sysLights.instrLightGroup:actuate(1)
 		end
 		if kc_has_emer_lights then
 			sysLights.emerLights:actuate(1)
+		end
+		if kc_has_logo_lights then
+			sysLights.logoSwitch:actuate(0)
+		end
+		if kc_has_wing_lights then
+			sysLights.wingSwitch:actuate(0)
+		end
+		if kc_has_wheel_lights then
+			sysLights.wheelSwitch:actuate(0)
 		end
 		if kc_is_daylight() == false then
 			if kc_has_dome_lights then
@@ -402,20 +422,42 @@ function kc_macro_lights(flightphase)
 			end
 		end
 	elseif flightphase == kc_phase_before_start then
+		sysLights.landLightGroup:actuate(0)
+		if kc_has_rwy_lights then
+			sysLights.rwyLightGroup:actuate(0)
+		end
+		if kc_has_taxi_light then
+			sysLights.taxiSwitch:actuate(0)
+		end
 		if kc_has_pos_lights then
 			sysLights.positionSwitch:actuate(1)
-		end
-		if kc_has_instr_lights then
-			sysLights.instrLightGroup:actuate(1)
 		end
 		if kc_has_beacon then
 			sysLights.beaconSwitch:actuate(1)
 		end
+		if kc_has_strobe_lights then
+			sysLights.strobesSwitch:actuate(0)
+		end
 		if kc_has_strb_as_bcn then
 			sysLights.strobesSwitch:actuate(1)
 		end
+		if kc_has_instr_lights then
+			sysLights.instrLightGroup:actuate(1)
+		end
 		if kc_has_emer_lights then
 			sysLights.emerLights:actuate(1)
+		end
+		if kc_has_logo_lights then
+			sysLights.logoSwitch:actuate(0)
+		end
+		if kc_has_wing_lights then
+			sysLights.wingSwitch:actuate(0)
+		end
+		if kc_has_wheel_lights then
+			sysLights.wheelSwitch:actuate(0)
+		end
+		if kc_has_instr_lights then
+			sysLights.instrLightGroup:actuate(1)
 		end
 		if kc_is_daylight() == false then
 			if kc_has_dome_lights then
@@ -429,17 +471,9 @@ function kc_macro_lights(flightphase)
 			end
 		end
 	elseif flightphase == kc_phase_taxi_rwy then
-		if kc_has_pos_lights then
-			sysLights.positionSwitch:actuate(1)
-		end
-		if kc_has_instr_lights then
-			sysLights.instrLightGroup:actuate(1)
-		end
-		if kc_has_beacon then
-			sysLights.beaconSwitch:actuate(1)
-		end
-		if kc_has_strb_as_bcn then
-			sysLights.strobesSwitch:actuate(1)
+		sysLights.landLightGroup:actuate(0)
+		if kc_has_rwy_lights then
+			sysLights.rwyLightGroup:actuate(0)
 		end
 		if kc_has_taxi_light then
 			sysLights.taxiSwitch:actuate(1)
@@ -447,8 +481,32 @@ function kc_macro_lights(flightphase)
 		if kc_has_ll_as_taxi then
 			sysLights.landLightGroup:actuate(1)
 		end
+		if kc_has_pos_lights then
+			sysLights.positionSwitch:actuate(1)
+		end
+		if kc_has_beacon then
+			sysLights.beaconSwitch:actuate(1)
+		end
+		if kc_has_strobe_lights then
+			sysLights.strobesSwitch:actuate(0)
+		end
+		if kc_has_strb_as_bcn then
+			sysLights.strobesSwitch:actuate(1)
+		end
+		if kc_has_instr_lights then
+			sysLights.instrLightGroup:actuate(1)
+		end
 		if kc_has_emer_lights then
 			sysLights.emerLights:actuate(1)
+		end
+		if kc_has_logo_lights then
+			sysLights.logoSwitch:actuate(0)
+		end
+		if kc_has_wing_lights then
+			sysLights.wingSwitch:actuate(0)
+		end
+		if kc_has_wheel_lights then
+			sysLights.wheelSwitch:actuate(0)
 		end
 		if kc_is_daylight() == false then
 			if kc_has_logo_lights then
@@ -459,11 +517,15 @@ function kc_macro_lights(flightphase)
 			end
 		end	
 	elseif flightphase == kc_phase_before_takeoff then
+		sysLights.landLightGroup:actuate(1)
+		if kc_has_rwy_lights then
+			sysLights.rwyLightGroup:actuate(1)
+		end
+		if kc_has_taxi_light then
+			sysLights.taxiSwitch:actuate(0)
+		end
 		if kc_has_pos_lights then
 			sysLights.positionSwitch:actuate(1)
-		end
-		if kc_has_instr_lights then
-			sysLights.instrLightGroup:actuate(1)
 		end
 		if kc_has_beacon then
 			sysLights.beaconSwitch:actuate(1)
@@ -471,11 +533,20 @@ function kc_macro_lights(flightphase)
 		if kc_has_strobe_lights then
 			sysLights.strobesSwitch:actuate(1)
 		end
-		if kc_has_strb_as_bcn then
-			sysLights.strobesSwitch:actuate(1)
+		if kc_has_instr_lights then
+			sysLights.instrLightGroup:actuate(1)
 		end
 		if kc_has_emer_lights then
 			sysLights.emerLights:actuate(1)
+		end
+		if kc_has_logo_lights then
+			sysLights.logoSwitch:actuate(0)
+		end
+		if kc_has_wing_lights then
+			sysLights.wingSwitch:actuate(0)
+		end
+		if kc_has_wheel_lights then
+			sysLights.wheelSwitch:actuate(0)
 		end
 		if kc_is_daylight() == false then
 			if kc_has_logo_lights then
@@ -485,42 +556,80 @@ function kc_macro_lights(flightphase)
 				sysLights.panelLightGroup:actuate(1)
 			end
 		end	
+	elseif flightphase == kc_phase_approach then
 		sysLights.landLightGroup:actuate(1)
 		if kc_has_rwy_lights then
 			sysLights.rwyLightGroup:actuate(1)
 		end
-	elseif flightphase == kc_phase_approach then
+		if kc_has_taxi_light then
+			sysLights.taxiSwitch:actuate(0)
+		end
+		if kc_has_pos_lights then
+			sysLights.positionSwitch:actuate(1)
+		end
+		if kc_has_beacon then
+			sysLights.beaconSwitch:actuate(1)
+		end
+		if kc_has_strobe_lights then
+			sysLights.strobesSwitch:actuate(1)
+		end
+		if kc_has_instr_lights then
+			sysLights.instrLightGroup:actuate(1)
+		end
 		if kc_has_emer_lights then
 			sysLights.emerLights:actuate(1)
 		end
-		kc_macro_lights_descend_10k()
-		if kc_has_rwy_lights then
-			sysLights.rwyLightGroup:actuate(1)
+		if kc_has_logo_lights then
+			sysLights.logoSwitch:actuate(0)
 		end
-		sysLights.landLightGroup:actuate(1)
+		if kc_has_wing_lights then
+			sysLights.wingSwitch:actuate(0)
+		end
+		if kc_has_wheel_lights then
+			sysLights.wheelSwitch:actuate(0)
+		end
+
+		kc_macro_lights_descend_10k()
+
 		if kc_is_daylight() == false then		
 			if kc_has_logo_lights then
 				sysLights.logoSwitch:actuate(1)
 			end
 		end
 	elseif flightphase == kc_phase_afterland then
+		sysLights.landLightGroup:actuate(0)
+		if kc_has_rwy_lights then
+			sysLights.rwyLightGroup:actuate(0)
+		end
+		if kc_has_taxi_light then
+			sysLights.taxiSwitch:actuate(1)
+		end
+		if kc_has_ll_as_taxi then
+			sysLights.landLightGroup:actuate(1)
+		end
 		if kc_has_pos_lights then
 			sysLights.positionSwitch:actuate(1)
-		end
-		if kc_has_instr_lights then
-			sysLights.instrLightGroup:actuate(1)
 		end
 		if kc_has_beacon then
 			sysLights.beaconSwitch:actuate(1)
 		end
-		if kc_has_taxi_light then
-			sysLights.taxiSwitch:actuate(1)
-		end	
-		if kc_has_ll_as_taxi then
-			sysLights.landLightGroup:actuate(1)
+		if kc_has_strobe_lights then
+			sysLights.strobesSwitch:actuate(0)
+		end
+		if kc_has_instr_lights then
+			sysLights.instrLightGroup:actuate(1)
 		end
 		if kc_has_emer_lights then
 			sysLights.emerLights:actuate(1)
+		end
+		if kc_has_logo_lights then
+			sysLights.logoSwitch:actuate(0)
+		end
+		if kc_has_wing_lights then
+			sysLights.wingSwitch:actuate(0)
+		end
+		if kc_has_wheel_lights then
+			sysLights.wheelSwitch:actuate(0)
 		end
 		if kc_is_daylight() == false then
 			if kc_has_logo_lights then
@@ -1090,8 +1199,6 @@ function kc_macro_mcp(flightphase)
 			if kc_has_vnav and kc_has_lnav then
 				sysMCP.lnavSwitch:actuate(1)
 				sysMCP.vnavSwitch:actuate(1)
-			else
-				sysMCP.vorlocSwitch:actuate(1)
 			end
 		end
 		if kc_has_ils then
