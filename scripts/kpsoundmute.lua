@@ -9,11 +9,11 @@ ks_acf_icao = "DFLT" -- active addon aircraft ICAO code (DFLT when nothing found
 ks_mode_auto = false -- switches between manual mode (use the toggle command) and outside detection
 
 -- ====== Select the addon modules based on ICAO code
-if PLANE_ICAO == "PC12" then
-	ks_acf_icao = "PC12" 
+-- if PLANE_ICAO == "PC12" then
+	-- ks_acf_icao = "PC12" 
 -- elseif PLANE_ICAO == "xxx" then
 	-- ks_acf_icao = "xxx"
-end
+-- end
 
 -- mute state is off at start
 ks_mute_state = true
@@ -32,18 +32,18 @@ function ks_switch_mute()
 			ks_mute_state = false
 		end
 	end
-	if ks_acf_icao == "PC12" then
-		if ks_mute_state == false then
-			set("thranda/sound/mastervolknob",0.1)
-			set("sim/operation/sound/interior_volume_ratio",0.1)
-			set("sim/operation/sound/weather_volume_ratio",0.1)
-			ks_mute_state = true
-		else
-			set("thranda/sound/mastervolknob",0.5)
-			set("sim/operation/sound/interior_volume_ratio",0.7)
-			set("sim/operation/sound/weather_volume_ratio",0.7)
-			ks_mute_state = false
-		end
+	-- if ks_acf_icao == "PC12" then
+		-- if ks_mute_state == false then
+			-- set("thranda/sound/mastervolknob",0.1)
+			-- set("sim/operation/sound/interior_volume_ratio",0.1)
+			-- set("sim/operation/sound/weather_volume_ratio",0.1)
+			-- ks_mute_state = true
+		-- else
+			-- set("thranda/sound/mastervolknob",0.5)
+			-- set("sim/operation/sound/interior_volume_ratio",0.7)
+			-- set("sim/operation/sound/weather_volume_ratio",0.7)
+			-- ks_mute_state = false
+		-- end
 	end
 end
 

@@ -33,24 +33,24 @@ if PLANE_ICAO == "B738" then
 	end
 
 -- Epic Victory Aerobask
-elseif PLANE_ICAO == "EVIC" then
-	kh_acf_icao = "EVIC"
+-- elseif PLANE_ICAO == "EVIC" then
+	-- kh_acf_icao = "EVIC"
 
 -- Epic E1000 Aerobask
-elseif PLANE_ICAO == "EPIC" then
-	kh_acf_icao = "EPIC"
+-- elseif PLANE_ICAO == "EPIC" then
+	-- kh_acf_icao = "EPIC"
 
 -- Thranda PC12
-elseif PLANE_ICAO == "PC12" then
-	kh_acf_icao = "PC12"
+-- elseif PLANE_ICAO == "PC12" then
+	-- kh_acf_icao = "PC12"
 	
 -- FF A350
 -- elseif PLANE_ICAO == "A359" then
 	-- kh_acf_icao = "A359"
 	
 -- Laminar SF50
-elseif PLANE_ICAO == "SF50" then
-	kh_acf_icao = "SF50"
+-- elseif PLANE_ICAO == "SF50" then
+	-- kh_acf_icao = "SF50"
 	
 -- XP12 Citation X
 elseif PLANE_ICAO == "C750" and PLANE_TAILNUMBER == "N750XP" then
@@ -109,10 +109,10 @@ elseif PLANE_ICAO == "A20N" and PLANE_TAILNUMBER == "C-GTLT" then
 	kc_acf_icao = "A3TL"
 elseif PLANE_ICAO == "A321" then
 	kc_acf_icao = "A3TL"
-elseif PLANE_ICAO == "A339" then
-	kc_acf_icao = "A3TL"
-elseif PLANE_ICAO == "A346" then
-	kc_acf_icao = "A3TL"
+-- elseif PLANE_ICAO == "A339" then
+	-- kc_acf_icao = "A3TL"
+-- elseif PLANE_ICAO == "A346" then
+	-- kc_acf_icao = "A3TL"
 	
 -- Laminar MD-82
 elseif PLANE_ICAO == "MD82" and PLANE_TAILNUMBER == "N552AA" then
@@ -123,8 +123,8 @@ elseif PLANE_ICAO == "MD82" and PLANE_TAILNUMBER == "N552AA" then
 	-- kh_acf_icao = "MD88"
 
 -- Aerobask Phenom 300
-elseif PLANE_ICAO == "E55P" then
-	kh_acf_icao = "E55P"
+-- elseif PLANE_ICAO == "E55P" then
+	-- kh_acf_icao = "E55P"
 end
 
 -- load aircraft specific systems
