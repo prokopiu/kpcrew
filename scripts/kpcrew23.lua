@@ -38,8 +38,8 @@ elseif PLANE_ICAO == "EVIC" then
 	kc_acf_icao = "EVIC"
 
 -- Epic E1000 Aerobask
--- elseif PLANE_ICAO == "EPIC" then
-	-- kc_acf_icao = "EPIC"
+elseif PLANE_ICAO == "EPIC" then
+	kc_acf_icao = "EPIC"
 
 -- Thranda PC12
 -- elseif PLANE_ICAO == "PC12" then

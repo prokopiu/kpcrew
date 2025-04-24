@@ -15,6 +15,7 @@ kc_is_turboprop		= true		-- Aircraft is turbo prop
 kc_has_apu			= false		-- Aircraft has an APU
 kc_has_inv_ess_bus	= false		-- Aircraft has inverters and essential busses
 kc_has_bus_ties		= false		-- Aircraft has bus ties for AC & DC
+kc_has_gpu			= true		-- Aircraft has GPU connection
 
 -- === Controls
 kc_has_speedbrake	= false		-- Aircraft has an air brake to extend
@@ -22,11 +23,11 @@ kc_has_aileron_trim	= false		-- Aircraft has aileron trim
 kc_has_rudder_trim	= false		-- Aircraft has rudder trimrim
 kc_full_rgt_rudder	= -14.9		-- Threshold where the rudder is almost fully to the right
 kc_NumFlapsTO		= 2
-kc_TakeoffFlaps 	= "UP|TO"
-kc_TakeoffFlapsInd 	= "0|1"
+kc_TakeoffFlaps 	= "UP|T/O| | | | | "
+kc_TakeoffFlapsInd 	= "0|1|1|1|1|1|1"
 kc_NumFlapsLDG		= 2
-kc_LandingFlaps 	= "TO|LAND"
-kc_LandingFlapsInd 	= "1|2"
+kc_LandingFlaps 	= "T/O|FULL| | | | | "
+kc_LandingFlapsInd 	= "1|2|2|2|2|2|2"
 kc_gear_ext_index	= 1			-- When to extend gear in flaps extend
 
 -- === engines
@@ -73,6 +74,8 @@ kc_apptypes 		= "ILS CAT 1|VOR|NDB|RNAV|VISUAL|TOUCH AND GO|CIRCLING"
 kc_has_autothrottle = false		-- Aircraft has autothrottle
 kc_has_radar_alt	= false		-- Aircraft has radar altitude
 kc_has_dh_minimum	= false		-- Aircraft has decicion height
+kc_has_vnav			= false		-- Aircraft has VNAV
+kc_has_lnav			= false		-- Aircraft has LNAV
 
 -- === other options
 kc_has_wipers		= false		-- Aircraft has wipers
