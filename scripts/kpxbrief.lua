@@ -28,8 +28,8 @@ if PLANE_ICAO == "B738" then
 	end
 
 -- Epic Victory Aerobask
--- elseif PLANE_ICAO == "EVIC" then
-	-- kc_acf_icao = "EVIC"
+elseif PLANE_ICAO == "EVIC" then
+	kc_acf_icao = "EVIC"
 
 -- Epic E1000 Aerobask
 -- elseif PLANE_ICAO == "EPIC" then
@@ -2045,26 +2045,28 @@ function kb_brief_builder(kb_brief_wnd, x, y)
 						imgui.PopItemWidth()
 						imgui.PopID()
 
-						imgui.PushStyleColor(imgui.constant.Col.Text, 0xFFCCCCCC)
-							imgui.TextUnformatted("AUTO BRAKE:")
-						imgui.PopStyleColor()
-						imgui.SameLine()
-						imgui.PushItemWidth(65*kb_font_scale);
-						imgui.PushID("autobrake:")
-						imgui.PushStyleColor(imgui.constant.Col.Text, 0xFF1b9af8)
-							if imgui.BeginCombo("", kc_split(kc_LandingAutoBrake,"|")[activeBriefings:get("approach:autobrake")]) then
-								local options = kc_split(kc_LandingAutoBrake,"|")
-								for i = 1, #options do
-									if imgui.Selectable(options[i], activeBriefings:get("approach:autobrake") == i) then
-										activeBriefings:set("approach:autobrake",i)
+						if kc_has_autobrake then
+							imgui.PushStyleColor(imgui.constant.Col.Text, 0xFFCCCCCC)
+								imgui.TextUnformatted("AUTO BRAKE:")
+							imgui.PopStyleColor()
+							imgui.SameLine()
+							imgui.PushItemWidth(65*kb_font_scale);
+							imgui.PushID("autobrake:")
+							imgui.PushStyleColor(imgui.constant.Col.Text, 0xFF1b9af8)
+								if imgui.BeginCombo("", kc_split(kc_LandingAutoBrake,"|")[activeBriefings:get("approach:autobrake")]) then
+									local options = kc_split(kc_LandingAutoBrake,"|")
+									for i = 1, #options do
+										if imgui.Selectable(options[i], activeBriefings:get("approach:autobrake") == i) then
+											activeBriefings:set("approach:autobrake",i)
+										end
 									end
+								imgui.EndCombo()
 								end
-							imgui.EndCombo()
-							end
-						imgui.PopStyleColor()
-						imgui.PopItemWidth()
-						imgui.PopID()
-
+							imgui.PopStyleColor()
+							imgui.PopItemWidth()
+							imgui.PopID()
+						end
+						
 						imgui.Separator()
 
 						imgui.PushStyleColor(imgui.constant.Col.Text, 0xFFCCCCCC)
@@ -2519,26 +2521,28 @@ function kb_brief_builder(kb_brief_wnd, x, y)
 						imgui.PopItemWidth()
 						imgui.PopID()
 
-						imgui.PushStyleColor(imgui.constant.Col.Text, 0xFFCCCCCC)
-							imgui.TextUnformatted("AUTO BRAKE:")
-						imgui.PopStyleColor()
-						imgui.SameLine()
-						imgui.PushItemWidth(65*kb_font_scale);
-						imgui.PushID("autobrake:")
-						imgui.PushStyleColor(imgui.constant.Col.Text, 0xFF1b9af8)
-							if imgui.BeginCombo("", kc_split(kc_LandingAutoBrake,"|")[activeBriefings:get("approach:autobrake")]) then
-								local options = kc_split(kc_LandingAutoBrake,"|")
-								for i = 1, #options do
-									if imgui.Selectable(options[i], activeBriefings:get("approach:autobrake") == i) then
-										activeBriefings:set("approach:autobrake",i)
+						if kc_has_autobrake then
+							imgui.PushStyleColor(imgui.constant.Col.Text, 0xFFCCCCCC)
+								imgui.TextUnformatted("AUTO BRAKE:")
+							imgui.PopStyleColor()
+							imgui.SameLine()
+							imgui.PushItemWidth(65*kb_font_scale);
+							imgui.PushID("autobrake:")
+							imgui.PushStyleColor(imgui.constant.Col.Text, 0xFF1b9af8)
+								if imgui.BeginCombo("", kc_split(kc_LandingAutoBrake,"|")[activeBriefings:get("approach:autobrake")]) then
+									local options = kc_split(kc_LandingAutoBrake,"|")
+									for i = 1, #options do
+										if imgui.Selectable(options[i], activeBriefings:get("approach:autobrake") == i) then
+											activeBriefings:set("approach:autobrake",i)
+										end
 									end
+								imgui.EndCombo()
 								end
-							imgui.EndCombo()
-							end
-						imgui.PopStyleColor()
-						imgui.PopItemWidth()
-						imgui.PopID()
-			
+							imgui.PopStyleColor()
+							imgui.PopItemWidth()
+							imgui.PopID()
+						end
+						
 						imgui.Separator()
 
 						imgui.PushStyleColor(imgui.constant.Col.Text, 0xFFCCCCCC)

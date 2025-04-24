@@ -34,8 +34,8 @@ if PLANE_ICAO == "B738" then
 	end
 
 -- Epic Victory Aerobask
--- elseif PLANE_ICAO == "EVIC" then
-	-- kc_acf_icao = "EVIC"
+elseif PLANE_ICAO == "EVIC" then
+	kc_acf_icao = "EVIC"
 
 -- Epic E1000 Aerobask
 -- elseif PLANE_ICAO == "EPIC" then

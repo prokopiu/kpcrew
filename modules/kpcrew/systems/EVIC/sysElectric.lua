@@ -1,4 +1,4 @@
--- TMPL airplane 
+-- EVIC airplane 
 -- Electric system functionality
 
 -- @classmod sysElectric
@@ -18,6 +18,14 @@ local KeepPressedSwitchCmd	= require "kpcrew.systems.KeepPressedSwitchCmd"
 
 sysElectric = require("kpcrew.systems.DFLT.sysElectric")
 
-logMsg("TMPL sysElectric")
+logMsg("EVIC sysElectric")
+
+-- ** Avionics Buses
+sysElectric.avionics1Bus		= TwoStateToggleSwitch:new("aviobus1","sim/cockpit2/switches/avionics_power_on",0,
+	"sim/systems/avionics_toggle")
+sysElectric.avionics2Bus		= InopSwitch:new("aviobus2")
+sysElectric.avionicsSwitchGroup = SwitchGroup:new("altswitches")
+sysElectric.avionicsSwitchGroup:addSwitch(sysElectric.avionics1Bus)
+sysElectric.avionicsSwitchGroup:addSwitch(sysElectric.avionics2Bus)
 
 return sysElectric

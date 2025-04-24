@@ -33,8 +33,8 @@ if PLANE_ICAO == "B738" then
 	end
 
 -- Epic Victory Aerobask
--- elseif PLANE_ICAO == "EVIC" then
-	-- kh_acf_icao = "EVIC"
+elseif PLANE_ICAO == "EVIC" then
+	kh_acf_icao = "EVIC"
 
 -- Epic E1000 Aerobask
 -- elseif PLANE_ICAO == "EPIC" then
@@ -123,8 +123,8 @@ elseif PLANE_ICAO == "MD82" and PLANE_TAILNUMBER == "N552AA" then
 	-- kh_acf_icao = "MD88"
 
 -- Aerobask Phenom 300
--- elseif PLANE_ICAO == "E55P" then
-	-- kh_acf_icao = "E55P"
+elseif PLANE_ICAO == "E55P" then
+	kh_acf_icao = "E55P"
 end
 
 -- load aircraft specific systems
