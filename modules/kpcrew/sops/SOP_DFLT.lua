@@ -696,7 +696,8 @@ engStartProc:addItem(ProcedureItem:new("PARKING BRAKE","SET",FlowItem.actorFO,0,
 		if sysGeneral.parkBrakeSwitch:getStatus() ~= 1 then
 			kc_speakNoText(0,"Set parking brake when push finished")
 		end
-	end))
+	end,
+	function () return activeBriefings:get("taxi:pushDirection") == 1 end))
 if kc_is_airbus == true then
 	engStartProc:addItem(ProcedureItem:new("ENGINE MODE","NORM",FlowItem.actorFO,0,
 		function () return sysEngines.engIgnitionGroup:getStatus() == kc_ab_engm_norm end,
@@ -865,6 +866,7 @@ end
 if kc_has_toc then
 	beforeTakeoffProc:addItem(HoldProcedureItem:new("TAKEOFF CONFIG","CHECK",FlowItem.actorCPT))
 end
+
 -- =====================================================================================================================
 
 -- =================== RUNWAY ENTRY  =====================
@@ -1231,7 +1233,7 @@ end
 
 -- =====================================================================================================================
 
-local ap1off = Procedure:new("A/P 1","OFF")
+local ap1off = Procedure:new("A/P OFF","")
 ap1off:setFlightPhase(0-kc_phase_approach)
 
 if kc_has_autopilot then
@@ -1320,7 +1322,7 @@ afterLandingProc:addItem(ProcedureItem:new("ANTI ICE SETTINGS","AS REQUIRED",Flo
 	function () return true end,
 	function () kc_macro_aice(kc_phase_afterland) end))
 afterLandingProc:addItem(ProcedureItem:new("FLAPS","UP",FlowItem.actorFO,0,true,
-	function () sysControls.flapsSwitch:setValue(sysControls.flaps_pos[0]) end))
+	function () kc_macro_set_flap(0) end))
 afterLandingProc:addItem(ProcedureItem:new("EXTERNAL LIGHTS","AS REQUIRED",FlowItem.actorFO,0,
 	function () return true end,
 	function () kc_macro_lights(kc_phase_afterland) end))

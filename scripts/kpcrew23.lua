@@ -2,7 +2,7 @@
 	*** KPCREW 2.3
 	Virtual copilot for X-PLane 11/12
 	Kosta Prokopiu, July 2023
-	Changed March 2025
+	Changed May 2025
 --]]
 
 require "kpcrew.genutils"
@@ -124,8 +124,8 @@ elseif PLANE_ICAO == "MD82" and PLANE_TAILNUMBER == "N552AA" then
 	-- kc_acf_icao = "MD88"
 	
 -- Aerobask Phenom 300
--- elseif PLANE_ICAO == "E55P" then
-	-- kc_acf_icao = "E55P"
+elseif PLANE_ICAO == "E55P" then
+	kc_acf_icao = "E55P"
 end
 
 -- Aircraft Specific SOP/Checklist/Procedure Definitions
@@ -604,53 +604,10 @@ if kc_file_exists(SCRIPT_DIRECTORY .. "..\\Modules\\kpcrew_prefs\\" .. kc_acf_ic
 	getActivePrefs():load()
 end
 
--- ===== Briefings window =====
--- kc_show_brief_once = 0
--- kc_hide_brief_once = 0
--- kc_brief_wnd = nil
-
--- function kc_init_brief_window(briefing)
-	-- local height = briefing:getWndHeight()
-	-- local width = briefing:getWndWidth()
-	-- kc_brief_wnd = float_wnd_create(width, height, 1, true)
-	-- float_wnd_set_title(kc_brief_wnd, briefing:getName())
-	-- float_wnd_set_imgui_builder(kc_brief_wnd, "kc_brief_builder")
-	-- float_wnd_set_position(kc_brief_wnd, briefing:getWndXPos(), briefing:getWndYPos())
--- end
-
--- function kc_brief_builder()
-	-- getActiveBriefings():render()
--- end
-
--- function kc_hide_brief_wnd()
-	-- if kc_brief_wnd then 
-		-- float_wnd_destroy(kc_brief_wnd)
-	-- end
--- end
-
--- function kc_toggle_brief_window()
-	-- kc_show_brief = not kc_show_brief
-	-- if kc_show_brief then
-		-- if kc_show_brief_once == 0 then
-			-- kc_init_brief_window(getActiveBriefings())
-			-- kc_show_brief_once = 1
-			-- kc_hide_brief_once = 0
-		-- end
-	-- else
-		-- if kc_hide_brief_once == 0 then
-			-- kc_hide_brief_wnd()
-			-- kc_show_brief_once = 0
-			-- kc_hide_brief_once = 1
-		-- end
-	-- end
--- end
-
 -- ===== Background  Window control - direct window commands do not work as expected =====
 kc_wnd_sop_action = 0
 kc_wnd_flow_action = 0
 kc_wnd_pref_action = 0
--- kc_wnd_brief_action = 0
-
 
 function bckWindowOpen()
 	if kc_wnd_sop_action == 1 then
@@ -688,13 +645,11 @@ kc_bgr_executor = kcFlowExecutor:new(getActiveSOP():getBackgroundFlow(),true)
 do_often("kc_flow_executor:execute()")
 do_often("kc_bgr_executor:execute()")
 
-add_macro("KPCrew Debug Procvars", "kc_init_pref_window(getBckVars())")
 create_command("kp/crew/master", "KPCrew Masterbutton","kc_master_button()","","")
 create_command("kp/crew/next", "KPCrew Nextbutton","kc_next_button()","","")
 create_command("kp/crew/prev", "KPCrew Prevbutton","kc_prev_button()","","")
 create_command("kp/crew/flowwindow", "KPCrew Toggle Flow Window","kc_wnd_flow_action=1","","")
 create_command("kp/crew/sopwindow", "KPCrew Toggle SOP Window","kc_wnd_sop_action=1","","")
 create_command("kp/crew/openmaster", "KPCrew Open Master Window","kc_ctrl_wnd_state = 1 kc_ctrl_wnd_off=false local xpos = kc_scrn_width - 705 float_wnd_set_geometry(kc_ctrl_wnd, xpos, 46, kc_scrn_width, 1)","","")
--- create_command("kp/crew/briefwindow", "KPCrew Toggle Briefing Window","kb_brief_toggle_wnd()","","")
 
 add_macro("KPCrew Toggle Control Window", "kc_ctrl_wnd_state = 1 kc_ctrl_wnd_off=false local xpos = kc_scrn_width - 705 float_wnd_set_geometry(kc_ctrl_wnd, xpos, 46, kc_scrn_width, 1)")

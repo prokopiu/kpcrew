@@ -43,28 +43,6 @@ end)
 -- VORLOC
 sysMCP.vorlocSwitch			= TwoStateToggleSwitch:new("vorloc","sim/cockpit2/autopilot/nav_status",0,
 	"sim/autopilot/NAV")
--- sysMCP.vorlocSwitch 		= TwoStateCustomSwitch:new("vorloc","sim/cockpit2/autopilot/nav_status",0,
--- function ()
-	-- set("sim/operation/override/override_autopilot",2)
--- end,
--- function ()
-	-- set("sim/operation/override/override_autopilot",0)
--- end,
--- function ()
-	-- if get("sim/cockpit2/autopilot/heading_mode") ~= 2 then
-		-- set("sim/operation/override/override_autopilot",2)
-	-- else
-		-- set("sim/operation/override/override_autopilot",0)
-	-- end
--- end,
--- function () 
-	-- if get("sim/cockpit2/autopilot/heading_mode") == 2 or 
-		-- get("sim/cockpit2/autopilot/heading_mode") == 13 then
-		-- return 1
-	-- else
-		-- return 0
-	-- end
--- end)
 
 -- NAV mode annunciator
 -- Autopilot lateral mode. (0=roll, 1=heading sel, 2=nav, 10=TO/GA, 11=Re-entry, 12=Free, 

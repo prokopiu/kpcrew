@@ -45,4 +45,16 @@ SOP_E55P = require("kpcrew.sops.SOP_DFLT")
 
 activeSOP:setName("AEROBASK PHENOM 300 SOP")
 
+activeSOP:getFlow(proc_ind_shutdownProc):addItem(ProcedureItem:new("ENGINE STARTERS","OFF",FlowItem.actorPF,0,
+	function () return 
+		get("aerobask/engines/knob_start_stop_1") == 0 and 
+		get("aerobask/engines/knob_start_stop_2") == 0 
+	end,
+	function () 
+		command_once("aerobask/engines/knob_1_lt")
+		command_once("aerobask/engines/knob_1_lt")
+		command_once("aerobask/engines/knob_2_lt")
+		command_once("aerobask/engines/knob_2_lt")
+	end))
+
 return SOP_E55P

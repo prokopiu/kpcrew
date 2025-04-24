@@ -517,12 +517,12 @@ function kc_macro_lights(flightphase)
 			end
 		end	
 	elseif flightphase == kc_phase_before_takeoff then
+		if kc_has_taxi_light then
+			sysLights.taxiSwitch:actuate(0)
+		end
 		sysLights.landLightGroup:actuate(1)
 		if kc_has_rwy_lights then
 			sysLights.rwyLightGroup:actuate(1)
-		end
-		if kc_has_taxi_light then
-			sysLights.taxiSwitch:actuate(0)
 		end
 		if kc_has_pos_lights then
 			sysLights.positionSwitch:actuate(1)
@@ -557,13 +557,14 @@ function kc_macro_lights(flightphase)
 			end
 		end	
 	elseif flightphase == kc_phase_approach then
+		if kc_has_taxi_light then
+			sysLights.taxiSwitch:actuate(0)
+		end
 		sysLights.landLightGroup:actuate(1)
 		if kc_has_rwy_lights then
 			sysLights.rwyLightGroup:actuate(1)
 		end
-		if kc_has_taxi_light then
-			sysLights.taxiSwitch:actuate(0)
-		end
+
 		if kc_has_pos_lights then
 			sysLights.positionSwitch:actuate(1)
 		end
@@ -1072,7 +1073,7 @@ function kc_macro_aice(flightphase)
 			end
 		end
 		if kc_has_wing_antiice and kc_is_airbus ~= true then
-			if activeBriefings:get("takeoff:antiice") ~= 3 then
+			if activeBriefings:get("takeoff:antiice") == 3 then
 				sysAice.wingAntiIce:actuate(1)
 			else
 				sysAice.wingAntiIce:actuate(0)
@@ -1093,7 +1094,7 @@ function kc_macro_aice(flightphase)
 			end
 		end
 		if kc_has_wing_antiice and kc_is_airbus ~= true then
-			if activeBriefings:get("approach:antiice") ~= 3 then
+			if activeBriefings:get("approach:antiice") == 3 then
 				sysAice.wingAntiIce:actuate(1)
 			else
 				sysAice.wingAntiIce:actuate(0)
