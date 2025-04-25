@@ -49,8 +49,8 @@ elseif PLANE_ICAO == "EPIC" then
 	-- kh_acf_icao = "A359"
 	
 -- Laminar SF50
--- elseif PLANE_ICAO == "SF50" then
-	-- kh_acf_icao = "SF50"
+elseif PLANE_ICAO == "SF50" then
+	kh_acf_icao = "SF50"
 	
 -- XP12 Citation X
 elseif PLANE_ICAO == "C750" and PLANE_TAILNUMBER == "N750XP" then

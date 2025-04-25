@@ -19,11 +19,11 @@ kc_has_avionics_sw  = false		-- Aircraft has Avionics switch
 kc_has_aileron_trim	= false		-- Aircraft has aileron trim
 kc_has_rudder_trim	= false		-- Aircraft has rudder trim
 kc_NumFlapsTO		= 2
-kc_TakeoffFlaps 	= "UP|50%"
-kc_TakeoffFlapsInd 	= "0|1"
+kc_TakeoffFlaps 	= "UP|50%| | | | | "
+kc_TakeoffFlapsInd 	= "0|1|1|1|1|1|1"
 kc_NumFlapsLDG		= 2
-kc_LandingFlaps 	= "50%|100%"
-kc_LandingFlapsInd 	= "1|2"
+kc_LandingFlaps 	= "50%|100%| | | | | "
+kc_LandingFlapsInd 	= "1|2|2|2|2|2|2"
 kc_has_speedbrake	= false		-- Aircraft has an air brake to extend
 kc_full_rgt_rudder	= 0.9		-- Threshold where the rudder is almost fully to the right
 kc_spdbrk_can_arm	= false		-- Aircraft's speedbrake can be armed
@@ -63,7 +63,7 @@ kc_has_nosmoke_sgn	= false		-- Aircraft has no smoking signs
 kc_has_beacon		= false		-- Aircraft has beacon
 
 -- === Payload & weights
-kc_pld_ld_button	= false		-- Load the aircraft payload from kpxbrief	
+kc_pld_ld_button	= true		-- Load the aircraft payload from kpxbrief	
 
 -- === MCP & autopilot
 kc_TakeoffApModes 	= "HDG/FLCH|"
@@ -74,6 +74,7 @@ kc_has_ias_sel		= false		-- Aircraft has IAS selector
 kc_has_radar_alt	= false		-- Aircraft has radar altitude
 kc_has_dh_minimum	= false		-- Aircraft has decicion height
 kc_has_vnav			= false		-- Aircraft has VNAV
+kc_has_lnav			= false		-- Aircraft has LNAV
 
 -- === other options
 kc_has_wipers		= false		-- Aircraft has wipers

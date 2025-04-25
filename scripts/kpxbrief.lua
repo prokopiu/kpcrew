@@ -44,8 +44,8 @@ elseif PLANE_ICAO == "EPIC" then
 	-- kc_acf_icao = "A359"
 
 -- Laminar SF50
--- elseif PLANE_ICAO == "SF50" then
-	-- kc_acf_icao = "SF50"
+elseif PLANE_ICAO == "SF50" then
+	kc_acf_icao = "SF50"
 	
 -- XP12 Citation X
 elseif PLANE_ICAO == "C750" and PLANE_TAILNUMBER == "N750XP" then
@@ -1768,7 +1768,7 @@ function kb_brief_builder(kb_brief_wnd, x, y)
 							imgui.TextUnformatted("ARR TYPE  :")
 						imgui.PopStyleColor()
 						imgui.SameLine()
-						imgui.PushItemWidth(60*kb_font_scale);
+						imgui.PushItemWidth(80*kb_font_scale);
 						imgui.PushID("Arrival Type:")
 						imgui.PushStyleColor(imgui.constant.Col.Text, color_orange)
 							if imgui.BeginCombo("", kc_split(kc_APP_proctype_list,"|")[activeBriefings:get("arrival:arrType")]) then
@@ -2245,7 +2245,7 @@ function kb_brief_builder(kb_brief_wnd, x, y)
 							imgui.TextUnformatted("ARR TYPE  :")
 						imgui.PopStyleColor()
 						imgui.SameLine()
-						imgui.PushItemWidth(60*kb_font_scale);
+						imgui.PushItemWidth(80*kb_font_scale);
 						imgui.PushID("Altn Arrival Type:")
 						imgui.PushStyleColor(imgui.constant.Col.Text, color_orange)
 							if imgui.BeginCombo("", kc_split(kc_APP_proctype_list,"|")[activeBriefings:get("arrival:altnarrType")]) then
