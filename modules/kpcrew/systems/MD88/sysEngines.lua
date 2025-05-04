@@ -1,9 +1,9 @@
--- Rotate MD88 airplane 
+-- TMPL airplane 
 -- Engine related functionality
 
 -- @classmod sysEngines
 -- @author Kosta Prokopiu
--- @copyright 2024 Kosta Prokopiu
+-- @copyright 2025 Kosta Prokopiu
 
 local TwoStateDrefSwitch 	= require "kpcrew.systems.TwoStateDrefSwitch"
 local TwoStateCmdSwitch	 	= require "kpcrew.systems.TwoStateCmdSwitch"
@@ -18,4 +18,6 @@ local KeepPressedSwitchCmd	= require "kpcrew.systems.KeepPressedSwitchCmd"
 
 sysEngines = require("kpcrew.systems.DFLT.sysEngines")
 
+logMsg("TMPL sysEngines")
+	
 return sysEngines

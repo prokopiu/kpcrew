@@ -1,9 +1,9 @@
--- Rotate MD88 airplane 
+-- TMPL airplane 
 -- Anti Ice functionality
 
 -- @classmod sysAice
 -- @author Kosta Prokopiu
--- @copyright 2024 Kosta Prokopiu
+-- @copyright 2025 Kosta Prokopiu
 
 local sysAice = {
 }
@@ -20,5 +20,7 @@ local InopSwitch 			= require "kpcrew.systems.InopSwitch"
 local KeepPressedSwitchCmd	= require "kpcrew.systems.KeepPressedSwitchCmd"
 
 sysAice = require("kpcrew.systems.DFLT.sysAice")
+
+logMsg("TMPL sysAice")
 
 return sysAice

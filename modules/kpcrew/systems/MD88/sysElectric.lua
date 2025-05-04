@@ -1,9 +1,9 @@
--- Rotate MD88 airplane 
+-- MD88 Rotate airplane 
 -- Electric system functionality
 
 -- @classmod sysElectric
 -- @author Kosta Prokopiu
--- @copyright 2024 Kosta Prokopiu
+-- @copyright 2025 Kosta Prokopiu
 
 local TwoStateDrefSwitch 	= require "kpcrew.systems.TwoStateDrefSwitch"
 local TwoStateCmdSwitch	 	= require "kpcrew.systems.TwoStateCmdSwitch"
@@ -18,18 +18,23 @@ local KeepPressedSwitchCmd	= require "kpcrew.systems.KeepPressedSwitchCmd"
 
 sysElectric = require("kpcrew.systems.DFLT.sysElectric")
 
--- GPU Bus Switches
+logMsg("MD88 sysElectric")
+
+-- ----- Batteries
+sysElectric.batteryGroup 	= SwitchGroup:new("battery switches")
+sysElectric.batterySwitch 	= TwoStateDrefSwitch:new("battery1","Rotate/md80/electrical/battery_on",0)
+sysElectric.batteryGroup:addSwitch(batterySwitch)
+
+-- ----- GPU
+sysElectric.gpuGenBusGroup	= SwitchGroup:new("gpubussgroup")
+-- de-/activate GPU
+sysElectric.gpuConnect 		= TwoStateToggleSwitch:new("GPU","Rotate/md80/electrical/GPU_power_available",0,
+	"Rotate/md80/electrical/GPU_power_request_toggle")
 sysElectric.gpuGenBus1 		= TwoStateDrefSwitch:new("gpubus1","Rotate/md80/electrical/GPU_l_bus_switch",0)
 sysElectric.gpuGenBus2 		= TwoStateDrefSwitch:new("gpubus2","Rotate/md80/electrical/GPU_r_bus_switch",0)
-sysElectric.gpuGenBusGroup	= SwitchGroup:new("gpubussgroup")
 sysElectric.gpuGenBusGroup:addSwitch(sysElectric.gpuGenBus1)
 sysElectric.gpuGenBusGroup:addSwitch(sysElectric.gpuGenBus2)
 
--- APU Bus Switches
-sysElectric.apuGenBus1 		= TwoStateDrefSwitch:new("apubus1","Rotate/md80/electrical/APU_l_bus_switch",0)
-sysElectric.apuGenBus2 		= TwoStateDrefSwitch:new("apubus2","Rotate/md80/electrical/APU_r_bus_switch",0)
-sysElectric.apuGenBusGroup	= SwitchGroup:new("apubussgroup")
-sysElectric.apuGenBusGroup:addSwitch(sysElectric.apuGenBus1)
-sysElectric.apuGenBusGroup:addSwitch(sysElectric.apuGenBus2)
+sysElectric.gpuOnBus = SimpleAnnunciator:new("","Rotate/md80/electrical/GPU_power_available",0)
 
 return sysElectric

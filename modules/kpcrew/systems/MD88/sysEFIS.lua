@@ -1,9 +1,9 @@
--- Rotate MD88 airplane 
+-- TMPL airplane 
 -- EFIS functionality
 
 -- @classmod sysEFIS
 -- @author Kosta Prokopiu
--- @copyright 2024 Kosta Prokopiu
+-- @copyright 2025 Kosta Prokopiu
 
 local TwoStateDrefSwitch 	= require "kpcrew.systems.TwoStateDrefSwitch"
 local TwoStateCmdSwitch	 	= require "kpcrew.systems.TwoStateCmdSwitch"
@@ -17,5 +17,7 @@ local InopSwitch 			= require "kpcrew.systems.InopSwitch"
 local KeepPressedSwitchCmd	= require "kpcrew.systems.KeepPressedSwitchCmd"
 
 sysEFIS = require("kpcrew.systems.DFLT.sysEFIS")
+
+logMsg("TMPL sysEFIS")
 
 return sysEFIS

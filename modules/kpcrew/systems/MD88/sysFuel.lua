@@ -1,9 +1,9 @@
--- Rotate MD88 airplane 
+-- MD88 Rotate airplane 
 -- Fuel related functionality
 
 -- @classmod sysFuel
 -- @author Kosta Prokopiu
--- @copyright 2024 Kosta Prokopiu
+-- @copyright 2025 Kosta Prokopiu
 
 local TwoStateDrefSwitch 	= require "kpcrew.systems.TwoStateDrefSwitch"
 local TwoStateCmdSwitch	 	= require "kpcrew.systems.TwoStateCmdSwitch"
@@ -15,22 +15,10 @@ local TwoStateToggleSwitch	= require "kpcrew.systems.TwoStateToggleSwitch"
 local MultiStateCmdSwitch 	= require "kpcrew.systems.MultiStateCmdSwitch"
 local InopSwitch 			= require "kpcrew.systems.InopSwitch"
 local KeepPressedSwitchCmd	= require "kpcrew.systems.KeepPressedSwitchCmd"
+local drefFuelPressLow 		= "sim/cockpit2/annunciators/fuel_pressure_low"
 
 sysFuel = require("kpcrew.systems.DFLT.sysFuel")
 
--- Fuel pumps
-sysFuel.fuelPumpLeftAft 	= TwoStateDrefSwitch:new ("fuelpumpleftaft","Rotate/md80/fuel/left_aft_pump",0)
-sysFuel.fuelPumpLeftFwd 	= TwoStateDrefSwitch:new ("fuelpumpleftfwd","Rotate/md80/fuel/left_fwd_pump",0)
-sysFuel.fuelPumpRightAft 	= TwoStateDrefSwitch:new ("fuelpumprightaft","Rotate/md80/fuel/right_aft_pump",0)
-sysFuel.fuelPumpRightFwd	= TwoStateDrefSwitch:new ("fuelpumprightfwd","Rotate/md80/fuel/right_fwd_pump",0)
-sysFuel.fuelPumpCtrAft 		= TwoStateDrefSwitch:new ("fuelpumpctraft","Rotate/md80/fuel/center_aft_pump",0)
-sysFuel.fuelPumpCtrFwd	 	= TwoStateDrefSwitch:new ("fuelpumpctrfwd","Rotate/md80/fuel/center_fwd_pump",0)
-sysFuel.allFuelPumpGroup 		= SwitchGroup:new("fuelpumpgroup")
-sysFuel.allFuelPumpGroup:addSwitch(sysFuel.fuelPumpLeftAft)
-sysFuel.allFuelPumpGroup:addSwitch(sysFuel.fuelPumpRightAft)
-sysFuel.allFuelPumpGroup:addSwitch(sysFuel.fuelPumpCtrAft)
-sysFuel.allFuelPumpGroup:addSwitch(sysFuel.fuelPumpLeftFwd)
-sysFuel.allFuelPumpGroup:addSwitch(sysFuel.fuelPumpRightFwd)
-sysFuel.allFuelPumpGroup:addSwitch(sysFuel.fuelPumpCtrFwd)
+logMsg("MD88 sysFuel")
 
 return sysFuel
