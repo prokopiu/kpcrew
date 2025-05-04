@@ -1,4 +1,4 @@
--- TMPL airplane 
+-- PC12 airplane 
 -- Radio functionality
 
 -- @classmod sysRadios
@@ -18,6 +18,15 @@ local KeepPressedSwitchCmd	= require "kpcrew.systems.KeepPressedSwitchCmd"
 
 sysRadios = require("kpcrew.systems.DFLT.sysRadios")
 
-logMsg("TMPL sysRadios")
+logMsg("PC12 sysRadios")
+
+sysRadios.xpdrSwitch 		= TwoStateDrefSwitch:new("xpdrmode","sim/cockpit2/radios/actuators/transponder_mode",0)
+sysRadios.xpdrCode 			= TwoStateDrefSwitch:new("xpdrcode","sim/cockpit2/radios/actuators/transponder_code",0)
+
+sysRadios.off				= 0
+sysRadios.stby				= 1
+sysRadios.alt				= 3
+sysRadios.ta				= 3
+sysRadios.tara				= 3
 
 return sysRadios

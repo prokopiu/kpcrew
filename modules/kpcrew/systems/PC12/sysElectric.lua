@@ -23,10 +23,11 @@ logMsg("PC12 sysElectric")
 -- ----- Batteries
 sysElectric.batteryGroup 	= SwitchGroup:new("battery switches")
 sysElectric.batterySwitch 	= TwoStateCmdSwitch:new("battery1","thranda/Switch",7,
-	"thranda/switches/SwitchDn07","thranda/switches/SwitchUp07","nocommand")
+	"thranda/switches/SwitchUp07","thranda/switches/SwitchDn07","nocommand")
 sysElectric.battery2Switch 	= TwoStateCmdSwitch:new("battery2","thranda/Switch",11,
-	"thranda/switches/SwitchDn11","thranda/switches/SwitchUp11","nocommand")
+	"thranda/switches/SwitchUp11","thranda/switches/SwitchDn11","nocommand")
 sysElectric.batteryGroup:addSwitch(batterySwitch)
+sysElectric.batteryGroup:addSwitch(battery2Switch)
 
 sysElectric.batt1Volt 		= SimpleAnnunciator:new("BATT1 Voltage","sim/cockpit2/electrical/battery_voltage_actual_volts",-1)
 sysElectric.batt2Volt 		= SimpleAnnunciator:new("BATT2 Voltage","sim/cockpit2/electrical/battery_voltage_actual_volts",1)
