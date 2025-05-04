@@ -20,11 +20,11 @@ kc_has_aileron_trim	= false		-- Aircraft has aileron trim
 kc_spdbrk_can_arm	= true		-- Aircraft's speedbrake can be armed
 kc_spdbrk_arm_pos	= -0.5
 kc_NumFlapsTO		= 3
-kc_TakeoffFlaps 	= "0|1+F|2| | | "
-kc_TakeoffFlapsInd 	= "0|1|2|2|2|2"
+kc_TakeoffFlaps 	= "0|1+F|2| | | | "
+kc_TakeoffFlapsInd 	= "0|1|2|2|2|2|2"
 kc_NumFlapsLDG		= 2
-kc_LandingFlaps 	= "3|FULL| | | | "
-kc_LandingFlapsInd 	= "3|4|4|4|4|4"
+kc_LandingFlaps 	= "3|FULL| | | | | "
+kc_LandingFlapsInd 	= "3|4|4|4|4|4|4"
 
 -- === engines
 kc_ab_engm_norm		= 0			-- Airbus engine mode norm

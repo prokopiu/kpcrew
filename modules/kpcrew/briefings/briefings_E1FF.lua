@@ -15,11 +15,11 @@ kc_acf_name 		= "E195/E175 Free X-Crafts"
 kc_spdbrk_can_arm	= true		-- Aircraft's speedbrake can be armed
 kc_spdbrk_arm_pos	= -0.5
 kc_NumFlapsTO		= 4
-kc_TakeoffFlaps 	= "UP|1|2|3"
-kc_TakeoffFlapsInd 	= "0|1|2|3"
+kc_TakeoffFlaps 	= "UP|1|2|3| | | "
+kc_TakeoffFlapsInd 	= "0|1|2|3|3|3|3"
 kc_NumFlapsLDG		= 3
-kc_LandingFlaps 	= "4|5|FULL"
-kc_LandingFlapsInd 	= "4|5|6"
+kc_LandingFlaps 	= "4|5|FULL| | | | "
+kc_LandingFlapsInd 	= "4|5|6|6|6|6|6"
 kc_full_rgt_rudder	= -14.9		-- Threshold where the rudder is almost fully to the right
 
 -- === engines
