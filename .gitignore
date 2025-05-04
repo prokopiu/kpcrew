@@ -5,3 +5,17 @@ scripts/AutoExposure.lua
 modules/kpcrew/briefings/briefings_MD82 - Copy.lua
 modules/kpcrew/sops/SOP_MD88.lua.off
 scripts/DK_Toliss_Callout.lua
+modules/kpcrew/systems/MD88 old/sysRadios.lua
+modules/kpcrew/systems/MD88 old/sysMCP.lua
+modules/kpcrew/systems/MD88 old/sysMacros.lua
+modules/kpcrew/systems/MD88 old/sysLights.lua
+modules/kpcrew/systems/MD88 old/sysHydraulic.lua
+modules/kpcrew/systems/MD88 old/sysGeneral.lua
+modules/kpcrew/systems/MD88 old/sysFuel.lua
+modules/kpcrew/systems/MD88 old/sysFMC.lua
+modules/kpcrew/systems/MD88 old/sysEngines.lua
+modules/kpcrew/systems/MD88 old/sysElectric.lua
+modules/kpcrew/systems/MD88 old/sysEFIS.lua
+modules/kpcrew/systems/MD88 old/sysControls.lua
+modules/kpcrew/systems/MD88 old/sysAir.lua
+modules/kpcrew/systems/MD88 old/sysAice.lua

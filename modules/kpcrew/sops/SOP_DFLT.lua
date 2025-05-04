@@ -187,7 +187,7 @@ if kc_has_retractgear then
 		function () return sysGeneral.gearLightsAnc:getStatus() == 1 end))
 end
 electricalPowerUpProc:addItem(ProcedureItem:new("LIGHTS","AS REQUIRED",FlowItem.actorFO,0,
-	function () return sysLights.positionSwitch:getStatus() ~= 0 end,
+	function () return true end,
 	function () kc_macro_lights(kc_phase_turnaround) end))
 electricalPowerUpProc:addItem(ProcedureItem:new("POWER LEVERS","IDLE",FlowItem.actorFO,0,
 	function () return sysEngines.throttlePos:getStatus() == 0 end,
@@ -379,7 +379,7 @@ if kc_has_apu == true then
 		function () sysAir.apuBleedSwitch:actuate(1) end))
 end
 if kc_has_gpu == true and kc_has_apu == true then
-	beforeStart:addItem(ProcedureItem:new("EXTERNAL POWER","OFF",FlowItem.actorFO,2,
+	prePushStartProc:addItem(ProcedureItem:new("EXTERNAL POWER","OFF",FlowItem.actorFO,2,
 		function () return 
 			sysElectric.gpuOnBus:getStatus() == 0
 		end,
@@ -388,7 +388,7 @@ if kc_has_gpu == true and kc_has_apu == true then
 		end))
 end
 if kc_has_gpu == true and kc_has_apu == true then
-	beforeStart:addItem(ProcedureItem:new("EXTERNAL POWER","DISCONNECT",FlowItem.actorFO,0,
+	prePushStartProc:addItem(ProcedureItem:new("EXTERNAL POWER","DISCONNECT",FlowItem.actorFO,0,
 		function () return 
 			sysElectric.gpuConnect:getStatus() == 0 
 		end,
@@ -501,11 +501,11 @@ engStartProc:addItem(ProcedureItem:new("START SEQUENCE","%s then %s|activeBriefi
 		kc_speakNoText(0,stext)
 	end))
 end
-if kc_has_fuel_select then
-	engStartProc:addItem(ProcedureItem:new("FUEL SYSTEM","AS REQUIRED",FlowItem.actorFO,0,
-		function () return sysFuel.fuelSwitchGroup:getStatus() == 1 end,
-		function () kc_macro_fuel(kc_phase_before_start) end))
-end
+
+engStartProc:addItem(ProcedureItem:new("FUEL SYSTEM","AS REQUIRED",FlowItem.actorFO,0,
+	function () return sysFuel.allFuelPumpGroup:getStatus() > 0 end,
+	function () kc_macro_fuel(kc_phase_before_start) end))
+
 engStartProc:addItem(ProcedureItem:new("AIR CONDITIONING / PACKS","AS REQUIRED",FlowItem.actorPM,0,
 	function () return true end,
 	function () kc_macro_air(kc_phase_before_start) end))
@@ -692,12 +692,7 @@ engStartProc:addItem(ProcedureItem:new("LOCKOUT PIN REMOVED","VERIFY",FlowItem.a
 	function () return activeBriefings:get("taxi:gateStand") > 2 end))
 engStartProc:addItem(ProcedureItem:new("PARKING BRAKE","SET",FlowItem.actorFO,0,
 	function () return sysGeneral.parkBrakeSwitch:getStatus() == 1 end,
-	function () 
-		if sysGeneral.parkBrakeSwitch:getStatus() ~= 1 then
-			kc_speakNoText(0,"Set parking brake when push finished")
-		end
-	end,
-	function () return activeBriefings:get("taxi:pushDirection") == 1 end))
+	function () end))
 if kc_is_airbus == true then
 	engStartProc:addItem(ProcedureItem:new("ENGINE MODE","NORM",FlowItem.actorFO,0,
 		function () return sysEngines.engIgnitionGroup:getStatus() == kc_ab_engm_norm end,
@@ -752,13 +747,11 @@ if kc_has_gpu then
 end
 if kc_has_apu then
 	afterStartProc:addItem(ProcedureItem:new("APU GENERATOR","OFF",FlowItem.actorFO,0,
-		function () return sysElectric.apuStartSwitch:getStatus() == 0 end,
-		function () sysElectric.apuStartSwitch:actuate(0) end))
+		function () return sysElectric.apuGenBusGroup:getStatus() == 0 end,
+		function () sysElectric.apuGenBusGroup:actuate(0) end))
 	afterStartProc:addItem(ProcedureItem:new("APU BLEED AIR","OFF",FlowItem.actorFO,0,
 		function () return sysAir.apuBleedSwitch:getStatus() == 0 end,
-		function () 
-			sysAir.apuBleedSwitch:actuate(0)
-		end))
+		function () sysAir.apuBleedSwitch:actuate(0) end))
 	if kc_is_airbus then
 		afterStartProc:addItem(ProcedureItem:new("APU MASTER","OFF",FlowItem.actorFO,3,
 			function () return sysElectric.apuMaster:getStatus() == 0 end,
@@ -766,7 +759,7 @@ if kc_has_apu then
 	else
 		afterStartProc:addItem(ProcedureItem:new("APU","OFF",FlowItem.actorFO,3,
 			function () return sysElectric.apuStartSwitch:getStatus() == 0 end,
-			function () sysElectric.apuStartSwitch:setValue(0) end))
+			function () kc_macro_apustop() end))
 	end
 end
 if kc_has_speedbrake then
@@ -962,17 +955,18 @@ if kc_has_retractgear then
 		function () return sysGeneral.GearSwitch:getStatus() == 0 end,
 		function () sysGeneral.GearSwitch:actuate(0) end))
 end
-for toflapidx=kc_NumFlapsTO-1, 2, -1 do
+for toflapidx=kc_NumFlapsTO, 2, -1 do
 	flapsUpProc:addItem(HoldProcedureItem:new("FLAPS " .. kc_pref_split(kc_TakeoffFlaps)[toflapidx],"RETRACT AT " .. sysControls.flaps_spd[tonumber(kc_pref_split(kc_TakeoffFlapsInd)[toflapidx])] .. " KTS",FlowItem.actorPF,nil,
-		-- function () return sysControls.flapsSwitch:getStatus() < sysControls.flaps_pos[tonumber(kc_pref_split(kc_TakeoffFlapsInd)[activeBriefings:get("takeoff:flaps")])]-0.01 end
-		function () return (toflapidx >= kc_NumFlapsTO) or (toflapidx >= tonumber(kc_pref_split(kc_TakeoffFlapsInd)[activeBriefings:get("takeoff:flaps")])) end))
+		function () return (toflapidx >= kc_NumFlapsTO) or (toflapidx > tonumber(kc_pref_split(kc_TakeoffFlapsInd)[activeBriefings:get("takeoff:flaps")])) end))
+		-- function () return (toflapidx >= kc_NumFlapsTO) or (toflapidx >= tonumber(kc_pref_split(kc_TakeoffFlapsInd)[activeBriefings:get("takeoff:flaps")])) end))
 	
 	flapsUpProc:addItem(ProcedureItem:new("FLAPS ".. kc_pref_split(kc_TakeoffFlaps)[toflapidx],"SET",FlowItem.actorPF,0,true,
 		function () 
 			kc_macro_set_flap(toflapidx-1) 
 			kc_speakNoText(0,"speed check flaps " .. kc_pref_split(kc_TakeoffFlaps)[toflapidx]) 
 		end,
-		function () return (toflapidx >= kc_NumFlapsTO) or (toflapidx >= tonumber(kc_pref_split(kc_TakeoffFlapsInd)[activeBriefings:get("takeoff:flaps")])) end))
+		function () return (toflapidx >= kc_NumFlapsTO) or (toflapidx > tonumber(kc_pref_split(kc_TakeoffFlapsInd)[activeBriefings:get("takeoff:flaps")])) end))
+		-- function () return (toflapidx >= kc_NumFlapsTO) or (toflapidx >= tonumber(kc_pref_split(kc_TakeoffFlapsInd)[activeBriefings:get("takeoff:flaps")])) end))
 end	
 	
 flapsUpProc:addItem(HoldProcedureItem:new("FLAPS " .. kc_pref_split(kc_TakeoffFlaps)[1],"RETRACT AT " .. sysControls.flaps_spd[tonumber(kc_pref_split(kc_TakeoffFlapsInd)[1])] .. " KTS",FlowItem.actorPF))

@@ -56,6 +56,9 @@ function ()
 	end
 end)
 
+-- PTU / Transfer Pump
+sysHydraulic.PTU			= InopSwitch:new("ptu")
+
 -- hydraulic pressure
 sysHydraulic.hydPressureLow	= CustomAnnunciator:new("hydpressurelow",
 function ()  

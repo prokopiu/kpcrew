@@ -3,7 +3,7 @@
 
 -- @classmod sysElectric
 -- @author Kosta Prokopiu
--- @copyright 2024 Kosta Prokopiu
+-- @copyright 2025 Kosta Prokopiu
 
 local sysElectric = {
 }
@@ -83,7 +83,7 @@ sysElectric.apuGenBusGroup:addSwitch(sysElectric.apuGenBus2)
 -- APU RUNNING annunciator
 sysElectric.apuRunningAnc 	= CustomAnnunciator:new("apurunning",
 	function () 
-		if get("sim/aircraft/electrical/bus_apu_is_on") == 1 then
+		if get("sim/cockpit/engine/APU_N1") > 98 then
 			return 1
 		else
 			return 0

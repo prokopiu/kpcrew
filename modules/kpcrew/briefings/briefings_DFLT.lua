@@ -52,7 +52,7 @@ kc_has_proplever	= false		-- Aircraft has prop lever
 kc_prop_lvr_min		= 125		-- Prop lever Minimum
 kc_prop_lvr_feather	= 105		-- Prop lever feather
 kc_prop_lvr_max		= 178		-- Prop lever maximum
-kc_has_mixlever		= true		-- Airctaft has mixture lever
+kc_has_mixlever		= false		-- Airctaft has mixture lever
 kc_mixture_off		= 0
 kc_mixture_min		= 0.4
 kc_mixture_rich		= 1
@@ -76,6 +76,7 @@ kc_has_fuel_select	= false		-- Aircraft has fuel tank selector
 -- === Hydraulics
 kc_has_hyd_elec_pmps= true		-- Aircraft has electric hydraulic pumps
 kc_has_hyd_eng_pmps = true		-- Aircraft has engine hydraulic pumps
+kc_has_ptu			= false		-- Aircraft has power transfer unit
 
 -- === Air supply
 kc_LandingPacks 	= "OFF|ON"

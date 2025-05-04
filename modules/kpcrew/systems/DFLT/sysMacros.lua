@@ -883,9 +883,6 @@ function kc_macro_air(flightphase)
 		if kc_is_airbus == false and kc_has_iso_valvle then	
 			sysAir.isoValveSwitch:actuate(0)
 		end
-		if kc_has_oxygen then
-			sysAir.oxygenMaster:actuate(0)
-		end
 		if kc_has_engine_bleed then
 			sysAir.engBleedGroup:actuate(0)
 		end
@@ -1001,6 +998,9 @@ function kc_macro_hyd(flightphase)
 		if kc_has_hyd_eng_pmps == true then
 			sysHydraulic.engHydPumpGroup:actuate(0)
 		end
+		if kc_has_ptu == true then
+			sysHydraulic.PTU:actuate(0)
+		end
 	elseif flightphase == kc_phase_turnaround then
 		if kc_has_hyd_elec_pmps == true then
 			sysHydraulic.elecHydPumpGroup:actuate(1)
@@ -1008,12 +1008,18 @@ function kc_macro_hyd(flightphase)
 		if kc_has_hyd_eng_pmps == true then
 			sysHydraulic.engHydPumpGroup:actuate(1)
 		end
+		if kc_has_ptu == true then
+			sysHydraulic.PTU:actuate(0)
+		end
 	elseif flightphase == kc_phase_before_start then
+		if kc_has_hyd_eng_pmps == true then
+			sysHydraulic.engHydPumpGroup:actuate(1)
+		end
 		if kc_has_hyd_elec_pmps == true then
 			sysHydraulic.elecHydPumpGroup:actuate(1)
 		end 
-		if kc_has_hyd_eng_pmps == true then
-			sysHydraulic.engHydPumpGroup:actuate(1)
+		if kc_has_ptu == true then
+			sysHydraulic.PTU:actuate(1)
 		end
 	elseif flightphase == kc_phase_after_start then
 		if kc_has_hyd_elec_pmps == true then
@@ -1021,6 +1027,39 @@ function kc_macro_hyd(flightphase)
 		end 
 		if kc_has_hyd_eng_pmps == true then
 			sysHydraulic.engHydPumpGroup:actuate(1)
+		end
+		if kc_has_ptu == true then
+			sysHydraulic.PTU:actuate(1)
+		end
+	elseif flightphase == kc_phase_climb then
+		if kc_has_hyd_elec_pmps == true then
+			sysHydraulic.elecHydPumpGroup:actuate(0)
+		end 
+		if kc_has_hyd_eng_pmps == true then
+			sysHydraulic.engHydPumpGroup:actuate(1)
+		end
+		if kc_has_ptu == true then
+			sysHydraulic.PTU:actuate(0)
+		end
+	elseif flightphase == kc_phase_landing then
+		if kc_has_hyd_elec_pmps == true then
+			sysHydraulic.elecHydPumpGroup:actuate(0)
+		end 
+		if kc_has_hyd_eng_pmps == true then
+			sysHydraulic.engHydPumpGroup:actuate(1)
+		end
+		if kc_has_ptu == true then
+			sysHydraulic.PTU:actuate(1)
+		end
+	elseif flightphase == kc_phase_shutdown then
+		if kc_has_hyd_elec_pmps == true then
+			sysHydraulic.elecHydPumpGroup:actuate(0)
+		end 
+		if kc_has_hyd_eng_pmps == true then
+			sysHydraulic.engHydPumpGroup:actuate(1)
+		end
+		if kc_has_ptu == true then
+			sysHydraulic.PTU:actuate(0)
 		end
 	else
 		logMsg("Invalid flightphase")
@@ -1336,6 +1375,13 @@ function kc_bck_apuonline(trigger)
 		sysAir.apuBleedSwitch:actuate(1)
 		kc_procvar_set(trigger,false)
 	end
+end
+
+-- APU start background
+function kc_macro_apustop()
+	sysElectric.apuGenBusGroup:actuate(0)
+	sysAir.apuBleedSwitch:actuate(0)
+	sysElectric.apuMaster:setValue(0)
 end
 
 function kc_macro_set_autobrake(index)

@@ -119,9 +119,13 @@ elseif PLANE_ICAO == "MD82" and PLANE_TAILNUMBER == "N552AA" then
 	kh_acf_icao = "MD82"
 	
 -- RotateSim MD-88
--- elseif PLANE_ICAO == "MD88" then
-	-- kh_acf_icao = "MD88"
+elseif PLANE_ICAO == "MD88" then
+	kh_acf_icao = "MD88"
 
+-- MSparks B747
+elseif PLANE_ICAO == "B744" or PLANE_ICAO == "B74F" then
+	kh_acf_icao = "B744"
+	
 -- Aerobask Phenom 300
 elseif PLANE_ICAO == "E55P" then
 	kh_acf_icao = "E55P"

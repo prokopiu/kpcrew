@@ -120,8 +120,12 @@ elseif PLANE_ICAO == "MD82" and PLANE_TAILNUMBER == "N552AA" then
 	kc_acf_icao = "MD82"
 	
 -- RotateSim MD-88
--- elseif PLANE_ICAO == "MD88" then
-	-- kc_acf_icao = "MD88"
+elseif PLANE_ICAO == "MD88" then
+	kc_acf_icao = "MD88"
+	
+-- MSparks B747
+elseif PLANE_ICAO == "B744" or PLANE_ICAO == "B74F" then
+	kc_acf_icao = "B744"
 	
 -- Aerobask Phenom 300
 elseif PLANE_ICAO == "E55P" then
@@ -300,8 +304,19 @@ kc_mstr_button_text = "== FLOW =="
 
 -- ===== Control bar to open windows (preliminary)
 kc_ctrl_wnd_state = 0
+-- kc_key_repeat_cnt = 0
 
 function kc_master_button()
+	-- kc_key_repeat_cnt = kc_key_repeat_cnt + 1
+	-- logMsg("Key repeat: " .. kc_key_repeat_cnt)
+	-- if kc_key_repeat_cnt >= 9 then
+		-- kc_key_repeat_cnt = 0 
+	-- end
+	-- if kc_key_repeat_cnt > 1 then
+		-- logMsg("stop")
+		-- return 
+	-- end
+	
 	if getActivePrefs():get("general:assistance") == 1 and kc_ctrl_wnd_state == 0 then
 		kc_ctrl_wnd_state = 1
 		local xpos = kc_scrn_width - 705
@@ -375,6 +390,16 @@ function kc_init_ctrl_window()
 end
 
 function kc_prev_button()
+	-- kc_key_repeat_cnt = kc_key_repeat_cnt + 1
+	-- logMsg("Key repeat: " .. kc_key_repeat_cnt)
+	-- if kc_key_repeat_cnt >= 9 then
+		-- kc_key_repeat_cnt = 0 
+	-- end
+	-- if kc_key_repeat_cnt > 1 then
+		-- logMsg("stop")
+		-- return 
+	-- end
+	
 	-- unassisted always navigate flows
 	if getActivePrefs():get("general:assistance") == 1 then
 		if getActiveSOP():getActiveFlowIndex() > 1 then
@@ -392,7 +417,19 @@ function kc_prev_button()
 	end
 end
 
+
+
 function kc_next_button()
+	-- kc_key_repeat_cnt = kc_key_repeat_cnt + 1
+	-- logMsg("Key repeat: " .. kc_key_repeat_cnt)
+	-- if kc_key_repeat_cnt >= 9 then
+		-- kc_key_repeat_cnt = 0 
+	-- end
+	-- if kc_key_repeat_cnt > 1 then
+		-- logMsg("stop")
+		-- return 
+	-- end
+		
 	-- unassisted always navigate flows
 	if getActivePrefs():get("general:assistance") == 1 then
 		getActiveSOP():setNextFlowActive()
