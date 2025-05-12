@@ -56,6 +56,8 @@ function kc_macro_state_cold_and_dark()
 	-- MCP settings
 	kc_macro_mcp(kc_phase_colddark)
 
+	kc_macro_set_xpdrmode(sysRadios.off)
+	kc_macro_set_xpdrcode(2000)
 	
 	if kc_is_turboprop or kc_is_ga then
 		sysEngines.mixtureLever:actuate(0)
@@ -216,8 +218,6 @@ end
 
 -- ====================================== General settings like doors and external objects
 function kc_macro_doors_ext(flightphase)
-	logMsg("Doors flight phase: " .. kcSopFlightPhase[flightphase])
-	
 	-- Cold & dark
 	if flightphase == kc_phase_colddark then
 		if kc_has_doors then
@@ -662,7 +662,7 @@ end
 -- background switch lights at reaching 10000 ft in descend
 function kc_macro_lights_descend_10k()
 	-- set the lights when sinking through 10.000 ft
-	kc_macro_lights_climb_10k()
+	-- kc_macro_lights_climb_10k()
 	sysLights.landLightGroup:actuate(1)
 	if kc_is_daylight() == false then		
 		if kc_has_logo_lights then

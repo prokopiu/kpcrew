@@ -1,4 +1,4 @@
--- Laminar C750  airplane 
+-- TMPL airplane 
 -- EFIS functionality
 
 -- @classmod sysEFIS
@@ -18,25 +18,6 @@ local KeepPressedSwitchCmd	= require "kpcrew.systems.KeepPressedSwitchCmd"
 
 sysEFIS = require("kpcrew.systems.DFLT.sysEFIS")
 
-sysEFIS.mapRange_5 	= 0
-sysEFIS.mapRange10 	= 1
-sysEFIS.mapRange20 	= 2
-sysEFIS.mapRange40 	= 3
-sysEFIS.mapRange80 	= 4
-sysEFIS.mapRange160 = 5
-sysEFIS.mapRange320 = 6
-sysEFIS.mapRange640 = 6
-
-sysEFIS.mapModeAPP 	= 0
-sysEFIS.mapModeVOR 	= 1
-sysEFIS.mapModeMAP 	= 2
-sysEFIS.mapModePLAN = 4
-
-sysEFIS.voradfVOR 	= 1
-sysEFIS.voradfOFF 	= 0
-sysEFIS.voradfADF 	= -1
-
-sysEFIS.minsTypeRadio = 0
-sysEFIS.minsTypeBaro = 1
+logMsg("TMPL sysEFIS")
 
 return sysEFIS

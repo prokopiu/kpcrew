@@ -3,7 +3,7 @@
 
 -- @classmod sysMCP
 -- @author Kosta Prokopiu
--- @copyright 2024 Kosta Prokopiu
+-- @copyright 2025 Kosta Prokopiu
 
 local TwoStateDrefSwitch 	= require "kpcrew.systems.TwoStateDrefSwitch"
 local TwoStateCmdSwitch	 	= require "kpcrew.systems.TwoStateCmdSwitch"
@@ -17,6 +17,8 @@ local InopSwitch 			= require "kpcrew.systems.InopSwitch"
 local KeepPressedSwitchCmd	= require "kpcrew.systems.KeepPressedSwitchCmd"
 
 sysMCP = require("kpcrew.systems.DFLT.sysMCP")
+
+logMsg("C750 sysMCP")
 
 local drefVORLocLight 		= "laminar/CitX/autopilot/nav_mode_on"
 local drefHDGLight			= "sim/cockpit2/autopilot/heading_mode"

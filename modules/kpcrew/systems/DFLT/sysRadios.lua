@@ -148,6 +148,11 @@ sysRadios.adf2StandbyFreq 	= SimpleAnnunciator:new("",drefAdf2StandbyFreq,0)
 sysRadios.xpdrSwitch 		= TwoStateDrefSwitch:new ("xpdrmode",drefXpdrSwitch,0)
 sysRadios.xpdrCode 			= TwoStateDrefSwitch:new ("xpdrcode",drefXpdrCode,0)
 
+sysRadios.stby				= 1
+sysRadios.alt				= 2
+sysRadios.ta				= 2
+sysRadios.tara				= 3
+
 -- ===== UI related functions =====
 
 function sysRadios:panel_render()

@@ -755,10 +755,10 @@ if kc_has_apu then
 	if kc_is_airbus then
 		afterStartProc:addItem(ProcedureItem:new("APU MASTER","OFF",FlowItem.actorFO,3,
 			function () return sysElectric.apuMaster:getStatus() == 0 end,
-			function () sysElectric.apuMaster:setValue(0) end))
+			function () sysElectric.apuMaster:actuate(0) end))
 	else
 		afterStartProc:addItem(ProcedureItem:new("APU","OFF",FlowItem.actorFO,3,
-			function () return sysElectric.apuStartSwitch:getStatus() == 0 end,
+			function () return sysElectric.apuRunningAnc:getStatus() == 0 end,
 			function () kc_macro_apustop() end))
 	end
 end
@@ -1458,9 +1458,6 @@ if kc_has_seatbelt_sgn then
 		function () return sysGeneral.passSignsSwitch:getStatus() == 0 end,
 		function () sysGeneral.passSignsSwitch:actuate(0) end))
 end
-shutdownProc:addItem(ProcedureItem:new("ELECTRIC SYSTEM","AS REQUIRED",FlowItem.actorFO,0,
-	function () return true end,
-	function () kc_macro_elec_system(kc_phase_shutdown) end))
 shutdownProc:addItem(ProcedureItem:new("PACK/BLEED AIR/OXYGEN","AS REQUIRED",FlowItem.actorFO,0,
 	function () return sysAir.engBleedGroup:getStatus() == 0 end,
 	function () kc_macro_air(kc_phase_shutdown)	end))
@@ -1478,7 +1475,10 @@ if kc_has_doors then
 		function () return sysGeneral.doorGroup:getStatus() > 0 end,
 		function () kc_macro_doors_ext(kc_phase_shutdown) end))	
 end
-
+shutdownProc:addItem(ProcedureItem:new("ELECTRIC SYSTEM","AS REQUIRED",FlowItem.actorFO,0,
+	function () return true end,
+	function () kc_macro_elec_system(kc_phase_shutdown) end))
+	
 -- ======== STATES =============
 
 -- ================= Cold & Dark State ==================

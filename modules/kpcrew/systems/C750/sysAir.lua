@@ -5,9 +5,6 @@
 -- @author Kosta Prokopiu
 -- @copyright 2025 Kosta Prokopiu
 
-local sysAir = {
-}
-
 local TwoStateDrefSwitch 	= require "kpcrew.systems.TwoStateDrefSwitch"
 local TwoStateCmdSwitch	 	= require "kpcrew.systems.TwoStateCmdSwitch"
 local TwoStateCustomSwitch 	= require "kpcrew.systems.TwoStateCustomSwitch"
@@ -20,6 +17,8 @@ local InopSwitch 			= require "kpcrew.systems.InopSwitch"
 local KeepPressedSwitchCmd	= require "kpcrew.systems.KeepPressedSwitchCmd"
 
 sysAir = require("kpcrew.systems.DFLT.sysAir")
+
+logMsg("C750 sysAir")
 
 -- PACK switches
 sysAir.packLeftSwitch 		= TwoStateCustomSwitch:new("pack1","laminar/CitX/bleedair/air_cond_cockpit",0,
@@ -146,7 +145,47 @@ sysAir.engBleedGroup:addSwitch(sysAir.bleedEng1Switch)
 sysAir.engBleedGroup:addSwitch(sysAir.bleedEng2Switch)
 
 -- APU Bleed
-sysAir.apuBleedSwitch 		= TwoStateCmdSwitch:new("apubleed","laminar/CitX/APU/bleed_air_switch",0,
-	"laminar/CitX/APU/bleed_switch_up","laminar/CitX/APU/bleed_switch_dwn","nocommand")
+sysAir.apuBleedSwitch 		= TwoStateCustomSwitch:new("apubleed","laminar/CitX/APU/bleed_air_switch",0,
+	function () 
+		command_once("laminar/CitX/APU/bleed_switch_dwn")
+		command_once("laminar/CitX/APU/bleed_switch_dwn")
+		command_once("laminar/CitX/APU/bleed_switch_up")
+	end,
+	function () 
+		command_once("laminar/CitX/APU/bleed_switch_dwn")
+		command_once("laminar/CitX/APU/bleed_switch_dwn")
+	end,
+	function () 
+	end,
+	function ()
+		if get("laminar/CitX/APU/bleed_air_switch") > 0 then
+			return 1
+		else
+			return 0
+		end
+	end)
+
+-- Oxygen Supply PASS/OXY
+sysAir.oxygenMaster			= TwoStateDrefSwitch:new("oxygen","laminar/CitX/oxygen/pass_oxy",0,
+	function () -- AUTO
+		if get("laminar/CitX/oxygen/pass_oxy") == 0 then 
+			command_once("laminar/CitX/oxygen/cmd_pass_oxy_up")
+		elseif get("laminar/CitX/oxygen/pass_oxy") == 2 then 
+			command_once("laminar/CitX/oxygen/cmd_pass_oxy_dwn")
+		end
+	end,
+	function () 
+		command_once("laminar/CitX/oxygen/cmd_pass_oxy_dwn")
+		command_once("laminar/CitX/oxygen/cmd_pass_oxy_dwn")
+	end,
+	function () 
+	end,
+	function ()
+		if get("laminar/CitX/oxygen/pass_oxy") > 0 then
+			return 1
+		else
+			return 0
+		end
+	end)
 
 return sysAir

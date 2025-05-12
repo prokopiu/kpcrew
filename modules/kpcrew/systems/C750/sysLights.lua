@@ -23,6 +23,8 @@ local drefPanelLights 		= "sim/cockpit2/switches/panel_brightness_ratio"
 
 sysLights = require("kpcrew.systems.DFLT.sysLights")
 
+logMsg("C750 sysLights")
+
 -- Beacons or Anticollision Lights, single, onoff, command driven
 sysLights.beaconSwitch 		= TwoStateCustomSwitch:new("beacon","laminar/CitX/lights/gnd_rec_anti_coll",0,
 	function () 
@@ -72,10 +74,43 @@ sysLights.taxiSwitch 		= TwoStateToggleSwitch:new("taxi","laminar/CitX/lights/ta
 	"laminar/CitX/lights/cmd_taxi_toggle")
 
 -- Landing Lights, single onoff command driven
-sysLights.llLeftSwitch 		= TwoStateToggleSwitch:new("llleft","laminar/CitX/lights/landing_left",0,
-	"laminar/CitX/lights/cmd_landing_left_toggle")
-sysLights.llRightSwitch 	= TwoStateToggleSwitch:new("llright","laminar/CitX/lights/landing_right",0,
-	"laminar/CitX/lights/cmd_landing_right_toggle")
+sysLights.llLeftSwitch 		= TwoStateCustomSwitch:new("llleft","laminar/CitX/lights/landing_left",0,
+	function () 
+		if get("laminar/CitX/lights/landing_left") == 0 then
+			command_once("laminar/CitX/lights/cmd_landing_left_toggle")
+		end
+	end,
+	function () 
+		if get("laminar/CitX/lights/landing_left") ~= 0 then
+			command_once("laminar/CitX/lights/cmd_landing_left_toggle")
+		end
+	end,
+	function () 
+		command_once("laminar/CitX/lights/cmd_landing_left_toggle")
+	end,
+	function ()
+		return get("laminar/CitX/lights/landing_left")
+	end
+)
+
+sysLights.llRightSwitch 	= TwoStateCustomSwitch:new("llright","laminar/CitX/lights/landing_right",0,
+	function () 
+		if get("laminar/CitX/lights/landing_right") == 0 then
+			command_once("laminar/CitX/lights/cmd_landing_right_toggle")
+		end
+	end,
+	function () 
+		if get("laminar/CitX/lights/landing_right") ~= 0 then
+			command_once("laminar/CitX/lights/cmd_landing_right_toggle")
+		end
+	end,
+	function () 
+		command_once("laminar/CitX/lights/cmd_landing_right_toggle")
+	end,
+	function ()
+		return get("laminar/CitX/lights/landing_right")
+	end
+)
 sysLights.landLightGroup 	= SwitchGroup:new("landinglights")
 sysLights.landLightGroup:addSwitch(sysLights.llLeftSwitch)
 sysLights.landLightGroup:addSwitch(sysLights.llRightSwitch)
@@ -168,5 +203,24 @@ sysLights.positionSwitch 	= TwoStateToggleSwitch:new("position","laminar/CitX/li
 
 -- Position Light(s) status
 sysLights.positionAnc 		= SimpleAnnunciator:new("positionlights","laminar/CitX/lights/navigation",0)
+
+sysLights.emerLights		= TwoStateCustomSwitch:new("emerlights","laminar/CitX/lights/emerg_light_switch",0,
+	function ()
+		command_once("laminar/CitX/lights/emerg_light_switch_up")
+		command_once("laminar/CitX/lights/emerg_light_switch_up")
+	end,
+	function ()
+		command_once("laminar/CitX/lights/emerg_light_switch_dwn")
+		command_once("laminar/CitX/lights/emerg_light_switch_dwn")
+	end,
+	function ()
+	end,
+	function ()
+		if get("laminar/CitX/lights/emerg_light_switch") > 0 then
+			return 1
+		else
+			return 0
+		end
+	end)
 
 return sysLights

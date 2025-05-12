@@ -20,9 +20,10 @@ local InopSwitch 			= require "kpcrew.systems.InopSwitch"
 local KeepPressedSwitchCmd	= require "kpcrew.systems.KeepPressedSwitchCmd"
 
 logMsg("DFLT sysElectric")
+
 require("kpcrew.briefings.briefings_" .. kc_acf_icao)
 
--- ----- Batteries
+-- ** BATTERY Switch
 sysElectric.batteryGroup 	= SwitchGroup:new("battery switches")
 sysElectric.batterySwitch 	= TwoStateDrefSwitch:new("battery1","sim/cockpit/electrical/battery_array_on",-1)
 sysElectric.battery2Switch 	= InopSwitch:new("battery2")

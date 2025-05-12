@@ -28,4 +28,8 @@ logMsg("C750 sysControls")
 sysControls.yawDamper = TwoStateToggleSwitch:new("yawdamper","sim/cockpit2/switches/yaw_damper_on",0,
 	"laminar/CitX/autopilot/cmd_yd_toggle")
 
+-- Autobrake
+sysControls.antiskid	= TwoStateToggleSwitch:new("autobrake","laminar/CitX/hydraulics/antiskid",0,
+	"laminar/CitX/hydraulics/cmd_antiskid_toggle")
+
 return sysControls

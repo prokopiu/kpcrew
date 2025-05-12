@@ -164,13 +164,13 @@ kc_has_transponder	= true		-- Aircraft has transponder
 kc_has_doors		= true		-- Aircraft has doors
 kc_has_cargo_doors	= true		-- Aircraft has cargo doors
 kc_has_cockpit_door	= true		-- Aircraft has cockpit door
-kc_has_oxygen		= false		-- Aircraft has oxygen supply
 
 kc_has_autobrake	= true		-- Aircraft has autobrake
 kc_LandingAutoBrake = "OFF|1|2|3|MAX"
 kc_LandingAutoBrInd = "1|2|3|4|5"
 kc_AutoBrakeOff		= 1
 kc_AutoBrakeRTO		= 0
+kc_has_antiskid		= false
 
 -- === Operating speeds
 kc_speeds_vs0		= -1		-- Stall Speed, Landing Configuration from ACF

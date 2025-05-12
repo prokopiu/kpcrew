@@ -3,7 +3,8 @@
 
 -- @classmod sysFuel
 -- @author Kosta Prokopiu
--- @copyright 2022 Kosta Prokopiu
+-- @copyright 2025 Kosta Prokopiu
+
 local sysFuel = {
 }
 
@@ -24,8 +25,8 @@ local drefFuelPressLow 		= "sim/cockpit2/annunciators/fuel_pressure_low"
 
 -- Check if fuel is inbalanced
 function sysFuel.fuel_balanced()
-	local tank1 = get("sim/cockpit2/fuel/fuel_quantity",0) 
-	local tank2 = get("sim/cockpit2/fuel/fuel_quantity",1) 
+	local tank1 = get("sim/cockpit2/fuel/fuel_quantity",kc_FuelTankLeftInd) 
+	local tank2 = get("sim/cockpit2/fuel/fuel_quantity",kc_FuelTankRghtInd) 
 	return math.abs(tank1-tank2) < 100
 end
 	

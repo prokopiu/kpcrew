@@ -15,17 +15,11 @@ local TwoStateToggleSwitch	= require "kpcrew.systems.TwoStateToggleSwitch"
 local MultiStateCmdSwitch 	= require "kpcrew.systems.MultiStateCmdSwitch"
 local InopSwitch 			= require "kpcrew.systems.InopSwitch"
 local KeepPressedSwitchCmd	= require "kpcrew.systems.KeepPressedSwitchCmd"
-local drefFuelPressLow 		= "sim/cockpit2/annunciators/fuel_pressure_low"
 
 sysFuel = require("kpcrew.systems.DFLT.sysFuel")
 
--- Check if fuel is inbalanced
-function sysFuel.fuel_balanced()
-	local tank1 = get("sim/cockpit2/fuel/fuel_quantity",1) 
-	local tank2 = get("sim/cockpit2/fuel/fuel_quantity",2) 
-	return math.abs(tank1-tank2) < 100
-end
-	
+logMsg("C750 sysFuel")
+
 -- Fuel pumps
 sysFuel.fuelPumpLeftAft 	= TwoStateCustomSwitch:new ("fuelpumpleftaft","laminar/CitX/fuel/boost_left",0,
 	function () 
@@ -65,7 +59,25 @@ sysFuel.allFuelPumpGroup 	= SwitchGroup:new("fuelpumpgroup")
 sysFuel.allFuelPumpGroup:addSwitch(sysFuel.fuelPumpLeftAft)
 sysFuel.allFuelPumpGroup:addSwitch(sysFuel.fuelPumpRightAft)
 
-sysFuel.crossFeed = MultiStateCmdSwitch:new("crossfeed","laminar/CitX/fuel/crossfeed",0,
-	"laminar/CitX/oxygen/cmd_pass_oxy_dwn","laminar/CitX/oxygen/cmd_pass_oxy_up",-1,1,false)
+sysFuel.crossFeed 	= TwoStateCustomSwitch:new("crossfeed","laminar/CitX/fuel/crossfeed",0,
+	function () 
+		command_once("laminar/CitX/fuel/cmd_crossfeed_left")
+		command_once("laminar/CitX/fuel/cmd_crossfeed_left")
+		command_once("laminar/CitX/fuel/cmd_crossfeed_left")
+		command_once("laminar/CitX/fuel/cmd_crossfeed_left")
+		command_once("laminar/CitX/fuel/cmd_crossfeed_right")
+		command_once("laminar/CitX/fuel/cmd_crossfeed_right")
+	end,
+	function () 
+		command_once("laminar/CitX/fuel/cmd_crossfeed_left")
+		command_once("laminar/CitX/fuel/cmd_crossfeed_left")
+		command_once("laminar/CitX/fuel/cmd_crossfeed_left")
+		command_once("laminar/CitX/fuel/cmd_crossfeed_left")
+		command_once("laminar/CitX/fuel/cmd_crossfeed_right")
+		command_once("laminar/CitX/fuel/cmd_crossfeed_right")
+	end,
+	function () 
+	end
+)
 
 return sysFuel
