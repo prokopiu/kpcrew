@@ -191,6 +191,12 @@ activeSOP:getFlow(proc_ind_beforeTakeoff):addItem(ProcedureItem:new("ANTISKID","
 	function () 
 		sysGeneral.antiSkid:actuate(0)
 	end))
+activeSOP:getFlow(proc_ind_beforeTakeoff):addItem(ProcedureItem:new("ENGINE SYNC","FAN",FlowItem.actorFO,0,
+	function () return get("laminar/CitX/engine/eng_sync") == -1 end,
+	function () 
+		command_once("laminar/CitX/engine/cmd_eng_sync_dwn")
+		command_once("laminar/CitX/engine/cmd_eng_sync_dwn")
+	end))
 	
 -- RUNWAY ENTRY
 activeSOP:getFlow(proc_ind_runwayEntry):addItem(IndirectProcedureItem:new("THRUST SETTING","FAN% ~80",FlowItem.actorPF,0,"tomode",
@@ -200,6 +206,24 @@ activeSOP:getFlow(proc_ind_runwayEntry):addItem(IndirectProcedureItem:new("THRUS
 		kc_procvar_set("above10k",true) -- background 10.000 ft activities
 		kc_procvar_set("attransalt",true) -- background transition altitude activities
 	end))
+
+-- landing proc engine sync off
+activeSOP:getFlow(proc_ind_landing):addItem(ProcedureItem:new("ENGINE SYNC","OFF",FlowItem.actorFO,0,
+	function () return get("laminar/CitX/engine/eng_sync") == 0 end,
+	function () 
+		if get("laminar/CitX/engine/eng_sync") < 0 then
+			command_once("laminar/CitX/engine/cmd_eng_sync_up")
+		end
+		if get("laminar/CitX/engine/eng_sync") > 0 then
+			command_once("laminar/CitX/engine/cmd_eng_sync_dwn")
+		end	
+	end))
+	-- as recommended by Textron
+activeSOP:getFlow(proc_ind_landing):addItem(ProcedureItem:new("APU","START",FlowItem.actorFO,0,
+		function () return sysElectric.apuRunningAnc:getStatus() > 0 end,
+		function () 
+			kc_procvar_set("apustart",true)
+		end))
 
 -- AP1 OFF
 activeSOP:getFlow(proc_ind_ap1off):addItem(ProcedureItem:new("FD","TURN ON AGAIN",FlowItem.actorPF,0,
