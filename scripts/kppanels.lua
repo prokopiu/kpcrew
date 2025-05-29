@@ -1,12 +1,12 @@
 --[[
 	*** KPPANELS 1.0
 	External panels
-	Kosta Prokopiu, March 2025
+	Kosta Prokopiu, May 2025
 --]]
 
 require "kpcrew.genutils"
 
-kc_VERSION = "2.3-alpha10"
+kc_VERSION = "2.3-alpha11"
 kc_simversion = get("sim/version/xplane_internal_version")
 
 logMsg ( "FWL: ** Starting KPPanels version " .. kc_VERSION .. " on XP " .. kc_simversion .. " **" )
@@ -38,7 +38,11 @@ elseif PLANE_ICAO == "EPIC" then
 -- Thranda PC12
 elseif PLANE_ICAO == "PC12" then
 	kc_acf_icao = "PC12"
-		
+
+-- Aeroworx DC-3 Freeware
+elseif PLANE_ICAO == "DC3" then
+	kc_acf_icao = "ADC3"
+	
 -- FF A350
 -- elseif PLANE_ICAO == "A359" then
 	-- kc_acf_icao = "A359"
@@ -109,6 +113,10 @@ elseif PLANE_ICAO == "A339" then
 elseif PLANE_ICAO == "A346" then
 	kc_acf_icao = "A3TL"
 	
+-- LES Saab SF34
+elseif PLANE_ICAO == "SF34" then
+	kc_acf_icao = "SF34"
+	
 -- Laminar MD-82
 elseif PLANE_ICAO == "MD82" and PLANE_TAILNUMBER == "N552AA" then
 	kc_acf_icao = "MD82"
@@ -145,8 +153,8 @@ sysRadios 		= require("kpcrew.systems." .. kc_acf_icao .. ".sysRadios")
 
 -- initialize briefing window
 function kp_init_panels_window()
-    local wndWidth =  1000
-    local wndHeight = 400
+    local wndWidth =  1020
+    local wndHeight = 300
     fontScale1 = 1
     angle=1
     fontScale = 1
@@ -200,9 +208,9 @@ function kp_panels_builder(kp_panels_wnd, x, y)
 	imgui.Separator()
 	
 	imgui.Columns(3,"panelcolumns",true)
-		imgui.SetColumnWidth(0,300)
-		imgui.SetColumnWidth(1,400)
-		imgui.SetColumnWidth(2,300)
+		imgui.SetColumnWidth(0,250)
+		imgui.SetColumnWidth(1,450)
+		imgui.SetColumnWidth(2,350)
 	
 		imgui.BeginChild("left1")
 			sysEFIS.panel_render()

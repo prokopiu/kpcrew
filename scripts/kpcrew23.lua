@@ -41,6 +41,10 @@ elseif PLANE_ICAO == "EVIC" then
 elseif PLANE_ICAO == "EPIC" then
 	kc_acf_icao = "EPIC"
 
+-- Aeroworx DC-3 Freeware
+elseif PLANE_ICAO == "DC3" then
+	kc_acf_icao = "ADC3"
+	
 -- Thranda PC12
 -- elseif PLANE_ICAO == "PC12" then
 	-- kc_acf_icao = "PC12"
@@ -122,6 +126,10 @@ elseif PLANE_ICAO == "MD82" and PLANE_TAILNUMBER == "N552AA" then
 -- RotateSim MD-88
 elseif PLANE_ICAO == "MD88" then
 	kc_acf_icao = "MD88"
+	
+-- LES Saab SF34
+elseif PLANE_ICAO == "SF34" then
+	kc_acf_icao = "SF34"
 	
 -- MSparks B747
 elseif PLANE_ICAO == "B744" or PLANE_ICAO == "B74F" then

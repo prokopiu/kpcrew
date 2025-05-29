@@ -1,6 +1,6 @@
 --[[
 	*** KPHARDWARE
-	Kosta Prokopiu, September 2022
+	Kosta Prokopiu, September 2025
 --]]
 
 require "kpcrew.genutils"
@@ -9,11 +9,10 @@ require "kpcrew.systems.activities"
 local KPH_VERSION = "2.3-alpha11"
 
 -- disable windows by changing from true to false
-local show_mcp_panel = false
-local show_light_panel = false
-local show_radio_panel = false
-local show_efis_panel = false
-
+-- local show_mcp_panel = false
+-- local show_light_panel = false
+-- local show_radio_panel = false
+-- local show_efis_panel = false
 
 -- auto reverse certain axes
 
@@ -40,6 +39,10 @@ elseif PLANE_ICAO == "EVIC" then
 elseif PLANE_ICAO == "EPIC" then
 	kh_acf_icao = "EPIC"
 
+-- Aeroworx DC-3 Freeware
+elseif PLANE_ICAO == "DC3" then
+	kh_acf_icao = "ADC3"
+	
 -- Thranda PC12
 -- elseif PLANE_ICAO == "PC12" then
 	-- kh_acf_icao = "PC12"
@@ -93,7 +96,7 @@ elseif PLANE_ICAO == "A333" then
 	-- kh_acf_icao = "E1XX"
 -- elseif PLANE_ICAO == "E195" and PLANE_TAILNUMBER == "E195" then
 	-- kh_acf_icao = "E1XX"
-	
+
 -- X-CRAFTS FREE E-JETS XP12 (E1FF)
 -- Free 175       170/175
 -- Free 195       190/195
@@ -113,6 +116,10 @@ elseif PLANE_ICAO == "A321" then
 	-- kc_acf_icao = "A3TL"
 -- elseif PLANE_ICAO == "A346" then
 	-- kc_acf_icao = "A3TL"
+	
+-- LES Saab SF34
+elseif PLANE_ICAO == "SF34" then
+	kh_acf_icao = "SF34"
 	
 -- Laminar MD-82
 elseif PLANE_ICAO == "MD82" and PLANE_TAILNUMBER == "N552AA" then
@@ -145,6 +152,10 @@ sysAice 		= require("kpcrew.systems." .. kh_acf_icao .. ".sysAice")
 sysMCP 			= require("kpcrew.systems." .. kh_acf_icao .. ".sysMCP")	
 sysEFIS 		= require("kpcrew.systems." .. kh_acf_icao .. ".sysEFIS")	
 sysRadios 		= require("kpcrew.systems." .. kh_acf_icao .. ".sysRadios")	
+
+if kc_file_exists(SCRIPT_DIRECTORY .. "..\\Modules\\kpcrew_prefs\\General.preferences") then
+	getActivePrefs():load()
+end
 
 xsp_bravo_mode 			= 1
 xsp_bravo_layer 		= 0
@@ -205,6 +216,7 @@ function xsp_bravo_knob_dn()
 
 end
 -- ============ aircraft generic joystick/key commands
+-- needs to have the sysLights system set up with all that are required and in all 3 modes (on, off, toggle)
 
 -- ------------------ Lights
 create_command("kp/xsp/lights/beacon_switch_on",	"Beacon Lights On","sysLights.beaconSwitch:actuate(modeOn)","","")
@@ -243,9 +255,14 @@ create_command("kp/xsp/lights/rwyto_switch_on",		"Runway Lights On","sysLights.r
 create_command("kp/xsp/lights/rwyto_switch_off",	"Runway Lights Off","sysLights.rwyLightGroup:actuate(modeOff)","","")
 create_command("kp/xsp/lights/rwyto_switch_tgl",	"Runway Lights Toggle","sysLights.rwyLightGroup:actuate(modeToggle)","","")
 
+-- ---- internal lights
 create_command("kp/xsp/lights/instruments_on",		"Instrument Lights On","sysLights.instrLightGroup:actuate(modeOn)","","")
 create_command("kp/xsp/lights/instruments_off",		"Instrument Lights Off","sysLights.instrLightGroup:actuate(modeOff)","","")
 create_command("kp/xsp/lights/instruments_tgl",		"Instrument Lights Toggle","sysLights.instrLightGroup:actuate(modeToggle)","","")
+
+create_command("kp/xsp/lights/panel_on",			"Panel Lights On","sysLights.panelLightGroup:actuate(modeOn)","","")
+create_command("kp/xsp/lights/panel_off",			"Panel Lights Off","sysLights.panelLightGroup:actuate(modeOff)","","")
+create_command("kp/xsp/lights/panel_tgl",			"Panel Lights Toggle","sysLights.panelLightGroup:actuate(modeToggle)","","")
 
 create_command("kp/xsp/lights/dome_switch_on",		"Cockpit Lights On","sysLights.domeLightGroup:actuate(modeOn)","","")
 create_command("kp/xsp/lights/dome_switch_off",		"Cockpit Lights Off","sysLights.domeLightGroup:actuate(modeOff)","","")
@@ -359,7 +376,9 @@ create_command("kp/xsp/fuel/pumps_tgl",				"Fuel Pumps Toggle", "sysFuel.allFuel
 create_command("kp/xsp/autopilot/both_fd_on",		"All FDs On", "sysMCP.fdirGroup:actuate(modeOn)", "", "")
 create_command("kp/xsp/autopilot/both_fd_off",		"All FDs Off", "sysMCP.fdirGroup:actuate(modeOff)", "", "")
 create_command("kp/xsp/autopilot/both_fd_tgl",		"All FDs Toggle", "sysMCP.fdirGroup:actuate(modeToggle)", "", "")
-create_command("kp/xsp/autopilot/bc_tgl",			"Toggle Reverse Appr", "sysMCP.backcourse:actuate(modeToggle)", "", "")
+
+-- create_command("kp/xsp/autopilot/bc_tgl",			"Toggle Reverse Appr", "sysMCP.backcourse:actuate(modeToggle)", "", "")
+
 create_command("kp/xsp/autopilot/ap_tgl",			"Toggle A/P 1", "sysMCP.ap1Switch:actuate(modeToggle)", "", "")
 create_command("kp/xsp/autopilot/alt_tgl",			"Toggle Altitude Hold", "sysMCP.altholdSwitch:actuate(modeToggle)","","")
 create_command("kp/xsp/autopilot/hdg_tgl",			"Toggle Heading Select", "sysMCP.hdgselSwitch:actuate(modeToggle)","","")
@@ -367,7 +386,9 @@ create_command("kp/xsp/autopilot/nav_tgl",			"Toggle Nav Mode", "sysMCP.vorlocSw
 create_command("kp/xsp/autopilot/app_tgl",			"Toggle Approach", "sysMCP.approachSwitch:actuate(modeToggle)","","")
 create_command("kp/xsp/autopilot/vs_tgl",			"Toggle Vertical Speed", "sysMCP.vsSwitch:actuate(modeToggle)","","")
 create_command("kp/xsp/autopilot/ias_tgl",			"Toggle IAS/Speed mode", "sysMCP.speedSwitch:actuate(modeToggle)","","")
+
 create_command("kp/xsp/autopilot/toga_press",		"Press Left TOGA", "sysMCP.togaPilotSwitch:actuate(modeToggle)","","")
+
 create_command("kp/xsp/autopilot/at_tgl",			"A/T Tgl", "sysMCP.athrSwitch:actuate(modeToggle)","","")
 create_command("kp/xsp/autopilot/at_arm",			"A/T Arm", "sysMCP.athrSwitch:actuate(modeOn)","","")
 create_command("kp/xsp/autopilot/at_off",			"A/T OFF", "sysMCP.athrSwitch:actuate(modeOff)","","")
@@ -463,51 +484,51 @@ create_command("kp/xsp/efis/voradf_1_up",			"EFIS VORADF1 Up/Right", "sysEFIS.vo
 create_command("kp/xsp/efis/voradf_2_dn",			"EFIS VORADF2 Down/Left", "sysEFIS.voradf2Pilot:step(cmdDown)","","")
 create_command("kp/xsp/efis/voradf_2_up",			"EFIS VORADF2 Up/Right", "sysEFIS.voradf2Pilot:step(cmdUp)","","")
 
--- mode rotary ALT-VS-HDG-CRS-IAS
-create_command("kp/xsp/bravo/mode_alt",	"Bravo AP Mode ALT",	"xsp_bravo_mode=1", "", "")
-create_command("kp/xsp/bravo/mode_vs",	"Bravo AP Mode VS",		"xsp_bravo_mode=2", "", "")
-create_command("kp/xsp/bravo/mode_hdg",	"Bravo AP Mode HDG",	"xsp_bravo_mode=3", "", "")
-create_command("kp/xsp/bravo/mode_crs",	"Bravo AP Mode CRS",	"xsp_bravo_mode=4", "", "")
-create_command("kp/xsp/bravo/mode_ias",	"Bravo AP Mode IAS",	"xsp_bravo_mode=5", "", "")
+-- MCP part Bravo mode rotary ALT-VS-HDG-CRS-IAS
+-- create_command("kp/xsp/bravo/mode_alt",	"Bravo AP Mode ALT",	"xsp_bravo_mode=1", "", "")
+-- create_command("kp/xsp/bravo/mode_vs",	"Bravo AP Mode VS",		"xsp_bravo_mode=2", "", "")
+-- create_command("kp/xsp/bravo/mode_hdg",	"Bravo AP Mode HDG",	"xsp_bravo_mode=3", "", "")
+-- create_command("kp/xsp/bravo/mode_crs",	"Bravo AP Mode CRS",	"xsp_bravo_mode=4", "", "")
+-- create_command("kp/xsp/bravo/mode_ias",	"Bravo AP Mode IAS",	"xsp_bravo_mode=5", "", "")
 
 -- DECR-INCR Rotary
-create_command("kp/xsp/bravo/knob_up",	"Bravo AP Knob Up",		"xsp_bravo_knob_up()", "", "")
-create_command("kp/xsp/bravo/knob_dn",	"Bravo AP Knob Down",	"xsp_bravo_knob_dn()", "", "")
+-- create_command("kp/xsp/bravo/knob_up",	"Bravo AP Knob Up",		"xsp_bravo_knob_up()", "", "")
+-- create_command("kp/xsp/bravo/knob_dn",	"Bravo AP Knob Down",	"xsp_bravo_knob_dn()", "", "")
 
 -- AP MODE switches
-create_command("kp/xsp/bravo/button_hdg","Bravo HDG Button","sysMCP.hdgselSwitch:actuate(2)", "", "")
-create_command("kp/xsp/bravo/button_nav","Bravo NAV Button","sysMCP.vorlocSwitch:actuate(2)", "", "")
-create_command("kp/xsp/bravo/button_apr","Bravo APR Button","sysMCP.approachSwitch:actuate(2)", "", "")
-create_command("kp/xsp/bravo/button_rev","Bravo REV Button","sysMCP.backcourse:actuate(2)", "", "")
-create_command("kp/xsp/bravo/button_alt","Bravo ALT Button","sysMCP.altholdSwitch:actuate(2)", "", "")
-create_command("kp/xsp/bravo/button_vsp","Bravo VSP Button","sysMCP.vsSwitch:actuate(2)", "", "")
-create_command("kp/xsp/bravo/button_ias","Bravo IAS Button","sysMCP.speedSwitch:actuate(2)", "", "")
+-- create_command("kp/xsp/bravo/button_hdg","Bravo HDG Button","sysMCP.hdgselSwitch:actuate(2)", "", "")
+-- create_command("kp/xsp/bravo/button_nav","Bravo NAV Button","sysMCP.vorlocSwitch:actuate(2)", "", "")
+-- create_command("kp/xsp/bravo/button_apr","Bravo APR Button","sysMCP.approachSwitch:actuate(2)", "", "")
+-- create_command("kp/xsp/bravo/button_rev","Bravo REV Button","sysMCP.backcourse:actuate(2)", "", "")
+-- create_command("kp/xsp/bravo/button_alt","Bravo ALT Button","sysMCP.altholdSwitch:actuate(2)", "", "")
+-- create_command("kp/xsp/bravo/button_vsp","Bravo VSP Button","sysMCP.vsSwitch:actuate(2)", "", "")
+-- create_command("kp/xsp/bravo/button_ias","Bravo IAS Button","sysMCP.speedSwitch:actuate(2)", "", "")
 
 -- larger AUTO PILOT switch
-create_command("kp/xsp/bravo/button_ap", "Bravo Autopilot Button",	"sysMCP.ap1Switch:actuate(1)", "", "")
+-- create_command("kp/xsp/bravo/button_ap", "Bravo Autopilot Button",	"sysMCP.ap1Switch:actuate(1)", "", "")
 
-create_command("kp/xsp/bravo/toga_press", "Bravo Press Left TOGA", "sysMCP.togaPilotSwitch:actuate(modeToggle)","","")
+-- create_command("kp/xsp/bravo/toga_press", "Bravo Press Left TOGA", "sysMCP.togaPilotSwitch:actuate(modeToggle)","","")
 
 -- prepare for other switches
-create_command("kp/xsp/bravo/switch1_on","Bravo Switch 1 On","","","")
-create_command("kp/xsp/bravo/switch2_on","Bravo Switch 2 On","","","")
-create_command("kp/xsp/bravo/switch3_on","Bravo Switch 3 On","","","")
-create_command("kp/xsp/bravo/switch4_on","Bravo Switch 4 On","","","")
-create_command("kp/xsp/bravo/switch5_on","Bravo Switch 5 On","","","")
-create_command("kp/xsp/bravo/switch6_on","Bravo Switch 6 On","","","")
-create_command("kp/xsp/bravo/switch7_on","Bravo Switch 7 On","","","")
+-- create_command("kp/xsp/bravo/switch1_on","Bravo Switch 1 On","","","")
+-- create_command("kp/xsp/bravo/switch2_on","Bravo Switch 2 On","","","")
+-- create_command("kp/xsp/bravo/switch3_on","Bravo Switch 3 On","","","")
+-- create_command("kp/xsp/bravo/switch4_on","Bravo Switch 4 On","","","")
+-- create_command("kp/xsp/bravo/switch5_on","Bravo Switch 5 On","","","")
+-- create_command("kp/xsp/bravo/switch6_on","Bravo Switch 6 On","","","")
+-- create_command("kp/xsp/bravo/switch7_on","Bravo Switch 7 On","","","")
 
-create_command("kp/xsp/bravo/switch1_off","Bravo Switch 1 Off","","","")
-create_command("kp/xsp/bravo/switch2_off","Bravo Switch 2 Off","","","")
-create_command("kp/xsp/bravo/switch3_off","Bravo Switch 3 Off","","","")
-create_command("kp/xsp/bravo/switch4_off","Bravo Switch 4 Off","","","")
-create_command("kp/xsp/bravo/switch5_off","Bravo Switch 5 Off","","","")
-create_command("kp/xsp/bravo/switch6_off","Bravo Switch 6 Off","","","")
-create_command("kp/xsp/bravo/switch7_off","Bravo Switch 7 Off","","","")
+-- create_command("kp/xsp/bravo/switch1_off","Bravo Switch 1 Off","","","")
+-- create_command("kp/xsp/bravo/switch2_off","Bravo Switch 2 Off","","","")
+-- create_command("kp/xsp/bravo/switch3_off","Bravo Switch 3 Off","","","")
+-- create_command("kp/xsp/bravo/switch4_off","Bravo Switch 4 Off","","","")
+-- create_command("kp/xsp/bravo/switch5_off","Bravo Switch 5 Off","","","")
+-- create_command("kp/xsp/bravo/switch6_off","Bravo Switch 6 Off","","","")
+-- create_command("kp/xsp/bravo/switch7_off","Bravo Switch 7 Off","","","")
 
 -- comment out if you do not need this
 -- require("kpcrew.hardware.honeycombBravo")
-require("kpcrew.hardware.honeycombAlpha")
+-- require("kpcrew.hardware.honeycombAlpha")
 
 --------------- Instantiate Datarefs for general annunciators ----------- 
 
@@ -634,7 +655,7 @@ xsp_mcp_ap1[0] = 0
 xsp_mcp_rev = create_dataref_table("kp/xsp/bravo/mcp_rev", "Int")
 xsp_mcp_rev[0] = 0
 
--- background function every 1 sec to set lights/annunciators for hardware (honeycomb)
+-- background function every 1 sec to set lights/annunciators for hardware (honeycomb bravo)
 function xsp_set_light_drefs()
 
 	-- General Gear Status In=0 Out=1
@@ -768,211 +789,211 @@ local start_y_pos = 0
 
 -- ===== Aircraft specific MCP Window
 
-kh_mcp_wnd = nil
-kh_mcp_start_pos = 0
-local mcp_window_height = 46
-local mcp_window_width = 25
+-- kh_mcp_wnd = nil
+-- kh_mcp_start_pos = 0
+-- local mcp_window_height = 46
+-- local mcp_window_width = 25
 
-function kh_init_mcp_window()
-	if kh_mcp_wnd == 0 or kh_mcp_wnd == nil then	
-		kh_mcp_start_pos = start_y_pos
-		start_y_pos = start_y_pos + mcp_window_height
-		kh_mcp_wnd = float_wnd_create(mcp_window_width, mcp_window_height, 2, true)
-		float_wnd_set_title(kh_mcp_wnd, "")
-		float_wnd_set_position(kh_mcp_wnd, 0, kh_mcp_start_pos) --kh_scrn_height - start_y_pos)
-		float_wnd_set_imgui_builder(kh_mcp_wnd, "kh_mcp_builder")
-		float_wnd_set_onclose(kh_mcp_wnd, "kh_close_mcp_window")
-		kh_mcp_start_pos = start_y_pos
-	end
-end
+-- function kh_init_mcp_window()
+	-- if kh_mcp_wnd == 0 or kh_mcp_wnd == nil then	
+		-- kh_mcp_start_pos = start_y_pos
+		-- start_y_pos = start_y_pos + mcp_window_height
+		-- kh_mcp_wnd = float_wnd_create(mcp_window_width, mcp_window_height, 2, true)
+		-- float_wnd_set_title(kh_mcp_wnd, "")
+		-- float_wnd_set_position(kh_mcp_wnd, 0, kh_mcp_start_pos) --kh_scrn_height - start_y_pos)
+		-- float_wnd_set_imgui_builder(kh_mcp_wnd, "kh_mcp_builder")
+		-- float_wnd_set_onclose(kh_mcp_wnd, "kh_close_mcp_window")
+		-- kh_mcp_start_pos = start_y_pos
+	-- end
+-- end
 
-kh_mcp_wnd_state = 0
+-- kh_mcp_wnd_state = 0
 
-function kh_mcp_builder()
-	if get("sim/graphics/view/window_width") ~= kh_scrn_width or get("sim/graphics/view/window_height") ~= kh_scrn_height then
-		kh_mcp_wnd_state = -1
-		kh_light_wnd_state = -1
-		kh_radio_wnd_state = -1
-		kh_efis_wnd_state = -1
-		kh_scrn_width = get("sim/graphics/view/window_width")
-		kh_scrn_height = get("sim/graphics/view/window_height")
-	end
-	imgui.SetWindowFontScale(1.05)
-	imgui.PushStyleColor(imgui.constant.Col.Text, color_white)
-		sysMCP:render(kh_mcp_start_pos,mcp_window_height)
-	imgui.PopStyleColor()
-end
+-- function kh_mcp_builder()
+	-- if get("sim/graphics/view/window_width") ~= kh_scrn_width or get("sim/graphics/view/window_height") ~= kh_scrn_height then
+		-- kh_mcp_wnd_state = -1
+		-- kh_light_wnd_state = -1
+		-- kh_radio_wnd_state = -1
+		-- kh_efis_wnd_state = -1
+		-- kh_scrn_width = get("sim/graphics/view/window_width")
+		-- kh_scrn_height = get("sim/graphics/view/window_height")
+	-- end
+	-- imgui.SetWindowFontScale(1.05)
+	-- imgui.PushStyleColor(imgui.constant.Col.Text, color_white)
+		-- sysMCP:render(kh_mcp_start_pos,mcp_window_height)
+	-- imgui.PopStyleColor()
+-- end
 
-function kh_close_mcp_window()
-	kh_mcp_wnd = nil
-end
+-- function kh_close_mcp_window()
+	-- kh_mcp_wnd = nil
+-- end
 
-if show_mcp_panel then 
-	kh_init_mcp_window() 
-end
+-- if show_mcp_panel then 
+	-- kh_init_mcp_window() 
+-- end
 
-function kh_hide_mcp_wnd()
-	if kh_mcp_wnd then 
-		float_wnd_destroy(kh_mcp_wnd)
-		start_y_pos = start_y_pos - mcp_window_height
-	end
-end
+-- function kh_hide_mcp_wnd()
+	-- if kh_mcp_wnd then 
+		-- float_wnd_destroy(kh_mcp_wnd)
+		-- start_y_pos = start_y_pos - mcp_window_height
+	-- end
+-- end
 
 -- ===== Aircraft specific Light Window
 
-kh_light_wnd = nil
-kh_light_start_pos = 0
-local light_window_height = 46 
-local light_window_width = 25
+-- kh_light_wnd = nil
+-- kh_light_start_pos = 0
+-- local light_window_height = 46 
+-- local light_window_width = 25
 
-function kh_init_light_window()
-	if kh_light_wnd == 0 or kh_light_wnd == nil then	
-		kh_light_start_pos = start_y_pos
-		start_y_pos = start_y_pos + light_window_height
-		kh_light_wnd = float_wnd_create(light_window_width, light_window_height, 2, true)
-		float_wnd_set_title(kh_light_wnd, "")
-		float_wnd_set_position(kh_light_wnd, 0, kh_light_start_pos) --kh_scrn_height - start_y_pos)
-		float_wnd_set_imgui_builder(kh_light_wnd, "kh_light_builder")
-		float_wnd_set_onclose(kh_light_wnd, "kh_close_light_window")
-		kh_light_start_pos = start_y_pos
-	end
-end
+-- function kh_init_light_window()
+	-- if kh_light_wnd == 0 or kh_light_wnd == nil then	
+		-- kh_light_start_pos = start_y_pos
+		-- start_y_pos = start_y_pos + light_window_height
+		-- kh_light_wnd = float_wnd_create(light_window_width, light_window_height, 2, true)
+		-- float_wnd_set_title(kh_light_wnd, "")
+		-- float_wnd_set_position(kh_light_wnd, 0, kh_light_start_pos) --kh_scrn_height - start_y_pos)
+		-- float_wnd_set_imgui_builder(kh_light_wnd, "kh_light_builder")
+		-- float_wnd_set_onclose(kh_light_wnd, "kh_close_light_window")
+		-- kh_light_start_pos = start_y_pos
+	-- end
+-- end
 
-kh_light_wnd_state = 0
+-- kh_light_wnd_state = 0
 
-function kh_light_builder()
-	if get("sim/graphics/view/window_width") ~= kh_scrn_width or get("sim/graphics/view/window_height") ~= kh_scrn_height then
-		kh_mcp_wnd_state = -1
-		kh_light_wnd_state = -1
-		kh_radio_wnd_state = -1
-		kh_efis_wnd_state = -1
-		kh_scrn_width = get("sim/graphics/view/window_width")
-		kh_scrn_height = get("sim/graphics/view/window_height")
-	end
-	imgui.SetWindowFontScale(1.05)
-	imgui.PushStyleColor(imgui.constant.Col.Text, color_white)
-		sysLights:render(kh_light_start_pos,light_window_height)
-	imgui.PopStyleColor()
-end
+-- function kh_light_builder()
+	-- if get("sim/graphics/view/window_width") ~= kh_scrn_width or get("sim/graphics/view/window_height") ~= kh_scrn_height then
+		-- kh_mcp_wnd_state = -1
+		-- kh_light_wnd_state = -1
+		-- kh_radio_wnd_state = -1
+		-- kh_efis_wnd_state = -1
+		-- kh_scrn_width = get("sim/graphics/view/window_width")
+		-- kh_scrn_height = get("sim/graphics/view/window_height")
+	-- end
+	-- imgui.SetWindowFontScale(1.05)
+	-- imgui.PushStyleColor(imgui.constant.Col.Text, color_white)
+		-- sysLights:render(kh_light_start_pos,light_window_height)
+	-- imgui.PopStyleColor()
+-- end
 
-function kh_close_light_window()
-	kh_light_wnd = nil
-end
+-- function kh_close_light_window()
+	-- kh_light_wnd = nil
+-- end
 
-if show_light_panel then
-	kh_init_light_window() 
-end	
+-- if show_light_panel then
+	-- kh_init_light_window() 
+-- end	
 
-function kh_hide_light_wnd()
-	if kh_light_wnd then 
-		float_wnd_destroy(kh_light_wnd)
-		start_y_pos = start_y_pos - light_window_height
-	end
-end
+-- function kh_hide_light_wnd()
+	-- if kh_light_wnd then 
+		-- float_wnd_destroy(kh_light_wnd)
+		-- start_y_pos = start_y_pos - light_window_height
+	-- end
+-- end
 
 -- ===== Aircraft specific Radio Window
 
-kh_radio_wnd = nil
-kh_radio_start_pos = 0
-local radio_window_height = 80 
-local radio_window_width = 25
+-- kh_radio_wnd = nil
+-- kh_radio_start_pos = 0
+-- local radio_window_height = 80 
+-- local radio_window_width = 25
 
-function kh_init_radio_window()
-	if kh_radio_wnd == 0 or kh_radio_wnd == nil then	
-		kh_radio_start_pos = start_y_pos
-		start_y_pos = start_y_pos + radio_window_height
-		kh_radio_wnd = float_wnd_create(radio_window_width, radio_window_height, 2, true)
-		float_wnd_set_title(kh_radio_wnd, "")
-		float_wnd_set_position(kh_radio_wnd, 0, kh_radio_start_pos)
-		float_wnd_set_imgui_builder(kh_radio_wnd, "kh_radio_builder")
-		float_wnd_set_onclose(kh_radio_wnd, "kh_close_radio_window")
-		kh_radio_start_pos = start_y_pos
-	end
-end
+-- function kh_init_radio_window()
+	-- if kh_radio_wnd == 0 or kh_radio_wnd == nil then	
+		-- kh_radio_start_pos = start_y_pos
+		-- start_y_pos = start_y_pos + radio_window_height
+		-- kh_radio_wnd = float_wnd_create(radio_window_width, radio_window_height, 2, true)
+		-- float_wnd_set_title(kh_radio_wnd, "")
+		-- float_wnd_set_position(kh_radio_wnd, 0, kh_radio_start_pos)
+		-- float_wnd_set_imgui_builder(kh_radio_wnd, "kh_radio_builder")
+		-- float_wnd_set_onclose(kh_radio_wnd, "kh_close_radio_window")
+		-- kh_radio_start_pos = start_y_pos
+	-- end
+-- end
 
-kh_radio_wnd_state = 0
+-- kh_radio_wnd_state = 0
 
-function kh_radio_builder()
-	if get("sim/graphics/view/window_width") ~= kh_scrn_width or get("sim/graphics/view/window_height") ~= kh_scrn_height then
-		kh_mcp_wnd_state = -1
-		kh_light_wnd_state = -1
-		kh_radio_wnd_state = -1
-		kh_efis_wnd_state = -1
-		kh_scrn_width = get("sim/graphics/view/window_width")
-		kh_scrn_height = get("sim/graphics/view/window_height")
-	end
-	imgui.SetWindowFontScale(1.05)
-	imgui.PushStyleColor(imgui.constant.Col.Text, color_white)
-		sysRadios:render(kh_radio_start_pos,radio_window_height)
-	imgui.PopStyleColor()
-end
+-- function kh_radio_builder()
+	-- if get("sim/graphics/view/window_width") ~= kh_scrn_width or get("sim/graphics/view/window_height") ~= kh_scrn_height then
+		-- kh_mcp_wnd_state = -1
+		-- kh_light_wnd_state = -1
+		-- kh_radio_wnd_state = -1
+		-- kh_efis_wnd_state = -1
+		-- kh_scrn_width = get("sim/graphics/view/window_width")
+		-- kh_scrn_height = get("sim/graphics/view/window_height")
+	-- end
+	-- imgui.SetWindowFontScale(1.05)
+	-- imgui.PushStyleColor(imgui.constant.Col.Text, color_white)
+		-- sysRadios:render(kh_radio_start_pos,radio_window_height)
+	-- imgui.PopStyleColor()
+-- end
 
-function kh_close_radio_window()
-	kh_radio_wnd = nil
-end
+-- function kh_close_radio_window()
+	-- kh_radio_wnd = nil
+-- end
 
-if show_radio_panel then
-	kh_init_radio_window() 
-end
+-- if show_radio_panel then
+	-- kh_init_radio_window() 
+-- end
 
-function kh_hide_radio_wnd()
-	if kh_radio_wnd then 
-		float_wnd_destroy(kh_radio_wnd)
-		start_y_pos = start_y_pos - radio_window_height
-	end
-end
+-- function kh_hide_radio_wnd()
+	-- if kh_radio_wnd then 
+		-- float_wnd_destroy(kh_radio_wnd)
+		-- start_y_pos = start_y_pos - radio_window_height
+	-- end
+-- end
 
 -- ===== Aircraft specific EFIS Window
 
-kh_efis_wnd = nil
-kh_efis_start_pos = 0
-local efis_window_height = 46 
-local efis_window_width = 25
+-- kh_efis_wnd = nil
+-- kh_efis_start_pos = 0
+-- local efis_window_height = 46 
+-- local efis_window_width = 25
 
-function kh_init_efis_window()
-	if kh_efis_wnd == 0 or kh_efis_wnd == nil then	
-		kh_efis_start_pos = start_y_pos
-		start_y_pos = start_y_pos + efis_window_height
-		kh_efis_wnd = float_wnd_create(efis_window_width, efis_window_height, 2, true)
-		float_wnd_set_title(kh_efis_wnd, "")
-		float_wnd_set_position(kh_efis_wnd, 0, kh_efis_start_pos) --kh_scrn_height - start_y_pos)
-		float_wnd_set_imgui_builder(kh_efis_wnd, "kh_efis_builder")
-		float_wnd_set_onclose(kh_efis_wnd, "kh_close_efis_window")
-		kh_efis_start_pos = start_y_pos
-	end
-end
+-- function kh_init_efis_window()
+	-- if kh_efis_wnd == 0 or kh_efis_wnd == nil then	
+		-- kh_efis_start_pos = start_y_pos
+		-- start_y_pos = start_y_pos + efis_window_height
+		-- kh_efis_wnd = float_wnd_create(efis_window_width, efis_window_height, 2, true)
+		-- float_wnd_set_title(kh_efis_wnd, "")
+		-- float_wnd_set_position(kh_efis_wnd, 0, kh_efis_start_pos) --kh_scrn_height - start_y_pos)
+		-- float_wnd_set_imgui_builder(kh_efis_wnd, "kh_efis_builder")
+		-- float_wnd_set_onclose(kh_efis_wnd, "kh_close_efis_window")
+		-- kh_efis_start_pos = start_y_pos
+	-- end
+-- end
 
-kh_efis_wnd_state = 0
+-- kh_efis_wnd_state = 0
 
-function kh_efis_builder()
-	if get("sim/graphics/view/window_width") ~= kh_scrn_width or get("sim/graphics/view/window_height") ~= kh_scrn_height then
-		kh_mcp_wnd_state = -1
-		kh_light_wnd_state = -1
-		kh_radio_wnd_state = -1
-		kh_efis_wnd_state = -1
-		kh_scrn_width = get("sim/graphics/view/window_width")
-		kh_scrn_height = get("sim/graphics/view/window_height")
-	end
-	imgui.SetWindowFontScale(1.05)
-	imgui.PushStyleColor(imgui.constant.Col.Text, color_white)
-		sysEFIS:render(kh_efis_start_pos,efis_window_height)
-	imgui.PopStyleColor()
-end
+-- function kh_efis_builder()
+	-- if get("sim/graphics/view/window_width") ~= kh_scrn_width or get("sim/graphics/view/window_height") ~= kh_scrn_height then
+		-- kh_mcp_wnd_state = -1
+		-- kh_light_wnd_state = -1
+		-- kh_radio_wnd_state = -1
+		-- kh_efis_wnd_state = -1
+		-- kh_scrn_width = get("sim/graphics/view/window_width")
+		-- kh_scrn_height = get("sim/graphics/view/window_height")
+	-- end
+	-- imgui.SetWindowFontScale(1.05)
+	-- imgui.PushStyleColor(imgui.constant.Col.Text, color_white)
+		-- sysEFIS:render(kh_efis_start_pos,efis_window_height)
+	-- imgui.PopStyleColor()
+-- end
 
-function kh_close_efis_window()
-	kh_efis_wnd = nil
-end
+-- function kh_close_efis_window()
+	-- kh_efis_wnd = nil
+-- end
 
-if show_efis_panel then 
-	kh_init_efis_window() 
-end
+-- if show_efis_panel then 
+	-- kh_init_efis_window() 
+-- end
 
-function kh_hide_efis_wnd()
-	if kh_efis_wnd then 
-		float_wnd_destroy(kh_efis_wnd)
-		start_y_pos = start_y_pos - efis_window_height
-	end
-end
+-- function kh_hide_efis_wnd()
+	-- if kh_efis_wnd then 
+		-- float_wnd_destroy(kh_efis_wnd)
+		-- start_y_pos = start_y_pos - efis_window_height
+	-- end
+-- end
 
 -- regularly update the drefs for annunciators and lights (every 1 second)
 do_often("xsp_set_light_drefs()")
