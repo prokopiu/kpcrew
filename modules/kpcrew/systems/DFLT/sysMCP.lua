@@ -19,9 +19,7 @@ local TwoStateToggleSwitch	= require "kpcrew.systems.TwoStateToggleSwitch"
 local MultiStateCmdSwitch 	= require "kpcrew.systems.MultiStateCmdSwitch"
 local InopSwitch 			= require "kpcrew.systems.InopSwitch"
 
---------- Switches
-
--- Flight Directors (DFLT only one supported)
+-- **Flight Directors 
 sysMCP.fdirPilotSwitch 		= TwoStateDrefSwitch:new("fdir left","sim/cockpit2/autopilot/flight_director_mode",0)
 sysMCP.fdirCoPilotSwitch 	= TwoStateDrefSwitch:new("fdir right","sim/cockpit2/autopilot/flight_director2_mode",0)
 sysMCP.fdirGroup 			= SwitchGroup:new("fdirs")
@@ -29,21 +27,30 @@ sysMCP.fdirGroup:addSwitch(sysMCP.fdirPilotSwitch)
 sysMCP.fdirGroup:addSwitch(sysMCP.fdirCoPilotSwitch)
 sysMCP.fdirAnc 				= SimpleAnnunciator:new("fdiranc","sim/cockpit2/autopilot/flight_director_mode",0)
 
--- HDG SELECT mode
+-- **AUTOPILOT
+sysMCP.ap1Switch 			= TwoStateToggleSwitch:new("autopilot1","sim/cockpit2/autopilot/servos_on",0,
+	"sim/autopilot/servos_toggle")
+sysMCP.apAnc 				= SimpleAnnunciator:new("autopilotanc","sim/cockpit2/autopilot/servos_on",0)
+
+-- **ALTHOLD
+sysMCP.altholdSwitch 		= TwoStateToggleSwitch:new("althold","sim/cockpit2/autopilot/altitude_hold_status",0,
+	"sim/autopilot/altitude_hold")
+sysMCP.altAnc 				= SimpleAnnunciator:new("altanc","sim/cockpit2/autopilot/altitude_hold_status",0)
+
+-- **HDG SELECT mode
 sysMCP.hdgselSwitch 		= TwoStateDrefSwitch:new("hdgsel","sim/cockpit2/autopilot/heading_mode",0)
 sysMCP.hdgAnc 				= CustomAnnunciator:new("hdganc",
 function () 
-	if get("sim/cockpit2/autopilot/heading_status") == 1 or get("sim/cockpit2/autopilot/heading_status") == 14 then
+	if get("sim/cockpit2/autopilot/heading_mode") == 1 then
 		return 1
 	else
 		return 0
 	end
 end)
 
--- VORLOC
+-- **VORLOC/NAV
 sysMCP.vorlocSwitch			= TwoStateToggleSwitch:new("vorloc","sim/cockpit2/autopilot/nav_status",0,
 	"sim/autopilot/NAV")
-
 -- NAV mode annunciator
 -- Autopilot lateral mode. (0=roll, 1=heading sel, 2=nav, 10=TO/GA, 11=Re-entry, 12=Free, 
 -- 13=GPSS, 14=heading hold, 15=turn-rate, 16=rollout, 18=track)
@@ -57,43 +64,12 @@ function ()
 	end
 end)
 
--- LNAV / GPSS mode
-sysMCP.lnavSwitch 			= TwoStateCustomSwitch:new("lnav","sim/cockpit2/autopilot/heading_mode",0,
-function ()
-	set("sim/operation/override/override_autopilot",13)
-end,
-function ()
-	set("sim/operation/override/override_autopilot",0)
-end,
-function ()
-	if get("sim/cockpit2/autopilot/heading_mode") ~= 13 then
-		set("sim/operation/override/override_autopilot",13)
-	else
-		set("sim/operation/override/override_autopilot",0)
-	end
-end,
-function () 
-	if get("sim/cockpit2/autopilot/heading_mode") == 2 or 
-		get("sim/cockpit2/autopilot/heading_mode") == 13 then
-		return 1
-	else
-		return 0
-	end
-end)
-
--- ALTHOLD
-sysMCP.altholdSwitch 		= TwoStateToggleSwitch:new("althold","sim/cockpit2/autopilot/altitude_hold_status",0,
-	"sim/autopilot/altitude_hold")
-
-sysMCP.altAnc 				= SimpleAnnunciator:new("altanc","sim/cockpit2/autopilot/altitude_hold_status",0)
-
--- APPROACH
+-- **APPROACH
 sysMCP.approachSwitch 		= TwoStateToggleSwitch:new("approach","sim/cockpit2/autopilot/approach_status",0,
 	"sim/autopilot/approach")
-
 sysMCP.aprAnc 				= SimpleAnnunciator:new("apranc","sim/cockpit2/autopilot/approach_status",0)
 
--- VS
+-- **VS
 sysMCP.vsSwitch 			= TwoStateCustomSwitch:new("vsmode","sim/cockpit2/autopilot/altitude_mode",0,
 function ()
 	set("sim/cockpit2/autopilot/altitude_mode",4)
@@ -115,11 +91,48 @@ function ()
 		return 0
 	end
 end)
-
 -- Vertical mode annunciator
 sysMCP.vspAnc 				= CustomAnnunciator:new("vspanc",
 function () 
 	if get("sim/cockpit2/autopilot/altitude_mode") == 4 or get("sim/cockpit2/autopilot/fms_vnav") > 0 then
+		return 1
+	else
+		return 0
+	end
+end)
+
+-- **SPEED Mode
+sysMCP.speedSwitch 			= TwoStateDrefSwitch:new("speed","sim/cockpit2/autopilot/autothrottle_enabled",0)
+sysMCP.spdAnc 				= SimpleAnnunciator:new("spdanc","sim/cockpit2/autopilot/autothrottle_enabled",0)
+
+-- **TOGA Button
+sysMCP.togaPilotSwitch 		= TwoStateToggleSwitch:new("togapilot","sim/cockpit2/autopilot/TOGA_status",0,
+	"sim/autopilot/take_off_go_around")
+
+-- **ATHR
+-- -1=hard off, not even armed. 0=servos declutched (arm, hold), 1=airspeed hold, 2=N1 target hold, 3=retard, 4=reserved for future use
+sysMCP.athrSwitch 			= TwoStateToggleSwitch:new("athr","sim/cockpit2/autopilot/autothrottle_enabled",0,
+	"sim/autopilot/autothrottle_toggle")
+sysMCP.athrAnc				= SimpleAnnunciator:new("athr","sim/cockpit2/autopilot/autothrottle_enabled",0)
+
+-- LNAV / GPSS mode
+sysMCP.lnavSwitch 			= TwoStateCustomSwitch:new("lnav","sim/cockpit2/autopilot/heading_mode",0,
+function ()
+	set("sim/operation/override/override_autopilot",13)
+end,
+function ()
+	set("sim/operation/override/override_autopilot",0)
+end,
+function ()
+	if get("sim/cockpit2/autopilot/heading_mode") ~= 13 then
+		set("sim/operation/override/override_autopilot",13)
+	else
+		set("sim/operation/override/override_autopilot",0)
+	end
+end,
+function () 
+	if get("sim/cockpit2/autopilot/heading_mode") == 2 or 
+		get("sim/cockpit2/autopilot/heading_mode") == 13 then
 		return 1
 	else
 		return 0
@@ -153,30 +166,10 @@ function ()
 	end
 end)
 
--- SPEED
-sysMCP.speedSwitch 			= TwoStateDrefSwitch:new("speed","sim/cockpit2/autopilot/autothrottle_enabled",0)
-
-sysMCP.spdAnc 				= SimpleAnnunciator:new("spdanc","sim/cockpit2/autopilot/autothrottle_enabled",0)
-
--- AUTOPILOT
-sysMCP.ap1Switch 			= TwoStateToggleSwitch:new("autopilot1","sim/cockpit2/autopilot/servos_on",0,
-	"sim/autopilot/servos_toggle")
-
-sysMCP.apAnc 				= SimpleAnnunciator:new("autopilotanc","sim/cockpit2/autopilot/servos_on",0)
-
 -- BACKCOURSE
 sysMCP.backcourse 			= InopSwitch:new("backcourse")
-
 sysMCP.bcAnc 				= InopSwitch:new("bc")
 
--- TOGA
-sysMCP.togaPilotSwitch 		= TwoStateToggleSwitch:new("togapilot","sim/cockpit2/autopilot/TOGA_status",0,
-	"sim/autopilot/take_off_go_around")
-
--- ATHR
--- -1=hard off, not even armed. 0=servos declutched (arm, hold), 1=airspeed hold, 2=N1 target hold, 3=retard, 4=reserved for future use
-sysMCP.athrSwitch 			= TwoStateToggleSwitch:new("athr","sim/cockpit2/autopilot/autothrottle_enabled",0,
-	"sim/autopilot/autothrottle_toggle")
 
 -- === Selectors
 
@@ -241,34 +234,54 @@ sysMCP.yawDamper			= TwoStateToggleSwitch:new("yawdamper","sim/cockpit2/annuncia
 function sysMCP:panel_render()
 	imgui.BeginGroup()
 		imgui.TextUnformatted("MCP ")
-		kc_imgui_rotary_mcp("CRS:%03d",sysMCP.crs1Selector,10,11)
+		if kc_has_ils then
+			kc_imgui_rotary_mcp("CRS:%03d",sysMCP.crs1Selector,10,11)
+			imgui.SameLine()
+		end
+		if kc_has_flightdir then
+			kc_imgui_toggle_button_mcp("FD",sysMCP.fdirGroup,10,25,25)
+			imgui.SameLine()
+		end
+		if kc_has_autothrottle then
+			kc_imgui_toggle_button_mcp("AT",sysMCP.athrSwitch,10,25,25)
+			imgui.SameLine()
+		end
+		if kc_has_flch_ias then
+			kc_imgui_toggle_button_mcp("SPD",sysMCP.speedSwitch,10,30,25)
+			imgui.SameLine()
+		end
+		if kc_has_ias_sel then
+			kc_imgui_rotary_mcp("SPD:%03d",sysMCP.iasSelector,10,12)
+			imgui.SameLine()
+		end
+		kc_imgui_toggle_button_mcp("NAV",sysMCP.vorlocSwitch,10,30,25)
 		imgui.SameLine()
-		kc_imgui_toggle_button_mcp("FDIR",sysMCP.fdirGroup,10,42,25)
-		imgui.SameLine()
-		kc_imgui_toggle_button_mcp("ATHR",sysMCP.athrSwitch,10,42,25)
-		-- imgui.SameLine()
-		-- kc_imgui_toggle_button_mcp("SPD",sysMCP.speedSwitch,10,42,25)
-		imgui.SameLine()
-		kc_imgui_rotary_mcp("SPD:%03d",sysMCP.iasSelector,10,12)
-		imgui.SameLine()
-		kc_imgui_toggle_button_mcp("NAV",sysMCP.vorlocSwitch,10,42,25)
-		imgui.SameLine()
-		kc_imgui_toggle_button_mcp("HDG",sysMCP.hdgselSwitch,10,42,25)
-		imgui.SameLine()
-		kc_imgui_rotary_mcp("HDG:%03d",sysMCP.hdgSelector,10,13)
-		imgui.SameLine()
-		kc_imgui_toggle_button_mcp("ALT",sysMCP.altholdSwitch,10,42,25)
-		imgui.SameLine()
-		kc_imgui_rotary_mcp("ALT:%05d",sysMCP.altSelector,10,14)
-		imgui.SameLine()
-		kc_imgui_toggle_button_mcp("V/S",sysMCP.vsSwitch,10,42,25)
-		imgui.SameLine()
-		kc_imgui_rotary_mcp((sysMCP.vspSelector:getStatus() >= 0) and "VSP:+%04d" or "VSP:%05d",sysMCP.vspSelector,10,15)
-		imgui.SameLine()
-		kc_imgui_toggle_button_mcp("APR",sysMCP.approachSwitch,10,42,25)
-		imgui.SameLine()
-		kc_imgui_toggle_button_mcp("A/P",sysMCP.ap1Switch,10,59,25)
-		-- imgui.SameLine()
+		if kc_has_hdg_sel then
+			kc_imgui_toggle_button_mcp("HDG",sysMCP.hdgselSwitch,10,30,25)
+			imgui.SameLine()
+			kc_imgui_rotary_mcp("HDG:%03d",sysMCP.hdgSelector,10,13)
+			imgui.SameLine()
+		end
+		if kc_has_alt_sel then
+			kc_imgui_toggle_button_mcp("ALT",sysMCP.altholdSwitch,10,30,25)
+			imgui.SameLine()
+			kc_imgui_rotary_mcp("ALT:%05d",sysMCP.altSelector,10,14)
+			imgui.SameLine()
+		end
+		if kc_has_vsp_sel then
+			kc_imgui_toggle_button_mcp("V/S",sysMCP.vsSwitch,10,30,25)
+			imgui.SameLine()
+			kc_imgui_rotary_mcp((sysMCP.vspSelector:getStatus() >= 0) and "VSP:+%04d" or "VSP:%05d",sysMCP.vspSelector,10,15)
+			imgui.SameLine()
+		end
+		if kc_has_ils then
+			kc_imgui_toggle_button_mcp("APR",sysMCP.approachSwitch,10,30,25)
+			imgui.SameLine()
+		end
+		if kc_has_autopilot then
+			kc_imgui_toggle_button_mcp("A/P",sysMCP.ap1Switch,10,30,25)
+			imgui.SameLine()
+		end
 		-- kc_imgui_toggle_button_mcp("N1",sysMCP.n1Switch,10,22,25)
 		-- imgui.SameLine()
 		-- kc_imgui_toggle_button_mcp("VN",sysMCP.vnavSwitch,10,22,25)
@@ -277,13 +290,6 @@ function sysMCP:panel_render()
 		-- imgui.SameLine()
 		-- kc_imgui_toggle_button_mcp("LN",sysMCP.lnavSwitch,10,22,25)
 		-- imgui.SameLine()
-		-- kc_imgui_toggle_button_mcp("AP",sysMCP.approachSwitch,10,22,25)
-		-- imgui.SameLine()
-		-- kc_imgui_toggle_button_mcp("AL",sysMCP.altholdSwitch,10,22,25)
-		-- imgui.SameLine()
-		-- kc_imgui_toggle_button_mcp("VS",sysMCP.vsSwitch,10,22,25)
-		-- imgui.SameLine()
-		-- kc_imgui_toggle_button_mcp("A/P",sysMCP.ap1Switch,10,59,25)
 	imgui.EndGroup()
 end
 

@@ -28,6 +28,9 @@ sysAir.trimAirSwitch 		= InopSwitch:new("trimair")
 -- RECIRC fans
 sysAir.recircFanLeft 		= InopSwitch:new("recirc1")
 sysAir.recircFanRight 		= InopSwitch:new("recirc2")
+sysAir.recircSwitchGroup 	= SwitchGroup:new("Recirc")
+sysAir.recircSwitchGroup:addSwitch(sysAir.recircFanLeft)
+sysAir.recircSwitchGroup:addSwitch(sysAir.recircFanRight)
 
 -- PACK switches
 sysAir.packLeftSwitch 		= TwoStateDrefSwitch:new("pack1","sim/cockpit2/bleedair/actuators/pack_left",0)

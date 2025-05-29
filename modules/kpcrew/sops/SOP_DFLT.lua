@@ -503,7 +503,7 @@ engStartProc:addItem(ProcedureItem:new("START SEQUENCE","%s then %s|activeBriefi
 end
 
 engStartProc:addItem(ProcedureItem:new("FUEL SYSTEM","AS REQUIRED",FlowItem.actorFO,0,
-	function () return sysFuel.allFuelPumpGroup:getStatus() > 0 end,
+	function () return true end,
 	function () kc_macro_fuel(kc_phase_before_start) end))
 
 engStartProc:addItem(ProcedureItem:new("AIR CONDITIONING / PACKS","AS REQUIRED",FlowItem.actorPM,0,
@@ -1601,6 +1601,8 @@ backgroundFlow:addItem(BackgroundProcedureItem:new("","","SYS",0,
 		if kc_procvar_get("engstart4") == true then 
 			kc_bck_start_engine("engstart4")
 		end
+		
+		kc_macro_additional_bck_procs()
 	end))
 
 -- ==== Background Flow ====

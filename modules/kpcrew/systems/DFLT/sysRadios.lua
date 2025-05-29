@@ -148,6 +148,7 @@ sysRadios.adf2StandbyFreq 	= SimpleAnnunciator:new("",drefAdf2StandbyFreq,0)
 sysRadios.xpdrSwitch 		= TwoStateDrefSwitch:new ("xpdrmode",drefXpdrSwitch,0)
 sysRadios.xpdrCode 			= TwoStateDrefSwitch:new ("xpdrcode",drefXpdrCode,0)
 
+sysRadios.off				= 0
 sysRadios.stby				= 1
 sysRadios.alt				= 2
 sysRadios.ta				= 2
@@ -159,29 +160,42 @@ function sysRadios:panel_render()
 	imgui.BeginGroup()
 		imgui.TextUnformatted("  RADIOS ")
 		kc_imgui_label_mcp(" ",10)
-		imgui.SameLine()		kc_imgui_com_radio("COM1:",sysRadios.com1StbyCourse,sysRadios.com1StbyFine,sysRadios.com1StandbyFreq,sysRadios.com1ActiveFreq,sysRadios.com1Flip,10,21)
+		imgui.SameLine()		
+		kc_imgui_com_radio("COM1:",sysRadios.com1StbyCourse,sysRadios.com1StbyFine,sysRadios.com1StandbyFreq,sysRadios.com1ActiveFreq,sysRadios.com1Flip,10,21)
 		kc_imgui_label_mcp(" ",10)
 		imgui.SameLine()
 		kc_imgui_com_radio("COM2:",sysRadios.com2StbyCourse,sysRadios.com2StbyFine,sysRadios.com2StandbyFreq,sysRadios.com2ActiveFreq,sysRadios.com2Flip,45,31)
 		kc_imgui_label_mcp(" ",10)
 		imgui.SameLine()
-		kc_imgui_nav_radio("NAV1:",sysRadios.nav1StbyCourse,sysRadios.nav1StbyFine,sysRadios.nav1StandbyFreq,sysRadios.nav1ActiveFreq,sysRadios.nav1Flip,10,22)
-		kc_imgui_label_mcp(" ",10)
-		imgui.SameLine()
-		kc_imgui_nav_radio("NAV2:",sysRadios.nav2StbyCourse,sysRadios.nav2StbyFine,sysRadios.nav2StandbyFreq,sysRadios.nav2ActiveFreq,sysRadios.nav2Flip,45,32)
-		kc_imgui_label_mcp(" ",10)
-		imgui.SameLine()
-		kc_imgui_adf_radio("ADF1:",sysRadios.adf1StbyCourse,sysRadios.adf1StbyFine,sysRadios.adf1StandbyFreq,sysRadios.adf1ActiveFreq,sysRadios.adf1Flip,10,23)
-		kc_imgui_label_mcp(" ",10)
-		imgui.SameLine()
-		kc_imgui_adf_radio("ADF2:",sysRadios.adf2StbyCourse,sysRadios.adf2StbyFine,sysRadios.adf2StandbyFreq,sysRadios.adf2ActiveFreq,sysRadios.adf2Flip,45,33)
-		
+		if kc_has_nav_radios then
+			kc_imgui_nav_radio("NAV1:",sysRadios.nav1StbyCourse,sysRadios.nav1StbyFine,sysRadios.nav1StandbyFreq,sysRadios.nav1ActiveFreq,sysRadios.nav1Flip,10,22)
+			kc_imgui_label_mcp(" ",10)
+			imgui.SameLine()
+			kc_imgui_nav_radio("NAV2:",sysRadios.nav2StbyCourse,sysRadios.nav2StbyFine,sysRadios.nav2StandbyFreq,sysRadios.nav2ActiveFreq,sysRadios.nav2Flip,45,32)
+			kc_imgui_label_mcp(" ",10)
+			imgui.SameLine()
+		end
+		if kc_has_adf_radios then
+			kc_imgui_adf_radio("ADF1:",sysRadios.adf1StbyCourse,sysRadios.adf1StbyFine,sysRadios.adf1StandbyFreq,sysRadios.adf1ActiveFreq,sysRadios.adf1Flip,10,23)
+			kc_imgui_label_mcp(" ",10)
+			imgui.SameLine()
+			kc_imgui_adf_radio("ADF2:",sysRadios.adf2StbyCourse,sysRadios.adf2StbyFine,sysRadios.adf2StandbyFreq,sysRadios.adf2ActiveFreq,sysRadios.adf2Flip,45,33)
+		end
 		if kc_has_transponder then
 			kc_imgui_label_mcp(" ",10)
 			imgui.SameLine()
 			kc_imgui_number_mcp("XPDR: %04d",sysRadios.xpdrCode,10,11)
 			imgui.SameLine()
-			kc_imgui_simple_button_mcp("OFF",sysRadios.xpdrSwitch,10,42,25)
+			kc_imgui_script_button("OFF","kc_macro_set_xpdrmode(sysRadios.off)",10,30,25)
+			imgui.SameLine()
+			kc_imgui_script_button("STB","kc_macro_set_xpdrmode(sysRadios.stby)",10,30,25)
+			imgui.SameLine()
+			kc_imgui_script_button("ALT","kc_macro_set_xpdrmode(sysRadios.alt)",10,30,25)
+			imgui.SameLine()
+			kc_imgui_script_button("TA","kc_macro_set_xpdrmode(sysRadios.ta)",10,30,25)
+			imgui.SameLine()
+			kc_imgui_script_button("ON","kc_macro_set_xpdrmode(sysRadios.tara)",10,30,25)
+
 		end
 		imgui.Separator()
 	imgui.EndGroup()

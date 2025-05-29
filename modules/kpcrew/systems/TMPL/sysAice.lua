@@ -5,9 +5,6 @@
 -- @author Kosta Prokopiu
 -- @copyright 2025 Kosta Prokopiu
 
-local sysAice = {
-}
-
 local TwoStateDrefSwitch 	= require "kpcrew.systems.TwoStateDrefSwitch"
 local TwoStateCmdSwitch	 	= require "kpcrew.systems.TwoStateCmdSwitch"
 local TwoStateCustomSwitch 	= require "kpcrew.systems.TwoStateCustomSwitch"

@@ -744,6 +744,21 @@ function kc_imgui_cmd_button(label,command,ypos,width,height)
 	imgui.PopStyleColor()
 end
 
+function kc_imgui_script_button(label,command,ypos,width,height)
+	imgui.PushStyleColor(imgui.constant.Col.Button, color_mcp_button)
+	imgui.PushStyleColor(imgui.constant.Col.ButtonActive, color_mcp_active)
+	imgui.PushStyleColor(imgui.constant.Col.ButtonHovered, color_mcp_hover)
+	imgui.PushStyleColor(imgui.constant.Col.Text,color_mcp_text)
+	if imgui.Button(label, width, height) then
+		local f = loadstring(command)
+		f()
+	end
+	imgui.PopStyleColor()
+	imgui.PopStyleColor()
+	imgui.PopStyleColor()
+	imgui.PopStyleColor()
+end
+
 function kc_imgui_simple_actuator(label,system,action,ypos,width,height)
     -- imgui.SameLine()
 	-- imgui.SetCursorPosY(ypos)
@@ -770,6 +785,9 @@ function kc_imgui_radio(radio,label,course,fine,standby,active,flip,ypos,id)
 	imgui.PushStyleColor(imgui.constant.Col.ButtonHovered, color_mcp_hover)
 	imgui.PushStyleColor(imgui.constant.Col.Text,color_mcp_text)
 
+	imgui.TextUnformatted(label)
+	imgui.SameLine()
+	
     imgui.PushID(id)
 	imgui.Button("--", 20, 25)
 	if imgui.IsItemActive() then
@@ -784,33 +802,17 @@ function kc_imgui_radio(radio,label,course,fine,standby,active,flip,ypos,id)
 		fine:step(slowDown)
 	end
 	imgui.PopID()
-	
 	if radio == 1 then
 		imgui.SameLine()
-		imgui.PushStyleColor(imgui.constant.Col.Text,color_bright_green)
-		imgui.Button(string.format("%06.3f",active:getStatus()/1000), 55, 25)
-		if imgui.IsItemActive() then
-			flip:actuate(2)
-		end
-		imgui.PopStyleColor()
+		imgui.TextUnformatted(string.format("%06.3f",standby:getStatus()/1000))
 	end
 	if radio == 2 then
 		imgui.SameLine()
-		imgui.PushStyleColor(imgui.constant.Col.Text,color_bright_green)
-		imgui.Button(string.format("%05.2f",active:getStatus()/100), 55, 25)
-		if imgui.IsItemActive() then
-			flip:actuate(2)
-		end
-		imgui.PopStyleColor()
+		imgui.TextUnformatted(string.format(" %05.2f",standby:getStatus()/100))
 	end
 	if radio == 3 then
 		imgui.SameLine()
-		imgui.PushStyleColor(imgui.constant.Col.Text,color_bright_green)
-		imgui.Button(string.format("%03.0f",active:getStatus()), 55, 25)
-		if imgui.IsItemActive() then
-			flip:actuate(2)
-		end
-		imgui.PopStyleColor()
+		imgui.TextUnformatted(string.format("   %04.0f",standby:getStatus()))
 	end
 	
 	imgui.SameLine()
@@ -831,17 +833,32 @@ function kc_imgui_radio(radio,label,course,fine,standby,active,flip,ypos,id)
 
 	if radio == 1 then
 		imgui.SameLine()
-		imgui.TextUnformatted(string.format(label .. "%06.3f",standby:getStatus()/1000))
+		imgui.PushStyleColor(imgui.constant.Col.Text,color_bright_green)
+		imgui.Button(string.format("%06.3f",active:getStatus()/1000), 60, 25)
+		if imgui.IsItemActive() then
+			flip:actuate(2)
+		end
+		imgui.PopStyleColor()
 	end
 	if radio == 2 then
 		imgui.SameLine()
-		imgui.TextUnformatted(string.format(label .. "%05.2f",standby:getStatus()/100))
+		imgui.PushStyleColor(imgui.constant.Col.Text,color_bright_green)
+		imgui.Button(string.format("%05.2f",active:getStatus()/100), 60, 25)
+		if imgui.IsItemActive() then
+			flip:actuate(2)
+		end
+		imgui.PopStyleColor()
 	end
 	if radio == 3 then
 		imgui.SameLine()
-		imgui.TextUnformatted(string.format(label .. "%03.0f",standby:getStatus()))
+		imgui.PushStyleColor(imgui.constant.Col.Text,color_bright_green)
+		imgui.Button(string.format("%03.0f",active:getStatus()), 60, 25)
+		if imgui.IsItemActive() then
+			flip:actuate(2)
+		end
+		imgui.PopStyleColor()
 	end
-
+	
 	imgui.PopStyleColor()
 	imgui.PopStyleColor()
 	imgui.PopStyleColor()

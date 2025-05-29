@@ -1,8 +1,8 @@
 activePrefSet = kcPreferenceSet:new("PREFERENCES")
 
 kc_assistance_levels = "No assistance|Guided|Some automation|Fully automatic"
-kc_weight_units = "KGS|LBS"
-kc_baro_units = "HPA|IN"
+kc_weight_units = "KG|LB"
+kc_baro_units = "MB|IN"
 
 local generalGroup = kcPreferenceGroup:new("general","GENERAL PREFERENCES")
 generalGroup:setInitialOpen(true)

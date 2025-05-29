@@ -86,6 +86,7 @@ kc_has_press_cab	= true		-- Aircraft has pressurized cabine
 kc_has_iso_valvle	= true		-- Aircraft has switchable isolation valve
 kc_has_engine_bleed = true		-- Aircraft has engine bleeds
 kc_has_oxygen		= true		-- Aircraft has oxygen supply
+kc_has_recirc		= false		-- Aircraft has recirc system
 
 -- === Anti Ice
 kc_TakeoffAntiice 	= "NOT REQUIRED|ENGINE ONLY|ENGINE AND WING"
@@ -164,6 +165,8 @@ kc_has_transponder	= true		-- Aircraft has transponder
 kc_has_doors		= true		-- Aircraft has doors
 kc_has_cargo_doors	= true		-- Aircraft has cargo doors
 kc_has_cockpit_door	= true		-- Aircraft has cockpit door
+kc_has_adf_radios	= true		-- Aircraft has ADF radios
+kc_has_nav_radios	= true		-- Aircraft has NAV radios
 
 kc_has_autobrake	= true		-- Aircraft has autobrake
 kc_LandingAutoBrake = "OFF|1|2|3|MAX"

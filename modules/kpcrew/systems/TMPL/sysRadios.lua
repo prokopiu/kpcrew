@@ -20,4 +20,10 @@ sysRadios = require("kpcrew.systems.DFLT.sysRadios")
 
 logMsg("TMPL sysRadios")
 
+sysRadios.off				= 0
+sysRadios.stby				= 1
+sysRadios.alt				= 2
+sysRadios.ta				= 2
+sysRadios.tara				= 3
+
 return sysRadios

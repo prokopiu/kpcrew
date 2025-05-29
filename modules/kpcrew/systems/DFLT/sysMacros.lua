@@ -756,15 +756,15 @@ function kc_macro_elec_system(flightphase)
 				sysElectric.gen4Switch:actuate(1)
 			end
 		else
-			sysElectric.gen1Switch:actuate(1)
+			sysElectric.gen1Switch:actuate(0)
 			if kc_get_nr_generators() > 1 then
-				sysElectric.gen2Switch:actuate(1)
+				sysElectric.gen2Switch:actuate(0)
 			end
 			if kc_get_nr_generators() > 2 then
-				sysElectric.gen3Switch:actuate(1)
+				sysElectric.gen3Switch:actuate(0)
 			end
 			if kc_get_nr_generators() > 3 then
-				sysElectric.gen4Switch:actuate(1)
+				sysElectric.gen4Switch:actuate(0)
 			end
 		end	
 	elseif flightphase == kc_phase_after_start then
@@ -889,6 +889,9 @@ function kc_macro_air(flightphase)
 		if kc_has_oxygen then 
 			sysAir.oxygenMaster:actuate(0)
 		end
+		if kc_has_recirc then
+			sysAir.recircSwitchGroup:actuate(0)
+		end
 	elseif flightphase == kc_phase_turnaround then
 		if kc_has_press_cab then
 			sysAir.packSwitchGroup:actuate(1)
@@ -899,6 +902,9 @@ function kc_macro_air(flightphase)
 		end
 		if kc_has_engine_bleed then
 			sysAir.engBleedGroup:actuate(0)
+		end
+		if kc_has_engine_bleed then
+			sysAir.engBleedGroup:actuate(1)
 		end
 	elseif flightphase == kc_phase_before_start then
 		if kc_has_press_cab then
@@ -926,6 +932,9 @@ function kc_macro_air(flightphase)
 		if kc_has_oxygen then 
 			sysAir.oxygenMaster:actuate(0)
 		end
+		if kc_has_engine_bleed then
+			sysAir.engBleedGroup:actuate(1)
+		end
 	elseif flightphase == kc_phase_before_takeoff then
 		if kc_has_press_cab then
 			if activeBriefings:get("takeoff:packs") < 2 then 
@@ -948,6 +957,9 @@ function kc_macro_air(flightphase)
 		if kc_has_oxygen then 
 			sysAir.oxygenMaster:actuate(1)
 		end
+		if kc_has_engine_bleed then
+			sysAir.engBleedGroup:actuate(1)
+		end
 	elseif flightphase == kc_phase_takeoff then
 		if kc_has_press_cab then
 			sysAir.packSwitchGroup:setValue(1)
@@ -958,6 +970,9 @@ function kc_macro_air(flightphase)
 		if kc_has_oxygen then 
 			sysAir.oxygenMaster:actuate(1)
 		end	
+		if kc_has_engine_bleed then
+			sysAir.engBleedGroup:actuate(1)
+		end
 	elseif flightphase == kc_phase_approach then
 		if kc_has_engine_bleed then
 			sysAir.engBleedGroup:actuate(1)
@@ -972,6 +987,9 @@ function kc_macro_air(flightphase)
 				sysAir.packSwitchGroup:actuate(1)
 			end
 		end
+		if kc_has_engine_bleed then
+			sysAir.engBleedGroup:actuate(1)
+		end
 	elseif flightphase == kc_phase_shutdown then
 		if kc_has_press_cab then
 			sysAir.packSwitchGroup:setValue(1)
@@ -982,6 +1000,9 @@ function kc_macro_air(flightphase)
 		if kc_has_oxygen then 
 			sysAir.oxygenMaster:actuate(0)
 		end	
+		if kc_has_engine_bleed then
+			sysAir.engBleedGroup:actuate(0)
+		end
 	else
 		logMsg("Invalid flightphase")
 	end	
@@ -1467,6 +1488,9 @@ end
 
 function kc_macro_set_xpdrcode(code)
 	sysRadios.xpdrCode:setValue(code)
+end
+
+function kc_macro_additional_bck_procs()
 end
 
 return sysMacros
