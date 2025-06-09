@@ -84,14 +84,17 @@ elseif PLANE_ICAO == "A333" then
 -- E-JET FAM 175  175/175
 -- E-JET FAM 190  190/190
 -- E-JET FAM 195  195/195
--- elseif PLANE_ICAO == "E170" and PLANE_TAILNUMBER == "E170" then
-	-- kc_acf_icao = "E1XX"
--- elseif PLANE_ICAO == "E175" and PLANE_TAILNUMBER == "E175" then
-	-- kc_acf_icao = "E1XX"
--- elseif PLANE_ICAO == "E190" and PLANE_TAILNUMBER == "E190" then
-	-- kc_acf_icao = "E1XX"
--- elseif PLANE_ICAO == "E195" and PLANE_TAILNUMBER == "E195" then
-	-- kc_acf_icao = "E1XX"
+-- LINEAGE 1000
+elseif PLANE_ICAO == "E170" and PLANE_TAILNUMBER == "E170" then
+	kc_acf_icao = "E1XX"
+elseif PLANE_ICAO == "E175" and PLANE_TAILNUMBER == "E175" then
+	kc_acf_icao = "E1XX"
+elseif PLANE_ICAO == "E190" and PLANE_TAILNUMBER == "E190" then
+	kc_acf_icao = "E1XX"
+elseif PLANE_ICAO == "E195" and PLANE_TAILNUMBER == "E195" then
+	kc_acf_icao = "E1XX"
+elseif PLANE_ICAO == "E19L" then
+	kc_acf_icao = "E1XX"
 	
 -- X-CRAFTS FREE E-JETS XP12 (E1FF)
 -- Free 175       170/175
@@ -312,7 +315,18 @@ function kb_extract_simbrief_ofp()
 	activeBriefings:set("departure:aptElevation",handler.root.OFP.origin.elevation)
 	activeBriefings:set("departure:transalt",handler.root.OFP.origin.trans_alt)
 	activeBriefings:set("departure:initAlt",handler.root.OFP.general.initial_altitude)
-	activeBriefings:set("departure:initHeading",handler.root.OFP.navlog.fix[1].heading_mag)
+	-- 
+	local runways = handler.root.OFP.tlr.takeoff.runway
+	-- print("\nManual print")
+    for i=1,#runways do
+		-- print(runways[i].identifier)
+		if runways[i].identifier == handler.root.OFP.origin.plan_rwy then
+			-- print(runways[i].magnetic_course)
+			activeBriefings:set("departure:initHeading",runways[i].magnetic_course)
+			activeBriefings:set("departure:nav1Course",runways[i].magnetic_course)
+			activeBriefings:set("departure:nav2Course",runways[i].magnetic_course)
+		end
+	end
 	origtranslvl = handler.root.OFP.origin.trans_level
 
 -- arrival
@@ -334,10 +348,23 @@ function kb_extract_simbrief_ofp()
 	activeBriefings:set("arrival:alttranslvl",handler.root.OFP.alternate.trans_level)
 	desttransalt = handler.root.OFP.destination.trans_alt
 	altntransalt = handler.root.OFP.alternate.trans_alt
+	-- 
+	local runways = handler.root.OFP.tlr.landing.runway
+	-- print("\nManual print")
+    for i=1,#runways do
+		-- print(runways[i].identifier)
+		if runways[i].identifier == handler.root.OFP.destination.plan_rwy then
+			-- print(runways[i].magnetic_course)
+			activeBriefings:set("approach:nav1Course",runways[i].magnetic_course)
+			activeBriefings:set("approach:nav2Course",runways[i].magnetic_course)
+			activeBriefings:set("approach:gaheading",runways[i].magnetic_course)
+			activeBriefings:set("approach:nav1Freq",runways[i].ils_frequency)
+		end
+	end	
 	
 -- general
 	activeBriefings:set("arrival:altnElevation",handler.root.OFP.alternate.elevation)
-
+	
 -- set the metars from x-plane as default
 	if activePrefSet:get("general:askyMetar") then
 		origmetar = kb_get_asky_metar(handler.root.OFP.origin.icao_code)
@@ -1503,36 +1530,6 @@ function kb_brief_builder(kb_brief_wnd, x, y)
 						imgui.PopID()
 
 						imgui.PushStyleColor(imgui.constant.Col.Text, color_white)
-							imgui.TextUnformatted("BARO QNH  :")
-						imgui.PopStyleColor()
-						imgui.SameLine()
-						imgui.PushItemWidth(40*kb_font_scale);
-						imgui.PushID("depqnh:")
-						imgui.PushStyleColor(imgui.constant.Col.Text, color_orange)
-							local changed, textin = imgui.InputInt("", activeBriefings:get("departure:atisQNH"), 0)
-							if changed then
-								activeBriefings:set("departure:atisQNH",textin)
-							end
-						imgui.PopStyleColor()
-						imgui.PopItemWidth()
-						imgui.PopID()
-
-						imgui.PushStyleColor(imgui.constant.Col.Text, color_white)
-							imgui.TextUnformatted("SQUAWK    :")
-						imgui.PopStyleColor()
-						imgui.SameLine()
-						imgui.PushItemWidth(35*kb_font_scale);
-						imgui.PushID("squawk:")
-						imgui.PushStyleColor(imgui.constant.Col.Text, color_orange)
-							local changed, textin = imgui.InputInt("", activeBriefings:get("departure:squawk"), 0)
-							if changed then
-								activeBriefings:set("departure:squawk",textin)
-							end
-						imgui.PopStyleColor()
-						imgui.PopItemWidth()
-						imgui.PopID()
-
-						imgui.PushStyleColor(imgui.constant.Col.Text, color_white)
 							imgui.TextUnformatted("DEP TYPE  :")
 						imgui.PopStyleColor()
 						imgui.SameLine()
@@ -1582,6 +1579,36 @@ function kb_brief_builder(kb_brief_wnd, x, y)
 						imgui.PopItemWidth()
 						imgui.PopID()
 						
+						imgui.PushStyleColor(imgui.constant.Col.Text, color_white)
+							imgui.TextUnformatted("BARO QNH  :")
+						imgui.PopStyleColor()
+						imgui.SameLine()
+						imgui.PushItemWidth(40*kb_font_scale);
+						imgui.PushID("depqnh:")
+						imgui.PushStyleColor(imgui.constant.Col.Text, color_orange)
+							local changed, textin = imgui.InputInt("", activeBriefings:get("departure:atisQNH"), 0)
+							if changed then
+								activeBriefings:set("departure:atisQNH",textin)
+							end
+						imgui.PopStyleColor()
+						imgui.PopItemWidth()
+						imgui.PopID()
+
+						imgui.PushStyleColor(imgui.constant.Col.Text, color_white)
+							imgui.TextUnformatted("SQUAWK    :")
+						imgui.PopStyleColor()
+						imgui.SameLine()
+						imgui.PushItemWidth(35*kb_font_scale);
+						imgui.PushID("squawk:")
+						imgui.PushStyleColor(imgui.constant.Col.Text, color_orange)
+							local changed, textin = imgui.InputInt("", activeBriefings:get("departure:squawk"), 0)
+							if changed then
+								activeBriefings:set("departure:squawk",textin)
+							end
+						imgui.PopStyleColor()
+						imgui.PopItemWidth()
+						imgui.PopID()
+						
 						imgui.Separator()
 
 						imgui.PushStyleColor(imgui.constant.Col.Text, 0xFFCCCCCC)
@@ -1624,7 +1651,7 @@ function kb_brief_builder(kb_brief_wnd, x, y)
 						imgui.PopItemWidth()
 						imgui.PopID()
 
-						if kc_is_airbus == false then
+						if kc_is_airbus == false and kc_has_rated_to then
 							imgui.PushStyleColor(imgui.constant.Col.Text, color_white)
 								imgui.TextUnformatted("T/O THRUST:")
 							imgui.PopStyleColor()
@@ -1736,7 +1763,7 @@ function kb_brief_builder(kb_brief_wnd, x, y)
 						imgui.Separator()
 						
 						imgui.PushStyleColor(imgui.constant.Col.Text, 0xFFCCCCCC)
-							imgui.TextUnformatted("V1        :")
+							imgui.TextUnformatted("V1/VR/V2  :")
 						imgui.PopStyleColor()
 						imgui.SameLine()
 						imgui.PushItemWidth(30*kb_font_scale);
@@ -1750,9 +1777,9 @@ function kb_brief_builder(kb_brief_wnd, x, y)
 						imgui.PopItemWidth()
 						imgui.PopID()
 
-						imgui.PushStyleColor(imgui.constant.Col.Text, 0xFFCCCCCC)
-							imgui.TextUnformatted("VR        :")
-						imgui.PopStyleColor()
+						-- imgui.PushStyleColor(imgui.constant.Col.Text, 0xFFCCCCCC)
+							-- imgui.TextUnformatted("VR        :")
+						-- imgui.PopStyleColor()
 						imgui.SameLine()
 						imgui.PushItemWidth(30*kb_font_scale);
 						imgui.PushID("takeoff vr:")
@@ -1765,9 +1792,9 @@ function kb_brief_builder(kb_brief_wnd, x, y)
 						imgui.PopItemWidth()
 						imgui.PopID()
 
-						imgui.PushStyleColor(imgui.constant.Col.Text, 0xFFCCCCCC)
-							imgui.TextUnformatted("V2        :")
-						imgui.PopStyleColor()
+						-- imgui.PushStyleColor(imgui.constant.Col.Text, 0xFFCCCCCC)
+							-- imgui.TextUnformatted("V2        :")
+						-- imgui.PopStyleColor()
 						imgui.SameLine()
 						imgui.PushItemWidth(30*kb_font_scale);
 						imgui.PushID("takeoff v2:")
@@ -1955,7 +1982,7 @@ function kb_brief_builder(kb_brief_wnd, x, y)
 							imgui.TextUnformatted("APPR TYPE :")
 						imgui.PopStyleColor()
 						imgui.SameLine()
-						imgui.PushItemWidth(100*kb_font_scale);
+						imgui.PushItemWidth(120*kb_font_scale);
 						imgui.PushID("takeoff forced:")
 						imgui.PushStyleColor(imgui.constant.Col.Text, 0xFF1b9af8)
 						if imgui.BeginCombo("", kc_split(kc_apptypes,"|")[activeBriefings:get("approach:appType")]) then
@@ -1971,9 +1998,26 @@ function kb_brief_builder(kb_brief_wnd, x, y)
 						imgui.PopItemWidth()
 						imgui.PopID()
 
+						if activeBriefings:get("approach:appType") < 3 then
+							imgui.PushStyleColor(imgui.constant.Col.Text, color_white)
+								imgui.TextUnformatted("ILS FREQ  :")
+							imgui.PopStyleColor()
+							imgui.SameLine()
+							imgui.PushItemWidth(60*kb_font_scale);
+							imgui.PushID("ils:")
+							imgui.PushStyleColor(imgui.constant.Col.Text, color_orange)
+								local changed, textin = imgui.InputText("", activeBriefings:get("approach:nav1Freq"), 255)
+								if changed then
+									activeBriefings:set("approach:nav1Freq",textin)
+								end
+							imgui.PopStyleColor()
+							imgui.PopItemWidth()
+							imgui.PopID()
+						end
+						
 						if kc_is_airbus == false then
 							imgui.PushStyleColor(imgui.constant.Col.Text, 0xFFCCCCCC)
-								imgui.TextUnformatted("CRS 1     :")
+								imgui.TextUnformatted("CRS1/CRS2 :")
 							imgui.PopStyleColor()
 							imgui.SameLine()
 							imgui.PushItemWidth(30*kb_font_scale);
@@ -1987,9 +2031,9 @@ function kb_brief_builder(kb_brief_wnd, x, y)
 							imgui.PopItemWidth()
 							imgui.PopID()
 
-							imgui.PushStyleColor(imgui.constant.Col.Text, 0xFFCCCCCC)
-								imgui.TextUnformatted("CRS 2     :")
-							imgui.PopStyleColor()
+							-- imgui.PushStyleColor(imgui.constant.Col.Text, 0xFFCCCCCC)
+								-- imgui.TextUnformatted("CRS 2     :")
+							-- imgui.PopStyleColor()
 							imgui.SameLine()
 							imgui.PushItemWidth(30*kb_font_scale);
 							imgui.PushID("apprcrs2:")
@@ -2080,7 +2124,7 @@ function kb_brief_builder(kb_brief_wnd, x, y)
 						imgui.PopID()
 						
 						imgui.PushStyleColor(imgui.constant.Col.Text, 0xFFCCCCCC)
-							imgui.TextUnformatted("VREF      :")
+							imgui.TextUnformatted("VREF/VAPP :")
 						imgui.PopStyleColor()
 						imgui.SameLine()
 						imgui.PushItemWidth(30*kb_font_scale);
@@ -2094,9 +2138,9 @@ function kb_brief_builder(kb_brief_wnd, x, y)
 						imgui.PopItemWidth()
 						imgui.PopID()
 
-						imgui.PushStyleColor(imgui.constant.Col.Text, 0xFFCCCCCC)
-							imgui.TextUnformatted("VAPP      :")
-						imgui.PopStyleColor()
+						-- imgui.PushStyleColor(imgui.constant.Col.Text, 0xFFCCCCCC)
+							-- imgui.TextUnformatted("VAPP      :")
+						-- imgui.PopStyleColor()
 						imgui.SameLine()
 						imgui.PushItemWidth(30*kb_font_scale);
 						imgui.PushID("vapp:")
@@ -2447,25 +2491,42 @@ function kb_brief_builder(kb_brief_wnd, x, y)
 						imgui.PopItemWidth()
 						imgui.PopID()
 
+						if activeBriefings:get("approach:altnappType") < 3 then
+							imgui.PushStyleColor(imgui.constant.Col.Text, color_white)
+								imgui.TextUnformatted("ILS FREQ  :")
+							imgui.PopStyleColor()
+							imgui.SameLine()
+							imgui.PushItemWidth(60*kb_font_scale);
+							imgui.PushID("altnils:")
+							imgui.PushStyleColor(imgui.constant.Col.Text, color_orange)
+								local changed, textin = imgui.InputText("", activeBriefings:get("approach:altnnav1Freq"), 255)
+								if changed then
+									activeBriefings:set("approach:altnnav1Freq",textin)
+								end
+							imgui.PopStyleColor()
+							imgui.PopItemWidth()
+							imgui.PopID()
+						end
+						
 						if kc_is_airbus == false then
 							imgui.PushStyleColor(imgui.constant.Col.Text, 0xFFCCCCCC)
-								imgui.TextUnformatted("CRS 1     :")
+								imgui.TextUnformatted("CRS1/CRS2 :")
 							imgui.PopStyleColor()
 							imgui.SameLine()
 							imgui.PushItemWidth(30*kb_font_scale);
 							imgui.PushID("apprcrs1:")
 							imgui.PushStyleColor(imgui.constant.Col.Text, 0xFF1b9af8)
-								local changed, textin = imgui.InputInt("", activeBriefings:get("approach:nav1Course"), 0)
+								local changed, textin = imgui.InputInt("", activeBriefings:get("approach:altnnav1Course"), 0)
 								if changed then
-									activeBriefings:set("approach:nav1Course",textin)
+									activeBriefings:set("approach:altnnav1Course",textin)
 								end
 							imgui.PopStyleColor()
 							imgui.PopItemWidth()
 							imgui.PopID()
 
-							imgui.PushStyleColor(imgui.constant.Col.Text, 0xFFCCCCCC)
-								imgui.TextUnformatted("CRS 2     :")
-							imgui.PopStyleColor()
+							-- imgui.PushStyleColor(imgui.constant.Col.Text, 0xFFCCCCCC)
+								-- imgui.TextUnformatted("CRS 2     :")
+							-- imgui.PopStyleColor()
 							imgui.SameLine()
 							imgui.PushItemWidth(30*kb_font_scale);
 							imgui.PushID("apprcrs2:")
@@ -2498,7 +2559,7 @@ function kb_brief_builder(kb_brief_wnd, x, y)
 							imgui.TextUnformatted("GA HDG    :")
 						imgui.PopStyleColor()
 						imgui.SameLine()
-						imgui.PushItemWidth(20*kb_font_scale);
+						imgui.PushItemWidth(3*kb_font_scale);
 						imgui.PushID("gahdh:")
 						imgui.PushStyleColor(imgui.constant.Col.Text, 0xFF1b9af8)
 							local changed, textin = imgui.InputInt("", activeBriefings:get("approach:gaheading"), 0)
@@ -2556,7 +2617,7 @@ function kb_brief_builder(kb_brief_wnd, x, y)
 						imgui.PopID()
 						
 						imgui.PushStyleColor(imgui.constant.Col.Text, 0xFFCCCCCC)
-							imgui.TextUnformatted("VREF      :")
+							imgui.TextUnformatted("VREF/VAPP :")
 						imgui.PopStyleColor()
 						imgui.SameLine()
 						imgui.PushItemWidth(30*kb_font_scale);
@@ -2570,9 +2631,9 @@ function kb_brief_builder(kb_brief_wnd, x, y)
 						imgui.PopItemWidth()
 						imgui.PopID()
 
-						imgui.PushStyleColor(imgui.constant.Col.Text, 0xFFCCCCCC)
-							imgui.TextUnformatted("VAPP      :")
-						imgui.PopStyleColor()
+						-- imgui.PushStyleColor(imgui.constant.Col.Text, 0xFFCCCCCC)
+							-- imgui.TextUnformatted("VAPP      :")
+						-- imgui.PopStyleColor()
 						imgui.SameLine()
 						imgui.PushItemWidth(30*kb_font_scale);
 						imgui.PushID("altnvapp:")
