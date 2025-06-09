@@ -19,7 +19,7 @@ local Switch = require "kpcrew.systems.Switch"
 -- @tparam int maxvalue maximal value for the switch
 -- @tparam boolean readonly = true cannot use setValue()
 -- @treturn Switch the created base element
-function khMultiStateCmdSwitch:new(name, statusDref, statusDrefIdx, decrcmd, incrcmd, minvalue, maxvalue, readonly)
+function khMultiStateCmdSwitch:new(name, statusDref, statusDrefIdx, decrcmd, incrcmd, minvalue, maxvalue, readonly, diff)
 
     khMultiStateCmdSwitch.__index = khMultiStateCmdSwitch
     setmetatable(khMultiStateCmdSwitch, {
@@ -35,6 +35,7 @@ function khMultiStateCmdSwitch:new(name, statusDref, statusDrefIdx, decrcmd, inc
 	obj.maxvalue = maxvalue
 	obj.readonly = readonly
 	obj.delay = self.defaultDelay
+	obj.diff = diff --new alternative to commands
 	
     return obj
 
@@ -67,7 +68,12 @@ end
 -- @tparam int 0=down, 1=up, 10=delayed down, 11=delayed up
 function khMultiStateCmdSwitch:step(action)
 	if action == cmdUp then
-		command_once(self.incrcmd)
+		if self.incrcmd ~= nil then
+			command_once(self.incrcmd)
+		elseif self.diff ~= nil then
+			local tmpValue = get(self.statusDref,self.statusDrefIdx)
+			self:setValue(tmpValue + self.diff)
+		end
 	end
 	if action == slowUp then
 		if self.delay > 0 then
@@ -78,7 +84,12 @@ function khMultiStateCmdSwitch:step(action)
 		end
 	end
 	if action == cmdDown then
-		command_once(self.decrcmd)
+		if self.decrcmd ~= nil then
+			command_once(self.decrcmd)
+		elseif self.diff ~= nil then
+			local tmpValue = get(self.statusDref,self.statusDrefIdx)
+			self:setValue(tmpValue-self.diff)
+		end
 	end
 	if action == slowDown then
 		if self.delay > 0 then
