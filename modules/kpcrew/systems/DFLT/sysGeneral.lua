@@ -292,6 +292,14 @@ function ()
 	end
 end)
 
+-- Windows
+sysGeneral.window1			= InopSwitch:new("window1")
+sysGeneral.window2			= InopSwitch:new("window2")
+sysGeneral.windowGroup 		= SwitchGroup:new("doors")
+sysGeneral.windowGroup:addSwitch(sysGeneral.window1)
+sysGeneral.windowGroup:addSwitch(sysGeneral.window2)
+
+
 -- Wiper Switches
 sysGeneral.wiperLeft = TwoStateDrefSwitch:new("wiperleft","sim/cockpit2/switches/wiper_speed_switch",-1)
 sysGeneral.wiperRight = TwoStateDrefSwitch:new("wiperright","sim/cockpit2/switches/wiper_speed_switch",1)

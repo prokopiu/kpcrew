@@ -20,6 +20,10 @@ sysRadios = require("kpcrew.systems.DFLT.sysRadios")
 
 logMsg("E1FF sysRadios")
 
+sysRadios.xpdrSwitch 		= TwoStateDrefSwitch:new("xpdrmode","sim/cockpit2/radios/actuators/transponder_mode",0)
+sysRadios.xpdrCode 			= TwoStateDrefSwitch:new("xpdrcode","sim/cockpit2/radios/actuators/transponder_code",0)
+
+sysRadios.off				= 0
 sysRadios.stby				= 1
 sysRadios.alt				= 2
 sysRadios.ta				= 2

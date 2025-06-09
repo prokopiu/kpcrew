@@ -159,16 +159,14 @@ if kc_has_gpu then
 		end,
 		function () 
 			sysElectric.gpuConnect:actuate(1)
-		end,
-		function () return activeBriefings:get("departure:activateAPUPowerUp") ~= 2 end))	
+		end))	
 	electricalPowerUpProc:addItem(ProcedureItem:new("EXTERNAL POWER","ON",FlowItem.actorFO,0,
 		function () return 
 			sysElectric.gpuOnBus:getStatus() > 0
 		end,
 		function () 
 			sysElectric.gpuGenBusGroup:actuate(1)
-		end,
-		function () return activeBriefings:get("departure:activateAPUPowerUp") ~= 2 end))
+		end))
 end
 
 -- If APU available & APU power up selected
@@ -541,17 +539,19 @@ else
 			end))
 	end
 end
-engStartProc:addItem(IndirectProcedureItem:new("POWER LEVERS","IDLE",FlowItem.actorCPT,3,"eng_start_1_lever",
-	function () return sysEngines.throttlePos:getStatus() == 0 end,
-	function () 
-		sysEngines.throttlePos:actuate(0) 
-		if kc_is_turboprop or kc_is_ga then
-			sysEngines.mixtureLever:actuate(kc_mixture_min)
-		end
-		if kc_has_proplever then
-			sysEngines.propLever:setValue(kc_prop_lvr_max)
-		end	
-	end))
+if kc_needs_throttle_idle then 
+	engStartProc:addItem(IndirectProcedureItem:new("POWER LEVERS","IDLE",FlowItem.actorCPT,3,"eng_start_1_lever",
+		function () return sysEngines.throttlePos:getStatus() == 0 end,
+		function () 
+			sysEngines.throttlePos:actuate(0) 
+			if kc_is_turboprop or kc_is_ga then
+				sysEngines.mixtureLever:actuate(kc_mixture_min)
+			end
+			if kc_has_proplever then
+				sysEngines.propLever:setValue(kc_prop_lvr_max)
+			end	
+		end))
+end
 if kc_get_nr_engines() == 1 then
 	engStartProc:addItem(IndirectProcedureItem:new("ENGINE START SWITCH","ENGAGE",FlowItem.actorFO,20,"eng_start_1_grd",
 		function () return sysEngines.engStart1Switch:getStatus() > 0 end,
@@ -573,7 +573,7 @@ else
 				kc_procvar_set("engstart2",true)
 			else 
 				kc_procvar_set("engstart1",true)
-			kc_speakNoText(0,"starting first engine")
+			-- kc_speakNoText(0,"starting first engine")
 		end 
 	end))
 end
@@ -600,11 +600,13 @@ if kc_get_nr_engines() >= 2 then
 				end
 			end))
 	end
-	engStartProc:addItem(IndirectProcedureItem:new("POWER LEVER","IDLE",FlowItem.actorCPT,3,"eng_start_2_lever",
-		function () return sysEngines.throttlePos:getStatus() == 0	end,
-		function () 
-			command_once("sim/engines/throttle_idle")
-		end))
+	if kc_needs_throttle_idle then 
+		engStartProc:addItem(IndirectProcedureItem:new("POWER LEVER","IDLE",FlowItem.actorCPT,3,"eng_start_2_lever",
+			function () return sysEngines.throttlePos:getStatus() == 0	end,
+			function () 
+				command_once("sim/engines/throttle_idle")
+			end))
+	end
 	engStartProc:addItem(IndirectProcedureItem:new("START SWITCH SECOND ENGINE","ENGAGE",FlowItem.actorCPT,20,"eng_start_2_grd",
 		function () 
 			if activeBriefings:get("taxi:startSequence") == 1 then
@@ -619,7 +621,7 @@ if kc_get_nr_engines() >= 2 then
 			else 
 				kc_procvar_set("engstart2",true)
 			end 
-			kc_speakNoText(0,"starting second engine")
+			-- kc_speakNoText(0,"starting second engine")
 		end))
 	engStartProc:addItem(ProcedureItem:new("2ND ENGINE N2","INCREASING",FlowItem.actorCPT,0,
 		function () if activeBriefings:get("taxi:startSequence") == 1 then
@@ -640,16 +642,18 @@ if kc_get_nr_engines() >= 3 then
 				end
 			end))
 	end
-	engStartProc:addItem(IndirectProcedureItem:new("POWER LEVER","IDLE",FlowItem.actorCPT,3,"eng_start_3_lever",
-		function () return sysEngines.throttlePos:getStatus() == 0	end,
-		function () 
-			command_once("sim/engines/throttle_idle")
-		end))
+	if kc_needs_throttle_idle then 
+		engStartProc:addItem(IndirectProcedureItem:new("POWER LEVER","IDLE",FlowItem.actorCPT,3,"eng_start_3_lever",
+			function () return sysEngines.throttlePos:getStatus() == 0	end,
+			function () 
+				command_once("sim/engines/throttle_idle")
+			end))
+	end
 	engStartProc:addItem(IndirectProcedureItem:new("START SWITCH THIRD ENGINE","ENGAGE",FlowItem.actorCPT,20,"eng_start_3_grd",
 		function () return sysEngines.engStart3Switch:getStatus() == 1 end,
 		function () 
 			kc_procvar_set("engstart3",true)
-			kc_speakNoText(0,"starting third engine")
+			-- kc_speakNoText(0,"starting third engine")
 		end))
 	engStartProc:addItem(ProcedureItem:new("3RD ENGINE N2","INCREASING",FlowItem.actorCPT,0,
 		function () return get("sim/cockpit2/engine/indicators/N2_percent",2) > kc_n2_after_start end,
@@ -667,16 +671,18 @@ if kc_get_nr_engines() >= 4 then
 				end
 			end))
 	end
-	engStartProc:addItem(IndirectProcedureItem:new("POWER LEVER","IDLE",FlowItem.actorCPT,3,"eng_start_4_lever",
-		function () return sysEngines.throttlePos:getStatus() == 0	end,
-		function () 
-			command_once("sim/engines/throttle_idle")
-		end))
+	if kc_needs_throttle_idle then 
+		engStartProc:addItem(IndirectProcedureItem:new("POWER LEVER","IDLE",FlowItem.actorCPT,3,"eng_start_4_lever",
+			function () return sysEngines.throttlePos:getStatus() == 0	end,
+			function () 
+				command_once("sim/engines/throttle_idle")
+			end))
+	end
 	engStartProc:addItem(IndirectProcedureItem:new("START SWITCH FOURTH ENGINE","ENGAGE",FlowItem.actorCPT,20,"eng_start_4_grd",
 		function () return sysEngines.engStart4Switch:getStatus() == 1 end,
 		function () 
 			kc_procvar_set("engstart4",true)
-			kc_speakNoText(0,"starting fourth engine")
+			-- kc_speakNoText(0,"starting fourth engine")
 		end))
 	engStartProc:addItem(ProcedureItem:new("4TH ENGINE N2","INCREASING",FlowItem.actorCPT,0,
 		function () return get("sim/cockpit2/engine/indicators/N2_percent",3) > kc_n2_after_start end,
@@ -758,7 +764,7 @@ if kc_has_apu then
 			function () sysElectric.apuMaster:actuate(0) end))
 	else
 		afterStartProc:addItem(ProcedureItem:new("APU","OFF",FlowItem.actorFO,3,
-			function () return sysElectric.apuRunningAnc:getStatus() == 0 end,
+			function () return true end,
 			function () kc_macro_apustop() end))
 	end
 end
@@ -1162,7 +1168,7 @@ for ldgflapidx=1,kc_get_nr_flapdetents(),1 do
 		-- function () return sysControls.flapsSwitch:getStatus() >= sysControls.flaps_pos[ldgflapidx] end,
 		function () kc_macro_set_flap(ldgflapidx) end,
 		function () return tonumber(kc_pref_split(kc_LandingFlapsInd)[activeBriefings:get("approach:flaps")]) < ldgflapidx end))
-	if ldgflapidx == 2 then
+	if ldgflapidx == kc_gear_ext_index then
 		if kc_has_retractgear == true then
 			flapsProc:addItem(HoldProcedureItem:new("LANDING GEAR DOWN","COMMAND",FlowItem.actorPF))
 			flapsProc:addItem(ProcedureItem:new("GEAR ","DOWN",FlowItem.actorPNF,0,true,

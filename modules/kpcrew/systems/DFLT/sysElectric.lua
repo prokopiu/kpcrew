@@ -114,6 +114,8 @@ end
 
 -- DC Bus Tie
 sysElectric.dcBusTie				= TwoStateDrefSwitch:new("dcbustie","sim/cockpit2/electrical/cross_tie",0)
+-- AC Bus Tie
+sysElectric.acBusTie				= InopSwitch:new("acbustie")
 
 -- ** ALTERNATOR Switches to help when aircraft do not work with the switches
 sysElectric.alternator1Switch 		= TwoStateCmdSwitch:new("gen1","sim/cockpit/electrical/generator_on",-1,

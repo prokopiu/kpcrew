@@ -18,7 +18,7 @@ local KeepPressedSwitchCmd	= require "kpcrew.systems.KeepPressedSwitchCmd"
 
 sysHydraulic = require("kpcrew.systems.DFLT.sysHydraulic")
 
-logMsg("TMPL sysHydraulic")
+logMsg("E1FF sysHydraulic")
 
 -- HYD Engine Pumps
 sysHydraulic.engHydPumpGroup = SwitchGroup:new("enghydpumps")
