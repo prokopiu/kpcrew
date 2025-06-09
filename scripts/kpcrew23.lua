@@ -90,14 +90,17 @@ elseif PLANE_ICAO == "A333" then
 -- E-JET FAM 175  175/175
 -- E-JET FAM 190  190/190
 -- E-JET FAM 195  195/195
--- elseif PLANE_ICAO == "E170" and PLANE_TAILNUMBER == "E170" then
-	-- kc_acf_icao = "E1XX"
--- elseif PLANE_ICAO == "E175" and PLANE_TAILNUMBER == "E175" then
-	-- kc_acf_icao = "E1XX"
--- elseif PLANE_ICAO == "E190" and PLANE_TAILNUMBER == "E190" then
-	-- kc_acf_icao = "E1XX"
--- elseif PLANE_ICAO == "E195" and PLANE_TAILNUMBER == "E195" then
-	-- kc_acf_icao = "E1XX"
+-- LINEAGE 1000
+elseif PLANE_ICAO == "E170" and PLANE_TAILNUMBER == "E170" then
+	kc_acf_icao = "E1XX"
+elseif PLANE_ICAO == "E175" and PLANE_TAILNUMBER == "E175" then
+	kc_acf_icao = "E1XX"
+elseif PLANE_ICAO == "E190" and PLANE_TAILNUMBER == "E190" then
+	kc_acf_icao = "E1XX"
+elseif PLANE_ICAO == "E195" and PLANE_TAILNUMBER == "E195" then
+	kc_acf_icao = "E1XX"
+elseif PLANE_ICAO == "E19L" then
+	kc_acf_icao = "E1XX"
 	
 -- X-CRAFTS FREE E-JETS XP12 (E1FF)
 -- Free 175       170/175
