@@ -79,8 +79,25 @@ kc_AutoBrakeOff		= 1
 kc_AutoBrakeRTO		= 0
 kc_has_antiskid		= true
 
+kc_can_load_speeds	= true		-- Aircraft can pass speeds to kpxbrief
 
 -- === Operating speeds
 
 -- === Altitudes
 kc_max_altitude		= 40000 	-- Max Altitude
+
+-- set the takeoff details v-speeds, trim
+function kc_set_takeoff_details()
+	activeBriefings:set("takeoff:v1",145)
+	activeBriefings:set("takeoff:vr",145)
+	activeBriefings:set("takeoff:v2",155)
+	activeBriefings:set("takeoff:elevatorTrim",-6)
+end
+
+-- set the landing details v-speeds, trim
+function kc_set_landing_details()
+	activeBriefings:set("approach:vref",132)
+	activeBriefings:set("approach:vapp",137)
+	activeBriefings:set("approach:altnvref",132)
+	activeBriefings:set("approach:altnvapp",137)
+end
