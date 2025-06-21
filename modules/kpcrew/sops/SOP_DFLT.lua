@@ -951,7 +951,7 @@ end
 local flapsUpProc = Procedure:new("RETRACT FLAPS","")
 flapsUpProc:setFlightPhase(0-kc_phase_takeoff)
 
-if kc_is_airbus == false then
+if kc_is_airbus == false and kc_has_yawdamper then
 	flapsUpProc:addItem(ProcedureItem:new("YAW DAMPER","ON",FlowItem.actorPF,0,
 		function () return sysControls.yawDamper:getStatus() == 1 end,
 		function () sysControls.yawDamper:actuate(1) end))
@@ -1208,17 +1208,17 @@ end
 local LandingCheck = Checklist:new("LANDING CHECKLIST","landing checklist","")
 LandingCheck:setFlightPhase(kc_phase_approach)
 
-LandingCheck:addItem(ChecklistItem:new("FLAPS","LANDING FLAPS %s|kc_pref_split(kc_LandingFlaps)[activeBriefings:get(\"approach:flaps\")]",FlowItem.actorPM,0,
+LandingCheck:addItem(ChecklistItem:new("FLAPS","LANDING FLAPS %s|kc_pref_split(kc_LandingFlaps)[activeBriefings:get(\"approach:flaps\")]",FlowItem.actorPM,2,
 	function () return sysControls.flapsSwitch:getStatus() >= sysControls.flaps_pos[tonumber(kc_pref_split(kc_LandingFlapsInd)[activeBriefings:get("approach:flaps")])] end,
 	function () kc_macro_set_flap(tonumber(kc_pref_split(kc_LandingFlapsInd)[activeBriefings:get("approach:flaps")])) end))
 if kc_has_retractgear == true then
-	LandingCheck:addItem(ChecklistItem:new("LANDING GEAR","DOWN",FlowItem.actorPM,0,
+	LandingCheck:addItem(ChecklistItem:new("LANDING GEAR","DOWN",FlowItem.actorPM,1,
 		function () return sysGeneral.GearSwitch:getStatus() == 1 end,
 		function () 
 			sysGeneral.GearSwitch:actuate(1) 
 		end))
 end
-LandingCheck:addItem(ChecklistItem:new("LANDING LIGHTS","ON",FlowItem.actorPM,0,
+LandingCheck:addItem(ChecklistItem:new("LANDING LIGHTS","ON",FlowItem.actorPM,1,
 	function () return sysLights.landLightGroup:getStatus() > 0 end,
 	function () kc_macro_lights(kc_phase_approach)end))
 if kc_has_autobrake then
@@ -1226,7 +1226,7 @@ if kc_has_autobrake then
 		function () return sysControls.Autobrake:getStatus() == tonumber(kc_pref_split(kc_LandingAutoBrInd)[activeBriefings:get("approach:autobrake")]) end))
 end
 if kc_has_speedbrake and kc_spdbrk_can_arm then
-	LandingCheck:addItem(ChecklistItem:new("SPEEDBRAKE","ARM",FlowItem.actorPM,0,
+	LandingCheck:addItem(ChecklistItem:new("SPEEDBRAKE","ARM",FlowItem.actorPM,1,
 	function () return sysControls.Speedbrake:getStatus() == kc_spdbrk_arm_pos end,
 	function () sysControls.Speedbrake:setValue(kc_spdbrk_arm_pos) end))
 end 

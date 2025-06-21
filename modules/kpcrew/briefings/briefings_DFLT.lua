@@ -47,6 +47,7 @@ kc_has_reversers	= true		-- Aircraft has reversers
 kc_ab_engm_norm		= 1			-- Airbus engine mode norm
 kc_ab_engm_strt		= 2			-- Airbus engine mode start
 kc_ab_engm_crnk		= 0			-- Airbus engine mode crank
+kc_has_rated_to		= false		-- Aircraft has rated thrust setting for T/O
 kc_TakeoffThrust 	= "RATED|DE-RATED|ASSUMED TEMPERATURE|RATED AND ASSUMED|DE-RATED AND ASSUMED"
 kc_has_proplever	= false		-- Aircraft has prop lever
 kc_prop_lvr_min		= 125		-- Prop lever Minimum
@@ -58,6 +59,7 @@ kc_mixture_min		= 0.4
 kc_mixture_rich		= 1
 kc_n2_after_start	= 40
 kc_has_ignition		= true		-- has ignition switch
+kc_needs_throttle_idle = true	-- Aircraft needs idle throttle on start
 
 -- === Fuel
 kc_NumTanks			= -1		-- Number of tanks from acf
@@ -167,6 +169,8 @@ kc_has_cargo_doors	= true		-- Aircraft has cargo doors
 kc_has_cockpit_door	= true		-- Aircraft has cockpit door
 kc_has_adf_radios	= true		-- Aircraft has ADF radios
 kc_has_nav_radios	= true		-- Aircraft has NAV radios
+kc_has_windows		= false		-- Aircraft has openable windows
+kc_can_load_speeds	= false		-- Aircraft can pass speeds to kpxbrief
 
 kc_has_autobrake	= true		-- Aircraft has autobrake
 kc_LandingAutoBrake = "OFF|1|2|3|MAX"
@@ -527,6 +531,11 @@ function kc_set_fuel(totalfuel)
 			set_array("sim/flightmodel/weight/m_fuel",kc_FuelTankCntrInd,0)
 		end
 	end
+end
+
+-- get MAC% CG from x-plane
+function kc_get_mac_cg()
+	return get("sim/flightmodel2/misc/cg_offset_z_mac")
 end
 
 -- set the takeoff details v-speeds, trim from the aircraft if available

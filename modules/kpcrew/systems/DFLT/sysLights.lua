@@ -180,7 +180,7 @@ function sysLights:panel_render()
 		kc_imgui_label_mcp("|",10)
 		if kc_has_dome_lights then
 			imgui.SameLine()
-			kc_imgui_toggle_button_mcp("DOME",sysLights.domeLightSwitch,10,42,25)
+			kc_imgui_toggle_button_mcp("DOME",sysLights.domeLightGroup,10,42,25)
 		end
 		if kc_has_instr_lights then
 			imgui.SameLine()
