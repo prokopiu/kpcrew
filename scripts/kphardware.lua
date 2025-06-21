@@ -108,6 +108,23 @@ elseif PLANE_ICAO == "E170" and PLANE_TAILNUMBER == "E175" then
 elseif PLANE_ICAO == "E190" and PLANE_TAILNUMBER == "E195" then
 	kh_acf_icao = "E1FF"
 
+-- X-CRAFTS ERJ FAMILIY XP12 (ER1X)
+-- ERJ 135
+-- ERJ 140
+-- ERJ 145
+-- ERJ 145XR
+-- LEGACY Business jet
+elseif PLANE_ICAO == "E135" then
+	kh_acf_icao = "ER1X"
+elseif PLANE_ICAO == "E140" then
+	kh_acf_icao = "ER1X"
+elseif PLANE_ICAO == "E145" then
+	kh_acf_icao = "ER1X"
+elseif PLANE_ICAO == "E45X" then
+	kh_acf_icao = "ER1X"
+elseif PLANE_ICAO == "E35L" then
+	kh_acf_icao = "ER1X"
+	
 -- ToLiss Airbusses
 elseif PLANE_ICAO == "A319" and PLANE_TAILNUMBER == "C-GTLS" then
 	kc_acf_icao = "A3TL"
