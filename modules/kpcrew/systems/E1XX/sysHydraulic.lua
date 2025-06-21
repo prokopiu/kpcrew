@@ -26,10 +26,10 @@ sysHydraulic.engHydPump1	= TwoStateDrefSwitch:new("enghydpump1","XCrafts/ERJ/Hyd
 sysHydraulic.engHydPump2	= TwoStateDrefSwitch:new("enghydpump2","XCrafts/ERJ/Hydraulics2",0)
 sysHydraulic.engHydPump3	= TwoStateDrefSwitch:new("enghydpump3","XCrafts/hydraulic/sys3_elec_pump_a_switch",0)
 sysHydraulic.engHydPump4	= TwoStateDrefSwitch:new("enghydpump4","XCrafts/hydraulic/sys3_elec_pump_b_switch",0)
-sysHydraulic.engHydPumpGroup:addSwitch(sysHydraulic.elecHydPump1)
-sysHydraulic.engHydPumpGroup:addSwitch(sysHydraulic.elecHydPump2)
-sysHydraulic.engHydPumpGroup:addSwitch(sysHydraulic.elecHydPump3)
-sysHydraulic.engHydPumpGroup:addSwitch(sysHydraulic.elecHydPump4)
+sysHydraulic.engHydPumpGroup:addSwitch(sysHydraulic.engHydPump1)
+sysHydraulic.engHydPumpGroup:addSwitch(sysHydraulic.engHydPump2)
+sysHydraulic.engHydPumpGroup:addSwitch(sysHydraulic.engHydPump3)
+sysHydraulic.engHydPumpGroup:addSwitch(sysHydraulic.engHydPump4)
 
 -- PTU / Transfer Pump
 sysHydraulic.PTU			= TwoStateDrefSwitch:new("ptu","XCrafts/hydraulic/PTU_switch",0)

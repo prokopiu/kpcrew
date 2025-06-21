@@ -35,20 +35,6 @@ sysLights.wheelSwitch 		= TwoStateDrefSwitch:new("wheel","XCrafts/light/inspecti
 -- Wheel well Light(s) status
 sysLights.wheelAnc 			= SimpleAnnunciator:new("wheellights","XCrafts/light/inspection_switch",0)
 
--- **RWY Turnoff Lights
--- sysLights.rwyLeftSwitch 	= TwoStateDrefSwitch:new("rwyleft",drefGenericLights,12)
--- sysLights.rwyLightGroup 	= SwitchGroup:new("runwaylights")
--- sysLights.rwyLightGroup:addSwitch(sysLights.rwyLeftSwitch)
--- runway turnoff lights
--- sysLights.runwayAnc 		= CustomAnnunciator:new("runwaylights",
--- function () 
-	-- if get(drefGenericLights,12) > 0  then
-		-- return 1
-	-- else
-		-- return 0
-	-- end
--- end)
-
 -- Emergency lighting
 sysLights.emerLights		= TwoStateDrefSwitch:new("emerlights","XCrafts/light/emerg_switch",0)
 
