@@ -805,7 +805,7 @@ end
 
 -- packs for engine start
 function kc_macro_packs_start()
-	sysAir.packSwitchGroup:setValue(sysAir.packModeOff)
+	sysAir.packSwitchGroup:setValue(0)
 	sysAir.isoValveSwitch:setValue(sysAir.isoVlvOpen)
 end
 
@@ -1311,7 +1311,7 @@ end
 
 -- wait for descending through trans lvl then execute items
 function kc_bck_transition_level(trigger)
-	if get("sim/cockpit2/gauges/indicators/altitude_ft_pilot") < activeBriefings:get("arrival:translvl")*100 then
+	if get("sim/cockpit2/gauges/indicators/altitude_ft_pilot") < activeBriefings:get("arrival:translvl") then
 		kc_macro_at_trans_lvl()
 		kc_procvar_set(trigger,false)
 		kc_speakNoText(0,"transition level                  ready for approach checklist")

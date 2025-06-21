@@ -78,7 +78,7 @@ sysMCP.togaCopilotSwitch 	= TwoStateToggleSwitch:new("togacopilot","laminar/B738
 	"laminar/B738/autopilot/right_toga_press")
 
 -- ATHR
-sysMCP.athrSwitch 			= TwoStateToggleSwitch:new("athr","laminar/B738/autopilot/autothrottle_status1",0,
+sysMCP.athrSwitch 			= TwoStateToggleSwitch:new("athr","laminar/B738/autopilot/autothrottle_arm_pos",0,
 	"laminar/B738/autopilot/autothrottle_arm_toggle")
 
 -- CRS 1&2

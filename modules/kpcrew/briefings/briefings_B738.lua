@@ -18,6 +18,10 @@ kc_LandingAutoBrInd = "0|1|2|3|4|5"
 kc_LandingPacks 	= "OFF|ON|UNDER PRESSURIZED"
 kc_Numflap_detents	=  8 		-- Number of flap detents
 
+kc_can_load_speeds	= true		-- Aircraft can pass speeds to kpxbrief
+kc_fuel_ld_button	= false		-- Load the aircraft fuel from kpxbrief	
+kc_pld_ld_button	= false		-- Load the aircraft payload from kpxbrief	
+
 -- aircraft specs, weights in KG
 -- MAX ZERO FUEL WEIGHT:   62732 KG - 138300 LBS
 -- MAX TAKEOFF WEIGHT:     79016 KG - 174200 LBS
@@ -25,8 +29,7 @@ kc_Numflap_detents	=  8 		-- Number of flap detents
 -- MAX FUEL CAPACITY:      20900 KG -  46077 LBS
 -- FUEL FLOW PER HOUR:      2187 KG -   4825 LBS
 
-kc_fuel_ld_button	= false		-- Load the aircraft fuel from kpxbrief	
-kc_pld_ld_button	= false		-- Load the aircraft payload from kpxbrief	
+
 
 -- kc_DOW 				= 41510  -- Dry Operating Weight (aka OEW)
 -- kc_MZFW  			= 62732  -- Maximum Zero Fuel Weight
@@ -110,11 +113,12 @@ kc_speeds_vlo		= 210		-- Maximum Gear Extended Speed Vlo 210 KIAS
 
 -- set payload (does not work in all addons and sim versions)
 function kc_set_payload()
-	-- only XP11
-	-- if activeBckVars:get("general:simversion") < 12000 then
-		local payload = activeBriefings:get("flight:toweight")
-		set("sim/flightmodel/weight/m_fixed", payload)
-	-- end
+	local payload = activeBriefings:get("flight:payload")
+	set("sim/flightmodel/weight/m_fixed", payload)
+end
+
+-- set fuel (does not work in all addons and sim versions)
+function kc_set_fuel()
 	set("sim/aircraft/weight/acf_m_fuel_tot",20000)
 	local fgoal = activeBriefings:get("flight:takeoffFuel")
 	set("sim/flightmodel/weight/m_fuel1",math.min(kc_MFL1,fgoal/2))
@@ -139,10 +143,12 @@ end
 function kc_set_landing_details()
 	activeBriefings:set("approach:vref",get("laminar/B738/FMS/vref"))
 	activeBriefings:set("approach:vapp",get("laminar/B738/FMS/vref")+get("laminar/B738/FMS/approach_wind_corr"))
-	local ldgflaps = get("laminar/B738/FMS/approach_flaps")
-	if ldgflaps == 30 then
-		activeBriefings:set("approach:flaps",1)
-	elseif ldgflaps == 40 then
-		activeBriefings:set("approach:flaps",2)
-	end
+	activeBriefings:set("approach:altnvref",get("laminar/B738/FMS/vref"))
+	activeBriefings:set("approach:altnvapp",get("laminar/B738/FMS/vref")+get("laminar/B738/FMS/approach_wind_corr"))
+	-- local ldgflaps = get("laminar/B738/FMS/approach_flaps")
+	-- if ldgflaps == 30 then
+		-- activeBriefings:set("approach:flaps",1)
+	-- elseif ldgflaps == 40 then
+		-- activeBriefings:set("approach:flaps",2)
+	-- end
 end
