@@ -21,7 +21,7 @@ sysControls = require("kpcrew.systems.DFLT.sysControls")
 logMsg("ADC3 sysControls")
 
 sysControls.flaps_pos = {[0] =   0, [1] =  0.25, [2] =     0.5, [3] = 0.75, [4] = 1,      [5] = 1, [6] = 1,       [7] = 1, [8] = 1}
-sysControls.flaps_spd = {[0] = 134, [1] =   134, [2] =    99, [3] =   96,   [4] = 96,     [5] =   96, [6] =  96,    [7] =   96, [8] = 96}
+sysControls.flaps_spd = {[0] = 109, [1] =   109, [2] =    99, [3] =   96,   [4] = 96,     [5] =   96, [6] =  96,    [7] =   96, [8] = 96}
 sysControls.flaps_name= {[0] = "UP",[1] = "25%", [2] = "50%", [3] = "75%",  [4] = "FULL", [5] =   "FULL", [6] =  "FULL", [7] =   "FULL", [8] = "35"}
 
 return sysControls

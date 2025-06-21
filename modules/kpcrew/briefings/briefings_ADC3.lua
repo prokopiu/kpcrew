@@ -13,7 +13,7 @@ kc_is_turboprop		= true		-- Aircraft is turbo prop
 -- === Electric system
 kc_has_apu			= false		-- Aircraft has an APU
 kc_has_gpu			= false		-- Aircraft has GPU connection
-kc_has_inv_ess_bus	= false		-- Aircraft has inverters and essential busses
+kc_has_inv_ess_bus	= true		-- Aircraft has inverters and essential busses
 kc_has_bus_ties		= false		-- Aircraft has bus ties for AC & DC
 kc_has_standby_pwr	= false		-- Aircraft has standby power
 
@@ -36,12 +36,13 @@ kc_has_proplever	= false		-- Aircraft has prop lever
 kc_has_mixlever		= false		-- Airctaft has mixture lever
 kc_n2_after_start	= 27
 kc_has_ignition		= true		-- has ignition switch
+kc_needs_throttle_idle = false	-- Aircraft needs idle throttle on start
 
 -- === Fuel
-kc_has_fuel_pumps   = true		-- Aircraft has switchable fuel pumps
+kc_has_fuel_pumps   = false		-- Aircraft has switchable fuel pumps
 kc_has_fuel_xfeed	= false		-- Aircraft has fuel crossfeed
 kc_fuel_ld_button	= false		-- Load the aircraft fuel from kpxbrief
-kc_has_fuel_select	= true		-- Aircraft has fuel tank selector
+kc_has_fuel_select	= false		-- Aircraft has fuel tank selector
 
 -- === Hydraulics
 kc_has_hyd_elec_pmps= false		-- Aircraft has electric hydraulic pumps
