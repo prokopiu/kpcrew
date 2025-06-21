@@ -1,5 +1,5 @@
 --[[
-	*** KPBRIEF 1.0
+	*** KPxBRIEF 1.0
 	Simbrief based briefing on steroids
 	Kosta Prokopiu, May 2025
 --]]
@@ -9,7 +9,7 @@ require "kpcrew.genutils"
 kc_VERSION = "2.3-alpha11"
 kc_simversion = get("sim/version/xplane_internal_version")
 
-logMsg ( "FWL: ** Starting KPBrief version " .. kc_VERSION .. " on XP " .. kc_simversion .. " **" )
+logMsg ( "FWL: ** Starting KPxBrief version " .. kc_VERSION .. " on XP " .. kc_simversion .. " **" )
 
 local color_white = 0xFFCCCCCC
 local color_orange = 0xFF1b9af8
@@ -103,6 +103,23 @@ elseif PLANE_ICAO == "E170" and PLANE_TAILNUMBER == "E175" then
 	kc_acf_icao = "E1FF"
 elseif PLANE_ICAO == "E190" and PLANE_TAILNUMBER == "E195" then
 	kc_acf_icao = "E1FF"
+
+-- X-CRAFTS ERJ FAMILIY XP12 (ER1X)
+-- ERJ 135
+-- ERJ 140
+-- ERJ 145
+-- ERJ 145XR
+-- LEGACY Business jet
+elseif PLANE_ICAO == "E135" then
+	kc_acf_icao = "ER1X"
+elseif PLANE_ICAO == "E140" then
+	kc_acf_icao = "ER1X"
+elseif PLANE_ICAO == "E145" then
+	kc_acf_icao = "ER1X"
+elseif PLANE_ICAO == "E45X" then
+	kc_acf_icao = "ER1X"
+elseif PLANE_ICAO == "E35L" then
+	kc_acf_icao = "ER1X"
 	
 -- ToLiss Airbusses
 elseif PLANE_ICAO == "A319" and PLANE_TAILNUMBER == "C-GTLS" then
@@ -146,13 +163,13 @@ kb_font_scale = 1.0
 -- initialize briefing window
 function kb_init_brief_window()
     local wndWidth =  950 * kb_font_scale
-    local wndHeight = 950 * kb_font_scale
+    local wndHeight = 930 * kb_font_scale
     fontScale1 = 1
     angle=1
     fontScale = 1
 	
     kb_brief_wnd = float_wnd_create(wndWidth, wndHeight, 1, true)
-    float_wnd_set_title(kb_brief_wnd, "KPBrief " .. kc_VERSION)
+    float_wnd_set_title(kb_brief_wnd, "KPxBrief " .. kc_VERSION)
     float_wnd_set_imgui_builder(kb_brief_wnd, "kb_brief_builder")
     float_wnd_set_onclose(kb_brief_wnd, "kb_hide_brief_wnd")
 end
@@ -316,15 +333,14 @@ function kb_extract_simbrief_ofp()
 	activeBriefings:set("departure:transalt",handler.root.OFP.origin.trans_alt)
 	activeBriefings:set("departure:initAlt",handler.root.OFP.general.initial_altitude)
 	-- 
-	local runways = handler.root.OFP.tlr.takeoff.runway
-	-- print("\nManual print")
-    for i=1,#runways do
-		-- print(runways[i].identifier)
-		if runways[i].identifier == handler.root.OFP.origin.plan_rwy then
-			-- print(runways[i].magnetic_course)
-			activeBriefings:set("departure:initHeading",runways[i].magnetic_course)
-			activeBriefings:set("departure:nav1Course",runways[i].magnetic_course)
-			activeBriefings:set("departure:nav2Course",runways[i].magnetic_course)
+	if handler.root.OFP.tlr.takeoff ~= nil then
+		local runways = handler.root.OFP.tlr.takeoff.runway
+		for i=1,#runways do
+			if runways[i].identifier == handler.root.OFP.origin.plan_rwy then
+				activeBriefings:set("departure:initHeading",runways[i].magnetic_course)
+				activeBriefings:set("departure:nav1Course",runways[i].magnetic_course)
+				activeBriefings:set("departure:nav2Course",runways[i].magnetic_course)
+			end
 		end
 	end
 	origtranslvl = handler.root.OFP.origin.trans_level
@@ -349,18 +365,22 @@ function kb_extract_simbrief_ofp()
 	desttransalt = handler.root.OFP.destination.trans_alt
 	altntransalt = handler.root.OFP.alternate.trans_alt
 	-- 
-	local runways = handler.root.OFP.tlr.landing.runway
-	-- print("\nManual print")
-    for i=1,#runways do
-		-- print(runways[i].identifier)
-		if runways[i].identifier == handler.root.OFP.destination.plan_rwy then
-			-- print(runways[i].magnetic_course)
-			activeBriefings:set("approach:nav1Course",runways[i].magnetic_course)
-			activeBriefings:set("approach:nav2Course",runways[i].magnetic_course)
-			activeBriefings:set("approach:gaheading",runways[i].magnetic_course)
-			activeBriefings:set("approach:nav1Freq",runways[i].ils_frequency)
-		end
-	end	
+	if handler.root.OFP.tlr.landing ~= nil then
+		local runways = handler.root.OFP.tlr.landing.runway
+		for i=1,#runways do
+			if runways[i].identifier == handler.root.OFP.destination.plan_rwy then
+				activeBriefings:set("approach:nav1Course",runways[i].magnetic_course)
+				activeBriefings:set("approach:nav2Course",runways[i].magnetic_course)
+				activeBriefings:set("approach:gaheading",runways[i].magnetic_course)
+				-- logMsg(">> " .. type(runways[i].ils_frequency[1]))
+				if runways[i].ils_frequency[1] == nil then
+					activeBriefings:set("approach:nav1Freq","---.--")
+				else
+					activeBriefings:set("approach:nav1Freq",runways[i].ils_frequency)
+				end
+			end
+		end	
+	end
 	
 -- general
 	activeBriefings:set("arrival:altnElevation",handler.root.OFP.alternate.elevation)
@@ -1079,29 +1099,7 @@ function kb_brief_builder(kb_brief_wnd, x, y)
 							imgui.PopID()
 							imgui.PopStyleVar()
 						end
-						
-						-- imgui.Separator()
-
-						
-						-- imgui.PushStyleColor(imgui.constant.Col.Text, color_white)
-							-- imgui.TextUnformatted("EXTRA FUEL (" .. wunit .. "):")
-						-- imgui.PopStyleColor()
-						-- imgui.SameLine()
-						-- imgui.PushItemWidth(40*kb_font_scale);
-						-- imgui.PushID("pilotextra:")
-						-- imgui.PushStyleColor(imgui.constant.Col.Text, color_orange)
-							-- local changed, textin = imgui.InputInt("", activeBriefings:get("flight:pilotextra"), 0)
-							-- if changed then
-								-- activeBriefings:set("flight:pilotextra",textin)
-							-- end
-						-- imgui.PopStyleColor()
-						-- imgui.PopItemWidth()
-						-- imgui.PopID()
-						
-
-
-						-- imgui.Separator()
-						
+									
 						imgui.PushStyleColor(imgui.constant.Col.Text, color_white)
 							imgui.TextUnformatted("AZFW :")
 						imgui.PopStyleColor()
@@ -1149,6 +1147,15 @@ function kb_brief_builder(kb_brief_wnd, x, y)
 						imgui.PushStyleColor(imgui.constant.Col.Text, color_green)
 							imgui.TextUnformatted(string.format("%06.0f",kc_get_MaxFuel()))
 						imgui.PopStyleColor()
+
+
+						imgui.PushStyleColor(imgui.constant.Col.Text, color_white)
+							imgui.TextUnformatted("MAC CG:")
+						imgui.PopStyleColor()
+						imgui.SameLine()
+						imgui.PushStyleColor(imgui.constant.Col.Text, color_green)
+							imgui.TextUnformatted(string.format("%6.2f",kc_get_mac_cg()))
+						imgui.PopStyleColor()
 						
 						imgui.Separator()
 
@@ -1159,30 +1166,6 @@ function kb_brief_builder(kb_brief_wnd, x, y)
 						imgui.PushStyleColor(imgui.constant.Col.Text, color_green)
 							imgui.TextUnformatted(string.format("%06.0f",activeBriefings:get("flight:paxweight")))
 						imgui.PopStyleColor()
-
-						-- imgui.PushStyleColor(imgui.constant.Col.Text, color_white)
-							-- imgui.TextUnformatted("MZFW " .. wunit .. "   :")
-						-- imgui.PopStyleColor()
-						-- imgui.SameLine()
-						-- imgui.PushStyleColor(imgui.constant.Col.Text, color_green)
-							-- imgui.TextUnformatted(activeBriefings:get("flight:maxzfw"))
-						-- imgui.PopStyleColor()
-						
-						-- imgui.PushStyleColor(imgui.constant.Col.Text, color_white)
-							-- imgui.TextUnformatted("MTOW " .. wunit .. "   :")
-						-- imgui.PopStyleColor()
-						-- imgui.SameLine()
-						-- imgui.PushStyleColor(imgui.constant.Col.Text, color_green)
-							-- imgui.TextUnformatted(activeBriefings:get("flight:maxtow"))
-						-- imgui.PopStyleColor()
-
-						-- imgui.PushStyleColor(imgui.constant.Col.Text, color_white)
-							-- imgui.TextUnformatted("MLDW " .. wunit .. "   :")
-						-- imgui.PopStyleColor()
-						-- imgui.SameLine()
-						-- imgui.PushStyleColor(imgui.constant.Col.Text, color_green)
-							-- imgui.TextUnformatted(activeBriefings:get("flight:maxldw"))
-						-- imgui.PopStyleColor()
 
 						imgui.PushStyleColor(imgui.constant.Col.Text, color_white)
 							imgui.TextUnformatted("MIN DIV:")
@@ -1324,7 +1307,7 @@ function kb_brief_builder(kb_brief_wnd, x, y)
 						imgui.PopStyleColor()
 						imgui.SameLine()
 						imgui.PushStyleColor(imgui.constant.Col.Text, color_white)
-							imgui.TextUnformatted("MAX:")
+							imgui.TextUnformatted("END:")
 						imgui.PopStyleColor()
 						imgui.SameLine()
 						imgui.PushStyleColor(imgui.constant.Col.Text, color_orange)
@@ -1777,9 +1760,6 @@ function kb_brief_builder(kb_brief_wnd, x, y)
 						imgui.PopItemWidth()
 						imgui.PopID()
 
-						-- imgui.PushStyleColor(imgui.constant.Col.Text, 0xFFCCCCCC)
-							-- imgui.TextUnformatted("VR        :")
-						-- imgui.PopStyleColor()
 						imgui.SameLine()
 						imgui.PushItemWidth(30*kb_font_scale);
 						imgui.PushID("takeoff vr:")
@@ -1792,9 +1772,6 @@ function kb_brief_builder(kb_brief_wnd, x, y)
 						imgui.PopItemWidth()
 						imgui.PopID()
 
-						-- imgui.PushStyleColor(imgui.constant.Col.Text, 0xFFCCCCCC)
-							-- imgui.TextUnformatted("V2        :")
-						-- imgui.PopStyleColor()
 						imgui.SameLine()
 						imgui.PushItemWidth(30*kb_font_scale);
 						imgui.PushID("takeoff v2:")
@@ -1806,6 +1783,17 @@ function kb_brief_builder(kb_brief_wnd, x, y)
 						imgui.PopStyleColor()
 						imgui.PopItemWidth()
 						imgui.PopID()
+						
+						if kc_can_load_speeds == true then
+							imgui.SameLine()
+							imgui.PushStyleVar_2(imgui.constant.StyleVar.FramePadding, 3, 0);
+							imgui.PushID("ldvspeeds")
+							if imgui.Button("LD", 20*kb_font_scale, 20*kb_font_scale) then
+								kc_set_takeoff_details()
+							end						
+							imgui.PopID()
+							imgui.PopStyleVar()
+						end
 
 						imgui.PushStyleColor(imgui.constant.Col.Text, 0xFFCCCCCC)
 							imgui.TextUnformatted("INIT HDG  :")
@@ -2138,9 +2126,6 @@ function kb_brief_builder(kb_brief_wnd, x, y)
 						imgui.PopItemWidth()
 						imgui.PopID()
 
-						-- imgui.PushStyleColor(imgui.constant.Col.Text, 0xFFCCCCCC)
-							-- imgui.TextUnformatted("VAPP      :")
-						-- imgui.PopStyleColor()
 						imgui.SameLine()
 						imgui.PushItemWidth(30*kb_font_scale);
 						imgui.PushID("vapp:")
@@ -2152,7 +2137,18 @@ function kb_brief_builder(kb_brief_wnd, x, y)
 						imgui.PopStyleColor()
 						imgui.PopItemWidth()
 						imgui.PopID()
-
+						
+						if kc_can_load_speeds == true then
+							imgui.SameLine()
+							imgui.PushStyleVar_2(imgui.constant.StyleVar.FramePadding, 3, 0);
+							imgui.PushID("ldlanding")
+							if imgui.Button("LD", 20*kb_font_scale, 20*kb_font_scale) then
+								kc_set_landing_details()
+							end						
+							imgui.PopID()
+							imgui.PopStyleVar()
+						end
+						
 						imgui.PushStyleColor(imgui.constant.Col.Text, 0xFFCCCCCC)
 							imgui.TextUnformatted("FLAPS     :")
 						imgui.PopStyleColor()
@@ -2631,9 +2627,6 @@ function kb_brief_builder(kb_brief_wnd, x, y)
 						imgui.PopItemWidth()
 						imgui.PopID()
 
-						-- imgui.PushStyleColor(imgui.constant.Col.Text, 0xFFCCCCCC)
-							-- imgui.TextUnformatted("VAPP      :")
-						-- imgui.PopStyleColor()
 						imgui.SameLine()
 						imgui.PushItemWidth(30*kb_font_scale);
 						imgui.PushID("altnvapp:")
@@ -2646,6 +2639,17 @@ function kb_brief_builder(kb_brief_wnd, x, y)
 						imgui.PopItemWidth()
 						imgui.PopID()
 
+						if kc_can_load_speeds == true then
+							imgui.SameLine()
+							imgui.PushStyleVar_2(imgui.constant.StyleVar.FramePadding, 3, 0);
+							imgui.PushID("altnldlanding")
+							if imgui.Button("LD", 20*kb_font_scale, 20*kb_font_scale) then
+								kc_set_landing_details()
+							end						
+							imgui.PopID()
+							imgui.PopStyleVar()
+						end
+						
 						imgui.PushStyleColor(imgui.constant.Col.Text, 0xFFCCCCCC)
 							imgui.TextUnformatted("FLAPS     :")
 						imgui.PopStyleColor()
@@ -3066,55 +3070,25 @@ function kb_brief_builder(kb_brief_wnd, x, y)
 							imgui.TextUnformatted(tostring(kc_has_reversers))
 						imgui.PopStyleColor()
 						
-												imgui.PushStyleColor(imgui.constant.Col.Text, 0xFFCCCCCC)
-							imgui.TextUnformatted("CRS 1   :")
-						imgui.PopStyleColor()
-						imgui.SameLine()
-						imgui.PushItemWidth(30*kb_font_scale);
-						imgui.PushID("takeoff crs1:")
-						imgui.PushStyleColor(imgui.constant.Col.Text, 0xFF1b9af8)
-							local changed, textin = imgui.InputInt("", activeBriefings:get("departure:nav1Course"), 0)
-							if changed then
-								activeBriefings:set("departure:nav1Course",textin)
-							end
-						imgui.PopStyleColor()
-						imgui.PopItemWidth()
-						imgui.PopID()
-						
-						imgui.PushStyleColor(imgui.constant.Col.Text, 0xFFCCCCCC)
-							imgui.TextUnformatted("CRS 2   :")
-						imgui.PopStyleColor()
-						imgui.SameLine()
-						imgui.PushItemWidth(30*kb_font_scale);
-						imgui.PushID("takeoff crs2:")
-						imgui.PushStyleColor(imgui.constant.Col.Text, 0xFF1b9af8)
-							local changed, textin = imgui.InputInt("", activeBriefings:get("departure:nav2Course"), 0)
-							if changed then
-								activeBriefings:set("departure:nav2Course",textin)
-							end
-						imgui.PopStyleColor()
-						imgui.PopItemWidth()
-						imgui.PopID()
-
-						imgui.PushStyleColor(imgui.constant.Col.Text, 0xFFCCCCCC)
-							imgui.TextUnformatted("A/P Mode:")
-						imgui.PopStyleColor()
-						imgui.SameLine()
-						imgui.PushItemWidth(85*kb_font_scale);
-						imgui.PushID("takeoff forced:")
-						imgui.PushStyleColor(imgui.constant.Col.Text, 0xFF1b9af8)
-							if imgui.BeginCombo("", kc_split(kc_TakeoffApModes,"|")[activeBriefings:get("takeoff:apMode")]) then
-								local options = kc_split(kc_TakeoffApModes,"|")
-								for i = 1, #options do
-									if imgui.Selectable(options[i], activeBriefings:get("takeoff:apMode") == i) then
-										activeBriefings:set("takeoff:apMode",i)
-									end
-								end
-							imgui.EndCombo()
-							end
-						imgui.PopStyleColor()
-						imgui.PopItemWidth()
-						imgui.PopID()
+						-- imgui.PushStyleColor(imgui.constant.Col.Text, 0xFFCCCCCC)
+							-- imgui.TextUnformatted("A/P Mode:")
+						-- imgui.PopStyleColor()
+						-- imgui.SameLine()
+						-- imgui.PushItemWidth(85*kb_font_scale);
+						-- imgui.PushID("takeoff forced:")
+						-- imgui.PushStyleColor(imgui.constant.Col.Text, 0xFF1b9af8)
+							-- if imgui.BeginCombo("", kc_split(kc_TakeoffApModes,"|")[activeBriefings:get("takeoff:apMode")]) then
+								-- local options = kc_split(kc_TakeoffApModes,"|")
+								-- for i = 1, #options do
+									-- if imgui.Selectable(options[i], activeBriefings:get("takeoff:apMode") == i) then
+										-- activeBriefings:set("takeoff:apMode",i)
+									-- end
+								-- end
+							-- imgui.EndCombo()
+							-- end
+						-- imgui.PopStyleColor()
+						-- imgui.PopItemWidth()
+						-- imgui.PopID()
 
 					imgui.EndChild()
 				imgui.NextColumn()
@@ -3188,41 +3162,25 @@ function kb_brief_builder(kb_brief_wnd, x, y)
 						imgui.PopItemWidth()
 						imgui.PopID()
 
-						imgui.PushStyleColor(imgui.constant.Col.Text, 0xFFCCCCCC)
-							imgui.TextUnformatted("DH          :")
-						imgui.PopStyleColor()
-						imgui.SameLine()
-						imgui.PushItemWidth(30*kb_font_scale);
-						imgui.PushID("depdecisionheight:")
-						imgui.PushStyleColor(imgui.constant.Col.Text, 0xFF1b9af8)
-							local changed, textin = imgui.InputInt("", activeBriefings:get("departure:decision"), 0)
-							if changed then
-								activeBriefings:set("departure:decision",textin)
-							end
-						imgui.PopStyleColor()
-						imgui.PopItemWidth()
-						imgui.PopID()
-
-
-						imgui.PushStyleColor(imgui.constant.Col.Text, 0xFFCCCCCC)
-							imgui.TextUnformatted("RETURN      :")
-						imgui.PopStyleColor()
-						imgui.SameLine()
-						imgui.PushItemWidth(92*kb_font_scale);
-						imgui.PushID("takeoff forced:")
-						imgui.PushStyleColor(imgui.constant.Col.Text, 0xFF1b9af8)
-							if imgui.BeginCombo("", kc_split(kc_DEP_forced_return,"|")[activeBriefings:get("takeoff:forcedReturn")]) then
-								local options = kc_split(kc_DEP_forced_return,"|")
-								for i = 1, #options do
-									if imgui.Selectable(options[i], activeBriefings:get("takeoff:forcedReturn") == i) then
-										activeBriefings:set("takeoff:forcedReturn",i)
-									end
-								end
-							imgui.EndCombo()
-							end
-						imgui.PopStyleColor()
-						imgui.PopItemWidth()
-						imgui.PopID()
+						-- imgui.PushStyleColor(imgui.constant.Col.Text, 0xFFCCCCCC)
+							-- imgui.TextUnformatted("RETURN      :")
+						-- imgui.PopStyleColor()
+						-- imgui.SameLine()
+						-- imgui.PushItemWidth(92*kb_font_scale);
+						-- imgui.PushID("takeoff forced:")
+						-- imgui.PushStyleColor(imgui.constant.Col.Text, 0xFF1b9af8)
+							-- if imgui.BeginCombo("", kc_split(kc_DEP_forced_return,"|")[activeBriefings:get("takeoff:forcedReturn")]) then
+								-- local options = kc_split(kc_DEP_forced_return,"|")
+								-- for i = 1, #options do
+									-- if imgui.Selectable(options[i], activeBriefings:get("takeoff:forcedReturn") == i) then
+										-- activeBriefings:set("takeoff:forcedReturn",i)
+									-- end
+								-- end
+							-- imgui.EndCombo()
+							-- end
+						-- imgui.PopStyleColor()
+						-- imgui.PopItemWidth()
+						-- imgui.PopID()
 						
 					imgui.EndChild()
 				imgui.Columns()
