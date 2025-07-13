@@ -109,4 +109,5 @@ activeSOP:getFlow(proc_ind_shutdownProc):addItem(ProcedureItem:new("EMER LTS","O
 	
 return SOP_A3TL
 
--- A339 ext power on 
+-- A339 A/Brk MAX not set
+-- A339 T/O spoilers not armed

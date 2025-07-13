@@ -61,19 +61,27 @@ else
 	sysElectric.gpuConnect 		= TwoStateCustomSwitch:new("GPU","AirbusFBW/EnableExternalPower",0,
 	function ()
 		set("AirbusFBW/EnableExternalPower",1)
-		set("AirbusFBW/EnableExternalPowerB",1)
+		if PLANE_ICAO == "A339" then
+			set("AirbusFBW/EnableExternalPowerB",1)
+		end
 	end,
 	function ()
 		set("AirbusFBW/EnableExternalPower",0)
-		set("AirbusFBW/EnableExternalPowerB",0)
+		if PLANE_ICAO == "A339" then
+			set("AirbusFBW/EnableExternalPowerB",0)
+		end
 	end,
 	function ()
 		if get("AirbusFBW/EnableExternalPower") == 0 then
 			set("AirbusFBW/EnableExternalPower",1)
-			set("AirbusFBW/EnableExternalPowerB",1)
+			if PLANE_ICAO == "A339" then
+				set("AirbusFBW/EnableExternalPowerB",1)
+			end
 		else
 			set("AirbusFBW/EnableExternalPower",0)
-			set("AirbusFBW/EnableExternalPowerB",0)
+			if PLANE_ICAO == "A339" then
+				set("AirbusFBW/EnableExternalPowerB",0)
+			end
 		end
 	end,
 	function ()
@@ -92,15 +100,15 @@ if PLANE_ICAO ~= "A339" and PLANE_ICAO ~= "A346" then
 	sysElectric.gpuGenBusGroup:addSwitch(sysElectric.gpuGenBus1)
 else
 	if PLANE_ICAO == "A339" then
-		sysElectric.gpuGenBus1 		= TwoStateCmdSwitch:new("gpubus1","AirbusFBW/ExtPowOHPArray",-1,
-			"toliss_airbus/eleccommands/ExtPowOn","toliss_airbus/eleccommands/ExtPowOff","toliss_airbus/eleccommands/ExtPowToggle")
+		sysElectric.gpuGenBus1 		= TwoStateDrefSwitch:new("gpubus1","AirbusFBW/ElecOHPArray",15)
 		sysElectric.gpuGenBusGroup:addSwitch(sysElectric.gpuGenBus1)
-	else
+		sysElectric.gpuGenBus2 		= TwoStateDrefSwitch:new("gpubus2","AirbusFBW/ElecOHPArray",3)
+		sysElectric.gpuGenBusGroup:addSwitch(sysElectric.gpuGenBus2)
+	end
+	if PLANE_ICAO == "A346" then
 		sysElectric.gpuGenBus1 		= TwoStateCmdSwitch:new("gpubus1","AirbusFBW/ExtPowOHPArray",-1,
 			"toliss_airbus/eleccommands/ExtPowAOn","toliss_airbus/eleccommands/ExtPowAOff","toliss_airbus/eleccommands/ExtPowAToggle")
 		sysElectric.gpuGenBusGroup:addSwitch(sysElectric.gpuGenBus1)
-	end
-	if PLANE_ICAO == "A346" then
 		sysElectric.gpuGenBus2 		= TwoStateCmdSwitch:new("gpubus2","AirbusFBW/ExtPowOHPArray",1,
 		"toliss_airbus/eleccommands/ExtPowBOn","toliss_airbus/eleccommands/ExtPowBOff","toliss_airbus/eleccommands/ExtPowBToggle")
 		sysElectric.gpuGenBusGroup:addSwitch(sysElectric.gpuGenBus2)

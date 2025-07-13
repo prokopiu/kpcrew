@@ -23,6 +23,12 @@ logMsg("A3TL sysEFIS")
 -- MINS SET
 sysEFIS.minsPilot 			= InopSwitch:new("minspilot")
 
+-- MTRS
+sysEFIS.mtrsPilot 			= TwoStateDrefSwitch:new("mtrspilot","AirbusFBW/MetricAlt",0)
+
+-- FPV
+sysEFIS.fpvPilot 			= TwoStateDrefSwitch:new("fpvpilot","AirbusFBW/HDGTRKmode",0)
+
 -- WX 
 sysEFIS.wxrPilot 			= TwoStateCustomSwitch:new("wxrpilot","AirbusFBW/WXPowerSwitch",0,
 	function ()

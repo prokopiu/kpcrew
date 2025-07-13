@@ -15,19 +15,21 @@ logMsg("A3TL sysMacros")
 
 -- custom cold & dark activities
 function kc_macro_custom_cold_dark()
+
+	logMsg("kc_macro_custom_cold_dark A3TL")
 	if PLANE_ICAO == "A339" or PLANE_ICAO == "A346" then
 		set_array("AirbusFBW/ElecOHPArray",16,0)
 		set_array("AirbusFBW/ElecOHPArray",18,0)
 		set_array("AirbusFBW/ElecOHPArray",8,0)
 		set_array("AirbusFBW/ElecOHPArray",9,0)
 	end	
-	if PLANE_ICAO == "A339" or PLANE_ICAO == "A346" then
-		command_once("toliss_airbus/eleccommands/ExtPowAOff") 
-		command_once("toliss_airbus/eleccommands/ExtPowBOff") 
-	else
-		command_once("toliss_airbus/eleccommands/ExtPowOff") 
-	end
-	set("AirbusFBW/EnableExternalPower",0)
+	-- if PLANE_ICAO == "A339" or PLANE_ICAO == "A346" then
+		-- command_once("toliss_airbus/eleccommands/ExtPowAOff") 
+		-- command_once("toliss_airbus/eleccommands/ExtPowBOff") 
+	-- else
+		-- command_once("toliss_airbus/eleccommands/ExtPowOff") 
+	-- end
+	-- set("AirbusFBW/EnableExternalPower",0)
 	
 	set("AirbusFBW/RMP1Switch",0)
 	set("AirbusFBW/RMP2Switch",0)
@@ -87,6 +89,10 @@ function kc_macro_custom_cold_dark()
 
 	set("AirbusFBW/APUMaster",0)
 	set("AirbusFBW/APUStarter",0)
+	
+	set_array("AirbusFBW/ADIRUSwitchArray",0,0)
+	set_array("AirbusFBW/ADIRUSwitchArray",1,0)
+	set_array("AirbusFBW/ADIRUSwitchArray",2,0)
 	
 end
 
@@ -654,26 +660,10 @@ end
 
 -- IRS off 0=OFF, 1=NAV, 2=ATT
 function kc_macro_set_irs(mode)
-	command_once("toliss_airbus/adirucommands/ADIRU1SwitchDown")
-	command_once("toliss_airbus/adirucommands/ADIRU1SwitchDown")
-	command_once("toliss_airbus/adirucommands/ADIRU2SwitchDown")
-	command_once("toliss_airbus/adirucommands/ADIRU2SwitchDown")
-	command_once("toliss_airbus/adirucommands/ADIRU3SwitchDown")
-	command_once("toliss_airbus/adirucommands/ADIRU3SwitchDown")
-	if mode == 0 then -- OFF
-		-- do nothing see above
-	elseif mode == 1 then -- ALIGN
-		command_once("toliss_airbus/adirucommands/ADIRU1SwitchUp")
-		command_once("toliss_airbus/adirucommands/ADIRU2SwitchUp")
-		command_once("toliss_airbus/adirucommands/ADIRU3SwitchUp")
-	elseif mode == 2 then -- NAV 
-		command_once("toliss_airbus/adirucommands/ADIRU1SwitchUp")
-		command_once("toliss_airbus/adirucommands/ADIRU1SwitchUp")
-		command_once("toliss_airbus/adirucommands/ADIRU2SwitchUp")
-		command_once("toliss_airbus/adirucommands/ADIRU2SwitchUp")
-		command_once("toliss_airbus/adirucommands/ADIRU3SwitchUp")		
-		command_once("toliss_airbus/adirucommands/ADIRU3SwitchUp")
-	end
+logMsg("irs "..mode)
+	set_array("AirbusFBW/ADIRUSwitchArray",0,mode)
+	set_array("AirbusFBW/ADIRUSwitchArray",1,mode)
+	set_array("AirbusFBW/ADIRUSwitchArray",2,mode)
 end
 
 -- ground objects 1=on 0=off

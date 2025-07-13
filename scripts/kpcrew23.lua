@@ -134,8 +134,8 @@ elseif PLANE_ICAO == "A20N" and PLANE_TAILNUMBER == "C-GTLT" then
 	kc_acf_icao = "A3TL"
 elseif PLANE_ICAO == "A321" then
 	kc_acf_icao = "A3TL"
--- elseif PLANE_ICAO == "A339" then
-	-- kc_acf_icao = "A3TL"
+elseif PLANE_ICAO == "A339" then
+	kc_acf_icao = "A3TL"
 -- elseif PLANE_ICAO == "A346" then
 	-- kc_acf_icao = "A3TL"
 	

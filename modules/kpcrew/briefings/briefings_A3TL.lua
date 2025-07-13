@@ -92,6 +92,10 @@ kc_pld_ld_button	= true		-- Load the aircraft payload from kpxbrief
 -- === MCP & autopilot
 kc_has_irs			= true		-- Aircraft has IRS that must be aligned
 kc_NumIRS			= 3			-- Number of IRS systems
+kc_irs_off			= 0
+kc_irs_align		= 1
+kc_irs_nav			= 1
+kc_irs_att			= 2
 kc_has_yawdamper	= false		-- Aircraft has switchable yaw damper
 kc_has_ils			= true		-- Aircraft has ILS receiver
 kc_has_rnav_cap		= true		-- Aircraft has rnav capability
@@ -101,6 +105,8 @@ kc_has_flch_ias		= true		-- Aircraft has FLCH/IAS mode
 kc_has_altsel_mode	= false		-- Aircraft needs atlsel to be selected
 kc_has_radar_alt	= true		-- Aircraft has radar altitude
 kc_has_dh_minimum	= true		-- Aircraft has decicion height
+kc_has_meter_pfd	= true		-- Aircraft can show meters in PFD
+kc_has_mach_switch	= true		-- Aircraft can switch between ias mach
 
 -- === other options
 kc_has_ground_obj	= true		-- Aircraft has its own ground objects (chocks etc)
