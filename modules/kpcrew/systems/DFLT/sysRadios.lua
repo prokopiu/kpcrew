@@ -90,6 +90,8 @@ sysRadios.com1StbyCourse 	= MultiStateCmdSwitch:new("",drefCom1StandbyFreq,0,
 sysRadios.com1Flip 			= TwoStateToggleSwitch:new("",drefCom1Flip,0,
 	cmdCom1Flip)
 
+sysRadios.com1Direct 		= MultiStateCmdSwitch:new("",drefCom1ActiveFreq,0,
+	cmdCom1FineDown,cmdCom1FineUp,118000,136990,false)
 sysRadios.com1ActiveFreq 	= SimpleAnnunciator:new("",drefCom1ActiveFreq,0)
 sysRadios.com1StandbyFreq 	= SimpleAnnunciator:new("",drefCom1StandbyFreq,0)
 
@@ -158,45 +160,83 @@ sysRadios.tara				= 3
 
 function sysRadios:panel_render()
 	imgui.BeginGroup()
-		imgui.TextUnformatted("  RADIOS ")
-		kc_imgui_label_mcp(" ",10)
+		imgui.TextUnformatted("RADIOS  ")
 		imgui.SameLine()		
-		kc_imgui_com_radio("COM1:",sysRadios.com1StbyCourse,sysRadios.com1StbyFine,sysRadios.com1StandbyFreq,sysRadios.com1ActiveFreq,sysRadios.com1Flip,10,21)
-		kc_imgui_label_mcp(" ",10)
-		imgui.SameLine()
-		kc_imgui_com_radio("COM2:",sysRadios.com2StbyCourse,sysRadios.com2StbyFine,sysRadios.com2StandbyFreq,sysRadios.com2ActiveFreq,sysRadios.com2Flip,45,31)
-		kc_imgui_label_mcp(" ",10)
-		imgui.SameLine()
-		if kc_has_nav_radios then
-			kc_imgui_nav_radio("NAV1:",sysRadios.nav1StbyCourse,sysRadios.nav1StbyFine,sysRadios.nav1StandbyFreq,sysRadios.nav1ActiveFreq,sysRadios.nav1Flip,10,22)
-			kc_imgui_label_mcp(" ",10)
-			imgui.SameLine()
-			kc_imgui_nav_radio("NAV2:",sysRadios.nav2StbyCourse,sysRadios.nav2StbyFine,sysRadios.nav2StandbyFreq,sysRadios.nav2ActiveFreq,sysRadios.nav2Flip,45,32)
-			kc_imgui_label_mcp(" ",10)
-			imgui.SameLine()
+		if imgui.Button("SAVE", 56*kb_font_scale, 19) then
+			activeBriefings:save()
 		end
-		if kc_has_adf_radios then
-			kc_imgui_adf_radio("ADF1:",sysRadios.adf1StbyCourse,sysRadios.adf1StbyFine,sysRadios.adf1StandbyFreq,sysRadios.adf1ActiveFreq,sysRadios.adf1Flip,10,23)
-			kc_imgui_label_mcp(" ",10)
-			imgui.SameLine()
-			kc_imgui_adf_radio("ADF2:",sysRadios.adf2StbyCourse,sysRadios.adf2StbyFine,sysRadios.adf2StandbyFreq,sysRadios.adf2ActiveFreq,sysRadios.adf2Flip,45,33)
+		imgui.SameLine()
+		if imgui.Button("LOAD", 56*kb_font_scale, 19*kb_font_scale) then
+			activeBriefings:load()
 		end
-		if kc_has_transponder then
-			kc_imgui_label_mcp(" ",10)
-			imgui.SameLine()
-			kc_imgui_number_mcp("XPDR: %04d",sysRadios.xpdrCode,10,11)
-			imgui.SameLine()
-			kc_imgui_script_button("OFF","kc_macro_set_xpdrmode(sysRadios.off)",10,30,25)
-			imgui.SameLine()
-			kc_imgui_script_button("STB","kc_macro_set_xpdrmode(sysRadios.stby)",10,30,25)
-			imgui.SameLine()
-			kc_imgui_script_button("ALT","kc_macro_set_xpdrmode(sysRadios.alt)",10,30,25)
-			imgui.SameLine()
-			kc_imgui_script_button("TA","kc_macro_set_xpdrmode(sysRadios.ta)",10,30,25)
-			imgui.SameLine()
-			kc_imgui_script_button("ON","kc_macro_set_xpdrmode(sysRadios.tara)",10,30,25)
+-- ATIS Store
+		kc_imgui_stored_com("departure:atisFreq","ATISD",sysRadios.com1Direct,sysRadios.com1Direct,10,41)
+		imgui.SameLine()
+-- COM1 Radio
+		kc_imgui_com_radio("COM1",sysRadios.com1StbyCourse,sysRadios.com1StbyFine,sysRadios.com1StandbyFreq,sysRadios.com1ActiveFreq,sysRadios.com1Flip,10,21)
 
+-- ATIS Store
+		kc_imgui_stored_com("departure:clearanceFreq","CLRNCE",sysRadios.com1Direct,sysRadios.com1Direct,10,42)
+		imgui.SameLine()
+-- COM2 Radio
+		kc_imgui_com_radio("COM2",sysRadios.com2StbyCourse,sysRadios.com2StbyFine,sysRadios.com2StandbyFreq,sysRadios.com2ActiveFreq,sysRadios.com2Flip,45,31)
+
+-- GRND Store
+		kc_imgui_stored_com("departure:groundFreq","GROUNDD",sysRadios.com1Direct,sysRadios.com1Direct,10,43)
+-- NAV1 Radio
+		if kc_has_nav_radios then
+			imgui.SameLine()
+			kc_imgui_nav_radio("NAV1",sysRadios.nav1StbyCourse,sysRadios.nav1StbyFine,sysRadios.nav1StandbyFreq,sysRadios.nav1ActiveFreq,sysRadios.nav1Flip,10,22)
 		end
+-- TOWER Store
+		kc_imgui_stored_com("departure:towerFreq","TOWERD",sysRadios.com1Direct,sysRadios.com1Direct,10,44)
+-- NAV2 Radio
+		if kc_has_nav_radios then
+			imgui.SameLine()
+			kc_imgui_nav_radio("NAV2",sysRadios.nav2StbyCourse,sysRadios.nav2StbyFine,sysRadios.nav2StandbyFreq,sysRadios.nav2ActiveFreq,sysRadios.nav2Flip,45,32)
+		end
+-- TOWER Store
+		kc_imgui_stored_com("departure:departureFreq","DEPART",sysRadios.com1Direct,sysRadios.com1Direct,10,45)
+-- ADF1 Radio
+		if kc_has_adf_radios then
+			imgui.SameLine()
+			kc_imgui_adf_radio("ADF1",sysRadios.adf1StbyCourse,sysRadios.adf1StbyFine,sysRadios.adf1StandbyFreq,sysRadios.adf1ActiveFreq,sysRadios.adf1Flip,10,23)
+		end
+-- CENTER 1 Store
+		kc_imgui_stored_com("departure:center1Freq","CTR1",sysRadios.com1Direct,sysRadios.com1Direct,10,46)
+-- ADF2 Radio
+		if kc_has_adf_radios then
+			imgui.SameLine()
+			kc_imgui_adf_radio("ADF2",sysRadios.adf2StbyCourse,sysRadios.adf2StbyFine,sysRadios.adf2StandbyFreq,sysRadios.adf2ActiveFreq,sysRadios.adf2Flip,45,33)
+		end
+-- CENTER 2 Store
+		kc_imgui_stored_com("departure:center2Freq","CTR2",sysRadios.com1Direct,sysRadios.com1Direct,10,47)
+-- ATIS Store
+		kc_imgui_stored_com("arrival:atisFreq","ATISA",sysRadios.com1Direct,sysRadios.com1Direct,10,51)
+		imgui.SameLine()
+		if kc_has_transponder then
+			imgui.SameLine()
+			kc_imgui_number_mcp("XPDR",sysRadios.xpdrCode,60,38,5)
+		end
+-- APPROACH Store
+		kc_imgui_stored_com("arrival:approachFreq","APPRCH",sysRadios.com1Direct,sysRadios.com1Direct,10,48)
+		if kc_has_transponder then
+			imgui.SameLine()
+			kc_imgui_script_button("OFF","kc_macro_set_xpdrmode(sysRadios.off)",10,28,19)
+			imgui.SameLine()
+			kc_imgui_script_button("STB","kc_macro_set_xpdrmode(sysRadios.stby)",10,28,19)
+			imgui.SameLine()
+			kc_imgui_script_button("ALT","kc_macro_set_xpdrmode(sysRadios.alt)",10,28,19)
+			imgui.SameLine()
+			kc_imgui_script_button("TA","kc_macro_set_xpdrmode(sysRadios.ta)",10,28,19)
+			imgui.SameLine()
+			kc_imgui_script_button("ON","kc_macro_set_xpdrmode(sysRadios.tara)",10,28,19)
+		end
+-- TOWER 2 Store
+		kc_imgui_stored_com("arrival:towerFreq","TOWERA",sysRadios.com1Direct,sysRadios.com1Direct,10,49)
+-- GROUND 2 Store
+		kc_imgui_stored_com("arrival:groundFreq","GROUNDA",sysRadios.com1Direct,sysRadios.com1Direct,10,50)
+
 		imgui.Separator()
 	imgui.EndGroup()
 end

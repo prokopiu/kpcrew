@@ -174,7 +174,7 @@ sysRadios 		= require("kpcrew.systems." .. kc_acf_icao .. ".sysRadios")
 -- initialize briefing window
 function kp_init_panels_window()
     local wndWidth =  1020
-    local wndHeight = 300
+    local wndHeight = 350
     fontScale1 = 1
     angle=1
     fontScale = 1

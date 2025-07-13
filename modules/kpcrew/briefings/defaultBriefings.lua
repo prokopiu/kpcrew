@@ -160,6 +160,14 @@ departure:add(kcPreference:new("nav2Course",0,kcPreference.typeInt,"NAV2 CRS|10"
 departure:add(kcPreference:new("decision",200,kcPreference.typeInt,"Decision Height/Altitude|10"))
 departure:add(kcPreference:new("aptElevation",0,kcPreference.typeInt,"depAirport Elevation|100"))
 departure:add(kcPreference:new("activateAPUPowerUp",1,kcPreference.typeList,"Power Up with APU|Start APU|APU remains off"))
+-- ATC Frequencies stored
+departure:add(kcPreference:new("atisFreq","122.800",kcPreference.typeText,"ATIS"))
+departure:add(kcPreference:new("clearanceFreq","122.800",kcPreference.typeText,"DEL"))
+departure:add(kcPreference:new("groundFreq","122.800",kcPreference.typeText,"GROUND"))
+departure:add(kcPreference:new("towerFreq","122.800",kcPreference.typeText,"TOWER"))
+departure:add(kcPreference:new("departureFreq","122.800",kcPreference.typeText,"DEPARTURE"))
+departure:add(kcPreference:new("center1Freq","122.800",kcPreference.typeText,"Center1"))
+departure:add(kcPreference:new("center2Freq","122.800",kcPreference.typeText,"Center2"))
 
 
 -- =================== TAXI BRIEFING ==================
@@ -207,6 +215,11 @@ arrival:add(kcPreference:new("aptElevation",0,kcPreference.typeInt,"*Airport Ele
 arrival:add(kcPreference:new("rwyCond",1,kcPreference.typeList,"Runway Condition|" .. kc_APP_rwystate_list))
 arrival:add(kcPreference:new("altnrwyCond",1,kcPreference.typeList,"Alternate Runway Condition|" .. kc_APP_rwystate_list))
 arrival:add(kcPreference:new("altnElevation",0,kcPreference.typeInt,"alternate Elevation|100"))
+-- Arrival ATC Frequencies store
+arrival:add(kcPreference:new("atisFreq","122.800",kcPreference.typeText,"ATIS"))
+arrival:add(kcPreference:new("approachFreq","122.800",kcPreference.typeText,"APPROACH"))
+arrival:add(kcPreference:new("towerFreq","122.800",kcPreference.typeText,"Tower"))
+arrival:add(kcPreference:new("groundFreq","122.800",kcPreference.typeText,"GROUND"))
 
 -- =================== APPROACH ==================
 local approach = kcPreferenceGroup:new("approach","APPROACH DATA")

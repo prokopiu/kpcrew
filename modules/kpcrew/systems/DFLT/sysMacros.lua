@@ -115,6 +115,7 @@ function kc_macro_state_cold_and_dark()
 	end
 	if kc_has_gpu then
 		sysElectric.gpuGenBusGroup:actuate(0)
+		sysElectric.gpuConnect:actuate(0)
 	end
 	
 	if kc_has_windows then
@@ -183,11 +184,7 @@ function kc_macro_state_turnaround()
 	end 
 	
 	if kc_has_irs then
-		if kc_is_airbus == true then 
-			kc_macro_set_irs(1)
-		else
-			kc_macro_set_irs(2)
-		end
+		kc_macro_set_irs(1)
 	end
 	
 	if kc_has_seatbelt_sgn then

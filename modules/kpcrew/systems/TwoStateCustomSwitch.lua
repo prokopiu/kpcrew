@@ -17,8 +17,10 @@ local Switch = require "kpcrew.systems.Switch"
 -- @tparam string funcOff function to turn off
 -- @tparam string funcToggle function to toggle
 -- @tparam string funcStatus function to return status value
+-- @tparam string funcStep function to step through like MultiState
+-- @tparam string funcSet function to set values directly
 -- @treturn Switch the created base element
-function khTwoStateCustomSwitch:new(name, statusDref, statusDrefIdx, funcOn, funcOff, funcToggle, funcStatus)
+function khTwoStateCustomSwitch:new(name, statusDref, statusDrefIdx, funcOn, funcOff, funcToggle, funcStatus, funcStep, funcSet)
 
     khTwoStateCustomSwitch.__index = khTwoStateCustomSwitch
     setmetatable(khTwoStateCustomSwitch, {
@@ -32,6 +34,8 @@ function khTwoStateCustomSwitch:new(name, statusDref, statusDrefIdx, funcOn, fun
 	obj.funcOff = funcOff
 	obj.funcToggle = funcToggle
 	obj.funcStatus = funcStatus
+	obj.funcStep = funcStep
+	obj.funcSet = funcSet
 	obj.delay = self.defaultDelay
 	
     return obj
@@ -79,6 +83,26 @@ function khTwoStateCustomSwitch:actuate(action)
 		end
 	end
 end
+
+	-- if self.readonly == true then
+		-- if value <= self.maxvalue and value >= self.minvalue then
+			-- local cnt = self.maxvalue - self.minvalue + 1
+			-- if value < self:getStatus() then
+				-- while cnt > 0 and self:getStatus() > self.minvalue and self:getStatus() ~= value do
+					-- cnt = cnt -1
+					-- command_once(self.decrcmd) 
+				-- end
+			-- else
+				-- while cnt > 0 and self:getStatus() < self.maxvalue and self:getStatus() ~= value do
+					-- cnt = cnt -1
+					-- command_once(self.incrcmd)
+				-- end
+			-- end
+		-- end
+	-- else
+		-- self:setValue(value)
+	-- end
+
 
 -- perform a single step up or down
 -- @tparam int 0=down, 1=up, 10=delayed down, 11=delayed up

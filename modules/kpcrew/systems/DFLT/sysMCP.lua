@@ -227,61 +227,91 @@ sysMCP.apDiscYoke 			= TwoStateToggleSwitch:new("discapyoke","sim/cockpit2/annun
 sysMCP.yawDamper			= TwoStateToggleSwitch:new("yawdamper","sim/cockpit2/annunciators/yaw_damper",0,
 	"sim/systems/yaw_damper_toggle")
 
+-- Airbus LS Switch
+sysMCP.lsSwitch				= InopSwitch:new("LS")
+
 ------- Annunciators
 
 -- ===== UI related functions =====
 
 function sysMCP:panel_render()
 	imgui.BeginGroup()
-		imgui.TextUnformatted("MCP ")
-		if kc_has_ils then
-			kc_imgui_rotary_mcp("CRS:%03d",sysMCP.crs1Selector,10,11)
-			imgui.SameLine()
-		end
+		-- imgui.TextUnformatted("MCP ")
 		if kc_has_flightdir then
-			kc_imgui_toggle_button_mcp("FD",sysMCP.fdirGroup,10,25,25)
-			imgui.SameLine()
-		end
-		if kc_has_autothrottle then
-			kc_imgui_toggle_button_mcp("AT",sysMCP.athrSwitch,10,25,25)
-			imgui.SameLine()
-		end
-		if kc_has_flch_ias then
-			kc_imgui_toggle_button_mcp("SPD",sysMCP.speedSwitch,10,30,25)
-			imgui.SameLine()
+			kc_imgui_toggle_button_mcp("FD",sysMCP.fdirGroup,0,22,19)
 		end
 		if kc_has_ias_sel then
-			kc_imgui_rotary_mcp("SPD:%03d",sysMCP.iasSelector,10,12)
 			imgui.SameLine()
+			kc_imgui_number_mcp("SPD",sysMCP.iasSelector,110,38,5)
 		end
-		kc_imgui_toggle_button_mcp("NAV",sysMCP.vorlocSwitch,10,30,25)
-		imgui.SameLine()
+		if kc_has_mach_switch then
+			imgui.SameLine()
+			kc_imgui_toggle_button_mcp("S/M",sysMCP.machSwitch,0,30,19)
+		end
 		if kc_has_hdg_sel then
-			kc_imgui_toggle_button_mcp("HDG",sysMCP.hdgselSwitch,10,30,25)
 			imgui.SameLine()
-			kc_imgui_rotary_mcp("HDG:%03d",sysMCP.hdgSelector,10,13)
-			imgui.SameLine()
+			kc_imgui_number_mcp("HDG",sysMCP.hdgSelector,111,38,4)
 		end
 		if kc_has_alt_sel then
-			kc_imgui_toggle_button_mcp("ALT",sysMCP.altholdSwitch,10,30,25)
 			imgui.SameLine()
-			kc_imgui_rotary_mcp("ALT:%05d",sysMCP.altSelector,10,14)
+			kc_imgui_number_mcp("ALT",sysMCP.altSelector,112,45,6)
+		end
+		if kc_has_meter_pfd then
 			imgui.SameLine()
+			kc_imgui_toggle_button_mcp("MTR",sysEFIS.mtrsPilot,0,30,19)
 		end
 		if kc_has_vsp_sel then
-			kc_imgui_toggle_button_mcp("V/S",sysMCP.vsSwitch,10,30,25)
-			imgui.SameLine()
-			kc_imgui_rotary_mcp((sysMCP.vspSelector:getStatus() >= 0) and "VSP:+%04d" or "VSP:%05d",sysMCP.vspSelector,10,15)
-			imgui.SameLine()
-		end
-		if kc_has_ils then
-			kc_imgui_toggle_button_mcp("APR",sysMCP.approachSwitch,10,30,25)
-			imgui.SameLine()
-		end
-		if kc_has_autopilot then
-			kc_imgui_toggle_button_mcp("A/P",sysMCP.ap1Switch,10,30,25)
-			imgui.SameLine()
-		end
+				imgui.SameLine()
+				kc_imgui_number_mcp("V/S",sysMCP.vspSelector,113,45,6)
+		end 
+		-- if kc_has_ils then
+			-- kc_imgui_rotary_mcp("CRS:%03d",sysMCP.crs1Selector,10,11)
+			-- imgui.SameLine()
+		-- end
+		-- if kc_has_flightdir then
+			-- kc_imgui_toggle_button_mcp("FD",sysMCP.fdirGroup,10,25,25)
+			-- imgui.SameLine()
+		-- end
+		-- if kc_has_autothrottle then
+			-- kc_imgui_toggle_button_mcp("AT",sysMCP.athrSwitch,10,25,25)
+			-- imgui.SameLine()
+		-- end
+		-- if kc_has_flch_ias then
+			-- kc_imgui_toggle_button_mcp("SPD",sysMCP.speedSwitch,10,30,25)
+			-- imgui.SameLine()
+		-- end
+		-- if kc_has_ias_sel then
+			-- kc_imgui_rotary_mcp("SPD:%03d",sysMCP.iasSelector,10,12)
+			-- imgui.SameLine()
+		-- end
+		-- kc_imgui_toggle_button_mcp("NAV",sysMCP.vorlocSwitch,10,30,25)
+		-- imgui.SameLine()
+		-- if kc_has_hdg_sel then
+			-- kc_imgui_toggle_button_mcp("HDG",sysMCP.hdgselSwitch,10,30,25)
+			-- imgui.SameLine()
+			-- kc_imgui_rotary_mcp("HDG:%03d",sysMCP.hdgSelector,10,13)
+			-- imgui.SameLine()
+		-- end
+		-- if kc_has_alt_sel then
+			-- kc_imgui_toggle_button_mcp("ALT",sysMCP.altholdSwitch,10,30,25)
+			-- imgui.SameLine()
+			-- kc_imgui_rotary_mcp("ALT:%05d",sysMCP.altSelector,10,14)
+			-- imgui.SameLine()
+		-- end
+		-- if kc_has_vsp_sel then
+			-- kc_imgui_toggle_button_mcp("V/S",sysMCP.vsSwitch,10,30,25)
+			-- imgui.SameLine()
+			-- kc_imgui_rotary_mcp((sysMCP.vspSelector:getStatus() >= 0) and "VSP:+%04d" or "VSP:%05d",sysMCP.vspSelector,10,15)
+			-- imgui.SameLine()
+		-- end
+		-- if kc_has_ils then
+			-- kc_imgui_toggle_button_mcp("APR",sysMCP.approachSwitch,10,30,25)
+			-- imgui.SameLine()
+		-- end
+		-- if kc_has_autopilot then
+			-- kc_imgui_toggle_button_mcp("A/P",sysMCP.ap1Switch,10,30,25)
+			-- imgui.SameLine()
+		-- end
 		-- kc_imgui_toggle_button_mcp("N1",sysMCP.n1Switch,10,22,25)
 		-- imgui.SameLine()
 		-- kc_imgui_toggle_button_mcp("VN",sysMCP.vnavSwitch,10,22,25)
@@ -292,5 +322,4 @@ function sysMCP:panel_render()
 		-- imgui.SameLine()
 	imgui.EndGroup()
 end
-
 return sysMCP

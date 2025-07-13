@@ -151,6 +151,8 @@ kc_has_flch_ias		= true		-- Aircraft has FLCH/IAS mode
 kc_has_altsel_mode	= false		-- Aircraft needs atlsel to be selected
 kc_has_radar_alt	= true		-- Aircraft has radar altitude
 kc_has_dh_minimum	= true		-- Aircraft has decicion height
+kc_has_meter_pfd	= false		-- Aircraft can show meters in PFD
+kc_has_mach_switch	= false		-- Aircraft can switch between ias mach
 
 -- === other options
 kc_has_stairs		= false		-- Aircraft has autonomous stairs on L1
