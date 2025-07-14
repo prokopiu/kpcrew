@@ -752,9 +752,11 @@ if kc_has_gpu then
 		end))	
 end
 if kc_has_apu then
-	afterStartProc:addItem(ProcedureItem:new("APU GENERATOR","OFF",FlowItem.actorFO,0,
-		function () return sysElectric.apuGenBusGroup:getStatus() == 0 end,
-		function () sysElectric.apuGenBusGroup:actuate(0) end))
+	if kc_is_airbus == false then
+		afterStartProc:addItem(ProcedureItem:new("APU GENERATOR","OFF",FlowItem.actorFO,0,
+			function () return sysElectric.apuGenBusGroup:getStatus() == 0 end,
+			function () sysElectric.apuGenBusGroup:actuate(0) end))
+	end
 	afterStartProc:addItem(ProcedureItem:new("APU BLEED AIR","OFF",FlowItem.actorFO,0,
 		function () return sysAir.apuBleedSwitch:getStatus() == 0 end,
 		function () sysAir.apuBleedSwitch:actuate(0) end))
@@ -798,7 +800,7 @@ afterStartProc:addItem(ProcedureItem:new("FLAPS","SET TAKEOFF FLAPS %s|kc_pref_s
 	function () return true end,
 	function () kc_macro_set_flap(activeBriefings:get("takeoff:flaps")-1) end))
 afterStartProc:addItem(ProcedureItem:new("MCP","INITIALIZE",FlowItem.actorFO,0,
-	function () return sysMCP.altSelector:getStatus() == activeBriefings:get("departure:initAlt") end,
+	function () return sysMCP.altDisplay:getStatus() == activeBriefings:get("departure:initAlt") end,
 	function () kc_macro_mcp(kc_phase_turnaround) end))
 if kc_has_transponder then
 	afterStartProc:addItem(ProcedureItem:new("TRANSPONDER","ON",FlowItem.actorFO,0,
@@ -837,7 +839,7 @@ beforeTakeoffProc:addItem(ProcedureItem:new("FLAPS","CHECK T/O FLAPS %s|kc_pref_
 	function () kc_macro_set_flap(activeBriefings:get("takeoff:flaps")-1) end)) 
 if kc_has_alt_sel then
 	beforeTakeoffProc:addItem(ProcedureItem:new("A/P ALTITUDE","SET %05d|activeBriefings:get(\"departure:initAlt\")",FlowItem.actorCPT,0,
-		function () return sysMCP.altSelector:getStatus() == activeBriefings:get("departure:initAlt") end,
+		function () return sysMCP.altDisplay:getStatus() == activeBriefings:get("departure:initAlt") end,
 		function () sysMCP.altSelector:setValue(activeBriefings:get("departure:initAlt")) end))
 end
 if kc_is_airbus == false and kc_has_hdg_sel == true then
@@ -854,7 +856,7 @@ if kc_has_autobrake then
 		function () kc_macro_set_autobrake(kc_AutoBrakeRTO) end))
 end
 beforeTakeoffProc:addItem(ProcedureItem:new("MCP","INITIALIZE",FlowItem.actorFO,0,
-	function () return sysMCP.altSelector:getStatus() == activeBriefings:get("departure:initAlt") end,
+	function () return sysMCP.altDisplay:getStatus() == activeBriefings:get("departure:initAlt") end,
 	function () kc_macro_mcp(kc_phase_before_takeoff) end))
 beforeTakeoffProc:addItem(HoldProcedureItem:new("ELEVATOR TRIM","SET FOR TAKEOFF & CHECK",FlowItem.actorCPT))
 if kc_has_speedbrake and kc_spdbrk_can_arm then
@@ -1180,10 +1182,10 @@ for ldgflapidx=1,kc_get_nr_flapdetents(),1 do
 end
 if kc_has_alt_sel then
 	flapsProc:addItem(ProcedureItem:new("GO AROUND ALTITUDE","SET %s|activeBriefings:get(\"approach:gaaltitude\")",FlowItem.actorPM,0,
-		function() return sysMCP.altSelector:getStatus()  == activeBriefings:get("approach:gaaltitude") end,
+		function() return sysMCP.altDisplay:getStatus()  == activeBriefings:get("approach:gaaltitude") end,
 		function() sysMCP.altSelector:setValue(activeBriefings:get("approach:gaaltitude")) end))
 end
-if kc_has_hdg_sel then
+if kc_has_hdg_sel and kc_is_airbus == false then
 	flapsProc:addItem(ProcedureItem:new("GO AROUND HEADING","SET %s|activeBriefings:get(\"approach:gaheading\")",FlowItem.actorPM,0,
 		function() return sysMCP.hdgSelector:getStatus() == activeBriefings:get("approach:gaheading") end,
 		function() sysMCP.hdgSelector:setValue(activeBriefings:get("approach:gaheading")) end))	

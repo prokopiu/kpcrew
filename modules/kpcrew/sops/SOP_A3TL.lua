@@ -108,6 +108,3 @@ activeSOP:getFlow(proc_ind_shutdownProc):addItem(ProcedureItem:new("EMER LTS","O
 	function () set_array("AirbusFBW/OHPLightSwitches",10,0) end))
 	
 return SOP_A3TL
-
--- A339 A/Brk MAX not set
--- A339 T/O spoilers not armed

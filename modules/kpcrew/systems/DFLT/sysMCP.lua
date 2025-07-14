@@ -205,6 +205,7 @@ sysMCP.turnRateSelector 	= InopSwitch:new("turnrate")
 -- ALT
 sysMCP.altSelector 			= MultiStateCmdSwitch:new("alt","sim/cockpit2/autopilot/altitude_dial_ft",0,
 	"sim/autopilot/altitude_down","sim/autopilot/altitude_up",0,50000,false)
+sysMCP.altDisplay 			= SimpleAnnunciator:new("alt","sim/cockpit2/autopilot/altitude_dial_ft",0)
 
 -- ALT INTV
 sysMCP.altintvSwitch 		= InopSwitch:new("altintv")

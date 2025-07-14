@@ -514,48 +514,31 @@ function kc_fuel_all_white_off()
 	return stdwhites and a346whites
 end
 
--- mcp
+-- ====================================== A/P & Glareshield related functions
+function kc_macro_mcp(flightphase)
+	logMsg("MCP flight phase: " .. kcSopFlightPhase[flightphase])
 
-function xkc_macro_mcp_cold_dark()
-	sysMCP.fdirGroup:actuate(0)
-	sysMCP.athrSwitch:actuate(0)
-	sysMCP.iasSelector:setValue(activePrefSet:get("aircraft:mcp_def_spd"))
-	sysMCP.hdgSelector:setValue(activePrefSet:get("aircraft:mcp_def_hdg"))
-	sysMCP.altSelector:setValue(activePrefSet:get("aircraft:mcp_def_alt"))
-	sysMCP.vspSelector:setValue(0)
-	sysMCP.discAPSwitch:actuate(0)
-	sysMCP.ap1Switch:actuate(0)
-end
-
-function xkc_macro_mcp_preflight()
-	sysMCP.fdirGroup:actuate(1)
-	sysMCP.athrSwitch:actuate(0)
-	sysMCP.altSelector:setValue(activeBriefings:get("departure:initAlt"))
-	sysMCP.vspSelector:actuate(0)
-	sysMCP.discAPSwitch:actuate(0)
-end
-
-function xkc_macro_mcp_takeoff()
-	sysMCP.fdirGroup:actuate(1)
-	sysMCP.athrSwitch:actuate(1)
-	sysMCP.altSelector:setValue(activeBriefings:get("departure:initAlt"))
-	sysMCP.vspSelector:actuate(0)
-	sysMCP.discAPSwitch:actuate(0)
-end
-
-function xkc_macro_mcp_goaround()
-	sysMCP.fdirGroup:actuate(1)
-	sysMCP.athrSwitch:actuate(1)
-	sysMCP.altSelector:setValue(activeBriefings:get("approach:gaaltitude"))
-end
-
-function xkc_macro_mcp_after_landing()
-	sysMCP.fdirGroup:actuate(0)
-	sysMCP.athrSwitch:actuate(0)
-	sysMCP.hdgselSwitch:actuate(0)
-	sysMCP.speedSwitch:actuate(0)
-	sysMCP.ap1Switch:actuate(0)
-end
+	if flightphase == kc_phase_colddark then
+		sysMCP.fdirGroup:actuate(0)
+		sysMCP.athrSwitch:actuate(0)
+		sysMCP.iasSelector:setValue(activePrefSet:get("aircraft:mcp_def_spd"))
+		sysMCP.hdgSelector:setValue(activePrefSet:get("aircraft:mcp_def_hdg"))
+		sysMCP.altSelector:setValue(activePrefSet:get("aircraft:mcp_def_alt"))
+		sysMCP.vspSelector:setValue(0)
+	elseif flightphase == kc_phase_turnaround then
+		sysMCP.fdirGroup:actuate(1)
+		sysMCP.athrSwitch:actuate(0)
+		sysMCP.altSelector:setValue(activeBriefings:get("departure:initAlt"))
+	elseif flightphase == kc_phase_before_takeoff then
+		sysMCP.fdirGroup:actuate(1)
+	elseif flightphase == kc_phase_afterland then
+		sysMCP.fdirGroup:actuate(0)
+		sysMCP.hdgSelector:setValue(0)
+		sysMCP.speedSwitch:actuate(0)
+	else 
+		logMsg("Invalid flightphase")
+	end
+end 
 
 -- autobrake
 function kc_macro_set_autobrake(index)

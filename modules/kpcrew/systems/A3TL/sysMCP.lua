@@ -116,6 +116,7 @@ sysMCP.altSelector 			= TwoStateCustomSwitch:new("alt","sim/cockpit2/autopilot/a
 		if get("AirbusFBW/ALTmanaged") == 1 then displaystr = displaystr.."o" end
 		return displaystr
 	end)
+sysMCP.altDisplay 			= SimpleAnnunciator:new("alt","sim/cockpit2/autopilot/altitude_dial_ft",0)
 	
 -- VSP
 sysMCP.vspSelector 			= TwoStateCustomSwitch:new("vsp","sim/cockpit2/autopilot/vvi_dial_fpm",0,
@@ -140,7 +141,6 @@ sysMCP.vspSelector 			= TwoStateCustomSwitch:new("vsp","sim/cockpit2/autopilot/v
 		return displaystr
 	end)
 	
-	-- AirbusFBW/VSdashed
 -- render kppanels MCP section
 function sysMCP:panel_render()
 	imgui.BeginGroup()

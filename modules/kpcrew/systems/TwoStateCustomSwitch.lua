@@ -4,7 +4,7 @@
 -- @author Kosta Prokopiu
 -- @copyright 2022 Kosta Prokopiu
 local khTwoStateCustomSwitch = {
-	defaultDelay = 3 
+	defaultDelay = 4 
 }
 
 local Switch = require "kpcrew.systems.Switch"
@@ -84,25 +84,23 @@ function khTwoStateCustomSwitch:actuate(action)
 	end
 end
 
-	-- if self.readonly == true then
-		-- if value <= self.maxvalue and value >= self.minvalue then
-			-- local cnt = self.maxvalue - self.minvalue + 1
-			-- if value < self:getStatus() then
-				-- while cnt > 0 and self:getStatus() > self.minvalue and self:getStatus() ~= value do
-					-- cnt = cnt -1
-					-- command_once(self.decrcmd) 
-				-- end
-			-- else
-				-- while cnt > 0 and self:getStatus() < self.maxvalue and self:getStatus() ~= value do
-					-- cnt = cnt -1
-					-- command_once(self.incrcmd)
-				-- end
-			-- end
-		-- end
-	-- else
-		-- self:setValue(value)
-	-- end
-
+function khTwoStateCustomSwitch:setValue(value)
+	if type(self.funcSet) == 'function' then
+		value = self.funcSet(value)
+	end
+	-- if index = 0 then it is a single dataref, set with simple set
+	if self.statusDrefIdx == 0 then
+		set(self.statusDref, value)
+	end
+	-- if the index is -1 then pull as array element index [0]
+	-- otherwise pull as array element with given index
+	if self.statusDrefIdx == -1 then
+		set_array(self.statusDref,0,value)
+	end
+	if self.statusDrefIdx > 0 then
+		set_array(self.statusDref,self.statusDrefIdx,value)
+	end
+end
 
 -- perform a single step up or down
 -- @tparam int 0=down, 1=up, 10=delayed down, 11=delayed up
