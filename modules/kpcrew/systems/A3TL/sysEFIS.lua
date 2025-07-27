@@ -189,6 +189,48 @@ sysEFIS.pilotNDB			= TwoStateToggleSwitch:new("NDB","AirbusFBW/NDShowNDBCapt",0,
 sysEFIS.pilotARPT			= TwoStateToggleSwitch:new("ARPT","AirbusFBW/NDShowARPTCapt",0,
 	"toliss_airbus/dispcommands/CaptArptPushButton")
 
+-- Baro standard toggle
+sysEFIS.barostdPilot 	= TwoStateDrefSwitch:new("barostdpilot","AirbusFBW/BaroStdCapt",0)
+sysEFIS.barostdCopilot 	= TwoStateDrefSwitch:new("barostdcopilot","AirbusFBW/BaroStdFO",0)
+sysEFIS.barostdStandby 	= TwoStateDrefSwitch:new("barostdstandby","AirbusFBW/ISIBaroStd",0)
+sysEFIS.barostdGroup 	= SwitchGroup:new("barostdgroup")
+sysEFIS.barostdGroup:addSwitch(sysEFIS.barostdPilot)
+sysEFIS.barostdGroup:addSwitch(sysEFIS.barostdCopilot)
+sysEFIS.barostdGroup:addSwitch(sysEFIS.barostdStandby)
+
+-- baro mbar/inhg
+sysEFIS.baroMbar 		= TwoStateCustomSwitch:new("mbar","sim/cockpit2/gauges/actuators/barometer_setting_in_hg_pilot",0,
+function () end,
+function () end,
+function () end,
+function () 
+	return string.format("%04.0f",get("sim/cockpit2/gauges/actuators/barometer_setting_in_hg_pilot") * 33.8639)
+end,
+function () end,
+function (value) 
+	return value / 33.87
+end)
+
+sysEFIS.baroInhg 		= TwoStateCustomSwitch:new("inhg","sim/cockpit2/gauges/actuators/barometer_setting_in_hg_pilot",0,
+function () end,
+function () end,
+function () end,
+function () 
+	return string.format("%05.2f",get("sim/cockpit2/gauges/actuators/barometer_setting_in_hg_pilot"))
+end)
+
+
+-- Baro standard toggle
+sysGeneral.barostdPilot 	= sysEFIS.barostdPilot 
+sysGeneral.barostdCopilot 	= sysEFIS.barostdCopilo
+sysGeneral.barostdStandby 	= sysEFIS.barostdStandb
+sysGeneral.barostdGroup 	= sysEFIS.barostdGroup 
+
+-- baro mbar/inhg
+sysGeneral.baroMbar 		= sysEFIS.baroMbar
+sysGeneral.baroInhg 		= sysEFIS.baroInhg
+
+
 -- render kppanels EFIS section
 function sysEFIS.panel_render()
 	imgui.BeginGroup()
@@ -215,69 +257,13 @@ function sysEFIS.panel_render()
 
 		kc_imgui_cmd_button("STD","toliss_airbus/capt_baro_pull",10,40,19)
 		imgui.SameLine()
-		kc_imgui_number_mcp("MB",sysGeneral.baroMbar,124,40,5)
+		kc_imgui_number_mcp("MB",sysEFIS.baroMbar,124,40,5)
 		imgui.SameLine()
-		kc_imgui_number_mcp("IN",sysGeneral.baroInhg,112,45,6)
+		kc_imgui_number_mcp("IN",sysEFIS.baroInhg,125,45,6)
 		imgui.SameLine()
 		kc_imgui_cmd_button("BARO","toliss_airbus/capt_baro_push",10,40,19)
 
 		imgui.Separator()
-		
-		-- kc_imgui_simple_actuator("DN",sysGeneral.baroGroup,cmdDown,10,23,25)
-		-- imgui.SameLine()
-		-- kc_imgui_value("%04d |",sysGeneral.baroMbar,10)
-		-- imgui.SameLine()
-		-- kc_imgui_value("%5.2f",sysGeneral.baroInhg,10)
-		-- imgui.SameLine()
-		-- kc_imgui_simple_actuator("UP",sysGeneral.baroGroup,slowUp,10,23,25)
-		-- imgui.SameLine()
-
-		-- kc_imgui_toggle_button_mcp("ARPT",sysEFIS.pilotARPT,0,37,19)
-		
-		
-		
--- toliss_airbus/capt_baro_pull
--- toliss_airbus/capt_baro_push
-
--- AirbusFBW/BaroUnitCapt
-
-	
-		-- imgui.SameLine()
-		-- kc_imgui_toggle_button_mcp("TERR",sysMCP.vorlocSwitch,0,34,19)
-
-
-
-		-- imgui.TextUnformatted("  EFIS ")
-		-- imgui.TextUnformatted("  ND:")
-		-- imgui.TextUnformatted(" ")	
-		-- imgui.SameLine()	
-		-- kc_imgui_simple_actuator("MODE <",sysEFIS.mapModePilot,cmdDown,10,47,25)
-		-- imgui.SameLine()
-		-- kc_imgui_simple_actuator("MODE >",sysEFIS.mapModePilot,cmdUp,10,47,25)
-		-- imgui.SameLine()
-		-- kc_imgui_simple_actuator("ZOOM <",sysEFIS.mapZoomPilot,cmdDown,10,47,25)
-		-- imgui.SameLine()
-		-- kc_imgui_simple_actuator("ZOOM >",sysEFIS.mapZoomPilot,cmdUp,10,47,25)
-		-- imgui.TextUnformatted(" ")	
-		-- imgui.SameLine()
-		-- kc_imgui_toggle_button_mcp("WXR",sysEFIS.wxrPilot,10,47,25)
-		-- imgui.SameLine()
-		-- kc_imgui_toggle_button_mcp("APT",sysEFIS.arptPilot,10,47,25)
-		-- imgui.SameLine()
-		-- kc_imgui_toggle_button_mcp("NAV",sysEFIS.staPilot,10,47,25)
-		-- imgui.SameLine()
-		-- kc_imgui_toggle_button_mcp("WPT",sysEFIS.wptPilot,10,47,25)
-		-- imgui.TextUnformatted("  MINIMUMS:")	
-		-- imgui.TextUnformatted(" ")	
-		-- imgui.SameLine()
-		-- kc_imgui_rotary_mcp("%04d",sysEFIS.minsPilot,10,31)
-		-- imgui.TextUnformatted("  BARO:")	
-		-- imgui.TextUnformatted(" ")	
-		-- imgui.SameLine()
-		
-
-
-		-- imgui.Separator()
 		
 	imgui.EndGroup()	
 end

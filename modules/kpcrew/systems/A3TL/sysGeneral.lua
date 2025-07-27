@@ -44,36 +44,6 @@ sysGeneral.irsUnitGroup:addSwitch(sysGeneral.irsUnit1Switch)
 sysGeneral.irsUnitGroup:addSwitch(sysGeneral.irsUnit2Switch)
 sysGeneral.irsUnitGroup:addSwitch(sysGeneral.irsUnit3Switch)
 
--- Baro standard toggle
-sysGeneral.barostdPilot 	= TwoStateDrefSwitch:new("barostdpilot","AirbusFBW/BaroStdCapt",0)
-sysGeneral.barostdCopilot 	= TwoStateDrefSwitch:new("barostdcopilot","AirbusFBW/BaroStdFO",0)
-sysGeneral.barostdStandby 	= TwoStateDrefSwitch:new("barostdstandby","AirbusFBW/ISIBaroStd",0)
-sysGeneral.barostdGroup 	= SwitchGroup:new("barostdgroup")
-sysGeneral.barostdGroup:addSwitch(sysGeneral.barostdPilot)
-sysGeneral.barostdGroup:addSwitch(sysGeneral.barostdCopilot)
-sysGeneral.barostdGroup:addSwitch(sysGeneral.barostdStandby)
-
--- baro mbar/inhg
-sysGeneral.baroMbar 		= TwoStateCustomSwitch:new("mbar","sim/cockpit2/gauges/actuators/barometer_setting_in_hg_pilot",0,
-function () end,
-function () end,
-function () end,
-function () 
-	return string.format("%04.0f",get("sim/cockpit2/gauges/actuators/barometer_setting_in_hg_pilot") * 33.8639)
-end,
-function () end,
-function (value) 
-	return value / 33.87
-end)
-
-sysGeneral.baroInhg 		= TwoStateCustomSwitch:new("inhg","sim/cockpit2/gauges/actuators/barometer_setting_in_hg_pilot",0,
-function () end,
-function () end,
-function () end,
-function () 
-	return string.format("%05.2f",get("sim/cockpit2/gauges/actuators/barometer_setting_in_hg_pilot"))
-end)
-
 -- Doors
 sysGeneral.doorL1			= TwoStateCustomSwitch:new("doorl1","AirbusFBW/PaxDoorModeArray",-1,
 	function () 

@@ -26,8 +26,8 @@ kc_spdbrk_can_arm	= true		-- Aircraft's speedbrake can be armed
 kc_spdbrk_arm_pos	= -0.5
 kc_full_rgt_rudder	= 14.9		-- Threshold where the rudder is almost fully to the right
 kc_NumFlapsTO		= 3
-kc_TakeoffFlaps 	= "0|1+F|2| | | | "
-kc_TakeoffFlapsInd 	= "0|1|2|2|2|2|2"
+kc_TakeoffFlaps 	= "0|1|2|3| | | "
+kc_TakeoffFlapsInd 	= "0|1|2|3|2|2|2"
 kc_NumFlapsLDG		= 2
 kc_LandingFlaps 	= "3|FULL| | | | | "
 kc_LandingFlapsInd 	= "3|4|4|4|4|4|4"
@@ -45,17 +45,12 @@ kc_has_hyd_elec_pmps= true		-- Aircraft has electric hydraulic pumps
 kc_has_hyd_eng_pmps = true		-- Aircraft has engine hydraulic pumps
 
 -- === Air supply
-kc_LandingPacks 	= "OFF|ON"
-kc_TakeoffPacks 	= "ON|AUTO|OFF"
-kc_TakeoffBleeds 	= "OFF|ON"
 kc_has_press_cab	= true		-- Aircraft has pressurized cabine
 kc_has_iso_valvle	= true		-- Aircraft has switchable isolation valve
 kc_has_engine_bleed = true		-- Aircraft has engine bleeds
 kc_has_oxygen		= true		-- Aircraft has oxygen supply
 
 -- === Anti Ice
-kc_TakeoffAntiice 	= "NOT REQUIRED|ENGINE ONLY|ENGINE AND WING"
-kc_LandingAntiice 	= "NOT REQUIRED|ENGINE ONLY|ENGINE AND WING"
 kc_has_window_heat	= true		-- Aircraft has dedicated window heat
 kc_has_wing_antiice	= true		-- Aircraft has anti ice measures for wings
 kc_has_eng_antiice	= true		-- Aircraft has engine antiice measures
