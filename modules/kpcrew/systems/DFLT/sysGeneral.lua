@@ -26,25 +26,18 @@ local KeepPressedSwitchCmd	= require "kpcrew.systems.KeepPressedSwitchCmd"
 local drefSlider 			= "sim/cockpit2/switches/custom_slider_on"
 local drefParkbrake			= "sim/cockpit2/controls/parking_brake_ratio"
 local drefGearLever			= "sim/cockpit/switches/gear_handle_status"
-local drefBaroLeft			= "sim/cockpit2/gauges/actuators/barometer_setting_in_hg_pilot"
-local drefBaroRight 		= "sim/cockpit2/gauges/actuators/barometer_setting_in_hg_copilot"
-local drefBaroStby	 		= "sim/cockpit2/gauges/actuators/barometer_setting_in_hg_stby"
+
 
 --------- Annunciator datarefs common
 
-local drefCurrentBaro 		= "sim/weather/barometer_sealevel_inhg"
+
 
 --------- Switch commands common
 
 local cmdParkbrake			= "sim/flight_controls/brakes_toggle_max"
 local cmdGearDown			= "sim/flight_controls/landing_gear_down"
 local cmdGearUp				= "sim/flight_controls/landing_gear_up"
-local cmdBaroLeftDown		= "sim/instruments/barometer_down"
-local cmdBaroLeftUp			= "sim/instruments/barometer_up"
-local cmdBaroRightDown		= "sim/instruments/barometer_copilot_down"
-local cmdBaroRightUp		= "sim/instruments/barometer_copilot_up"
-local cmdBaroStbyDown		= "sim/instruments/barometer_stby_down"
-local cmdBaroStbyUp			= "sim/instruments/barometer_stby_up"
+
 
 -- Optional Gound objects
 sysGeneral.groundObjects = InopSwitch:new("ground objects")
@@ -307,37 +300,6 @@ sysGeneral.wiperGroup = SwitchGroup:new("wipers")
 sysGeneral.wiperGroup:addSwitch(sysGeneral.wiperLeft)
 sysGeneral.wiperGroup:addSwitch(sysGeneral.wiperRight)
 
--- Baro standard toggle
-sysGeneral.barostdPilot 	= TwoStateToggleSwitch:new("barostdpilot","sim/cockpit/misc/barometer_setting",0,
-	"sim/instruments/barometer_std")
-sysGeneral.barostdCopilot 	= InopSwitch:new("barostdcopilot")
-sysGeneral.barostdStandby 	= InopSwitch:new("barostdstandby")
-sysGeneral.barostdGroup 	= SwitchGroup:new("barostdgroup")
-sysGeneral.barostdGroup:addSwitch(sysGeneral.barostdPilot)
-sysGeneral.barostdGroup:addSwitch(sysGeneral.barostdCopilot)
-sysGeneral.barostdGroup:addSwitch(sysGeneral.barostdStandby)
-
--- Baro mode
-sysGeneral.baroModePilot 	= InopSwitch:new("baromodepilot")
-sysGeneral.baroModeCoPilot 	= InopSwitch:new("baromodecopilot")
-sysGeneral.baroModeStandby 	= InopSwitch:new("baromodecopilot")
-sysGeneral.baroModeGroup 	= SwitchGroup:new("baromodegroup")
-sysGeneral.baroModeGroup:addSwitch(sysGeneral.baroModePilot)
-sysGeneral.baroModeGroup:addSwitch(sysGeneral.baroModeCoPilot)
-sysGeneral.baroModeGroup:addSwitch(sysGeneral.baroModeStandby)
-
--- Baro value
-sysGeneral.baroPilot 		= MultiStateCmdSwitch:new("baropilot",drefBaroLeft,0,
-	cmdBaroLeftDown,cmdBaroLeftUp)
-sysGeneral.baroCoPilot 		= MultiStateCmdSwitch:new("barocopilot",drefBaroRight,0,
-	cmdBaroRightDown,cmdBaroRightUp)
-sysGeneral.baroStandby 		= MultiStateCmdSwitch:new("barostandby",drefBaroStby,0,
-	cmdBaroStbyDown,cmdBaroStbyUp)
-sysGeneral.baroGroup 		= SwitchGroup:new("barogroup")
-sysGeneral.baroGroup:addSwitch(sysGeneral.baroPilot)
-sysGeneral.baroGroup:addSwitch(sysGeneral.baroCoPilot)
-sysGeneral.baroGroup:addSwitch(sysGeneral.baroStandby)
-
 -- IRS/ADIRU
 sysGeneral.irsUnit1Switch 	= InopSwitch:new("irsunit1")
 sysGeneral.irsUnit2Switch 	= InopSwitch:new("irsunit2")
@@ -363,17 +325,6 @@ sysGeneral.masterCautionAnc = SimpleAnnunciator:new("mastercaution", "sim/cockpi
 
 -- Master Warning
 sysGeneral.masterWarningAnc = SimpleAnnunciator:new("masterwarning", "sim/cockpit2/annunciators/master_warning",0)
-
-
--- baro mbar/inhg
-sysGeneral.baroMbar 		= CustomAnnunciator:new("mbar",
-function () 
-	return get("sim/cockpit2/gauges/actuators/barometer_setting_in_hg_pilot") * 33.8639 
-end)
-sysGeneral.baroInhg 		= CustomAnnunciator:new("inhg",
-function () 
-	return get("sim/cockpit2/gauges/actuators/barometer_setting_in_hg_pilot") 
-end)
 
 sysGeneral.chrono			= InopSwitch:new("chrono")
 sysGeneral.clock			= TwoStateCustomSwitch:new("clock","sim/cockpit2/clock_timer/chrono_running",-1,

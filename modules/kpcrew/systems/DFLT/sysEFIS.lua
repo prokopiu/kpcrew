@@ -1,5 +1,5 @@
 -- DFLT airplane 
--- EFIS functionality
+-- EFIS/BARO functionality
 
 -- @classmod sysEFIS
 -- @author Kosta Prokopiu
@@ -40,16 +40,55 @@ local TwoStateToggleSwitch	= require "kpcrew.systems.TwoStateToggleSwitch"
 local MultiStateCmdSwitch 	= require "kpcrew.systems.MultiStateCmdSwitch"
 local InopSwitch 			= require "kpcrew.systems.InopSwitch"
 
+local drefBaroLeft			= "sim/cockpit2/gauges/actuators/barometer_setting_in_hg_pilot"
+local drefBaroRight 		= "sim/cockpit2/gauges/actuators/barometer_setting_in_hg_copilot"
+local drefBaroStby	 		= "sim/cockpit2/gauges/actuators/barometer_setting_in_hg_stby"
+local drefCurrentBaro 		= "sim/weather/barometer_sealevel_inhg"
+local cmdBaroLeftDown		= "sim/instruments/barometer_down"
+local cmdBaroLeftUp			= "sim/instruments/barometer_up"
+local cmdBaroRightDown		= "sim/instruments/barometer_copilot_down"
+local cmdBaroRightUp		= "sim/instruments/barometer_copilot_up"
+local cmdBaroStbyDown		= "sim/instruments/barometer_stby_down"
+local cmdBaroStbyUp			= "sim/instruments/barometer_stby_up"
+
 ------------- Switches
 
--- MAP ZOOM
-sysEFIS.mapZoomPilot 		= MultiStateCmdSwitch:new("mapzoompilot","sim/cockpit/switches/EFIS_map_range_selector",0,
-	"sim/instruments/map_zoom_in","sim/instruments/map_zoom_out",0,6,false)
-sysEFIS.mapZoomCopilot 		= InopSwitch:new("mapzoomcopilot")
+-- MAP ZOOM G1000
+sysEFIS.mapZoomPilot 		= TwoStateCustomSwitch:new("mapzoompilot","sim/cockpit/switches/EFIS_map_range_selector",0,
+	function ()
+		command_once("sim/GPS/g1000n3_range_up")
+		command_once("sim/GPS/g1000n1_range_up")
+		command_once("sim/instruments/map_zoom_out")
+	end,
+	function ()
+		command_once("sim/GPS/g1000n3_range_down")
+		command_once("sim/GPS/g1000n1_range_down")
+		command_once("sim/instruments/map_zoom_in")
+	end,
+	function ()
+	end,
+	function ()
+		return 1
+	end)
+sysEFIS.mapZoomCopilot 		= TwoStateCustomSwitch:new("mapzoomcopilot","sim/cockpit/switches/EFIS_map_range_selector",0,
+	function ()
+		command_once("sim/GPS/g1000n3_range_up")
+		command_once("sim/GPS/g1000n2_range_up")
+		command_once("sim/instruments/map_zoom_out")
+	end,
+	function ()
+		command_once("sim/GPS/g1000n3_range_down")
+		command_once("sim/GPS/g1000n2_range_down")
+		command_once("sim/instruments/map_zoom_in")
+	end,
+	function ()
+	end,
+	function ()
+		return 1
+	end)
 
 -- MAP MODE
-sysEFIS.mapModePilot 		= MultiStateCmdSwitch:new("mapmodepilot","sim/cockpit/switches/EFIS_map_submode",0,
-	"sim/instruments/EFIS_mode_dn","sim/instruments/EFIS_mode_up",0,4,false)
+sysEFIS.mapModePilot 		= InopSwitch:new("mapmodepilot")
 sysEFIS.mapModeCopilot 		= InopSwitch:new("mapmodecopilot")
 
 -- CTR
@@ -110,8 +149,7 @@ sysEFIS.minsResetPilot 		= InopSwitch:new("minsresetpilot")
 sysEFIS.minsResetCopilot 	= InopSwitch:new("minsresetcopilot")
 
 -- MINS SET
-sysEFIS.minsPilot 			= MultiStateCmdSwitch:new("minspilot","sim/cockpit/misc/radio_altimeter_minimum",0,
-	"sim/instruments/dh_ref_down","sim/instruments/dh_ref_up",0,999,false)
+sysEFIS.minsPilot 			= TwoStateDrefSwitch:new("minspilot","sim/cockpit2/gauges/actuators/baro_altimeter_bug_ft_pilot",0)
 sysEFIS.minsCopilot 		= InopSwitch:new("minscopilot")
 
 -- VOR/ADF 1
@@ -122,99 +160,106 @@ sysEFIS.voradf1Copilot 		= InopSwitch:new("voradf1copilot")
 sysEFIS.voradf2Pilot 		= InopSwitch:new("vorad2pilot")
 sysEFIS.voradf2Copilot 		= InopSwitch:new("vorad2copilot")
 
+-- Baro section
+
+-- baro mbar/inhg
+sysEFIS.baroMbar 		= TwoStateCustomSwitch:new("mbar",drefBaroLeft,0,
+function () end,
+function () end,
+function () end,
+function () 
+	return string.format("%04.0f",get(drefBaroLeft) * 33.8639)
+end,
+function () end,
+function (value) 
+	return value / 33.87
+end)
+
+sysEFIS.baroInhg 		= TwoStateCustomSwitch:new("inhg",drefBaroLeft,0,
+function () end,
+function () end,
+function () end,
+function () 
+	return string.format("%05.2f",get(drefBaroLeft))
+end)
+
+-- Baro standard toggle
+sysEFIS.barostdPilot 	= TwoStateToggleSwitch:new("barostdpilot","sim/cockpit/misc/barometer_setting",0,
+	"sim/instruments/barometer_std")
+sysEFIS.barostdCopilot 	= InopSwitch:new("barostdcopilot")
+sysEFIS.barostdStandby 	= InopSwitch:new("barostdstandby")
+sysEFIS.barostdGroup 	= SwitchGroup:new("barostdgroup")
+sysEFIS.barostdGroup:addSwitch(sysEFIS.barostdPilot)
+sysEFIS.barostdGroup:addSwitch(sysEFIS.barostdCopilot)
+sysEFIS.barostdGroup:addSwitch(sysEFIS.barostdStandby)
+
+-- Baro mode
+sysEFIS.baroModePilot 	= InopSwitch:new("baromodepilot")
+sysEFIS.baroModeCoPilot 	= InopSwitch:new("baromodecopilot")
+sysEFIS.baroModeStandby 	= InopSwitch:new("baromodecopilot")
+sysEFIS.baroModeGroup 	= SwitchGroup:new("baromodegroup")
+sysEFIS.baroModeGroup:addSwitch(sysEFIS.baroModePilot)
+sysEFIS.baroModeGroup:addSwitch(sysEFIS.baroModeCoPilot)
+sysEFIS.baroModeGroup:addSwitch(sysEFIS.baroModeStandby)
+
+-- Baro value
+sysEFIS.baroPilot 		= MultiStateCmdSwitch:new("baropilot",drefBaroLeft,0,
+	cmdBaroLeftDown,cmdBaroLeftUp)
+sysEFIS.baroCoPilot 		= MultiStateCmdSwitch:new("barocopilot",drefBaroRight,0,
+	cmdBaroRightDown,cmdBaroRightUp)
+sysEFIS.baroStandby 		= MultiStateCmdSwitch:new("barostandby",drefBaroStby,0,
+	cmdBaroStbyDown,cmdBaroStbyUp)
+sysEFIS.baroGroup 		= SwitchGroup:new("barogroup")
+sysEFIS.baroGroup:addSwitch(sysEFIS.baroPilot)
+sysEFIS.baroGroup:addSwitch(sysEFIS.baroCoPilot)
+sysEFIS.baroGroup:addSwitch(sysEFIS.baroStandby)
+
+
+-- Baro standard toggle
+sysGeneral.barostdPilot 	= sysEFIS.barostdPilot 
+sysGeneral.barostdCopilot 	= sysEFIS.barostdCopilot
+sysGeneral.barostdStandby 	= sysEFIS.barostdStandby
+sysGeneral.barostdGroup 	= sysEFIS.barostdGroup 
+
+-- Baro mode
+sysGeneral.baroModePilot 	= sysEFIS.baroModePilot 
+sysGeneral.baroModeCoPilot 	= sysEFIS.baroModeCoPilot
+sysGeneral.baroModeStandby 	= sysEFIS.baroModeStandby
+sysGeneral.baroModeGroup 	= sysEFIS.baroModeGroup 
+
+-- Baro value
+sysGeneral.baroPilot 		= sysEFIS.baroPilot 	
+sysGeneral.baroCoPilot 		= sysEFIS.baroCoPilot 	
+sysGeneral.baroStandby 		= sysEFIS.baroStandby 	
+sysGeneral.baroGroup 		= sysEFIS.baroGroup 
+
+-- baro mbar/inhg
+sysGeneral.baroMbar 		= sysEFIS.baroMbar
+sysGeneral.baroInhg 		= sysEFIS.baroInhg
 ------------- Annunciators
-
--- UI
-function sysEFIS:render(ypos,height)
-
-	-- reposition when screen size changes
-	if kh_efis_wnd_state < 0 then
-		float_wnd_set_position(kh_efis_wnd, 0, kh_scrn_height - ypos)
-		float_wnd_set_geometry(kh_efis_wnd, 0, ypos, 25, ypos-height)
-		kh_efis_wnd_state = 0
-	end
-	
-	imgui.SetCursorPosY(10)
-	imgui.SetCursorPosX(2)
-	
-	if kh_efis_wnd_state == 1 then
-		imgui.Button("<", 17, 25)
-		if imgui.IsItemActive() then 
-			kh_efis_wnd_state = 0
-			float_wnd_set_geometry(kh_efis_wnd, 0, ypos, 25, ypos-height)
-		end
-	end
-
-	if kh_efis_wnd_state == 0 then
-		imgui.Button("E", 17, 25)
-		if imgui.IsItemActive() then 
-			kh_efis_wnd_state = 1
-			float_wnd_set_geometry(kh_efis_wnd, 0, ypos, 790, ypos-height)
-		end
-	end
-
-	kc_imgui_label_mcp("ND:",10)
-	kc_imgui_simple_actuator("MODE <",sysEFIS.mapModePilot,cmdDown,10,47,25)
-	kc_imgui_simple_actuator("MODE >",sysEFIS.mapModePilot,cmdUp,10,47,25)
-	kc_imgui_simple_actuator("ZOOM <",sysEFIS.mapZoomPilot,cmdDown,10,47,25)
-	kc_imgui_simple_actuator("ZOOM >",sysEFIS.mapZoomPilot,cmdUp,10,47,25)
-	kc_imgui_label_mcp("|",10)
-	kc_imgui_toggle_button_mcp("WXR",sysEFIS.wxrPilot,10,30,25)
-	kc_imgui_toggle_button_mcp("APT",sysEFIS.arptPilot,10,30,25)
-	kc_imgui_toggle_button_mcp("NAV",sysEFIS.staPilot,10,30,25)
-	kc_imgui_toggle_button_mcp("WPT",sysEFIS.wptPilot,10,30,25)
-	kc_imgui_label_mcp("| MINS",10)
-	kc_imgui_rotary_mcp("%04d",sysEFIS.minsPilot,10,31)
-	kc_imgui_label_mcp("| BARO",10)
-	kc_imgui_simple_actuator("DN",sysGeneral.baroGroup,cmdDown,10,23,25)
-	kc_imgui_value("%04d ",sysGeneral.baroMbar,10)
-	kc_imgui_value("%5.2f",sysGeneral.baroInhg,10)
-	kc_imgui_simple_actuator("UP",sysGeneral.baroGroup,cmdUp,10,23,25)
-end
 
 function sysEFIS.panel_render()
 	imgui.BeginGroup()
-		imgui.TextUnformatted("  EFIS ")
-		imgui.TextUnformatted("  ND:")
-		imgui.TextUnformatted(" ")	
-		imgui.SameLine()	
-		kc_imgui_simple_actuator("MODE <",sysEFIS.mapModePilot,cmdDown,10,47,25)
+
+		kc_imgui_script_button("MAP -","sysEFIS.mapZoomPilot:actuate(0)",-1,40,19)
 		imgui.SameLine()
-		kc_imgui_simple_actuator("MODE >",sysEFIS.mapModePilot,cmdUp,10,47,25)
-		imgui.SameLine()
-		kc_imgui_simple_actuator("ZOOM <",sysEFIS.mapZoomPilot,cmdDown,10,47,25)
-		imgui.SameLine()
-		kc_imgui_simple_actuator("ZOOM >",sysEFIS.mapZoomPilot,cmdUp,10,47,25)
-		imgui.TextUnformatted(" ")	
-		imgui.SameLine()
-		kc_imgui_toggle_button_mcp("WXR",sysEFIS.wxrPilot,10,47,25)
-		imgui.SameLine()
-		kc_imgui_toggle_button_mcp("APT",sysEFIS.arptPilot,10,47,25)
-		imgui.SameLine()
-		kc_imgui_toggle_button_mcp("NAV",sysEFIS.staPilot,10,47,25)
-		imgui.SameLine()
-		kc_imgui_toggle_button_mcp("WPT",sysEFIS.wptPilot,10,47,25)
-		imgui.TextUnformatted("  MINIMUMS:")	
-		imgui.TextUnformatted(" ")	
-		imgui.SameLine()
-		kc_imgui_rotary_mcp("%04d",sysEFIS.minsPilot,10,31)
-		imgui.TextUnformatted("  BARO:")	
-		imgui.TextUnformatted(" ")	
-		imgui.SameLine()
-		kc_imgui_simple_actuator("DN",sysGeneral.baroGroup,cmdDown,10,23,25)
-		imgui.SameLine()
-		kc_imgui_value("%04d |",sysGeneral.baroMbar,10)
-		imgui.SameLine()
-		kc_imgui_value("%5.2f",sysGeneral.baroInhg,10)
-		imgui.SameLine()
-		kc_imgui_simple_actuator("UP",sysGeneral.baroGroup,slowUp,10,23,25)
-		
-		imgui.SameLine()
-		kc_imgui_cmd_button("STD","sim/instruments/barometer_std",10,40,25)
+		kc_imgui_script_button("MAP +","sysEFIS.mapZoomPilot:actuate(1)",-1,40,19)
+	
+		imgui.Separator()
+		-- imgui.TextUnformatted("BARO MIN:")
+		kc_imgui_number_mcp("BARO MIN:",sysEFIS.minsPilot,31,40,5)
 
 		imgui.Separator()
 		
-	imgui.EndGroup()	
+		kc_imgui_cmd_button("STD","sim/instruments/barometer_std",10,40,19)
+		imgui.SameLine()
+		kc_imgui_number_mcp("MB",sysEFIS.baroMbar,124,40,5)
+		imgui.SameLine()
+		kc_imgui_number_mcp("IN",sysEFIS.baroInhg,112,45,6)
+
+		imgui.Separator()
+		
+	imgui.EndGroup()		
 end
 
 return sysEFIS

@@ -48,7 +48,7 @@ kc_ab_engm_norm		= 1			-- Airbus engine mode norm
 kc_ab_engm_strt		= 2			-- Airbus engine mode start
 kc_ab_engm_crnk		= 0			-- Airbus engine mode crank
 kc_has_rated_to		= false		-- Aircraft has rated thrust setting for T/O
-kc_TakeoffThrust 	= "RATED|DE-RATED|ASSUMED TEMPERATURE|RATED AND ASSUMED|DE-RATED AND ASSUMED"
+kc_TakeoffThrust 	= "TOGA|FLEX|D-TO"
 kc_has_proplever	= false		-- Aircraft has prop lever
 kc_prop_lvr_min		= 125		-- Prop lever Minimum
 kc_prop_lvr_feather	= 105		-- Prop lever feather
@@ -91,8 +91,8 @@ kc_has_oxygen		= true		-- Aircraft has oxygen supply
 kc_has_recirc		= false		-- Aircraft has recirc system
 
 -- === Anti Ice
-kc_TakeoffAntiice 	= "NOT REQUIRED|ENGINE ONLY|ENGINE AND WING"
-kc_LandingAntiice 	= "NOT REQUIRED|ENGINE ONLY|ENGINE AND WING"
+kc_TakeoffAntiice 	= "OFF|ENGINE|ENGINE & WING"
+kc_LandingAntiice 	= "OFF|ENGINE|ENGINE & WING"
 kc_has_window_heat	= true		-- Aircraft has dedicated window heat
 kc_has_wing_antiice	= true		-- Aircraft has anti ice measures for wings
 kc_has_eng_antiice	= true		-- Aircraft has engine antiice measures
@@ -137,7 +137,7 @@ kc_irs_nav			= 1
 kc_irs_att			= 0
 kc_has_flightdir	= true		-- Aircraft has flight director
 kc_has_autopilot	= true		-- Aircraft has autopilot
-kc_has_autothrottle = true		-- Aircraft has autothrottle
+kc_has_autothrottle = false		-- Aircraft has autothrottle
 kc_has_ias_sel		= true		-- Aircraft has IAS selector
 kc_has_hdg_sel		= true		-- Aircraft has Heading selector
 kc_has_alt_sel		= true		-- Aircraft has ALT selector
@@ -153,6 +153,7 @@ kc_has_radar_alt	= true		-- Aircraft has radar altitude
 kc_has_dh_minimum	= true		-- Aircraft has decicion height
 kc_has_meter_pfd	= false		-- Aircraft can show meters in PFD
 kc_has_mach_switch	= false		-- Aircraft can switch between ias mach
+kc_has_xp_g1000		= false     -- Aircraft has XP G1000
 
 -- === other options
 kc_has_stairs		= false		-- Aircraft has autonomous stairs on L1
