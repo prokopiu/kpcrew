@@ -1,2 +1,6 @@
-name: KPCrew
-theme: minima
+name: KPCrew Manual
+remote_theme: pages-themes/midnight@v0.2.0
+plugins: jekyll-remote-theme
+title: KPCrew Manual
+tagline: [A very short description of your site's purpose, used as subtitle]
+description: [A short description of your site's purpose (e.g. for search engines)]
