@@ -89,6 +89,7 @@ kc_has_iso_valvle	= true		-- Aircraft has switchable isolation valve
 kc_has_engine_bleed = true		-- Aircraft has engine bleeds
 kc_has_oxygen		= true		-- Aircraft has oxygen supply
 kc_has_recirc		= false		-- Aircraft has recirc system
+kc_has_trim_air		= false		-- Aircraft has trim air
 
 -- === Anti Ice
 kc_TakeoffAntiice 	= "OFF|ENGINE|ENGINE & WING"

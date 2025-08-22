@@ -325,7 +325,10 @@ if kc_has_flightdir then
 			end
 		end))
 end
-
+beforeStart:addItem(ProcedureItem:new("ELECTRIC SYSTEM","AS REQUIRED",FlowItem.actorFO,0,
+	function () return true end,
+	function () kc_macro_elec_system(kc_phase_before_start) end))
+	
 -- =====================================================================================================================
 
 -- prepare the aircraft for push and engine start
@@ -512,9 +515,11 @@ if kc_is_airbus == true then
 		function () return sysEngines.engIgnitionGroup:getStatus() == kc_ab_engm_strt end,
 		function () kc_macro_set_eng_mode(1) end))
 else
-	engStartProc:addItem(IndirectProcedureItem:new("IGNITION","ON",FlowItem.actorFO,0,"ignitionstart",
-		function () return sysEngines.engIgnitionGroup:getStatus() > 0 end,
-		function () sysEngines.engIgnitionGroup:actuate(1) end))
+	if kc_has_ignition then
+		engStartProc:addItem(IndirectProcedureItem:new("IGNITION","ON",FlowItem.actorFO,0,"ignitionstart",
+			function () return sysEngines.engIgnitionGroup:getStatus() > 0 end,
+			function () sysEngines.engIgnitionGroup:actuate(1) end))
+	end
 end
 if kc_get_nr_engines() == 1 then
 	engStartProc:addItem(HoldProcedureItem:new("ENGINE","START",FlowItem.actorCPT))
@@ -801,7 +806,7 @@ afterStartProc:addItem(ProcedureItem:new("FLAPS","SET TAKEOFF FLAPS %s|kc_pref_s
 	function () kc_macro_set_flap(activeBriefings:get("takeoff:flaps")-1) end))
 afterStartProc:addItem(ProcedureItem:new("MCP","INITIALIZE",FlowItem.actorFO,0,
 	function () return sysMCP.altDisplay:getStatus() == activeBriefings:get("departure:initAlt") end,
-	function () kc_macro_mcp(kc_phase_turnaround) end))
+	function () kc_macro_mcp(kc_phase_after_start) end))
 if kc_has_transponder then
 	afterStartProc:addItem(ProcedureItem:new("TRANSPONDER","ON",FlowItem.actorFO,0,
 		function () return sysRadios.xpdrSwitch:getStatus() == sysRadios.tara end,
@@ -812,7 +817,7 @@ if kc_has_transponder then
 	end))
 end 
 afterStartProc:addItem(ProcedureItem:new("TAXI LIGHTS","ON",FlowItem.actorFO,0,
-	function () return sysLights.taxiSwitch:getStatus() == 1 end,
+	function () return sysLights.taxiSwitch:getStatus() > 0 end,
 	function () 
 		kc_macro_lights(kc_phase_taxi_rwy)
 	end))
@@ -1182,7 +1187,7 @@ for ldgflapidx=1,kc_get_nr_flapdetents(),1 do
 end
 if kc_has_alt_sel then
 	flapsProc:addItem(ProcedureItem:new("GO AROUND ALTITUDE","SET %s|activeBriefings:get(\"approach:gaaltitude\")",FlowItem.actorPM,0,
-		function() return sysMCP.altDisplay:getStatus()  == activeBriefings:get("approach:gaaltitude") end,
+		function() return sysMCP.altDisplay:getStatus() == activeBriefings:get("approach:gaaltitude") end,
 		function() sysMCP.altSelector:setValue(activeBriefings:get("approach:gaaltitude")) end))
 end
 if kc_has_hdg_sel and kc_is_airbus == false then
@@ -1538,6 +1543,8 @@ proc_ind_ap1off 			= 16
 proc_ind_afterLandingProc	= 17
 proc_ind_taxiLightOff 		= 18
 proc_ind_shutdownProc 		= 19
+proc_ind_turnAroundState	= 20
+proc_ind_coldAndDarkState	= 21
 
 activeSOP:addProcedure(electricalPowerUpProc)
 activeSOP:addProcedure(beforeStart)

@@ -158,74 +158,74 @@ function sysLights:panel_render()
 		kc_imgui_label_mcp(" ",10)
 		if kc_has_logo_lights then
 			imgui.SameLine()
-			kc_imgui_toggle_button_mcp("LOGO",sysLights.logoSwitch,10,42,25)
+			kc_imgui_toggle_button_mcp("LOG",sysLights.logoSwitch,10,36,25)
 		end
 		if kc_has_strobe_lights then
 			imgui.SameLine()
-			kc_imgui_toggle_button_mcp("STRB",sysLights.strobesSwitch,10,42,25)
+			kc_imgui_toggle_button_mcp("STR",sysLights.strobesSwitch,10,36,25)
 		end
 		if kc_has_pos_lights then
 			imgui.SameLine()
-			kc_imgui_toggle_button_mcp("POS",sysLights.positionSwitch,10,42,25)
+			kc_imgui_toggle_button_mcp("POS",sysLights.positionSwitch,10,36,25)
 		end
 		if kc_has_beacon then
 			imgui.SameLine()
-			kc_imgui_toggle_button_mcp("BEAC",sysLights.beaconSwitch,10,42,25)
+			kc_imgui_toggle_button_mcp("BEA",sysLights.beaconSwitch,10,36,25)
 		end
 		if kc_has_wing_lights then
 			imgui.SameLine()
-			kc_imgui_toggle_button_mcp("WING",sysLights.wingSwitch,10,42,25)
+			kc_imgui_toggle_button_mcp("WNG",sysLights.wingSwitch,10,36,25)
 		end
 		imgui.SameLine()
 		kc_imgui_label_mcp("|",10)
 		if kc_has_dome_lights then
 			imgui.SameLine()
-			kc_imgui_toggle_button_mcp("DOME",sysLights.domeLightGroup,10,42,25)
+			kc_imgui_toggle_button_mcp("DOM",sysLights.domeLightGroup,10,36,25)
 		end
 		if kc_has_instr_lights then
 			imgui.SameLine()
-			kc_imgui_toggle_button_mcp("INSTR",sysLights.instrLightGroup,10,45,25)
+			kc_imgui_toggle_button_mcp("INS",sysLights.instrLightGroup,10,36,25)
 		end
 		if kc_has_panel_lights then
 			imgui.SameLine()
-			kc_imgui_toggle_button_mcp("PANEL",sysLights.panelLightGroup,10,45,25)
+			kc_imgui_toggle_button_mcp("PNL",sysLights.panelLightGroup,10,36,25)
 		end
 		kc_imgui_label_mcp(" ",10)
 		if kc_has_rwy_lights then
 			imgui.SameLine()		
-			kc_imgui_toggle_button_mcp("RWY",sysLights.rwyLightGroup,10,42,25)
+			kc_imgui_toggle_button_mcp("RWY",sysLights.rwyLightGroup,10,36,25)
 		end
 		if kc_NumLandingLts > 0 then
 			imgui.SameLine()
-			kc_imgui_toggle_button_mcp("LL 1",sysLights.llLeftSwitch,10,42,25)
+			kc_imgui_toggle_button_mcp("LL1",sysLights.llLeftSwitch,10,36,25)
 		end
 		if kc_NumLandingLts > 1 then
 			imgui.SameLine()
-			kc_imgui_toggle_button_mcp("LL 2",sysLights.llRightSwitch,10,42,25)
+			kc_imgui_toggle_button_mcp("LL2",sysLights.llRightSwitch,10,36,25)
 		end
 		if kc_NumLandingLts > 2 then
 			imgui.SameLine()
-			kc_imgui_toggle_button_mcp("LL 3",sysLights.ll3rdSwitch,10,42,25)
+			kc_imgui_toggle_button_mcp("LL3",sysLights.ll3rdSwitch,10,36,25)
 		end
 		if kc_NumLandingLts > 3 then
 			imgui.SameLine()
-			kc_imgui_toggle_button_mcp("LL 4",sysLights.ll4thSwitch,10,42,25)
+			kc_imgui_toggle_button_mcp("LL4",sysLights.ll4thSwitch,10,36,25)
 		end
 		imgui.SameLine()
-		kc_imgui_simple_button_mcp("ALL",sysLights.landLightGroup,10,42,25)
+		kc_imgui_simple_button_mcp("ALL",sysLights.landLightGroup,10,36,25)
 		if kc_has_taxi_light then
 			imgui.SameLine()
-			kc_imgui_toggle_button_mcp("TAXI",sysLights.taxiSwitch,10,42,25)
+			kc_imgui_toggle_button_mcp("TAXI",sysLights.taxiSwitch,10,36,25)
 		end
 		imgui.SameLine()
 		kc_imgui_label_mcp("|",10)
 		if kc_has_seatbelt_sgn then
 			imgui.SameLine()
-			kc_imgui_toggle_button_mcp("SEAT",sysGeneral.passSignsSwitch,10,42,25)
+			kc_imgui_toggle_button_mcp("SIT",sysGeneral.passSignsSwitch,10,36,25)
 		end
 		imgui.SameLine()
 		if kc_has_nosmoke_sgn then
-			kc_imgui_toggle_button_mcp("SMOKE",sysGeneral.noSmokingSwitch,10,45,25)
+			kc_imgui_toggle_button_mcp("SMK",sysGeneral.noSmokingSwitch,10,36,25)
 			imgui.Separator()
 		end
 

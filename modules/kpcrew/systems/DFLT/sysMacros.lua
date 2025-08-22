@@ -899,6 +899,12 @@ function kc_macro_air(flightphase)
 		if kc_has_recirc then
 			sysAir.recircSwitchGroup:actuate(0)
 		end
+		if kc_has_trim_air then
+			sysAir.trimAirSwitch:actuate(0)
+		end
+		if kc_has_apu then
+			sysAir.apuBleedSwitch:actuate(0)
+		end
 	elseif flightphase == kc_phase_turnaround then
 		if kc_has_press_cab then
 			sysAir.packSwitchGroup:actuate(1)
@@ -913,7 +919,10 @@ function kc_macro_air(flightphase)
 		if kc_has_recirc then
 			sysAir.recircSwitchGroup:actuate(1)
 		end
-	elseif flightphase == kc_phase_before_start then
+		if kc_has_trim_air then
+			sysAir.trimAirSwitch:actuate(1)
+		end
+		elseif flightphase == kc_phase_before_start then
 		if kc_has_press_cab then
 			sysAir.packSwitchGroup:actuate(0)
 		end
@@ -939,6 +948,9 @@ function kc_macro_air(flightphase)
 		if kc_has_oxygen then 
 			sysAir.oxygenMaster:actuate(0)
 		end
+		if kc_has_trim_air then
+			sysAir.trimAirSwitch:actuate(1)
+		end
 	elseif flightphase == kc_phase_before_takeoff then
 		if kc_has_press_cab then
 			if activeBriefings:get("takeoff:packs") < 2 then 
@@ -963,20 +975,16 @@ function kc_macro_air(flightphase)
 		if kc_has_oxygen then 
 			sysAir.oxygenMaster:actuate(1)
 		end
+		if kc_has_trim_air then
+			sysAir.trimAirSwitch:actuate(1)
+		end
 	elseif flightphase == kc_phase_takeoff then
 		if kc_has_press_cab then
-			if activeBriefings:get("takeoff:packs") < 2 then 
-				sysAir.packSwitchGroup:setValue(1)
-			else
-				sysAir.packSwitchGroup:setValue(0)
-			end
+			sysAir.packSwitchGroup:setValue(1)
 		end
 		if kc_has_engine_bleed then
-			if activeBriefings:get("takeoff:bleeds") > 1 then 
-				sysAir.engBleedGroup:actuate(1) 
-			else
-				sysAir.engBleedGroup:actuate(0) 
-			end
+			sysAir.engBleedGroup:actuate(1) 
+			sysAir.engBleedGroup:actuate(0) 
 		end
 		if kc_has_oxygen then 
 			sysAir.oxygenMaster:actuate(1)
@@ -995,6 +1003,9 @@ function kc_macro_air(flightphase)
 				sysAir.packSwitchGroup:actuate(1)
 			end
 		end
+		if kc_has_trim_air then
+			sysAir.trimAirSwitch:actuate(1)
+		end
 	elseif flightphase == kc_phase_shutdown then
 		if kc_has_press_cab then
 			sysAir.packSwitchGroup:setValue(1)
@@ -1005,6 +1016,9 @@ function kc_macro_air(flightphase)
 		if kc_has_oxygen then 
 			sysAir.oxygenMaster:actuate(0)
 		end	
+		if kc_has_trim_air then
+			sysAir.trimAirSwitch:actuate(0)
+		end
 	else
 		logMsg("Invalid flightphase")
 	end	
@@ -1218,6 +1232,31 @@ function kc_macro_mcp(flightphase)
 			sysMCP.yawDamper:actuate(0)
 		end
 	elseif flightphase == kc_phase_turnaround then
+		if kc_has_flightdir then
+			sysMCP.fdirGroup:actuate(1)
+		end
+		if kc_has_autothrottle then
+			sysMCP.athrSwitch:actuate(0)
+		end
+		if kc_has_yawdamper then
+			sysMCP.yawDamper:actuate(0)
+		end
+		if kc_has_ias_sel then
+			sysMCP.iasSelector:setValue(activeBriefings:get("takeoff:v2"))
+		end
+		if kc_has_hdg_sel then
+			sysMCP.hdgSelector:setValue(activeBriefings:get("departure:initHeading"))
+		end
+		if kc_has_alt_sel then
+			sysMCP.altSelector:setValue(activeBriefings:get("departure:initAlt"))
+		end
+		if kc_has_vsp_sel then
+			sysMCP.vspSelector:actuate(0)
+		end
+		if kc_has_autopilot then
+			sysMCP.discAPSwitch:actuate(0)
+		end
+	elseif flightphase == kc_phase_after_start then
 		if kc_has_flightdir then
 			sysMCP.fdirGroup:actuate(1)
 		end
