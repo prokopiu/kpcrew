@@ -1,49 +1,35 @@
--- DFLT airplane 
+-- B742 airplane 
 -- Flight Controls functionality
 
-local sysControls = {
-	trimCenter = 2,
-	trimLeft = 1,
-	trimRight = 0,
-	flapsUp = 0,
-	flapsDown = 1,
-	trimUp = 0,
-	trimDown = 1
-}
+-- @classmod sysControls
+-- @author Kosta Prokopiu
+-- @copyright 2025 Kosta Prokopiu
 
-local TwoStateDrefSwitch = require "kpcrew.systems.TwoStateDrefSwitch"
-local TwoStateCmdSwitch = require "kpcrew.systems.TwoStateCmdSwitch"
-local TwoStateCustomSwitch = require "kpcrew.systems.TwoStateCustomSwitch"
-local SwitchGroup  = require "kpcrew.systems.SwitchGroup"
-local SimpleAnnunciator = require "kpcrew.systems.SimpleAnnunciator"
-local CustomAnnunciator = require "kpcrew.systems.CustomAnnunciator"
-local TwoStateToggleSwitch = require "kpcrew.systems.TwoStateToggleSwitch"
-local MultiStateCmdSwitch = require "kpcrew.systems.MultiStateCmdSwitch"
-local InopSwitch = require "kpcrew.systems.InopSwitch"
+local TwoStateDrefSwitch 	= require "kpcrew.systems.TwoStateDrefSwitch"
+local TwoStateCmdSwitch	 	= require "kpcrew.systems.TwoStateCmdSwitch"
+local TwoStateCustomSwitch 	= require "kpcrew.systems.TwoStateCustomSwitch"
+local SwitchGroup  			= require "kpcrew.systems.SwitchGroup"
+local SimpleAnnunciator 	= require "kpcrew.systems.SimpleAnnunciator"
+local CustomAnnunciator 	= require "kpcrew.systems.CustomAnnunciator"
+local TwoStateToggleSwitch	= require "kpcrew.systems.TwoStateToggleSwitch"
+local MultiStateCmdSwitch 	= require "kpcrew.systems.MultiStateCmdSwitch"
+local InopSwitch 			= require "kpcrew.systems.InopSwitch"
+local KeepPressedSwitchCmd	= require "kpcrew.systems.KeepPressedSwitchCmd"
 
---------- Switches
+sysControls = require("kpcrew.systems.DFLT.sysControls")
 
--- Flaps 
-sysControls.flapsSwitch = MultiStateCmdSwitch:new("flaps","laminar/B747/cablecontrols/flap_ratio",0,"sim/flight_controls/flaps_up","sim/flight_controls/flaps_down")
+logMsg("B742 sysControls")
 
--- Pitch Trim
-sysControls.pitchTrimSwitch = MultiStateCmdSwitch:new("pitchtrim","sim/cockpit2/controls/elevator_trim",0,"sim/flight_controls/pitch_trim_up","sim/flight_controls/pitch_trim_down")
+sysControls.flaps_pos = {[0] =   0,  [1] = 0.16, [2] =  0.33, [3] =    0.5, [4] =  0.66, [5] =  0.83, [6] =    1, [7] =    1, [8] =    1}
+sysControls.flaps_spd = {[0] = 275,  [1] =  275, [2] =   250, [3] =    238, [4] =   231, [5] =   205, [6] =  180, [7] =  180, [8] =  180}
+sysControls.flaps_name= {[0] = "UP", [1] =  "1", [2] =   "5", [3] =   "10", [4] =  "20", [5] =  "25", [6] = "30", [7] = "30", [8] = "30"}
 
--- Aileron Trim
-sysControls.aileronTrimSwitch = MultiStateCmdSwitch:new("ailerontrim","sim/cockpit2/controls/aileron_trim",0,"sim/flight_controls/aileron_trim_right","sim/flight_controls/aileron_trim_left")
+sysControls.rudderDeflection	= SimpleAnnunciator:new("rudderdeflection","sim/flightmodel2/wing/rudder1_deg",11)
 
-sysControls.aileronReset = TwoStateToggleSwitch:new("aileronreset","sim/cockpit2/controls/aileron_trim",0,"sim/flight_controls/aileron_trim_center")
+-- Speedbrake lever
+sysControls.Speedbrake	= TwoStateDrefSwitch:new("speedbrake","B742/controls/spd_brake_lever",0)
 
--- Rudder Trim
-sysControls.rudderTrimSwitch = MultiStateCmdSwitch:new("ailerontrim","sim/cockpit2/controls/rudder_trim",0,"sim/flight_controls/rudder_trim_right","sim/flight_controls/rudder_trim_left")
-
-sysControls.rudderReset = TwoStateToggleSwitch:new("rudderreset","sim/cockpit2/controls/rudder_trim",0,"sim/flight_controls/rudder_trim_center")
-
-sysControls.yawDamper = TwoStateToggleSwitch:new("yawdamper","sim/cockpit2/switches/yaw_damper_on",0,"sim/systems/yaw_damper_toggle")
-
-sysControls.altFlapsCtrl = MultiStateCmdSwitch:new("altflapsctrl","laminar/B747/flt_ctrls/alt_flaps/sel_dial_pos",0,"laminar/B747/flt_ctrls/flaps/alt_flaps/sel_dial_dn","laminar/B747/flt_ctrls/flaps/alt_flaps/sel_dial_up")
-
---------- Annunciators
-
+-- Autobrake
+sysControls.Autobrake	= TwoStateDrefSwitch:new("autobrake","B742/OVHD/auto_brake_sel",0)
 
 return sysControls

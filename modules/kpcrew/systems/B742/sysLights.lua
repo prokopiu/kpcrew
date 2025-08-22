@@ -1,12 +1,9 @@
--- B744 Sparky Boeing 747 Mod
--- aircraft lights specific functionality
--- ** default element for kphardware - must be in all classes of this system
+-- B742 airplane 
+-- Aircraft lights specific functionality
 
 -- @classmod sysLights
 -- @author Kosta Prokopiu
--- @copyright 2022 Kosta Prokopiu
-local sysLights = {
-}
+-- @copyright 2025 Kosta Prokopiu
 
 local TwoStateDrefSwitch 	= require "kpcrew.systems.TwoStateDrefSwitch"
 local TwoStateCmdSwitch	 	= require "kpcrew.systems.TwoStateCmdSwitch"
@@ -17,198 +14,139 @@ local CustomAnnunciator 	= require "kpcrew.systems.CustomAnnunciator"
 local TwoStateToggleSwitch	= require "kpcrew.systems.TwoStateToggleSwitch"
 local MultiStateCmdSwitch 	= require "kpcrew.systems.MultiStateCmdSwitch"
 local InopSwitch 			= require "kpcrew.systems.InopSwitch"
+local KeepPressedSwitchCmd	= require "kpcrew.systems.KeepPressedSwitchCmd"
 
 local drefLandingLights 	= "sim/cockpit2/switches/landing_lights_switch"	
 local drefGenericLights 	= "sim/cockpit2/switches/generic_lights_switch"
 local drefInstrLights 		= "sim/cockpit2/switches/instrument_brightness_ratio"
 local drefPanelLights 		= "sim/cockpit2/switches/panel_brightness_ratio"
-local drefToggleSwitch 		= "laminar/B747/toggle_switch/position"
 
------------ Switches
+sysLights = require("kpcrew.systems.DFLT.sysLights")
 
--- Beacons or Anticollision Lights, single, onoff, command driven
-sysLights.beaconSwitch = TwoStateCustomSwitch:new("beacon","sim/cockpit/electrical/beacon_lights_on",0,
-function ()
-	command_once("laminar/B747/toggle_switch/beacon_light_down")
-	command_once("laminar/B747/toggle_switch/beacon_light_down")
-end,
+logMsg("B742 sysLights")
+
+-- **Beacons or Anticollision Lights, single, onoff, command driven
+sysLights.beaconSwitch 		= TwoStateDrefSwitch:new("beacon","B742/ext_light/beacon_sw",0)
+-- Beacons or Anticollision Light(s) status
+sysLights.beaconAnc 		= SimpleAnnunciator:new("beaconlights","B742/ext_light/beacon_sw",0)
+
+-- **Strobe Lights, single onoff command driven
+sysLights.strobesSwitch 	= TwoStateDrefSwitch:new("strobes","B742/ext_light/strobe_sw",0)
+-- Strobe Light(s) status
+sysLights.strobesAnc 		= SimpleAnnunciator:new("strobelights","B742/ext_light/strobe_sw",0)
+
+-- **Position (or Nav) Lights, single onoff command driven
+sysLights.positionSwitch 	= TwoStateDrefSwitch:new("position","B742/ext_light/NAV_sw",0)
+-- Position Light(s) status
+sysLights.positionAnc 		= SimpleAnnunciator:new("positionlights","B742/ext_light/NAV_sw",0)
+
+-- **Landing Lights, single onoff command driven
+sysLights.llLeftSwitch 		= TwoStateDrefSwitch:new("llleft","B742/ext_light/landing_outbd_L_sw",0)
+sysLights.llRightSwitch 	= TwoStateDrefSwitch:new("llright","B742/ext_light/landing_outbd_R_sw",0)
+sysLights.ll3rdSwitch 		= TwoStateDrefSwitch:new("ll3rd","B742/ext_light/landing_inbd_L_sw",0)
+sysLights.ll4thSwitch 		= TwoStateDrefSwitch:new("ll4th","B742/ext_light/landing_inbd_R_sw",0)
+sysLights.landLightGroup 	= SwitchGroup:new("landinglights")
+sysLights.landLightGroup:addSwitch(sysLights.llLeftSwitch)
+sysLights.landLightGroup:addSwitch(sysLights.llRightSwitch)
+sysLights.landLightGroup:addSwitch(sysLights.ll3rdSwitch)
+sysLights.landLightGroup:addSwitch(sysLights.ll4thSwitch)
+
+-- **RWY Turnoff Lights
+sysLights.rwyLeftSwitch 	= TwoStateDrefSwitch:new("rwyleft","B742/ext_light/runway_turnoff_L_sw",0)
+sysLights.rwyRightSwitch 	= TwoStateDrefSwitch:new("rwyright","B742/ext_light/runway_turnoff_R_sw",0)
+sysLights.rwyLightGroup 	= SwitchGroup:new("runwaylights")
+sysLights.rwyLightGroup:addSwitch(sysLights.rwyLeftSwitch)
+sysLights.rwyLightGroup:addSwitch(sysLights.rwyRightSwitch)
+-- runway turnoff lights
+sysLights.runwayAnc 		= CustomAnnunciator:new("runwaylights",
 function () 
-	command_once("laminar/B747/toggle_switch/beacon_light_up")
-end,
-function ()
-	if get("sim/cockpit/electrical/beacon_lights_on") == 0 then
-		command_once("laminar/B747/toggle_switch/beacon_light_down")
-		command_once("laminar/B747/toggle_switch/beacon_light_down")
+	if get("B742/ext_light/runway_turnoff_R_sw") > 0 or get("B742/ext_light/runway_turnoff_L_sw") > 0 then
+		return 1
 	else
-		command_once("laminar/B747/toggle_switch/beacon_light_up")
+		return 0
 	end
 end)
 
--- Position Lights, single onoff command driven
-sysLights.positionSwitch = TwoStateToggleSwitch:new("position","sim/cockpit2/switches/navigation_lights_on",0,"laminar/B747/toggle_switch/nav_light")
+-- **Taxi/Nose Lights, single onoff command driven
+sysLights.taxiSwitch 	= SwitchGroup:new("taxilights")
+sysLights.taxiSwitch:addSwitch(sysLights.rwyLeftSwitch)
+sysLights.taxiSwitch:addSwitch(sysLights.rwyRightSwitch)
+-- runway turnoff lights
+sysLights.taxiAnc 		= CustomAnnunciator:new("runwaylights",
+function () 
+	return sysLights.runwayAnc:getStatus()
+end)
 
--- Strobe Lights, single onoff command driven
-sysLights.strobesSwitch = TwoStateToggleSwitch:new("strobes","sim/cockpit2/switches/strobe_lights_on",0,"sim/lights/strobe_lights_on","sim/lights/strobe_lights_off","sim/lights/strobe_lights_toggle")
+-- **Logo Light
+sysLights.logoSwitch 		= TwoStateDrefSwitch:new("logo","B742/ext_light/logo_sw",0)
+-- Logo Light(s) status
+sysLights.logoAnc 			= SimpleAnnunciator:new("logolights","B742/ext_light/logo_sw",0)
 
--- Taxi/Nose Lights, single onoff command driven
-sysLights.taxiSwitch = TwoStateToggleSwitch:new("taxi","sim/cockpit2/switches/taxi_light_on",0,"laminar/B747/toggle_switch/taxi_light")
+-- **Wing Lights
+sysLights.wingSwitch 		= TwoStateDrefSwitch:new("wing","B742/ext_light/wing_sw",0)
+-- Wing Light(s) status
+sysLights.wingAnc 			= SimpleAnnunciator:new("winglights","B742/ext_light/wing_sw", 0)
 
--- Landing Lights, single onoff command driven
-sysLights.llLeftSwitch = TwoStateToggleSwitch:new("llleft",drefLandingLights,0,"laminar/B747/toggle_switch/landing_light_OBL")
-sysLights.llLeftSwitch2 = TwoStateToggleSwitch:new("llleft2",drefLandingLights,3,"laminar/B747/toggle_switch/landing_light_OBR")
-sysLights.llRightSwitch = TwoStateToggleSwitch:new("llright",drefLandingLights,1,"laminar/B747/toggle_switch/landing_light_IBL")
-sysLights.llRightSwitch2 = TwoStateToggleSwitch:new("llright2",drefLandingLights,2,"laminar/B747/toggle_switch/landing_light_IBR")
+-- **Dome Light
+sysLights.domeLightSwitch 	= TwoStateDrefSwitch:new("dome","B742/cockpit_light/dome",0)
+sysLights.domeLightSwitch2 	= InopSwitch:new("dome2")
+sysLights.domeLightGroup 	= SwitchGroup:new("dome lights")
+sysLights.domeLightGroup:addSwitch(sysLights.domeLightSwitch)
+sysLights.domeLightGroup:addSwitch(sysLights.domeLightSwitch2)
+-- Dome Light(s) status
+sysLights.domeAnc 			= CustomAnnunciator:new("domelights",
+function () 
+	if get("B742/cockpit_light/dome") ~= 0 then
+		return 1
+	else
+		return 0
+	end
+end)
 
-sysLights.landLightGroup = SwitchGroup:new("landinglights")
-sysLights.landLightGroup:addSwitch(sysLights.llLeftSwitch)
-sysLights.landLightGroup:addSwitch(sysLights.llLeftSwitch2)
-sysLights.landLightGroup:addSwitch(sysLights.llRightSwitch)
-sysLights.landLightGroup:addSwitch(sysLights.llRightSwitch2)
+-- **Panel lights
+sysLights.panel1Light		= TwoStateDrefSwitch:new("panellight1","B742/cockpit_light/main_panel_bkgr",0)
+sysLights.panel2Light		= TwoStateDrefSwitch:new("panellight2","B742/cockpit_light/map_left_panel",0)
+sysLights.panel3Light		= TwoStateDrefSwitch:new("panellight3","B742/cockpit_light/map_right_panel",0)
+sysLights.panelLightGroup 	= SwitchGroup:new("panellights")
+sysLights.panelLightGroup:addSwitch(sysLights.panel1Light)
+sysLights.panelLightGroup:addSwitch(sysLights.panel2Light)
+sysLights.panelLightGroup:addSwitch(sysLights.panel3Light)
 
--- Logo Light
-sysLights.logoSwitch = TwoStateToggleSwitch:new("logo",drefGenericLights,3,"laminar/B747/toggle_switch/logo_light")
-
--- RWY Turnoff Lights (2)
-sysLights.rwyLeftSwitch = TwoStateToggleSwitch:new("rwyleft",drefGenericLights,0,"laminar/B747/toggle_switch/rwy_tunoff_L")
-sysLights.rwyRightSwitch = TwoStateToggleSwitch:new("rwyright",drefGenericLights,1,"laminar/B747/toggle_switch/rwy_tunoff_R")
-
-sysLights.rwyLightGroup = SwitchGroup:new("runwaylights")
-sysLights.rwyLightGroup:addSwitch(sysLights.rwyLeftSwitch)
-sysLights.rwyLightGroup:addSwitch(sysLights.rwyRightSwitch)
-
--- Wing Lights
-sysLights.wingSwitch = TwoStateToggleSwitch:new("wing",drefGenericLights,2,"laminar/B747/toggle_switch/wing_light")
-
--- Wheel well Lights
-sysLights.wheelSwitch = InopSwitch:new("wheel")
-
--- Dome Light
-sysLights.domeLightSwitch = TwoStateDrefSwitch:new("wheel","sim/cockpit/electrical/cockpit_lights",0)
-
--- Instrument Lights
-sysLights.instr1Light = TwoStateDrefSwitch:new("",drefInstrLights,-1)
-sysLights.instr2Light = TwoStateDrefSwitch:new("",drefInstrLights,2)
-sysLights.instr3Light = TwoStateDrefSwitch:new("",drefPanelLights,1)
-sysLights.instr4Light = TwoStateDrefSwitch:new("",drefPanelLights,2)
-sysLights.instr5Light = TwoStateDrefSwitch:new("",drefPanelLights,3)
-sysLights.instr6Light = TwoStateDrefSwitch:new("",drefInstrLights,3)
-sysLights.instr7Light = TwoStateDrefSwitch:new("",drefInstrLights,4)
-
-sysLights.instrLightGroup = SwitchGroup:new("instrumentlights")
+-- **Instrument Lights
+sysLights.instr1Light		= TwoStateDrefSwitch:new("instrlite1","B742/cockpit_light/center_fwd_panel",0)
+sysLights.instr2Light		= TwoStateDrefSwitch:new("instrlite2","B742/cockpit_light/control_stand_panel",0)
+sysLights.instr3Light		= TwoStateDrefSwitch:new("instrlite3","B742/cockpit_light/front_left_big_panel",0)
+sysLights.instr4Light		= TwoStateDrefSwitch:new("instrlite4","B742/cockpit_light/front_panel",0)
+sysLights.instr5Light		= TwoStateDrefSwitch:new("instrlite5","B742/cockpit_light/front_right_big_panel",0)
+sysLights.instr6Light		= TwoStateDrefSwitch:new("instrlite6","B742/cockpit_light/FE_panel",0)
+sysLights.instrLightGroup 	= SwitchGroup:new("instrumentlights")
 sysLights.instrLightGroup:addSwitch(sysLights.instr1Light)
 sysLights.instrLightGroup:addSwitch(sysLights.instr2Light)
 sysLights.instrLightGroup:addSwitch(sysLights.instr3Light)
 sysLights.instrLightGroup:addSwitch(sysLights.instr4Light)
 sysLights.instrLightGroup:addSwitch(sysLights.instr5Light)
 sysLights.instrLightGroup:addSwitch(sysLights.instr6Light)
-sysLights.instrLightGroup:addSwitch(sysLights.instr7Light)
 
---------- Annunciators
--- annunciator to mark any landing lights on
-sysLights.landingAnc = CustomAnnunciator:new("landinglights",
-function () 
-	if get(drefLandingLights,0) > 0 or get(drefLandingLights,1) > 0  or get(drefLandingLights,2) > 0 or get(drefLandingLights,3) > 0 then
-		return 1
-	else
-		return 0
-	end
-end)
-
--- Beacons or Anticollision Light(s) status
-sysLights.beaconAnc = SimpleAnnunciator:new("beaconlights","sim/cockpit/electrical/beacon_lights_on",0)
-
--- Position Light(s) status
-sysLights.positionAnc = SimpleAnnunciator:new("positionlights","sim/cockpit2/switches/navigation_lights_on",0)
-
--- Strobe Light(s) status
-sysLights.strobesAnc = SimpleAnnunciator:new("strobelights","sim/cockpit2/switches/strobe_lights_on",0)
-
--- Taxi Light(s) status
-sysLights.taxiAnc = SimpleAnnunciator:new("strobelights","sim/cockpit2/switches/taxi_light_on",0)
-
--- Logo Light(s) status
-sysLights.logoAnc = SimpleAnnunciator:new("logolights","sim/cockpit2/switches/generic_lights_switch",3)
-
--- runway turnoff lights
-sysLights.runwayAnc = CustomAnnunciator:new("runwaylights",
-function () 
-	if get(drefGenericLights,0) > 0 or get(drefGenericLights,1) > 0 then
-		return 1
-	else
-		return 0
-	end
-end)
-
--- Wing Light(s) status
-sysLights.wingAnc = SimpleAnnunciator:new("winglights",drefGenericLights, 2)
-
--- Wheel well Light(s) status
-sysLights.wheelAnc = SimpleAnnunciator:new("wheellights",drefGenericLights,5)
-
--- Dome Light(s) status
-sysLights.domeAnc = CustomAnnunciator:new("domelights",
-function () 
-	if get( "sim/cockpit/electrical/cockpit_lights",0) ~= 0 then
-		return 1
-	else
-		return 0
-	end
-end)
-
--- Instrument Light(s) status
-sysLights.instrumentAnc = SimpleAnnunciator:new("instrumentlights", "sim/cockpit2/switches/instrument_brightness_ratio")
-
--- ===== UI related functions =====
-
--- render the MCP part
-function sysLights:render(ypos,height)
-
-	-- reposition when screen size changes
-	if kh_light_wnd_state < 0 then
-		float_wnd_set_position(kh_light_wnd, 0, kh_scrn_height - ypos)
-		float_wnd_set_geometry(kh_light_wnd, 0, ypos, 25, ypos-height)
-		kh_light_wnd_state = 0
-	end
-	
-	imgui.SetCursorPosY(10)
-	imgui.SetCursorPosX(2)
-	
-	if kh_light_wnd_state == 1 then
-		imgui.Button("<", 17, 25)
-		if imgui.IsItemActive() then 
-			kh_light_wnd_state = 0
-			float_wnd_set_geometry(kh_light_wnd, 0, ypos, 25, ypos-height)
+sysLights.emerLights		= TwoStateCustomSwitch:new("emerlights","B742/OVHD/emerg_lights_sw",0,
+	function() 
+		set("B742/OVHD/emerg_lights_sw",1)
+		set("B742/OVHD/emerg_lights_cap",0)
+	end,
+	function() 
+		set("B742/OVHD/emerg_lights_sw",0)
+		set("B742/OVHD/emerg_lights_cap",1)
+	end,
+	function() 
+		if get("B742/OVHD/emerg_lights_sw") == 0 then
+			set("B742/OVHD/emerg_lights_sw",1)
+			set("B742/OVHD/emerg_lights_cap",0)
+		else
+			set("B742/OVHD/emerg_lights_sw",0)
+			set("B742/OVHD/emerg_lights_cap",1)
 		end
-	end
-
-	if kh_light_wnd_state == 0 then
-		imgui.Button("L", 17, 25)
-		if imgui.IsItemActive() then 
-			kh_light_wnd_state = 1
-			float_wnd_set_geometry(kh_light_wnd, 0, ypos, 860, ypos-height)
-		end
-	end
-
-	kc_imgui_label_mcp("LIGHTS:",10)
-	kc_imgui_label_mcp("LAND:",10)
-	kc_imgui_toggle_button_mcp("OLEFT",sysLights.llLeftSwitch,10,42,25)
-	kc_imgui_toggle_button_mcp("ORIGHT",sysLights.llLeftSwitch2,10,42,25)
-	kc_imgui_toggle_button_mcp("ILEFT",sysLights.llRightSwitch,10,42,25)
-	kc_imgui_toggle_button_mcp("IRIGHT",sysLights.llRightSwitch2,10,42,25)
-	kc_imgui_simple_button_mcp("ALL",sysLights.landLightGroup,10,42,25)
-	kc_imgui_label_mcp("|",10)
-	kc_imgui_toggle_button_mcp("RWYs",sysLights.rwyLightGroup,10,42,25)
-	kc_imgui_toggle_button_mcp("TAXI",sysLights.taxiSwitch,10,42,25)
-	kc_imgui_toggle_button_mcp("LOGO",sysLights.logoSwitch,10,42,25)
-	kc_imgui_toggle_button_mcp("STRB",sysLights.strobesSwitch,10,42,25)
-	kc_imgui_toggle_button_mcp("POS",sysLights.positionSwitch,10,42,25)
-	kc_imgui_toggle_button_mcp("BEAC",sysLights.beaconSwitch,10,42,25)
-	kc_imgui_toggle_button_mcp("WING",sysLights.wingSwitch,10,42,25)
-	-- kc_imgui_toggle_button_mcp("WHL",sysLights.wheelSwitch,10,42,25)
-	kc_imgui_label_mcp("|",10)
-	kc_imgui_toggle_button_mcp("DOME",sysLights.domeLightSwitch,10,42,25)
-	kc_imgui_toggle_button_mcp("INSTR",sysLights.instrLightGroup,10,45,25)
-
-end
+	end,
+	function() 
+		return get("B742/OVHD/emerg_lights_sw")
+	end)
 
 return sysLights

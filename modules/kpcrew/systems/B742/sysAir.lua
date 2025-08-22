@@ -1,47 +1,67 @@
--- DFLT airplane 
+-- B742 airplane 
 -- Air and Pneumatics functionality
 
-local sysAir = {
-}
+-- @classmod sysAir
+-- @author Kosta Prokopiu
+-- @copyright 2025 Kosta Prokopiu
 
-local TwoStateDrefSwitch = require "kpcrew.systems.TwoStateDrefSwitch"
-local TwoStateCmdSwitch = require "kpcrew.systems.TwoStateCmdSwitch"
-local TwoStateCustomSwitch = require "kpcrew.systems.TwoStateCustomSwitch"
-local SwitchGroup  = require "kpcrew.systems.SwitchGroup"
-local SimpleAnnunciator = require "kpcrew.systems.SimpleAnnunciator"
-local CustomAnnunciator = require "kpcrew.systems.CustomAnnunciator"
-local TwoStateToggleSwitch = require "kpcrew.systems.TwoStateToggleSwitch"
-local MultiStateCmdSwitch = require "kpcrew.systems.MultiStateCmdSwitch"
-local InopSwitch = require "kpcrew.systems.InopSwitch"
-local drefAirANC = "sim/cockpit/warnings/annunciators/bleed_air_off"
+local TwoStateDrefSwitch 	= require "kpcrew.systems.TwoStateDrefSwitch"
+local TwoStateCmdSwitch	 	= require "kpcrew.systems.TwoStateCmdSwitch"
+local TwoStateCustomSwitch 	= require "kpcrew.systems.TwoStateCustomSwitch"
+local SwitchGroup  			= require "kpcrew.systems.SwitchGroup"
+local SimpleAnnunciator 	= require "kpcrew.systems.SimpleAnnunciator"
+local CustomAnnunciator 	= require "kpcrew.systems.CustomAnnunciator"
+local TwoStateToggleSwitch	= require "kpcrew.systems.TwoStateToggleSwitch"
+local MultiStateCmdSwitch 	= require "kpcrew.systems.MultiStateCmdSwitch"
+local InopSwitch 			= require "kpcrew.systems.InopSwitch"
+local KeepPressedSwitchCmd	= require "kpcrew.systems.KeepPressedSwitchCmd"
 
-sysAir.pack1Switch = MultiStateCmdSwitch:new("","laminar/B747/air/pack_ctrl/sel_dial_pos",0,"laminar/B747/air/pack_ctrl_01/sel_dial_dn","laminar/B747/air/pack_ctrl_01/sel_dial_up")
-sysAir.pack2Switch = MultiStateCmdSwitch:new("","laminar/B747/air/pack_ctrl/sel_dial_pos",1,"laminar/B747/air/pack_ctrl_02/sel_dial_dn","laminar/B747/air/pack_ctrl_02/sel_dial_up")
-sysAir.pack3Switch = MultiStateCmdSwitch:new("","laminar/B747/air/pack_ctrl/sel_dial_pos",2,"laminar/B747/air/pack_ctrl_03/sel_dial_dn","laminar/B747/air/pack_ctrl_03/sel_dial_up")
-sysAir.packSwitchGroup = SwitchGroup:new("PackBleeds")
-sysAir.packSwitchGroup:addSwitch(sysAir.pack1Switch)
-sysAir.packSwitchGroup:addSwitch(sysAir.pack2Switch)
-sysAir.packSwitchGroup:addSwitch(sysAir.pack3Switch)
+sysAir = require("kpcrew.systems.DFLT.sysAir")
+
+logMsg("B742 sysAir")
+
+-- PACK switches
+sysAir.packLeftSwitch 		= TwoStateDrefSwitch:new("pack1","B742/AIR_COND/pack_valves_rotary",-1)
+sysAir.packRightSwitch 		= TwoStateDrefSwitch:new("pack2","B742/AIR_COND/pack_valves_rotary",1)
+sysAir.packCenterSwitch 		= TwoStateDrefSwitch:new("pack3","B742/AIR_COND/pack_valves_rotary",2)
+sysAir.packSwitchGroup 		= SwitchGroup:new("PackBleeds")
+sysAir.packSwitchGroup:addSwitch(sysAir.packLeftSwitch)
+sysAir.packSwitchGroup:addSwitch(sysAir.packRightSwitch)
+sysAir.packSwitchGroup:addSwitch(sysAir.packCenterSwitch)
+
+-- RECIRC fans
+sysAir.recircFanLeft 		= TwoStateDrefSwitch:new("recirc1","B742/AIR_COND/recilc_fan_zones_sw",-1)
+sysAir.recircFanRight 		= TwoStateDrefSwitch:new("recirc2","B742/AIR_COND/recilc_fan_zones_sw",1)
+sysAir.recircFan3 			= TwoStateDrefSwitch:new("recirc3","B742/AIR_COND/recilc_fan_zones_sw",2)
+sysAir.recircFan4 			= TwoStateDrefSwitch:new("recirc4","B742/AIR_COND/recilc_fan_zones_sw",3)
+sysAir.recircSwitchGroup 	= SwitchGroup:new("Recirc")
+sysAir.recircSwitchGroup:addSwitch(sysAir.recircFanLeft)
+sysAir.recircSwitchGroup:addSwitch(sysAir.recircFanRight)
+sysAir.recircSwitchGroup:addSwitch(sysAir.recircFan3)
+sysAir.recircSwitchGroup:addSwitch(sysAir.recircFan4)
 
 -- ISOLATION VLV
-sysAir.isoValve1Switch = TwoStateToggleSwitch:new("","laminar/B747/air/isolation_valve_L_pos",0,"laminar/B747/button_switch/bleed_air_isln_vlv_L")
-sysAir.isoValve2Switch = TwoStateToggleSwitch:new("","laminar/B747/air/isolation_valve_R_pos",0,"laminar/B747/button_switch/bleed_air_isln_vlv_R")
-sysAir.isoValveGroup = SwitchGroup:new("isovlvs")
-sysAir.isoValveGroup:addSwitch(sysAir.isoValve1Switch)
-sysAir.isoValveGroup:addSwitch(sysAir.isoValve2Switch)
+sysAir.isoValveSwitch 		= SwitchGroup:new("IsoValves")
+sysAir.isoValve1 			= TwoStateDrefSwitch:new("pack1","B742/AIR_COND/pack_isolation_valves",-1)
+sysAir.isoValve2 			= TwoStateDrefSwitch:new("pack2","B742/AIR_COND/pack_isolation_valves",1)
+sysAir.isoValveSwitch:addSwitch(sysAir.isoValve1)
+sysAir.isoValveSwitch:addSwitch(sysAir.isoValve2)
+
+-- BLEED AIR
+sysAir.bleedEng1Switch 		= TwoStateDrefSwitch:new("bleed1","B742/AIR_COND/bleed_air_valves",-1)
+sysAir.bleedEng2Switch 		= TwoStateDrefSwitch:new("bleed2","B742/AIR_COND/bleed_air_valves",1)
+sysAir.bleedEng3Switch 		= TwoStateDrefSwitch:new("bleed3","B742/AIR_COND/bleed_air_valves",2)
+sysAir.bleedEng4Switch 		= TwoStateDrefSwitch:new("bleed4","B742/AIR_COND/bleed_air_valves",3)
+sysAir.engBleedGroup 		= SwitchGroup:new("EngBleeds")
+sysAir.engBleedGroup:addSwitch(sysAir.bleedEng1Switch)
+sysAir.engBleedGroup:addSwitch(sysAir.bleedEng2Switch)
+sysAir.engBleedGroup:addSwitch(sysAir.bleedEng3Switch)
+sysAir.engBleedGroup:addSwitch(sysAir.bleedEng4Switch)
 
 -- APU Bleed
-sysAir.apuBleedSwitch = TwoStateToggleSwitch:new("","laminar/B747/air/apu/bleed_valve_pos",0,"laminar/B747/button_switch/bleed_air_vlv_apu")
+sysAir.apuBleedSwitch 		= TwoStateDrefSwitch:new("apubleed","B742/APU/APU_bleed_air_sw",0)
 
-
--- VACUUM annunciator
-sysAir.vacuumAnc = CustomAnnunciator:new("vacuum",
-function ()
-	if get(drefAirANC,0) == 1 or get(drefAirANC,1) == 1 then
-		return 1
-	else
-		return 0
-	end
-end)
+-- TRIM/RAM air
+sysAir.trimAirSwitch 		= TwoStateDrefSwitch:new("trimair","B742/AIR_COND/trim_air_sw",0)
 
 return sysAir

@@ -1,71 +1,42 @@
--- DFLT airplane 
+-- B742 airplane 
 -- Engine related functionality
 
-local sysEngines = {
-}
+-- @classmod sysEngines
+-- @author Kosta Prokopiu
+-- @copyright 2025 Kosta Prokopiu
 
-local TwoStateDrefSwitch = require "kpcrew.systems.TwoStateDrefSwitch"
-local TwoStateCmdSwitch = require "kpcrew.systems.TwoStateCmdSwitch"
-local TwoStateCustomSwitch = require "kpcrew.systems.TwoStateCustomSwitch"
-local SwitchGroup  = require "kpcrew.systems.SwitchGroup"
-local SimpleAnnunciator = require "kpcrew.systems.SimpleAnnunciator"
-local CustomAnnunciator = require "kpcrew.systems.CustomAnnunciator"
-local TwoStateToggleSwitch = require "kpcrew.systems.TwoStateToggleSwitch"
-local MultiStateCmdSwitch = require "kpcrew.systems.MultiStateCmdSwitch"
-local InopSwitch = require "kpcrew.systems.InopSwitch"
+local TwoStateDrefSwitch 	= require "kpcrew.systems.TwoStateDrefSwitch"
+local TwoStateCmdSwitch	 	= require "kpcrew.systems.TwoStateCmdSwitch"
+local TwoStateCustomSwitch 	= require "kpcrew.systems.TwoStateCustomSwitch"
+local SwitchGroup  			= require "kpcrew.systems.SwitchGroup"
+local SimpleAnnunciator 	= require "kpcrew.systems.SimpleAnnunciator"
+local CustomAnnunciator 	= require "kpcrew.systems.CustomAnnunciator"
+local TwoStateToggleSwitch	= require "kpcrew.systems.TwoStateToggleSwitch"
+local MultiStateCmdSwitch 	= require "kpcrew.systems.MultiStateCmdSwitch"
+local InopSwitch 			= require "kpcrew.systems.InopSwitch"
+local KeepPressedSwitchCmd	= require "kpcrew.systems.KeepPressedSwitchCmd"
 
-local drefEngine1Starter = "sim/flightmodel2/engines/starter_is_running"
-local drefEngine2Starter = "sim/flightmodel2/engines/starter_is_running"
-local drefEngine1Oil = "sim/cockpit/warnings/annunciators/oil_pressure_low"
-local drefEngine2Oil = "sim/cockpit/warnings/annunciators/oil_pressure_low"
-local drefEngine1Fire = "sim/cockpit2/annunciators/engine_fires"
-local drefEngine2Fire = "sim/cockpit2/annunciators/engine_fires"
+sysEngines = require("kpcrew.systems.DFLT.sysEngines")
 
------------ Switches
+logMsg("B742 sysEngines")
 
--- Reverse Toggle
-sysEngines.reverseToggle = TwoStateToggleSwitch:new("reverse","sim/cockpit/warnings/annunciators/reverse",0,"sim/engines/thrust_reverse_toggle") 
-
------------ Annunciators
-
--- ENGINE FIRE annunciator
-sysEngines.engineFireAnc = CustomAnnunciator:new("enginefire",
-function ()
-	if get(drefEngine1Fire,0) > 0 or get(drefEngine2Fire,1) > 0 then
-		return 1
-	else
-		return 0
-	end
-end)
-
--- OIL PRESSURE annunciator
-sysEngines.OilPressureAnc = CustomAnnunciator:new("oilpressure",
-function ()
-	if get(drefEngine1Oil,0) > 0 or get(drefEngine2Oil,1) > 0 then
-		return 1
-	else
-		return 0
-	end
-end)
-
--- ENGINE STARTER annunciator
-sysEngines.engineStarterAnc = CustomAnnunciator:new("enginestarter",
-function ()
-	if get(drefEngine1Starter,0) > 0 and get(drefEngine2Starter,1) > 0 then
-		return 1
-	else
-		return 0
-	end
-end)
-
--- Reverse Thrust
-sysEngines.reverseAnc = CustomAnnunciator:new("enginestarter",
-function ()
-	if get("sim/cockpit/warnings/annunciators/reverse",0) > 0 then
-		return 1
-	else
-		return 0
-	end
-end)
+-- ignition
+sysEngines.engStart1Switch	= TwoStateDrefSwitch:new("ignition1","B742/OVHD/engine_ignition_sys_1",-1)
+sysEngines.engStart2Switch	= TwoStateDrefSwitch:new("ignition2","B742/OVHD/engine_ignition_sys_1",1)
+sysEngines.engStart3Switch	= TwoStateDrefSwitch:new("ignition3","B742/OVHD/engine_ignition_sys_1",2)
+sysEngines.engStart4Switch	= TwoStateDrefSwitch:new("ignition4","B742/OVHD/engine_ignition_sys_1",3)
+sysEngines.engStart5Switch	= TwoStateDrefSwitch:new("ignition1","B742/OVHD/engine_ignition_sys_2",-1)
+sysEngines.engStart6Switch	= TwoStateDrefSwitch:new("ignition2","B742/OVHD/engine_ignition_sys_2",1)
+sysEngines.engStart7Switch	= TwoStateDrefSwitch:new("ignition3","B742/OVHD/engine_ignition_sys_2",2)
+sysEngines.engStart8Switch	= TwoStateDrefSwitch:new("ignition4","B742/OVHD/engine_ignition_sys_2",3)
+sysEngines.engStarterGroup 	= SwitchGroup:new("engstarters")
+sysEngines.engStarterGroup:addSwitch(sysEngines.engStart1Switch)
+sysEngines.engStarterGroup:addSwitch(sysEngines.engStart2Switch)
+sysEngines.engStarterGroup:addSwitch(sysEngines.engStart3Switch)
+sysEngines.engStarterGroup:addSwitch(sysEngines.engStart4Switch)
+sysEngines.engStarterGroup:addSwitch(sysEngines.engStart5Switch)
+sysEngines.engStarterGroup:addSwitch(sysEngines.engStart6Switch)
+sysEngines.engStarterGroup:addSwitch(sysEngines.engStart7Switch)
+sysEngines.engStarterGroup:addSwitch(sysEngines.engStart8Switch)
 
 return sysEngines
