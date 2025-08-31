@@ -156,16 +156,23 @@ activeSOP:getFlow(proc_ind_beforeTakeoff):addItem(ProcedureItem:new("SPEEDBRAKE"
 activeSOP:getFlow(proc_ind_runwayEntry):addItem(ProcedureItem:new("BODY GEAR STEERING","DISARM",FlowItem.actorFO,0,
 	function () return get("B742/OVHD/body_gear_steer_sw") == 1 end,
 	function () end))
-
+activeSOP:getFlow(proc_ind_runwayEntry):addItem(ProcedureItem:new("PACKS & BLEEDS","AS REQUIRED",FlowItem.actorFO,0,
+	function () return true end,
+	function () kc_macro_air(kc_phase_takeoff) end))
+	
 -- === After Takeoff
 activeSOP:getFlow(proc_ind_afterTakeoff):addItem(ProcedureItem:new("FUEL HEAT","AUTO",FlowItem.actorFO,0,
 	function () return get("B742/FUEL/fuel_heat_sw") == 1 end,
 	function () 
-		set_array("B742/FUEL/fuel_heat_sw",0,1)
-		set_array("B742/FUEL/fuel_heat_sw",1,1)
-		set_array("B742/FUEL/fuel_heat_sw",2,1)
-		set_array("B742/FUEL/fuel_heat_sw",3,1)
+		set_array("B742/FUEL/fuel_heat_sw",0,-1)
+		set_array("B742/FUEL/fuel_heat_sw",1,-1)
+		set_array("B742/FUEL/fuel_heat_sw",2,-1)
+		set_array("B742/FUEL/fuel_heat_sw",3,-1)
 	end))
+activeSOP:getFlow(proc_ind_afterTakeoff):addItem(ProcedureItem:new("AUTO THRUST","SET CLB & SPD",FlowItem.actorFO,0,
+	function () return get("B742/EPRL/mode_speed_button") == 1 and get("B742/AP_panel/AT_on_sw") == 1 and
+					get("B742/EPRL/eprl_mode_sel") == 3 end,
+	function () end))
 
 -- === Climb Checks
 activeSOP:getFlow(proc_ind_climbCheck):addItem(ProcedureItem:new("ENGINE IGNITION","OFF",FlowItem.actorFO,0,

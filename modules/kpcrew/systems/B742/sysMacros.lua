@@ -362,6 +362,98 @@ function kc_macro_hyd(flightphase)
 	end	
 end
 
+-- ====================================== Air system flight phase 
+function kc_macro_air(flightphase)
+	logMsg("Fuel flight phase: " .. kcSopFlightPhase[flightphase])
+
+	if flightphase == kc_phase_colddark then
+		sysAir.packSwitchGroup:actuate(0)
+		sysAir.isoValveSwitch:actuate(0)
+		sysAir.engBleedGroup:actuate(0)
+		sysAir.recircSwitchGroup:actuate(0)
+		sysAir.trimAirSwitch:actuate(0)
+		sysAir.apuBleedSwitch:actuate(0)
+	elseif flightphase == kc_phase_turnaround then
+		sysAir.packSwitchGroup:actuate(1)
+		sysAir.isoValveSwitch:actuate(1)
+		sysAir.engBleedGroup:actuate(1)
+		sysAir.recircSwitchGroup:actuate(1)
+		sysAir.trimAirSwitch:actuate(1)
+		sysAir.apuBleedSwitch:actuate(1)
+	elseif flightphase == kc_phase_before_start then
+		sysAir.packSwitchGroup:actuate(0)
+		sysAir.isoValveSwitch:actuate(1)
+		sysAir.engBleedGroup:actuate(1)
+		sysAir.recircSwitchGroup:actuate(1)
+		sysAir.trimAirSwitch:actuate(1)
+		sysAir.apuBleedSwitch:actuate(1)
+	elseif flightphase == kc_phase_after_start then
+		sysAir.packSwitchGroup:actuate(1)
+		sysAir.isoValveSwitch:actuate(1)
+		sysAir.engBleedGroup:actuate(1)
+		sysAir.recircSwitchGroup:actuate(1)
+		sysAir.trimAirSwitch:actuate(1)
+		sysAir.apuBleedSwitch:actuate(0)
+	elseif flightphase == kc_phase_before_takeoff then
+		if activeBriefings:get("takeoff:packs") > 1 then 
+			sysAir.packSwitchGroup:setValue(1)
+		else
+			sysAir.packSwitchGroup:setValue(0)
+		end
+		sysAir.isoValveSwitch:actuate(1)
+		sysAir.recircSwitchGroup:actuate(1)
+		sysAir.trimAirSwitch:actuate(1)
+		sysAir.apuBleedSwitch:actuate(0)
+		if activeBriefings:get("takeoff:bleeds") > 1 then 
+			sysAir.engBleedGroup:actuate(1) 
+		else
+			sysAir.engBleedGroup:actuate(0) 
+		end
+	elseif flightphase == kc_phase_takeoff then
+		if activeBriefings:get("takeoff:packs") > 1 then 
+			sysAir.packSwitchGroup:setValue(1)
+		else
+			sysAir.packSwitchGroup:setValue(0)
+		end
+		sysAir.isoValveSwitch:actuate(1)
+		sysAir.recircSwitchGroup:actuate(1)
+		sysAir.trimAirSwitch:actuate(1)
+		sysAir.apuBleedSwitch:actuate(0)
+		if activeBriefings:get("takeoff:bleeds") > 1 then 
+			sysAir.engBleedGroup:actuate(1) 
+		else
+			sysAir.engBleedGroup:actuate(0) 
+		end
+	elseif flightphase == kc_phase_climb then
+		sysAir.packSwitchGroup:setValue(1)
+		sysAir.isoValveSwitch:actuate(1)
+		sysAir.recircSwitchGroup:actuate(1)
+		sysAir.trimAirSwitch:actuate(1)
+		sysAir.apuBleedSwitch:actuate(0)
+		sysAir.engBleedGroup:actuate(1) 
+	elseif flightphase == kc_phase_approach then
+		sysAir.isoValveSwitch:actuate(1)
+		sysAir.engBleedGroup:actuate(1)
+		sysAir.recircSwitchGroup:actuate(1)
+		sysAir.trimAirSwitch:actuate(1)
+		sysAir.apuBleedSwitch:actuate(0)
+		if activeBriefings:get("approach:packs") == 1 then
+			sysAir.packSwitchGroup:actuate(0)
+		else
+			sysAir.packSwitchGroup:actuate(1)
+		end
+	elseif flightphase == kc_phase_shutdown then
+		sysAir.packSwitchGroup:actuate(1)
+		sysAir.isoValveSwitch:actuate(1)
+		sysAir.engBleedGroup:actuate(0)
+		sysAir.recircSwitchGroup:actuate(1)
+		sysAir.trimAirSwitch:actuate(1)
+		sysAir.apuBleedSwitch:actuate(1)
+	else
+		logMsg("Invalid flightphase")
+	end	
+end
+
 -- set flaps based on index
 function kc_macro_set_flap(flapindex)
 
