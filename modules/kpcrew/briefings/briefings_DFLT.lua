@@ -11,6 +11,11 @@ kc_is_boeing		= false		-- Aircraft is a Boeing
 kc_is_zibo			= false
 kc_is_ga			= false		-- Aircraft is general aviation
 kc_is_turboprop		= false		-- Aircraft is turbo prop
+if get("sim/aircraft2/metadata/is_cargo") == 1 then
+	kc_is_cargo			= true		-- This is a cargo version
+else
+	kc_is_cargo			= false
+end
 
 -- === Electric system
 kc_NumBatteries		= -1		-- Number of batteries from acf
@@ -33,10 +38,10 @@ kc_spdbrk_can_arm	= false		-- Aircraft's speedbrake can be armed
 kc_spdbrk_arm_pos	= -1
 kc_full_rgt_rudder	= 14.9		-- Threshold where the rudder is almost fully to the right
 kc_NumFlapsTO		= 3
-kc_TakeoffFlaps 	= "0|1|2|2|2|2|2"
+kc_TakeoffFlaps 	= "0|1|2| | | | "
 kc_TakeoffFlapsInd 	= "0|1|2|2|2|2|2"
 kc_NumFlapsLDG		= 3
-kc_LandingFlaps 	= "0|1|2|2|2|2|2"
+kc_LandingFlaps 	= "0|1|2| | | | "
 kc_LandingFlapsInd 	= "0|1|2|2|2|2|2"
 kc_gear_ext_index	= 2			-- When to extend gear in flaps extend
 

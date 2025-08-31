@@ -251,7 +251,9 @@ end
 electricalPowerUpProc:addItem(ProcedureItem:new("ANTI-ICE SYSTEMS","AS REQUIRED",FlowItem.actorFO,0,
 		function () return true end,
 		function () kc_macro_aice(kc_phase_turnaround) end))
-		
+electricalPowerUpProc:addItem(ProcedureItem:new("MCP","INITIALIZE",FlowItem.actorFO,0,
+		function () return true end,
+		function () kc_macro_mcp(kc_phase_turnaround) end))		
 -- =====================================================================================================================
 
 -- ================= ENGINE START CHECKS ==================
@@ -306,6 +308,7 @@ if kc_has_apu == true then
 			function () return sysElectric.apuRunningAnc:getStatus() > 0 end,
 			function () 
 				kc_procvar_set("apustart",true)
+				kc_macro_elec_system(kc_phase_before_start)
 			end))
 end
 if kc_has_engine_bleed then
@@ -318,12 +321,8 @@ if kc_has_engine_bleed then
 end
 if kc_has_flightdir then
 	beforeStart:addItem(ProcedureItem:new("FLIGHT DIRECTOR","SET",FlowItem.actorFO,0,
-		function () return sysMCP.fdirAnc:getStatus() > 0 end,
-		function () 
-			if sysMCP.fdirAnc:getStatus() == 0 then
-				sysMCP.fdirGroup:actuate(1) 
-			end
-		end))
+		function () return sysMCP.fdirGroup:getStatus() > 0 end,
+		function () sysMCP.fdirGroup:actuate(1) end))
 end
 beforeStart:addItem(ProcedureItem:new("ELECTRIC SYSTEM","AS REQUIRED",FlowItem.actorFO,0,
 	function () return true end,
@@ -381,8 +380,7 @@ if kc_has_apu == true then
 end
 if kc_has_gpu == true and kc_has_apu == true then
 	prePushStartProc:addItem(ProcedureItem:new("EXTERNAL POWER","OFF",FlowItem.actorFO,2,
-		function () return 
-			sysElectric.gpuOnBus:getStatus() == 0
+		function () return sysElectric.gpuOnBus:getStatus() == 0
 		end,
 		function () 
 			sysElectric.gpuGenBusGroup:actuate(0)
@@ -390,12 +388,8 @@ if kc_has_gpu == true and kc_has_apu == true then
 end
 if kc_has_gpu == true and kc_has_apu == true then
 	prePushStartProc:addItem(ProcedureItem:new("EXTERNAL POWER","DISCONNECT",FlowItem.actorFO,0,
-		function () return 
-			sysElectric.gpuConnect:getStatus() == 0 
-		end,
-		function () 
-			sysElectric.gpuConnect:actuate(0)
-		end))
+		function () return sysElectric.gpuConnect:getStatus() == 0 end,
+		function () sysElectric.gpuConnect:actuate(0) end))
 end
 if kc_has_seatbelt_sgn == true then
 	prePushStartProc:addItem(ProcedureItem:new("SEAT BELT LIGHTS","ON",FlowItem.actorFO,0,
@@ -960,7 +954,7 @@ flapsUpProc:setFlightPhase(0-kc_phase_takeoff)
 
 if kc_is_airbus == false and kc_has_yawdamper then
 	flapsUpProc:addItem(ProcedureItem:new("YAW DAMPER","ON",FlowItem.actorPF,0,
-		function () return sysControls.yawDamper:getStatus() == 1 end,
+		function () return sysControls.yawDamper:getStatus() > 0 end,
 		function () sysControls.yawDamper:actuate(1) end))
 end
 if kc_has_retractgear then
@@ -1040,7 +1034,7 @@ climbCheck:setFlightPhase(kc_phase_climb)
 
 climbCheck:addItem(ProcedureItem:new("PACKS / BLEEDS","ON",FlowItem.actorFO,0,
 	function () return true end,
-	function () kc_macro_air(kc_phase_takeoff) end))
+	function () kc_macro_air(kc_phase_climb) end))
 if kc_has_oxygen then 
 	climbCheck:addItem(ProcedureItem:new("OXYGEN SUPPLY","ON",FlowItem.actorFO,0,
 		function () return sysAir.oxygenMaster:getStatus() > 0 end,
