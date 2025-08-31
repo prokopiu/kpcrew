@@ -1,11 +1,9 @@
--- DFLT airplane 
+-- B7x7 FF B767 B757 airplane 
 -- Air and Pneumatics functionality
 
 -- @classmod sysAir
 -- @author Kosta Prokopiu
--- @copyright 2022 Kosta Prokopiu
-local sysAir = {
-}
+-- @copyright 2025 Kosta Prokopiu
 
 local TwoStateDrefSwitch 	= require "kpcrew.systems.TwoStateDrefSwitch"
 local TwoStateCmdSwitch	 	= require "kpcrew.systems.TwoStateCmdSwitch"
@@ -16,50 +14,40 @@ local CustomAnnunciator 	= require "kpcrew.systems.CustomAnnunciator"
 local TwoStateToggleSwitch	= require "kpcrew.systems.TwoStateToggleSwitch"
 local MultiStateCmdSwitch 	= require "kpcrew.systems.MultiStateCmdSwitch"
 local InopSwitch 			= require "kpcrew.systems.InopSwitch"
+local KeepPressedSwitchCmd	= require "kpcrew.systems.KeepPressedSwitchCmd"
 
-local drefAirANC 			= "sim/cockpit2/annunciators/low_vacuum"
+sysAir = require("kpcrew.systems.DFLT.sysAir")
 
--- TRIM/RAM air
-sysAir.trimAirSwitch 		= InopSwitch:new("trimair")
-
--- RECIRC fans
-sysAir.recircFanLeft 		= InopSwitch:new("recirc1")
-sysAir.recircFanRight 		= InopSwitch:new("recirc2")
+logMsg("B7x7 sysAir")
 
 -- PACK switches
-sysAir.packLeftSwitch 		= InopSwitch:new("pack1")
-sysAir.packRightSwitch 		= InopSwitch:new("pack2")
+sysAir.packLeftSwitch 		= TwoStateDrefSwitch:new("pack1","1-sim/cond/leftPackSelector",0)
+sysAir.packRightSwitch 		= TwoStateDrefSwitch:new("pack2","1-sim/cond/rightPackSelector",0)
 sysAir.packSwitchGroup 		= SwitchGroup:new("PackBleeds")
 sysAir.packSwitchGroup:addSwitch(sysAir.packLeftSwitch)
 sysAir.packSwitchGroup:addSwitch(sysAir.packRightSwitch)
 
 -- ISOLATION VLV
-sysAir.isoValveSwitch 		= InopSwitch:new("isolation")
+sysAir.isoValveSwitch 		= TwoStateDrefSwitch:new("isolation","anim/59/button",0)
 
 -- BLEED AIR
-sysAir.bleedEng1Switch 		= InopSwitch:new("bleed1")
-sysAir.bleedEng2Switch 		= InopSwitch:new("bleed2")
--- sysAir.bleedEng3Switch 		= InopSwitch:new("bleed3")
--- sysAir.bleedEng4Switch 		= InopSwitch:new("bleed4")
+sysAir.bleedEng1Switch 		= TwoStateDrefSwitch:new("bleed1","anim/60/button",0)
+sysAir.bleedEng2Switch 		= TwoStateDrefSwitch:new("bleed2","anim/62/button",0)
 sysAir.engBleedGroup 		= SwitchGroup:new("EngBleeds")
 sysAir.engBleedGroup:addSwitch(sysAir.bleedEng1Switch)
 sysAir.engBleedGroup:addSwitch(sysAir.bleedEng2Switch)
--- sysAir.engBleedGroup:addSwitch(sysAir.bleedEng3Switch)
--- sysAir.engBleedGroup:addSwitch(sysAir.bleedEng4Switch)
+
+-- RECIRC fans
+sysAir.recircFanLeft 		= TwoStateDrefSwitch:new("recirc1","anim/55/button",0)
+sysAir.recircFanRight 		= TwoStateDrefSwitch:new("recirc2","anim/56/button",0)
+sysAir.recircSwitchGroup 	= SwitchGroup:new("Recirc")
+sysAir.recircSwitchGroup:addSwitch(sysAir.recircFanLeft)
+sysAir.recircSwitchGroup:addSwitch(sysAir.recircFanRight)
+
+-- TRIM/RAM air
+sysAir.trimAirSwitch 		= TwoStateDrefSwitch:new("trimair","anim/54/button",0)
 
 -- APU Bleed
-sysAir.apuBleedSwitch 		= InopSwitch:new("apubleed")
-
--- ======= Annunciators
-
--- ** VACUUM annunciator
-sysAir.vacuumAnc 			= CustomAnnunciator:new("vacuum",
-function ()
-	if get(drefAirANC,0) == 1 or get(drefAirANC,1) == 1 then
-		return 1
-	else
-		return 0
-	end
-end)
+sysAir.apuBleedSwitch 		= TwoStateDrefSwitch:new("apubleed","anim/61/button",0)
 
 return sysAir

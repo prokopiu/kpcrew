@@ -144,6 +144,9 @@ function kc_macro_state_turnaround()
 	-- air system settings
 	kc_macro_air(kc_phase_turnaround)
 
+	-- fuel system settings
+	kc_macro_fuel(kc_phase_turnaround)
+	
 	-- hyd system settings
 	kc_macro_hyd(kc_phase_turnaround)
 
@@ -184,7 +187,7 @@ function kc_macro_state_turnaround()
 	end 
 	
 	if kc_has_irs then
-		kc_macro_set_irs(1)
+		kc_macro_set_irs(2)
 	end
 	
 	if kc_has_seatbelt_sgn then
@@ -252,7 +255,11 @@ function kc_macro_doors_ext(flightphase)
 	-- Turnaround
 		if kc_has_doors then
 			sysGeneral.doorL1:actuate(1)
-			sysGeneral.doorL2:actuate(0)
+			if kc_is_cargo then
+				sysGeneral.doorL2:actuate(1)
+			else
+				sysGeneral.doorL2:actuate(1)
+			end
 			sysGeneral.doorR1:actuate(0)
 			sysGeneral.doorR2:actuate(0)
 		end
@@ -298,7 +305,11 @@ function kc_macro_doors_ext(flightphase)
 	-- Shutdown
 		if kc_has_doors then
 			sysGeneral.doorL1:actuate(1)
-			sysGeneral.doorL2:actuate(0)
+			if kc_is_cargo then
+				sysGeneral.doorL2:actuate(1)
+			else
+				sysGeneral.doorL2:actuate(1)
+			end
 			sysGeneral.doorR1:actuate(0)
 			sysGeneral.doorR2:actuate(0)
 		end
@@ -908,7 +919,6 @@ function kc_macro_air(flightphase)
 	elseif flightphase == kc_phase_turnaround then
 		if kc_has_press_cab then
 			sysAir.packSwitchGroup:actuate(1)
-			sysAir.isoValveSwitch:actuate(1)
 		end
 		if kc_has_oxygen then
 			sysAir.oxygenMaster:actuate(0)
@@ -932,8 +942,31 @@ function kc_macro_air(flightphase)
 		if kc_has_oxygen then
 			sysAir.oxygenMaster:actuate(0)
 		end
+	elseif flightphase == kc_phase_before_start then
+		if kc_has_press_cab then
+			sysAir.packSwitchGroup:actuate(0)
+		end
+		if kc_has_oxygen then
+			sysAir.oxygenMaster:actuate(0)
+		end
 		if kc_has_engine_bleed then
 			sysAir.engBleedGroup:actuate(1)
+		end
+		if kc_has_recirc then
+			sysAir.recircSwitchGroup:actuate(1)
+		end
+		if kc_has_trim_air then
+			sysAir.trimAirSwitch:actuate(1)
+		end
+		elseif flightphase == kc_phase_before_start then
+		if kc_has_press_cab then
+			sysAir.packSwitchGroup:actuate(0)
+		end
+		if kc_is_airbus == false and kc_has_iso_valvle then	
+			sysAir.isoValveSwitch:actuate(1)
+		end
+		if kc_has_oxygen then
+			sysAir.oxygenMaster:actuate(0)
 		end
 	elseif flightphase == kc_phase_after_start then
 		if kc_has_press_cab then
@@ -984,7 +1017,16 @@ function kc_macro_air(flightphase)
 		end
 		if kc_has_engine_bleed then
 			sysAir.engBleedGroup:actuate(1) 
-			sysAir.engBleedGroup:actuate(0) 
+		end
+		if kc_has_oxygen then 
+			sysAir.oxygenMaster:actuate(1)
+		end	
+	elseif flightphase == kc_phase_climb then
+		if kc_has_press_cab then
+			sysAir.packSwitchGroup:setValue(1)
+		end
+		if kc_has_engine_bleed then
+			sysAir.engBleedGroup:actuate(1) 
 		end
 		if kc_has_oxygen then 
 			sysAir.oxygenMaster:actuate(1)

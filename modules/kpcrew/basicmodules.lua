@@ -55,8 +55,8 @@ function kc_get_matching_icao_code()
 		-- icao = "A306"
 
 	-- FF 7x7
-	-- elseif PLANE_ICAO == "B762" or PLANE_ICAO == "B763" or PLANE_ICAO == "B764" then
-		-- icao = "B7x7"
+	elseif PLANE_ICAO == "B762" or PLANE_ICAO == "B763" or PLANE_ICAO == "B764" or PLANE_ICAO == "B752" or PLANE_ICAO == "B753" then
+		icao = "B7x7"
 		
 	-- Rotate MD-11
 	-- elseif PLANE_ICAO == "MD11" then

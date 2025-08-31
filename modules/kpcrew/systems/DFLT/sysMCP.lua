@@ -265,58 +265,58 @@ function sysMCP:panel_render()
 			imgui.SameLine()
 			kc_imgui_toggle_button_mcp("A/P",sysMCP.ap1Switch,10,30,19)
 		end
-		if kc_has_ias_sel then
-			imgui.SameLine()
-			kc_imgui_number_mcp("SPD",sysMCP.iasSelector,110,32,5)
-		end
-		if kc_has_mach_switch then
-			imgui.SameLine()
-			kc_imgui_toggle_button_mcp("S/M",sysMCP.machSwitch,0,30,19)
-		end
-		if kc_has_flch_ias then
-			imgui.SameLine()
-			kc_imgui_toggle_button_mcp("FLC",sysMCP.speedSwitch,10,30,19)
-		end
-		if kc_has_autothrottle then
-			imgui.SameLine()
-			kc_imgui_toggle_button_mcp("A/T",sysMCP.athrSwitch,0,30,19)
-		end
-		if kc_has_hdg_sel then
-			imgui.SameLine()
-			kc_imgui_number_mcp("HDG",sysMCP.hdgSelector,111,32,4)
-			imgui.SameLine()
-			kc_imgui_toggle_button_mcp("HDG",sysMCP.hdgselSwitch,10,30,19)
-		end
-		imgui.SameLine()
-		kc_imgui_toggle_button_mcp("NAV",sysMCP.vorlocSwitch,10,30,19)
-		if kc_has_alt_sel then
-			imgui.SameLine()
-			kc_imgui_number_mcp("ALT",sysMCP.altSelector,112,45,6)
-			imgui.SameLine()
-			kc_imgui_toggle_button_mcp("ALT",sysMCP.altholdSwitch,10,30,19)
-		end
-		if kc_has_meter_pfd then
-			imgui.SameLine()
-			kc_imgui_toggle_button_mcp("MTR",sysEFIS.mtrsPilot,0,30,19)
-		end
-		if kc_has_vsp_sel then
-			imgui.SameLine()
-			kc_imgui_number_mcp("V/S",sysMCP.vspSelector,113,45,6)
-			imgui.SameLine()
-			kc_imgui_toggle_button_mcp("V/S",sysMCP.vsSwitch,10,30,19)
-			imgui.SameLine()
-			kc_imgui_cmd_button("DN","sim/autopilot/nose_down",10,30,19)
-			imgui.SameLine()
-			kc_imgui_cmd_button("UP","sim/autopilot/nose_up",10,30,19)
-		end 
-		if kc_has_ils then
-			imgui.SameLine()
-			kc_imgui_number_mcp("CRS1",sysMCP.crs1Selector,114,32,4)
-			imgui.SameLine()
-			kc_imgui_number_mcp("CRS2",sysMCP.crs2Selector,115,32,4)
-			imgui.SameLine()
-			kc_imgui_toggle_button_mcp("APR",sysMCP.approachSwitch,10,30,19)
-		end
+		-- if kc_has_ias_sel then
+			-- imgui.SameLine()
+			-- kc_imgui_number_mcp("SPD",sysMCP.iasSelector,110,32,5)
+		-- end
+		-- if kc_has_mach_switch then
+			-- imgui.SameLine()
+			-- kc_imgui_toggle_button_mcp("S/M",sysMCP.machSwitch,0,30,19)
+		-- end
+		-- if kc_has_flch_ias then
+			-- imgui.SameLine()
+			-- kc_imgui_toggle_button_mcp("FLC",sysMCP.speedSwitch,10,30,19)
+		-- end
+		-- if kc_has_autothrottle then
+			-- imgui.SameLine()
+			-- kc_imgui_toggle_button_mcp("A/T",sysMCP.athrSwitch,0,30,19)
+		-- end
+		-- if kc_has_hdg_sel then
+			-- imgui.SameLine()
+			-- kc_imgui_number_mcp("HDG",sysMCP.hdgSelector,111,32,4)
+			-- imgui.SameLine()
+			-- kc_imgui_toggle_button_mcp("HDG",sysMCP.hdgselSwitch,10,30,19)
+		-- end
+		-- imgui.SameLine()
+		-- kc_imgui_toggle_button_mcp("NAV",sysMCP.vorlocSwitch,10,30,19)
+		-- if kc_has_alt_sel then
+			-- imgui.SameLine()
+			-- kc_imgui_number_mcp("ALT",sysMCP.altSelector,112,45,6)
+			-- imgui.SameLine()
+			-- kc_imgui_toggle_button_mcp("ALT",sysMCP.altholdSwitch,10,30,19)
+		-- end
+		-- if kc_has_meter_pfd then
+			-- imgui.SameLine()
+			-- kc_imgui_toggle_button_mcp("MTR",sysEFIS.mtrsPilot,0,30,19)
+		-- end
+		-- if kc_has_vsp_sel then
+			-- imgui.SameLine()
+			-- kc_imgui_number_mcp("V/S",sysMCP.vspSelector,113,45,6)
+			-- imgui.SameLine()
+			-- kc_imgui_toggle_button_mcp("V/S",sysMCP.vsSwitch,10,30,19)
+			-- imgui.SameLine()
+			-- kc_imgui_cmd_button("DN","sim/autopilot/nose_down",10,30,19)
+			-- imgui.SameLine()
+			-- kc_imgui_cmd_button("UP","sim/autopilot/nose_up",10,30,19)
+		-- end 
+		-- if kc_has_ils then
+			-- imgui.SameLine()
+			-- kc_imgui_number_mcp("CRS1",sysMCP.crs1Selector,114,32,4)
+			-- imgui.SameLine()
+			-- kc_imgui_number_mcp("CRS2",sysMCP.crs2Selector,115,32,4)
+			-- imgui.SameLine()
+			-- kc_imgui_toggle_button_mcp("APR",sysMCP.approachSwitch,10,30,19)
+		-- end
 	imgui.EndGroup()
 end
 return sysMCP

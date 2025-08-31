@@ -1,11 +1,9 @@
--- B7x7 airplane 
+-- B7x7 B757 B767 airplane 
 -- MCP functionality
 
 -- @classmod sysMCP
 -- @author Kosta Prokopiu
--- @copyright 2022 Kosta Prokopiu
-local sysMCP = {
-}
+-- @copyright 2025 Kosta Prokopiu
 
 local TwoStateDrefSwitch 	= require "kpcrew.systems.TwoStateDrefSwitch"
 local TwoStateCmdSwitch	 	= require "kpcrew.systems.TwoStateCmdSwitch"
@@ -16,258 +14,389 @@ local CustomAnnunciator 	= require "kpcrew.systems.CustomAnnunciator"
 local TwoStateToggleSwitch	= require "kpcrew.systems.TwoStateToggleSwitch"
 local MultiStateCmdSwitch 	= require "kpcrew.systems.MultiStateCmdSwitch"
 local InopSwitch 			= require "kpcrew.systems.InopSwitch"
+local KeepPressedSwitchCmd	= require "kpcrew.systems.KeepPressedSwitchCmd"
 
-local drefVORLocLight 		= "sim/cockpit2/autopilot/nav_status"
-local drefLNAVLight 		= "sim/cockpit2/radios/actuators/HSI_source_select_pilot"
-local drefSPDLight 			= "sim/cockpit2/autopilot/autothrottle_on"
-local drefVSLight 			= "sim/cockpit2/autopilot/vvi_status"
-local drefVNAVLight 		= "sim/cockpit2/autopilot/fms_vnav"
+sysMCP = require("kpcrew.systems.DFLT.sysMCP")
 
---------- Switches
+logMsg("B7x7 sysMCP")
 
--- Flight Directors (DFLT only one supported)
-sysMCP.fdirPilotSwitch 		= TwoStateDrefSwitch:new("fdir left","sim/cockpit2/autopilot/flight_director_mode",0)
-sysMCP.fdirCoPilotSwitch 	= InopSwitch:new("fdir right")
+-- **Flight Directors 
+sysMCP.fdirPilotSwitch 		= TwoStateCustomSwitch:new("fdir left","1-sim/AP/fd1Switcher/anim",0,
+function ()
+	if get("1-sim/AP/fd1Switcher/anim") == 1 then
+		command_once("1-sim/command/AP/fd1Switcher_trigger")
+	end
+end,
+function ()
+	if get("1-sim/AP/fd1Switcher/anim") == 0 then
+		command_once("1-sim/command/AP/fd1Switcher_trigger")
+	end
+end,
+function ()
+	command_once("1-sim/command/AP/fd1Switcher_trigger")
+end,
+function () 
+	return 1-get("1-sim/AP/fd1Switcher/anim")
+end)
+sysMCP.fdirCoPilotSwitch 	= TwoStateCustomSwitch:new("fdir right","1-sim/AP/fd2Switcher/anim",0,
+function ()
+	if get("1-sim/AP/fd2Switcher/anim") == 1 then
+		command_once("1-sim/command/AP/fd2Switcher_trigger")
+	end
+end,
+function ()
+	if get("1-sim/AP/fd2Switcher/anim") == 0 then
+		command_once("1-sim/command/AP/fd2Switcher_trigger")
+	end
+end,
+function ()
+	command_once("1-sim/command/AP/fd2Switcher_trigger")
+end,
+function () 
+	return 1-get("1-sim/AP/fd2Switcher/anim")
+end)
 sysMCP.fdirGroup 			= SwitchGroup:new("fdirs")
 sysMCP.fdirGroup:addSwitch(sysMCP.fdirPilotSwitch)
 sysMCP.fdirGroup:addSwitch(sysMCP.fdirCoPilotSwitch)
--- Flight Directors annunciator
-sysMCP.fdirAnc 				= SimpleAnnunciator:new("fdiranc","sim/cockpit2/autopilot/flight_director_mode",0)
+sysMCP.fdirAnc 				= SimpleAnnunciator:new("fdiranc","1-sim/AP/fd1Switcher/anim",0)
 
--- HDG SEL
-sysMCP.hdgselSwitch 		= TwoStateToggleSwitch:new("hdgsel","sim/cockpit2/autopilot/heading_mode",-1,
-	"sim/autopilot/heading")
+-- **AUTOPILOT
+sysMCP.ap1Switch 			= TwoStateCustomSwitch:new("autopilot1","1-sim/AP/cmd_L_Button",0,
+function ()
+	if get("1-sim/AP/cmd_L_Button") == 0 then
+		command_once("1-sim/comm/AP/CMD_L")
+	end
+end,
+function ()
+	if get("1-sim/AP/cmd_L_Button") == 1 then
+		command_once("1-sim/comm/AP/CMD_L")
+	end
+end,
+function ()
+	command_once("1-sim/comm/AP/CMD_L")
+end,
+function () 
+	return get("1-sim/AP/lamp/12")
+end)
+sysMCP.apAnc 				= SimpleAnnunciator:new("autopilotanc","1-sim/AP/lamp/12",0)
 
--- VORLOC
-sysMCP.vorlocSwitch 		= TwoStateToggleSwitch:new("vorloc",drefVORLocLight,0,"sim/autopilot/NAV")
+-- **ALTHOLD
+sysMCP.altholdSwitch 		= TwoStateCustomSwitch:new("althold","1-sim/AP/altHoldButton",0,
+function ()
+	if get("1-sim/AP/altHoldButton") == 0 then
+		command_once("1-sim/comm/AP/altHoldButton")
+	end
+end,
+function ()
+	if get("1-sim/AP/altHoldButton") == 1 then
+		command_once("1-sim/comm/AP/altHoldButton")
+	end
+end,
+function ()
+	command_once("1-sim/comm/AP/altHoldButton")
+end,
+function () 
+	return get("1-sim/AP/lamp/8")
+end)
+sysMCP.altAnc 				= SimpleAnnunciator:new("altanc","1-sim/AP/lamp/8",0)
 
--- ALTHOLD
-sysMCP.altholdSwitch 		= TwoStateToggleSwitch:new("althold","sim/cockpit2/autopilot/altitude_hold_status",0,
-	"sim/autopilot/altitude_hold")
+-- **HDG SELECT mode
+sysMCP.hdgselSwitch 		= TwoStateCustomSwitch:new("hdgsel","1-sim/AP/hdgConfButton",0,
+function ()
+	if get("1-sim/AP/hdgConfButton") == 1 then
+		command_once("1-sim/comm/AP/multiHdg")
+		command_once("1-sim/comm/AP/multiSelect")
+	end
+end,
+function ()
+	if get("1-sim/AP/hdgConfButton") == 0 then
+		command_once("1-sim/comm/AP/multiHdg")
+		command_once("1-sim/comm/AP/multiSelect")
+	end
+end,
+function ()
+		command_once("1-sim/comm/AP/multiHdg")
+		command_once("1-sim/comm/AP/multiSelect")
+end,
+function () 
+	return 1-get("1-sim/AP/hdgConfButton")
+end)
+sysMCP.hdgAnc 				= SimpleAnnunciator:new("hdganc","1-sim/AP/lamp/6",0)
 
--- APPROACH
-sysMCP.approachSwitch 		= TwoStateToggleSwitch:new("approach","sim/cockpit2/autopilot/approach_status",0,
-	"sim/autopilot/approach")
+-- HDGHOLD
+sysMCP.hdgholdSwitch 		= TwoStateCustomSwitch:new("hdghold","1-sim/AP/hdgHoldButton",0,
+function ()
+	if get("1-sim/AP/hdgHoldButton") == 0 then
+		command_once("1-sim/comm/AP/hdgHoldButton")
+	end
+end,
+function ()
+	if get("1-sim/AP/hdgHoldButton") == 1 then
+		command_once("1-sim/comm/AP/hdgHoldButton")
+	end
+end,
+function ()
+	command_once("1-sim/comm/AP/hdgHoldButton")
+end,
+function () 
+	return get("1-sim/AP/lamp/6")
+end)
 
--- VS
-sysMCP.vsSwitch 			= TwoStateToggleSwitch:new("vs",drefVSLight,0,"sim/autopilot/vertical_speed")
+-- **VORLOC
+sysMCP.vorlocSwitch			= TwoStateCustomSwitch:new("vorloc","1-sim/AP/locButton",0,
+function ()
+	if get("1-sim/AP/locButton") == 0 then
+		command_once("1-sim/comm/AP/locButton")
+	end
+end,
+function ()
+	if get("1-sim/AP/locButton") == 1 then
+		command_once("1-sim/comm/AP/locButton")
+	end
+end,
+function ()
+	command_once("1-sim/comm/AP/locButton")
+end,
+function () 
+	return get("1-sim/AP/lamp/10")
+end)
 
--- SPEED
-sysMCP.speedSwitch 			= TwoStateToggleSwitch:new("speed",drefSPDLight,0,"sim/autopilot/autothrottle_toggle")
+-- **SPEED Mode
+sysMCP.speedSwitch 			= TwoStateCustomSwitch:new("speed","1-sim/AP/spdButton",0,
+function ()
+	if get("1-sim/AP/spdButton") == 0 then
+		command_once("1-sim/comm/AP/multiSpd")
+		command_once("1-sim/comm/AP/multiSelect")
+	end
+end,
+function ()
+	if get("1-sim/AP/spdButton") == 1 then
+		command_once("1-sim/comm/AP/multiSpd")
+		command_once("1-sim/comm/AP/multiSelect")
+	end
+end,
+function ()
+	command_once("1-sim/comm/AP/multiSpd")
+	command_once("1-sim/comm/AP/multiSelect")
+end,
+function () 
+	return get("1-sim/AP/lamp/2")
+end)
+sysMCP.spdAnc 				= SimpleAnnunciator:new("spdanc","1-sim/AP/lamp/2",0)
 
--- AUTOPILOT
-sysMCP.ap1Switch 			= TwoStateCmdSwitch:new("autopilot1","1-sim/AP/cmd_L_Button",0,
-	"1-sim/AP/cmd_L_Button","1-sim/AP/cmd_L_Button")
+-- NAV mode annunciator
+sysMCP.navAnc 				= SimpleAnnunciator:new("navanc","1-sim/AP/lamp/10",0)
 
--- BACKCOURSE
-sysMCP.backcourse 			= InopSwitch:new("backcourse")
+-- **APPROACH
+sysMCP.approachSwitch 		= TwoStateCustomSwitch:new("approach","1-sim/AP/appButton",0,
+function ()
+	if get("1-sim/AP/appButton") == 0 then
+		command_once("1-sim/comm/AP/appButton")
+	end
+end,
+function ()
+	if get("1-sim/AP/appButton") == 1 then
+		command_once("1-sim/comm/AP/appButton")
+	end
+end,
+function ()
+	command_once("1-sim/comm/AP/appButton")
+end,
+function () 
+	return get("1-sim/AP/lamp/11")
+end)
+sysMCP.aprAnc 				= SimpleAnnunciator:new("apranc","1-sim/AP/lamp/11",0)
 
--- TOGA
-sysMCP.togaPilotSwitch 		= TwoStateToggleSwitch:new("togapilot","sim/cockpit2/autopilot/TOGA_status",0,
-	"sim/autopilot/take_off_go_around")
+-- IAS mode or Level Change or FLCH
+sysMCP.flchSwitch 		= TwoStateCustomSwitch:new("flch","1-sim/AP/flchButton",0,
+function ()
+	if get("1-sim/AP/flchButton") == 0 then
+		command_once("1-sim/comm/AP/flchButton")
+	end
+end,
+function ()
+	if get("1-sim/AP/flchButton") == 1 then
+		command_once("1-sim/comm/AP/flchButton")
+	end
+end,
+function ()
+	command_once("1-sim/comm/AP/flchButton")
+end,
+function () 
+	return get("1-sim/AP/lamp/5")
+end)
 
--- ATHR
-sysMCP.athrSwitch 			= TwoStateToggleSwitch:new("athr","sim/cockpit2/autopilot/autothrottle_enabled",0,
-	"sim/autopilot/autothrottle_toggle")
+-- **VS
+sysMCP.vsSwitch 			= TwoStateCustomSwitch:new("vsmode","1-sim/AP/vviButton",0,
+function ()
+	if get("1-sim/AP/vviButton") == 0 then
+		command_once("1-sim/comm/AP/vviButton")
+	end
+end,
+function ()
+	if get("1-sim/AP/vviButton") == 1 then
+		command_once("1-sim/comm/AP/vviButton")
+	end
+end,
+function ()
+	command_once("1-sim/comm/AP/vviButton")
+end,
+function () 
+	return get("1-sim/AP/lamp/5")
+end)
+-- Vertical mode annunciator
+sysMCP.vspAnc 				= SimpleAnnunciator:new("vspanc","1-sim/AP/lamp/7",0)
 
+-- LNAV
+sysMCP.lnavSwitch 			= TwoStateCustomSwitch:new("lnav","1-sim/AP/lnavButton",0,
+function ()
+	if get("1-sim/AP/lnavButton") == 0 then
+		command_once("1-sim/comm/AP/lnavButton")
+	end
+end,
+function ()
+	if get("1-sim/AP/lnavButton") == 1 then
+		command_once("1-sim/comm/AP/lnavButton")
+	end
+end,
+function ()
+	command_once("1-sim/comm/AP/lnavButton")
+end,
+function () 
+	return get("1-sim/AP/lamp/3")
+end)
+
+-- VNAV
+sysMCP.vnavSwitch 			= TwoStateCustomSwitch:new("vnav","1-sim/AP/vnavButton",0,
+function ()
+	if get("1-sim/AP/vnavButton") == 0 then
+		command_once("1-sim/comm/AP/vnavButton")
+	end
+end,
+function ()
+	if get("1-sim/AP/vnavButton") == 1 then
+		command_once("1-sim/comm/AP/vnavButton")
+	end
+end,
+function ()
+	command_once("1-sim/comm/AP/vnavButton")
+end,
+function () 
+	return get("1-sim/AP/lamp/4")
+end)
+
+-- **TOGA Button
+sysMCP.togaPilotSwitch 		= TwoStateToggleSwitch:new("togapilot","1-sim/AP/togaButton",0,
+	"1-sim/comm/AP/at_toga")
+	
+-- **ATHR
+sysMCP.athrSwitch 			= TwoStateCustomSwitch:new("athr","1-sim/AP/atSwitcher/anim",0,
+function ()
+	if get("1-sim/AP/atSwitcher/anim") == 1 then
+		command_once("1-sim/command/AP/atSwitcher_trigger")
+	end
+end,
+function ()
+	if get("1-sim/AP/atSwitcher/anim") == 0 then
+		command_once("1-sim/command/AP/atSwitcher_trigger")
+	end
+end,
+function ()
+	command_once("1-sim/command/AP/atSwitcher_trigger")
+end,
+function () 
+	return 1-get("1-sim/AP/atSwitcher/anim")
+end)
+sysMCP.athrAnc				= SimpleAnnunciator:new("athr","1-sim/AP/atSwitcher/anim",0)
+
+-- === Selectors
 
 -- CRS 1&2
 sysMCP.crs1Selector 		= MultiStateCmdSwitch:new("crs1","sim/cockpit2/radios/actuators/nav1_obs_deg_mag_pilot",0,
-	"sim/radios/obs1_down","sim/radios/obs1_up",0,359,false)
+	"1-sim/comm/vor1crsRotaryDN","1-sim/comm/vor1crsRotaryUP",0,359,false)
 sysMCP.crs2Selector 		= MultiStateCmdSwitch:new("crs2","sim/cockpit2/radios/actuators/nav2_obs_deg_mag_pilot",0,
-	"sim/radios/obs2_down","sim/radios/obs2_up",0,359,false)
+	"1-sim/comm/vor2crsRotaryDN","1-sim/comm/vor2crsRotaryUP",0,359,false)
 sysMCP.crsSelectorGroup	 	= SwitchGroup:new("crs")
 sysMCP.crsSelectorGroup:addSwitch(sysMCP.crs1Selector)
 sysMCP.crsSelectorGroup:addSwitch(sysMCP.crs2Selector)
 
--- N1 Boeing
-sysMCP.n1Switch 			= InopSwitch:new("n1")
-
 -- IAS
-sysMCP.iasSelector 			= MultiStateCmdSwitch:new("ias","1-sim/AP/machInKIAS",0,
+sysMCP.iasSelector 			= MultiStateCmdSwitch:new("ias","757Avionics/ap/spd_act",0,
 	"1-sim/comm/AP/spdDN","1-sim/comm/AP/spdUP",100,340,false)
 
--- KTS/MACH C/O
-sysMCP.machSwitch 			= InopSwitch:new("mach")
-
--- SPD INTV
-sysMCP.spdIntvSwitch 		= InopSwitch:new("spdintv")
-
--- VNAV
-sysMCP.vnavSwitch 			= TwoStateToggleSwitch:new("vnav",drefVNAVLight,0,"sim/autopilot/FMS")
-
--- LVL CHG
-sysMCP.lvlchgSwitch 		= InopSwitch:new("lvlchg")
-
 -- HDG
-sysMCP.hdgSelector 			= TwoStateCustomSwitch:new("hdg","757Avionics/ap/hdg_act",0,
-	function () 
-		local lalt = get("757Avionics/ap/hdg_act")
-		set("757Avionics/ap/hdg_act",lalt+1)
-	end,
-	function () 
-		local lalt = get("757Avionics/ap/hdg_act")
-		set("757Avionics/ap/hdg_act",lalt-1)
-	end,
-	function () 
-		return
-	end
-)
-
--- TURNRATE
-sysMCP.turnRateSelector 	= InopSwitch:new("turnrate")
-
--- LNAV
-sysMCP.lnavSwitch 			= InopSwitch:new("lnav")
+sysMCP.hdgSelector 			= MultiStateCmdSwitch:new("hdg","757Avionics/ap/hdg_act",0,
+	"1-sim/comm/AP/hdgDN","1-sim/comm/AP/hdgUP",0,359,false)
 
 -- ALT
-sysMCP.altSelector 			= TwoStateCustomSwitch:new("alt","757Avionics/ap/alt_act",0,
-	function () 
-		local lalt = get("757Avionics/ap/alt_act")
-		set("757Avionics/ap/alt_act",lalt+100)
-	end,
-	function () 
-		local lalt = get("757Avionics/ap/alt_act")
-		set("757Avionics/ap/alt_act",lalt-100)
-	end,
-	function () 
-		return
-	end,
-	function () 
-		return 
-	end
-)
-
--- ALT INTV
-sysMCP.altintvSwitch 		= InopSwitch:new("altintv")
+sysMCP.altSelector 			= MultiStateCmdSwitch:new("alt","757Avionics/ap/alt_act",0,
+	"1-sim/comm/AP/altDN","1-sim/comm/AP/altUP",0,50000,false)
+sysMCP.altDisplay 			= SimpleAnnunciator:new("alt","757Avionics/ap/alt_act",0)
 
 -- VSP
-sysMCP.vspSelector 			= MultiStateCmdSwitch:new("vsp","sim/cockpit2/autopilot/vvi_dial_fpm",0,
-	"sim/autopilot/vertical_speed_down","sim/autopilot/vertical_speed_up",-7900,7900,true)
-
--- CWS Boeing only
-sysMCP.cwsaSwitch 			= TwoStateToggleSwitch:new("cwsa","sim/cockpit2/autopilot/servos_on",0,
-	"sim/autopilot/fdir_servos_toggle")
-sysMCP.cwsbSwitch 			= InopSwitch:new("cwsb")
+sysMCP.vspSelector 			= MultiStateCmdSwitch:new("vsp","757Avionics/ap/vs_act",0,
+	"1-sim/comm/AP/vviDN","1-sim/comm/AP/vviUP",-7900,7900,false)
 
 -- A/P DISENGAGE
-sysMCP.discAPSwitch 		= TwoStateToggleSwitch:new("apdisc","757Avionics/ap/ap_mode",0,
+sysMCP.discAPSwitch 		= TwoStateCustomSwitch:new("apdisc","1-sim/AP/desengageLever/anim",0,
+function ()
+	if get("1-sim/AP/desengageLever/anim") == 1 then
+		command_once("1-sim/command/AP/atSwitcher_trigger")
+	end
+end,
+function ()
+	if get("1-sim/AP/desengageLever/anim") == 0 then
+		command_once("1-sim/command/AP/desengageLever_button")
+	end
+end,
+function ()
+	command_once("1-sim/command/AP/desengageLever_button")
+end,
+function () 
+	return 1-get("1-sim/command/AP/desengageLever_button")
+end)
+	
+sysMCP.apDiscYoke 			= TwoStateToggleSwitch:new("discapyoke","sim/cockpit2/annunciators/autopilot_disconnect",0,
 	"1-sim/comm/AP/ap_disc")
-sysMCP.apDiscYoke 			= TwoStateCmdSwitch:new("discapyoke","757Avionics/ap/ap_mode",0,
-	"1-sim/comm/AP/ap_disc","1-sim/comm/AP/ap_disc")
 
--- NAVIGATION SWITCHES
-sysMCP.vhfNavSwitch 		= InopSwitch:new("vhfnav")
-sysMCP.irsNavSwitch			= InopSwitch:new("irsnav")
-sysMCP.fmcNavSwitch 		= InopSwitch:new("fmcnav")
-sysMCP.displaySourceSwitch 	= InopSwitch:new("dispsrc")
-sysMCP.displayControlSwitch = InopSwitch:new("dispctrl")
-
-------- Annunciators
-
-
--- HDG Select/mode annunciator
-sysMCP.hdgAnc 				= CustomAnnunciator:new("hdganc",
-function () 
-	if get("sim/cockpit2/autopilot/heading_status") > 0 then
-		return 1
-	else
-		return 0
-	end
-end)
-
-
--- NAV mode annunciator
-sysMCP.navAnc 				= CustomAnnunciator:new("navanc",
-function () 
-	if get(drefVORLocLight) > 0 or get(drefLNAVLight) > 0 then
-		return 1
-	else
-		return 0
-	end
-end)
-
--- APR Select/mode annunciator
-sysMCP.aprAnc 				= SimpleAnnunciator:new("apranc","sim/cockpit2/autopilot/approach_status",0)
-
--- SPD mode annunciator
-sysMCP.spdAnc 				= SimpleAnnunciator:new("spdanc","sim/cockpit2/autopilot/autothrottle_on",0)
-
--- Vertical mode annunciator
-sysMCP.vspAnc 				= CustomAnnunciator:new("vspanc",
-function () 
-	if get(drefVSLight) > 0 or get(drefVNAVLight) > 0 then
-		return 1
-	else
-		return 0
-	end
-end)
-
--- ALT mode annunciator
-sysMCP.altAnc 				= SimpleAnnunciator:new("altanc","sim/cockpit2/autopilot/altitude_hold_status",0)
-
--- A/P mode annunciator
-sysMCP.apAnc 				= SimpleAnnunciator:new("autopilotanc","sim/cockpit2/autopilot/servos_on",0)
-
--- BC mode annunciator
-sysMCP.bcAnc 				= InopSwitch:new("bc")
-
--- ===== UI related functions =====
-
--- render the MCP part
-function sysMCP:render(ypos,height)
-
-	-- reposition when screen size changes
-	if kh_mcp_wnd_state < 0 then
-		float_wnd_set_position(kh_mcp_wnd, 0, kh_scrn_height - ypos)
-		float_wnd_set_geometry(kh_mcp_wnd, 0, ypos, 25, ypos-height)
-		kh_mcp_wnd_state = 0
-	end
-	
-	imgui.SetCursorPosY(10)
-	imgui.SetCursorPosX(2)
-	
-	if kh_mcp_wnd_state == 1 then
-		imgui.Button("<", 17, 25)
-		if imgui.IsItemActive() then 
-			kh_mcp_wnd_state = 0
-			float_wnd_set_geometry(kh_mcp_wnd, 0, ypos, 25, ypos-height)
+-- YAW DAMPER
+sysMCP.yawDamper			= SwitchGroup:new("yawdamper")
+sysMCP.yawDamper1			= TwoStateCustomSwitch:new("yawdamper","anim/1/button",0,
+	function ()
+		set("anim/1/button",1)
+	end,
+	function ()
+		set("anim/1/button",0)
+	end,
+	function ()
+		if get("anim/1/button") == 0 then
+			set("anim/1/button",1)
+		else
+			set("anim/1/button",0)
 		end
-	end
+	end,
+	function ()
+		return get("anim/1/button")
+	end)
+sysMCP.yawDamper:addSwitch(sysMCP.yawDamper1)
 
-	if kh_mcp_wnd_state == 0 then
-		imgui.Button("M", 17, 25)
-		if imgui.IsItemActive() then 
-			kh_mcp_wnd_state = 1
-			float_wnd_set_geometry(kh_mcp_wnd, 0, ypos, 920, ypos-height)
+sysMCP.yawDamper2			= TwoStateCustomSwitch:new("yawdamper","anim/2/button",0,
+	function ()
+		set("anim/2/button",1)
+	end,
+	function ()
+		set("anim/2/button",0)
+	end,
+	function ()
+		if get("anim/2/button") == 0 then
+			set("anim/2/button",1)
+		else
+			set("anim/2/button",0)
 		end
-	end
-
-	sysMCP.crs1Selector:setDefaultDelay(3)
-	sysMCP.iasSelector:setDefaultDelay(4)
-	sysMCP.hdgSelector:setDefaultDelay(3)
-	sysMCP.altSelector:setDefaultDelay(4)
-	sysMCP.vspSelector:setDefaultDelay(8)
-
-	kc_imgui_rotary_mcp("CRS:%03d",sysMCP.crs1Selector,10,11)
-	kc_imgui_toggle_button_mcp("FD",sysMCP.fdirGroup,10,22,25)
-	kc_imgui_toggle_button_mcp("AT",sysMCP.athrSwitch,10,22,25)
-	-- kc_imgui_toggle_button_mcp("N1",sysMCP.n1Switch,10,22,25)
-	kc_imgui_toggle_button_mcp("SP",sysMCP.speedSwitch,10,22,25)
-	kc_imgui_rotary_mcp("SPD:%03d",sysMCP.iasSelector,10,12)
-	kc_imgui_toggle_button_mcp("VN",sysMCP.vnavSwitch,10,22,25)
-	-- kc_imgui_toggle_button_mcp("LC",sysMCP.lvlchgSwitch,10,22,25)
-	kc_imgui_rotary_mcp("HDG:%03d",sysMCP.hdgSelector,10,13)
-	kc_imgui_toggle_button_mcp("HD",sysMCP.hdgselSwitch,10,22,25)
-	-- kc_imgui_toggle_button_mcp("LN",sysMCP.lnavSwitch,10,22,25)
-	kc_imgui_toggle_button_mcp("LO",sysMCP.vorlocSwitch,10,22,25)
-	kc_imgui_toggle_button_mcp("AP",sysMCP.approachSwitch,10,22,25)
-	kc_imgui_rotary_mcp("ALT:%05d",sysMCP.altSelector,10,14)
-	kc_imgui_toggle_button_mcp("AL",sysMCP.altholdSwitch,10,22,25)
-	kc_imgui_rotary_mcp((sysMCP.vspSelector:getStatus() >= 0) and "VSP:+%04d" or "VSP:%05d",sysMCP.vspSelector,10,15)
-	kc_imgui_toggle_button_mcp("VS",sysMCP.vsSwitch,10,22,25)
-	kc_imgui_toggle_button_mcp("A/P",sysMCP.ap1Switch,10,59,25)
-
-end
+	end,
+	function ()
+		return get("anim/2/button")
+	end)
+sysMCP.yawDamper:addSwitch(sysMCP.yawDamper2)
 
 return sysMCP
