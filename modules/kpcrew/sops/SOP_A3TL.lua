@@ -98,6 +98,11 @@ activeSOP:getFlow(proc_ind_beforeStart):addItem(ProcedureItem:new("ELEC HYD PUMP
 	function () sysHydraulic.elecHydPumpGroup:actuate(0) end))
 
 -- landing Procedure
+activeSOP:getFlow(proc_ind_afterLandingProc):addItem(ProcedureItem:new("LS","OFF",FlowItem.actorFO,0,
+	function () return get("AirbusFBW/ILSonCapt") == 0 end,
+	function () set("AirbusFBW/ILSonCapt",0) end))
+
+-- After landing
 activeSOP:getFlow(proc_ind_landing):addItem(ProcedureItem:new("LS","ON",FlowItem.actorFO,0,
 	function () return get("AirbusFBW/ILSonCapt") == 1 end,
 	function () set("AirbusFBW/ILSonCapt",1) end))

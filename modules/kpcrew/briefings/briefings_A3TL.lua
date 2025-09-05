@@ -34,7 +34,13 @@ kc_LandingFlapsInd 	= "3|4|4|4|4|4|4"
 
 -- === engines
 kc_n2_after_start	= 50
-
+if PLANE_ICAO == "A346" then
+	kc_StartSequence 	= "4 TO 1|1 TO 4"
+	kc_StartBackground	= { [1] = {"4", "3", "2", "1"}, [2] = {"1", "2", "3", "4"} }
+else
+	kc_StartSequence 	= "2 THEN 1|1 THEN 2"
+	kc_StartBackground	= { [1] = {"2", "1"}, [2] = {"1", "2"} }
+end 
 -- === Fuel
 kc_has_fuel_pumps   = true		-- Aircraft has switchable fuel pumps
 kc_has_fuel_xfeed	= true		-- Aircraft has fuel crossfeed

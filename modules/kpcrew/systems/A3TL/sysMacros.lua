@@ -529,6 +529,10 @@ function kc_macro_mcp(flightphase)
 		sysMCP.fdirGroup:actuate(1)
 		sysMCP.athrSwitch:actuate(0)
 		sysMCP.altSelector:setValue(activeBriefings:get("departure:initAlt"))
+	elseif flightphase == kc_phase_after_start then
+		sysMCP.fdirGroup:actuate(1)
+		sysMCP.athrSwitch:actuate(0)
+		sysMCP.altSelector:setValue(activeBriefings:get("departure:initAlt"))
 	elseif flightphase == kc_phase_before_takeoff then
 		sysMCP.fdirGroup:actuate(1)
 	elseif flightphase == kc_phase_afterland then
@@ -607,15 +611,19 @@ function kc_bck_start_engine(trigger)
 	if kc_procvar_get(delayvar) == -1 then
 		kc_procvar_set(delayvar,20)
 		if trigger == "engstart1" then
+			kc_speakNoText(0,"Starting engine 1")
 			command_once("toliss_airbus/engcommands/Master1On")
 		end
 		if trigger == "engstart2" then
+			kc_speakNoText(0,"Starting engine 2")
 			command_once("toliss_airbus/engcommands/Master2On")
 		end
 		if trigger == "engstart3" then
+			kc_speakNoText(0,"Starting engine 3")
 			command_once("toliss_airbus/engcommands/Master3On")
 		end
 		if trigger == "engstart4" then
+			kc_speakNoText(0,"Starting engine 4")
 			command_once("toliss_airbus/engcommands/Master4On")
 		end
 	else
