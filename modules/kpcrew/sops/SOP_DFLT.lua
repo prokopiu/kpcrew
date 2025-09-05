@@ -559,32 +559,23 @@ if kc_get_nr_engines() == 1 then
 			kc_speakNoText(0,"starting engine")
 		end))
 else
-	engStartProc:addItem(IndirectProcedureItem:new("START SWITCH FIRST ENGINE","ENGAGE",FlowItem.actorFO,20,"eng_start_1_grd",
+	engStartProc:addItem(IndirectProcedureItem:new("ENGAGE START SWITCH ","ENGINE %s|kc_StartBackground[activeBriefings:get(\"taxi:startSequence\")][1]",FlowItem.actorFO,20,"eng_start_1_grd",
 		function () 
-			if activeBriefings:get("taxi:startSequence") == 1 and kc_get_nr_engines() > 1 then
-				return sysEngines.engStart2Switch:getStatus() > 0
-			else 
-				return sysEngines.engStart1Switch:getStatus() > 0
-			end 
+			local status = loadstring("return sysEngines.engStart" .. kc_StartBackground[activeBriefings:get("taxi:startSequence")][1] .. "Switch:getStatus() > 0")
+			return status()
 		end,
 		function () 
-			if activeBriefings:get("taxi:startSequence") == 1 and kc_get_nr_engines() > 1 then
-				kc_procvar_set("engstart2",true)
-			else 
-				kc_procvar_set("engstart1",true)
-			-- kc_speakNoText(0,"starting first engine")
-		end 
-	end))
+			kc_procvar_set("engstart" .. kc_StartBackground[activeBriefings:get("taxi:startSequence")][1],true)
+		end))
 end
 if kc_get_nr_engines() == 1 then
 	engStartProc:addItem(ProcedureItem:new("ENGINE N2","INCREASING",FlowItem.actorCPT,0,
 		function () return get("sim/cockpit2/engine/indicators/N2_percent",0) > 8 end,
 		function () end))
 else
-	engStartProc:addItem(ProcedureItem:new("FIRST ENGINE N2","INCREASING",FlowItem.actorCPT,0,
-		function () if activeBriefings:get("taxi:startSequence") == 1 and kc_get_nr_engines() > 1 then
-			return get("sim/cockpit2/engine/indicators/N2_percent",1) > kc_n2_after_start else 
-			return get("sim/cockpit2/engine/indicators/N2_percent",0) > kc_n2_after_start end 
+	engStartProc:addItem(ProcedureItem:new("ENGINE N2","INCREASING ENGINE %s|kc_StartBackground[activeBriefings:get(\"taxi:startSequence\")][1]",FlowItem.actorCPT,0,
+		function () return 
+			get("sim/cockpit2/engine/indicators/N2_percent",(kc_StartBackground[activeBriefings:get("taxi:startSequence")][1])-1) > kc_n2_after_start 
 		end,
 		function () end))	
 end
@@ -606,29 +597,19 @@ if kc_get_nr_engines() >= 2 then
 				command_once("sim/engines/throttle_idle")
 			end))
 	end
-	engStartProc:addItem(IndirectProcedureItem:new("START SWITCH SECOND ENGINE","ENGAGE",FlowItem.actorCPT,20,"eng_start_2_grd",
+	engStartProc:addItem(IndirectProcedureItem:new("ENGAGE START SWITCH ","ENGINE %s|kc_StartBackground[activeBriefings:get(\"taxi:startSequence\")][2]",FlowItem.actorFO,20,"eng_start_2_grd",
 		function () 
-			if activeBriefings:get("taxi:startSequence") == 1 then
-				return sysEngines.engStart1Switch:getStatus() == 1
-			else 
-				return sysEngines.engStart2Switch:getStatus() == 1
-			end 
+			local status = loadstring("return sysEngines.engStart" .. kc_StartBackground[activeBriefings:get("taxi:startSequence")][2] .. "Switch:getStatus() > 0")
+			return status()
 		end,
 		function () 
-			if activeBriefings:get("taxi:startSequence") == 1 then
-				kc_procvar_set("engstart1",true)
-			else 
-				kc_procvar_set("engstart2",true)
-			end 
-			-- kc_speakNoText(0,"starting second engine")
+			kc_procvar_set("engstart" .. kc_StartBackground[activeBriefings:get("taxi:startSequence")][2],true)
 		end))
-	engStartProc:addItem(ProcedureItem:new("2ND ENGINE N2","INCREASING",FlowItem.actorCPT,0,
-		function () if activeBriefings:get("taxi:startSequence") == 1 then
-			return get("sim/cockpit2/engine/indicators/N2_percent",0) > kc_n2_after_start else 
-			return get("sim/cockpit2/engine/indicators/N2_percent",1) > kc_n2_after_start end 
+	engStartProc:addItem(ProcedureItem:new("ENGINE N2","INCREASING ENGINE %s|kc_StartBackground[activeBriefings:get(\"taxi:startSequence\")][2]",FlowItem.actorCPT,0,
+		function () return 
+			get("sim/cockpit2/engine/indicators/N2_percent",(kc_StartBackground[activeBriefings:get("taxi:startSequence")][2])-1) > kc_n2_after_start 
 		end,
-		function () 
-		end))
+		function () end))
 end
 if kc_get_nr_engines() >= 3 then
 	engStartProc:addItem(HoldProcedureItem:new("START THIRD ENGINE","STARTING THIRD ENGINE",FlowItem.actorCPT))
@@ -648,16 +629,19 @@ if kc_get_nr_engines() >= 3 then
 				command_once("sim/engines/throttle_idle")
 			end))
 	end
-	engStartProc:addItem(IndirectProcedureItem:new("START SWITCH THIRD ENGINE","ENGAGE",FlowItem.actorCPT,20,"eng_start_3_grd",
-		function () return sysEngines.engStart3Switch:getStatus() == 1 end,
+	engStartProc:addItem(IndirectProcedureItem:new("ENGAGE START SWITCH ","ENGINE %s|kc_StartBackground[activeBriefings:get(\"taxi:startSequence\")][3]",FlowItem.actorFO,20,"eng_start_3_grd",
 		function () 
-			kc_procvar_set("engstart3",true)
-			-- kc_speakNoText(0,"starting third engine")
-		end))
-	engStartProc:addItem(ProcedureItem:new("3RD ENGINE N2","INCREASING",FlowItem.actorCPT,0,
-		function () return get("sim/cockpit2/engine/indicators/N2_percent",2) > kc_n2_after_start end,
+			local status = loadstring("return sysEngines.engStart" .. kc_StartBackground[activeBriefings:get("taxi:startSequence")][3] .. "Switch:getStatus() > 0")
+			return status()
+		end,
 		function () 
+			kc_procvar_set("engstart" .. kc_StartBackground[activeBriefings:get("taxi:startSequence")][3],true)
 		end))
+	engStartProc:addItem(ProcedureItem:new("ENGINE N2","INCREASING ENGINE %s|kc_StartBackground[activeBriefings:get(\"taxi:startSequence\")][3]",FlowItem.actorCPT,0,
+		function () return 
+			get("sim/cockpit2/engine/indicators/N2_percent",(kc_StartBackground[activeBriefings:get("taxi:startSequence")][3])-1) > kc_n2_after_start 
+		end,
+		function () end))
 end
 if kc_get_nr_engines() >= 4 then
 	engStartProc:addItem(HoldProcedureItem:new("START FOURTH ENGINE","STARTING FOURTH ENGINE",FlowItem.actorCPT))
@@ -677,16 +661,19 @@ if kc_get_nr_engines() >= 4 then
 				command_once("sim/engines/throttle_idle")
 			end))
 	end
-	engStartProc:addItem(IndirectProcedureItem:new("START SWITCH FOURTH ENGINE","ENGAGE",FlowItem.actorCPT,20,"eng_start_4_grd",
-		function () return sysEngines.engStart4Switch:getStatus() == 1 end,
+	engStartProc:addItem(IndirectProcedureItem:new("ENGAGE START SWITCH ","ENGINE %s|kc_StartBackground[activeBriefings:get(\"taxi:startSequence\")][4]",FlowItem.actorFO,20,"eng_start_4_grd",
 		function () 
-			kc_procvar_set("engstart4",true)
-			-- kc_speakNoText(0,"starting fourth engine")
-		end))
-	engStartProc:addItem(ProcedureItem:new("4TH ENGINE N2","INCREASING",FlowItem.actorCPT,0,
-		function () return get("sim/cockpit2/engine/indicators/N2_percent",3) > kc_n2_after_start end,
+			local status = loadstring("return sysEngines.engStart" .. kc_StartBackground[activeBriefings:get("taxi:startSequence")][4] .. "Switch:getStatus() > 0")
+			return status()
+		end,
 		function () 
+			kc_procvar_set("engstart" .. kc_StartBackground[activeBriefings:get("taxi:startSequence")][4],true)
 		end))
+	engStartProc:addItem(ProcedureItem:new("ENGINE N2","INCREASING ENGINE %s|kc_StartBackground[activeBriefings:get(\"taxi:startSequence\")][4]",FlowItem.actorCPT,0,
+		function () return 
+			get("sim/cockpit2/engine/indicators/N2_percent",(kc_StartBackground[activeBriefings:get("taxi:startSequence")][4])-1) > kc_n2_after_start 
+		end,
+		function () end))
 end
 engStartProc:addItem(SimpleProcedureItem:new("When pushback/towing complete",
 	function () return activeBriefings:get("taxi:gateStand") > 2 end))
@@ -799,7 +786,7 @@ afterStartProc:addItem(ProcedureItem:new("FLAPS","SET TAKEOFF FLAPS %s|kc_pref_s
 	function () return true end,
 	function () kc_macro_set_flap(activeBriefings:get("takeoff:flaps")-1) end))
 afterStartProc:addItem(ProcedureItem:new("MCP","INITIALIZE",FlowItem.actorFO,0,
-	function () return sysMCP.altDisplay:getStatus() == activeBriefings:get("departure:initAlt") end,
+	function () return true end,
 	function () kc_macro_mcp(kc_phase_after_start) end))
 if kc_has_transponder then
 	afterStartProc:addItem(ProcedureItem:new("TRANSPONDER","ON",FlowItem.actorFO,0,
@@ -1485,7 +1472,9 @@ end
 shutdownProc:addItem(ProcedureItem:new("ELECTRIC SYSTEM","AS REQUIRED",FlowItem.actorFO,0,
 	function () return true end,
 	function () kc_macro_elec_system(kc_phase_shutdown) end))
-	
+shutdownProc:addItem(ProcedureItem:new("LIGHTS","AS REQUIRED",FlowItem.actorFO,0,
+	function () return true end,
+	function () kc_macro_lights(kc_phase_shutdown) end))
 -- ======== STATES =============
 
 -- ================= Cold & Dark State ==================
