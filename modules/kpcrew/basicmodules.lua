@@ -36,7 +36,11 @@ function kc_get_matching_icao_code()
 		
 	-- FF A350
 	-- elseif PLANE_ICAO == "A359" then
-		-- icao = "A359"
+		-- icao = "A359"	
+	
+	-- SSG B748
+	elseif PLANE_ICAO == "B748" then
+		icao = "B748"
 
 	-- Laminar SF50
 	elseif PLANE_ICAO == "SF50" then
@@ -143,7 +147,7 @@ function kc_get_matching_icao_code()
 		icao = "SF34"
 		
 	-- MSparks B747
-	elseif PLANE_ICAO == "B744" or PLANE_ICAO == "B74F" then
+	elseif PLANE_ICAO == "B744" or PLANE_ICAO == "B744F" then
 		icao = "B744"
 		
 	-- Aerobask Phenom 300
