@@ -80,6 +80,8 @@ sysMCP.apAnc 				= CustomAnnunciator:new("autopilotanc",
 		end
 	end)
 
+sysMCP.altAnc 				= SimpleAnnunciator:new("altanc","B742/AP_panel/altitude_mode_sw",0)
+
 -- IAS
 sysMCP.iasSelector 			= MultiStateCmdSwitch:new("ias","B742/AP_panel/AT_spd_set_rotary",0,
 	nil,nil,100,340,false,1)
@@ -159,4 +161,21 @@ sysMCP.yawDamper2			= TwoStateCustomSwitch:new("yawdamper","B742/OVHD/YAW_damper
 	end)
 sysMCP.yawDamper:addSwitch(sysMCP.yawDamper2)
 
+sysMCP.navAnc 				= CustomAnnunciator:new("navanc",
+function () 
+	if get("B742/AP_panel/AP_nav_mode_sel") == 0 then
+		return 1
+	else
+		return 0
+	end
+end)
+
+sysMCP.aprAnc 				= CustomAnnunciator:new("apranc",
+function () 
+	if get("B742/AP_panel/AP_nav_mode_sel") == 4 then
+		return 1
+	else
+		return 0
+	end
+end)
 return sysMCP

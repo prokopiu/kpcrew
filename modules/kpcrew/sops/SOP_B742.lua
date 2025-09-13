@@ -107,8 +107,21 @@ activeSOP:getFlow(proc_ind_electrical):addItem(ProcedureItem:new("STANDBY IGNITI
 activeSOP:getFlow(proc_ind_electrical):addItem(ProcedureItem:new("ESS AC BUS","NORM",FlowItem.actorFO,0,
 	function () return get("B742/ELEC/ESS_bus_sel") == 1 end,
 	function () set("B742/ELEC/ESS_bus_sel",1) end))
+activeSOP:getFlow(proc_ind_electrical):addItem(ProcedureItem:new("GPWS & INSTR","TEST",FlowItem.actorFO,1,
+	function () return get("B742/misc_controls/instr_warn_test_button") == 1 end,
+	function () 
+		set("B742/misc_controls/gnd_prox_test_button",1) 
+		set("B742/misc_controls/instr_warn_test_button",1) 
+	end))
+activeSOP:getFlow(proc_ind_electrical):addItem(ProcedureItem:new("GPWS & INSTR","TEST",FlowItem.actorFO,0,
+	function () return get("B742/misc_controls/instr_warn_test_button") == 0 end,
+	function () 
+		set("B742/misc_controls/gnd_prox_test_button",0) 
+		set("B742/misc_controls/instr_warn_test_button",0) 
+	end))
 	
 -- === before start
+
 activeSOP:getFlow(proc_ind_beforeStart):addItem(ProcedureItem:new("ANTI SKID","ON",FlowItem.actorFO,0,
 	function () return get("B742/OVHD/anti_skid_on_off_sw") == 1 end,
 	function () 
@@ -124,7 +137,13 @@ activeSOP:getFlow(proc_ind_beforeStart):addItem(ProcedureItem:new("START VALVE",
 activeSOP:getFlow(proc_ind_beforeStart):addItem(ProcedureItem:new("ESS AC BUS","NORM",FlowItem.actorFO,0,
 	function () return get("B742/ELEC/ESS_bus_sel") == 1 end,
 	function () set("B742/ELEC/ESS_bus_sel",1) end))
-
+activeSOP:getFlow(proc_ind_beforeStart):addItem(ProcedureItem:new("EPRL","GA & EPR MODE",FlowItem.actorFO,0,
+	function () return get("B742/EPRL/eprl_mode_sel") == 5 end,
+	function () 
+		set("B742/EPRL/eprl_mode_sel",5)
+		set("B742/EPRL/mode_epr_button",1)
+	end))
+	
 -- === After Start
 activeSOP:getFlow(proc_ind_afterStart):addItem(ProcedureItem:new("YAW DAMPERS","ON",FlowItem.actorFO,0,
 	function () return sysMCP.yawDamper:getStatus() > 0 end,
@@ -138,6 +157,19 @@ activeSOP:getFlow(proc_ind_afterStart):addItem(ProcedureItem:new("BODY GEAR STEE
 		set("B742/OVHD/body_gear_steer_sw",0)
 		set("B742/OVHD/body_gear_steer_cap",1)
 	end))
+activeSOP:getFlow(proc_ind_afterStart):addItem(ProcedureItem:new("START VALVE","OFF",FlowItem.actorFO,0,
+	function () return get("B742/OVHD/start_valve_sw") == 0 end,
+	function () 
+		set("B742/OVHD/start_valve_sw",0)
+		set("B742/OVHD/start_valve_cap",0)
+	end))
+activeSOP:getFlow(proc_ind_afterStart):addItem(ProcedureItem:new("GASPER","ON",FlowItem.actorFO,0,
+	function () return get("B742/AIR_COND/gasper_on_sw") == 1 end,
+	function () set("B742/AIR_COND/gasper_on_sw",1) end))
+activeSOP:getFlow(proc_ind_afterStart):addItem(ProcedureItem:new("SUPPLY VENT FANS","ON",FlowItem.actorFO,0,
+	function () return get("B742/AIR_COND/suppl_vent_fans_sw") == 1 end,
+	function () set("B742/AIR_COND/suppl_vent_fans_sw",1) end))
+	
 -- === Before Takeoff
 activeSOP:getFlow(proc_ind_beforeTakeoff):addItem(ProcedureItem:new("WX RADAR","WX",FlowItem.actorFO,0,
 	function () return sysEFIS.wxrPilot:getStatus() == 3 end,
@@ -151,39 +183,68 @@ activeSOP:getFlow(proc_ind_beforeTakeoff):addItem(ProcedureItem:new("ENGINE IGNI
 activeSOP:getFlow(proc_ind_beforeTakeoff):addItem(ProcedureItem:new("SPEEDBRAKE","ARM",FlowItem.actorFO,0,
 	function () return get("B742/controls/speedbrake_lever_detent") > 0.009 end,
 	function () set("B742/controls/speedbrake_lever_detent",0.0095) end))
-
+activeSOP:getFlow(proc_ind_beforeTakeoff):addItem(ProcedureItem:new("EPRL","TOD & EPR MODE",FlowItem.actorFO,0,
+	function () return get("B742/EPRL/eprl_mode_sel") == 1 end,
+	function () 
+		set("B742/EPRL/eprl_mode_sel",1)
+		set("B742/EPRL/mode_epr_button",1)
+	end))
+	
 -- === Runway entry
-activeSOP:getFlow(proc_ind_runwayEntry):addItem(ProcedureItem:new("BODY GEAR STEERING","DISARM",FlowItem.actorFO,0,
-	function () return get("B742/OVHD/body_gear_steer_sw") == 1 end,
-	function () end))
 activeSOP:getFlow(proc_ind_runwayEntry):addItem(ProcedureItem:new("PACKS & BLEEDS","AS REQUIRED",FlowItem.actorFO,0,
 	function () return true end,
 	function () kc_macro_air(kc_phase_takeoff) end))
-	
--- === After Takeoff
-activeSOP:getFlow(proc_ind_afterTakeoff):addItem(ProcedureItem:new("FUEL HEAT","AUTO",FlowItem.actorFO,0,
-	function () return get("B742/FUEL/fuel_heat_sw") == 1 end,
+activeSOP:getFlow(proc_ind_runwayEntry):addItem(ProcedureItem:new("EPRL","TOD & EPR MODE",FlowItem.actorFO,0,
+	function () return get("B742/EPRL/eprl_mode_sel") == 1 end,
 	function () 
-		set_array("B742/FUEL/fuel_heat_sw",0,-1)
-		set_array("B742/FUEL/fuel_heat_sw",1,-1)
-		set_array("B742/FUEL/fuel_heat_sw",2,-1)
-		set_array("B742/FUEL/fuel_heat_sw",3,-1)
+		set("B742/EPRL/eprl_mode_sel",1)
+		set("B742/EPRL/mode_epr_button",1)
 	end))
-activeSOP:getFlow(proc_ind_afterTakeoff):addItem(ProcedureItem:new("AUTO THRUST","SET CLB & SPD",FlowItem.actorFO,0,
-	function () return get("B742/EPRL/mode_speed_button") == 1 and get("B742/AP_panel/AT_on_sw") == 1 and
-					get("B742/EPRL/eprl_mode_sel") == 3 end,
-	function () end))
+activeSOP:getFlow(proc_ind_runwayEntry):addItem(HoldProcedureItem:new("BODY GEAR STEERING","DISARM",FlowItem.actorCPT))
+activeSOP:getFlow(proc_ind_runwayEntry):addItem(ProcedureItem:new("BODY GEAR STEERING","DISARM",FlowItem.actorFO,0,
+	function () return get("B742/OVHD/body_gear_steer_sw") == 1 end,
+	function () 
+		set("B742/OVHD/body_gear_steer_sw",1) 
+		set("B742/OVHD/body_gear_steer_cap",0)
+	end))
+activeSOP:getFlow(proc_ind_runwayEntry):addItem(HoldProcedureItem:new("AUTO THRUST","SET CLB & SPD",FlowItem.actorCPT))
 
+
+-- === Gear up
+activeSOP:getFlow(proc_ind_gearUp):addItem(ProcedureItem:new("EPRL","CLB & SPD MODE",FlowItem.actorFO,0,
+	function () return get("B742/EPRL/eprl_mode_sel") == 3 end,
+	function () 
+		set("B742/EPRL/eprl_mode_sel",3)
+		set("B742/EPRL/mode_speed_button",1)
+		sysMCP.iasSelector:setValue(activeBriefings:get("takeoff:clmbspd"))
+	end))
+
+-- === After Takeoff
+
+	
 -- === Climb Checks
 activeSOP:getFlow(proc_ind_climbCheck):addItem(ProcedureItem:new("ENGINE IGNITION","OFF",FlowItem.actorFO,0,
 	function () return sysEngines.engStarterGroup:getStatus() == 0 end,
 	function () sysEngines.engStarterGroup:setValue(0) end))
+activeSOP:getFlow(proc_ind_climbCheck):addItem(HoldProcedureItem:new("SET EPRL","CRZ & MACH MODE",FlowItem.actorCPT))
+activeSOP:getFlow(proc_ind_climbCheck):addItem(ProcedureItem:new("EPRL","CRZ & MACH MODE",FlowItem.actorFO,0,
+	function () return get("B742/EPRL/eprl_mode_sel") == 4 end,
+	function () 
+		set("B742/EPRL/eprl_mode_sel",4)
+		set("B742/EPRL/mode_mach_button",1)
+	end))
 	
 -- === landing
 activeSOP:getFlow(proc_ind_landing):addItem(ProcedureItem:new("ENGINE IGNITION","FLT START",FlowItem.actorFO,0,
 	function () return sysEngines.engStarterGroup:getStatus() < 0 end,
 	function () sysEngines.engStarterGroup:setValue(-1) end))
-
+-- activeSOP:getFlow(proc_ind_landing):addItem(ProcedureItem:new("EPRL","GA",FlowItem.actorFO,0,
+	-- function () return get("B742/EPRL/eprl_mode_sel") == 5 end,
+	-- function () 
+		-- set("B742/EPRL/eprl_mode_sel",5)
+		-- set("B742/EPRL/mode_epr_button",1)
+	-- end))
+	
 -- === after landing
 activeSOP:getFlow(proc_ind_afterLandingProc):addItem(ProcedureItem:new("WX RADAR","STBY",FlowItem.actorFO,0,
 	function () return sysEFIS.wxrPilot:getStatus() == 1 end,
@@ -204,4 +265,11 @@ activeSOP:getFlow(proc_ind_afterLandingProc):addItem(ProcedureItem:new("PRESSURI
 		function () return get("B742/AIR_COND/mode_sel_rotary") == 2 end,
 		function () set("B742/AIR_COND/mode_sel_rotary",2) end))
 
+-- === Shutdown
+activeSOP:getFlow(proc_ind_shutdownProc):addItem(ProcedureItem:new("GASPER","OFF",FlowItem.actorFO,0,
+	function () return get("B742/AIR_COND/gasper_on_sw") == 0 end,
+	function () set("B742/AIR_COND/gasper_on_sw",0) end))
+activeSOP:getFlow(proc_ind_shutdownProc):addItem(ProcedureItem:new("SUPPLY VENT FANS","OFF",FlowItem.actorFO,0,
+	function () return get("B742/AIR_COND/suppl_vent_fans_sw") == 0 end,
+	function () set("B742/AIR_COND/suppl_vent_fans_sw",0) end))
 return SOP_B742

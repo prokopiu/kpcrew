@@ -456,16 +456,7 @@ end
 
 -- set flaps based on index
 function kc_macro_set_flap(flapindex)
-
-	for i = 1, kc_get_nr_flapdetents() do
-		command_once("sim/flight_controls/flaps_up")
-	end 
-	local fldwn = kc_pref_split(kc_TakeoffFlapsInd)[flapindex+1]
-	for i = 1, fldwn do
-	logMsg(fldwn)
-		command_once("sim/flight_controls/flaps_down")
-	end
-
+	set("sim/cockpit2/controls/flap_ratio",sysControls.flaps_pos[flapindex])
 end
 
 function kc_macro_set_autobrake(index)

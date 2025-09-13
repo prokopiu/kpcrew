@@ -44,7 +44,8 @@ kc_gear_ext_index	= 3			-- When to extend gear in flaps extend
 
 -- === engines
 kc_NumEngines		= -1		-- Number of engines from acf
-kc_StartSequence 	= "1 TO 4| "
+kc_StartSequence 	= "4, 1, 2, 3|1, 2, 3, 4"
+kc_StartBackground	= { [1] = {"4", "1", "2", "3"}, [2] = {"1", "2", "3", "4"} }
 kc_has_reversers	= true		-- Aircraft has reversers
 kc_ab_engm_norm		= 1			-- Airbus engine mode norm
 kc_ab_engm_strt		= 2			-- Airbus engine mode start
@@ -157,6 +158,7 @@ kc_has_dh_minimum	= true		-- Aircraft has decicion height
 kc_has_meter_pfd	= false		-- Aircraft can show meters in PFD
 kc_has_mach_switch	= false		-- Aircraft can switch between ias mach
 kc_has_xp_g1000		= false     -- Aircraft has XP G1000
+kc_sets_climb_speed	= true		-- ias is set to climbspeed
 
 -- === other options
 kc_has_stairs		= false		-- Aircraft has autonomous stairs on L1
