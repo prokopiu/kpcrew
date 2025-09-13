@@ -138,6 +138,11 @@ function kc_macro_state_turnaround()
 
 	sysGeneral.parkBrakeSwitch:actuate(1) 
 
+	if kc_has_gpu then
+		sysElectric.gpuConnect:actuate(1)
+		sysElectric.gpuGenBusGroup:actuate(1)
+	end
+	
 	-- electric system settings
 	kc_macro_elec_system(kc_phase_turnaround)
 
@@ -174,11 +179,6 @@ function kc_macro_state_turnaround()
 	
 	if kc_has_autobrake then
 		kc_macro_set_autobrake(kc_AutoBrakeOff)
-	end
-	
-	if kc_has_gpu then
-		sysElectric.gpuConnect:actuate(1)
-		sysElectric.gpuGenBusGroup:actuate(1)
 	end
 	
 	if kc_has_apu and activeBriefings:get("departure:activateAPUPowerUp") == 1 then
@@ -836,6 +836,9 @@ function kc_macro_elec_system(flightphase)
 		if kc_has_avionics_sw then
 			sysElectric.avionicsSwitchGroup:actuate(1)
 		end
+		if kc_has_standby_pwr then
+			sysElectric.stbyPowerSwitch:actuate(0)
+		end
 	else
 		logMsg("Invalid flightphase")
 	end	
@@ -1166,7 +1169,7 @@ function kc_macro_aice(flightphase)
 		if kc_has_pitot_heat then 
 			sysAice.probeHeatGroup:actuate(0)
 		end
-		if kc_has_window_heat  then
+		if kc_is_airbus == false and kc_has_window_heat  then
 			sysAice.windowHeatGroup:actuate(1)
 		end
 		if kc_has_eng_antiice then
@@ -1484,6 +1487,11 @@ function kc_bck_apuonline(trigger)
 	end
 end
 
+-- auxiliary function
+function kc_bck_auxiliary(trigger)
+	kc_procvar_set(trigger,false)
+end
+
 -- APU start background
 function kc_macro_apustop()
 	sysElectric.apuGenBusGroup:actuate(0)
@@ -1506,15 +1514,19 @@ function kc_bck_start_engine(trigger)
 		command_once("sim/engines/mixture_max")
 		if trigger == "engstart1" then
 			command_begin("sim/starters/engage_start_run_1")
+			kc_speakNoText(0,"Starting Engine 1")
 		end
 		if trigger == "engstart2" then
 			command_begin("sim/starters/engage_start_run_2")
+			kc_speakNoText(0,"Starting Engine 2")
 		end
 		if trigger == "engstart3" then
 			command_begin("sim/starters/engage_start_run_3")
+			kc_speakNoText(0,"Starting Engine 3")
 		end
 		if trigger == "engstart4" then
 			command_begin("sim/starters/engage_start_run_4")
+			kc_speakNoText(0,"Starting Engine 4")
 		end
 	else
 		if kc_procvar_get(delayvar) <= 0 then
@@ -1567,6 +1579,11 @@ function kc_macro_set_irs(mode)
 	end
 end
 
+-- Arm Speedbrake
+function kc_macro_arm_speedbrake()
+	sysControls.Speedbrake:setValue(kc_spdbrk_arm_pos)
+end
+
 -- === transponder
 function kc_macro_set_xpdrmode(mode)
 	sysRadios.xpdrSwitch:setValue(mode)
@@ -1577,6 +1594,34 @@ function kc_macro_set_xpdrcode(code)
 end
 
 function kc_macro_additional_bck_procs()
+end
+
+function kc_bck_callouts(trigger)
+	-- logMsg("callout" .. flightphase)
+	if kc_callout_v1 and flightphase == kc_phase_takeoff then
+		if kc_procvar_exists("v1callout") == false then
+			kc_procvar_initialize_count("v1callout",1)
+		end
+		if kc_procvar_get("v1callout") == 1 then
+			-- wait for v1 speed then a single callout
+		end
+	end
+	if kc_callout_vr and flightphase == kc_phase_takeoff then
+		if kc_procvar_exists("vrcallout") == false then
+			kc_procvar_initialize_count("vrcallout",1)
+		end
+		if kc_procvar_get("vrcallout") == 1 then
+			-- wait for v1 speed then a single callout
+		end
+	end
+	if kc_callout_v2 and flightphase == kc_phase_takeoff then
+		if kc_procvar_exists("v2callout") == false then
+			kc_procvar_initialize_count("v2callout",1)
+		end
+		if kc_procvar_get("v2callout") == 1 then
+			-- wait for v1 speed then a single callout
+		end
+	end
 end
 
 return sysMacros

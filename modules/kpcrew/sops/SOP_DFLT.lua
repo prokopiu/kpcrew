@@ -848,7 +848,7 @@ beforeTakeoffProc:addItem(HoldProcedureItem:new("ELEVATOR TRIM","SET FOR TAKEOFF
 if kc_has_speedbrake and kc_spdbrk_can_arm then
 	beforeTakeoffProc:addItem(ProcedureItem:new("SPEEDBRAKE","ARM",FlowItem.actorFO,0,
 	function () return sysControls.Speedbrake:getStatus() == kc_spdbrk_arm_pos end,
-	function () sysControls.Speedbrake:setValue(kc_spdbrk_arm_pos) end))
+	function () kc_macro_arm_speedbrake() end))
 end 
 if kc_has_toc then
 	beforeTakeoffProc:addItem(HoldProcedureItem:new("TAKEOFF CONFIG","CHECK",FlowItem.actorCPT))
@@ -866,7 +866,7 @@ end
 -- ======================================================
 
 local runwayEntryProc = Procedure:new("RUNWAY ENTRY","","")
-runwayEntryProc:setFlightPhase(0-kc_phase_before_takeoff)
+runwayEntryProc:setFlightPhase(0-kc_phase_takeoff)
 
 runwayEntryProc:addItem(ProcedureItem:new("EXTERNAL LIGHTS","SET",FlowItem.actorFO,0,
 	function () return sysLights.strobesSwitch:getStatus() > 0 end,
@@ -879,6 +879,7 @@ if kc_has_transponder then
 			activeBckVars:set("general:timesOUT",kc_dispTimeHHMM(get("sim/time/zulu_time_sec"))) 
 			kc_procvar_set("above10k",true) -- background 10.000 ft activities
 			kc_procvar_set("attransalt",true) -- background transition altitude activities
+			kc_procvar_set("callouts",true)	-- initiate callouts
 		end))
 end
 runwayEntryProc:addItem(ProcedureItem:new("PACKS / BLEEDS","AS REQUIRED",FlowItem.actorFO,0,true,
@@ -893,6 +894,7 @@ if kc_has_clock then
 		function () return sysGeneral.clock:getStatus() == 1 end,
 		function () sysGeneral.clock:actuate(1) end))
 end
+
 
 -- =====================================================================================================================
 
@@ -942,7 +944,10 @@ flapsUpProc:setFlightPhase(0-kc_phase_takeoff)
 if kc_is_airbus == false and kc_has_yawdamper then
 	flapsUpProc:addItem(ProcedureItem:new("YAW DAMPER","ON",FlowItem.actorPF,0,
 		function () return sysControls.yawDamper:getStatus() > 0 end,
-		function () sysControls.yawDamper:actuate(1) end))
+		function () 
+			sysControls.yawDamper:actuate(1) 
+			kc_procvar_set("callouts",true)	-- initiate callouts
+		end))
 end
 if kc_has_retractgear then
 	flapsUpProc:addItem(ProcedureItem:new("GEAR","UP",FlowItem.actorPM,0,
@@ -957,7 +962,9 @@ for toflapidx=kc_NumFlapsTO, 2, -1 do
 	flapsUpProc:addItem(ProcedureItem:new("FLAPS ".. kc_pref_split(kc_TakeoffFlaps)[toflapidx],"SET",FlowItem.actorPF,0,true,
 		function () 
 			kc_macro_set_flap(toflapidx-1) 
-			kc_speakNoText(0,"speed check flaps " .. kc_pref_split(kc_TakeoffFlaps)[toflapidx]) 
+			if kc_announce_flaps then
+				kc_speakNoText(0,"speed check flaps " .. kc_pref_split(kc_TakeoffFlaps)[toflapidx]) 
+			end
 		end,
 		function () return (toflapidx >= kc_NumFlapsTO) or (toflapidx > tonumber(kc_pref_split(kc_TakeoffFlapsInd)[activeBriefings:get("takeoff:flaps")])) end))
 		-- function () return (toflapidx >= kc_NumFlapsTO) or (toflapidx >= tonumber(kc_pref_split(kc_TakeoffFlapsInd)[activeBriefings:get("takeoff:flaps")])) end))
@@ -967,7 +974,9 @@ flapsUpProc:addItem(HoldProcedureItem:new("FLAPS " .. kc_pref_split(kc_TakeoffFl
 flapsUpProc:addItem(ProcedureItem:new("FLAPS ".. kc_pref_split(kc_TakeoffFlaps)[1],"SET",FlowItem.actorPF,0,true,
 	function () 
 		kc_macro_set_flap(0)
-		kc_speakNoText(0,"speed check flaps " .. kc_pref_split(kc_TakeoffFlaps)[1]) 
+		if kc_announce_flaps then
+			kc_speakNoText(0,"speed check flaps " .. kc_pref_split(kc_TakeoffFlaps)[1]) 
+		end
 	end))
 if kc_has_autopilot then
 	flapsUpProc:addItem(HoldProcedureItem:new("A/P 1","ACTIVATE",FlowItem.actorCPT))
@@ -996,6 +1005,7 @@ if kc_has_retractgear then
 		function () 
 			sysGeneral.GearSwitch:actuate(0) 
 			sysLights.taxiSwitch:actuate(0)
+			kc_procvar_set("callouts",true)	-- initiate callouts
 		end))
 end
 afterTakeoffCheck:addItem(ChecklistItem:new("FLAPS","UP",FlowItem.actorPM,0,
@@ -1005,6 +1015,11 @@ if kc_has_autobrake then
 	afterTakeoffCheck:addItem(ChecklistItem:new("AUTOBRAKE","OFF",FlowItem.actorFO,0,
 		function () return sysControls.Autobrake:getStatus() == kc_AutoBrakeOff end,
 		function () kc_macro_set_autobrake(kc_AutoBrakeOff) end))
+end
+if kc_sets_climb_speed then
+	afterTakeoffCheck:addItem(ProcedureItem:new("CLIMB SPEED","SET",FlowItem.actorFO,0,
+	function () return sysMCP.iasSelector:getStatus() == activeBriefings:get("takeoff:clmbspd") end,
+	function () sysMCP.iasSelector:setValue(activeBriefings:get("takeoff:clmbspd")) end))
 end
 -- =====================================================================================================================
 
@@ -1021,7 +1036,10 @@ climbCheck:setFlightPhase(kc_phase_climb)
 
 climbCheck:addItem(ProcedureItem:new("PACKS / BLEEDS","ON",FlowItem.actorFO,0,
 	function () return true end,
-	function () kc_macro_air(kc_phase_climb) end))
+	function () 
+		kc_procvar_set("callouts",true)	-- initiate callouts
+		kc_macro_air(kc_phase_climb) 
+	end))
 if kc_has_oxygen then 
 	climbCheck:addItem(ProcedureItem:new("OXYGEN SUPPLY","ON",FlowItem.actorFO,0,
 		function () return sysAir.oxygenMaster:getStatus() > 0 end,
@@ -1075,17 +1093,19 @@ if kc_is_airbus then
 			kc_procvar_set("attranslvl",true) -- background transition level activities
 			kc_procvar_set("above10k",false) 
 			kc_procvar_set("attransalt",false) 
+			kc_procvar_set("callouts",true)	-- initiate callouts
 		end))
 else
 	descentProc:addItem(ProcedureItem:new("LANDING DATA","VREF %i, MINIMUMS %i|activeBriefings:get(\"approach:vref\")|activeBriefings:get(\"approach:decision\")",FlowItem.actorPM,0,
 		function () 
-			return get("sim/cockpit/misc/radio_altimeter_minimum") == activeBriefings:get("approach:decision") end,
+			return sysEFIS.minsPilot:getStatus() == activeBriefings:get("approach:decision") end,
 		function ()
 			sysEFIS.minsPilot:setValue(activeBriefings:get("approach:decision")) 
 			kc_procvar_set("below10k",true) -- background 10.000 ft activities
 			kc_procvar_set("attranslvl",true) -- background transition level activities
 			kc_procvar_set("above10k",false) 
 			kc_procvar_set("attransalt",false) 
+			kc_procvar_set("callouts",true)	-- initiate callouts
 		end))
 end
 descentProc:addItem(ProcedureItem:new("ANTI-ICE SETTINGS","AS REQUIRED",FlowItem.actorPM,0,
@@ -1141,7 +1161,10 @@ landingProc:addItem(ProcedureItem:new("AIR CONDITIONING PACK SWITCHES","AS REQUI
 		function () kc_macro_air(kc_phase_approach) end))
 landingProc:addItem(ProcedureItem:new("LANDING LIGHTS","ON",FlowItem.actorPF,0,
 	function () return sysLights.landLightGroup:getStatus() > 0 end,
-	function () kc_macro_lights(kc_phase_approach) end))	
+	function () 
+		kc_macro_lights(kc_phase_approach) 
+		kc_procvar_set("callouts",true)	-- initiate callouts
+	end))	
 
 -- =====================================================================================================================
 
@@ -1169,7 +1192,10 @@ end
 if kc_has_alt_sel then
 	flapsProc:addItem(ProcedureItem:new("GO AROUND ALTITUDE","SET %s|activeBriefings:get(\"approach:gaaltitude\")",FlowItem.actorPM,0,
 		function() return sysMCP.altDisplay:getStatus() == activeBriefings:get("approach:gaaltitude") end,
-		function() sysMCP.altSelector:setValue(activeBriefings:get("approach:gaaltitude")) end))
+		function() 
+			sysMCP.altSelector:setValue(activeBriefings:get("approach:gaaltitude")) 
+			kc_procvar_set("callouts",true)	-- initiate callouts
+		end))
 end
 if kc_has_hdg_sel and kc_is_airbus == false then
 	flapsProc:addItem(ProcedureItem:new("GO AROUND HEADING","SET %s|activeBriefings:get(\"approach:gaheading\")",FlowItem.actorPM,0,
@@ -1179,7 +1205,7 @@ end
 if kc_has_speedbrake and kc_spdbrk_can_arm then
 	flapsProc:addItem(IndirectProcedureItem:new("SPEEDBRAKE","ARM",FlowItem.actorFO,0,"armspdbrk",
 	function () return sysControls.Speedbrake:getStatus() == kc_spdbrk_arm_pos end,
-	function () sysControls.Speedbrake:setValue(kc_spdbrk_arm_pos) end))
+	function () kc_macro_arm_speedbrake() end))
 end 
 
 
@@ -1204,6 +1230,7 @@ if kc_has_retractgear == true then
 		function () return sysGeneral.GearSwitch:getStatus() == 1 end,
 		function () 
 			sysGeneral.GearSwitch:actuate(1) 
+			kc_procvar_set("callouts",true)	-- initiate callouts
 		end))
 end
 LandingCheck:addItem(ChecklistItem:new("LANDING LIGHTS","ON",FlowItem.actorPM,1,
@@ -1216,7 +1243,7 @@ end
 if kc_has_speedbrake and kc_spdbrk_can_arm then
 	LandingCheck:addItem(ChecklistItem:new("SPEEDBRAKE","ARM",FlowItem.actorPM,1,
 	function () return sysControls.Speedbrake:getStatus() == kc_spdbrk_arm_pos end,
-	function () sysControls.Speedbrake:setValue(kc_spdbrk_arm_pos) end))
+	function () kc_macro_arm_speedbrake() end))
 end 
 
 -- =====================================================================================================================
@@ -1263,7 +1290,10 @@ afterLandingProc:setFlightPhase(kc_phase_afterland)
 if kc_has_clock then
 	afterLandingProc:addItem(ProcedureItem:new("CLOCK","STOP",FlowItem.actorFO,0,
 		function () return sysGeneral.clock:getStatus() == kc_et_timer_off end,
-		function () sysGeneral.clock:actuate(kc_et_timer_off) end))
+		function () 
+			sysGeneral.clock:actuate(kc_et_timer_off) 
+			kc_procvar_set("callouts",false)	-- stop callouts
+		end))
 end
 if kc_has_aileron_trim or kc_has_rudder_trim then
 	afterLandingProc:addItem(ProcedureItem:new("AILERON & RUDDER TRIM","RESET",FlowItem.actorFO,0,
@@ -1351,7 +1381,10 @@ end
 if kc_has_ll_as_taxi then
 	taxiLightOff:addItem(ProcedureItem:new("LANDING LIGHTS","OFF",FlowItem.actorFO,0,
 		function () return sysLights.landLightGroup:getStatus() == 0 end,
-		function () sysLights.landLightGroup:actuate(0) end))
+		function () 
+			kc_procvar_set("callouts",false)	-- stop callouts
+			sysLights.landLightGroup:actuate(0) 
+		end))
 end
 
 -- =====================================================================================================================
@@ -1395,6 +1428,7 @@ if kc_has_gpu then
 		function () 
 			sysElectric.gpuConnect:actuate(1)
 			sysElectric.gpuGenBusGroup:actuate(1)
+			kc_procvar_set("callouts",false)	-- stop callouts
 		end,
 		function () return activeBriefings:get("approach:powerAtGate") > 1 end))
 end
@@ -1491,6 +1525,7 @@ coldAndDarkProc:addItem(ProcedureItem:new("GPU DISCONNECT","SET","SYS",0,true,
 		end
 		getActiveSOP():reset()
 		getActiveSOP():setActiveFlowIndex(1)
+		kc_procvar_set("callouts",false)	-- stop callouts
 	end))
 		
 -- ================= Turn Around State ==================
@@ -1499,10 +1534,16 @@ turnAroundProc:setFlightPhase(SOP.phaseTurnAround)
 turnAroundProc:addItem(ProcedureItem:new("TURNAROUND","SET","SYS",0,true,
 	function () 
 		kc_macro_state_turnaround()
+	end))
+turnAroundProc:addItem(ProcedureItem:new("GPU GENERATOR","ON","SYS",0,true,
+	function ()
+		if kc_has_gpu then
+			sysElectric.gpuGenBusGroup:actuate(1)
+		end
+		kc_procvar_set("callouts",false)	-- stop callouts
 		getActiveSOP():reset()
 		getActiveSOP():setActiveFlowIndex(2)
 	end))
-
 -- ============  =============
 -- add the checklists and procedures to the active sop
 local nopeProc = Procedure:new("NO PROCEDURES AVAILABLE")
@@ -1566,6 +1607,8 @@ kc_procvar_initialize_bool("engstart1", false)
 kc_procvar_initialize_bool("engstart2", false) 
 kc_procvar_initialize_bool("engstart3", false) 
 kc_procvar_initialize_bool("engstart4", false) 
+kc_procvar_initialize_bool("auxiliary", false) 
+kc_procvar_initialize_bool("callouts", false) -- general callouts per flight phase
 
 backgroundFlow:addItem(BackgroundProcedureItem:new("","","SYS",0,
 	function () 
@@ -1598,6 +1641,12 @@ backgroundFlow:addItem(BackgroundProcedureItem:new("","","SYS",0,
 		end
 		if kc_procvar_get("engstart4") == true then 
 			kc_bck_start_engine("engstart4")
+		end
+		if kc_procvar_get("auxiliary") == true then 
+			kc_bck_auxiliary("auxiliary")
+		end
+		if kc_procvar_get("callouts") == true then 
+			kc_bck_callouts("callouts")
 		end
 		
 		kc_macro_additional_bck_procs()

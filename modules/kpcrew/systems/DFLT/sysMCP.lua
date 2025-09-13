@@ -265,6 +265,15 @@ function sysMCP:panel_render()
 			imgui.SameLine()
 			kc_imgui_toggle_button_mcp("A/P",sysMCP.ap1Switch,10,30,19)
 		end
+		if kc_has_lnav then
+			imgui.SameLine()
+			kc_imgui_toggle_button_mcp("LNV",sysMCP.lnavSwitch,10,30,19)
+		end
+		if kc_has_lnav then
+			imgui.SameLine()
+			kc_imgui_toggle_button_mcp("VNV",sysMCP.vnavSwitch,10,30,19)
+		end
+		
 		-- if kc_has_ias_sel then
 			-- imgui.SameLine()
 			-- kc_imgui_number_mcp("SPD",sysMCP.iasSelector,110,32,5)
@@ -289,12 +298,12 @@ function sysMCP:panel_render()
 		-- end
 		-- imgui.SameLine()
 		-- kc_imgui_toggle_button_mcp("NAV",sysMCP.vorlocSwitch,10,30,19)
-		-- if kc_has_alt_sel then
-			-- imgui.SameLine()
-			-- kc_imgui_number_mcp("ALT",sysMCP.altSelector,112,45,6)
-			-- imgui.SameLine()
-			-- kc_imgui_toggle_button_mcp("ALT",sysMCP.altholdSwitch,10,30,19)
-		-- end
+		if kc_has_alt_sel then
+			imgui.SameLine()
+			kc_imgui_number_mcp("ALT",sysMCP.altSelector,112,45,6)
+			imgui.SameLine()
+			kc_imgui_toggle_button_mcp("ALT",sysMCP.altholdSwitch,10,30,19)
+		end
 		-- if kc_has_meter_pfd then
 			-- imgui.SameLine()
 			-- kc_imgui_toggle_button_mcp("MTR",sysEFIS.mtrsPilot,0,30,19)
