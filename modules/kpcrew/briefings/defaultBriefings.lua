@@ -199,6 +199,7 @@ takeoff:add(kcPreference:new("msa",0,kcPreference.typeInt,"Departure MSA (ft)|10
 takeoff:add(kcPreference:new("v1",0,kcPreference.typeInt,"*V1|1"))
 takeoff:add(kcPreference:new("vr",0,kcPreference.typeInt,"*VR|1"))
 takeoff:add(kcPreference:new("v2",250,kcPreference.typeInt,"*V2|1"))
+takeoff:add(kcPreference:new("clmbspd",250,kcPreference.typeInt,"climbspd|1"))
 takeoff:add(kcPreference:new("hw",0,kcPreference.typeInt,"*Headwind"))
 takeoff:add(kcPreference:new("cw",0,kcPreference.typeInt,"*Crosswind"))
 takeoff:add(kcPreference:new("tora",0,kcPreference.typeInt,"*TORA"))

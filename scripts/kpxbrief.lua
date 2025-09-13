@@ -241,10 +241,18 @@ function kb_extract_simbrief_ofp()
 
 				if runways[i].thrust_setting == "FLEX" then
 					activeBriefings:set("takeoff:thrust",2)
-					activeBriefings:set("takeoff:flextemp",runways[i].flex_temperature)
+					if #runways[i].flex_temperature == 0 then
+						activeBriefings:set("takeoff:flextemp",15)
+					else
+						activeBriefings:set("takeoff:flextemp",runways[i].flex_temperature)
+					end
 				else
 					activeBriefings:set("takeoff:thrust",3)
-					activeBriefings:set("takeoff:flextemp",runways[i].flex_temperature)
+					if #runways[i].flex_temperature == 0 then
+						activeBriefings:set("takeoff:flextemp",15)
+					else
+						activeBriefings:set("takeoff:flextemp",runways[i].flex_temperature)
+					end
 				end
 
 				activeBriefings:set("takeoff:hw",runways[i].headwind_component)
@@ -1024,10 +1032,18 @@ function kb_brief_builder(kb_brief_wnd, x, y)
 									end
 									if runways[i].thrust_setting == "FLEX" then
 										activeBriefings:set("takeoff:thrust",2)
-										activeBriefings:set("takeoff:flextemp",runways[i].flex_temperature)
+										if #runways[i].flex_temperature == 0 then
+											activeBriefings:set("takeoff:flextemp",15)
+										else
+											activeBriefings:set("takeoff:flextemp",runways[i].flex_temperature)
+										end
 									else
 										activeBriefings:set("takeoff:thrust",3)
-										activeBriefings:set("takeoff:flextemp",runways[i].flex_temperature)
+										if #runways[i].flex_temperature == 0 then
+											activeBriefings:set("takeoff:flextemp",15)
+										else
+											activeBriefings:set("takeoff:flextemp",runways[i].flex_temperature)
+										end
 									end
 									activeBriefings:set("takeoff:hw",runways[i].headwind_component)
 									activeBriefings:set("takeoff:cw",runways[i].crosswind_component)
@@ -1141,6 +1157,12 @@ function kb_brief_builder(kb_brief_wnd, x, y)
 								function () kc_set_takeoff_details() end )
 						end
 
+						if kc_sets_climb_speed then
+							kxb_label_white("CLIMB SPD :")
+							imgui.SameLine()						
+							kxb_orange_int_field_rw(30,"clmbspd","takeoff:clmbspd",0)
+						end
+
 						kxb_label_white("IN HDG/ALT:")
 						imgui.SameLine()						
 						kxb_orange_int_field_rw(38,"inithdg","departure:initHeading",0)
@@ -1149,14 +1171,16 @@ function kb_brief_builder(kb_brief_wnd, x, y)
 						imgui.SameLine()						
 						kxb_orange_int_field_rw(60,"initalt","departure:initAlt",0)
 
-						kxb_label_white("*CRS1/CRS2:")
-						imgui.SameLine()						
-						kxb_orange_int_field_rw(60,"crs12","departure:nav1Course",0)
-						imgui.SameLine()						
-						kxb_label_white("/")
-						imgui.SameLine()						
-						kxb_orange_int_field_rw(60,"crs22","departure:nav2Course",0)
-							
+						if kc_is_airbus == false then
+							kxb_label_white("*CRS1/CRS2:")
+							imgui.SameLine()						
+							kxb_orange_int_field_rw(60,"crs12","departure:nav1Course",0)
+							imgui.SameLine()						
+							kxb_label_white("/")
+							imgui.SameLine()						
+							kxb_orange_int_field_rw(60,"crs22","departure:nav2Course",0)
+						end 
+						
 						imgui.Separator()
 -- -----------------------------------------------------------------------------------------------------------------
 						
