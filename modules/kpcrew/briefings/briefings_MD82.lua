@@ -29,7 +29,8 @@ kc_LandingFlapsInd 	= "4|5|5|5|5|5|5"
 kc_gear_ext_index	= 2			-- When to extend gear in flaps extend
 
 -- === engines
-kc_TakeoffThrust 	= "RATED|DE-RATED|ASSUMED TEMPERATURE|RATED AND ASSUMED|DE-RATED AND ASSUMED"
+kc_has_rated_to		= true		-- Aircraft has rated thrust setting for T/O
+kc_TakeoffThrust 	= "T/O|T/O FLEX|GA| | "
 kc_n2_after_start	= 40
 kc_has_ignition		= true		-- has ignition switch
 
@@ -59,6 +60,8 @@ kc_pld_ld_button	= true		-- Load the aircraft payload from kpxbrief
 kc_has_yawdamper	= false		-- Aircraft has switchable yaw damper
 kc_has_vnav			= false
 kc_has_lnav			= false
+kc_sets_climb_speed	= true		-- ias is set to climbspeed
+kc_has_autothrottle = true		-- Aircraft has autothrottle
 
 -- === other options
 kc_has_stairs		= true		-- Aircraft has autonomous stairs on L1
@@ -72,6 +75,11 @@ kc_LandingAutoBrake = "OFF|MIN|MED|MAX"
 kc_LandingAutoBrInd = "1|2|4|5"
 kc_AutoBrakeOff		= 1
 kc_AutoBrakeRTO		= 0
+
+-- === Callouts
+kc_callout_v1		= true
+kc_callout_vr		= true
+kc_callout_v2		= true
 
 -- === Operating speeds
 

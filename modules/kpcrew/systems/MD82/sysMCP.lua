@@ -37,4 +37,6 @@ sysMCP.athrSwitch = TwoStateToggleSwitch:new("athr","laminar/md82/autopilot/auto
 -- YAW DAMPER
 sysMCP.yawDamper			= TwoStateDrefSwitch:new("yawdamper","sim/cockpit/switches/yaw_damper_on",0)
 
+
+
 return sysMCP
