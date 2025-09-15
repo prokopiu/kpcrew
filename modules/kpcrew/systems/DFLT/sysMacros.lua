@@ -1597,29 +1597,40 @@ function kc_macro_additional_bck_procs()
 end
 
 function kc_bck_callouts(trigger)
-	-- logMsg("callout" .. flightphase)
-	if kc_callout_v1 and flightphase == kc_phase_takeoff then
-		if kc_procvar_exists("v1callout") == false then
-			kc_procvar_initialize_count("v1callout",1)
+	local flightphase = math.abs(activeBckVars:get("general:flight_state"))
+	if flightphase == kc_phase_takeoff then
+		logMsg("takeoff")
+		if kc_callout_v1 then
+			if kc_procvar_exists("v1callout") == false then
+				kc_procvar_initialize_count("v1callout",1)
+			end
+			if kc_procvar_get("v1callout") == 1 then
+				if get("sim/flightmodel/position/indicated_airspeed") >= activeBriefings:get("takeoff:v1") then	
+					kc_speakNoText(0,"vee 1")
+					kc_procvar_set("v1callout",0)
+				end
+			end
 		end
-		if kc_procvar_get("v1callout") == 1 then
-			-- wait for v1 speed then a single callout
-		end
-	end
-	if kc_callout_vr and flightphase == kc_phase_takeoff then
-		if kc_procvar_exists("vrcallout") == false then
-			kc_procvar_initialize_count("vrcallout",1)
-		end
-		if kc_procvar_get("vrcallout") == 1 then
-			-- wait for v1 speed then a single callout
-		end
-	end
-	if kc_callout_v2 and flightphase == kc_phase_takeoff then
-		if kc_procvar_exists("v2callout") == false then
-			kc_procvar_initialize_count("v2callout",1)
-		end
-		if kc_procvar_get("v2callout") == 1 then
-			-- wait for v1 speed then a single callout
+		if kc_callout_vr then
+			if kc_procvar_exists("vrcallout") == false then
+				kc_procvar_initialize_count("vrcallout",1)
+			end
+			if kc_procvar_get("vrcallout") == 1 then
+				if get("sim/flightmodel/position/indicated_airspeed") >= activeBriefings:get("takeoff:vr") then	
+					kc_speakNoText(0,"rotate")
+					kc_procvar_set("vrcallout",0)
+				end
+			end		end
+		if kc_callout_v2 then
+			if kc_procvar_exists("v2callout") == false then
+				kc_procvar_initialize_count("v2callout",1)
+			end
+			if kc_procvar_get("v2callout") == 1 then
+				if get("sim/flightmodel/position/indicated_airspeed") >= activeBriefings:get("takeoff:v2") then	
+					kc_speakNoText(0,"vee 2")
+					kc_procvar_set("v2callout",0)
+				end
+			end
 		end
 	end
 end

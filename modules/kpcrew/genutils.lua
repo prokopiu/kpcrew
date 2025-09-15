@@ -537,7 +537,7 @@ end
 function kc_is_daylight()
 	local lightthreshold = 0
 	if kc_simversion > 120000 then
-		lightthreshold = 0.4
+		lightthreshold = 0.1
 	else
 		lightthreshold = 0.1
 	end
@@ -946,6 +946,16 @@ function kc_procvar_initialize_count(procvarid, value)
 	local procvar = getBckVars():find("procvars:" .. procvarid)
 	if procvar == nil then 
 		kc_global_procvars:add(kcPreference:new(procvarid,value,kcPreference.typeInt,procvarid .. "|0"))
+	else
+		kc_procvar_set(procvarid,value)
+	end
+end
+
+-- initialize a string procvar
+function kc_procvar_initialize_string(procvarid, value)
+	local procvar = getBckVars():find("procvars:" .. procvarid)
+	if procvar == nil then 
+		kc_global_procvars:add(kcPreference:new(procvarid,value,kcPreference.typeText,procvarid .. "|"))
 	else
 		kc_procvar_set(procvarid,value)
 	end

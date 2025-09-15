@@ -44,6 +44,7 @@ kc_NumFlapsLDG		= 3
 kc_LandingFlaps 	= "0|1|2| | | | "
 kc_LandingFlapsInd 	= "0|1|2|2|2|2|2"
 kc_gear_ext_index	= 2			-- When to extend gear in flaps extend
+kc_announce_flaps	= true 
 
 -- === engines
 kc_NumEngines		= -1		-- Number of engines from acf
@@ -161,6 +162,8 @@ kc_has_dh_minimum	= true		-- Aircraft has decicion height
 kc_has_meter_pfd	= false		-- Aircraft can show meters in PFD
 kc_has_mach_switch	= false		-- Aircraft can switch between ias mach
 kc_has_xp_g1000		= false     -- Aircraft has XP G1000
+kc_sets_climb_speed	= false		-- ias is set to climbspeed
+kc_show_ilsfrq_btn	= true		-- can set frequency
 
 -- === other options
 kc_has_stairs		= false		-- Aircraft has autonomous stairs on L1
@@ -188,6 +191,11 @@ kc_LandingAutoBrInd = "1|2|3|4|5"
 kc_AutoBrakeOff		= 1
 kc_AutoBrakeRTO		= 0
 kc_has_antiskid		= false
+
+-- === Callouts
+kc_callout_v1		= false
+kc_callout_vr		= false
+kc_callout_v2		= false
 
 -- === Operating speeds
 kc_speeds_vs0		= -1		-- Stall Speed, Landing Configuration from ACF
