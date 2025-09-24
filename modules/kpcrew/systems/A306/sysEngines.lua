@@ -1,11 +1,9 @@
--- DFLT airplane 
+-- A306 airplane 
 -- Engine related functionality
 
 -- @classmod sysEngines
 -- @author Kosta Prokopiu
--- @copyright 2022 Kosta Prokopiu
-local sysEngines = {
-}
+-- @copyright 2025 Kosta Prokopiu
 
 local TwoStateDrefSwitch 	= require "kpcrew.systems.TwoStateDrefSwitch"
 local TwoStateCmdSwitch	 	= require "kpcrew.systems.TwoStateCmdSwitch"
@@ -16,60 +14,60 @@ local CustomAnnunciator 	= require "kpcrew.systems.CustomAnnunciator"
 local TwoStateToggleSwitch	= require "kpcrew.systems.TwoStateToggleSwitch"
 local MultiStateCmdSwitch 	= require "kpcrew.systems.MultiStateCmdSwitch"
 local InopSwitch 			= require "kpcrew.systems.InopSwitch"
+local KeepPressedSwitchCmd	= require "kpcrew.systems.KeepPressedSwitchCmd"
 
-local drefEngine1Starter 	= "sim/flightmodel2/engines/starter_is_running"
-local drefEngine2Starter 	= "sim/flightmodel2/engines/starter_is_running"
-local drefEngine1Oil 		= "sim/cockpit/warnings/annunciators/oil_pressure_low"
-local drefEngine2Oil 		= "sim/cockpit/warnings/annunciators/oil_pressure_low"
-local drefEngine1Fire 		= "sim/cockpit2/annunciators/engine_fires"
-local drefEngine2Fire 		= "sim/cockpit2/annunciators/engine_fires"
+sysEngines = require("kpcrew.systems.DFLT.sysEngines")
 
------------ Switches
+logMsg("A306 sysEngines")
 
--- Reverse Toggle
-sysEngines.reverseToggle 	= TwoStateToggleSwitch:new("reverse","sim/cockpit/warnings/annunciators/reverse",0,
-	"sim/engines/thrust_reverse_toggle") 
-
------------ Annunciators
-
--- ** ENGINE FIRE annunciator
-sysEngines.engineFireAnc 	= CustomAnnunciator:new("enginefire",
-function ()
-	if get(drefEngine1Fire,0) > 0 or get(drefEngine2Fire,1) > 0 then
-		return 1
-	else
-		return 0
-	end
+-- Starter Switches
+sysEngines.engStart1Switch	= TwoStateCustomSwitch:new("starter1","A300/engine/starter1",0,
+function () 
+	kc_procvar_set("engstart1",true)
+end,
+function () 
+	kc_procvar_set("engstart1",false)
+end,
+function () 
+end,
+function () 
+	return get("A300/engine/starter1",0)
+end)
+sysEngines.engStart2Switch	= TwoStateCustomSwitch:new("starter2","A300/engine/starter2",0,
+function () 
+	kc_procvar_set("engstart2",true)
+end,
+function () 
+	kc_procvar_set("engstart2",false)
+end,
+function () 
+end,
+function () 
+	return get("A300/engine/starter2",1)
 end)
 
--- ** OIL PRESSURE annunciator
-sysEngines.OilPressureAnc 	= CustomAnnunciator:new("oilpressure",
-function ()
-	if get(drefEngine1Oil,0) > 0 or get(drefEngine2Oil,1) > 0 then
-		return 1
-	else
-		return 0
-	end
-end)
+sysEngines.engStarterGroup 	= SwitchGroup:new("engstarters")
+sysEngines.engStarterGroup:addSwitch(sysEngines.engStart1Switch)
+sysEngines.engStarterGroup:addSwitch(sysEngines.engStart2Switch)
 
--- ** ENGINE STARTER annunciator
-sysEngines.engineStarterAnc = CustomAnnunciator:new("enginestarter",
-function ()
-	if get(drefEngine1Starter,0) > 0 and get(drefEngine2Starter,1) > 0 then
-		return 1
-	else
-		return 0
-	end
-end)
-
--- ** Reverse Thrust
-sysEngines.reverseAnc 		= CustomAnnunciator:new("enginestarter",
-function ()
-	if get("sim/cockpit/warnings/annunciators/reverse") > 0 then
-		return 1
-	else
-		return 0
-	end
-end)
+-- ignition
+sysEngines.engIgnition1	= TwoStateCustomSwitch:new("ignition1","A300/engine_ignition_switch",0,
+	function ()
+		set("A300/engine_ignition_switch",0)
+	end,
+	function ()
+		set("A300/engine_ignition_switch",3)
+	end,
+	function ()
+	end,
+	function ()
+		if get("A300/engine_ignition_switch") == 3 then
+			return 0
+		else
+			return 1
+		end
+	end)
+sysEngines.engIgnitionGroup 	= SwitchGroup:new("ignitions")
+sysEngines.engIgnitionGroup:addSwitch(sysEngines.engIgnition1)
 
 return sysEngines
