@@ -717,7 +717,7 @@ end
 -- *TRANSPONDER..................................ON  (F/O)
 -- =======================================================
 
-local afterStartProc = Procedure:new("AFTER START CHECK","","")
+local afterStartProc = Procedure:new("AFTER START ITEMS","","")
 afterStartProc:setFlightPhase(kc_phase_after_start)
 
 afterStartProc:addItem(ProcedureItem:new("PARKING BRAKE","SET",FlowItem.actorFO,0,
@@ -844,16 +844,19 @@ end
 beforeTakeoffProc:addItem(ProcedureItem:new("MCP","INITIALIZE",FlowItem.actorFO,0,
 	function () return sysMCP.altDisplay:getStatus() == activeBriefings:get("departure:initAlt") end,
 	function () kc_macro_mcp(kc_phase_before_takeoff) end))
-beforeTakeoffProc:addItem(HoldProcedureItem:new("ELEVATOR TRIM","SET FOR TAKEOFF & CHECK",FlowItem.actorCPT))
+if activePrefSet:get("general:checklists") == false then
+	beforeTakeoffProc:addItem(HoldProcedureItem:new("ELEVATOR TRIM","SET FOR TAKEOFF & CHECK",FlowItem.actorCPT))
+end
 if kc_has_speedbrake and kc_spdbrk_can_arm then
 	beforeTakeoffProc:addItem(ProcedureItem:new("SPEEDBRAKE","ARM",FlowItem.actorFO,0,
 	function () return sysControls.Speedbrake:getStatus() == kc_spdbrk_arm_pos end,
 	function () kc_macro_arm_speedbrake() end))
 end 
-if kc_has_toc then
-	beforeTakeoffProc:addItem(HoldProcedureItem:new("TAKEOFF CONFIG","CHECK",FlowItem.actorCPT))
+if activePrefSet:get("general:checklists") == false then
+	if kc_has_toc then
+		beforeTakeoffProc:addItem(HoldProcedureItem:new("TAKEOFF CONFIG","CHECK",FlowItem.actorCPT))
+	end
 end
-
 -- =====================================================================================================================
 
 -- =================== RUNWAY ENTRY  =====================
@@ -943,9 +946,9 @@ flapsUpProc:setFlightPhase(0-kc_phase_takeoff)
 
 if kc_is_airbus == false and kc_has_yawdamper then
 	flapsUpProc:addItem(ProcedureItem:new("YAW DAMPER","ON",FlowItem.actorPF,0,
-		function () return sysControls.yawDamper:getStatus() > 0 end,
+		function () return sysMCP.yawDamper:getStatus() > 0 end,
 		function () 
-			sysControls.yawDamper:actuate(1) 
+			sysMCP.yawDamper:actuate(1) 
 			kc_procvar_set("callouts",true)	-- initiate callouts
 		end))
 end
@@ -1162,7 +1165,7 @@ landingProc:addItem(ProcedureItem:new("AIR CONDITIONING PACK SWITCHES","AS REQUI
 landingProc:addItem(ProcedureItem:new("LANDING LIGHTS","ON",FlowItem.actorPF,0,
 	function () return sysLights.landLightGroup:getStatus() > 0 end,
 	function () 
-		kc_macro_lights(kc_phase_approach) 
+		sysLights.landLightGroup:actuate(1) 
 		kc_procvar_set("callouts",true)	-- initiate callouts
 	end))	
 
@@ -1260,7 +1263,10 @@ end
 if kc_has_autothrottle and kc_is_airbus == false then
 	ap1off:addItem(ProcedureItem:new("A/T","OFF",FlowItem.actorFO,0,
 		function () return sysMCP.athrSwitch:getStatus() == 0 end,
-		function () sysMCP.athrSwitch:actuate(0) end))
+		function () 
+			sysMCP.athrSwitch:actuate(0) 
+			command_once("sim/autopilot/autothrottle_hard_off")
+		end))
 end
 -- =====================================================================================================================
 
@@ -1487,7 +1493,7 @@ if kc_has_seatbelt_sgn then
 		function () sysGeneral.passSignsSwitch:actuate(0) end))
 end
 shutdownProc:addItem(ProcedureItem:new("PACK/BLEED AIR/OXYGEN","AS REQUIRED",FlowItem.actorFO,0,
-	function () return sysAir.engBleedGroup:getStatus() == 0 end,
+	function () return true end,
 	function () kc_macro_air(kc_phase_shutdown)	end))
 shutdownProc:addItem(ProcedureItem:new("FUEL BOOST BOTH","OFF",FlowItem.actorFO,0,
 	function () return sysFuel.allFuelPumpGroup:getStatus() == 0 end,

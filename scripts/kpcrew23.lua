@@ -33,8 +33,11 @@ kcPreferenceSet 		= require("kpcrew.preferences.PreferenceSet")
 kcPreferenceGroup 		= require("kpcrew.preferences.PreferenceGroup")
 kcPreference 			= require("kpcrew.preferences.Preference")
 kc_global_procvars 		= kcPreferenceGroup:new("procvars","Procedure Variables")
-
 kcLoadedPrefs 			= require("kpcrew.preferences.defaultPrefs")
+if kc_file_exists(SCRIPT_DIRECTORY .. "..\\Modules\\kpcrew_prefs\\" .. kc_acf_icao .. ".preferences") then
+	getActivePrefs():load()
+end
+
 kcLoadedVars 			= require("kpcrew.preferences.backgroundVars")
 kcLoadedSOP 			= require("kpcrew.sops.SOP_" .. kc_acf_icao)
 kcLoadedBrief			= require("kpcrew.briefings.defaultBriefings")
@@ -496,10 +499,6 @@ function kc_toggle_pref_window()
 			kc_hide_pref_once = 1
 		end
 	end
-end
-
-if kc_file_exists(SCRIPT_DIRECTORY .. "..\\Modules\\kpcrew_prefs\\" .. kc_acf_icao .. ".preferences") then
-	getActivePrefs():load()
 end
 
 -- ===== Background  Window control - direct window commands do not work as expected =====

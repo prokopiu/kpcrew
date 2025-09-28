@@ -118,9 +118,6 @@ sysControls.rudderTrimSwitch = TwoStateCustomSwitch:new("ruddertrim","sim/cockpi
 sysControls.rudderReset	= TwoStateToggleSwitch:new("rudderreset","sim/cockpit2/controls/rudder_trim",0,
 	"sim/flight_controls/rudder_trim_center")
 
--- YAW Damper
-sysControls.yawDamper	= TwoStateDrefSwitch:new("yawdamper","sim/cockpit2/switches/yaw_damper_on",0)
-
 -- Speedbrake lever
 sysControls.Speedbrake	= TwoStateDrefSwitch:new("speedbrake","sim/cockpit2/controls/speedbrake_ratio",0)
 

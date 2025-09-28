@@ -496,7 +496,7 @@ function xsp_set_light_drefs()
 	xsp_gear_status[0] 		= sysGeneral.gearLightsAnc:getStatus()
 
 	-- FLIGHT DIRECTOR annunciator
-	-- xsp_mcp_fdir[0] 		= sysMCP.fdirAnc:getStatus()
+	xsp_mcp_fdir[0] 		= sysMCP.fdirAnc:getStatus()
 	
 	---------- Lights -----------
 	

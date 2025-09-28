@@ -1137,11 +1137,13 @@ function kb_brief_builder(kb_brief_wnd, x, y)
 -- V1/Vr/V2  : [999][999][999]
 -- IN HDG/ALT: [999][99999]
 
-						kxb_label_white("T/O MD/TMP:")
-						imgui.SameLine()						
-						kxb_dropdown_orange(90,"tothrust",kc_split(kc_TakeoffThrust,"|")[activeBriefings:get("takeoff:thrust")],kc_split(kc_TakeoffThrust,"|"),"takeoff:thrust")
-						imgui.SameLine()
-						kxb_orange_int_field_rw(40,"flextemp","takeoff:flextemp",0)
+						if kc_has_rated_to then
+							kxb_label_white("T/O MD/TMP:")
+							imgui.SameLine()						
+							kxb_dropdown_orange(90,"tothrust",kc_split(kc_TakeoffThrust,"|")[activeBriefings:get("takeoff:thrust")],kc_split(kc_TakeoffThrust,"|"),"takeoff:thrust")
+							imgui.SameLine()
+							kxb_orange_int_field_rw(40,"flextemp","takeoff:flextemp",0)
+						end
 						
 						kxb_label_white("V1/VR/V2  :")
 						imgui.SameLine()						
@@ -1311,6 +1313,11 @@ function kb_brief_builder(kb_brief_wnd, x, y)
 							kxb_label_white("ILS FREQ  :")
 							imgui.SameLine()						
 							kxb_orange_text_field_rw(60,"arrilsfrq","approach:nav1Freq",35)
+							if kc_show_ilsfrq_btn then
+								imgui.SameLine()
+								kxb_scaled_button("setils","SET",25,13,
+								function () set("sim/cockpit/radios/nav1_freq_hz",activeBriefings:get("approach:nav1Freq")*100) end)
+							end
 						end
 
 						if kc_is_airbus == false then

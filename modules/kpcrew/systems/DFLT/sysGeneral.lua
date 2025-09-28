@@ -6,6 +6,7 @@
 -- @copyright 2025 Kosta Prokopiu
 
 local sysGeneral = {
+	cmdParkbrake		= "sim/flight_controls/brakes_toggle_max"
 }
 
 logMsg("DFLT sysGeneral")
@@ -26,11 +27,18 @@ local KeepPressedSwitchCmd	= require "kpcrew.systems.KeepPressedSwitchCmd"
 local drefSlider 			= "sim/cockpit2/switches/custom_slider_on"
 local drefParkbrake			= "sim/cockpit2/controls/parking_brake_ratio"
 local drefGearLever			= "sim/cockpit/switches/gear_handle_status"
-
+local drefWiperLeft			= "sim/cockpit2/switches/wiper_speed_switch"
+local drefWiperRight		= "sim/cockpit2/switches/wiper_speed_switch"
+local indxWiperLeft			= -1
+local indxWiperRight		= 1
+local drefNoSmoking			= "sim/cockpit2/switches/no_smoking"
+local drefSeatBelts			= "sim/cockpit/switches/fasten_seat_belts"
 
 --------- Annunciator datarefs common
 
-
+local drefAnnGearLeftGreen	= "sim/flightmodel/movingparts/gear1def"
+local drefAnnGearRghtGreen	= "sim/flightmodel/movingparts/gear2def"
+local drefAnnGearNoseGreen	= "sim/flightmodel/movingparts/gear3def"
 
 --------- Switch commands common
 
@@ -38,17 +46,16 @@ local cmdParkbrake			= "sim/flight_controls/brakes_toggle_max"
 local cmdGearDown			= "sim/flight_controls/landing_gear_down"
 local cmdGearUp				= "sim/flight_controls/landing_gear_up"
 
-
 -- Optional Gound objects
 sysGeneral.groundObjects = InopSwitch:new("ground objects")
 
 -- Parking Brake
-sysGeneral.parkBrakeSwitch 	= TwoStateToggleSwitch:new("parkbrake","sim/cockpit2/controls/parking_brake_ratio",0,
-	"sim/flight_controls/brakes_toggle_max")
+sysGeneral.parkBrakeSwitch 	= TwoStateToggleSwitch:new("parkbrake",drefParkbrake,0,
+	cmdParkbrake)
 
 sysGeneral.parkbrakeAnc 	= CustomAnnunciator:new("parkbrake",
 function ()
-	if get("sim/cockpit2/controls/parking_brake_ratio") > 0 then
+	if get(drefParkbrake) > 0 then
 		return 1
 	else
 		return 0
@@ -56,13 +63,13 @@ function ()
 end)
 
 -- Landing Gear
-sysGeneral.GearSwitch 		= TwoStateCmdSwitch:new("gear","sim/cockpit2/controls/gear_handle_down",0,
-	"sim/flight_controls/landing_gear_down","sim/flight_controls/landing_gear_up","nocommand")
+sysGeneral.GearSwitch 		= TwoStateCmdSwitch:new("gear",drefGearLever,0,
+	cmdGearDown,cmdGearUp,"nocommand")
 
 -- Gear Lights for annunciators
-sysGeneral.gearLeftGreenAnc = SimpleAnnunciator:new("gear", "sim/flightmodel/movingparts/gear1def",0)
-sysGeneral.gearRightGreenAnc = SimpleAnnunciator:new("gear", "sim/flightmodel/movingparts/gear2def",0)
-sysGeneral.gearNodeGreenAnc = SimpleAnnunciator:new("gear", "sim/flightmodel/movingparts/gear3def",0)
+sysGeneral.gearLeftGreenAnc = SimpleAnnunciator:new("gear",drefAnnGearLeftGreen,0)
+sysGeneral.gearRightGreenAnc = SimpleAnnunciator:new("gear",drefAnnGearRghtGreen,0)
+sysGeneral.gearNodeGreenAnc = SimpleAnnunciator:new("gear",drefAnnGearNoseGreen,0)
 sysGeneral.gearLeftRedAnc 	= InopSwitch:new("gear")
 sysGeneral.gearRightRedAnc 	= InopSwitch:new("gear")
 sysGeneral.gearNodeRedAnc 	= InopSwitch:new("gear")
@@ -292,10 +299,9 @@ sysGeneral.windowGroup 		= SwitchGroup:new("doors")
 sysGeneral.windowGroup:addSwitch(sysGeneral.window1)
 sysGeneral.windowGroup:addSwitch(sysGeneral.window2)
 
-
 -- Wiper Switches
-sysGeneral.wiperLeft = TwoStateDrefSwitch:new("wiperleft","sim/cockpit2/switches/wiper_speed_switch",-1)
-sysGeneral.wiperRight = TwoStateDrefSwitch:new("wiperright","sim/cockpit2/switches/wiper_speed_switch",1)
+sysGeneral.wiperLeft = TwoStateDrefSwitch:new("wiperleft",drefWiperLeft,indxWiperLeft)
+sysGeneral.wiperRight = TwoStateDrefSwitch:new("wiperright",drefWiperRight,indxWiperRight)
 sysGeneral.wiperGroup = SwitchGroup:new("wipers")
 sysGeneral.wiperGroup:addSwitch(sysGeneral.wiperLeft)
 sysGeneral.wiperGroup:addSwitch(sysGeneral.wiperRight)
@@ -309,12 +315,9 @@ sysGeneral.irsUnitGroup:addSwitch(sysGeneral.irsUnit1Switch)
 sysGeneral.irsUnitGroup:addSwitch(sysGeneral.irsUnit2Switch)
 sysGeneral.irsUnitGroup:addSwitch(sysGeneral.irsUnit3Switch)
 
-sysGeneral.noSmokingSwitch	= TwoStateDrefSwitch:new("nosmoke","sim/cockpit2/switches/no_smoking",0)
+sysGeneral.noSmokingSwitch	= TwoStateDrefSwitch:new("nosmoke",drefNoSmoking,0)
 
-sysGeneral.passSignsSwitch	= TwoStateDrefSwitch:new("seatbelts","sim/cockpit/switches/fasten_seat_belts",0)
-
--- Optional Gound objects
-sysGeneral.groundObjects = InopSwitch:new("ground objects")
+sysGeneral.passSignsSwitch	= TwoStateDrefSwitch:new("seatbelts",drefSeatBelts,0)
 
 sysGeneral.tocheck		 = InopSwitch:new("tockeck")
 

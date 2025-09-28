@@ -367,10 +367,10 @@ function kc_macro_lights(flightphase)
 			sysLights.strobesSwitch:actuate(0)
 		end
 		if kc_has_instr_lights then
-			sysLights.instrLightGroup:actuate(0)
+			sysLights.instrLightGroup:setValue(0)
 		end
 		if kc_has_dome_lights then
-			sysLights.domeLightGroup:actuate(0)
+			sysLights.domeLightGroup:setValue(0)
 		end
 		if kc_has_logo_lights then
 			sysLights.logoSwitch:actuate(0)
@@ -382,7 +382,7 @@ function kc_macro_lights(flightphase)
 			sysLights.wheelSwitch:actuate(0)
 		end
 		if kc_has_panel_lights then
-			sysLights.panelLightGroup:actuate(0)
+			sysLights.panelLightGroup:setValue(0)
 		end	
 		if kc_has_emer_lights then
 			sysLights.emerLights:actuate(0)
@@ -406,7 +406,7 @@ function kc_macro_lights(flightphase)
 			sysLights.strobesSwitch:actuate(0)
 		end
 		if kc_has_instr_lights then
-			sysLights.instrLightGroup:actuate(1)
+			sysLights.instrLightGroup:setValue(1)
 		end
 		if kc_has_emer_lights then
 			sysLights.emerLights:actuate(1)
@@ -420,9 +420,12 @@ function kc_macro_lights(flightphase)
 		if kc_has_wheel_lights then
 			sysLights.wheelSwitch:actuate(0)
 		end
-		if kc_is_daylight() == false then
+		if kc_has_dome_lights then
+			sysLights.domeLightGroup:setValue(0)
+		end
+			if kc_is_daylight() == false then
 			if kc_has_dome_lights then
-				sysLights.domeLightGroup:actuate(1)
+				sysLights.domeLightGroup:setValue(1)
 			end
 			if kc_has_logo_lights then
 				sysLights.logoSwitch:actuate(1)
@@ -434,7 +437,7 @@ function kc_macro_lights(flightphase)
 				sysLights.wheelSwitch:actuate(1)
 			end
 			if kc_has_panel_lights then
-				sysLights.panelLightGroup:actuate(1)
+				sysLights.panelLightGroup:setValue(1)
 			end
 		end
 	elseif flightphase == kc_phase_before_start then
@@ -458,7 +461,7 @@ function kc_macro_lights(flightphase)
 			sysLights.strobesSwitch:actuate(1)
 		end
 		if kc_has_instr_lights then
-			sysLights.instrLightGroup:actuate(1)
+			sysLights.instrLightGroup:setValue(1)
 		end
 		if kc_has_emer_lights then
 			sysLights.emerLights:actuate(1)
@@ -473,17 +476,17 @@ function kc_macro_lights(flightphase)
 			sysLights.wheelSwitch:actuate(0)
 		end
 		if kc_has_instr_lights then
-			sysLights.instrLightGroup:actuate(1)
+			sysLights.instrLightGroup:setValue(1)
 		end
 		if kc_is_daylight() == false then
 			if kc_has_dome_lights then
-				sysLights.domeLightGroup:actuate(1)
+				sysLights.domeLightGroup:setValue(1)
 			end
 			if kc_has_logo_lights then
 				sysLights.logoSwitch:actuate(1)
 			end
 			if kc_has_panel_lights then
-				sysLights.panelLightGroup:actuate(1)
+				sysLights.panelLightGroup:setValue(1)
 			end
 		end
 	elseif flightphase == kc_phase_taxi_rwy then
@@ -491,11 +494,11 @@ function kc_macro_lights(flightphase)
 		if kc_has_rwy_lights then
 			sysLights.rwyLightGroup:actuate(0)
 		end
-		if kc_has_taxi_light then
-			sysLights.taxiSwitch:actuate(1)
-		end
 		if kc_has_ll_as_taxi then
 			sysLights.landLightGroup:actuate(1)
+		end
+		if kc_has_taxi_light then
+			sysLights.taxiSwitch:actuate(1)
 		end
 		if kc_has_pos_lights then
 			sysLights.positionSwitch:actuate(1)
@@ -510,7 +513,7 @@ function kc_macro_lights(flightphase)
 			sysLights.strobesSwitch:actuate(1)
 		end
 		if kc_has_instr_lights then
-			sysLights.instrLightGroup:actuate(1)
+			sysLights.instrLightGroup:setValue(1)
 		end
 		if kc_has_emer_lights then
 			sysLights.emerLights:actuate(1)
@@ -529,7 +532,7 @@ function kc_macro_lights(flightphase)
 				sysLights.logoSwitch:actuate(1)
 			end
 			if kc_has_panel_lights then
-				sysLights.panelLightGroup:actuate(1)
+				sysLights.panelLightGroup:setValue(1)
 			end
 		end	
 	elseif flightphase == kc_phase_before_takeoff then
@@ -550,7 +553,7 @@ function kc_macro_lights(flightphase)
 			sysLights.strobesSwitch:actuate(1)
 		end
 		if kc_has_instr_lights then
-			sysLights.instrLightGroup:actuate(1)
+			sysLights.instrLightGroup:setValue(1)
 		end
 		if kc_has_emer_lights then
 			sysLights.emerLights:actuate(1)
@@ -569,7 +572,7 @@ function kc_macro_lights(flightphase)
 				sysLights.logoSwitch:actuate(1)
 			end
 			if kc_has_panel_lights then
-				sysLights.panelLightGroup:actuate(1)
+				sysLights.panelLightGroup:setValue(1)
 			end
 		end	
 	elseif flightphase == kc_phase_approach then
@@ -591,7 +594,7 @@ function kc_macro_lights(flightphase)
 			sysLights.strobesSwitch:actuate(1)
 		end
 		if kc_has_instr_lights then
-			sysLights.instrLightGroup:actuate(1)
+			sysLights.instrLightGroup:setValue(1)
 		end
 		if kc_has_emer_lights then
 			sysLights.emerLights:actuate(1)
@@ -634,7 +637,7 @@ function kc_macro_lights(flightphase)
 			sysLights.strobesSwitch:actuate(0)
 		end
 		if kc_has_instr_lights then
-			sysLights.instrLightGroup:actuate(1)
+			sysLights.instrLightGroup:setValue(1)
 		end
 		if kc_has_emer_lights then
 			sysLights.emerLights:actuate(1)
@@ -653,7 +656,10 @@ function kc_macro_lights(flightphase)
 				sysLights.logoSwitch:actuate(1)
 			end
 			if kc_has_panel_lights then
-				sysLights.panelLightGroup:actuate(1)
+				sysLights.panelLightGroup:setValue(1)
+			end
+			if kc_has_dome_lights then
+				sysLights.domeLightGroup:setValue(1)
 			end
 		end	
 	else
@@ -934,16 +940,6 @@ function kc_macro_air(flightphase)
 		end
 		if kc_has_trim_air then
 			sysAir.trimAirSwitch:actuate(1)
-		end
-		elseif flightphase == kc_phase_before_start then
-		if kc_has_press_cab then
-			sysAir.packSwitchGroup:actuate(0)
-		end
-		if kc_is_airbus == false and kc_has_iso_valvle then	
-			sysAir.isoValveSwitch:actuate(1)
-		end
-		if kc_has_oxygen then
-			sysAir.oxygenMaster:actuate(0)
 		end
 	elseif flightphase == kc_phase_before_start then
 		if kc_has_press_cab then
