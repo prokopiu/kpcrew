@@ -6,7 +6,7 @@ kc_baro_units = "MB|IN"
 
 local generalGroup = kcPreferenceGroup:new("general","GENERAL PREFERENCES")
 generalGroup:setInitialOpen(true)
--- generalGroup:add(kcPreference:new("test",1,kcPreference.typeInfo,"TEST|"))
+
 generalGroup:add(kcPreference:new("assistance",4,kcPreference.typeList,"Assistance Level|" .. kc_assistance_levels))
 generalGroup:add(kcPreference:new("weight_kgs",true,kcPreference.typeToggle,"Weight Units|" .. kc_weight_units))
 generalGroup:add(kcPreference:new("baro_mode_hpa",true,kcPreference.typeToggle,"EFIS Default Baro Mode (Both)|" .. kc_baro_units))
@@ -22,6 +22,8 @@ generalGroup:add(kcPreference:new("xpdrusa",true,kcPreference.typeToggle,"Transp
 
 generalGroup:add(kcPreference:new("simbriefuser"," ",kcPreference.typeText,"SIMBRIEF Username|"))
 generalGroup:add(kcPreference:new("askyMetar",false,kcPreference.typeToggle,"ASky METAR|Load ON|Load OFF"))
+
+generalGroup:add(kcPreference:new("checklists",false,kcPreference.typeToggle,"Aircraft Checklists (needs reload)|Use CHKLs|No CHKLs"))
 
 -- generalGroup:add(kcPreference:new("betterPushback",false,kcPreference.typeToggle,"BetterPushback|Use BP|Don't use BP"))
 -- generalGroup:add(kcPreference:new("sges",false,kcPreference.typeToggle,"Simple Ground Services|Use GSES|Don't use SGES"))
