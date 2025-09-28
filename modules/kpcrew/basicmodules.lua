@@ -55,8 +55,8 @@ function kc_get_matching_icao_code()
 		icao = "A33L"
 		
 	-- Inibuilds A300
-	-- elseif PLANE_ICAO == "A306" then
-		-- icao = "A306"
+	elseif PLANE_ICAO == "A306" then
+		icao = "A306"
 
 	-- FF 7x7
 	elseif PLANE_ICAO == "B762" or PLANE_ICAO == "B763" or PLANE_ICAO == "B764" or PLANE_ICAO == "B752" or PLANE_ICAO == "B753" then
@@ -119,6 +119,17 @@ function kc_get_matching_icao_code()
 		icao = "ER1X"
 	elseif PLANE_ICAO == "E35L" then
 		icao = "ER1X"
+
+	-- JUSTFLIGHT BAE SERIES
+	-- B463
+	-- B462
+	-- B461
+	elseif PLANE_ICAO == "B461" then
+		icao = "B46X"
+	elseif PLANE_ICAO == "B462" then
+		icao = "B46X"
+	elseif PLANE_ICAO == "B463" then
+		icao = "B46X"
 		
 	-- ToLiss Airbusses
 	elseif PLANE_ICAO == "A319" and PLANE_TAILNUMBER == "C-GTLS" then
