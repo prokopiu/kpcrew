@@ -1148,7 +1148,7 @@ end
 -- *SPEEDBRAKE..................................ARM   (PM)
 -- =======================================================
 
-local landingProc = Procedure:new("LANDING PROCEDURE","","")
+local landingProc = Procedure:new("APPROACH PROCEDURE","","")
 landingProc:setFlightPhase(kc_phase_approach)
 
 landingProc:addItem(HoldProcedureItem:new("ALTIMETERS","QNH %s|activeBriefings:get(\"arrival:atisQNH\")",FlowItem.actorBOTH))
@@ -1171,7 +1171,7 @@ landingProc:addItem(ProcedureItem:new("LANDING LIGHTS","ON",FlowItem.actorPF,0,
 
 -- =====================================================================================================================
 
-local flapsProc = Procedure:new("EXTEND FLAPS","","")
+local flapsProc = Procedure:new("LANDING FLOW","","")
 flapsProc:setFlightPhase(0-kc_phase_approach)
 
 for ldgflapidx=1,kc_get_nr_flapdetents(),1 do

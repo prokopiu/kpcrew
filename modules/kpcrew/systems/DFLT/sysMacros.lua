@@ -421,11 +421,11 @@ function kc_macro_lights(flightphase)
 			sysLights.wheelSwitch:actuate(0)
 		end
 		if kc_has_dome_lights then
-			sysLights.domeLightGroup:setValue(0)
+			sysLights.domeLightGroup:actuate(0)
 		end
-			if kc_is_daylight() == false then
+		if kc_is_daylight() == false then
 			if kc_has_dome_lights then
-				sysLights.domeLightGroup:setValue(1)
+				sysLights.domeLightGroup:actuate(1)
 			end
 			if kc_has_logo_lights then
 				sysLights.logoSwitch:actuate(1)
