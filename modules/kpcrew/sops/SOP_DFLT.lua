@@ -284,7 +284,7 @@ beforeStart:addItem(ProcedureItem:new("ELECTRICAL POWER UP (SKIP IF BATT ONLY)",
 	end))
 if kc_has_hyd_elec_pmps then
 	beforeStart:addItem(IndirectProcedureItem:new("HYDRAULIC SYSTEM","AS REQUIRED",FlowItem.actorFO,0,"elechydstart",
-		function () return sysHydraulic.elecHydPumpGroup:getStatus() > 0 end,
+		function () return true end,
 		function () kc_macro_hyd(kc_phase_before_start)	end))	
 end
 if kc_has_doors then

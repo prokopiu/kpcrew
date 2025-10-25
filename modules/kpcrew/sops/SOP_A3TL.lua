@@ -92,7 +92,11 @@ activeSOP:getFlow(proc_ind_electrical):addItem(ProcedureItem:new("RMPS","ON",Flo
 		set("AirbusFBW/RMP1Switch",1) 
 		set("AirbusFBW/RMP2Switch",1) 
 		set("AirbusFBW/RMP3Switch",1) 
-	end))	
+	end))
+activeSOP:getFlow(proc_ind_electrical):addItem(ProcedureItem:new("ELEC HYD PUMP","OFF",FlowItem.actorFO,0,
+	function () return sysHydraulic.elecHydPumpGroup:getStatus() == 0 end,
+	function () sysHydraulic.elecHydPumpGroup:actuate(0) end))
+	
 if activePrefSet:get("general:checklists") == true then
 activeSOP:getFlow(proc_ind_electrical):addItem(HoldProcedureItem:new("== COCKPIT PREPARATION CHECKLIST ==","== CALL ==",FlowItem.actorCPT))
 activeSOP:getFlow(proc_ind_electrical):addItem(ChecklistItem:new("COCKPIT PREPARATION CHECKLIST","",FlowItem.actorFO,2,
@@ -107,7 +111,7 @@ activeSOP:getFlow(proc_ind_electrical):addItem(ChecklistItem:new("FUEL QUANTITY"
 activeSOP:getFlow(proc_ind_electrical):addItem(ChecklistItem:new("SEAT BELTS","ON",FlowItem.actorFO,1,
 	function () return sysGeneral.passSignsSwitch:getStatus() == 1 end,
 	function () sysGeneral.passSignsSwitch:actuate(1) end))	
-activeSOP:getFlow(proc_ind_electrical):addItem(ChecklistItem:new("ADIRS","NAV",FlowItem.actorFO,1,
+activeSOP:getFlow(proc_ind_electrical):addItem(ChecklistItem:new("ADIRS","#exchange|NAV|naff",FlowItem.actorFO,2,
 	function () return sysGeneral.irsUnitGroup:getStatus() > 1 end,
 	function () 
 		if kc_is_airbus == true then 
@@ -116,7 +120,7 @@ activeSOP:getFlow(proc_ind_electrical):addItem(ChecklistItem:new("ADIRS","NAV",F
 			kc_macro_set_irs(2)
 		end
 	end))	
-activeSOP:getFlow(proc_ind_electrical):addItem(ChecklistItem:new("BARO REF","ALL SET TO QNH",FlowItem.actorBOTH,1,
+activeSOP:getFlow(proc_ind_electrical):addItem(ChecklistItem:new("BARO REF","ALL SET TO QNH",FlowItem.actorBOTH,2,
 	function () return true end,
 	function ()  end))	
 activeSOP:getFlow(proc_ind_electrical):addItem(ChecklistItem:new("COCKPIT PREPARATION CHECKLIST","COMPLETED",FlowItem.actorFO,2,
@@ -156,7 +160,13 @@ end
 -- activeSOP:getFlow(proc_ind_engStart):addItem(ProcedureItem:new("","",FlowItem.actorFO,0,
 	-- function () return  end,
 	-- function () end))
-	
+activeSOP:getFlow(proc_ind_engStart):addItem(ProcedureItem:new("FLIGHT DIRECTOR","SET",FlowItem.actorFO,0,
+	function () return sysMCP.fdirGroup:getStatus() > 0 end,
+	function () sysMCP.fdirGroup:actuate(1) end))
+activeSOP:getFlow(proc_ind_engStart):addItem(ProcedureItem:new("TRANSPONDER ATC","ON",FlowItem.actorFO,0,
+	function () return get("AirbusFBW/XPDRTCASMode") > 0 end,
+	function () set("AirbusFBW/XPDRTCASMode",1) end))
+				
 -- === After Start
 -- activeSOP:getFlow(proc_ind_afterStart):addItem(ProcedureItem:new("","",FlowItem.actorFO,0,
 	-- function () return  end,
@@ -291,7 +301,7 @@ activeSOP:getFlow(proc_ind_landing):addItem(ChecklistItem:new("AUTOBRAKE","%s|kc
 		function () return sysControls.Autobrake:getStatus() == tonumber(kc_pref_split(kc_LandingAutoBrInd)[activeBriefings:get("approach:autobrake")]) end,
 		function () kc_macro_set_autobrake(tonumber(kc_pref_split(kc_LandingAutoBrInd)[activeBriefings:get("approach:autobrake")])) 
 		end))	
-activeSOP:getFlow(proc_ind_landing):addItem(ChecklistItem:new("ENGINE MODE SELECTOR","NORM",FlowItem.actorCPT,2,
+activeSOP:getFlow(proc_ind_landing):addItem(ChecklistItem:new("ENGINE MODE SELECTOR","NORM",FlowItem.actorCPT,3,
 	function () return sysEngines.engIgnitionGroup:getStatus() == 1 end,
 	function () sysEngines.engIgnitionGroup:actuate(0) end))
 activeSOP:getFlow(proc_ind_landing):addItem(ChecklistItem:new("APPROACH CHECKLIST","COMPLETED",FlowItem.actorFO,2,
@@ -308,7 +318,7 @@ end
 -- activeSOP:getFlow(proc_ind_LandingCheck):addItem(ProcedureItem:new("","",FlowItem.actorFO,0,
 	-- function () return end,
 	-- function () end))
-activeSOP:getFlow(proc_ind_LandingCheck):addItem(ChecklistItem:new("GO AROUND ALTITUDE","%s FT|activeBriefings:get(\"approach:gaaltitude\")",FlowItem.actorFO,1,
+activeSOP:getFlow(proc_ind_LandingCheck):addItem(ChecklistItem:new("GO AROUND ALTITUDE","%s feet|activeBriefings:get(\"approach:gaaltitude\")",FlowItem.actorFO,3,
 	function () return true end,
 	function ()  end))	
 activeSOP:getFlow(proc_ind_LandingCheck):addItem(ChecklistItem:new("CABIN CREW","ADVISED",FlowItem.actorFO,1,
@@ -327,7 +337,7 @@ activeSOP:getFlow(proc_ind_afterLandingProc):addItem(ProcedureItem:new("LS","OFF
 	function () set("AirbusFBW/ILSonCapt",0) end))
 activeSOP:getFlow(proc_ind_afterLandingProc):addItem(ProcedureItem:new("RADAR & #spell|PWS#","OFF",FlowItem.actorCPT,1,
 	function () return sysEFIS.wxrPilot:getStatus() == 0 end,
-	function () sysEFIS.wxrPilot:setValue(0) end))
+	function () sysEFIS.wxrPilot:actuate(0) end))
 	
 -- === Shutdown
 -- activeSOP:getFlow(proc_ind_shutdownProc):addItem(ProcedureItem:new("","",FlowItem.actorFO,0,
@@ -341,7 +351,7 @@ activeSOP:getFlow(proc_ind_shutdownProc):addItem(HoldProcedureItem:new("== PARKI
 activeSOP:getFlow(proc_ind_shutdownProc):addItem(ChecklistItem:new("PARKING CHECKLIST","",FlowItem.actorFO,2,
 	function () return true end,
 	function ()  end))
-activeSOP:getFlow(proc_ind_shutdownProc):addItem(ChecklistItem:new("PARKING BRAKE","SET",FlowItem.actorFO,1,
+activeSOP:getFlow(proc_ind_shutdownProc):addItem(ChecklistItem:new("PARKING BRAKE","SET",FlowItem.actorFO,2,
 	function () return sysGeneral.parkBrakeSwitch:getStatus() == 1 end,
 	function () sysGeneral.parkBrakeSwitch:actuate(1) end))
 activeSOP:getFlow(proc_ind_shutdownProc):addItem(IndirectChecklistItem:new("ENGINES","OFF",FlowItem.actorCPT,1,"throttlescutland",

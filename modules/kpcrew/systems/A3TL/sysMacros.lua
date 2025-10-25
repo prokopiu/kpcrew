@@ -188,6 +188,7 @@ function kc_macro_custom_turnaround()
 	set("AirbusFBW/ExtractSwitch",0)
 	set("AirbusFBW/CabinFanSwitch",1)
 
+	sysHydraulic.elecHydPumpGroup:actuate(0)
 end
 
 -- ========= air conditioning
@@ -512,6 +513,136 @@ function kc_fuel_all_white_off()
 	end
 	
 	return stdwhites and a346whites
+end
+
+-- ====================================== Lights related functions
+function kc_macro_lights(flightphase)
+	logMsg("Lights flight phase: " .. kcSopFlightPhase[flightphase])
+
+	-- Cold & dark
+	if flightphase == kc_phase_colddark then
+		sysLights.landLightGroup:actuate(0)
+		sysLights.rwyLightGroup:actuate(0)
+		sysLights.taxiSwitch:actuate(0)
+		sysLights.positionSwitch:actuate(0)
+		sysLights.beaconSwitch:actuate(0)
+		sysLights.strobesSwitch:actuate(0)
+		sysLights.instrLightGroup:actuate(0)
+		sysLights.domeLightGroup:actuate(0)
+		sysLights.logoSwitch:actuate(0)
+		sysLights.wingSwitch:actuate(0)
+		sysLights.panelLightGroup:actuate(0)
+		sysLights.emerLights:actuate(0)
+	elseif flightphase == kc_phase_turnaround then
+		sysLights.landLightGroup:actuate(0)
+		sysLights.rwyLightGroup:actuate(0)
+		sysLights.taxiSwitch:actuate(0)
+		sysLights.positionSwitch:actuate(1)
+		sysLights.beaconSwitch:actuate(0)
+		sysLights.strobesSwitch:actuate(0)
+		sysLights.instrLightGroup:actuate(1)
+		sysLights.domeLightGroup:actuate(0)
+		sysLights.logoSwitch:actuate(0)
+		sysLights.wingSwitch:actuate(0)
+		sysLights.panelLightGroup:actuate(0)
+		sysLights.emerLights:actuate(1)
+		if kc_is_daylight() == false then
+			sysLights.domeLightGroup:actuate(1)
+			sysLights.logoSwitch:actuate(1)
+			sysLights.wingSwitch:actuate(1)
+			sysLights.panelLightGroup:actuate(1)
+		end
+	elseif flightphase == kc_phase_before_start then
+		sysLights.landLightGroup:actuate(0)
+		sysLights.rwyLightGroup:actuate(0)
+		sysLights.taxiSwitch:actuate(0)
+		sysLights.positionSwitch:actuate(1)
+		sysLights.beaconSwitch:actuate(1)
+		sysLights.strobesSwitch:actuate(0)
+		sysLights.instrLightGroup:actuate(1)
+		sysLights.domeLightGroup:actuate(0)
+		sysLights.logoSwitch:actuate(0)
+		sysLights.wingSwitch:actuate(0)
+		sysLights.panelLightGroup:actuate(0)
+		sysLights.emerLights:actuate(1)
+		if kc_is_daylight() == false then
+			sysLights.logoSwitch:actuate(1)
+			sysLights.panelLightGroup:actuate(1)
+		end
+	elseif flightphase == kc_phase_taxi_rwy then
+		sysLights.landLightGroup:actuate(0)
+		sysLights.rwyLightGroup:actuate(0)
+		sysLights.taxiSwitch:actuate(1)
+		sysLights.positionSwitch:actuate(1)
+		sysLights.beaconSwitch:actuate(1)
+		sysLights.strobesSwitch:actuate(0)
+		sysLights.instrLightGroup:actuate(1)
+		sysLights.domeLightGroup:actuate(0)
+		sysLights.logoSwitch:actuate(0)
+		sysLights.wingSwitch:actuate(0)
+		sysLights.panelLightGroup:actuate(0)
+		sysLights.emerLights:actuate(1)
+		if kc_is_daylight() == false then
+			sysLights.logoSwitch:actuate(1)
+			sysLights.panelLightGroup:actuate(1)
+		end
+	elseif flightphase == kc_phase_before_takeoff then
+		sysLights.landLightGroup:actuate(1)
+		sysLights.rwyLightGroup:actuate(0)
+		sysLights.taxiSwitch:setValue(2)
+		sysLights.positionSwitch:actuate(1)
+		sysLights.beaconSwitch:actuate(1)
+		sysLights.strobesSwitch:actuate(1)
+		sysLights.instrLightGroup:actuate(1)
+		sysLights.domeLightGroup:actuate(0)
+		sysLights.logoSwitch:actuate(0)
+		sysLights.wingSwitch:actuate(0)
+		sysLights.panelLightGroup:actuate(0)
+		sysLights.emerLights:actuate(1)
+		if kc_is_daylight() == false then
+			sysLights.logoSwitch:actuate(1)
+			sysLights.panelLightGroup:actuate(1)
+		end
+	elseif flightphase == kc_phase_approach then
+		sysLights.landLightGroup:actuate(1)
+		sysLights.rwyLightGroup:actuate(1)
+		sysLights.taxiSwitch:setValue(0)
+		sysLights.positionSwitch:actuate(1)
+		sysLights.beaconSwitch:actuate(1)
+		sysLights.strobesSwitch:actuate(1)
+		sysLights.instrLightGroup:actuate(1)
+		sysLights.domeLightGroup:actuate(0)
+		sysLights.logoSwitch:actuate(0)
+		sysLights.wingSwitch:actuate(0)
+		sysLights.panelLightGroup:actuate(0)
+		sysLights.emerLights:actuate(1)
+		if kc_is_daylight() == false then
+			sysLights.logoSwitch:actuate(1)
+			sysLights.panelLightGroup:actuate(1)
+		end
+
+		kc_macro_lights_descend_10k()
+	elseif flightphase == kc_phase_afterland then
+		sysLights.landLightGroup:actuate(0)
+		sysLights.rwyLightGroup:actuate(0)
+		sysLights.taxiSwitch:setValue(1)
+		sysLights.positionSwitch:actuate(1)
+		sysLights.beaconSwitch:actuate(1)
+		sysLights.strobesSwitch:actuate(0)
+		sysLights.instrLightGroup:actuate(1)
+		sysLights.domeLightGroup:actuate(0)
+		sysLights.logoSwitch:actuate(0)
+		sysLights.wingSwitch:actuate(0)
+		sysLights.panelLightGroup:actuate(0)
+		sysLights.emerLights:actuate(1)
+		if kc_is_daylight() == false then
+			sysLights.logoSwitch:actuate(1)
+			sysLights.panelLightGroup:actuate(1)
+		end
+	else
+		logMsg("Invalid flightphase")
+	end	
+
 end
 
 -- ====================================== A/P & Glareshield related functions

@@ -217,24 +217,21 @@ sysLights.runwayAnc 		= SimpleAnnunciator:new("runwaylights","AirbusFBW/OHPLight
 -- Dome Light
 if PLANE_ICAO ~= "A339" then
 	sysLights.domeLightSwitch 	= TwoStateCustomSwitch:new("dome","AirbusFBW/OHPLightSwitches",8,
-	function () 
-		command_once("toliss_airbus/lightcommands/DomeLightDown")
-		command_once("toliss_airbus/lightcommands/DomeLightDown")
-		command_once("toliss_airbus/lightcommands/DomeLightUp")
+	function ()
+		set_array("AirbusFBW/OHPLightSwitches",8,2)
 	end,
 	function ()
-		command_once("toliss_airbus/lightcommands/DomeLightDown")
-		command_once("toliss_airbus/lightcommands/DomeLightDown")
+		set_array("AirbusFBW/OHPLightSwitches",8,0)
 	end,
 	function () 
 		if get("AirbusFBW/OHPLightSwitches",8) == 0 then
 			set_array("AirbusFBW/OHPLightSwitches",8,2)
 		else
-			set_array("AirbusFBW/OHPLightSwitches",8,1)
+			set_array("AirbusFBW/OHPLightSwitches",8,0)
 		end
 	end,
 	function ()
-		if get("AirbusFBW/OHPLightSwitches",8) == 2 then 
+		if get("AirbusFBW/OHPLightSwitches",8) > 0 then 
 			return 1
 		else
 			return 0

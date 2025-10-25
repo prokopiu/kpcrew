@@ -42,10 +42,10 @@ sysEFIS.wxrPilot 			= TwoStateCustomSwitch:new("wxrpilot","AirbusFBW/WXPowerSwit
 	function ()
 	end,
 	function ()
-		if get("AirbusFBW/WXPowerSwitch") ~= 1 then
-			return 1
-		else
+		if get("AirbusFBW/WXPowerSwitch") == 1 then
 			return 0
+		else
+			return 1
 		end
 	end)
 sysEFIS.wxrCopilot 			= InopSwitch:new("wxrcopilot")

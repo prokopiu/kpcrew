@@ -100,260 +100,263 @@ local wunit = "KG"
 
 -- extract the data from the Simbrief XML
 function kb_extract_simbrief_ofp()
-	-- latest OFP gets stored in kpcrew_prefs folder as simbrief.xml
-	local xmlfile = xml2lua.loadFile(SCRIPT_DIRECTORY .. "..\\Modules\\kpcrew_prefs\\simbrief.xml")
-	local parser = xml2lua.parser(handler)
-	parser:parse(xmlfile)
+	-- check if file exists
+	if kc_file_exists(SCRIPT_DIRECTORY .. "..\\Modules\\kpcrew_prefs\\simbrief.xml") then
+		-- latest OFP gets stored in kpcrew_prefs folder as simbrief.xml
+		local xmlfile = xml2lua.loadFile(SCRIPT_DIRECTORY .. "..\\Modules\\kpcrew_prefs\\simbrief.xml")
+		local parser = xml2lua.parser(handler)
+		parser:parse(xmlfile)
 
-	-- initialize OFP record and scan the downloaded XML file
-	activeBriefings:set("flight:callsign",handler.root.OFP.atc.callsign)
-	activeBriefings:set("flight:flightnumber",handler.root.OFP.general.flight_number)
-	if handler.root.OFP.general.icao_airline == nil then
-		handler.root.OFP.general.icao_airline = ""
-	end
-	-- activeBriefings:set("flight:airline",handler.root.OFP.general.icao_airline)
-	activeBriefings:set("flight:planrwy",handler.root.OFP.origin.plan_rwy)
-	activeBriefings:set("flight:originIcao",handler.root.OFP.origin.icao_code)
-	activeBriefings:set("flight:originIata",handler.root.OFP.origin.iata_code)
-	activeBriefings:set("flight:originRegion",handler.root.OFP.origin.icao_region)
-	activeBriefings:set("flight:originName",handler.root.OFP.origin.name)
-	activeBriefings:set("flight:destinationIcao",handler.root.OFP.destination.icao_code)
-	activeBriefings:set("flight:destinationIata",handler.root.OFP.destination.iata_code)
-	activeBriefings:set("flight:destinationRegion",handler.root.OFP.destination.icao_region)
-	activeBriefings:set("flight:destinationName",handler.root.OFP.destination.name)
-	activeBriefings:set("flight:destrwy",handler.root.OFP.destination.plan_rwy)
-	activeBriefings:set("flight:altnrwy",handler.root.OFP.alternate.plan_rwy)
-	activeBriefings:set("flight:alternateIcao",handler.root.OFP.alternate.icao_code)
-	activeBriefings:set("flight:alternateIata",handler.root.OFP.alternate.iata_code)
-	activeBriefings:set("flight:alternateRegion",handler.root.OFP.alternate.icao_region)
-	activeBriefings:set("flight:alternateName",handler.root.OFP.alternate.name)
-	activeBriefings:set("flight:route",handler.root.OFP.atc.route)
-	activeBriefings:set("flight:costIndex",handler.root.OFP.general.costindex)
-	activeBriefings:set("flight:routedistance",handler.root.OFP.general.route_distance)
-	activeBriefings:set("flight:airdistance",handler.root.OFP.general.air_distance)
-	activeBriefings:set("flight:cruiseLevel",handler.root.OFP.general.initial_altitude)
-	activeBriefings:set("flight:averageWind",handler.root.OFP.general.avg_wind_dir .. "/" .. handler.root.OFP.general.avg_wind_spd)
-	activeBriefings:set("flight:averageWC",handler.root.OFP.general.avg_wind_comp)
-	activeBriefings:set("flight:averageISA",handler.root.OFP.general.avg_temp_dev)
-	activeBriefings:set("flight:tripFuel",handler.root.OFP.fuel.enroute_burn)
-	activeBriefings:set("flight:minimumTakeoff",handler.root.OFP.fuel.min_takeoff)
-	activeBriefings:set("flight:reserve",handler.root.OFP.fuel.reserve)
-	activeBriefings:set("flight:reserveTime",os.date("!%H%M",handler.root.OFP.fuel.reserve))
-	activeBriefings:set("flight:alternateBurn",handler.root.OFP.fuel.alternate_burn)
-	activeBriefings:set("flight:takeoffFuel",handler.root.OFP.fuel.plan_ramp)
-	activeBriefings:set("flight:averageFF",handler.root.OFP.fuel.avg_fuel_flow)
-	activeBriefings:set("flight:cargoWeight",handler.root.OFP.weights.cargo)
-	activeBriefings:set("flight:payload",handler.root.OFP.weights.payload)
-	activeBriefings:set("flight:zfw",handler.root.OFP.weights.est_zfw)
-	activeBriefings:set("flight:tow",handler.root.OFP.weights.est_tow)
-	activeBriefings:set("flight:ldw",handler.root.OFP.weights.est_ldw)
-	activeBriefings:set("flight:maxzfw",handler.root.OFP.weights.max_zfw)
-	activeBriefings:set("flight:maxtow",handler.root.OFP.weights.max_tow)
-	activeBriefings:set("flight:maxldw",handler.root.OFP.weights.max_ldw)
-	activeBriefings:set("flight:tropopause",handler.root.OFP.general.avg_tropopause)
-	activeBriefings:set("flight:deptimezone",handler.root.OFP.times.orig_timezone)
-	activeBriefings:set("flight:arrtimezone",handler.root.OFP.times.dest_timezone)
-	activeBriefings:set("flight:depdate",string.upper(os.date("!%d%b%y",handler.root.OFP.times.sched_out)))
-	activeBriefings:set("flight:deptime",os.date("!%H%M",handler.root.OFP.times.sched_out))
-	activeBriefings:set("flight:arrtime",os.date("!%H%M",handler.root.OFP.times.sched_in))
-	activeBriefings:set("flight:estdeptime",os.date("!%H%M",handler.root.OFP.times.est_out))
-	activeBriefings:set("flight:estarrtime",os.date("!%H%M",handler.root.OFP.times.est_in))
-	activeBriefings:set("flight:estairtime",os.date("!%H%M",handler.root.OFP.times.est_time_enroute))
-	activeBriefings:set("flight:airtime",os.date("!%H%M",handler.root.OFP.times.sched_time_enroute))
-	activeBriefings:set("flight:estblocktime",os.date("!%H%M",handler.root.OFP.times.est_block))
-	activeBriefings:set("flight:blocktime",os.date("!%H%M",handler.root.OFP.times.sched_block))
-	activeBriefings:set("flight:taxiouttime",os.date("!%H%M",handler.root.OFP.times.taxi_out))
-	activeBriefings:set("flight:taxiintime",os.date("!%H%M",handler.root.OFP.times.taxi_in))
-	activeBriefings:set("flight:cruiseprofile",handler.root.OFP.general.cruise_profile)
-	activeBriefings:set("flight:cruisemach",handler.root.OFP.general.cruise_mach)
-	activeBriefings:set("flight:cruisetas",handler.root.OFP.general.cruise_tas)
-	activeBriefings:set("flight:climbprofile",handler.root.OFP.general.climb_profile)
-	activeBriefings:set("flight:descentprofile",handler.root.OFP.general.descent_profile)
-	activeBriefings:set("flight:stepclimb",handler.root.OFP.general.stepclimb_string)
-	activeBriefings:set("flight:paxcount",handler.root.OFP.weights.pax_count)
-	activeBriefings:set("flight:paxweight",handler.root.OFP.weights.pax_weight)
-	activeBriefings:set("flight:rampweight",handler.root.OFP.weights.est_ramp)
-	activeBriefings:set("flight:fuelplanldg",handler.root.OFP.fuel.plan_landing)
-	activeBriefings:set("flight:mindiversion",handler.root.OFP.fuel.plan_landing)
-	activeBriefings:set("flight:conttime",handler.root.OFP.general.cont_rule)
-	activeBriefings:set("flight:altnete",os.date("!%H%M",handler.root.OFP.alternate.ete))
-	activeBriefings:set("flight:taxifuel",handler.root.OFP.fuel.taxi)
-	activeBriefings:set("flight:endurance",os.date("!%H%M",handler.root.OFP.times.endurance))	
-	activeBriefings:set("flight:extrafuel",handler.root.OFP.fuel.extra)
-	activeBriefings:set("flight:extratime",os.date("!%H%M",handler.root.OFP.times.extrafuel_time))	
-
-	activeBriefings:set("flight:planblockfuel",handler.root.OFP.fuel.plan_ramp + handler.root.OFP.fuel.extra_optional + handler.root.OFP.fuel.extra_required)
-	activeBriefings:set("flight:planblocktime",os.date("!%H%M",handler.root.OFP.times.endurance + handler.root.OFP.times.extrafuel_time))	
-	activeBriefings:set("flight:pilotextra",handler.root.OFP.fuel.extra_optional)
-	
-	wunit = string.sub(string.upper(handler.root.OFP.params.units),1,2)
-
--- departure 
-	if (#handler.root.OFP.general.sid_ident > 0) then
-		activeBriefings:set("departure:deproute",handler.root.OFP.general.sid_ident)
-		activeBriefings:set("departure:deptype",1)
-	else
-		activeBriefings:set("departure:deproute","n.a.")
-		activeBriefings:set("departure:deptype",2)
-	end
-	if (#handler.root.OFP.general.sid_trans > 0) then
-		activeBriefings:set("departure:deptransition",handler.root.OFP.general.sid_trans)
-	else
-		activeBriefings:set("departure:deptransition","n.a.")
-	end
-	activeBriefings:set("departure:aptElevation",handler.root.OFP.origin.elevation)
-	activeBriefings:set("departure:transalt",handler.root.OFP.origin.trans_alt)
-	activeBriefings:set("departure:initAlt",handler.root.OFP.general.initial_altitude)
-	
-	if handler.root.OFP.tlr.takeoff ~= nil then
-		local runways = handler.root.OFP.tlr.takeoff.runway
-		for i=1,#runways do
-			if runways[i].identifier == activeBriefings:get("flight:planrwy") then
-				activeBriefings:set("departure:initHeading",runways[i].magnetic_course)
-				activeBriefings:set("departure:nav1Course",runways[i].magnetic_course)
-				activeBriefings:set("departure:nav2Course",runways[i].magnetic_course)
-				activeBriefings:set("takeoff:v1",runways[i].speeds_v1)
-				activeBriefings:set("takeoff:vr",runways[i].speeds_vr)
-				activeBriefings:set("takeoff:v2",runways[i].speeds_v2)
-				activeBriefings:set("takeoff:rwylength",runways[i].length)
-				activeBriefings:set("takeoff:tora",runways[i].length_tora)
-				
-				if runways[i].bleed_setting ~= "OFF" then
-					activeBriefings:set("takeoff:bleeds",2)
-				else
-					activeBriefings:set("takeoff:bleeds",1)
-				end
-				if runways[i].anti_ice_setting == "OFF" then
-					activeBriefings:set("takeoff:antiice",1)
-				end
-				if runways[i].anti_ice_setting == "ENGINE" then
-					activeBriefings:set("takeoff:antiice",2)
-				end
-				if runways[i].anti_ice_setting == "ENGINE & WING" then
-					activeBriefings:set("takeoff:antiice",3)
-				end
-
-				if handler.root.OFP.tlr.takeoff.conditions.surface_condition == "dry" then
-					activeBriefings:set("departure:rwyCond",1)
-				else
-					activeBriefings:set("departure:rwyCond",2)
-				end
-
-				if runways[i].thrust_setting == "FLEX" then
-					activeBriefings:set("takeoff:thrust",2)
-					if #runways[i].flex_temperature == 0 then
-						activeBriefings:set("takeoff:flextemp",15)
-					else
-						activeBriefings:set("takeoff:flextemp",runways[i].flex_temperature)
-					end
-				else
-					activeBriefings:set("takeoff:thrust",3)
-					if #runways[i].flex_temperature == 0 then
-						activeBriefings:set("takeoff:flextemp",15)
-					else
-						activeBriefings:set("takeoff:flextemp",runways[i].flex_temperature)
-					end
-				end
-
-				activeBriefings:set("takeoff:hw",runways[i].headwind_component)
-				activeBriefings:set("takeoff:cw",runways[i].crosswind_component)
-			end
+		-- initialize OFP record and scan the downloaded XML file
+		activeBriefings:set("flight:callsign",handler.root.OFP.atc.callsign)
+		activeBriefings:set("flight:flightnumber",handler.root.OFP.general.flight_number)
+		if handler.root.OFP.general.icao_airline == nil then
+			handler.root.OFP.general.icao_airline = ""
 		end
-	else
-		activeBriefings:set("departure:initHeading",000)
-		activeBriefings:set("departure:nav1Course",1)
-		activeBriefings:set("departure:nav2Course",1)
-		activeBriefings:set("takeoff:v1",100)
-		activeBriefings:set("takeoff:vr",100)
-		activeBriefings:set("takeoff:v2",100)
-		activeBriefings:set("takeoff:rwylength",-1)
-		activeBriefings:set("takeoff:tora",-1)
-		activeBriefings:set("takeoff:bleeds",2)
-		activeBriefings:set("takeoff:antiice",2)
-		activeBriefings:set("departure:rwyCond",1)
-		activeBriefings:set("takeoff:thrust",2)
-		activeBriefings:set("takeoff:flextemp",15)
-		activeBriefings:set("takeoff:hw",0)
-		activeBriefings:set("takeoff:cw",0)		
-	end
-	
-	origtranslvl = handler.root.OFP.origin.trans_level
+		-- activeBriefings:set("flight:airline",handler.root.OFP.general.icao_airline)
+		activeBriefings:set("flight:planrwy",handler.root.OFP.origin.plan_rwy)
+		activeBriefings:set("flight:originIcao",handler.root.OFP.origin.icao_code)
+		activeBriefings:set("flight:originIata",handler.root.OFP.origin.iata_code)
+		activeBriefings:set("flight:originRegion",handler.root.OFP.origin.icao_region)
+		activeBriefings:set("flight:originName",handler.root.OFP.origin.name)
+		activeBriefings:set("flight:destinationIcao",handler.root.OFP.destination.icao_code)
+		activeBriefings:set("flight:destinationIata",handler.root.OFP.destination.iata_code)
+		activeBriefings:set("flight:destinationRegion",handler.root.OFP.destination.icao_region)
+		activeBriefings:set("flight:destinationName",handler.root.OFP.destination.name)
+		activeBriefings:set("flight:destrwy",handler.root.OFP.destination.plan_rwy)
+		activeBriefings:set("flight:altnrwy",handler.root.OFP.alternate.plan_rwy)
+		activeBriefings:set("flight:alternateIcao",handler.root.OFP.alternate.icao_code)
+		activeBriefings:set("flight:alternateIata",handler.root.OFP.alternate.iata_code)
+		activeBriefings:set("flight:alternateRegion",handler.root.OFP.alternate.icao_region)
+		activeBriefings:set("flight:alternateName",handler.root.OFP.alternate.name)
+		activeBriefings:set("flight:route",handler.root.OFP.atc.route)
+		activeBriefings:set("flight:costIndex",handler.root.OFP.general.costindex)
+		activeBriefings:set("flight:routedistance",handler.root.OFP.general.route_distance)
+		activeBriefings:set("flight:airdistance",handler.root.OFP.general.air_distance)
+		activeBriefings:set("flight:cruiseLevel",handler.root.OFP.general.initial_altitude)
+		activeBriefings:set("flight:averageWind",handler.root.OFP.general.avg_wind_dir .. "/" .. handler.root.OFP.general.avg_wind_spd)
+		activeBriefings:set("flight:averageWC",handler.root.OFP.general.avg_wind_comp)
+		activeBriefings:set("flight:averageISA",handler.root.OFP.general.avg_temp_dev)
+		activeBriefings:set("flight:tripFuel",handler.root.OFP.fuel.enroute_burn)
+		activeBriefings:set("flight:minimumTakeoff",handler.root.OFP.fuel.min_takeoff)
+		activeBriefings:set("flight:reserve",handler.root.OFP.fuel.reserve)
+		activeBriefings:set("flight:reserveTime",os.date("!%H%M",handler.root.OFP.fuel.reserve))
+		activeBriefings:set("flight:alternateBurn",handler.root.OFP.fuel.alternate_burn)
+		activeBriefings:set("flight:takeoffFuel",handler.root.OFP.fuel.plan_ramp)
+		activeBriefings:set("flight:averageFF",handler.root.OFP.fuel.avg_fuel_flow)
+		activeBriefings:set("flight:cargoWeight",handler.root.OFP.weights.cargo)
+		activeBriefings:set("flight:payload",handler.root.OFP.weights.payload)
+		activeBriefings:set("flight:zfw",handler.root.OFP.weights.est_zfw)
+		activeBriefings:set("flight:tow",handler.root.OFP.weights.est_tow)
+		activeBriefings:set("flight:ldw",handler.root.OFP.weights.est_ldw)
+		activeBriefings:set("flight:maxzfw",handler.root.OFP.weights.max_zfw)
+		activeBriefings:set("flight:maxtow",handler.root.OFP.weights.max_tow)
+		activeBriefings:set("flight:maxldw",handler.root.OFP.weights.max_ldw)
+		activeBriefings:set("flight:tropopause",handler.root.OFP.general.avg_tropopause)
+		activeBriefings:set("flight:deptimezone",handler.root.OFP.times.orig_timezone)
+		activeBriefings:set("flight:arrtimezone",handler.root.OFP.times.dest_timezone)
+		activeBriefings:set("flight:depdate",string.upper(os.date("!%d%b%y",handler.root.OFP.times.sched_out)))
+		activeBriefings:set("flight:deptime",os.date("!%H%M",handler.root.OFP.times.sched_out))
+		activeBriefings:set("flight:arrtime",os.date("!%H%M",handler.root.OFP.times.sched_in))
+		activeBriefings:set("flight:estdeptime",os.date("!%H%M",handler.root.OFP.times.est_out))
+		activeBriefings:set("flight:estarrtime",os.date("!%H%M",handler.root.OFP.times.est_in))
+		activeBriefings:set("flight:estairtime",os.date("!%H%M",handler.root.OFP.times.est_time_enroute))
+		activeBriefings:set("flight:airtime",os.date("!%H%M",handler.root.OFP.times.sched_time_enroute))
+		activeBriefings:set("flight:estblocktime",os.date("!%H%M",handler.root.OFP.times.est_block))
+		activeBriefings:set("flight:blocktime",os.date("!%H%M",handler.root.OFP.times.sched_block))
+		activeBriefings:set("flight:taxiouttime",os.date("!%H%M",handler.root.OFP.times.taxi_out))
+		activeBriefings:set("flight:taxiintime",os.date("!%H%M",handler.root.OFP.times.taxi_in))
+		activeBriefings:set("flight:cruiseprofile",handler.root.OFP.general.cruise_profile)
+		activeBriefings:set("flight:cruisemach",handler.root.OFP.general.cruise_mach)
+		activeBriefings:set("flight:cruisetas",handler.root.OFP.general.cruise_tas)
+		activeBriefings:set("flight:climbprofile",handler.root.OFP.general.climb_profile)
+		activeBriefings:set("flight:descentprofile",handler.root.OFP.general.descent_profile)
+		activeBriefings:set("flight:stepclimb",handler.root.OFP.general.stepclimb_string)
+		activeBriefings:set("flight:paxcount",handler.root.OFP.weights.pax_count)
+		activeBriefings:set("flight:paxweight",handler.root.OFP.weights.pax_weight)
+		activeBriefings:set("flight:rampweight",handler.root.OFP.weights.est_ramp)
+		activeBriefings:set("flight:fuelplanldg",handler.root.OFP.fuel.plan_landing)
+		activeBriefings:set("flight:mindiversion",handler.root.OFP.fuel.plan_landing)
+		activeBriefings:set("flight:conttime",handler.root.OFP.general.cont_rule)
+		activeBriefings:set("flight:altnete",os.date("!%H%M",handler.root.OFP.alternate.ete))
+		activeBriefings:set("flight:taxifuel",handler.root.OFP.fuel.taxi)
+		activeBriefings:set("flight:endurance",os.date("!%H%M",handler.root.OFP.times.endurance))	
+		activeBriefings:set("flight:extrafuel",handler.root.OFP.fuel.extra)
+		activeBriefings:set("flight:extratime",os.date("!%H%M",handler.root.OFP.times.extrafuel_time))	
 
--- arrival
-	if (#handler.root.OFP.general.star_ident > 0) then
-		activeBriefings:set("arrival:arrroute",handler.root.OFP.general.star_ident)
-		activeBriefings:set("arrival:arrroute",handler.root.OFP.general.star_ident)
-		activeBriefings:set("arrival:arrType",1)
-	else
-		activeBriefings:set("arrival:arrroute","n.a.")
-		activeBriefings:set("arrival:arrType",2)
-	end
-	if (#handler.root.OFP.general.star_trans > 0) then
-		activeBriefings:set("arrival:arrtransition",handler.root.OFP.general.star_trans)
-	else
-		activeBriefings:set("arrival:arrtransition","n.a.")
-	end
-	activeBriefings:set("arrival:translvl",handler.root.OFP.destination.trans_level)
-	activeBriefings:set("arrival:aptElevation",handler.root.OFP.destination.elevation)
-	activeBriefings:set("arrival:alttranslvl",handler.root.OFP.alternate.trans_level)
-	desttransalt = handler.root.OFP.destination.trans_alt
-	altntransalt = handler.root.OFP.alternate.trans_alt
-	
-	if handler.root.OFP.tlr.landing ~= nil then
-		local runways2 = handler.root.OFP.tlr.landing.runway
-		for i=1,#runways2 do
-			if runways2[i].identifier == activeBriefings:get("flight:destrwy") then
-				activeBriefings:set("approach:nav1Course",runways2[i].magnetic_course)
-				activeBriefings:set("approach:nav2Course",runways2[i].magnetic_course)
-				activeBriefings:set("approach:gaheading",runways2[i].magnetic_course)
-				if #runways2[i].ils_frequency == 0 then
-					activeBriefings:set("approach:nav1Freq","---.--")
-				else
-					activeBriefings:set("approach:nav1Freq",runways2[i].ils_frequency)
-				end
+		activeBriefings:set("flight:planblockfuel",handler.root.OFP.fuel.plan_ramp + handler.root.OFP.fuel.extra_optional + handler.root.OFP.fuel.extra_required)
+		activeBriefings:set("flight:planblocktime",os.date("!%H%M",handler.root.OFP.times.endurance + handler.root.OFP.times.extrafuel_time))	
+		activeBriefings:set("flight:pilotextra",handler.root.OFP.fuel.extra_optional)
+		
+		wunit = string.sub(string.upper(handler.root.OFP.params.units),1,2)
 
-				if handler.root.OFP.tlr.landing.conditions.surface_condition == "dry" then
-					activeBriefings:set("arrival:rwyCond",1)
-					activeBriefings:set("approach:vref",handler.root.OFP.tlr.landing.distance_dry.speeds_vref)
-					activeBriefings:set("approach:vapp",activeBriefings:get("approach:vref")+5)
-				else
-					activeBriefings:set("arrival:rwyCond",2)
-					activeBriefings:set("approach:vref",handler.root.OFP.tlr.landing.distance_wet.speeds_vref)
-					activeBriefings:set("approach:vapp",activeBriefings:get("approach:vref")+5)
+	-- departure 
+		if (#handler.root.OFP.general.sid_ident > 0) then
+			activeBriefings:set("departure:deproute",handler.root.OFP.general.sid_ident)
+			activeBriefings:set("departure:deptype",1)
+		else
+			activeBriefings:set("departure:deproute","n.a.")
+			activeBriefings:set("departure:deptype",2)
+		end
+		if (#handler.root.OFP.general.sid_trans > 0) then
+			activeBriefings:set("departure:deptransition",handler.root.OFP.general.sid_trans)
+		else
+			activeBriefings:set("departure:deptransition","n.a.")
+		end
+		activeBriefings:set("departure:aptElevation",handler.root.OFP.origin.elevation)
+		activeBriefings:set("departure:transalt",handler.root.OFP.origin.trans_alt)
+		activeBriefings:set("departure:initAlt",handler.root.OFP.general.initial_altitude)
+		
+		if handler.root.OFP.tlr.takeoff ~= nil then
+			local runways = handler.root.OFP.tlr.takeoff.runway
+			for i=1,#runways do
+				if runways[i].identifier == activeBriefings:get("flight:planrwy") then
+					activeBriefings:set("departure:initHeading",runways[i].magnetic_course)
+					activeBriefings:set("departure:nav1Course",runways[i].magnetic_course)
+					activeBriefings:set("departure:nav2Course",runways[i].magnetic_course)
+					activeBriefings:set("takeoff:v1",runways[i].speeds_v1)
+					activeBriefings:set("takeoff:vr",runways[i].speeds_vr)
+					activeBriefings:set("takeoff:v2",runways[i].speeds_v2)
+					activeBriefings:set("takeoff:rwylength",runways[i].length)
+					activeBriefings:set("takeoff:tora",runways[i].length_tora)
+					
+					if runways[i].bleed_setting ~= "OFF" then
+						activeBriefings:set("takeoff:bleeds",2)
+					else
+						activeBriefings:set("takeoff:bleeds",1)
+					end
+					if runways[i].anti_ice_setting == "OFF" then
+						activeBriefings:set("takeoff:antiice",1)
+					end
+					if runways[i].anti_ice_setting == "ENGINE" then
+						activeBriefings:set("takeoff:antiice",2)
+					end
+					if runways[i].anti_ice_setting == "ENGINE & WING" then
+						activeBriefings:set("takeoff:antiice",3)
+					end
+
+					if handler.root.OFP.tlr.takeoff.conditions.surface_condition == "dry" then
+						activeBriefings:set("departure:rwyCond",1)
+					else
+						activeBriefings:set("departure:rwyCond",2)
+					end
+
+					if runways[i].thrust_setting == "FLEX" then
+						activeBriefings:set("takeoff:thrust",2)
+						if #runways[i].flex_temperature == 0 then
+							activeBriefings:set("takeoff:flextemp",15)
+						else
+							activeBriefings:set("takeoff:flextemp",runways[i].flex_temperature)
+						end
+					else
+						activeBriefings:set("takeoff:thrust",3)
+						if #runways[i].flex_temperature == 0 then
+							activeBriefings:set("takeoff:flextemp",15)
+						else
+							activeBriefings:set("takeoff:flextemp",runways[i].flex_temperature)
+						end
+					end
+
+					activeBriefings:set("takeoff:hw",runways[i].headwind_component)
+					activeBriefings:set("takeoff:cw",runways[i].crosswind_component)
 				end
-				
-				activeBriefings:set("approach:rwylength",runways2[i].length)
-				activeBriefings:set("approach:lda",runways2[i].length_lda)
-				activeBriefings:set("approach:hw",runways2[i].headwind_component)
-				activeBriefings:set("approach:cw",runways2[i].crosswind_component)
 			end
-		end	
-	else
-		activeBriefings:set("approach:nav1Course",1)
-		activeBriefings:set("approach:nav2Course",1)
-		activeBriefings:set("approach:gaheading",1)
-		activeBriefings:set("approach:nav1Freq","---.--")
-		activeBriefings:set("arrival:rwyCond",1)
-		activeBriefings:set("approach:vref",100)
-		activeBriefings:set("approach:vapp",100)
-		activeBriefings:set("approach:rwylength",-1)
-		activeBriefings:set("approach:lda",-1)
-		activeBriefings:set("approach:hw",0)
-		activeBriefings:set("approach:cw",0)
-	end
-	
--- general
-	activeBriefings:set("arrival:altnElevation",handler.root.OFP.alternate.elevation)
-	
--- set the metars from x-plane as default
-	if activePrefSet:get("general:askyMetar") then
-		origmetar = kb_get_asky_metar(handler.root.OFP.origin.icao_code)
-		destmetar = kb_get_asky_metar(handler.root.OFP.destination.icao_code)
-		altnmetar = kb_get_asky_metar(handler.root.OFP.alternate.icao_code)
-	else
-		origmetar = kb_get_xp_metar(handler.root.OFP.origin.icao_code)
-		destmetar = kb_get_xp_metar(handler.root.OFP.destination.icao_code)
-		altnmetar = kb_get_xp_metar(handler.root.OFP.alternate.icao_code)
+		else
+			activeBriefings:set("departure:initHeading",000)
+			activeBriefings:set("departure:nav1Course",1)
+			activeBriefings:set("departure:nav2Course",1)
+			activeBriefings:set("takeoff:v1",100)
+			activeBriefings:set("takeoff:vr",100)
+			activeBriefings:set("takeoff:v2",100)
+			activeBriefings:set("takeoff:rwylength",-1)
+			activeBriefings:set("takeoff:tora",-1)
+			activeBriefings:set("takeoff:bleeds",2)
+			activeBriefings:set("takeoff:antiice",2)
+			activeBriefings:set("departure:rwyCond",1)
+			activeBriefings:set("takeoff:thrust",2)
+			activeBriefings:set("takeoff:flextemp",15)
+			activeBriefings:set("takeoff:hw",0)
+			activeBriefings:set("takeoff:cw",0)		
+		end
+		
+		origtranslvl = handler.root.OFP.origin.trans_level
+
+	-- arrival
+		if (#handler.root.OFP.general.star_ident > 0) then
+			activeBriefings:set("arrival:arrroute",handler.root.OFP.general.star_ident)
+			activeBriefings:set("arrival:arrroute",handler.root.OFP.general.star_ident)
+			activeBriefings:set("arrival:arrType",1)
+		else
+			activeBriefings:set("arrival:arrroute","n.a.")
+			activeBriefings:set("arrival:arrType",2)
+		end
+		if (#handler.root.OFP.general.star_trans > 0) then
+			activeBriefings:set("arrival:arrtransition",handler.root.OFP.general.star_trans)
+		else
+			activeBriefings:set("arrival:arrtransition","n.a.")
+		end
+		activeBriefings:set("arrival:translvl",handler.root.OFP.destination.trans_level)
+		activeBriefings:set("arrival:aptElevation",handler.root.OFP.destination.elevation)
+		activeBriefings:set("arrival:alttranslvl",handler.root.OFP.alternate.trans_level)
+		desttransalt = handler.root.OFP.destination.trans_alt
+		altntransalt = handler.root.OFP.alternate.trans_alt
+		
+		if handler.root.OFP.tlr.landing ~= nil then
+			local runways2 = handler.root.OFP.tlr.landing.runway
+			for i=1,#runways2 do
+				if runways2[i].identifier == activeBriefings:get("flight:destrwy") then
+					activeBriefings:set("approach:nav1Course",runways2[i].magnetic_course)
+					activeBriefings:set("approach:nav2Course",runways2[i].magnetic_course)
+					activeBriefings:set("approach:gaheading",runways2[i].magnetic_course)
+					if #runways2[i].ils_frequency == 0 then
+						activeBriefings:set("approach:nav1Freq","---.--")
+					else
+						activeBriefings:set("approach:nav1Freq",runways2[i].ils_frequency)
+					end
+
+					if handler.root.OFP.tlr.landing.conditions.surface_condition == "dry" then
+						activeBriefings:set("arrival:rwyCond",1)
+						activeBriefings:set("approach:vref",handler.root.OFP.tlr.landing.distance_dry.speeds_vref)
+						activeBriefings:set("approach:vapp",activeBriefings:get("approach:vref")+5)
+					else
+						activeBriefings:set("arrival:rwyCond",2)
+						activeBriefings:set("approach:vref",handler.root.OFP.tlr.landing.distance_wet.speeds_vref)
+						activeBriefings:set("approach:vapp",activeBriefings:get("approach:vref")+5)
+					end
+					
+					activeBriefings:set("approach:rwylength",runways2[i].length)
+					activeBriefings:set("approach:lda",runways2[i].length_lda)
+					activeBriefings:set("approach:hw",runways2[i].headwind_component)
+					activeBriefings:set("approach:cw",runways2[i].crosswind_component)
+				end
+			end	
+		else
+			activeBriefings:set("approach:nav1Course",1)
+			activeBriefings:set("approach:nav2Course",1)
+			activeBriefings:set("approach:gaheading",1)
+			activeBriefings:set("approach:nav1Freq","---.--")
+			activeBriefings:set("arrival:rwyCond",1)
+			activeBriefings:set("approach:vref",100)
+			activeBriefings:set("approach:vapp",100)
+			activeBriefings:set("approach:rwylength",-1)
+			activeBriefings:set("approach:lda",-1)
+			activeBriefings:set("approach:hw",0)
+			activeBriefings:set("approach:cw",0)
+		end
+		
+	-- general
+		activeBriefings:set("arrival:altnElevation",handler.root.OFP.alternate.elevation)
+		
+	-- set the metars from x-plane as default
+		if activePrefSet:get("general:askyMetar") then
+			origmetar = kb_get_asky_metar(handler.root.OFP.origin.icao_code)
+			destmetar = kb_get_asky_metar(handler.root.OFP.destination.icao_code)
+			altnmetar = kb_get_asky_metar(handler.root.OFP.alternate.icao_code)
+		else
+			origmetar = kb_get_xp_metar(handler.root.OFP.origin.icao_code)
+			destmetar = kb_get_xp_metar(handler.root.OFP.destination.icao_code)
+			altnmetar = kb_get_xp_metar(handler.root.OFP.alternate.icao_code)
+		end
 	end
 end
 

@@ -87,18 +87,19 @@ end
 function khTwoStateCustomSwitch:setValue(value)
 	if type(self.funcSet) == 'function' then
 		value = self.funcSet(value)
-	end
-	-- if index = 0 then it is a single dataref, set with simple set
-	if self.statusDrefIdx == 0 then
-		set(self.statusDref, value)
-	end
-	-- if the index is -1 then pull as array element index [0]
-	-- otherwise pull as array element with given index
-	if self.statusDrefIdx == -1 then
-		set_array(self.statusDref,0,value)
-	end
-	if self.statusDrefIdx > 0 then
-		set_array(self.statusDref,self.statusDrefIdx,value)
+	else
+		-- if index = 0 then it is a single dataref, set with simple set
+		if self.statusDrefIdx == 0 then
+			set(self.statusDref, value)
+		end
+		-- if the index is -1 then pull as array element index [0]
+		-- otherwise pull as array element with given index
+		if self.statusDrefIdx == -1 then
+			set_array(self.statusDref,0,value)
+		end
+		if self.statusDrefIdx > 0 then
+			set_array(self.statusDref,self.statusDrefIdx,value)
+		end
 	end
 end
 
