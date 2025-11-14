@@ -24,16 +24,18 @@ local kcSOP = {
 	phaseTaxiArrival 	= 16,
 	phaseShutdown 		= 17,
 	phaseTurnAround 	= 18,
-	phaseFlightPlanning = 19
+	phaseFlightPlanning = 19,
+	phaseGoAround		= 20
 }
 
 local Flow				= require "kpcrew.Flow"
 
-kcSopFlightPhase = { [1] = "Cold & Dark", 	[2] = "Prel Preflight", [3] = "Preflight", 		[4] = "Before Start", 
-					 [5] = "After Start", 	[6] = "Taxi to Runway", [7] = "Before Takeoff", [8] = "Takeoff",
-					 [9] = "Climb", 		[10] = "Enroute", 		[11] = "Descent", 		[12] = "Arrival", 
-					 [13] = "Approach", 	[14] = "Landing", 		[15] = "Turnoff", 		[16] = "Taxi to Stand", 
-					 [17] = "Shutdown", 	[18] = "Turnaround", 	[19] = "Flight Planning", [0] = "" }
+kcSopFlightPhase = { [1] = "Cold & Dark", 	[2] = "Prel Preflight", [3] = "Preflight", 			[4] = "Before Start", 
+					 [5] = "After Start", 	[6] = "Taxi to Runway", [7] = "Before Takeoff", 	[8] = "Takeoff",
+					 [9] = "Climb", 		[10] = "Enroute", 		[11] = "Descent", 			[12] = "Arrival", 
+					 [13] = "Approach", 	[14] = "Landing", 		[15] = "Turnoff", 			[16] = "Taxi to Stand", 
+					 [17] = "Shutdown", 	[18] = "Turnaround", 	[19] = "Flight Planning", 	[20] = "Go Around",
+					 [0] = ""  }
 
 -- Instantiate a new preference set
 -- @tparam string name Name of the SOP (also used as title)
