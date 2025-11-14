@@ -38,6 +38,7 @@ end
 -- return the current element dataref value
 -- @treturn <type> dataref value
 function khSwitch:getStatus()
+-- logMsg("name: "..self.name)
 	-- if index = 0 then it is a single dataref, pull with get
 	if self.statusDrefIdx == 0 then
 		return get(self.statusDref)

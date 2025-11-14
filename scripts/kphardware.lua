@@ -489,6 +489,22 @@ xsp_mcp_ap1[0] = 0
 xsp_mcp_rev = create_dataref_table("kp/xsp/bravo/mcp_rev", "Int")
 xsp_mcp_rev[0] = 0
 
+-- datarefs for MCP values
+xsp_mcp_altval = create_dataref_table("kp/xsp/bravo/mcp_altval", "Int")
+xsp_mcp_altval[0] = 0
+
+xsp_mcp_hdgval = create_dataref_table("kp/xsp/bravo/mcp_hdgval", "Int")
+xsp_mcp_hdgval[0] = 0
+
+xsp_mcp_spdval = create_dataref_table("kp/xsp/bravo/mcp_spdval", "Int")
+xsp_mcp_spdval[0] = 0
+
+xsp_mcp_vsival = create_dataref_table("kp/xsp/bravo/mcp_vsival", "Int")
+xsp_mcp_vsival[0] = 0
+
+xsp_mcp_crs1val = create_dataref_table("kp/xsp/bravo/mcp_crs1val", "Int")
+xsp_mcp_crs1val[0] = 0
+
 -- background function every 1 sec to set lights/annunciators for hardware (honeycomb bravo)
 function xsp_set_light_drefs()
 
@@ -612,6 +628,20 @@ function xsp_set_light_drefs()
 	-- REV annunciator
 	xsp_mcp_rev[0] = sysMCP.bcAnc:getStatus()
 
+	-- Altitude display
+	xsp_mcp_altval[0] = sysMCP.altSelector:getStatus()
+
+	-- Heading dispay
+	xsp_mcp_hdgval[0] = sysMCP.hdgSelector:getStatus()
+
+	-- Speed value
+	xsp_mcp_spdval[0] = sysMCP.iasSelector:getStatus()
+
+	-- VS value
+	xsp_mcp_vsival[0] = sysMCP.vspSelector:getStatus()
+
+	-- CRS1 value
+	xsp_mcp_crs1val[0] = sysMCP.crs1Selector:getStatus()
 end
 
 -- ===== UIs =====

@@ -1005,3 +1005,10 @@ function kb_get_latest_filename(folder)
     pipe:close()
     return filename
 end
+
+function kc_pull_baro_from_metar(metartext)
+	local q_value = string.match(metartext, "Q%d+")
+	local a_value = string.match(metartext, "A%d+")
+	if q_value ~= nil then return string.sub(q_value, 2) end
+	return string.sub(a_value, 2)
+end

@@ -62,7 +62,9 @@ end
 function khSwitchGroup:getStatus()
 	local stat = 0
     for _, switch in ipairs(self.switches) do
-        stat = stat + switch:getStatus()
+		if switch:getStatus() ~= nil then
+          stat = stat + switch:getStatus()
+		end
     end	
 	return stat
 end
