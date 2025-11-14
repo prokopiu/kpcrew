@@ -5,8 +5,57 @@
 -- @author Kosta Prokopiu
 -- @copyright 2025 Kosta Prokopiu
 
+-- System Elements
+-- sysGeneral.Autobrake
+-- sysGeneral.GearSwitch
+-- sysGeneral.chrono		
+-- sysGeneral.clock
+-- sysGeneral.cockpitDoor 	
+-- sysGeneral.doorACargo 	
+-- sysGeneral.doorACargoAnc 
+-- sysGeneral.doorFCargo 	
+-- sysGeneral.doorFCargoAnc 
+-- sysGeneral.doorGroup 	
+-- sysGeneral.doorL1		
+-- sysGeneral.doorL1Anc 	
+-- sysGeneral.doorL2		
+-- sysGeneral.doorL2Anc 	
+-- sysGeneral.doorR1		
+-- sysGeneral.doorR1Anc 	
+-- sysGeneral.doorR2		
+-- sysGeneral.doorR2Anc 	
+-- sysGeneral.doorsAnc 		
+-- sysGeneral.gearLeftGreenAnc 
+-- sysGeneral.gearLeftRedAnc 	
+-- sysGeneral.gearLightsAnc 	
+-- sysGeneral.gearNodeGreenAnc 
+-- sysGeneral.gearNodeRedAnc 	
+-- sysGeneral.gearRightGreenAnc
+-- sysGeneral.gearRightRedAnc 
+-- sysGeneral.groundObjects
+-- sysGeneral.irsUnit1Switch
+-- sysGeneral.irsUnit2Switch
+-- sysGeneral.irsUnit3Switch
+-- sysGeneral.irsUnitGroup
+-- sysGeneral.masterCautionAnc 
+-- sysGeneral.masterWarningAnc 
+-- sysGeneral.noSmokingSwitch
+-- sysGeneral.parkBrakeSwitch
+-- sysGeneral.parkbrakeAnc
+-- sysGeneral.passSignsSwitch
+-- sysGeneral.stairsL1 		
+-- sysGeneral.tocheck		 
+-- sysGeneral.window1		
+-- sysGeneral.window2		
+-- sysGeneral.windowGroup 	
+-- sysGeneral.wiperGroup 	
+-- sysGeneral.wiperLeft 	
+-- sysGeneral.wiperRight 	
+-- Macro: kc_macro_doors_ext
+-- Macro: kc_macro_set_groundobjects
+-- Macro: kc_macro_set_autobrake
+
 local sysGeneral = {
-	cmdParkbrake		= "sim/flight_controls/brakes_toggle_max"
 }
 
 logMsg("DFLT sysGeneral")
@@ -23,7 +72,6 @@ local InopSwitch 			= require "kpcrew.systems.InopSwitch"
 local KeepPressedSwitchCmd	= require "kpcrew.systems.KeepPressedSwitchCmd"
 
 --------- Switch datarefs common
-
 local drefSlider 			= "sim/cockpit2/switches/custom_slider_on"
 local drefParkbrake			= "sim/cockpit2/controls/parking_brake_ratio"
 local drefGearLever			= "sim/cockpit/switches/gear_handle_status"
@@ -33,26 +81,25 @@ local indxWiperLeft			= -1
 local indxWiperRight		= 1
 local drefNoSmoking			= "sim/cockpit2/switches/no_smoking"
 local drefSeatBelts			= "sim/cockpit/switches/fasten_seat_belts"
+local drefAutoBrakePos		= "sim/cockpit2/switches/auto_brake_level"
 
 --------- Annunciator datarefs common
-
 local drefAnnGearLeftGreen	= "sim/flightmodel/movingparts/gear1def"
 local drefAnnGearRghtGreen	= "sim/flightmodel/movingparts/gear2def"
 local drefAnnGearNoseGreen	= "sim/flightmodel/movingparts/gear3def"
 
 --------- Switch commands common
-
 local cmdParkbrake			= "sim/flight_controls/brakes_toggle_max"
 local cmdGearDown			= "sim/flight_controls/landing_gear_down"
 local cmdGearUp				= "sim/flight_controls/landing_gear_up"
 
+----------- Switches
+
 -- Optional Gound objects
-sysGeneral.groundObjects = InopSwitch:new("ground objects")
+sysGeneral.groundObjects 	= InopSwitch:new("ground objects")
 
 -- Parking Brake
-sysGeneral.parkBrakeSwitch 	= TwoStateToggleSwitch:new("parkbrake",drefParkbrake,0,
-	cmdParkbrake)
-
+sysGeneral.parkBrakeSwitch 	= TwoStateToggleSwitch:new("parkbrake",drefParkbrake,0,cmdParkbrake)
 sysGeneral.parkbrakeAnc 	= CustomAnnunciator:new("parkbrake",
 function ()
 	if get(drefParkbrake) > 0 then
@@ -68,7 +115,7 @@ sysGeneral.GearSwitch 		= TwoStateCmdSwitch:new("gear",drefGearLever,0,
 
 -- Gear Lights for annunciators
 sysGeneral.gearLeftGreenAnc = SimpleAnnunciator:new("gear",drefAnnGearLeftGreen,0)
-sysGeneral.gearRightGreenAnc = SimpleAnnunciator:new("gear",drefAnnGearRghtGreen,0)
+sysGeneral.gearRightGreenAnc= SimpleAnnunciator:new("gear",drefAnnGearRghtGreen,0)
 sysGeneral.gearNodeGreenAnc = SimpleAnnunciator:new("gear",drefAnnGearNoseGreen,0)
 sysGeneral.gearLeftRedAnc 	= InopSwitch:new("gear")
 sysGeneral.gearRightRedAnc 	= InopSwitch:new("gear")
@@ -259,7 +306,7 @@ sysGeneral.doorACargo 		= TwoStateCustomSwitch:new("dooracargo",drefSlider,5,
 sysGeneral.cockpitDoor 		= InopSwitch:new("cockpitdoor")
 sysGeneral.stairsL1 		= InopSwitch:new("stairs1")
 
-sysGeneral.doorGroup = SwitchGroup:new("doors")
+sysGeneral.doorGroup 		= SwitchGroup:new("doors")
 sysGeneral.doorGroup:addSwitch(sysGeneral.doorL1)
 sysGeneral.doorGroup:addSwitch(sysGeneral.doorL2)
 sysGeneral.doorGroup:addSwitch(sysGeneral.doorR1)
@@ -300,9 +347,9 @@ sysGeneral.windowGroup:addSwitch(sysGeneral.window1)
 sysGeneral.windowGroup:addSwitch(sysGeneral.window2)
 
 -- Wiper Switches
-sysGeneral.wiperLeft = TwoStateDrefSwitch:new("wiperleft",drefWiperLeft,indxWiperLeft)
-sysGeneral.wiperRight = TwoStateDrefSwitch:new("wiperright",drefWiperRight,indxWiperRight)
-sysGeneral.wiperGroup = SwitchGroup:new("wipers")
+sysGeneral.wiperLeft 		= TwoStateDrefSwitch:new("wiperleft",drefWiperLeft,indxWiperLeft)
+sysGeneral.wiperRight 		= TwoStateDrefSwitch:new("wiperright",drefWiperRight,indxWiperRight)
+sysGeneral.wiperGroup 		= SwitchGroup:new("wipers")
 sysGeneral.wiperGroup:addSwitch(sysGeneral.wiperLeft)
 sysGeneral.wiperGroup:addSwitch(sysGeneral.wiperRight)
 
@@ -319,7 +366,7 @@ sysGeneral.noSmokingSwitch	= TwoStateDrefSwitch:new("nosmoke",drefNoSmoking,0)
 
 sysGeneral.passSignsSwitch	= TwoStateDrefSwitch:new("seatbelts",drefSeatBelts,0)
 
-sysGeneral.tocheck		 = InopSwitch:new("tockeck")
+sysGeneral.tocheck		 	= InopSwitch:new("tockeck")
 
 -- ---------- Annunciators
 
@@ -331,21 +378,144 @@ sysGeneral.masterWarningAnc = SimpleAnnunciator:new("masterwarning", "sim/cockpi
 
 sysGeneral.chrono			= InopSwitch:new("chrono")
 sysGeneral.clock			= TwoStateCustomSwitch:new("clock","sim/cockpit2/clock_timer/chrono_running",-1,
-	function ()
-		set_array("sim/cockpit2/clock_timer/chrono_running",0,kc_et_timer_on)
-	end,
-	function ()
-		set_array("sim/cockpit2/clock_timer/chrono_running",0,kc_et_timer_off)
-	end,
-	function ()
-		set_array("sim/cockpit2/clock_timer/chrono_time",0,0)
-	end,
-	function ()
+	function () set_array("sim/cockpit2/clock_timer/chrono_running",0,kc_et_timer_on) end,
+	function () set_array("sim/cockpit2/clock_timer/chrono_running",0,kc_et_timer_off) end,
+	function () set_array("sim/cockpit2/clock_timer/chrono_time",0,0) end,
+	function () 
 		if get("sim/cockpit2/clock_timer/chrono_running",0) == kc_et_timer_on then
 			return 1
 		else
 			return 0
 		end
 	end)
+
+-- Autobrake
+sysGeneral.Autobrake		= TwoStateDrefSwitch:new("autobrake",drefAutoBrakePos,0)
+
+--------- Macros
+
+-- ====================================== General settings like doors and external objects
+function kc_macro_doors_ext(flightphase)
+	-- Cold & dark
+	if flightphase == kc_phase_colddark then
+		if kc_has_doors then
+			sysGeneral.doorL1:actuate(1)
+			sysGeneral.doorL2:actuate(0)
+			sysGeneral.doorR1:actuate(0)
+			sysGeneral.doorR2:actuate(0)
+		end
+		if kc_has_cargo_doors then
+			sysGeneral.doorFCargo:actuate(0)
+			sysGeneral.doorACargo:actuate(0)
+		end
+		if kc_has_cockpit_door then
+			sysGeneral.cockpitDoor:actuate(1)
+		end
+		if kc_has_stairs then
+			if activeBriefings:get("taxi:gateStand") > 1 then
+				sysGeneral.stairsL1:actuate(1)
+			else
+				sysGeneral.stairsL1:actuate(0)
+			end
+		end
+		if kc_has_ground_obj then
+			kc_macro_set_groundobjects(1)
+		end
+	elseif flightphase == kc_phase_turnaround then
+	-- Turnaround
+		if kc_has_doors then
+			sysGeneral.doorL1:actuate(1)
+			if kc_is_cargo then
+				sysGeneral.doorL2:actuate(1)
+			else
+				sysGeneral.doorL2:actuate(1)
+			end
+			sysGeneral.doorR1:actuate(0)
+			sysGeneral.doorR2:actuate(0)
+		end
+		if kc_has_cargo_doors then
+			sysGeneral.doorFCargo:actuate(1)
+			sysGeneral.doorACargo:actuate(1)
+		end
+		if kc_has_cockpit_door then
+			sysGeneral.cockpitDoor:actuate(1)
+		end
+		if kc_has_stairs then
+			if activeBriefings:get("taxi:gateStand") > 1 then
+				sysGeneral.stairsL1:actuate(1)
+			else
+				sysGeneral.stairsL1:actuate(0)
+			end
+		end
+		if kc_has_ground_obj then
+			kc_macro_set_groundobjects(1)
+		end
+	elseif flightphase == kc_phase_before_start then
+	-- Before start
+		if kc_has_doors then
+			sysGeneral.doorL1:actuate(0)
+			sysGeneral.doorL2:actuate(0)
+			sysGeneral.doorR1:actuate(0)
+			sysGeneral.doorR2:actuate(0)
+		end
+		if kc_has_cargo_doors then
+			sysGeneral.doorFCargo:actuate(0)
+			sysGeneral.doorACargo:actuate(0)
+		end
+		if kc_has_cockpit_door then
+			sysGeneral.cockpitDoor:actuate(0)
+		end
+		if kc_has_stairs then
+			sysGeneral.stairsL1:actuate(0)
+		end
+		if kc_has_ground_obj then
+			kc_macro_set_groundobjects(0)
+		end
+	elseif flightphase == kc_phase_shutdown then
+	-- Shutdown
+		if kc_has_doors then
+			sysGeneral.doorL1:actuate(1)
+			if kc_is_cargo then
+				sysGeneral.doorL2:actuate(1)
+			else
+				sysGeneral.doorL2:actuate(1)
+			end
+			sysGeneral.doorR1:actuate(0)
+			sysGeneral.doorR2:actuate(0)
+		end
+		if kc_has_cargo_doors then
+			sysGeneral.doorFCargo:actuate(1)
+			sysGeneral.doorACargo:actuate(1)
+		end
+		if kc_has_cockpit_door then
+			sysGeneral.cockpitDoor:actuate(1)
+		end
+		if kc_has_stairs then
+			if activeBriefings:get("taxi:gateStand") > 1 then
+				sysGeneral.stairsL1:actuate(1)
+			else
+				sysGeneral.stairsL1:actuate(0)
+			end
+		end
+		if kc_has_ground_obj then
+			kc_macro_set_groundobjects(1)
+		end
+	else
+		logMsg("Invalid flightphase")
+	end
+end
+
+-- Set ground objects 1=on 0=off
+function kc_macro_set_groundobjects(state)
+	if state == 1 then
+		-- nothing for DFLT; replace for other aircraft
+	else
+		-- nothing for DFLT; replace for other aircraft
+	end
+end
+
+function kc_macro_set_autobrake(index)
+	sysGeneral.Autobrake:setValue(index)	
+end
 
 return sysGeneral

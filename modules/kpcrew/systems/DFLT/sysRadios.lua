@@ -156,6 +156,16 @@ sysRadios.alt				= 2
 sysRadios.ta				= 2
 sysRadios.tara				= 3
 
+-- ===== System related macros =====
+-- === transponder
+function kc_macro_set_xpdrmode(mode)
+	sysRadios.xpdrSwitch:setValue(mode)
+end
+
+function kc_macro_set_xpdrcode(code)
+	sysRadios.xpdrCode:setValue(code)
+end
+
 -- ===== UI related functions =====
 
 function sysRadios:panel_render()

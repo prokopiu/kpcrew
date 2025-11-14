@@ -47,14 +47,14 @@ require("kpcrew.briefings.briefings_" .. kc_acf_icao)
 
 kc_num_visible_sop_items = 12 -- number of visible flows with positive phase number
 
-kcSopFlightPhase = { [1] = "Cold & Dark", 	[2] = "Prel Preflight", [3] = "Preflight", 		[4] = "Before Start", 
-					 [5] = "After Start", 	[6] = "Taxi to Runway", [7] = "Before Takeoff", [8] = "Takeoff",
-					 [9] = "Climb", 		[10] = "Enroute", 		[11] = "Descent", 		[12] = "Arrival", 
-					 [13] = "Approach", 	[14] = "Landing", 		[15] = "Turnoff", 		[16] = "Taxi to Stand", 
-					 [17] = "Shutdown", 	[18] = "Turnaround",	[19] = "Flightplan", 	[20] = "Go Around", [0] = "" }
+kcSopFlightPhase = { [1] = "Cold & Dark", 	[2] = "Prel Preflight", [3] = "Preflight", 			[4] = "Before Start", 
+					 [5] = "After Start", 	[6] = "Taxi to Runway", [7] = "Before Takeoff", 	[8] = "Takeoff",
+					 [9] = "Climb", 		[10] = "Enroute", 		[11] = "Descent", 			[12] = "Arrival", 
+					 [13] = "Approach", 	[14] = "Landing", 		[15] = "Turnoff", 			[16] = "Taxi to Stand", 
+					 [17] = "Shutdown", 	[18] = "Turnaround", 	[19] = "Flight Planning", 	[20] = "Go Around",
+					 [0] = ""  }
 					 
 kc_phase_colddark 		= 1
-kc_phase_turnaround 	= 18
 kc_phase_prel_preflight	= 2
 kc_phase_preflight 		= 3
 kc_phase_before_start 	= 4
@@ -71,7 +71,9 @@ kc_phase_landing 		= 14
 kc_phase_afterland 		= 15
 kc_phase_taxi_stand 	= 16
 kc_phase_shutdown 		= 17
+kc_phase_turnaround 	= 18
 kc_phase_flight_plan	= 19
+kc_phase_go_around		= 20
 
 -- Set up SOP =========================================================================
 
@@ -777,6 +779,7 @@ afterStartProc:addItem(IndirectProcedureItem:new("FLIGHT CONTROLS","CHECKED",Flo
 			return sysControls.rudderDeflection:getStatus() < kc_full_rgt_rudder
 		end
 	 end))
+afterStartProc:addItem(HoldProcedureItem:new("ELEVATOR TRIM","SET FOR TAKEOFF & CHECK",FlowItem.actorCPT))
 afterStartProc:addItem(IndirectProcedureItem:new("TIME","NOTED",FlowItem.actorCPT,0,"timesetblockoff",
 	function () return true end,
 	function () activeBckVars:set("general:timesOFF",kc_dispTimeHHMM(get("sim/time/zulu_time_sec"))) end,
@@ -796,7 +799,8 @@ if kc_has_transponder then
 			local xpdrcode = activeBriefings:get("departure:squawk")
 			sysRadios.xpdrCode:setValue(xpdrcode)
 	end))
-end 
+end
+afterStartProc:addItem(HoldProcedureItem:new("TAXI LIGHTS","ON WHEN TAXI BEGINS",FlowItem.actorCPT))
 afterStartProc:addItem(ProcedureItem:new("TAXI LIGHTS","ON",FlowItem.actorFO,0,
 	function () return sysLights.taxiSwitch:getStatus() > 0 end,
 	function () 
@@ -838,15 +842,12 @@ beforeTakeoffProc:addItem(ProcedureItem:new("ANTI-ICE SETTINGS","AS REQUIRED",Fl
 	function () kc_macro_aice(kc_phase_after_start) end))
 if kc_has_autobrake then
 	beforeTakeoffProc:addItem(ProcedureItem:new("AUTOBRAKE","R T O",FlowItem.actorFO,0,
-		function () return sysControls.Autobrake:getStatus() == kc_AutoBrakeRTO end,
+		function () return sysGeneral.Autobrake:getStatus() == kc_AutoBrakeRTO end,
 		function () kc_macro_set_autobrake(kc_AutoBrakeRTO) end))
 end
 beforeTakeoffProc:addItem(ProcedureItem:new("MCP","INITIALIZE",FlowItem.actorFO,0,
 	function () return sysMCP.altDisplay:getStatus() == activeBriefings:get("departure:initAlt") end,
 	function () kc_macro_mcp(kc_phase_before_takeoff) end))
-if activePrefSet:get("general:checklists") == false then
-	beforeTakeoffProc:addItem(HoldProcedureItem:new("ELEVATOR TRIM","SET FOR TAKEOFF & CHECK",FlowItem.actorCPT))
-end
 if kc_has_speedbrake and kc_spdbrk_can_arm then
 	beforeTakeoffProc:addItem(ProcedureItem:new("SPEEDBRAKE","ARM",FlowItem.actorFO,0,
 	function () return sysControls.Speedbrake:getStatus() == kc_spdbrk_arm_pos end,
@@ -1016,7 +1017,7 @@ afterTakeoffCheck:addItem(ChecklistItem:new("FLAPS","UP",FlowItem.actorPM,0,
 	function () sysControls.flapsSwitch:setValue(sysControls.flaps_pos[0]) end))
 if kc_has_autobrake then
 	afterTakeoffCheck:addItem(ChecklistItem:new("AUTOBRAKE","OFF",FlowItem.actorFO,0,
-		function () return sysControls.Autobrake:getStatus() == kc_AutoBrakeOff end,
+		function () return sysGeneral.Autobrake:getStatus() == kc_AutoBrakeOff end,
 		function () kc_macro_set_autobrake(kc_AutoBrakeOff) end))
 end
 if kc_sets_climb_speed then
@@ -1085,7 +1086,9 @@ end
 local descentProc = Procedure:new("DESCENT CHECK","","")
 descentProc:setFlightPhase(kc_phase_descent)
 
-descentProc:addItem(HoldProcedureItem:new("VREF","CHECK IN FMC",FlowItem.actorPF,nil))
+if kc_is_airbus == false then
+	descentProc:addItem(HoldProcedureItem:new("VREF","CHECK IN FMC",FlowItem.actorPF,nil))
+end
 if kc_is_airbus then
 	descentProc:addItem(ProcedureItem:new("LANDING DATA","VREF %i, MINIMUMS %i|activeBriefings:get(\"approach:vref\")|activeBriefings:get(\"approach:decision\")",FlowItem.actorPM,0,
 		function () 
@@ -1116,7 +1119,7 @@ descentProc:addItem(ProcedureItem:new("ANTI-ICE SETTINGS","AS REQUIRED",FlowItem
 	function () kc_macro_aice(kc_phase_descent) end))
 if kc_has_autobrake then
 	descentProc:addItem(ProcedureItem:new("AUTOBRAKE","%s|kc_pref_split(kc_LandingAutoBrake)[activeBriefings:get(\"approach:autobrake\")]",FlowItem.actorFO,0,
-		function () return sysControls.Autobrake:getStatus() == tonumber(kc_pref_split(kc_LandingAutoBrInd)[activeBriefings:get("approach:autobrake")]) end,
+		function () return sysGeneral.Autobrake:getStatus() == tonumber(kc_pref_split(kc_LandingAutoBrInd)[activeBriefings:get("approach:autobrake")]) end,
 		function () kc_macro_set_autobrake(tonumber(kc_pref_split(kc_LandingAutoBrInd)[activeBriefings:get("approach:autobrake")])) 
 		end))
 end
@@ -1241,7 +1244,7 @@ LandingCheck:addItem(ChecklistItem:new("LANDING LIGHTS","ON",FlowItem.actorPM,1,
 	function () kc_macro_lights(kc_phase_approach)end))
 if kc_has_autobrake then
 	LandingCheck:addItem(ChecklistItem:new("AUTOBRAKE","%s|kc_pref_split(kc_LandingAutoBrake)[activeBriefings:get(\"approach:autobrake\")]",FlowItem.actorPM,0,
-		function () return sysControls.Autobrake:getStatus() == tonumber(kc_pref_split(kc_LandingAutoBrInd)[activeBriefings:get("approach:autobrake")]) end))
+		function () return sysGeneral.Autobrake:getStatus() == tonumber(kc_pref_split(kc_LandingAutoBrInd)[activeBriefings:get("approach:autobrake")]) end))
 end
 if kc_has_speedbrake and kc_spdbrk_can_arm then
 	LandingCheck:addItem(ChecklistItem:new("SPEEDBRAKE","ARM",FlowItem.actorPM,1,
@@ -1256,8 +1259,8 @@ ap1off:setFlightPhase(0-kc_phase_approach)
 
 if kc_has_autopilot then
 	ap1off:addItem(ProcedureItem:new("A/P 1","OFF",FlowItem.actorFO,0,
-		function () return sysMCP.ap1Switch:getStatus() == 0 end,
-		function () sysMCP.ap1Switch:actuate(0) end))
+		function () return sysMCP.apDiscYoke:getStatus() == 0 end,
+		function () sysMCP.apDiscYoke:actuate(1) end))
 end
 
 if kc_has_autothrottle and kc_is_airbus == false then
@@ -1350,19 +1353,9 @@ afterLandingProc:addItem(ProcedureItem:new("FLAPS","UP",FlowItem.actorFO,0,true,
 afterLandingProc:addItem(ProcedureItem:new("EXTERNAL LIGHTS","AS REQUIRED",FlowItem.actorFO,0,
 	function () return true end,
 	function () kc_macro_lights(kc_phase_afterland) end))
-if kc_has_apu == true then
-	afterLandingProc:addItem(ProcedureItem:new("APU START","PERFORM",FlowItem.actorFO,0,
-		function () return sysElectric.apuRunningAnc:getStatus() > 0 end,
-		function () 
-			kc_procvar_set("apustart",true)
-			kc_procvar_set("apuonline",true)
-		end,
-		function () return activeBriefings:get("approach:activateAPUafterLand") == 2 end))
-end
-
 if kc_has_autobrake == true then
 	afterLandingProc:addItem(ProcedureItem:new("AUTOBRAKE","OFF",FlowItem.actorFO,0,
-		function () return sysControls.Autobrake:getStatus() == kc_AutoBrakeOff end,
+		function () return sysGeneral.Autobrake:getStatus() == kc_AutoBrakeOff end,
 		function () kc_macro_set_autobrake(kc_AutoBrakeOff) end))
 end
 afterLandingProc:addItem(ProcedureItem:new("MCP","SET",FlowItem.actorFO,0,
@@ -1373,6 +1366,16 @@ if kc_has_oxygen then
 		function () return sysAir.oxygenMaster:getStatus() == 0 end,
 		function () sysAir.oxygenMaster:actuate(0) end))
 end
+if kc_has_apu == true then
+	afterLandingProc:addItem(ProcedureItem:new("APU START","PERFORM",FlowItem.actorFO,0,
+		function () return sysElectric.apuRunningAnc:getStatus() > 0 end,
+		function () 
+			kc_procvar_set("apustart",true)
+			kc_procvar_set("apuonline",true)
+		end,
+		function () return activeBriefings:get("approach:activateAPUafterLand") == 2 end))
+end
+
 -- =====================================================================================================================
 
 local taxiLightOff = Procedure:new("TAXI LIGHT OFF","")
