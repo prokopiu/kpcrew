@@ -5,6 +5,26 @@
 -- @author Kosta Prokopiu
 -- @copyright 2025 Kosta Prokopiu
 
+-- System Elements
+-- sysEFIS.minsPilot 		
+-- sysEFIS.fpvPilot 	
+-- sysEFIS.mtrsPilot 	
+-- sysEFIS.wxrPilot 	
+-- sysEFIS.mapZoomPilot 
+-- sysEFIS.mapModePilot 
+-- sysEFIS.voradf1Pilot 	
+-- sysEFIS.voradf1Copilot 	
+-- sysEFIS.staPilot 	
+-- sysEFIS.wptPilot 	
+-- sysEFIS.arptPilot 	
+-- sysEFIS.dataPilot 	
+-- sysEFIS.posPilot 	
+-- sysEFIS.barostdPilot 	
+-- sysEFIS.barostdCopilot 	
+-- sysEFIS.barostdStandby 	
+-- UI: panel_render
+
+
 local TwoStateDrefSwitch 	= require "kpcrew.systems.TwoStateDrefSwitch"
 local TwoStateCmdSwitch	 	= require "kpcrew.systems.TwoStateCmdSwitch"
 local TwoStateCustomSwitch 	= require "kpcrew.systems.TwoStateCustomSwitch"
@@ -18,31 +38,56 @@ local KeepPressedSwitchCmd	= require "kpcrew.systems.KeepPressedSwitchCmd"
 
 sysEFIS = require("kpcrew.systems.DFLT.sysEFIS")
 
+--------- Switch datarefs common
+local drefEFISMtrs			= "AirbusFBW/MetricAlt"
+local drefEFISFPV			= "AirbusFBW/HDGTRKmode"
+local drefWXRModeL			= "sim/cockpit2/EFIS/EFIS_weather_on"
+local drefEFISMapRangeL		= "AirbusFBW/NDrangeCapt"
+local drefEFISMapModeL		= "AirbusFBW/NDmodeCapt"
+local drefEFISVORADF1		= "sim/cockpit2/EFIS/EFIS_1_selection_pilot"
+local drefEFISVORADF2		= "sim/cockpit2/EFIS/EFIS_2_selection_pilot"
+local drefEFISModeSTAVOR	= "AirbusFBW/NDShowCSTRCapt"
+local drefEFISModeWPT		= "AirbusFBW/NDShowWPTCapt"
+local drefEFISModeARPT		= "AirbusFBW/NDShowARPTCapt"
+local drefEFISModePos		= "AirbusFBW/NDShowVORDCapt"
+local drefEFISModeData		= "AirbusFBW/NDShowNDBCapt"
+local drefBaroStandardL		= "AirbusFBW/BaroStdCapt"
+local drefBaroStandardC		= "AirbusFBW/ISIBaroStd"
+local drefBaroStandardR		= "AirbusFBW/BaroStdFO"
+
+--------- Switch commands common
+local cmdWXRTglL			= "AirbusFBW/WXPowerSwitch"
+local cmdEFISModeSTAVOR		= "toliss_airbus/dispcommands/CaptCstrPushButton"
+local cmdEFISModeWPT		= "toliss_airbus/dispcommands/CaptWptPushButton"
+local cmdEFISModeARPT		= "toliss_airbus/dispcommands/CaptArptPushButton"
+local cmdEFISModePosNav		= "toliss_airbus/dispcommands/CaptVorDPushButton"
+local cmdEFISModeData		= "toliss_airbus/dispcommands/CaptNdbPushButton"
+
 logMsg("A3TL sysEFIS")
 
--- MINS SET
+-- MINS SET (not needed in Airbus)
 sysEFIS.minsPilot 			= InopSwitch:new("minspilot")
 
 -- MTRS
-sysEFIS.mtrsPilot 			= TwoStateDrefSwitch:new("mtrspilot","AirbusFBW/MetricAlt",0)
+sysEFIS.mtrsPilot 			= TwoStateDrefSwitch:new("mtrspilot",drefEFISMtrs,0)
 
 -- FPV
-sysEFIS.fpvPilot 			= TwoStateDrefSwitch:new("fpvpilot","AirbusFBW/HDGTRKmode",0)
+sysEFIS.fpvPilot 			= TwoStateDrefSwitch:new("fpvpilot",drefEFISFPV,0)
 
--- WX 
-sysEFIS.wxrPilot 			= TwoStateCustomSwitch:new("wxrpilot","AirbusFBW/WXPowerSwitch",0,
+-- WX (PWS mode for Airbus)
+sysEFIS.wxrPilot 			= TwoStateCustomSwitch:new("wxrpilot",cmdWXRTglL,0,
 	function ()
-		set("AirbusFBW/WXPowerSwitch",0)
+		set(cmdWXRTglL,0)
 		set("AirbusFBW/WXSwitchPWS",2)
 	end,
 	function ()
-		set("AirbusFBW/WXPowerSwitch",1)
+		set(cmdWXRTglL,1)
 		set("AirbusFBW/WXSwitchPWS",0)
 	end,
 	function ()
 	end,
 	function ()
-		if get("AirbusFBW/WXPowerSwitch") == 1 then
+		if get(cmdWXRTglL) == 1 then
 			return 0
 		else
 			return 1
@@ -51,199 +96,162 @@ sysEFIS.wxrPilot 			= TwoStateCustomSwitch:new("wxrpilot","AirbusFBW/WXPowerSwit
 sysEFIS.wxrCopilot 			= InopSwitch:new("wxrcopilot")
 
 -- MAP ZOOM
-sysEFIS.mapZoomPilot 		= TwoStateCustomSwitch:new("mapzoompilot","AirbusFBW/NDrangeCapt",0,
+sysEFIS.mapZoomPilot 		= TwoStateCustomSwitch:new("mapzoompilot",drefEFISMapRangeL,0,
 	function ()
-		local ndmod = get("AirbusFBW/NDrangeCapt")
+		local ndmod = get(drefEFISMapRangeL)
 		if ndmod < 5 then
-			set("AirbusFBW/NDrangeCapt",ndmod+1)
+			set(drefEFISMapRangeL,ndmod+1)
 		end
 	end,
 	function ()
-		local ndmod = get("AirbusFBW/NDrangeCapt")
+		local ndmod = get(drefEFISMapRangeL)
 		if ndmod > 0 then
-			set("AirbusFBW/NDrangeCapt",ndmod-1)
+			set(drefEFISMapRangeL,ndmod-1)
 		end
 	end,
 	function ()
 	end,
 	function ()
 		local displaystr = ""
-		if get("AirbusFBW/NDrangeCapt") == 0 then
+		if get(drefEFISMapRangeL) == 0 then
 			displaystr = "10"
-		elseif get("AirbusFBW/NDrangeCapt") == 1 then
+		elseif get(drefEFISMapRangeL) == 1 then
 			displaystr = "20"
-		elseif get("AirbusFBW/NDrangeCapt") == 2 then
+		elseif get(drefEFISMapRangeL) == 2 then
 			displaystr = "40"
-		elseif get("AirbusFBW/NDrangeCapt") == 3 then
+		elseif get(drefEFISMapRangeL) == 3 then
 			displaystr = "80"
-		elseif get("AirbusFBW/NDrangeCapt") == 4 then
+		elseif get(drefEFISMapRangeL) == 4 then
 			displaystr = "160"
-		elseif get("AirbusFBW/NDrangeCapt") == 5 then
+		elseif get(drefEFISMapRangeL) == 5 then
 			displaystr = "320"
 		end
 		return displaystr
 	end)
 
 -- MAP MODE
-sysEFIS.mapModePilot 		= TwoStateCustomSwitch:new("mapmodepilot","AirbusFBW/NDmodeCapt",0,
+sysEFIS.mapModePilot 		= TwoStateCustomSwitch:new("mapmodepilot",drefEFISMapModeL,0,
 	function ()
-		local ndmod = get("AirbusFBW/NDmodeCapt")
+		local ndmod = get(drefEFISMapModeL)
 		if ndmod < 5 then
-			set("AirbusFBW/NDmodeCapt",ndmod+1)
+			set(drefEFISMapModeL,ndmod+1)
 		end
 	end,
 	function ()
-		local ndmod = get("AirbusFBW/NDmodeCapt")
+		local ndmod = get(drefEFISMapModeL)
 		if ndmod > 0 then
-			set("AirbusFBW/NDmodeCapt",ndmod-1)
+			set(drefEFISMapModeL,ndmod-1)
 		end
 	end,
 	function ()
 	end,
 	function ()
 		local displaystr = ""
-		if get("AirbusFBW/NDmodeCapt") == 0 then
+		if get(drefEFISMapModeL) == 0 then
 			displaystr = "LS"
-		elseif get("AirbusFBW/NDmodeCapt") == 1 then
+		elseif get(drefEFISMapModeL) == 1 then
 			displaystr = "VOR"
-		elseif get("AirbusFBW/NDmodeCapt") == 2 then
+		elseif get(drefEFISMapModeL) == 2 then
 			displaystr = "NAV"
-		elseif get("AirbusFBW/NDmodeCapt") == 3 then
+		elseif get(drefEFISMapModeL) == 3 then
 			displaystr = "ARC"
-		elseif get("AirbusFBW/NDmodeCapt") == 4 then
+		elseif get(drefEFISMapModeL) == 4 then
 			displaystr = "PLAN"
-		elseif get("AirbusFBW/NDmodeCapt") == 5 then
+		elseif get(drefEFISMapModeL) == 5 then
 			displaystr = "ENG"
 		end
 		return displaystr
 	end)
 
 -- VOR/ADF 1
-sysEFIS.voradf1Pilot 		= TwoStateCustomSwitch:new("voradf1pilot","sim/cockpit2/EFIS/EFIS_1_selection_pilot",0,
+sysEFIS.voradf1Pilot 		= TwoStateCustomSwitch:new("voradf1pilot",drefEFISVORADF1,0,
 	function ()
-		local efis1 = get("sim/cockpit2/EFIS/EFIS_1_selection_pilot")
+		local efis1 = get(drefEFISVORADF1)
 		if efis1 < 2 then
-			set("sim/cockpit2/EFIS/EFIS_1_selection_pilot",efis1+1)
+			set(drefEFISVORADF1,efis1+1)
 		end
 	end,
 	function ()
-		local efis1 = get("sim/cockpit2/EFIS/EFIS_1_selection_pilot")
+		local efis1 = get(drefEFISVORADF1)
 		if efis1 > 0 then
-			set("sim/cockpit2/EFIS/EFIS_1_selection_pilot",efis1-1)
+			set(drefEFISVORADF1,efis1-1)
 		end
 	end,
-	function ()
-	end,
+	function () end,
 	function ()
 		local displaystr = ""
-		if get("sim/cockpit2/EFIS/EFIS_1_selection_pilot") == 0 then
+		if get(drefEFISVORADF1) == 0 then
 			displaystr = "ADF"
-		elseif get("sim/cockpit2/EFIS/EFIS_1_selection_pilot") == 1 then
+		elseif get(drefEFISVORADF1) == 1 then
 			displaystr = "OFF"
-		elseif get("sim/cockpit2/EFIS/EFIS_1_selection_pilot") == 2 then
+		elseif get(drefEFISVORADF1) == 2 then
 			displaystr = "VOR"
 		end
 		return displaystr
 	end)
 	
 -- VOR/ADF 2
-sysEFIS.voradf2Pilot 		= TwoStateCustomSwitch:new("vorad2pilot","sim/cockpit2/EFIS/EFIS_2_selection_pilot",0,
+sysEFIS.voradf2Pilot 		= TwoStateCustomSwitch:new("vorad2pilot",drefEFISVORADF2,0,
 	function ()
-		local efis1 = get("sim/cockpit2/EFIS/EFIS_2_selection_pilot")
+		local efis1 = get(drefEFISVORADF2)
 		if efis1 < 2 then
-			set("sim/cockpit2/EFIS/EFIS_2_selection_pilot",efis1+1)
+			set(drefEFISVORADF2,efis1+1)
 		end
 	end,
 	function ()
-		local efis1 = get("sim/cockpit2/EFIS/EFIS_2_selection_pilot")
+		local efis1 = get(drefEFISVORADF2)
 		if efis1 > 0 then
-			set("sim/cockpit2/EFIS/EFIS_2_selection_pilot",efis1-1)
+			set(drefEFISVORADF2,efis1-1)
 		end
 	end,
-	function ()
-	end,
+	function () end,
 	function ()
 		local displaystr = ""
-		if get("sim/cockpit2/EFIS/EFIS_2_selection_pilot") == 0 then
+		if get(drefEFISVORADF2) == 0 then
 			displaystr = "ADF"
-		elseif get("sim/cockpit2/EFIS/EFIS_2_selection_pilot") == 1 then
+		elseif get(drefEFISVORADF2) == 1 then
 			displaystr = "OFF"
-		elseif get("sim/cockpit2/EFIS/EFIS_2_selection_pilot") == 2 then
+		elseif get(drefEFISVORADF2) == 2 then
 			displaystr = "VOR"
 		end
 		return displaystr
 	end)
 
-sysEFIS.pilotCSTR			= TwoStateToggleSwitch:new("CSTR","AirbusFBW/NDShowCSTRCapt",0,
-	"toliss_airbus/dispcommands/CaptCstrPushButton")
+-- MAP options STA=CSTR
+sysEFIS.staPilot			= TwoStateToggleSwitch:new("CSTR",drefEFISModeSTAVOR,0,cmdEFISModeSTAVOR)
 
-sysEFIS.pilotWPT			= TwoStateToggleSwitch:new("WPT","AirbusFBW/NDShowWPTCapt",0,
-	"toliss_airbus/dispcommands/CaptWptPushButton")
+sysEFIS.wptPilot			= TwoStateToggleSwitch:new("WPT",drefEFISModeWPT,0,cmdEFISModeWPT)
 
-sysEFIS.pilotVORD			= TwoStateToggleSwitch:new("VORD","AirbusFBW/NDShowVORDCapt",0,
-	"toliss_airbus/dispcommands/CaptVorDPushButton")
+sysEFIS.posPilot			= TwoStateToggleSwitch:new("VORD",drefEFISModePos,0,cmdEFISModePosNav)
 
-sysEFIS.pilotNDB			= TwoStateToggleSwitch:new("NDB","AirbusFBW/NDShowNDBCapt",0,
-	"toliss_airbus/dispcommands/CaptNdbPushButton")
+-- MAP data = NDB
+sysEFIS.dataPilot			= TwoStateToggleSwitch:new("NDB",drefEFISModeData,0,cmdEFISModeData)
 
-sysEFIS.pilotARPT			= TwoStateToggleSwitch:new("ARPT","AirbusFBW/NDShowARPTCapt",0,
-	"toliss_airbus/dispcommands/CaptArptPushButton")
+sysEFIS.arptPilot			= TwoStateToggleSwitch:new("ARPT",drefEFISModeARPT,0,cmdEFISModeARPT)
 
 -- Baro standard toggle
-sysEFIS.barostdPilot 	= TwoStateDrefSwitch:new("barostdpilot","AirbusFBW/BaroStdCapt",0)
-sysEFIS.barostdCopilot 	= TwoStateDrefSwitch:new("barostdcopilot","AirbusFBW/BaroStdFO",0)
-sysEFIS.barostdStandby 	= TwoStateDrefSwitch:new("barostdstandby","AirbusFBW/ISIBaroStd",0)
+sysEFIS.barostdPilot 	= TwoStateDrefSwitch:new("barostdpilot",drefBaroStandardL,0)
+sysEFIS.barostdCopilot 	= TwoStateDrefSwitch:new("barostdcopilot",drefBaroStandardR,0)
+sysEFIS.barostdStandby 	= TwoStateDrefSwitch:new("barostdstandby",drefBaroStandardC,0)
 sysEFIS.barostdGroup 	= SwitchGroup:new("barostdgroup")
 sysEFIS.barostdGroup:addSwitch(sysEFIS.barostdPilot)
 sysEFIS.barostdGroup:addSwitch(sysEFIS.barostdCopilot)
 sysEFIS.barostdGroup:addSwitch(sysEFIS.barostdStandby)
 
--- baro mbar/inhg
-sysEFIS.baroMbar 		= TwoStateCustomSwitch:new("mbar","sim/cockpit2/gauges/actuators/barometer_setting_in_hg_pilot",0,
-function () end,
-function () end,
-function () end,
-function () 
-	return string.format("%04.0f",get("sim/cockpit2/gauges/actuators/barometer_setting_in_hg_pilot") * 33.8639)
-end,
-function () end,
-function (value) 
-	return value / 33.87
-end)
-
-sysEFIS.baroInhg 		= TwoStateCustomSwitch:new("inhg","sim/cockpit2/gauges/actuators/barometer_setting_in_hg_pilot",0,
-function () end,
-function () end,
-function () end,
-function () 
-	return string.format("%05.2f",get("sim/cockpit2/gauges/actuators/barometer_setting_in_hg_pilot"))
-end)
-
-
--- Baro standard toggle
-sysGeneral.barostdPilot 	= sysEFIS.barostdPilot 
-sysGeneral.barostdCopilot 	= sysEFIS.barostdCopilo
-sysGeneral.barostdStandby 	= sysEFIS.barostdStandb
-sysGeneral.barostdGroup 	= sysEFIS.barostdGroup 
-
--- baro mbar/inhg
-sysGeneral.baroMbar 		= sysEFIS.baroMbar
-sysGeneral.baroInhg 		= sysEFIS.baroInhg
-
-
+---------- UI related
 -- render kppanels EFIS section
 function sysEFIS.panel_render()
 	imgui.BeginGroup()
 
-		kc_imgui_toggle_button_mcp("CSTR",sysEFIS.pilotCSTR,0,37,19)
+		kc_imgui_toggle_button_mcp("CSTR",sysEFIS.staPilot,0,37,19)
 		imgui.SameLine()
-		kc_imgui_toggle_button_mcp("WPT",sysEFIS.pilotWPT,0,37,19)
+		kc_imgui_toggle_button_mcp("WPT",sysEFIS.wptPilot,0,37,19)
 		imgui.SameLine()
-		kc_imgui_toggle_button_mcp("VORD",sysEFIS.pilotVORD,0,37,19)
+		kc_imgui_toggle_button_mcp("VORD",sysEFIS.posPilot,0,37,19)
 		imgui.SameLine()
-		kc_imgui_toggle_button_mcp("NDB",sysEFIS.pilotNDB,0,37,19)
+		kc_imgui_toggle_button_mcp("NDB",sysEFIS.dataPilot,0,37,19)
 		imgui.SameLine()
-		kc_imgui_toggle_button_mcp("ARPT",sysEFIS.pilotARPT,0,37,19)
+		kc_imgui_toggle_button_mcp("ARPT",sysEFIS.arptPilot,0,37,19)
 	
 		kc_imgui_rotary_mcp("MODE: %s",sysEFIS.mapModePilot,ypos,120)
 		imgui.SameLine()

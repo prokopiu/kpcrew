@@ -115,10 +115,17 @@ kc_has_toc			= true		-- Airctaft has a takeof config check button
 kc_has_chrono		= true		-- Aircraft has a chrono stopwatch
 
 kc_has_autobrake	= true		-- Aircraft has autobrake
-kc_LandingAutoBrake = "OFF|LO|MED|MAX"
-kc_LandingAutoBrInd = "0|1|2|3"
-kc_AutoBrakeOff		= 0
-kc_AutoBrakeRTO		= 3
+if PLANE_ICAO == "A346" then
+	kc_LandingAutoBrake = "OFF|LO|2|3|4|HI"
+	kc_LandingAutoBrInd = "0|1|2|3|4|5"
+	kc_AutoBrakeOff		= 0
+	kc_AutoBrakeRTO		= 6
+else
+	kc_LandingAutoBrake = "OFF|LO|MED|MAX"
+	kc_LandingAutoBrInd = "0|1|2|3"
+	kc_AutoBrakeOff		= 0
+	kc_AutoBrakeRTO		= 3
+end
 
 -- === Operating speeds
 
