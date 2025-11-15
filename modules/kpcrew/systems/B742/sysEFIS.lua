@@ -5,6 +5,10 @@
 -- @author Kosta Prokopiu
 -- @copyright 2025 Kosta Prokopiu
 
+-- System Elements overwritten
+-- sysEFIS.wxrPilot 	
+-- sysEFIS.wxrCopilot 	
+
 local TwoStateDrefSwitch 	= require "kpcrew.systems.TwoStateDrefSwitch"
 local TwoStateCmdSwitch	 	= require "kpcrew.systems.TwoStateCmdSwitch"
 local TwoStateCustomSwitch 	= require "kpcrew.systems.TwoStateCustomSwitch"
@@ -20,8 +24,13 @@ sysEFIS = require("kpcrew.systems.DFLT.sysEFIS")
 
 logMsg("B742 sysEFIS")
 
+--------- Switch datarefs common
+local drefWXRModeL			= "B742/radar/mode_sel"
+
+------------- Switches
+
 -- WX 
-sysEFIS.wxrPilot 			= TwoStateDrefSwitch:new("wxrpilot","B742/radar/mode_sel",0)
+sysEFIS.wxrPilot 			= TwoStateDrefSwitch:new("wxrpilot",drefWXRModeL,0)
 sysEFIS.wxrCopilot 			= InopSwitch:new("wxrcopilot")
 	
 return sysEFIS

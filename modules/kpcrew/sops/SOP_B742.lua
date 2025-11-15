@@ -244,7 +244,7 @@ activeSOP:getFlow(proc_ind_landing):addItem(ProcedureItem:new("ENGINE IGNITION",
 		-- set("B742/EPRL/eprl_mode_sel",5)
 		-- set("B742/EPRL/mode_epr_button",1)
 	-- end))
-	
+
 -- === after landing
 activeSOP:getFlow(proc_ind_afterLandingProc):addItem(ProcedureItem:new("WX RADAR","STBY",FlowItem.actorFO,0,
 	function () return sysEFIS.wxrPilot:getStatus() == 1 end,
@@ -259,7 +259,7 @@ activeSOP:getFlow(proc_ind_afterLandingProc):addItem(ProcedureItem:new("ENGINE I
 	function () return sysEngines.engStarterGroup:getStatus() == 0 end,
 	function () sysEngines.engStarterGroup:setValue(0) end))
 activeSOP:getFlow(proc_ind_afterLandingProc):addItem(ProcedureItem:new("AUTOBRAKE","OFF",FlowItem.actorFO,0,
-		function () return sysControls.Autobrake:getStatus() == kc_AutoBrakeOff end,
+		function () return sysGeneral.Autobrake:getStatus() == kc_AutoBrakeOff end,
 		function () kc_macro_set_autobrake(kc_AutoBrakeOff) end))
 activeSOP:getFlow(proc_ind_afterLandingProc):addItem(ProcedureItem:new("PRESSURIZATION MODE SELECTOR","MAN",FlowItem.actorFO,0,
 		function () return get("B742/AIR_COND/mode_sel_rotary") == 2 end,
