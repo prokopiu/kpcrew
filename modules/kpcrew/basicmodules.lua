@@ -2,7 +2,7 @@
 	*** KPCREW 2.3
 	collection of functions to be used by more than one kptool
 	Kosta Prokopiu, July 2023
-	Changed July 2025
+	Changed November 2025
 --]]
 
 -- ------ find the right icao code 
@@ -11,12 +11,16 @@ function kc_get_matching_icao_code()
 	local icao = "DFLT" -- active addon aircraft ICAO code (DFLT when nothing found)
 
 	-- ====== Select the addon modules based on ICAO code
-	if PLANE_ICAO == "B738" then
-		if PLANE_TAILNUMBER ~= "ZB738" then
-			icao = "B737" 
-		else
-			icao = "B738" -- Zibo Mod
-		end
+	if PLANE_ICAO == "B738" and PLANE_TAILNUMBER == "ZB738" then
+		icao = "B737" -- Zibo B738
+	elseif PLANE_ICAO == "B739" then
+		icao = "B737" -- LevelUp B739
+	elseif PLANE_ICAO == "B736" then
+		icao = "B737" -- LevelUp B736
+	elseif PLANE_ICAO == "B737" then
+		icao = "B737" -- LevelUp B737
+	elseif PLANE_ICAO == "B738" and PLANE_TAILNUMBER == "B738" then
+		icao = "B737" -- LevelUp B738
 
 	-- Epic Victory Aerobask
 	elseif PLANE_ICAO == "EVIC" then

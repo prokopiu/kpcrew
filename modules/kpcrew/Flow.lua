@@ -180,6 +180,23 @@ function kcFlow:getActiveItem()
 	end
 end
 
+
+-- get the specific item
+-- @tparam int index
+-- @treturn FlowItem  at index
+function kcFlow:getFlowItem(index)
+	return self.items[index]
+end
+
+-- overwrite specific item
+-- @tparam int index
+-- @tparam FlowItem item to overwrite with
+function kcFlow:setFlowItem(index,flowitem)
+	if flowitem ~= nil then
+		self.items[index] = flowitem
+	end
+end
+
 -- set the active procedure item
 -- @tparam int itemIndex index of next item to work on
 function kcFlow:setActiveItemIndex(itemIndex)

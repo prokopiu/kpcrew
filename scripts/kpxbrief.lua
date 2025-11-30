@@ -214,9 +214,11 @@ function kb_extract_simbrief_ofp()
 					activeBriefings:set("departure:initHeading",runways[i].magnetic_course)
 					activeBriefings:set("departure:nav1Course",runways[i].magnetic_course)
 					activeBriefings:set("departure:nav2Course",runways[i].magnetic_course)
-					activeBriefings:set("takeoff:v1",runways[i].speeds_v1)
-					activeBriefings:set("takeoff:vr",runways[i].speeds_vr)
-					activeBriefings:set("takeoff:v2",runways[i].speeds_v2)
+					if kc_can_load_speeds == false then
+						activeBriefings:set("takeoff:v1",runways[i].speeds_v1)
+						activeBriefings:set("takeoff:vr",runways[i].speeds_vr)
+						activeBriefings:set("takeoff:v2",runways[i].speeds_v2)
+					end
 					activeBriefings:set("takeoff:rwylength",runways[i].length)
 					activeBriefings:set("takeoff:tora",runways[i].length_tora)
 					
@@ -1011,9 +1013,11 @@ function kb_brief_builder(kb_brief_wnd, x, y)
 									activeBriefings:set("departure:initHeading",runways[i].magnetic_course)
 									activeBriefings:set("departure:nav1Course",runways[i].magnetic_course)
 									activeBriefings:set("departure:nav2Course",runways[i].magnetic_course)
-									activeBriefings:set("takeoff:v1",runways[i].speeds_v1)
-									activeBriefings:set("takeoff:vr",runways[i].speeds_vr)
-									activeBriefings:set("takeoff:v2",runways[i].speeds_v2)
+									if kc_can_load_speeds == false then
+										activeBriefings:set("takeoff:v1",runways[i].speeds_v1)
+										activeBriefings:set("takeoff:vr",runways[i].speeds_vr)
+										activeBriefings:set("takeoff:v2",runways[i].speeds_v2)
+									end
 									if runways[i].bleed_setting ~= "OFF" then
 										activeBriefings:set("takeoff:bleeds",2)
 									else

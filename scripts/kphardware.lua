@@ -300,7 +300,7 @@ create_command("kp/xsp/autopilot/alt_up",			"Altitude increase", "sysMCP.altSele
 create_command("kp/xsp/autopilot/vsp_dn",			"Vertical Speed decrease", "sysMCP.vspSelector:step(cmdDown)","","")
 create_command("kp/xsp/autopilot/vsp_up",			"Vertical Speed increase", "sysMCP.vspSelector:step(cmdUp)","","")
 
-create_command("kp/xsp/autopilot/APDiscYoke",		"Disconnect A/P from Yoke", "sysMCP.apDiscYoke:actuate(1)","","")
+create_command("kp/xsp/autopilot/APDiscYoke",		"Disconnect A/P from Yoke", "sysMCP.apDiscYoke:actuate(0)","","")
 
 -- --------------- EFIS all captain side
 
