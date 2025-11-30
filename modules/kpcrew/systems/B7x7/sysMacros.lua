@@ -18,6 +18,21 @@ function kc_macro_custom_cold_dark()
 	set("params/LSU",0)
 	set("prep/loader",0)
 	set("params/gpu",0)
+	set("1-sim/engine/leftStartSelector",2)
+	set("1-sim/engine/rightStartSelector",2)
+	set("1-sim/cond/aftTempControl",0)
+	set("1-sim/cond/fltdkTempControl",0)
+	set("1-sim/cond/fwdTempControl",0)
+	set("1-sim/emer/lightsCover",1)
+	set("1-sim/eng/APUswitch",0)
+	set("1-sim/WX/modeSwitcher",0)
+	set("1-sim/press/modeSelector",0)
+	set("anim/57/button",0)
+	set("anim/57/button/anim",0)
+	set("anim/58/button",0)
+	set("anim/58/button/anim",0)
+	set("1-sim/AP/desengageLever",1)
+	set("1-sim/AP/desengageLever/anim",1)
 end
 
 -- aircraft specific custom steps not covered in default turnaround flow
@@ -27,6 +42,20 @@ function kc_macro_custom_turnaround()
 	set("params/LSU",1)
 	set("prep/loader",1)
 	set("params/gpu",1)
+	set("1-sim/engine/leftStartSelector",2)
+	set("1-sim/engine/rightStartSelector",2)
+	set("1-sim/cond/aftTempControl",0.5)
+	set("1-sim/cond/fltdkTempControl",0.5)
+	set("1-sim/cond/fwdTempControl",0.5)
+	set("1-sim/emer/lightsCover",0)
+	set("1-sim/WX/modeSwitcher",1)
+	set("1-sim/press/modeSelector",0)
+	set("anim/57/button",1)
+	set("anim/57/button/anim",1)
+	set("anim/58/button",1)
+	set("anim/58/button/anim",1)
+	set("1-sim/AP/desengageLever",0)
+	set("1-sim/AP/desengageLever/anim",0)
 end
 -- ====================================== Lights related functions
 function kc_macro_lights(flightphase)
@@ -466,9 +495,11 @@ function kc_bck_apustart(trigger)
 	if kc_procvar_get(delayvar) == -1 then
 		kc_procvar_set(delayvar,30)
 		set("1-sim/engine/APUStartSelector",2)
+		set("1-sim/engine/APUStartSelector/anim",2)
 	else
 		if kc_procvar_get(delayvar) <= 0 then
 			set("1-sim/engine/APUStartSelector",1)
+			set("1-sim/engine/APUStartSelector/anim",1)
 			kc_procvar_set(trigger,false)
 			kc_procvar_set(delayvar,-1)
 		else
@@ -481,6 +512,7 @@ end
 function kc_bck_apuonline(trigger)
 	if get("sim/cockpit2/electrical/APU_N1_percent") == 100 then
 		sysElectric.apuGenBusGroup:actuate(1)
+		sysElectric.gpuGenBusGroup:actuate(0)
 		sysAir.apuBleedSwitch:actuate(1)
 		kc_procvar_set(trigger,false)
 	end
@@ -490,6 +522,7 @@ end
 function kc_macro_apustop()
 	sysElectric.apuGenBusGroup:actuate(0)
 	set("1-sim/engine/APUStartSelector",0)
+	set("1-sim/engine/APUStartSelector/anim",0)
 end
 
 -- Start engines 
@@ -501,13 +534,16 @@ function kc_bck_start_engine(trigger)
 	if kc_procvar_get(delayvar) == -1 then
 		kc_procvar_set(delayvar,6)
 		set("1-sim/engine/ignitionSelector",0)
+		set("1-sim/engine/ignitionSelector/anim",0)
 		if trigger == "engstart1" then
 			set("1-sim/fuel/fuelCutOffLeft",0)
 			set("1-sim/engine/leftStartSelector",0)
+			set("anim/rhotery/8/anim",0)
 		end
 		if trigger == "engstart2" then
 			set("1-sim/fuel/fuelCutOffRight",0)
 			set("1-sim/engine/rightStartSelector",0)
+			set("anim/rhotery/9/anim",0)
 		end
 	else
 		if kc_procvar_get(delayvar) <= 0 then
@@ -515,11 +551,13 @@ function kc_bck_start_engine(trigger)
 			kc_procvar_set(delayvar,-1)
 			if trigger == "engstart1" then
 				set("1-sim/fuel/fuelCutOffLeft",2)
-				set("1-sim/engine/leftStartSelector",2)
+				set("1-sim/engine/leftStartSelector",1)
+				set("anim/rhotery/8/anim",1)
 			end
 			if trigger == "engstart2" then
 				set("1-sim/fuel/fuelCutOffRight",2)
-				set("1-sim/engine/rightStartSelector",2)
+				set("1-sim/engine/rightStartSelector",1)
+				set("anim/rhotery/9/anim",1)
 			end
 		else
 			kc_procvar_set(delayvar,kc_procvar_get(delayvar)-1)
@@ -549,6 +587,11 @@ sysGeneral.irsUnit1Switch:setValue(2)
 sysGeneral.irsUnit2Switch:setValue(2)
 sysGeneral.irsUnit3Switch:setValue(2)
 	end
+end
+
+-- test if all baros are set to local baro
+function kc_macro_test_local_baro()
+	return math.ceil(get("sim/cockpit/misc/barometer_setting")*100)/100 == math.ceil(get("sim/weather/barometer_sealevel_inhg")*100)/100 
 end
 
 return sysMacros

@@ -50,6 +50,7 @@ kc_gear_ext_index	= 3			-- When to extend gear in flaps extend
 -- === engines
 kc_NumEngines		= -1		-- Number of engines from acf
 kc_StartSequence 	= "2 THEN 1|1 THEN 2"
+kc_StartBackground	= { [1] = {"2", "1"}, [2] = {"1", "2"} }
 kc_has_reversers	= true		-- Aircraft has reversers
 kc_ab_engm_norm		= 1			-- Airbus engine mode norm
 kc_ab_engm_strt		= 2			-- Airbus engine mode start
@@ -185,7 +186,7 @@ kc_can_load_speeds	= false		-- Aircraft can pass speeds to kpxbrief
 
 kc_has_autobrake	= true		-- Aircraft has autobrake
 kc_LandingAutoBrake = "OFF|1|2|3|4|MAX"
-kc_LandingAutoBrInd = "0|1|2|3|4|5"
+kc_LandingAutoBrInd = "0|2|3|4|5|6"
 kc_AutoBrakeOff		= 0
 kc_AutoBrakeRTO		= -1
 kc_has_antiskid		= true

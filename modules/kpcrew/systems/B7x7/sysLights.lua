@@ -26,9 +26,75 @@ sysLights = require("kpcrew.systems.DFLT.sysLights")
 logMsg("B7x7 sysLights")
 
 -- **Landing Lights, single onoff command driven
-sysLights.llLeftSwitch 		= TwoStateDrefSwitch:new("llleft","1-sim/lights/landingL/switch",0)
-sysLights.llRightSwitch 	= TwoStateDrefSwitch:new("llright","1-sim/lights/landingR/switch",0)
-sysLights.ll3rdSwitch 		= TwoStateDrefSwitch:new("ll3rd","1-sim/lights/landingN/switch",0)
+sysLights.llLeftSwitch 		= TwoStateCustomSwitch:new("llleft","1-sim/lights/landingL/switch",0,
+	function () 
+		set("1-sim/lights/landingL/switch/anim",1)
+		set("1-sim/lights/landingL/switch",1)		
+	end,
+	function () 
+		set("1-sim/lights/landingL/switch/anim",0)
+		set("1-sim/lights/landingL/switch",0)		
+	end,
+	function () 
+		if get("1-sim/lights/landingL/switch") == 0 then
+			set("1-sim/lights/landingL/switch/anim",1)
+			set("1-sim/lights/landingL/switch",1)
+		else
+			set("1-sim/lights/landingL/switch/anim",0)
+			set("1-sim/lights/landingL/switch",0)	
+		end
+	end,
+	function () return get("1-sim/lights/landingL/switch") end,null,
+	function (value)
+		set("1-sim/lights/landingL/switch/anim",value)
+		set("1-sim/lights/landingL/switch",value)
+	end)
+sysLights.llRightSwitch 	= TwoStateCustomSwitch:new("llright","1-sim/lights/landingR/switch",0,
+	function () 
+		set("1-sim/lights/landingR/switch/anim",1)
+		set("1-sim/lights/landingR/switch",1)		
+	end,
+	function () 
+		set("1-sim/lights/landingR/switch/anim",0)
+		set("1-sim/lights/landingR/switch",0)		
+	end,
+	function () 
+		if get("1-sim/lights/landingR/switch") == 0 then
+			set("1-sim/lights/landingR/switch/anim",1)
+			set("1-sim/lights/landingR/switch",1)
+		else
+			set("1-sim/lights/landingR/switch/anim",0)
+			set("1-sim/lights/landingR/switch",0)	
+		end
+	end,
+	function () return get("1-sim/lights/landingR/switch") end,null,
+	function (value)
+		set("1-sim/lights/landingR/switch/anim",value)
+		set("1-sim/lights/landingR/switch",value)
+	end)
+sysLights.ll3rdSwitch 		= TwoStateCustomSwitch:new("ll3rd","1-sim/lights/landingN/switch",0,
+	function () 
+		set("1-sim/lights/landingN/switch/anim",1)
+		set("1-sim/lights/landingN/switch",1)		
+	end,
+	function () 
+		set("1-sim/lights/landingN/switch/anim",0)
+		set("1-sim/lights/landingN/switch",0)		
+	end,
+	function () 
+		if get("1-sim/lights/landingN/switch") == 0 then
+			set("1-sim/lights/landingN/switch/anim",1)
+			set("1-sim/lights/landingN/switch",1)
+		else
+			set("1-sim/lights/landingN/switch/anim",0)
+			set("1-sim/lights/landingN/switch",0)	
+		end
+	end,
+	function () return get("1-sim/lights/landingN/switch") end,null,
+	function (value)
+		set("1-sim/lights/landingN/switch/anim",value)
+		set("1-sim/lights/landingN/switch",value)
+	end)
 sysLights.landLightGroup 	= SwitchGroup:new("landinglights")
 sysLights.landLightGroup:addSwitch(sysLights.llLeftSwitch)
 sysLights.landLightGroup:addSwitch(sysLights.llRightSwitch)
@@ -45,8 +111,52 @@ function ()
 end)
 
 -- **RWY Turnoff Lights
-sysLights.rwyLeftSwitch 	= TwoStateDrefSwitch:new("rwyleft","1-sim/lights/runwayL/switch",0)
-sysLights.rwyRightSwitch 	= TwoStateDrefSwitch:new("rwyright","1-sim/lights/runwayR/switch",0)
+sysLights.rwyLeftSwitch 	= TwoStateCustomSwitch:new("rwyleft","1-sim/lights/runwayL/switch",0,
+	function () 
+		set("1-sim/lights/runwayL/switch/anim",1)
+		set("1-sim/lights/runwayL/switch",1)		
+	end,
+	function () 
+		set("1-sim/lights/runwayL/switch/anim",0)
+		set("1-sim/lights/runwayL/switch",0)		
+	end,
+	function () 
+		if get("1-sim/lights/runwayL/switch") == 0 then
+			set("1-sim/lights/runwayL/switch/anim",1)
+			set("1-sim/lights/runwayL/switch",1)
+		else
+			set("1-sim/lights/runwayL/switch/anim",0)
+			set("1-sim/lights/runwayL/switch",0)	
+		end
+	end,
+	function () return get("1-sim/lights/runwayL/switch") end,null,
+	function (value)
+		set("1-sim/lights/runwayL/switch/anim",value)
+		set("1-sim/lights/runwayL/switch",value)
+	end)
+sysLights.rwyRightSwitch 	= TwoStateCustomSwitch:new("rwyleft","1-sim/lights/runwayR/switch",0,
+	function () 
+		set("1-sim/lights/runwayR/switch/anim",1)
+		set("1-sim/lights/runwayR/switch",1)		
+	end,
+	function () 
+		set("1-sim/lights/runwayR/switch/anim",0)
+		set("1-sim/lights/runwayR/switch",0)		
+	end,
+	function () 
+		if get("1-sim/lights/runwayR/switch") == 0 then
+			set("1-sim/lights/runwayR/switch/anim",1)
+			set("1-sim/lights/runwayR/switch",1)
+		else
+			set("1-sim/lights/runwayR/switch/anim",0)
+			set("1-sim/lights/runwayR/switch",0)	
+		end
+	end,
+	function () return get("1-sim/lights/runwayR/switch") end,null,
+	function (value)
+		set("1-sim/lights/runwayR/switch/anim",value)
+		set("1-sim/lights/runwayR/switch",value)
+	end)
 sysLights.rwyLightGroup 	= SwitchGroup:new("runwaylights")
 sysLights.rwyLightGroup:addSwitch(sysLights.rwyLeftSwitch)
 sysLights.rwyLightGroup:addSwitch(sysLights.rwyRightSwitch)
@@ -75,27 +185,137 @@ function ()
 end)
 
 -- **Position (or Nav) Lights, single onoff command driven
-sysLights.positionSwitch 	= TwoStateDrefSwitch:new("position","anim/43/button",0)
+sysLights.positionSwitch 	= TwoStateCustomSwitch:new("position","anim/43/button",0,
+	function () 
+		set("anim/43/button/anim",1)
+		set("anim/43/button",1)		
+	end,
+	function () 
+		set("anim/43/button/anim",0)
+		set("anim/43/button",0)		
+	end,
+	function () 
+		if get("anim/43/button") == 0 then
+			set("anim/43/button/anim",1)
+			set("anim/43/button",1)
+		else
+			set("anim/43/button/anim",0)
+			set("anim/43/button",0)	
+		end
+	end,
+	function () return get("anim/43/button") end,null,
+	function (value)
+		set("anim/43/button/anim",value)
+		set("anim/43/button",value)
+	end)
 -- Position Light(s) status
 sysLights.positionAnc 		= SimpleAnnunciator:new("positionlights","anim/43/button",0)
 
 -- **Strobe Lights, single onoff command driven
-sysLights.strobesSwitch 	= TwoStateDrefSwitch:new("strobes","anim/45/button",0)
+sysLights.strobesSwitch 	= TwoStateCustomSwitch:new("strobes","anim/45/button",0,
+	function () 
+		set("anim/45/button/anim",1)
+		set("anim/45/button",1)		
+	end,
+	function () 
+		set("anim/45/button/anim",0)
+		set("anim/45/button",0)		
+	end,
+	function () 
+		if get("anim/45/button") == 0 then
+			set("anim/45/button/anim",1)
+			set("anim/45/button",1)
+		else
+			set("anim/45/button/anim",0)
+			set("anim/45/button",0)	
+		end
+	end,
+	function () return get("anim/45/button") end,null,
+	function (value)
+		set("anim/45/button/anim",value)
+		set("anim/45/button",value)
+	end)
 -- Strobe Light(s) status
 sysLights.strobesAnc 		= SimpleAnnunciator:new("strobelights","anim/45/button",0)
 
 -- **Beacons or Anticollision Lights, single, onoff, command driven
-sysLights.beaconSwitch 		= TwoStateDrefSwitch:new("beacon","anim/44/button",0)
+sysLights.beaconSwitch 		= TwoStateCustomSwitch:new("beacon","anim/44/button",0,
+	function () 
+		set("anim/44/button/anim",1)
+		set("anim/44/button",1)		
+	end,
+	function () 
+		set("anim/44/button/anim",0)
+		set("anim/44/button",0)		
+	end,
+	function () 
+		if get("anim/44/button") == 0 then
+			set("anim/44/button/anim",1)
+			set("anim/44/button",1)
+		else
+			set("anim/44/button/anim",0)
+			set("anim/44/button",0)	
+		end
+	end,
+	function () return get("anim/44/button") end,null,
+	function (value)
+		set("anim/44/button/anim",value)
+		set("anim/44/button",value)
+	end)
 -- Beacons or Anticollision Light(s) status
 sysLights.beaconAnc 		= SimpleAnnunciator:new("beaconlights","anim/44/button",0)
 
 -- **Wing Lights
-sysLights.wingSwitch 		= TwoStateDrefSwitch:new("wing","anim/46/button",0)
+sysLights.wingSwitch 		= TwoStateCustomSwitch:new("wing","anim/46/button",0,
+	function () 
+		set("anim/46/button/anim",1)
+		set("anim/46/button",1)		
+	end,
+	function () 
+		set("anim/46/button/anim",0)
+		set("anim/46/button",0)		
+	end,
+	function () 
+		if get("anim/46/button") == 0 then
+			set("anim/46/button/anim",1)
+			set("anim/46/button",1)
+		else
+			set("anim/46/button/anim",0)
+			set("anim/46/button",0)	
+		end
+	end,
+	function () return get("anim/46/button") end,null,
+	function (value)
+		set("anim/46/button/anim",value)
+		set("anim/46/button",value)
+	end)
 -- Wing Light(s) status
 sysLights.wingAnc 			= SimpleAnnunciator:new("winglights","anim/46/button",0)
 
 -- **Logo Light
-sysLights.logoSwitch 		= TwoStateDrefSwitch:new("logo","anim/52/button",0)
+sysLights.logoSwitch 		= TwoStateCustomSwitch:new("logo","anim/52/button",0,
+	function () 
+		set("anim/52/button/anim",1)
+		set("anim/52/button",1)		
+	end,
+	function () 
+		set("anim/52/button/anim",0)
+		set("anim/52/button",0)		
+	end,
+	function () 
+		if get("anim/52/button") == 0 then
+			set("anim/52/button/anim",1)
+			set("anim/52/button",1)
+		else
+			set("anim/52/button/anim",0)
+			set("anim/52/button",0)	
+		end
+	end,
+	function () return get("anim/52/button") end,null,
+	function (value)
+		set("anim/52/button/anim",value)
+		set("anim/52/button",value)
+	end)
 -- Logo Light(s) status
 sysLights.logoAnc 			= SimpleAnnunciator:new("logolights","anim/52/button",0)
 

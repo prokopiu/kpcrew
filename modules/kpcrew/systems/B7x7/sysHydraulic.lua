@@ -22,10 +22,98 @@ logMsg("B7x7 sysHydraulic")
 
 -- --- HYD Electric Pump
 sysHydraulic.elecHydPumpGroup 	= SwitchGroup:new("elechydpumps")
-sysHydraulic.elecHydPump1		= TwoStateDrefSwitch:new("elechydpump1","anim/9/button",0)
-sysHydraulic.elecHydPump2		= TwoStateDrefSwitch:new("elechydpump2","anim/10/button",0)
-sysHydraulic.elecHydPump3		= TwoStateDrefSwitch:new("elechydpump3","anim/12/button",0)
-sysHydraulic.elecHydPump4		= TwoStateDrefSwitch:new("elechydpump4","anim/13/button",0)
+sysHydraulic.elecHydPump1		= TwoStateCustomSwitch:new("elechydpump1","anim/9/button",0,
+	function () 
+		set("anim/9/button/anim",1)
+		set("anim/9/button",1)		
+	end,
+	function () 
+		set("anim/9/button/anim",0)
+		set("anim/9/button",0)		
+	end,
+	function () 
+		if get("anim/9/button") == 0 then
+			set("anim/9/button/anim",1)
+			set("anim/9/button",1)
+		else
+			set("anim/9/button/anim",0)
+			set("anim/9/button",0)	
+		end
+	end,
+	function () return get("anim/9/button") end,null,
+	function (value)
+		set("anim/9/button/anim",value)
+		set("anim/9/button",value)
+	end)
+sysHydraulic.elecHydPump2		= TwoStateCustomSwitch:new("elechydpump2","anim/10/button",0,
+	function () 
+		set("anim/10/button/anim",1)
+		set("anim/10/button",1)		
+	end,
+	function () 
+		set("anim/10/button/anim",0)
+		set("anim/10/button",0)		
+	end,
+	function () 
+		if get("anim/10/button") == 0 then
+			set("anim/10/button/anim",1)
+			set("anim/10/button",1)
+		else
+			set("anim/10/button/anim",0)
+			set("anim/10/button",0)	
+		end
+	end,
+	function () return get("anim/10/button") end,null,
+	function (value)
+		set("anim/10/button/anim",value)
+		set("anim/10/button",value)
+	end)
+sysHydraulic.elecHydPump3		= TwoStateCustomSwitch:new("elechydpump3","anim/12/button",0,
+	function () 
+		set("anim/12/button/anim",1)
+		set("anim/12/button",1)		
+	end,
+	function () 
+		set("anim/12/button/anim",0)
+		set("anim/12/button",0)		
+	end,
+	function () 
+		if get("anim/12/button") == 0 then
+			set("anim/12/button/anim",1)
+			set("anim/12/button",1)
+		else
+			set("anim/12/button/anim",0)
+			set("anim/12/button",0)	
+		end
+	end,
+	function () return get("anim/12/button") end,null,
+	function (value)
+		set("anim/12/button/anim",value)
+		set("anim/12/button",value)
+	end)
+sysHydraulic.elecHydPump4		= TwoStateCustomSwitch:new("elechydpump4","anim/13/button",0,
+	function () 
+		set("anim/13/button/anim",1)
+		set("anim/13/button",1)		
+	end,
+	function () 
+		set("anim/13/button/anim",0)
+		set("anim/13/button",0)		
+	end,
+	function () 
+		if get("anim/13/button") == 0 then
+			set("anim/13/button/anim",1)
+			set("anim/13/button",1)
+		else
+			set("anim/13/button/anim",0)
+			set("anim/13/button",0)	
+		end
+	end,
+	function () return get("anim/13/button") end,null,
+	function (value)
+		set("anim/13/button/anim",value)
+		set("anim/13/button",value)
+	end)
 sysHydraulic.elecHydPumpGroup:addSwitch(elecHydPump1)
 sysHydraulic.elecHydPumpGroup:addSwitch(elecHydPump2)
 sysHydraulic.elecHydPumpGroup:addSwitch(elecHydPump3)
@@ -33,9 +121,53 @@ sysHydraulic.elecHydPumpGroup:addSwitch(elecHydPump4)
 
 -- ----- HYD Engine Pumps
 sysHydraulic.engHydPumpGroup = SwitchGroup:new("enghydpumps")
-sysHydraulic.engHydPump1	= TwoStateDrefSwitch:new("enghydpump1","anim/8/button",0)
+sysHydraulic.engHydPump1	= TwoStateCustomSwitch:new("enghydpump1","anim/8/button",0,
+	function () 
+		set("anim/8/button/anim",1)
+		set("anim/8/button",1)		
+	end,
+	function () 
+		set("anim/8/button/anim",0)
+		set("anim/8/button",0)		
+	end,
+	function () 
+		if get("anim/8/button") == 0 then
+			set("anim/8/button/anim",1)
+			set("anim/8/button",1)
+		else
+			set("anim/8/button/anim",0)
+			set("anim/8/button",0)	
+		end
+	end,
+	function () return get("anim/8/button") end,null,
+	function (value)
+		set("anim/8/button/anim",value)
+		set("anim/8/button",value)
+	end)
 sysHydraulic.engHydPumpGroup:addSwitch(sysHydraulic.engHydPump1)
-sysHydraulic.engHydPump2	= TwoStateDrefSwitch:new("enghydpump2","anim/11/button",0)
+sysHydraulic.engHydPump2	= TwoStateCustomSwitch:new("enghydpump2","anim/11/button",0,
+	function () 
+		set("anim/11/button/anim",1)
+		set("anim/11/button",1)		
+	end,
+	function () 
+		set("anim/11/button/anim",0)
+		set("anim/11/button",0)		
+	end,
+	function () 
+		if get("anim/11/button") == 0 then
+			set("anim/11/button/anim",1)
+			set("anim/11/button",1)
+		else
+			set("anim/11/button/anim",0)
+			set("anim/11/button",0)	
+		end
+	end,
+	function () return get("anim/11/button") end,null,
+	function (value)
+		set("anim/11/button/anim",value)
+		set("anim/11/button",value)
+	end)
 sysHydraulic.engHydPumpGroup:addSwitch(sysHydraulic.engHydPump2)
 
 return sysHydraulic

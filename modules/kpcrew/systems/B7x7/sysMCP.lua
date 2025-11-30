@@ -361,42 +361,54 @@ sysMCP.apDiscYoke 			= TwoStateToggleSwitch:new("discapyoke","sim/cockpit2/annun
 
 -- YAW DAMPER
 sysMCP.yawDamper			= SwitchGroup:new("yawdamper")
-sysMCP.yawDamper1			= TwoStateCustomSwitch:new("yawdamper","anim/1/button",0,
-	function ()
-		set("anim/1/button",1)
+sysMCP.yawDamper1			= TwoStateCustomSwitch:new("yawdamper1","anim/1/button",0,
+	function () 
+		set("anim/1/button/anim",1)
+		set("anim/1/button",1)		
 	end,
-	function ()
-		set("anim/1/button",0)
+	function () 
+		set("anim/1/button/anim",0)
+		set("anim/1/button",0)		
 	end,
-	function ()
+	function () 
 		if get("anim/1/button") == 0 then
+			set("anim/1/button/anim",1)
 			set("anim/1/button",1)
 		else
-			set("anim/1/button",0)
+			set("anim/1/button/anim",0)
+			set("anim/1/button",0)	
 		end
 	end,
-	function ()
-		return get("anim/1/button")
+	function () return get("anim/1/button") end,null,
+	function (value)
+		set("anim/1/button/anim",value)
+		set("anim/1/button",value)
 	end)
 sysMCP.yawDamper:addSwitch(sysMCP.yawDamper1)
-
-sysMCP.yawDamper2			= TwoStateCustomSwitch:new("yawdamper","anim/2/button",0,
-	function ()
-		set("anim/2/button",1)
+sysMCP.yawDamper2			= TwoStateCustomSwitch:new("yawdamper2","anim/2/button",0,
+	function () 
+		set("anim/2/button/anim",1)
+		set("anim/2/button",1)		
 	end,
-	function ()
-		set("anim/2/button",0)
+	function () 
+		set("anim/2/button/anim",0)
+		set("anim/2/button",0)		
 	end,
-	function ()
+	function () 
 		if get("anim/2/button") == 0 then
+			set("anim/2/button/anim",1)
 			set("anim/2/button",1)
 		else
-			set("anim/2/button",0)
+			set("anim/2/button/anim",0)
+			set("anim/2/button",0)	
 		end
 	end,
-	function ()
-		return get("anim/2/button")
+	function () return get("anim/2/button") end,null,
+	function (value)
+		set("anim/2/button/anim",value)
+		set("anim/2/button",value)
 	end)
+
 sysMCP.yawDamper:addSwitch(sysMCP.yawDamper2)
 
 return sysMCP

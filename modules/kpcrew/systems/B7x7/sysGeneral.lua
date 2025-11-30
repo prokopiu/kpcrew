@@ -147,12 +147,77 @@ function ()
 end)
 
 -- IRS/ADIRU
-sysGeneral.irsUnit1Switch 	= TwoStateDrefSwitch:new("irsunit1","1-sim/irs/1/modeSel",0)
-sysGeneral.irsUnit2Switch 	= TwoStateDrefSwitch:new("irsunit2","1-sim/irs/2/modeSel",0)
-sysGeneral.irsUnit3Switch 	= TwoStateDrefSwitch:new("irsunit3","1-sim/irs/3/modeSel",0)
+sysGeneral.irsUnit1Switch 	= TwoStateCustomSwitch:new("irsunit1","1-sim/irs/1/modeSel",0,null,null,null,
+	function () return get("anim/rhotery/3") end,null,
+	function (value)
+		set("anim/rhotery/3/anim",value)
+		set("anim/rhotery/3",value)
+	end)
+sysGeneral.irsUnit2Switch 	= TwoStateCustomSwitch:new("irsunit2","1-sim/irs/2/modeSel",0,null,null,null,
+	function () return get("anim/rhotery/4") end,null,
+	function (value)
+		set("anim/rhotery/4/anim",value)
+		set("anim/rhotery/4",value)
+	end)
+sysGeneral.irsUnit3Switch 	= TwoStateCustomSwitch:new("irsunit3","1-sim/irs/3/modeSel",0,null,null,null,
+	function () return get("anim/rhotery/5") end,null,
+	function (value)
+		set("anim/rhotery/5/anim",value)
+		set("anim/rhotery/5",value)
+	end)
 sysGeneral.irsUnitGroup 	= SwitchGroup:new("irsunits")
 sysGeneral.irsUnitGroup:addSwitch(sysGeneral.irsUnit1Switch)
 sysGeneral.irsUnitGroup:addSwitch(sysGeneral.irsUnit2Switch)
 sysGeneral.irsUnitGroup:addSwitch(sysGeneral.irsUnit3Switch)
+
+sysGeneral.noSmokingSwitch	= TwoStateCustomSwitch:new("nosmoke","sim/cockpit2/switches/no_smoking",0,
+	function ()
+		local ndmod = get("sim/cockpit2/switches/no_smoking")
+		if ndmod < 2 then
+			set("sim/cockpit2/switches/no_smoking",ndmod+1)
+			set("anim/rhotery/11",ndmod+1)
+		end
+	end,
+	function ()
+		local ndmod = get("sim/cockpit2/switches/no_smoking")
+		if ndmod > 0 then
+			set("sim/cockpit2/switches/no_smoking",ndmod-1)
+			set("anim/rhotery/11",ndmod-1)
+		end
+	end,
+	function ()
+	end,
+	function ()
+		return get("sim/cockpit2/switches/no_smoking")
+	end,null,
+	function (value)
+		set("sim/cockpit2/switches/no_smoking",value)
+		set("anim/rhotery/11",value)
+	end)
+
+sysGeneral.passSignsSwitch	= TwoStateCustomSwitch:new("seatbelts","sim/cockpit2/switches/fasten_seat_belts",0,
+	function ()
+		local ndmod = get("sim/cockpit2/switches/fasten_seat_belts")
+		if ndmod < 2 then
+			set("sim/cockpit2/switches/fasten_seat_belts",ndmod+1)
+			set("anim/rhotery/12",ndmod+1)
+		end
+	end,
+	function ()
+		local ndmod = get("sim/cockpit2/switches/fasten_seat_belts")
+		if ndmod > 0 then
+			set("sim/cockpit2/switches/fasten_seat_belts",ndmod-1)
+			set("anim/rhotery/12",ndmod-1)
+		end
+	end,
+	function ()
+	end,
+	function ()
+		return get("sim/cockpit2/switches/fasten_seat_belts")
+	end,null,
+	function (value)
+		set("sim/cockpit2/switches/fasten_seat_belts",value)
+		set("anim/rhotery/12",value)
+	end)
 
 return sysGeneral

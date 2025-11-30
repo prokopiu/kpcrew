@@ -24,10 +24,16 @@ sysControls.flaps_pos = {[0] =   0,  [1] = 0.166667, [2] =  0.333333, [3] =    0
 sysControls.flaps_spd = {[0] = 240,  [1] =      240, [2] =       220, [3] =    210, [4] =      200, [5] =       190, [6] =  180, [7] =  180, [8] =  180}
 sysControls.flaps_name= {[0] = "UP", [1] =      "1", [2] =       "5", [3] =   "15", [4] =     "20", [5] =      "25", [6] = "30", [7] = "30", [8] = "30"}
 
-sysControls.rudderDeflection	= SimpleAnnunciator:new("rudderdeflection","sim/flightmodel2/wing/rudder1_deg",1)
+sysControls.rudderDeflection	= SimpleAnnunciator:new("rudderdeflection","sim/flightmodel2/wing/rudder1_deg",-1)
 
 -- Autobrake
-sysControls.Autobrake	= TwoStateDrefSwitch:new("autobrake","anim/rhotery/25",0)
+sysControls.Autobrake	= TwoStateCustomSwitch:new("autobrake","anim/rhotery/25",0,null,null,null,
+	function () return get("anim/rhotery/25") end,null,
+	function (value)
+		set("anim/rhotery/25/anim",value)
+		set("anim/rhotery/25",value)
+	end)
+
 
 -- YAW Damper
 sysControls.yawDamper	= SwitchGroup:new("yawDampers")
