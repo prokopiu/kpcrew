@@ -301,7 +301,7 @@ function ()
 end)
 
 sysGeneral.noSmokingSwitch	= TwoStateDrefSwitch:new("nosmoke",drefNoSmoking,12)
-sysGeneral.passSignsSwitch	= TwoStateDrefSwitch:new("seatbelts",drefNoSmoking,11)
+sysGeneral.passSignsSwitch	= TwoStateDrefSwitch:new("seatbelts",drefSeatBelts,11)
 
 sysGeneral.chrono			= TwoStateToggleSwitch:new("chrono",drefChrono,0,cmdChronoButton)
 	

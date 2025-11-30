@@ -24,6 +24,7 @@ kc_remove_gpu_after	= true		-- remove GPU after start
 -- === Controls
 kc_spdbrk_can_arm	= true		-- Aircraft's speedbrake can be armed
 kc_spdbrk_arm_pos	= -0.5
+kc_spdbrk_arm_to	= true		-- Speedbrake to be armed for takeoff (e.g. Airbus)
 kc_full_rgt_rudder	= 14.9		-- Threshold where the rudder is almost fully to the right
 kc_NumFlapsTO		= 3
 kc_TakeoffFlaps 	= "0|1|2|3| | | "
