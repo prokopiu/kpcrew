@@ -224,12 +224,6 @@ function kc_macro_state_turnaround()
 	kc_macro_custom_turnaround()
 end
 
--- set baros to local pressure at departure airport
-function kc_macro_set_local_baro()
-	set("sim/cockpit/misc/barometer_setting",math.floor(get("sim/weather/barometer_sealevel_inhg")*100)/100)
-	set("sim/cockpit/misc/barometer_setting2",math.floor(get("sim/weather/barometer_sealevel_inhg")*100)/100) 
-end
-
 -- ===========
 function kc_macro_below_10000_ft()
 	kc_macro_lights_descend_10k()

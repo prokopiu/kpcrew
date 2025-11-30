@@ -152,13 +152,7 @@ sysElectric.apuGenBusGroup:addSwitch(sysElectric.apuGenBus2)
 
 -- APU RUNNING annunciator
 sysElectric.apuRunningAnc 	= CustomAnnunciator:new("apurunning",
-	function () 
-		if get(drefAPUN1) > 98 then
-			return 1
-		else
-			return 0
-		end
-	end)
+	function () if get(drefAPUN1) > 98 then return 1 else return 0 end end)
 
 -- ---- Engine Generators
 sysElectric.genSwitchGroup 	= SwitchGroup:new("generators")
@@ -367,7 +361,7 @@ function kc_macro_elec_system(flightphase)
 			sysElectric.avionicsSwitchGroup:actuate(1)
 		end
 		if kc_has_standby_pwr then
-			sysElectric.stbyPowerSwitch:actuate(0)
+			sysElectric.stbyPowerSwitch:actuate(1)
 		end
 	else
 		logMsg("Invalid flightphase")

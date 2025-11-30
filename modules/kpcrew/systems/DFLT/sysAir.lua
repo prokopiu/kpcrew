@@ -38,6 +38,7 @@ local CustomAnnunciator 	= require "kpcrew.systems.CustomAnnunciator"
 local TwoStateToggleSwitch	= require "kpcrew.systems.TwoStateToggleSwitch"
 local MultiStateCmdSwitch 	= require "kpcrew.systems.MultiStateCmdSwitch"
 local InopSwitch 			= require "kpcrew.systems.InopSwitch"
+local KeepPressedSwitchCmd	= require "kpcrew.systems.KeepPressedSwitchCmd"
 
 --------- Switch datarefs common
 local drefPackSwitchLeft	= "sim/cockpit2/bleedair/actuators/pack_left"
@@ -159,15 +160,8 @@ function kc_macro_air(flightphase)
 		if kc_has_trim_air then
 			sysAir.trimAirSwitch:actuate(1)
 		end
-		elseif flightphase == kc_phase_before_start then
-		if kc_has_press_cab then
-			sysAir.packSwitchGroup:actuate(0)
-		end
 		if kc_is_airbus == false and kc_has_iso_valvle then	
 			sysAir.isoValveSwitch:actuate(1)
-		end
-		if kc_has_oxygen then
-			sysAir.oxygenMaster:actuate(0)
 		end
 	elseif flightphase == kc_phase_after_start then
 		if kc_has_press_cab then

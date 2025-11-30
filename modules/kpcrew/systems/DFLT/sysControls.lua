@@ -15,7 +15,6 @@
 -- sysControls.rudderTrimSwitch
 -- sysControls.rudderReset
 -- sysControls.Speedbrake
--- sysControls.Autobrake
 -- sysControls.rudderDeflection
 -- sysControls.yawDamper
 -- Macro: kc_macro_set_flap

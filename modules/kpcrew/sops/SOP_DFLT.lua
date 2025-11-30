@@ -156,19 +156,11 @@ electricalPowerUpProc:addItem(ProcedureItem:new("BATTERY & ELECTRIC SYSTEM","ON/
 -- If GPU available and power up with GPU selected
 if kc_has_gpu then
 	electricalPowerUpProc:addItem(ProcedureItem:new("EXTERNAL POWER","CONNECT",FlowItem.actorFO,1,
-		function () return 
-			sysElectric.gpuConnect:getStatus() > 0
-		end,
-		function () 
-			sysElectric.gpuConnect:actuate(1)
-		end))	
+		function () return sysElectric.gpuConnect:getStatus() > 0 end,
+		function () sysElectric.gpuConnect:actuate(1) end))	
 	electricalPowerUpProc:addItem(ProcedureItem:new("EXTERNAL POWER","ON",FlowItem.actorFO,0,
-		function () return 
-			sysElectric.gpuOnBus:getStatus() > 0
-		end,
-		function () 
-			sysElectric.gpuGenBusGroup:actuate(1)
-		end))
+		function () return sysElectric.gpuOnBus:getStatus() > 0 end,
+		function () sysElectric.gpuGenBusGroup:actuate(1) end))
 end
 
 -- If APU available & APU power up selected
@@ -289,6 +281,11 @@ if kc_has_hyd_elec_pmps then
 		function () return true end,
 		function () kc_macro_hyd(kc_phase_before_start)	end))	
 end
+if kc_has_stairs then
+	beforeStart:addItem(ProcedureItem:new("STAIRS","RETRACT",FlowItem.actorFO,5,
+		function () return sysGeneral.stairsL1:getStatus() == 0 end,
+		function () sysGeneral.stairsL1:actuate(0) end))
+end
 if kc_has_doors then
 	beforeStart:addItem(ProcedureItem:new("DOORS","CLOSED",FlowItem.actorFO,0,
 		function () return sysGeneral.doorsAnc:getStatus() == 0 end,
@@ -296,9 +293,7 @@ if kc_has_doors then
 end
 beforeStart:addItem(ProcedureItem:new("LIGHTS","AS REQUIRED",FlowItem.actorFO,0,
 	function () return true end,
-	function () 
-		kc_macro_lights(kc_phase_before_start) 
-	end))
+	function () kc_macro_lights(kc_phase_before_start) end))
 beforeStart:addItem(ProcedureItem:new("PARKING BRAKE","SET",FlowItem.actorFO,0,
 	function () return sysGeneral.parkBrakeSwitch:getStatus() == 1 end,
 	function () sysGeneral.parkBrakeSwitch:actuate(1) end))
@@ -313,6 +308,9 @@ if kc_has_apu == true then
 				kc_macro_elec_system(kc_phase_before_start)
 			end))
 end
+beforeStart:addItem(ProcedureItem:new("ANTI-ICE SETTINGS","AS REQUIRED",FlowItem.actorFO,0,
+	function () return sysAir.engBleedGroup:getStatus() > 0 end,
+	function () kc_macro_aice(kc_phase_before_start) end))
 if kc_has_engine_bleed then
 	beforeStart:addItem(ProcedureItem:new("ENGINE BLEED SWITCHES","ON",FlowItem.actorFO,0,
 		function () return sysAir.engBleedGroup:getStatus() > 0 end,
@@ -365,10 +363,7 @@ prePushStartProc:addItem(ProcedureItem:new("DOORS","CLOSED",FlowItem.actorFO,0,
 end
 prePushStartProc:addItem(IndirectProcedureItem:new("PARKING BRAKE","SET",FlowItem.actorCPT,0,"pb_parkbrk_initial_set",
 	function () return sysGeneral.parkBrakeSwitch:getStatus() == 1 end,
-	function () 
-		sysGeneral.parkBrakeSwitch:actuate(1) 
-		kc_macro_lights(kc_phase_before_start)
-	end))
+	function () sysGeneral.parkBrakeSwitch:actuate(1) end))
 prePushStartProc:addItem(ProcedureItem:new("FLAP LEVER","UP",FlowItem.actorFO,0,
 	function () return sysControls.flapsSwitch:getStatus() == 0 end,
 	function () sysControls.flapsSwitch:setValue(0) end))
@@ -381,12 +376,9 @@ if kc_has_apu == true then
 		function () sysAir.apuBleedSwitch:actuate(1) end))
 end
 if kc_has_gpu == true and kc_has_apu == true then
-	prePushStartProc:addItem(ProcedureItem:new("EXTERNAL POWER","OFF",FlowItem.actorFO,2,
-		function () return sysElectric.gpuOnBus:getStatus() == 0
-		end,
-		function () 
-			sysElectric.gpuGenBusGroup:actuate(0)
-		end))
+	prePushStartProc:addItem(IndirectProcedureItem:new("EXTERNAL POWER","OFF",FlowItem.actorFO,2,"extpwrstartoff",
+		function () return sysElectric.gpuGenBusGroup:getStatus() == 0 end,
+		function () sysElectric.gpuGenBusGroup:actuate(0) end))
 end
 if kc_has_gpu == true and kc_has_apu == true then
 	prePushStartProc:addItem(ProcedureItem:new("EXTERNAL POWER","DISCONNECT",FlowItem.actorFO,0,
@@ -555,7 +547,7 @@ if kc_needs_throttle_idle then
 end
 if kc_get_nr_engines() == 1 then
 	engStartProc:addItem(IndirectProcedureItem:new("ENGINE START SWITCH","ENGAGE",FlowItem.actorFO,20,"eng_start_1_grd",
-		function () return sysEngines.engStart1Switch:getStatus() > 0 end,
+		function () return sysEngines.engineStarterAnc:getStatus() > 0 end,
 		function () 
 			kc_procvar_set("engstart1",true)
 			kc_speakNoText(0,"starting engine")
@@ -563,8 +555,9 @@ if kc_get_nr_engines() == 1 then
 else
 	engStartProc:addItem(IndirectProcedureItem:new("ENGAGE START SWITCH ","ENGINE %s|kc_StartBackground[activeBriefings:get(\"taxi:startSequence\")][1]",FlowItem.actorFO,20,"eng_start_1_grd",
 		function () 
-			local status = loadstring("return sysEngines.engStart" .. kc_StartBackground[activeBriefings:get("taxi:startSequence")][1] .. "Switch:getStatus() > 0")
-			return status()
+			return sysEngines.engineStarterAnc:getStatus() > 0
+			-- local status = loadstring("return sysEngines.engStart" .. kc_StartBackground[activeBriefings:get("taxi:startSequence")][1] .. "Switch:getStatus() > 0")
+			-- return status()
 		end,
 		function () 
 			kc_procvar_set("engstart" .. kc_StartBackground[activeBriefings:get("taxi:startSequence")][1],true)
@@ -601,8 +594,9 @@ if kc_get_nr_engines() >= 2 then
 	end
 	engStartProc:addItem(IndirectProcedureItem:new("ENGAGE START SWITCH ","ENGINE %s|kc_StartBackground[activeBriefings:get(\"taxi:startSequence\")][2]",FlowItem.actorFO,20,"eng_start_2_grd",
 		function () 
-			local status = loadstring("return sysEngines.engStart" .. kc_StartBackground[activeBriefings:get("taxi:startSequence")][2] .. "Switch:getStatus() > 0")
-			return status()
+			return sysEngines.engineStarterAnc:getStatus() > 0 
+			-- local status = loadstring("return sysEngines.engStart" .. kc_StartBackground[activeBriefings:get("taxi:startSequence")][2] .. "Switch:getStatus() > 0")
+			-- return status()
 		end,
 		function () 
 			kc_procvar_set("engstart" .. kc_StartBackground[activeBriefings:get("taxi:startSequence")][2],true)
@@ -633,8 +627,9 @@ if kc_get_nr_engines() >= 3 then
 	end
 	engStartProc:addItem(IndirectProcedureItem:new("ENGAGE START SWITCH ","ENGINE %s|kc_StartBackground[activeBriefings:get(\"taxi:startSequence\")][3]",FlowItem.actorFO,20,"eng_start_3_grd",
 		function () 
-			local status = loadstring("return sysEngines.engStart" .. kc_StartBackground[activeBriefings:get("taxi:startSequence")][3] .. "Switch:getStatus() > 0")
-			return status()
+			return sysEngines.engineStarterAnc:getStatus() > 0 
+			-- local status = loadstring("return sysEngines.engStart" .. kc_StartBackground[activeBriefings:get("taxi:startSequence")][3] .. "Switch:getStatus() > 0")
+			-- return status()
 		end,
 		function () 
 			kc_procvar_set("engstart" .. kc_StartBackground[activeBriefings:get("taxi:startSequence")][3],true)
@@ -665,8 +660,9 @@ if kc_get_nr_engines() >= 4 then
 	end
 	engStartProc:addItem(IndirectProcedureItem:new("ENGAGE START SWITCH ","ENGINE %s|kc_StartBackground[activeBriefings:get(\"taxi:startSequence\")][4]",FlowItem.actorFO,20,"eng_start_4_grd",
 		function () 
-			local status = loadstring("return sysEngines.engStart" .. kc_StartBackground[activeBriefings:get("taxi:startSequence")][4] .. "Switch:getStatus() > 0")
-			return status()
+			return sysEngines.engineStarterAnc:getStatus() > 0 
+			-- local status = loadstring("return sysEngines.engStart" .. kc_StartBackground[activeBriefings:get("taxi:startSequence")][4] .. "Switch:getStatus() > 0")
+			-- return status()
 		end,
 		function () 
 			kc_procvar_set("engstart" .. kc_StartBackground[activeBriefings:get("taxi:startSequence")][4],true)
@@ -803,9 +799,7 @@ end
 afterStartProc:addItem(HoldProcedureItem:new("TAXI LIGHTS","ON WHEN TAXI BEGINS",FlowItem.actorCPT))
 afterStartProc:addItem(ProcedureItem:new("TAXI LIGHTS","ON",FlowItem.actorFO,0,
 	function () return sysLights.taxiSwitch:getStatus() > 0 end,
-	function () 
-		kc_macro_lights(kc_phase_taxi_rwy)
-	end))
+	function () kc_macro_lights(kc_phase_taxi_rwy) end))
 -- =====================================================================================================================
 
 -- =================== BEFORE TAKEOFF ====================
@@ -848,7 +842,7 @@ end
 beforeTakeoffProc:addItem(ProcedureItem:new("MCP","INITIALIZE",FlowItem.actorFO,0,
 	function () return sysMCP.altDisplay:getStatus() == activeBriefings:get("departure:initAlt") end,
 	function () kc_macro_mcp(kc_phase_before_takeoff) end))
-if kc_has_speedbrake and kc_spdbrk_can_arm then
+if kc_has_speedbrake and kc_spdbrk_can_arm and kc_spdbrk_arm_to then
 	beforeTakeoffProc:addItem(ProcedureItem:new("SPEEDBRAKE","ARM",FlowItem.actorFO,0,
 	function () return sysControls.Speedbrake:getStatus() == kc_spdbrk_arm_pos end,
 	function () kc_macro_arm_speedbrake() end))
@@ -933,7 +927,7 @@ gearUpProc:setFlightPhase(0-kc_phase_takeoff)
 
 if kc_has_retractgear then
 	gearUpProc:addItem(IndirectProcedureItem:new("GEAR","UP",FlowItem.actorPM,0,"gear_up_to",
-		function () return sysGeneral.GearSwitch:getStatus() == 0 end,
+		function () return sysGeneral.GearSwitch:getStatus() < 1 end,
 		function () 
 			sysGeneral.GearSwitch:actuate(0) 
 			kc_speakNoText(0,"gear coming up") 
@@ -955,7 +949,7 @@ if kc_is_airbus == false and kc_has_yawdamper then
 end
 if kc_has_retractgear then
 	flapsUpProc:addItem(ProcedureItem:new("GEAR","UP",FlowItem.actorPM,0,
-		function () return sysGeneral.GearSwitch:getStatus() == 0 end,
+		function () return sysGeneral.GearSwitch:getStatus() < 1 end,
 		function () sysGeneral.GearSwitch:actuate(0) end))
 end
 for toflapidx=kc_NumFlapsTO, 2, -1 do
@@ -1005,7 +999,7 @@ afterTakeoffCheck:setFlightPhase(kc_phase_climb)
 
 if kc_has_retractgear then
 	afterTakeoffCheck:addItem(ChecklistItem:new("LANDING GEAR","RETRACTED",FlowItem.actorPM,0,
-		function () return sysGeneral.GearSwitch:getStatus() == 0 end,
+		function () return sysGeneral.GearSwitch:getStatus() < 1 end,
 		function () 
 			sysGeneral.GearSwitch:actuate(0) 
 			sysLights.taxiSwitch:actuate(0)
@@ -1125,7 +1119,7 @@ if kc_has_autobrake then
 end
 if kc_has_seatbelt_sgn then
 	descentProc:addItem(ProcedureItem:new("SEAT BELT LIGHTS","ON",FlowItem.actorPM,0,
-		function () return sysGeneral.passSignsSwitch:getStatus() == 1 end,
+		function () return sysGeneral.passSignsSwitch:getStatus() > 0 end,
 		function () sysGeneral.passSignsSwitch:actuate(1) end))
 end 
 
@@ -1260,7 +1254,7 @@ ap1off:setFlightPhase(0-kc_phase_approach)
 if kc_has_autopilot then
 	ap1off:addItem(ProcedureItem:new("A/P 1","OFF",FlowItem.actorFO,0,
 		function () return sysMCP.apDiscYoke:getStatus() == 0 end,
-		function () sysMCP.apDiscYoke:actuate(1) end))
+		function () sysMCP.apDiscYoke:actuate(0) end))
 end
 
 if kc_has_autothrottle and kc_is_airbus == false then
@@ -1524,16 +1518,10 @@ shutdownProc:addItem(ProcedureItem:new("LIGHTS","AS REQUIRED",FlowItem.actorFO,0
 local coldAndDarkProc = State:new("COLD AND DARK","securing the aircraft","")
 coldAndDarkProc:setFlightPhase(SOP.phaseColdAndDark)
 coldAndDarkProc:addItem(ProcedureItem:new("COLD & DARK","SET","SYS",1,true,
-	function () 
-		kc_macro_state_cold_and_dark()
-	end))
+	function () kc_macro_state_cold_and_dark() end))
 coldAndDarkProc:addItem(ProcedureItem:new("GPU DISCONNECT","SET","SYS",0,true,
-	function ()
-		if kc_has_gpu then
-			sysElectric.gpuConnect:actuate(0)
-		end
-		getActiveSOP():reset()
-		getActiveSOP():setActiveFlowIndex(1)
+	function () if kc_has_gpu then sysElectric.gpuConnect:actuate(0) end
+		getActiveSOP():reset() getActiveSOP():setActiveFlowIndex(1) -- reset to engine start flows
 		kc_procvar_set("callouts",false)	-- stop callouts
 	end))
 		
@@ -1541,18 +1529,13 @@ coldAndDarkProc:addItem(ProcedureItem:new("GPU DISCONNECT","SET","SYS",0,true,
 local turnAroundProc = State:new("AIRCRAFT TURN AROUND","setting up the aircraft","aircraft configured for turn around")
 turnAroundProc:setFlightPhase(SOP.phaseTurnAround)
 turnAroundProc:addItem(ProcedureItem:new("TURNAROUND","SET","SYS",0,true,
-	function () 
-		kc_macro_state_turnaround()
-	end))
-turnAroundProc:addItem(ProcedureItem:new("GPU GENERATOR","ON","SYS",0,true,
-	function ()
-		if kc_has_gpu then
-			sysElectric.gpuGenBusGroup:actuate(1)
-		end
+	function () kc_macro_state_turnaround()	end))
+turnAroundProc:addItem(ProcedureItem:new("GPU DISCONNECT","SET","SYS",0,true,
+	function () if kc_has_gpu then sysElectric.gpuConnect:actuate(0) end 
+		getActiveSOP():reset() getActiveSOP():setActiveFlowIndex(1) -- reset to power up flow
 		kc_procvar_set("callouts",false)	-- stop callouts
-		getActiveSOP():reset()
-		getActiveSOP():setActiveFlowIndex(2)
 	end))
+	
 -- ============  =============
 -- add the checklists and procedures to the active sop
 local nopeProc = Procedure:new("NO PROCEDURES AVAILABLE")
@@ -1617,6 +1600,7 @@ kc_procvar_initialize_bool("engstart2", false)
 kc_procvar_initialize_bool("engstart3", false) 
 kc_procvar_initialize_bool("engstart4", false) 
 kc_procvar_initialize_bool("auxiliary", false) 
+kc_procvar_initialize_bool("apdisconnect", false)
 kc_procvar_initialize_bool("callouts", false) -- general callouts per flight phase
 
 backgroundFlow:addItem(BackgroundProcedureItem:new("","","SYS",0,
@@ -1653,6 +1637,9 @@ backgroundFlow:addItem(BackgroundProcedureItem:new("","","SYS",0,
 		end
 		if kc_procvar_get("auxiliary") == true then 
 			kc_bck_auxiliary("auxiliary")
+		end
+		if kc_procvar_get("apdisconnect") == true then 
+			kc_bck_disconnect_ap("apdisconnect")
 		end
 		if kc_procvar_get("callouts") == true then 
 			kc_bck_callouts("callouts")

@@ -54,6 +54,7 @@
 -- Macro: kc_macro_doors_ext
 -- Macro: kc_macro_set_groundobjects
 -- Macro: kc_macro_set_autobrake
+-- Macro: kc_macro_set_irs
 
 local sysGeneral = {
 }
@@ -101,13 +102,7 @@ sysGeneral.groundObjects 	= InopSwitch:new("ground objects")
 -- Parking Brake
 sysGeneral.parkBrakeSwitch 	= TwoStateToggleSwitch:new("parkbrake",drefParkbrake,0,cmdParkbrake)
 sysGeneral.parkbrakeAnc 	= CustomAnnunciator:new("parkbrake",
-function ()
-	if get(drefParkbrake) > 0 then
-		return 1
-	else
-		return 0
-	end
-end)
+function () if get(drefParkbrake) > 0 then return 1 else return 0 end end)
 
 -- Landing Gear
 sysGeneral.GearSwitch 		= TwoStateCmdSwitch:new("gear",drefGearLever,0,
@@ -127,12 +122,7 @@ function ()
 	local sum = sysGeneral.gearLeftGreenAnc:getStatus() +
 				sysGeneral.gearRightGreenAnc:getStatus() +
 				sysGeneral.gearNodeGreenAnc:getStatus()
-	if sum > 0 then 
-		return 1
-	else
-		return 0
-	end
-end)
+	if sum > 0 then return 1 else return 0 end end)
 
 -- Doors
 sysGeneral.doorL1			= TwoStateCustomSwitch:new("doorl1",drefSlider,-1,
@@ -304,7 +294,19 @@ sysGeneral.doorACargo 		= TwoStateCustomSwitch:new("dooracargo",drefSlider,5,
 		end
 	end)
 sysGeneral.cockpitDoor 		= InopSwitch:new("cockpitdoor")
-sysGeneral.stairsL1 		= InopSwitch:new("stairs1")
+sysGeneral.stairsL1 		= TwoStateCustomSwitch:new("stairs1","laminar/B738/airstairs_hide",0,
+	function() 
+		if get("laminar/B738/airstairs_hide") == 1 then
+			command_once("laminar/B738/airstairs_toggle")
+		end
+	end,
+	function() 
+		if get("laminar/B738/airstairs_hide") == 0 then
+			command_once("laminar/B738/airstairs_toggle")
+		end
+	end,
+	function() command_once("laminar/B738/airstairs_toggle") end,
+	function() return 1 - get("laminar/B738/airstairs_hide") end)
 
 sysGeneral.doorGroup 		= SwitchGroup:new("doors")
 sysGeneral.doorGroup:addSwitch(sysGeneral.doorL1)
@@ -332,12 +334,7 @@ function ()
 				sysGeneral.doorR2Anc:getStatus() +
 				sysGeneral.doorFCargoAnc:getStatus() +
 				sysGeneral.doorACargoAnc:getStatus()
-	if sum > 0 then 
-		return 1
-	else
-		return 0
-	end
-end)
+	if sum > 0 then return 1 else return 0 end end)
 
 -- Windows
 sysGeneral.window1			= InopSwitch:new("window1")
@@ -428,7 +425,7 @@ function kc_macro_doors_ext(flightphase)
 			if kc_is_cargo then
 				sysGeneral.doorL2:actuate(1)
 			else
-				sysGeneral.doorL2:actuate(1)
+				sysGeneral.doorL2:actuate(0)
 			end
 			sysGeneral.doorR1:actuate(0)
 			sysGeneral.doorR2:actuate(0)
@@ -516,6 +513,17 @@ end
 
 function kc_macro_set_autobrake(index)
 	sysGeneral.Autobrake:setValue(index)	
+end
+
+-- IRS off 0=OFF, 1=ALIGN, 2=NAV
+function kc_macro_set_irs(mode)
+	if mode == 0 then -- off
+		-- do nothing in DFLT
+	elseif mode == 1 then -- ALIGN
+		-- do nothing in DFLT
+	elseif mode == 2 then -- NAV 
+		-- do nothing in DFLT
+	end
 end
 
 return sysGeneral

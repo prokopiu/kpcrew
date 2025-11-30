@@ -97,6 +97,8 @@ function ()
 	end
 end)
 
+---------- Macros
+
 -- ====================================== Fuel system flight phase 
 function kc_macro_fuel(flightphase)
 	logMsg("Fuel flight phase: " .. kcSopFlightPhase[flightphase])

@@ -51,7 +51,6 @@ local drefWingAice2			= "sim/cockpit/switches/anti_ice_surf_heat_right"
 local drefEngineAice		= "sim/cockpit/switches/anti_ice_inlet_heat_per_engine"
 
 --------- Annunciator datarefs common
--- local drefThrottlePos		= "sim/cockpit2/engine/actuators/throttle_ratio_all"
 
 --------- Switch commands common
 local cmdWindowHeat1On		= "sim/ice/window_heat_on"
@@ -161,6 +160,11 @@ function kc_macro_aice(flightphase)
 		if kc_has_wing_antiice then
 			sysAice.wingAiceGroup:actuate(0)
 		end
+	elseif flightphase == kc_phase_before_start then
+		if kc_has_pitot_heat then sysAice.probeHeatGroup:actuate(1)	end
+		if kc_is_airbus == false and kc_has_window_heat  then sysAice.windowHeatGroup:actuate(1) end
+		if kc_has_eng_antiice then sysAice.engAntiIceGroup:actuate(0) end
+		if kc_has_wing_antiice then	sysAice.wingAiceGroup:actuate(0) end
 	elseif flightphase == kc_phase_after_start then
 		if kc_has_window_heat  then
 			if kc_is_airbus then	

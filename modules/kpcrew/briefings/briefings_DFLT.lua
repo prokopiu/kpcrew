@@ -36,6 +36,7 @@ kc_has_aileron_trim	= true		-- Aircraft has aileron trim
 kc_has_rudder_trim	= true		-- Aircraft has rudder trim
 kc_spdbrk_can_arm	= false		-- Aircraft's speedbrake can be armed
 kc_spdbrk_arm_pos	= -1
+kc_spdbrk_arm_to	= false		-- Speedbrake to be armed for takeoff (e.g. Airbus)
 kc_full_rgt_rudder	= 14.9		-- Threshold where the rudder is almost fully to the right
 kc_NumFlapsTO		= 3
 kc_TakeoffFlaps 	= "0|1|2| | | | "

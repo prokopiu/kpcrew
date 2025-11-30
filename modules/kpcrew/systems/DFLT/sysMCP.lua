@@ -52,7 +52,6 @@
 -- sysMCP.yawDamper
 -- sysMCP.lsSwitch
 -- Macro: kc_macro_mcp
--- Macro: kc_macro_set_irs
 -- UI: panel_render
 
 local sysMCP = {
@@ -408,15 +407,8 @@ function kc_macro_mcp(flightphase)
 	end
 end 
 
--- IRS off 0=OFF, 1=ALIGN, 2=NAV
-function kc_macro_set_irs(mode)
-	if mode == 0 then -- off
-		-- do nothing in DFLT
-	elseif mode == 1 then -- ALIGN
-		-- do nothing in DFLT
-	elseif mode == 2 then -- NAV 
-		-- do nothing in DFLT
-	end
+function kc_bck_disconnect_ap(trigger)
+	command_once(cmdAPDisconnect)
 end
 
 -- ===== UI related functions =====

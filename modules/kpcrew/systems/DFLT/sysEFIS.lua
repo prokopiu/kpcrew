@@ -262,6 +262,14 @@ sysEFIS.baroGroup:addSwitch(sysEFIS.baroPilot)
 sysEFIS.baroGroup:addSwitch(sysEFIS.baroCoPilot)
 sysEFIS.baroGroup:addSwitch(sysEFIS.baroStandby)
 
+
+-- set baros to local pressure at departure airport
+function kc_macro_set_local_baro()
+	set("sim/cockpit/misc/barometer_setting",math.floor(get("sim/weather/barometer_sealevel_inhg")*100)/100)
+	set("sim/cockpit/misc/barometer_setting2",math.floor(get("sim/weather/barometer_sealevel_inhg")*100)/100) 
+end
+
+
 ----- UI releated functions
 function sysEFIS.panel_render()
 	imgui.BeginGroup()
