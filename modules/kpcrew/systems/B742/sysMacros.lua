@@ -110,7 +110,7 @@ function kc_macro_custom_turnaround()
 
 	set("B742/ELEC/ESS_bus_sel",1)
 	
-	set("B742/OVHD/body_gear_steer_sw",1)
+	set("B742/OVHD/body_gear_steer_sw",0)
 	set("B742/OVHD/body_gear_steer_cap",1)
 	
 	sysEngines.engStarterGroup:actuate(0)
@@ -133,6 +133,7 @@ function kc_macro_custom_turnaround()
 	set("B742/FUEL/scavenge_pump_sw",0)
 	
 	set("B742/AIR_COND/mode_sel_rotary",1)
+
 end
 
 return sysMacros

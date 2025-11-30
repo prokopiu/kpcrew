@@ -46,67 +46,9 @@ SOP_B742 = require("kpcrew.sops.SOP_DFLT")
 activeSOP:setName("FELIS B747-200 SOP")
 
 -- === power up
-activeSOP:getFlow(proc_ind_electrical):addItem(ProcedureItem:new("RADIOS","ON",FlowItem.actorFO,0,
-	function () return get("B742/OVHD/radio_master_bus_ESS_on") == 1 end,
-	function () 
-		set("B742/OVHD/radio_master_bus_ESS_on",1)
-		set("B742/OVHD/radio_master_bus_NO2_on",1)
-	end))
-activeSOP:getFlow(proc_ind_electrical):addItem(ProcedureItem:new("BODY GEAR STEERING","ARM",FlowItem.actorFO,0,
-	function () return get("B742/OVHD/body_gear_steer_sw") == 0 end,
-	function () 
-		set("B742/OVHD/body_gear_steer_sw",0)
-		set("B742/OVHD/body_gear_steer_cap",1)
-	end))
-activeSOP:getFlow(proc_ind_electrical):addItem(ProcedureItem:new("ANTI-SKID","ON",FlowItem.actorFO,0,
-	function () return get("B742/OVHD/anti_skid_on_off_sw") == 1 end,
-	function () 
-		set("B742/OVHD/anti_skid_on_off_sw",1)
-		set("B742/OVHD/anti_skid_on_off_cap",0)
-	end))
-activeSOP:getFlow(proc_ind_electrical):addItem(ProcedureItem:new("TRIM AIR","OPEN",FlowItem.actorFO,0,
-	function () return get("B742/AIR_COND/trim_air_sw") == 1 end,
-	function () set("B742/AIR_COND/trim_air_sw",1) end))
-activeSOP:getFlow(proc_ind_electrical):addItem(ProcedureItem:new("GALLEY CHILLERS","ON",FlowItem.actorFO,0,
-	function () return get("B742/FE/galley_chiller_sw",0) == 1 end,
-	function () 
-		set_array("B742/FE/galley_chiller_sw",0,1)
-		set_array("B742/FE/galley_chiller_sw",1,1)
-		set_array("B742/FE/galley_chiller_sw",2,1)	
-	end))
-activeSOP:getFlow(proc_ind_electrical):addItem(ProcedureItem:new("WX RADAR","STBY",FlowItem.actorFO,0,
-	function () return sysEFIS.wxrPilot:getStatus() == 1 end,
-	function () sysEFIS.wxrPilot:setValue(1) end))
-activeSOP:getFlow(proc_ind_electrical):addItem(ProcedureItem:new("DC BUS ISOLATION","ON",FlowItem.actorFO,0,
-	function () return get("B742/FE/galley_chiller_sw",0) == 1 end,
-	function () 
-		set("B742/FE/DC_bus_isolation_2_sw",1)
-		set("B742/FE/DC_bus_isolation_3_sw",1)
-		set("B742/FE/DC_bus_isolation_4_sw",1)
-	end))
-activeSOP:getFlow(proc_ind_electrical):addItem(ProcedureItem:new("ENGINE IGNITION","OFF",FlowItem.actorFO,0,
-	function () return sysEngines.engStarterGroup:getStatus() == 0 end,
-	function () sysEngines.engStarterGroup:actuate(0) end))	
-activeSOP:getFlow(proc_ind_electrical):addItem(ProcedureItem:new("ALT FLAPS LEADING EDGE","OFF",FlowItem.actorFO,0,
-	function () return get("B742/FE/galley_chiller_sw",0) == 1 end,
-	function () 
-		set_array("B742/OVHD/alt_flaps_LE_sw",0,0)
-		set_array("B742/OVHD/alt_flaps_LE_sw",1,0)
-		set_array("B742/OVHD/alt_flaps_LE_sw",2,0)
-		set_array("B742/OVHD/alt_flaps_LE_sw",3,0)	
-	end))
-activeSOP:getFlow(proc_ind_electrical):addItem(ProcedureItem:new("ALT FLAPS TRAILING EDGE","OFF",FlowItem.actorFO,0,
-	function () return get("B742/FE/galley_chiller_sw",0) == 1 end,
-	function () 
-		set("B742/OVHD/alt_flaps_TE_sw_inbd",0)
-		set("B742/OVHD/alt_flaps_TE_sw_outbd",0)
-	end))
-activeSOP:getFlow(proc_ind_electrical):addItem(ProcedureItem:new("STANDBY IGNITION","NORM",FlowItem.actorFO,0,
-	function () return get("B742/OVHD/stby_ignition_sel") == 0 end,
-	function () set("B742/OVHD/stby_ignition_sel",0) end))	
-activeSOP:getFlow(proc_ind_electrical):addItem(ProcedureItem:new("ESS AC BUS","NORM",FlowItem.actorFO,0,
-	function () return get("B742/ELEC/ESS_bus_sel") == 1 end,
-	function () set("B742/ELEC/ESS_bus_sel",1) end))
+activeSOP:getFlow(proc_ind_electrical):addItem(ProcedureItem:new("OTHER ITEMS","SET",FlowItem.actorFO,0,
+	function () return true end,
+	function () kc_macro_custom_turnaround() end))
 activeSOP:getFlow(proc_ind_electrical):addItem(ProcedureItem:new("GPWS & INSTR","TEST",FlowItem.actorFO,1,
 	function () return get("B742/misc_controls/instr_warn_test_button") == 1 end,
 	function () 
@@ -143,7 +85,11 @@ activeSOP:getFlow(proc_ind_beforeStart):addItem(ProcedureItem:new("EPRL","GA & E
 		set("B742/EPRL/eprl_mode_sel",5)
 		set("B742/EPRL/mode_epr_button",1)
 	end))
-	
+activeSOP:getFlow(proc_ind_beforeStart):addItem(ProcedureItem:new("PACK 1","ON",FlowItem.actorFO,0,
+	function () return sysAir.packLeftSwitch:getStatus() == 1 end,
+	function () sysAir.packLeftSwitch:actuate(1) end))
+activeSOP:getFlow(proc_ind_beforeStart):addItem(HoldProcedureItem:new("BEFORE START CHECKLIST","CALL",FlowItem.actorCPT))
+
 -- === After Start
 activeSOP:getFlow(proc_ind_afterStart):addItem(ProcedureItem:new("YAW DAMPERS","ON",FlowItem.actorFO,0,
 	function () return sysMCP.yawDamper:getStatus() > 0 end,
@@ -169,6 +115,7 @@ activeSOP:getFlow(proc_ind_afterStart):addItem(ProcedureItem:new("GASPER","ON",F
 activeSOP:getFlow(proc_ind_afterStart):addItem(ProcedureItem:new("SUPPLY VENT FANS","ON",FlowItem.actorFO,0,
 	function () return get("B742/AIR_COND/suppl_vent_fans_sw") == 1 end,
 	function () set("B742/AIR_COND/suppl_vent_fans_sw",1) end))
+activeSOP:getFlow(proc_ind_afterStart):addItem(HoldProcedureItem:new("AFTER START CHECKLIST","CALL",FlowItem.actorCPT))
 	
 -- === Before Takeoff
 activeSOP:getFlow(proc_ind_beforeTakeoff):addItem(ProcedureItem:new("WX RADAR","WX",FlowItem.actorFO,0,
@@ -189,6 +136,7 @@ activeSOP:getFlow(proc_ind_beforeTakeoff):addItem(ProcedureItem:new("EPRL","TOD 
 		set("B742/EPRL/eprl_mode_sel",1)
 		set("B742/EPRL/mode_epr_button",1)
 	end))
+activeSOP:getFlow(proc_ind_beforeTakeoff):addItem(HoldProcedureItem:new("BEFORE TAKEOFF CHECKLIST","CALL",FlowItem.actorCPT))
 	
 -- === Runway entry
 activeSOP:getFlow(proc_ind_runwayEntry):addItem(ProcedureItem:new("PACKS & BLEEDS","AS REQUIRED",FlowItem.actorFO,0,
@@ -207,11 +155,11 @@ activeSOP:getFlow(proc_ind_runwayEntry):addItem(ProcedureItem:new("BODY GEAR STE
 		set("B742/OVHD/body_gear_steer_sw",1) 
 		set("B742/OVHD/body_gear_steer_cap",0)
 	end))
-activeSOP:getFlow(proc_ind_runwayEntry):addItem(HoldProcedureItem:new("AUTO THRUST","SET CLB & SPD",FlowItem.actorCPT))
+-- activeSOP:getFlow(proc_ind_runwayEntry):addItem(HoldProcedureItem:new("AUTO THRUST","SET CLB & SPD",FlowItem.actorCPT))
 
 
 -- === Gear up
-activeSOP:getFlow(proc_ind_gearUp):addItem(ProcedureItem:new("EPRL","CLB & SPD MODE",FlowItem.actorFO,0,
+activeSOP:getFlow(proc_ind_flapsUp):addItem(ProcedureItem:new("EPRL","CLB & SPD MODE",FlowItem.actorFO,0,
 	function () return get("B742/EPRL/eprl_mode_sel") == 3 end,
 	function () 
 		set("B742/EPRL/eprl_mode_sel",3)
@@ -220,6 +168,7 @@ activeSOP:getFlow(proc_ind_gearUp):addItem(ProcedureItem:new("EPRL","CLB & SPD M
 	end))
 
 -- === After Takeoff
+activeSOP:getFlow(proc_ind_afterTakeoff):addItem(HoldProcedureItem:new("AFTER TAKEOFF CHECKLIST","CALL",FlowItem.actorCPT))
 
 	
 -- === Climb Checks
@@ -233,6 +182,9 @@ activeSOP:getFlow(proc_ind_climbCheck):addItem(ProcedureItem:new("EPRL","CRZ & M
 		set("B742/EPRL/eprl_mode_sel",4)
 		set("B742/EPRL/mode_mach_button",1)
 	end))
+
+activeSOP:getFlow(proc_ind_descent):addItem(HoldProcedureItem:new("DESCEND CHECKLIST","CALL",FlowItem.actorCPT))
+
 	
 -- === landing
 activeSOP:getFlow(proc_ind_landing):addItem(ProcedureItem:new("ENGINE IGNITION","FLT START",FlowItem.actorFO,0,
@@ -264,6 +216,15 @@ activeSOP:getFlow(proc_ind_afterLandingProc):addItem(ProcedureItem:new("AUTOBRAK
 activeSOP:getFlow(proc_ind_afterLandingProc):addItem(ProcedureItem:new("PRESSURIZATION MODE SELECTOR","MAN",FlowItem.actorFO,0,
 		function () return get("B742/AIR_COND/mode_sel_rotary") == 2 end,
 		function () set("B742/AIR_COND/mode_sel_rotary",2) end))
+activeSOP:getFlow(proc_ind_afterLandingProc):addItem(ProcedureItem:new("GALLEY POWER","OFF",FlowItem.actorFO,0,
+	function () return get("B742/FE/galley_pwr_sw",0,0) == 0 end,
+	function () 
+		set_array("B742/FE/galley_pwr_sw",0,0)
+		set_array("B742/FE/galley_pwr_sw",1,0)
+		set_array("B742/FE/galley_pwr_sw",2,0)
+		set_array("B742/FE/galley_pwr_sw",3,0)
+	end))
+activeSOP:getFlow(proc_ind_afterLandingProc):addItem(HoldProcedureItem:new("AFTER LANDING CHECKLIST","CALL",FlowItem.actorCPT))
 
 -- === Shutdown
 activeSOP:getFlow(proc_ind_shutdownProc):addItem(ProcedureItem:new("GASPER","OFF",FlowItem.actorFO,0,
@@ -272,4 +233,7 @@ activeSOP:getFlow(proc_ind_shutdownProc):addItem(ProcedureItem:new("GASPER","OFF
 activeSOP:getFlow(proc_ind_shutdownProc):addItem(ProcedureItem:new("SUPPLY VENT FANS","OFF",FlowItem.actorFO,0,
 	function () return get("B742/AIR_COND/suppl_vent_fans_sw") == 0 end,
 	function () set("B742/AIR_COND/suppl_vent_fans_sw",0) end))
+activeSOP:getFlow(proc_ind_shutdownProc):addItem(HoldProcedureItem:new("SHUTDOWN CHECKLIST","CALL",FlowItem.actorCPT))
+
+
 return SOP_B742
