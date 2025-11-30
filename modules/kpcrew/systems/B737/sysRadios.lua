@@ -19,15 +19,9 @@ local KeepPressedSwitchCmd	= require "kpcrew.systems.KeepPressedSwitchCmd"
 sysRadios = require("kpcrew.systems.DFLT.sysRadios")
 
 logMsg("B737 sysRadios")
-kc_is_zibo			= PLANE_ICAO == "B738" and PLANE_TAILNUMBER == "ZB738"
 
-if kc_is_zibo then
-	sysRadios.xpdrSwitch 		= MultiStateCmdSwitch:new ("xpdrmode","laminar/B738/knob/transponder_pos",0,
-		"laminar/B738/knob/transponder_mode_dn","laminar/B738/knob/transponder_mode_up",0,5,true)
-else
-	sysRadios.xpdrSwitch 		= MultiStateCmdSwitch:new ("xpdrmode","laminar/B738/knob/transponder_pos",0,
-		"laminar/B738/knob/transponder_mode_dn","laminar/B738/knob/transponder_mode_up",1,5,true)
-end
+sysRadios.xpdrSwitch 		= MultiStateCmdSwitch:new ("xpdrmode","laminar/B738/knob/transponder_pos",0,
+	"laminar/B738/knob/transponder_mode_dn","laminar/B738/knob/transponder_mode_up",0,5,true)
 	
 sysRadios.xpdrCode 			= TwoStateDrefSwitch:new ("xpdrcode","sim/cockpit2/radios/actuators/transponder_code",0)
 
@@ -35,5 +29,9 @@ sysRadios.stby				= 1
 sysRadios.alt				= 3
 sysRadios.ta				= 4
 sysRadios.tara				= 5
+
+function kc_macro_set_xpdrmode(mode)
+	sysRadios.xpdrSwitch:actuate(mode)
+end
 
 return sysRadios

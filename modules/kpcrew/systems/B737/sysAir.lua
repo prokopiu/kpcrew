@@ -5,6 +5,24 @@
 -- @author Kosta Prokopiu
 -- @copyright 2025 Kosta Prokopiu
 
+-- System Elements:
+-- sysAir.trimAirSwitch
+-- sysAir.recircFanLeft
+-- sysAir.recircFanRight
+-- sysAir.recircSwitchGroup
+-- sysAir.packLeftSwitch 
+-- sysAir.packRightSwitch
+-- sysAir.packSwitchGroup
+-- sysAir.isoValveSwitch
+-- sysAir.bleedEng1Switch
+-- sysAir.bleedEng2Switch
+-- sysAir.bleedEng3Switch
+-- sysAir.bleedEng4Switch
+-- sysAir.engBleedGroup
+-- sysAir.apuBleedSwitch
+-- sysAir.oxygenMaster
+
+
 local sysAir = {
 }
 
@@ -22,112 +40,160 @@ local KeepPressedSwitchCmd	= require "kpcrew.systems.KeepPressedSwitchCmd"
 sysAir = require("kpcrew.systems.DFLT.sysAir")
 
 logMsg("B737 sysAir")
-kc_is_zibo			= PLANE_ICAO == "B738" and PLANE_TAILNUMBER == "ZB738"
+
+--------- Switch datarefs common
+local drefTrimAir			= "laminar/B738/air/trim_air_pos"
+local drefRecircL			= "laminar/B738/air/l_recirc_fan_pos"
+local drefRecircR			= "laminar/B738/air/r_recirc_fan_pos"
+local drefPackSwitchLeft	= "laminar/B738/air/l_pack_pos"
+local drefPackSwitchRight	= "laminar/B738/air/r_pack_pos"
+local drefIsoValve			= "laminar/B738/air/isolation_valve_pos"
+local drefBleedL			= "laminar/B738/toggle_switch/bleed_air_1_pos"
+local drefBleedR			= "laminar/B738/toggle_switch/bleed_air_2_pos"
+local drefAPUBleed			= "laminar/B738/toggle_switch/bleed_air_apu_pos"
+local drefOxygenMaster		= "sim/cockpit2/oxygen/actuators/demand_flow_setting"
+
+--------- Annunciator datarefs common
+local drefAirANC 			= "sim/cockpit2/annunciators/low_vacuum"
+
+--------- Switch commands common
+local cmdTraimAirTgl		= "laminar/B738/toggle_switch/trim_air"
+local cmdRecircLTgl			= "laminar/B738/toggle_switch/l_recirc_fan"
+local cmdRecircRTgl			= "laminar/B738/toggle_switch/r_recirc_fan"
+local cmdPackLeftDn			= "laminar/B738/toggle_switch/l_pack_dn"
+local cmdPackLeftUp			= "laminar/B738/toggle_switch/l_pack_up"
+local cmdPackRightDn		= "laminar/B738/toggle_switch/r_pack_dn"
+local cmdPackRightUp		= "laminar/B738/toggle_switch/r_pack_up"
+local cmdIsoValveDn			= "laminar/B738/toggle_switch/iso_valve_dn"
+local cmdIsoValveUp			= "laminar/B738/toggle_switch/iso_valve_up"
+local cmdBleedLTgl			= "laminar/B738/toggle_switch/bleed_air_1"
+local cmdBleedRTgl			= "laminar/B738/toggle_switch/bleed_air_2"
+local cmdAPUBleedTgl		= "laminar/B738/toggle_switch/bleed_air_apu"
+
+----------- Switches
+
+-- TRIM/RAM air
+sysAir.trimAirSwitch 		= TwoStateToggleSwitch:new("trimair",drefTrimAir,0,cmdTraimAirTgl)
+
+-- RECIRC fans
+sysAir.recircFanLeft 		= TwoStateToggleSwitch:new("recirc1",drefRecircL,0,cmdRecircLTgl)
+sysAir.recircFanRight 		= TwoStateToggleSwitch:new("recirc2",drefRecircR,0,cmdRecircRTgl)
+sysAir.recircSwitchGroup 	= SwitchGroup:new("Recirc")
+sysAir.recircSwitchGroup:addSwitch(sysAir.recircFanLeft)
+sysAir.recircSwitchGroup:addSwitch(sysAir.recircFanRight)
 
 -- PACK switches
-if kc_is_zibo then
-	sysAir.packLeftSwitch 		= MultiStateCmdSwitch:new("pack1","laminar/B738/air/l_pack_pos",0,
-		"laminar/B738/toggle_switch/l_pack_dn","laminar/B738/toggle_switch/l_pack_up",0,2,false)
-	sysAir.packRightSwitch 		= MultiStateCmdSwitch:new("pack2","laminar/B738/air/r_pack_pos",0,
-		"laminar/B738/toggle_switch/r_pack_dn","laminar/B738/toggle_switch/r_pack_up",0,2,false)
-else
-	sysAir.packLeftSwitch 		= TwoStateCustomSwitch:new("pack1","laminar/B738/pressurization/l_pack_pos",0,
-		function ()
-			command_once("laminar/B738/switch/Lpack_up")
-			command_once("laminar/B738/switch/Lpack_up")
-			command_once("laminar/B738/switch/Lpack_dn")
-		end,
-		function ()
-			command_once("laminar/B738/switch/Lpack_up")
-			command_once("laminar/B738/switch/Lpack_up")
-		end,
-		function ()
-		end,
-		function ()
-			if get("laminar/B738/pressurization/l_pack_pos") > -1 then
-				return 1
-			else
-				return 0
-			end
-		end)
-	sysAir.packRightSwitch 		= TwoStateCustomSwitch:new("pack2","laminar/B738/pressurization/r_pack_pos",0,
-		function ()
-			command_once("laminar/B738/switch/Rpack_up")
-			command_once("laminar/B738/switch/Rpack_up")
-			command_once("laminar/B738/switch/Rpack_dn")
-		end,
-		function ()
-			command_once("laminar/B738/switch/Rpack_up")
-			command_once("laminar/B738/switch/Rpack_up")
-		end,
-		function ()
-		end,
-		function ()
-			if get("laminar/B738/pressurization/r_pack_pos") > -1 then
-				return 1
-			else
-				return 0
-			end
-		end)
-end
+sysAir.packLeftSwitch 		= MultiStateCmdSwitch:new("pack1",drefPackSwitchLeft,0,cmdPackLeftDn,cmdPackLeftUp,0,2,false)
+sysAir.packRightSwitch 		= MultiStateCmdSwitch:new("pack2",drefPackSwitchRight,0,cmdPackRightDn,cmdPackRightUp,0,2,false)
 sysAir.packSwitchGroup 		= SwitchGroup:new("PackBleeds")
 sysAir.packSwitchGroup:addSwitch(sysAir.packLeftSwitch)
 sysAir.packSwitchGroup:addSwitch(sysAir.packRightSwitch)
 
 -- ISOLATION VLV
-if kc_is_zibo then
-	sysAir.isoValveSwitch 		= MultiStateCmdSwitch:new("isolation","laminar/B738/air/isolation_valve_pos",0,
-		"laminar/B738/toggle_switch/iso_valve_dn","laminar/B738/toggle_switch/iso_valve_up",0,2,false)
-else
-	sysAir.isoValveSwitch 		= TwoStateCustomSwitch:new("isolation","laminar/B738/pressurization/iso_valve_pos",0,
-		function ()
-			command_once("laminar/B738/switch/iso_valve_up")
-			command_once("laminar/B738/switch/iso_valve_up")
-			command_once("laminar/B738/switch/iso_valve_dn")
-		end,
-		function ()
-			command_once("laminar/B738/switch/iso_valve_up")
-			command_once("laminar/B738/switch/iso_valve_up")
-		end,
-		function ()
-		end,
-		function ()
-			if get("laminar/B738/pressurization/iso_valve_pos") > -1 then
-				return 1
-			else
-				return 0
-			end
-		end)
-end
+sysAir.isoValveSwitch 		= TwoStateDrefSwitch:new("isolation",drefIsoValve,0)
 
 -- BLEED AIR
-if kc_is_zibo then
-	sysAir.bleedEng1Switch 		= TwoStateToggleSwitch:new("bleed1","laminar/B738/toggle_switch/bleed_air_1_pos",0,
-		"laminar/B738/toggle_switch/bleed_air_1")
-	sysAir.bleedEng2Switch 		= TwoStateToggleSwitch:new("bleed2","laminar/B738/toggle_switch/bleed_air_2_pos",0,
-		"laminar/B738/toggle_switch/bleed_air_2")
-else
-	sysAir.bleedEng1Switch 		= TwoStateCmdSwitch:new("bleed1","sim/cockpit2/bleedair/actuators/engine_bleed_sov",-1,
-		"sim/bleed_air/engine_1_on","sim/bleed_air/engine_1_off","sim/bleed_air/engine_1_toggle")
-	sysAir.bleedEng2Switch 		= TwoStateCmdSwitch:new("bleed2","sim/cockpit2/bleedair/actuators/engine_bleed_sov",1,
-		"sim/bleed_air/engine_2_on","sim/bleed_air/engine_2_off","sim/bleed_air/engine_2_toggle")
-end
+sysAir.bleedEng1Switch 		= TwoStateToggleSwitch:new("bleed1",drefBleedL,0,cmdBleedLTgl)
+sysAir.bleedEng2Switch 		= TwoStateToggleSwitch:new("bleed2",drefBleedR,0,cmdBleedRTgl)
 sysAir.engBleedGroup 		= SwitchGroup:new("EngBleeds")
 sysAir.engBleedGroup:addSwitch(sysAir.bleedEng1Switch)
 sysAir.engBleedGroup:addSwitch(sysAir.bleedEng2Switch)
 
--- APU Bleed
-if kc_is_zibo then
-	sysAir.apuBleedSwitch 		= TwoStateToggleSwitch:new("apubleed","laminar/B738/toggle_switch/bleed_air_apu_pos",0,
-		"laminar/B738/toggle_switch/bleed_air_apu")
-else
-	sysAir.apuBleedSwitch 		= TwoStateCmdSwitch:new("apubleed","sim/cockpit2/bleedair/actuators/apu_bleed",0,
-		"sim/bleed_air/apu_on","sim/bleed_air/apu_off","sim/bleed_air/apu_toggle")
-end
 
+-- APU Bleed
+sysAir.apuBleedSwitch 		= TwoStateToggleSwitch:new("apubleed",drefAPUBleed,0,cmdAPUBleedTgl)
+
+-- Oxygen Supply
+sysAir.oxygenMaster			= TwoStateCustomSwitch:new("oxygen",drefOxygenMaster,0,
+	function () command_once("laminar/B738/one_way_switch/pax_oxy_on") end,
+	function () command_once("laminar/B738/one_way_switch/pax_oxy_norm") end,
+	function () command_once("laminar/B738/one_way_switch/pax_oxy_norm") end,
+	function () return get("laminar/B738/one_way_switch/pax_oxy_pos") end)
+	
 -- AIR temperature
 sysAir.contCabTemp 			= TwoStateDrefSwitch:new("airtemp1","laminar/B738/air/cont_cab_temp/rheostat",0)
 sysAir.fwdCabTemp 			= TwoStateDrefSwitch:new("airtemp2","laminar/B738/air/fwd_cab_temp/rheostat",0)
 sysAir.aftCabTemp 			= TwoStateDrefSwitch:new("airtemp3","laminar/B738/air/aft_cab_temp/rheostat",0)
+
+--------- Macros
+
+-- Macro: Air system flight phase 
+function kc_macro_air(flightphase)
+	logMsg("Fuel flight phase: " .. kcSopFlightPhase[flightphase])
+
+	if flightphase == kc_phase_colddark then
+		sysAir.packSwitchGroup:actuate(0)
+		sysAir.isoValveSwitch:actuate(0)
+		sysAir.engBleedGroup:actuate(0)
+		sysAir.oxygenMaster:actuate(0)
+		sysAir.recircSwitchGroup:actuate(0)
+		sysAir.trimAirSwitch:actuate(0)
+		sysAir.apuBleedSwitch:actuate(0)
+	elseif flightphase == kc_phase_turnaround then
+		sysAir.packSwitchGroup:actuate(1)
+		sysAir.isoValveSwitch:actuate(0)
+		sysAir.engBleedGroup:actuate(1)
+		sysAir.oxygenMaster:actuate(0)
+		sysAir.recircSwitchGroup:actuate(1)
+		sysAir.trimAirSwitch:actuate(1)
+		sysAir.apuBleedSwitch:actuate(0)
+	elseif flightphase == kc_phase_before_start then
+		sysAir.packSwitchGroup:actuate(0)
+		sysAir.isoValveSwitch:actuate(1)
+		sysAir.engBleedGroup:actuate(1)
+		sysAir.oxygenMaster:actuate(0)
+		sysAir.recircSwitchGroup:actuate(1)
+		sysAir.trimAirSwitch:actuate(1)
+		sysAir.apuBleedSwitch:actuate(1)
+	elseif flightphase == kc_phase_after_start then
+		sysAir.packSwitchGroup:actuate(1)
+		sysAir.isoValveSwitch:actuate(1)
+		sysAir.engBleedGroup:actuate(1)
+		sysAir.oxygenMaster:actuate(1)
+		sysAir.recircSwitchGroup:actuate(1)
+		sysAir.trimAirSwitch:actuate(1)
+		sysAir.apuBleedSwitch:actuate(0)
+	elseif flightphase == kc_phase_before_takeoff then
+		if activeBriefings:get("takeoff:packs") < 2 then 
+			sysAir.packSwitchGroup:setValue(1)
+		else
+			sysAir.packSwitchGroup:setValue(0)
+		end
+		sysAir.isoValveSwitch:actuate(1)
+		if activeBriefings:get("takeoff:bleeds") > 1 then 
+			sysAir.engBleedGroup:actuate(1) 
+		else
+			sysAir.engBleedGroup:actuate(0) 
+		end
+		sysAir.oxygenMaster:actuate(1)
+		sysAir.recircSwitchGroup:actuate(1)
+		sysAir.trimAirSwitch:actuate(1)
+		sysAir.apuBleedSwitch:actuate(0)
+	elseif flightphase == kc_phase_takeoff then
+		sysAir.packSwitchGroup:setValue(1)
+		sysAir.engBleedGroup:actuate(1) 
+		sysAir.oxygenMaster:actuate(1)
+	elseif flightphase == kc_phase_climb then
+		sysAir.packSwitchGroup:setValue(1)
+		sysAir.engBleedGroup:actuate(1) 
+		sysAir.oxygenMaster:actuate(1)
+	elseif flightphase == kc_phase_approach then
+		sysAir.engBleedGroup:actuate(1) 
+		sysAir.oxygenMaster:actuate(1)
+		if activeBriefings:get("approach:packs") == 1 then
+			sysAir.packSwitchGroup:actuate(0)
+		else
+			sysAir.packSwitchGroup:actuate(1)
+		end
+		sysAir.trimAirSwitch:actuate(1)
+	elseif flightphase == kc_phase_shutdown then
+		sysAir.packSwitchGroup:setValue(1)
+		sysAir.engBleedGroup:actuate(0)
+		sysAir.oxygenMaster:actuate(0)
+		sysAir.trimAirSwitch:actuate(0)
+	else
+		logMsg("Invalid flightphase")
+	end	
+end
 
 return sysAir
