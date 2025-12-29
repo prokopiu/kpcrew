@@ -23,6 +23,7 @@ logMsg("B744 sysRadios")
 sysRadios.xpdrSwitch 		= TwoStateDrefSwitch:new("xpdrmode","sim/cockpit2/radios/actuators/transponder_mode",0)
 sysRadios.xpdrCode 			= TwoStateDrefSwitch:new("xpdrcode","sim/cockpit2/radios/actuators/transponder_code",0)
 
+sysRadios.off				= 0
 sysRadios.stby				= 1
 sysRadios.alt				= 3
 sysRadios.ta				= 3

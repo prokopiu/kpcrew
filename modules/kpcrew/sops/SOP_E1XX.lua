@@ -78,3 +78,5 @@ activeSOP:getFlow(proc_ind_prePushStart):addItem(ProcedureItem:new("HYDRAULIC PU
 
 return SOP_E1XX
 
+-- A/P does not work
+-- Lights also did not switch as expected

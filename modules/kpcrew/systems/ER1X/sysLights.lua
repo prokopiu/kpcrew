@@ -25,6 +25,27 @@ sysLights = require("kpcrew.systems.DFLT.sysLights")
 
 logMsg("ER1X sysLights")
 
+-- **Landing Lights, single onoff command driven
+sysLights.llLeftSwitch 		= TwoStateToggleSwitch:new("llleft",drefLandingLights,1,
+	"XCrafts/Lights/left_landing_light_toggle")
+sysLights.llRightSwitch 	= TwoStateToggleSwitch:new("llright",drefLandingLights,2,
+	"XCrafts/Lights/right_landing_light_toggle")
+sysLights.ll3rdSwitch 		= TwoStateToggleSwitch:new("ll3rd",drefLandingLights,-1,
+	"XCrafts/Lights/center_landing_light_toggle")
+sysLights.landLightGroup 	= SwitchGroup:new("landinglights")
+sysLights.landLightGroup:addSwitch(sysLights.llLeftSwitch)
+sysLights.landLightGroup:addSwitch(sysLights.llRightSwitch)
+sysLights.landLightGroup:addSwitch(sysLights.ll3rdSwitch)
+-- annunciator to mark any landing lights on
+sysLights.landingAnc 		= CustomAnnunciator:new("landinglights",
+function () 
+	if get(drefLandingLights,0) > 0 or get(drefLandingLights,1) > 0  or get(drefLandingLights,2) > 0 then
+		return 1
+	else
+		return 0
+	end
+end)
+
 sysLights.emerLights		= TwoStateDrefSwitch:new("emerlights","sim/cockpit2/switches/generic_lights_switch",23)
 
 -- **Wing Lights

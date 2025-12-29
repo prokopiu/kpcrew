@@ -194,7 +194,6 @@ activeSOP:getFlow(proc_ind_afterStart):addItem(ChecklistItem:new("AFTER START CH
 	function ()  end))
 end
 
-
 -- set cabin altitude for cruise FL280+ 8000
 -- === Before Takeoff
 -- activeSOP:getFlow(proc_ind_beforeTakeoff):addItem(ProcedureItem:new("","",FlowItem.actorFO,0,
@@ -274,8 +273,13 @@ activeSOP:getFlow(proc_ind_afterTakeoff):addItem(ChecklistItem:new("#spell|APU# 
 	-- function () return end,
 	-- function () end))
 	
--- === landing
+-- === Arrival
 -- activeSOP:getFlow(proc_ind_landing):addItem(ProcedureItem:new("","",FlowItem.actorFO,0,
+	-- function () return end,
+	-- function () end))
+
+-- === landing Flow
+-- activeSOP:getFlow(proc_ind_flapsland):addItem(ProcedureItem:new("","",FlowItem.actorFO,0,
 	-- function () return end,
 	-- function () end))
 	

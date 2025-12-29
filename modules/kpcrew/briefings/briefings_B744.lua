@@ -17,6 +17,11 @@ kc_has_bus_ties		= true		-- Aircraft has bus ties for AC & DC
 kc_has_avionics_sw  = false		-- Aircraft has Avionics switch
 kc_remove_gpu_after	= true		-- remove GPU after start
 kc_has_standby_pwr	= true		-- Aircraft has standby power
+if PLANE_ICAO == "B744F" then
+	kc_is_cargo			= true		-- This is a cargo version
+else
+	kc_is_cargo			= false
+end
 
 -- === Controls
 kc_spdbrk_can_arm	= true		-- Aircraft's speedbrake can be armed
@@ -31,7 +36,8 @@ kc_LandingFlapsInd 	= "5|6|6|6|6|6|6"
 kc_gear_ext_index	= 3			-- When to extend gear in flaps extend
 
 -- === engines
-kc_StartSequence 	= "1 TO 4| "
+kc_StartSequence 	= "4, 1, 2, 3|1, 2, 3, 4"
+kc_StartBackground	= { [1] = {"4", "1", "2", "3"}, [2] = {"1", "2", "3", "4"} }
 kc_TakeoffThrust 	= "RATED|DE-RATED|ASSUMED TEMPERATURE|RATED AND ASSUMED|DE-RATED AND ASSUMED"
 kc_has_ignition		= false		-- has ignition switch
 kc_n2_after_start	= 55

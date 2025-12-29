@@ -105,3 +105,4 @@ activeSOP:getFlow(proc_ind_descent):addItem(ProcedureItem:new("CABIN ALTITUDE","
 
 return SOP_ER1X
 
+-- Lights are not correctly switched

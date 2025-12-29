@@ -26,6 +26,13 @@ function kc_macro_custom_cold_dark()
 	sysAir.recircSwitchGroup:actuate(0)
 	set_array("sim/cockpit2/switches/generic_lights_switch",34,1) -- ICE DETECTION OVERRIDE AUTO
 	set_array("sim/cockpit2/switches/generic_lights_switch",19,0) -- GASPER OFF
+	
+	command_once("XCrafts/Starter_Eng_1_down_CCW")
+	command_once("XCrafts/Starter_Eng_1_down_CCW")
+	command_once("XCrafts/Starter_Eng_2_down_CCW")
+	command_once("XCrafts/Starter_Eng_2_down_CCW")
+	set_array("sim/cockpit2/switches/custom_slider_on",10,0)
+	set_array("sim/cockpit2/switches/custom_slider_on",11,0)
 end
 
 -- aircraft specific custom steps not covered in default turnaround flow
@@ -187,6 +194,143 @@ function kc_macro_hyd(flightphase)
 	end	
 end
 
+-- ====================================== Lights related functions
+function kc_macro_lights(flightphase)
+	logMsg("Lights flight phase: " .. kcSopFlightPhase[flightphase])
+
+	-- Cold & dark
+	if flightphase == kc_phase_colddark then
+		sysLights.landLightGroup:actuate(0)
+		sysLights.taxiSwitch:actuate(0)
+		sysLights.positionSwitch:actuate(0)
+		sysLights.beaconSwitch:actuate(0)
+		sysLights.strobesSwitch:actuate(0)
+		sysLights.instrLightGroup:actuate(0)
+		sysLights.domeLightGroup:actuate(0)
+		sysLights.logoSwitch:actuate(0)
+		sysLights.wingSwitch:actuate(0)
+		sysLights.panelLightGroup:actuate(0)
+		sysLights.emerLights:actuate(0)
+	elseif flightphase == kc_phase_turnaround then
+		sysLights.landLightGroup:actuate(0)
+		sysLights.taxiSwitch:actuate(0)
+		sysLights.positionSwitch:actuate(1)
+		sysLights.beaconSwitch:actuate(0)
+		sysLights.strobesSwitch:actuate(0)
+		sysLights.instrLightGroup:actuate(1)
+		sysLights.domeLightGroup:actuate(0)
+		sysLights.logoSwitch:actuate(0)
+		sysLights.wingSwitch:actuate(0)
+		sysLights.panelLightGroup:actuate(0)
+		sysLights.emerLights:actuate(1)
+		if kc_is_daylight() == false then
+			sysLights.domeLightGroup:actuate(1)
+			sysLights.logoSwitch:actuate(1)
+			sysLights.wingSwitch:actuate(1)
+			sysLights.panelLightGroup:actuate(1)
+		end
+	elseif flightphase == kc_phase_before_start then
+		sysLights.landLightGroup:actuate(0)
+		sysLights.taxiSwitch:actuate(0)
+		sysLights.positionSwitch:actuate(1)
+		sysLights.beaconSwitch:actuate(1)
+		sysLights.strobesSwitch:actuate(0)
+		sysLights.instrLightGroup:actuate(1)
+		sysLights.domeLightGroup:actuate(0)
+		sysLights.logoSwitch:actuate(0)
+		sysLights.wingSwitch:actuate(0)
+		sysLights.panelLightGroup:actuate(0)
+		sysLights.emerLights:actuate(1)
+		if kc_is_daylight() == false then
+			sysLights.domeLightGroup:actuate(1)
+			sysLights.logoSwitch:actuate(1)
+			sysLights.panelLightGroup:actuate(1)
+		end
+	elseif flightphase == kc_phase_taxi_rwy then
+		sysLights.landLightGroup:actuate(0)
+		sysLights.taxiSwitch:actuate(1)
+		sysLights.positionSwitch:actuate(1)
+		sysLights.beaconSwitch:actuate(1)
+		sysLights.strobesSwitch:actuate(0)
+		sysLights.instrLightGroup:actuate(1)
+		sysLights.domeLightGroup:actuate(0)
+		sysLights.logoSwitch:actuate(0)
+		sysLights.wingSwitch:actuate(0)
+		sysLights.panelLightGroup:actuate(0)
+		sysLights.emerLights:actuate(1)
+		if kc_is_daylight() == false then
+			sysLights.logoSwitch:actuate(1)
+			sysLights.panelLightGroup:actuate(1)
+		end
+	elseif flightphase == kc_phase_before_takeoff then
+		sysLights.landLightGroup:actuate(1)
+		sysLights.taxiSwitch:actuate(1)
+		sysLights.positionSwitch:actuate(1)
+		sysLights.beaconSwitch:actuate(1)
+		sysLights.strobesSwitch:actuate(1)
+		sysLights.instrLightGroup:actuate(1)
+		sysLights.domeLightGroup:actuate(0)
+		sysLights.logoSwitch:actuate(0)
+		sysLights.wingSwitch:actuate(0)
+		sysLights.panelLightGroup:actuate(0)
+		sysLights.emerLights:actuate(1)
+		if kc_is_daylight() == false then
+			sysLights.logoSwitch:actuate(1)
+			sysLights.panelLightGroup:actuate(1)
+		end
+	elseif flightphase == kc_phase_approach then
+		sysLights.landLightGroup:actuate(1)
+		sysLights.taxiSwitch:actuate(0)
+		sysLights.positionSwitch:actuate(1)
+		sysLights.beaconSwitch:actuate(1)
+		sysLights.strobesSwitch:actuate(1)
+		sysLights.instrLightGroup:actuate(1)
+		sysLights.domeLightGroup:actuate(0)
+		sysLights.logoSwitch:actuate(0)
+		sysLights.wingSwitch:actuate(0)
+		sysLights.panelLightGroup:actuate(0)
+		sysLights.emerLights:actuate(1)
+		if kc_is_daylight() == false then
+			sysLights.logoSwitch:actuate(1)
+			sysLights.panelLightGroup:actuate(1)
+		end
+	elseif flightphase == kc_phase_afterland then
+		sysLights.landLightGroup:actuate(0)
+		sysLights.taxiSwitch:actuate(1)
+		sysLights.positionSwitch:actuate(1)
+		sysLights.beaconSwitch:actuate(1)
+		sysLights.strobesSwitch:actuate(0)
+		sysLights.instrLightGroup:actuate(1)
+		sysLights.domeLightGroup:actuate(0)
+		sysLights.logoSwitch:actuate(0)
+		sysLights.wingSwitch:actuate(0)
+		sysLights.panelLightGroup:actuate(0)
+		sysLights.emerLights:actuate(1)
+		if kc_is_daylight() == false then
+			sysLights.logoSwitch:actuate(1)
+			sysLights.panelLightGroup:actuate(1)
+		end
+	elseif flightphase == kc_phase_shutdown then
+		sysLights.landLightGroup:actuate(0)
+		sysLights.taxiSwitch:actuate(0)
+		sysLights.positionSwitch:actuate(1)
+		sysLights.beaconSwitch:actuate(0)
+		sysLights.strobesSwitch:actuate(0)
+		sysLights.instrLightGroup:actuate(1)
+		sysLights.domeLightGroup:actuate(0)
+		sysLights.logoSwitch:actuate(0)
+		sysLights.wingSwitch:actuate(0)
+		sysLights.panelLightGroup:actuate(0)
+		sysLights.emerLights:actuate(0)
+		if kc_is_daylight() == false then
+			sysLights.logoSwitch:actuate(1)
+			sysLights.panelLightGroup:actuate(1)
+		end	
+	else
+		logMsg("Invalid flightphase")
+	end	
+end
+
 -- APU start background
 function kc_bck_apustart(trigger)
 	local delayvar = trigger .. "delay"
@@ -238,11 +382,13 @@ function kc_bck_start_engine(trigger)
 			command_begin("sim/starters/engage_start_run_1")
 			command_once("XCrafts/Starter_Eng_1_up_CW")
 			command_once("XCrafts/Starter_Eng_1_up_CW")
+			kc_speakNoText(0,"Starting Engine 1")
 		end
 		if trigger == "engstart2" then
 			command_begin("sim/starters/engage_start_run_2")
 			command_once("XCrafts/Starter_Eng_2_up_CW")
 			command_once("XCrafts/Starter_Eng_2_up_CW")
+			kc_speakNoText(0,"Starting Engine 1")
 		end
 	else
 		if kc_procvar_get(delayvar) <= 0 then

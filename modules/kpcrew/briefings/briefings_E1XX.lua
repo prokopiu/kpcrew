@@ -48,6 +48,10 @@ kc_has_eng_antiice	= false		-- Aircraft has engine antiice measures
 kc_NumLandingLts	= 3			-- Number of landing light switches
 kc_has_emer_lights	= true		-- Aircraft has emergency lights
 
+-- === MCP & autopilot
+kc_has_vnav			= false		-- Aircraft has VNAV
+kc_has_lnav			= false		-- Aircraft has LNAV
+
 -- === Payload & weights
 kc_MaxRamp			= -1		-- Max Ramp weight
 kc_DOW 				= -1		-- Dry Operating Weight (aka OEW)

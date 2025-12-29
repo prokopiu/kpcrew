@@ -35,6 +35,7 @@ function kc_macro_custom_turnaround()
 	command_once("XCrafts/fuel/fuel_transfer_sw_ccw_cmnd")
 	command_once("XCrafts/fuel/fuel_transfer_sw_cw_cmnd")
 	set("XCrafts/light/sterile_switch",0)
+	sysElectric.genSwitchGroup:actuate(1)
 end
 
 -- ====================================== A/P & Glareshield related functions
@@ -152,11 +153,13 @@ function kc_bck_start_engine(trigger)
 			command_begin("sim/starters/engage_start_run_1")
 			command_once("XCrafts/Starter_Eng_1_up_CW")
 			command_once("XCrafts/Starter_Eng_1_up_CW")
+			kc_speakNoText("Starting engine 1")
 		end
 		if trigger == "engstart2" then
 			command_begin("sim/starters/engage_start_run_2")
 			command_once("XCrafts/Starter_Eng_2_up_CW")
 			command_once("XCrafts/Starter_Eng_2_up_CW")
+			kc_speakNoText("Starting engine 2")
 		end
 	else
 		if kc_procvar_get(delayvar) <= 0 then

@@ -19,3 +19,7 @@ modules/kpcrew/systems/MD88 old/sysEFIS.lua
 modules/kpcrew/systems/MD88 old/sysControls.lua
 modules/kpcrew/systems/MD88 old/sysAir.lua
 modules/kpcrew/systems/MD88 old/sysAice.lua
+modules/kpcrew/sops/SOP_C750 - Copy.lua
+scripts/DK_Toliss_Callout.luax
+/scripts/ToLiSS_VSpeeds
+scripts/ToLiss_VSpeeds_v2_8_1.lua

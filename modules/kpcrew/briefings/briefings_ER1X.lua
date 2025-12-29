@@ -27,8 +27,9 @@ kc_LandingFlapsInd 	= "3|4|4|4|4|4|4"
 kc_gear_ext_index	= 2			-- When to extend gear in flaps extend
 
 -- === engines
-kc_n2_after_start	= 30
+kc_n2_after_start	= 26
 kc_has_ignition		= true		-- has ignition switch
+kc_TakeoffThrust 	= "TOGA|FLEX|D-TO"
 
 -- === Fuel
 kc_FuelTankLeftInd	= 0
@@ -58,7 +59,7 @@ kc_has_eng_antiice	= true		-- Aircraft has engine antiice measures
 kc_has_pitot_heat	= true		-- Aircraft has pitot heat
 
 -- === Lights
-kc_has_wheel_lights	= true		-- Aircraft has wheel Lights
+kc_has_wheel_lights	= false		-- Aircraft has wheel Lights
 kc_has_rwy_lights	= false		-- Aircraft has rwy turnoff lights
 kc_has_emer_lights	= true		-- Aircraft has emergency lights
 

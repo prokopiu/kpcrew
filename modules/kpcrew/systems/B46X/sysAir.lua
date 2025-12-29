@@ -55,5 +55,5 @@ sysAir.apuBleedSwitch 		= TwoStateDrefSwitch:new("apubleed","thranda/pneumatic/A
 
 -- Oxygen Supply
 sysAir.oxygenMaster			= TwoStateDrefSwitch:new("oxygen","thranda/anim/OxygenPaxValve",0)
-
+	
 return sysAir

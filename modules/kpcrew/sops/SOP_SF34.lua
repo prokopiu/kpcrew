@@ -141,3 +141,5 @@ kc_procvar_initialize_bool("stairsout", false)
 kc_procvar_initialize_bool("stairsin", false) 
 
 return SOP_SF34
+
+-- FD lässt sich nicht schalten
