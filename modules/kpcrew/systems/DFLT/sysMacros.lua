@@ -110,12 +110,14 @@ function kc_macro_state_cold_and_dark()
 	end 
 	
 	if kc_has_apu then
-		sysElectric.apuStartSwitch:actuate(0)
+		sysElectric.apuStart:actuate(0)
 		sysAir.apuBleedSwitch:actuate(0)
 	end
 	if kc_has_gpu then
-		sysElectric.gpuGenBusGroup:actuate(0)
 		sysElectric.gpuConnect:actuate(0)
+	end
+	if kc_has_gpu_gens then
+		sysElectric.gpuGenBusGroup:actuate(0)
 	end
 	
 	if kc_has_windows then
@@ -140,6 +142,8 @@ function kc_macro_state_turnaround()
 
 	if kc_has_gpu then
 		sysElectric.gpuConnect:actuate(1)
+	end
+	if kc_has_gpu_gens then
 		sysElectric.gpuGenBusGroup:actuate(1)
 	end
 	

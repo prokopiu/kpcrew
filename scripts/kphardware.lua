@@ -99,9 +99,9 @@ end
 -- needs to have the sysLights system set up with all that are required and in all 3 modes (on, off, toggle)
 
 -- ------------------ Lights
-create_command("kp/xsp/lights/beacon_switch_on",	"Beacon Lights On","sysLights.beaconSwitch:actuate(modeOn)","","")
-create_command("kp/xsp/lights/beacon_switch_off",	"Beacon Lights Off","sysLights.beaconSwitch:actuate(modeOff)","","")
-create_command("kp/xsp/lights/beacon_switch_tgl",	"Beacon Lights Toggle","sysLights.beaconSwitch:actuate(modeToggle)","","")
+create_command("kp/xsp/lights/beacon_switch_on",	"Beacon Lights On","sysLights.beaconLightGroup:actuate(modeOn)","","")
+create_command("kp/xsp/lights/beacon_switch_off",	"Beacon Lights Off","sysLights.beaconLightGroup:actuate(modeOff)","","")
+create_command("kp/xsp/lights/beacon_switch_tgl",	"Beacon Lights Toggle","sysLights.beaconLightGroup:actuate(modeToggle)","","")
 
 create_command("kp/xsp/lights/position_switch_on",	"Position Lights On","sysLights.positionSwitch:actuate(modeOn)","","")
 create_command("kp/xsp/lights/position_switch_off",	"Position Lights Off","sysLights.positionSwitch:actuate(modeOff)", "", "")
@@ -505,6 +505,9 @@ xsp_mcp_vsival[0] = 0
 xsp_mcp_crs1val = create_dataref_table("kp/xsp/bravo/mcp_crs1val", "Int")
 xsp_mcp_crs1val[0] = 0
 
+xsp_mcp_crs2val = create_dataref_table("kp/xsp/bravo/mcp_crs2val", "Int")
+xsp_mcp_crs2val[0] = 0
+
 -- background function every 1 sec to set lights/annunciators for hardware (honeycomb bravo)
 function xsp_set_light_drefs()
 
@@ -523,7 +526,7 @@ function xsp_set_light_drefs()
 	xsp_lights_beacon[0] 	= sysLights.beaconAnc:getStatus()
 
 	-- position lights annunciator
-	xsp_lights_position[0] 	= sysLights.positionAnc:getStatus()
+	xsp_lights_position[0] 	= sysLights.navLightAnc:getStatus()
 
 	-- strobes 
 	xsp_lights_strobes[0] 	= sysLights.strobesAnc:getStatus()
@@ -532,16 +535,16 @@ function xsp_set_light_drefs()
 	xsp_lights_taxi[0] 		= sysLights.taxiAnc:getStatus()
 
 	-- logo lights
-	xsp_lights_logo[0] 		= sysLights.logoAnc:getStatus()
+	xsp_lights_logo[0] 		= sysLights.logoLightAnc:getStatus()
 
 	-- runway
-	xsp_lights_rwy[0] 		= sysLights.runwayAnc:getStatus()
+	xsp_lights_rwy[0] 		= sysLights.runwayLightAnc:getStatus()
 
 	-- wing
-	xsp_lights_wing[0] 		= sysLights.wingAnc:getStatus()
+	xsp_lights_wing[0] 		= sysLights.wingLightAnc:getStatus()
 
 	-- wheel
-	xsp_lights_wheel[0] 	= sysLights.wheelAnc:getStatus()
+	xsp_lights_wheel[0] 	= sysLights.wheelLightAnc:getStatus()
 
 	-- dome
 	xsp_lights_dome[0] 		= sysLights.domeAnc:getStatus()
@@ -642,6 +645,9 @@ function xsp_set_light_drefs()
 
 	-- CRS1 value
 	xsp_mcp_crs1val[0] = sysMCP.crs1Selector:getStatus()
+
+	-- CRS2 value
+	xsp_mcp_crs2val[0] = sysMCP.crs2Selector:getStatus()
 end
 
 -- ===== UIs =====
@@ -652,6 +658,6 @@ kh_scrn_height = get("sim/graphics/view/window_height")
 local start_y_pos = 0
 
 -- regularly update the drefs for annunciators and lights (every 1 second)
-do_often("xsp_set_light_drefs()")
+do_every_frame("xsp_set_light_drefs()")
 
 

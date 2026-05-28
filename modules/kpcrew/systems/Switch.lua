@@ -2,9 +2,19 @@
 --
 -- @classmod Switch
 -- @author Kosta Prokopiu
--- @copyright 2022 Kosta Prokopiu
+-- @copyright 2025 Kosta Prokopiu
 local khSwitch = {
 }
+
+-- Switch types
+kc_swtype_2StateCmd		= 1
+kc_swtype_toggleCmd		= 2
+kc_swtype_multistate	= 3
+kc_swtype_dref			= 4
+kc_swtype_annunciator	= 5
+kc_swtype_inop			= 6
+kc_swtype_customCmd		= 7
+kc_swtype_customAnn		= 8
 
 -- Base constructor for any switch
 -- @tparam string name of element

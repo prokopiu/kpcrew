@@ -37,6 +37,17 @@ WX_Cloudcover_list = {"","FEW","SCT","BKN","OVC",""}
 WX_Precipitation_list = {"NONE","DRIZZLE","LIGHT RAIN","RAIN","HEAVY RAIN","SNOW"}
 WX_Cloud_list = {"NO","FEW","SCATTERED","BROKEN","OVERCAST"}
 
+local TwoStateDrefSwitch 	= require "kpcrew.systems.TwoStateDrefSwitch"
+local TwoStateCmdSwitch	 	= require "kpcrew.systems.TwoStateCmdSwitch"
+local TwoStateCustomSwitch 	= require "kpcrew.systems.TwoStateCustomSwitch"
+local SwitchGroup  			= require "kpcrew.systems.SwitchGroup"
+local SimpleAnnunciator 	= require "kpcrew.systems.SimpleAnnunciator"
+local CustomAnnunciator 	= require "kpcrew.systems.CustomAnnunciator"
+local TwoStateToggleSwitch	= require "kpcrew.systems.TwoStateToggleSwitch"
+local MultiStateCmdSwitch 	= require "kpcrew.systems.MultiStateCmdSwitch"
+local InopSwitch 			= require "kpcrew.systems.InopSwitch"
+local KeepPressedSwitchCmd	= require "kpcrew.systems.KeepPressedSwitchCmd"
+
 -- speak text but don't show in sim, speakMode is used to prevent repetitive playing
 -- speakmode 1 will talk and show, 0 will only speak
 function kc_speakNoText(speakMode, sText)
@@ -1011,4 +1022,25 @@ function kc_pull_baro_from_metar(metartext)
 	local a_value = string.match(metartext, "A%d+")
 	if q_value ~= nil then return string.sub(q_value, 2) end
 	return string.sub(a_value, 2)
+end
+
+-- generically set up a system element (switch) for more generic setup
+function kc_setup_element(eDef)
+	if eDef.etype == kc_swtype_2StateCmd then
+		return TwoStateCmdSwitch:new(eDef.name,eDef.drefName,eDef.drefIndex,eDef.cmd1,eDef.cmd2,eDef.cmd3)
+	elseif eDef.etype == kc_swtype_toggleCmd then
+		return TwoStateToggleSwitch:new(eDef.name,eDef.drefName,eDef.drefIndex,eDef.cmd1)
+	elseif eDef.etype == kc_swtype_multistate then
+		return MultiStateCmdSwitch:new(eDef.name,eDef.drefName,eDef.drefIndex,eDef.cmd1,eDef.cmd2,eDef.msMin,eDef.msMax,eDef.msRead,eDef.msDiff)
+	elseif eDef.etype == kc_swtype_dref then
+		return TwoStateDrefSwitch:new(eDef.name,eDef.drefName,eDef.drefIndex)
+	elseif eDef.etype == kc_swtype_inop then 
+		return InopSwitch:new(eDef.name)
+	elseif eDef.etype == kc_swtype_customCmd then 
+		return TwoStateCustomSwitch:new(eDef.name,eDef.drefName,eDef.drefIndex,eDef.funcOn,eDef.funcOff,eDef.funcTgl,eDef.funcStat,eDef.funcStep,eDef.funcSet)
+	elseif eDef.etype == kc_swtype_annunciator then 
+		return SimpleAnnunciator:new(eDef.name,eDef.drefName,eDef.drefIndex)
+	elseif eDef.etype == kc_swtype_customAnn then 
+		return CustomAnnunciator:new(eDef.name,eDef.funcOn)
+	end
 end

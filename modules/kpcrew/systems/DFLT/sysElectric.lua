@@ -5,47 +5,38 @@
 -- @author Kosta Prokopiu
 -- @copyright 2025 Kosta Prokopiu
 
--- System Elements
--- sysElectric.batteryGroup 	
--- sysElectric.batterySwitch 	
--- sysElectric.battery2Switch 	
--- sysElectric.batt1Volt 
--- sysElectric.batt2Volt 
--- sysElectric.batt1Amp 
--- sysElectric.batt2Amp 
--- sysElectric.gpuGenBusGroup
--- sysElectric.gpuConnect
--- sysElectric.gpuGenBus1
--- sysElectric.gpuGenBus2
--- sysElectric.apuGenBusGroup
--- sysElectric.apuMaster	 
--- sysElectric.apuStartSwitch
--- sysElectric.apuGenBus1 	
--- sysElectric.apuGenBus2 	
--- sysElectric.apuRunningAnc
--- sysElectric.genSwitchGroup
--- sysElectric.gen1Switch
--- sysElectric.gen2Switch
--- sysElectric.gen3Switch
--- sysElectric.gen4Switch
--- sysElectric.dcBusTie	
--- sysElectric.acBusTie	
--- sysElectric.alternator1Switch 	
--- sysElectric.alternator2Switch 	
--- sysElectric.alternatorSwitchGroup
--- sysElectric.inverter1Switch 		
--- sysElectric.inverter2Switch 		
--- sysElectric.inverterSwitchGroup 	
--- sysElectric.avionics1Bus	
--- sysElectric.avionics2Bus	
--- sysElectric.avionicsSwitchGroup 
--- sysElectric.stbyPowerSwitch
--- sysElectric.lowVoltageAnc
--- sysElectric.gpuOnBus
--- Macro: kc_macro_elec_system
--- Macro: kc_bck_apustart
--- Macro: kc_bck_apuonline
--- Macro: kc_macro_apustop
+--[[
+System Elements:
+sysElectric.btGroup 	
+	sysElectric.btSwitch1 	
+	sysElectric.btSwitch2 
+	sysElectric.btSwitch3 	
+sysElectric.genSwitchGroup
+	sysElectric.genSwitch1
+	sysElectric.genSwitch2
+	sysElectric.genSwitch3
+	sysElectric.genSwitch4
+sysElectric.inverterSwitchGroup
+	sysElectric.inverterSwitch1 		
+	sysElectric.inverterSwitch2 		
+sysElectric.gpuConnect
+sysElectric.gpuGenBusGroup
+	sysElectric.gpuGenBus1
+	sysElectric.gpuGenBus2	
+sysElectric.apuStart
+sysElectric.apuMaster	 
+sysElectric.apuGenBusGroup
+	sysElectric.apuGenBus1 	
+	sysElectric.apuGenBus2 	
+sysElectric.stbyPowerGroup
+	sysElectric.stbyPowerSwitch1
+	sysElectric.stbyPowerSwitch2
+sysElectric.avionicsSwitchGroup
+	sysElectric.avionicsBus1
+	sysElectric.avionicsBus2
+sysElectric.dcBusTie
+sysElectric.acBusTie
+]]
 
 local sysElectric = {
 }
@@ -61,153 +52,159 @@ local MultiStateCmdSwitch 	= require "kpcrew.systems.MultiStateCmdSwitch"
 local InopSwitch 			= require "kpcrew.systems.InopSwitch"
 local KeepPressedSwitchCmd	= require "kpcrew.systems.KeepPressedSwitchCmd"
 
---------- Switch datarefs common
-local drefBattery1			= "sim/cockpit/electrical/battery_array_on"
-local drefGPUOn				= "sim/cockpit/electrical/gpu_on"
-local drefGPUGenerator		= "sim/cockpit2/electrical/GPU_generator_on"
-local drefAPUStarter		= "sim/cockpit2/electrical/APU_starter_switch"
-local drefAPUMaster			= "sim/cockpit2/electrical/APU_starter_switch"
-local drefAPUGenerator		= "sim/cockpit/electrical/generator_apu_on"
-local drefGenerator1		= "sim/cockpit/electrical/generator_on"
-local drefDCBusTie			= "sim/cockpit2/electrical/cross_tie"
-local drefInverter1			= "sim/cockpit/engine/inverter_on"
-local drefAvionics1			= "sim/cockpit2/switches/avionics_power_on"
-
---------- Annunciator datarefs common
-local drefBattery1Volt		= "sim/cockpit2/electrical/battery_voltage_actual_volts"
-local drefBattery1Amps		= "sim/cockpit2/electrical/battery_amps"
-local drefAPUN1				= "sim/cockpit/engine/APU_N1"
-local drefLowVoltage		= "sim/cockpit2/annunciators/low_voltage"
-
---------- Switch commands common
-local cmdGenerator1On		= "sim/electrical/generator_1_on"
-local cmdGenerator2On		= "sim/electrical/generator_2_on"
-local cmdGenerator1Off		= "sim/electrical/generator_1_off"	
-local cmdGenerator2Off		= "sim/electrical/generator_2_off"	
-local cmdGenerator1Tgl		= "sim/electrical/generator_1_toggle"
-local cmdGenerator2Tgl		= "sim/electrical/generator_2_toggle"
-
 logMsg("DFLT sysElectric")
 
-require("kpcrew.briefings.briefings_" .. kc_acf_icao)
+local def = require("kpcrew.systems." .. kc_acf_icao ..".sysElectricDefinitions")
 
 ----------- Switches
 
--- ** BATTERY Switch
-sysElectric.batteryGroup 	= SwitchGroup:new("battery switches")
-sysElectric.batterySwitch 	= TwoStateDrefSwitch:new("battery1",drefBattery1,-1)
-sysElectric.batteryGroup:addSwitch(batterySwitch)
-if kc_get_nr_batteries() > 1 then
-	sysElectric.battery2Switch 	= TwoStateDrefSwitch:new("battery2",drefBattery1,1)
-	sysElectric.batteryGroup:addSwitch(battery2Switch)
-end
-if kc_get_nr_batteries() > 2 then
-	sysElectric.battery3Switch 	= TwoStateDrefSwitch:new("battery3",drefBattery1,2)
-	sysElectric.batteryGroup:addSwitch(battery3Switch)
+-- === ** BATTERY Switches
+if kc_has_batteries then
+	sysElectric.btGroup 	= SwitchGroup:new("Battery switches")
+	sysElectric.btSwitch1 	= kc_setup_element(def.btSwitch1)
+	sysElectric.btGroup:addSwitch(sysElectric.btSwitch1)
+	if kc_num_batteries > 1 then
+		sysElectric.btSwitch2 	= kc_setup_element(def.btSwitch2)
+		sysElectric.btGroup:addSwitch(sysElectric.btSwitch2)
+	end
+	if kc_num_batteries > 2 then
+		sysElectric.btSwitch3 	= kc_setup_element(def.btSwitch3)
+		sysElectric.btGroup:addSwitch(sysElectric.btSwitch3)
+	end
+else
+	sysElectric.btGroup 	= SwitchGroup:new("Battery switches")
+	sysElectric.btSwitch1 	= kc_setup_element({etype=kc_swtype_inop, name="battery1"})
+	sysElectric.btGroup:addSwitch(sysElectric.btSwitch1)	
 end
 
--- Battery voltage and amps
-sysElectric.batt1Volt 		= SimpleAnnunciator:new("BATT1 Voltage",drefBattery1Volt,-1)
-sysElectric.batt2Volt 		= SimpleAnnunciator:new("BATT2 Voltage",drefBattery1Volt,1)
-sysElectric.batt1Amp 		= SimpleAnnunciator:new("BATT1 Amps",drefBattery1Amps,-1)
-sysElectric.batt2Amp 		= SimpleAnnunciator:new("BATT2 Amps",drefBattery1Amps,1)
+-- === Engine Generators
+if kc_has_generators then
+	sysElectric.genSwitchGroup 	= SwitchGroup:new("generators")
+	sysElectric.genSwitch1 		= kc_setup_element(def.genSwitch1)
+	sysElectric.genSwitchGroup:addSwitch(sysElectric.genSwitch1)
+	if kc_num_generators > 1 then
+		sysElectric.genSwitch2 	= kc_setup_element(def.genSwitch2)
+		sysElectric.genSwitchGroup:addSwitch(sysElectric.genSwitch2)
+	end
+	if kc_num_generators > 2 then
+		sysElectric.genSwitch3 	= kc_setup_element(def.genSwitch3)
+		sysElectric.genSwitchGroup:addSwitch(sysElectric.genSwitch3)
+	end
+	if kc_num_generators > 3 then
+		sysElectric.genSwitch4 	= kc_setup_element(def.genSwitch4)
+		sysElectric.genSwitchGroup:addSwitch(sysElectric.genSwitch4)
+	end
+else
+	sysElectric.genSwitchGroup 	= SwitchGroup:new("generators")
+	sysElectric.genSwitch1 		= kc_setup_element({etype=kc_swtype_inop, name="gen1"})
+	sysElectric.genSwitchGroup:addSwitch(sysElectric.genSwitch1)
+end
 
--- ----- GPU
-sysElectric.gpuGenBusGroup	= SwitchGroup:new("gpubussgroup")
--- de-/activate GPU
+-- === Inverters
+if kc_has_inverters then
+	sysElectric.inverterSwitchGroup 	= SwitchGroup:new("inverters")
+	sysElectric.inverterSwitch1 		= kc_setup_element(def.inverterSwitch1)
+	sysElectric.inverterSwitchGroup:addSwitch(sysElectric.inverterSwitch1)
+	if kc_num_inverters > 1 then
+		sysElectric.inverterSwitch2 		= kc_setup_element(def.inverterSwitch2)
+		sysElectric.inverterSwitchGroup:addSwitch(sysElectric.inverterSwitch2)
+	end
+else
+	sysElectric.inverterSwitchGroup 	= SwitchGroup:new("inverters")
+	sysElectric.inverterSwitch1 		= kc_setup_element({etype=kc_swtype_inop, name="Inverter 1"})
+	sysElectric.inverterSwitchGroup:addSwitch(sysElectric.inverterSwitch1)
+end
+
+-- === GPU 
 if kc_has_gpu then
-	sysElectric.gpuConnect 	= TwoStateCustomSwitch:new("GPU",drefGPUOn,0,
-	function ()
-		set(drefGPUOn,1)
-		command_once("sim/ground_ops/service_plane") -- default GPU needs services connected
-	end,
-	function () set(drefGPUOn,0) end,
-	function () end,
-	function () return get(drefGPUOn) end)	
-	sysElectric.gpuGenBus1 	= TwoStateDrefSwitch:new("gpubus1",drefGPUGenerator,0)
-	sysElectric.gpuGenBus2 	= InopSwitch:new("gpubus2")
+	sysElectric.gpuConnect 	= kc_setup_element(def.gpuConnect)
+	if kc_has_gpu_gens then
+		sysElectric.gpuGenBusGroup	= SwitchGroup:new("gpubussgroup")
+		sysElectric.gpuGenBus1 	= kc_setup_element(def.gpuGenBus1)
+		sysElectric.gpuGenBusGroup:addSwitch(sysElectric.gpuGenBus1)
+		if kc_num_gpu_gens > 1 then
+			sysElectric.gpuGenBus2 	= kc_setup_element(def.gpuGenBus2)
+			sysElectric.gpuGenBusGroup:addSwitch(sysElectric.gpuGenBus2)
+		end
+	end
+	sysElectric.gpuOnBus = kc_setup_element(def.gpuOnBus)
 else
-	sysElectric.gpuConnect 	= InopSwitch:new("GPU")
-	sysElectric.gpuGenBus1 	= InopSwitch:new("gpubus1")
-	sysElectric.gpuGenBus2 	= InopSwitch:new("gpubus2")
+	sysElectric.gpuGenBusGroup	= SwitchGroup:new("gpubussgroup")
+	sysElectric.gpuConnect 	= kc_setup_element({etype=kc_swtype_inop, name="gpuconnect"})
+	sysElectric.gpuGenBus1 	= kc_setup_element({etype=kc_swtype_inop, name="gpubus1"})
+	sysElectric.gpuGenBusGroup:addSwitch(sysElectric.gpuGenBus1)
+	sysElectric.gpuOnBus	= kc_setup_element({etype=kc_swtype_inop, name="gpuonbus"})
 end
-sysElectric.gpuGenBusGroup:addSwitch(sysElectric.gpuGenBus1)
-sysElectric.gpuGenBusGroup:addSwitch(sysElectric.gpuGenBus2)
 
--- ----- APU
-sysElectric.apuGenBusGroup	= SwitchGroup:new("apubussgroup")
+-- === APU
 if kc_has_apu then
-	sysElectric.apuMaster	= TwoStateDrefSwitch:new("apuswitch",drefAPUStarter,0)
-	sysElectric.apuStartSwitch 	= TwoStateDrefSwitch:new("apuswitch",drefAPUMaster,0)
-	sysElectric.apuGenBus1 	= TwoStateDrefSwitch:new("apubus1",drefAPUGenerator,0)
-	sysElectric.apuGenBus2 	= InopSwitch:new("apubus2")
+	sysElectric.apuStart 	= kc_setup_element(def.apuStart)
+	if kc_has_apu_master then 
+		sysElectric.apuMaster	= kc_setup_element(def.apuMaster)
+	end
+	if kc_has_apu_gens then
+		sysElectric.apuGenBusGroup	= SwitchGroup:new("apubussgroup")
+		sysElectric.apuGenBus1 	= kc_setup_element(def.apuGenBus1)
+		sysElectric.apuGenBusGroup:addSwitch(sysElectric.apuGenBus1)
+		if kc_num_apu_gens > 1 then
+			sysElectric.apuGenBus2 	= kc_setup_element(def.apuGenBus2)
+			sysElectric.apuGenBusGroup:addSwitch(sysElectric.apuGenBus2)
+		end
+	end
 else
-	sysElectric.apuMaster	= InopSwitch:new("apuswitch")
-	sysElectric.apuStartSwitch 	= InopSwitch:new("apuswitch")
-	sysElectric.apuGenBus1 	= InopSwitch:new("apubus1")
-	sysElectric.apuGenBus2 	= InopSwitch:new("apubus2")
-end
-sysElectric.apuGenBusGroup:addSwitch(sysElectric.apuGenBus1)
-sysElectric.apuGenBusGroup:addSwitch(sysElectric.apuGenBus2)
-
--- APU RUNNING annunciator
-sysElectric.apuRunningAnc 	= CustomAnnunciator:new("apurunning",
-	function () if get(drefAPUN1) > 98 then return 1 else return 0 end end)
-
--- ---- Engine Generators
-sysElectric.genSwitchGroup 	= SwitchGroup:new("generators")
-sysElectric.gen1Switch 		= TwoStateDrefSwitch:new("gen1",drefGenerator1,-1)
-sysElectric.genSwitchGroup:addSwitch(sysElectric.gen1Switch)
-if kc_get_nr_generators() > 1 then
-	sysElectric.gen2Switch 	= TwoStateDrefSwitch:new("gen2",drefGenerator1,1)
-	sysElectric.genSwitchGroup:addSwitch(sysElectric.gen2Switch)
-end
-if kc_get_nr_generators() > 2 then
-	sysElectric.gen3Switch 	= TwoStateDrefSwitch:new("gen3",drefGenerator1,2)
-	sysElectric.genSwitchGroup:addSwitch(sysElectric.gen3Switch)
-end
-if kc_get_nr_generators() > 3 then
-	sysElectric.gen4Switch 	= TwoStateDrefSwitch:new("gen4",drefGenerator1,3)
-	sysElectric.genSwitchGroup:addSwitch(sysElectric.gen4Switch)
+	sysElectric.apuStart	= kc_setup_element({etype=kc_swtype_inop, name="apustart"})
+	sysElectric.apuMaster	= kc_setup_element({etype=kc_swtype_inop, name="apumaster"})
+	sysElectric.apuGenBusGroup	= SwitchGroup:new("apubussgroup")
+	sysElectric.apuGenBus1 	= kc_setup_element({etype=kc_swtype_inop, name="apu gen bus 1"})
+	sysElectric.apuGenBusGroup:addSwitch(sysElectric.apuGenBus1)
 end
 
--- DC Bus Tie
-sysElectric.dcBusTie		= TwoStateDrefSwitch:new("dcbustie",drefDCBusTie,0)
--- AC Bus Tie
-sysElectric.acBusTie				= InopSwitch:new("acbustie")
+-- === Standby power
+if kc_has_standby_pwr then
+	sysElectric.stbyPowerGroup = SwitchGroup:new("Standby Power Group")
+	sysElectric.stbyPowerSwitch1 = kc_setup_element(def.stbyPowerSwitch1)
+	sysElectric.stbyPowerGroup:addSwitch(sysElectric.stbyPowerSwitch1)
+	if kc_num_standby_pwr > 1 then
+		sysElectric.stbyPowerSwitch2 = kc_setup_element(def.stbyPowerSwitch2)
+		sysElectric.stbyPowerGroup:addSwitch(sysElectric.stbyPowerSwitch2)
+	end
+else
+	sysElectric.stbyPowerGroup = SwitchGroup:new("Standby Power Group")
+	sysElectric.stbyPowerSwitch1 = kc_setup_element({etype=kc_swtype_inop, name="stby switch 1"})
+	sysElectric.stbyPowerGroup:addSwitch(sysElectric.stbyPowerSwitch1)
+end
 
--- ** ALTERNATOR Switches to help when aircraft do not work with the switches
-sysElectric.alternator1Switch 		= TwoStateCmdSwitch:new("gen1",drefGenerator1,-1,
-	cmdGenerator1On,cmdGenerator1Off,cmdGenerator1Tgl)
-sysElectric.alternator2Switch 		= TwoStateCmdSwitch:new("gen2",drefGenerator1,1,
-	cmdGenerator2On,cmdGenerator1Off,cmdGenerator2Tgl)
-sysElectric.alternatorSwitchGroup 	= SwitchGroup:new("altswitches")
-sysElectric.alternatorSwitchGroup:addSwitch(sysElectric.alternator1Switch)
-sysElectric.alternatorSwitchGroup:addSwitch(sysElectric.alternator2Switch)
+-- === ** Avionics Buses
+if kc_has_avionics_sw then
+	sysElectric.avionicsSwitchGroup = SwitchGroup:new("altswitches")
+	sysElectric.avionicsBus1		= kc_setup_element(def.avionicsBus1)
+	sysElectric.avionicsSwitchGroup:addSwitch(sysElectric.avionicsBus1)
+	if kc_num_avionics_sw > 1 then
+		sysElectric.avionicsBus2		= kc_setup_element(def.avionicsBus2)
+		sysElectric.avionicsSwitchGroup:addSwitch(sysElectric.avionicsBus2)
+	end
+else
+	sysElectric.avionicsSwitchGroup = SwitchGroup:new("altswitches")
+	sysElectric.avionicsBus1		= kc_setup_element({etype=kc_swtype_inop, name="avio bus 1"})
+	sysElectric.avionicsSwitchGroup:addSwitch(sysElectric.avionicsBus1)
+end
 
--- ---- Inverters
-sysElectric.inverter1Switch 		= TwoStateDrefSwitch:new("inverter1",drefInverter1,-1)
-sysElectric.inverter2Switch 		= TwoStateDrefSwitch:new("inverter2",drefInverter1,1)
-sysElectric.inverterSwitchGroup 	= SwitchGroup:new("inverters")
-sysElectric.inverterSwitchGroup:addSwitch(sysElectric.inverter1Switch)
-sysElectric.inverterSwitchGroup:addSwitch(sysElectric.inverter2Switch)
-
--- ** Avionics Buses
-sysElectric.avionics1Bus		= TwoStateDrefSwitch:new("aviobus1",drefAvionics1,0)
-sysElectric.avionics2Bus		= InopSwitch:new("aviobus2")
-sysElectric.avionicsSwitchGroup = SwitchGroup:new("altswitches")
-sysElectric.avionicsSwitchGroup:addSwitch(sysElectric.avionics1Bus)
-sysElectric.avionicsSwitchGroup:addSwitch(sysElectric.avionics2Bus)
-
--- standby power
-sysElectric.stbyPowerSwitch = InopSwitch:new("stbySwitch")
+-- === DC/AC Bus Tie
+if kc_has_bus_ties then
+	sysElectric.dcBusTie		= kc_setup_element(def.dcBusTie)
+	sysElectric.acBusTie		= kc_setup_element(def.acBusTie)
+else
+	sysElectric.dcBusTie		= kc_setup_element({etype=kc_swtype_inop, name="dc bus tie"})
+	sysElectric.acBusTie		= kc_setup_element({etype=kc_swtype_inop, name="ac bus tie"})
+end
 
 --------- Annunciators
 
--- LOW VOLTAGE annunciator
-sysElectric.lowVoltageAnc 	= SimpleAnnunciator:new("lowvoltage",drefLowVoltage,0)
+-- === APU RUNNING annunciator
+sysElectric.apuRunningAnc 	= kc_setup_element(def.apuRunningAnc)
 
-sysElectric.gpuOnBus = SimpleAnnunciator:new("gpuonbus",drefGPUOn,0)
+-- LOW VOLTAGE annunciator
+sysElectric.lowVoltageAnc 	= kc_setup_element(def.lowVoltageAnc)
 
 --------- Macros
 
@@ -216,153 +213,36 @@ function kc_macro_elec_system(flightphase)
 	logMsg("Electric flight phase: " .. kcSopFlightPhase[flightphase])
 	
 	if flightphase == kc_phase_colddark then
-		sysElectric.genSwitchGroup:actuate(0)
-		if kc_has_avionics_sw then
-			sysElectric.avionicsSwitchGroup:actuate(0)
-		end
-		if kc_has_inv_ess_bus then
-			sysElectric.inverterSwitchGroup:actuate(0)
-		end
-		if kc_has_bus_ties then
-			sysElectric.dcBusTie:actuate(0)
-			sysElectric.acBusTie:actuate(0)
-		end
-		sysElectric.batterySwitch:actuate(0) 
-		if kc_NumBatteries > 1 then
-			sysElectric.battery2Switch:actuate(0) 
-		end
-		if kc_get_nr_batteries() > 2 then
-			sysElectric.battery3Switch:actuate(0) 
-		end
-		if kc_has_standby_pwr then
-			sysElectric.stbyPowerSwitch:actuate(0)
-		end
-		if kc_is_airbus then
-			sysElectric.gen1Switch:actuate(1)
-			if kc_get_nr_generators() > 1 then
-				sysElectric.gen2Switch:actuate(1)
-			end
-			if kc_get_nr_generators() > 2 then
-				sysElectric.gen3Switch:actuate(1)
-			end
-			if kc_get_nr_generators() > 3 then
-				sysElectric.gen4Switch:actuate(1)
-			end
-		else
-			sysElectric.gen1Switch:actuate(0)
-			if kc_get_nr_generators() > 1 then
-				sysElectric.gen2Switch:actuate(0)
-			end
-			if kc_get_nr_generators() > 2 then
-				sysElectric.gen3Switch:actuate(0)
-			end
-			if kc_get_nr_generators() > 3 then
-				sysElectric.gen4Switch:actuate(0)
-			end
-		end	
+		if kc_is_airbus then sysElectric.genSwitchGroup:actuate(1) else sysElectric.genSwitchGroup:actuate(0) end
+		if kc_has_avionics_sw then sysElectric.avionicsSwitchGroup:actuate(0) end
+		if kc_has_inverters then sysElectric.inverterSwitchGroup:actuate(0) end
+		if kc_has_bus_ties then sysElectric.dcBusTie:actuate(0) sysElectric.acBusTie:actuate(0) end
+		if kc_has_batteries then sysElectric.btGroup:actuate(0) end
+		if kc_has_standby_pwr then sysElectric.stbyPowerGroup:actuate(0) end
 	elseif flightphase == kc_phase_turnaround then
-		sysElectric.genSwitchGroup:actuate(0)
-		if kc_has_avionics_sw then
-			sysElectric.avionicsSwitchGroup:actuate(1)
+		if kc_has_avionics_sw then sysElectric.avionicsSwitchGroup:actuate(1) end
+		if kc_has_inverters then
+			if kc_is_airbus then sysElectric.inverterSwitchGroup:actuate(0) else sysElectric.inverterSwitchGroup:actuate(1) end
 		end
-		if kc_has_inv_ess_bus then
-			if kc_is_airbus then
-				sysElectric.inverterSwitchGroup:actuate(0)
-			else
-				sysElectric.inverterSwitchGroup:actuate(1)
-			end
+		if kc_has_bus_ties then sysElectric.dcBusTie:actuate(1) sysElectric.acBusTie:actuate(1) end
+		if kc_has_batteries then sysElectric.btGroup:actuate(1) end
+		if kc_is_airbus then sysElectric.genSwitchGroup:actuate(1) else sysElectric.genSwitchGroup:actuate(0) end
+		if kc_has_standby_pwr then sysElectric.stbyPowerGroup:actuate(1) end
+	elseif flightphase == kc_phase_before_start then
+		if kc_has_avionics_sw then sysElectric.avionicsSwitchGroup:actuate(1) end
+		if kc_has_inverters then
+			if kc_is_airbus then sysElectric.inverterSwitchGroup:actuate(0) else sysElectric.inverterSwitchGroup:actuate(1) end
 		end
-		if kc_has_bus_ties then
-			sysElectric.dcBusTie:actuate(1)
-			sysElectric.acBusTie:actuate(1)
-		end
-		sysElectric.batterySwitch:actuate(1) 
-		if kc_NumBatteries > 1 then
-			sysElectric.battery2Switch:actuate(1) 
-		end
-		if kc_get_nr_batteries() > 2 then
-			sysElectric.battery3Switch:actuate(1) 
-		end
-		if kc_has_standby_pwr then
-			sysElectric.stbyPowerSwitch:actuate(1)
-		end
-		if kc_is_airbus then
-			sysElectric.gen1Switch:actuate(1)
-			if kc_get_nr_generators() > 1 then
-				sysElectric.gen2Switch:actuate(1)
-			end
-			if kc_get_nr_generators() > 2 then
-				sysElectric.gen3Switch:actuate(1)
-			end
-			if kc_get_nr_generators() > 3 then
-				sysElectric.gen4Switch:actuate(1)
-			end
-		else
-			sysElectric.gen1Switch:actuate(0)
-			if kc_get_nr_generators() > 1 then
-				sysElectric.gen2Switch:actuate(0)
-			end
-			if kc_get_nr_generators() > 2 then
-				sysElectric.gen3Switch:actuate(0)
-			end
-			if kc_get_nr_generators() > 3 then
-				sysElectric.gen4Switch:actuate(0)
-			end
-		end	
+		if kc_has_bus_ties then sysElectric.dcBusTie:actuate(1) sysElectric.acBusTie:actuate(1) end
+		if kc_has_batteries then sysElectric.btGroup:actuate(1) end
+		if kc_is_airbus then sysElectric.genSwitchGroup:actuate(1) else sysElectric.genSwitchGroup:actuate(0) end
+		if kc_has_standby_pwr then sysElectric.stbyPowerGroup:actuate(1) end
 	elseif flightphase == kc_phase_after_start then
-		if kc_is_airbus then
-			sysElectric.gen1Switch:actuate(1)
-			if kc_get_nr_generators() > 1 then
-				sysElectric.gen2Switch:actuate(1)
-			end
-			if kc_get_nr_generators() > 2 then
-				sysElectric.gen3Switch:actuate(1)
-			end
-			if kc_get_nr_generators() > 3 then
-				sysElectric.gen4Switch:actuate(1)
-			end
-		else
-			sysElectric.gen1Switch:actuate(1)
-			if kc_get_nr_generators() > 1 then
-				sysElectric.gen2Switch:actuate(1)
-			end
-			if kc_get_nr_generators() > 2 then
-				sysElectric.gen3Switch:actuate(1)
-			end
-			if kc_get_nr_generators() > 3 then
-				sysElectric.gen4Switch:actuate(1)
-			end	
-		end
+		sysElectric.genSwitchGroup:actuate(1)
 	elseif flightphase == kc_phase_shutdown then
-		if kc_is_airbus then
-			sysElectric.gen1Switch:actuate(1)
-			if kc_get_nr_generators() > 1 then
-				sysElectric.gen2Switch:actuate(1)
-			end
-			if kc_get_nr_generators() > 2 then
-				sysElectric.gen3Switch:actuate(1)
-			end
-			if kc_get_nr_generators() > 3 then
-				sysElectric.gen4Switch:actuate(1)
-			end
-		else
-			sysElectric.gen1Switch:actuate(0)
-			if kc_get_nr_generators() > 1 then
-				sysElectric.gen2Switch:actuate(0)
-			end
-			if kc_get_nr_generators() > 2 then
-				sysElectric.gen3Switch:actuate(0)
-			end
-			if kc_get_nr_generators() > 3 then
-				sysElectric.gen4Switch:actuate(0)
-			end	
-		end
-		if kc_has_avionics_sw then
-			sysElectric.avionicsSwitchGroup:actuate(1)
-		end
-		if kc_has_standby_pwr then
-			sysElectric.stbyPowerSwitch:actuate(1)
-		end
+		if kc_is_airbus then sysElectric.genSwitchGroup:actuate(1) else sysElectric.genSwitchGroup:actuate(0) end
+		if kc_has_avionics_sw then sysElectric.avionicsSwitchGroup:actuate(1) end
+		if kc_has_standby_pwr then sysElectric.stbyPowerGroup:actuate(1) end
 	else
 		logMsg("Invalid flightphase")
 	end	
@@ -376,10 +256,10 @@ function kc_bck_apustart(trigger)
 	end
 	if kc_procvar_get(delayvar) == -1 then
 		kc_procvar_set(delayvar,30)
-		sysElectric.apuStartSwitch:setValue(2)
+		sysElectric.apuStart:setValue(2)
 	else
 		if kc_procvar_get(delayvar) <= 0 then
-			sysElectric.apuStartSwitch:setValue(1)
+			sysElectric.apuStart:setValue(1)
 			kc_procvar_set(trigger,false)
 			kc_procvar_set(delayvar,-1)
 		else
@@ -401,7 +281,7 @@ end
 function kc_macro_apustop()
 	sysElectric.apuGenBusGroup:actuate(0)
 	sysAir.apuBleedSwitch:actuate(0)
-	sysElectric.apuMaster:setValue(0)
+	sysElectric.apuStart:setValue(0)
 end
 
 return sysElectric

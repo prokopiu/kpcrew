@@ -18,26 +18,8 @@ else
 end
 
 -- === Electric system
-kc_NumBatteries		= -1		-- Number of batteries from acf
-kc_NumGenerators	= -1		-- Number of generators from acf
-kc_NumInverters		= -1		-- Number of inverters from acf
-kc_has_apu			= true		-- Aircraft has an APU
-kc_has_gpu			= true		-- Aircraft has GPU connection
-kc_has_inv_ess_bus	= true		-- Aircraft has inverters and essential busses
-kc_has_bus_ties		= true		-- Aircraft has bus ties for AC & DC
-kc_has_avionics_sw  = true		-- Aircraft has Avionics switch
-kc_remove_gpu_after	= true		-- remove GPU after start
-kc_has_standby_pwr	= false		-- Aircraft has standby power
 
 -- === Controls
-kc_Numflap_detents	= -1 		-- Number of flap detents from acf
-kc_has_speedbrake	= true		-- Aircraft has an air brake to extend
-kc_has_aileron_trim	= true		-- Aircraft has aileron trim
-kc_has_rudder_trim	= true		-- Aircraft has rudder trim
-kc_spdbrk_can_arm	= false		-- Aircraft's speedbrake can be armed
-kc_spdbrk_arm_pos	= -1
-kc_spdbrk_arm_to	= false		-- Speedbrake to be armed for takeoff (e.g. Airbus)
-kc_full_rgt_rudder	= 14.9		-- Threshold where the rudder is almost fully to the right
 kc_NumFlapsTO		= 3
 kc_TakeoffFlaps 	= "0|1|2| | | | "
 kc_TakeoffFlapsInd 	= "0|1|2|2|2|2|2"
@@ -48,83 +30,59 @@ kc_gear_ext_index	= 2			-- When to extend gear in flaps extend
 kc_announce_flaps	= true 
 
 -- === engines
-kc_NumEngines		= -1		-- Number of engines from acf
+-- kc_NumEngines		= -1		-- Number of engines from acf
+-- kc_has_reversers	= true		-- Aircraft has reversers
+-- kc_ab_engm_norm		= 1			-- Airbus engine mode norm
+-- kc_ab_engm_strt		= 2			-- Airbus engine mode start
+-- kc_ab_engm_crnk		= 0			-- Airbus engine mode crank
+-- kc_has_rated_to		= false		-- Aircraft has rated thrust setting for T/O
+-- kc_has_proplever	= false		-- Aircraft has prop lever
+-- kc_prop_lvr_min		= 125		-- Prop lever Minimum
+-- kc_prop_lvr_feather	= 105		-- Prop lever feather
+-- kc_prop_lvr_max		= 178		-- Prop lever maximum
+-- kc_has_mixlever		= false		-- Airctaft has mixture lever
+-- kc_mixture_off		= 0
+-- kc_mixture_min		= 0.4
+-- kc_mixture_rich		= 1
+-- kc_n2_after_start	= 40
+-- kc_has_ignition		= true		-- has ignition switch
+-- kc_needs_throttle_idle = true	-- Aircraft needs idle throttle on start
 kc_StartSequence 	= "2 THEN 1|1 THEN 2"
 kc_StartBackground	= { [1] = {"2", "1"}, [2] = {"1", "2"} }
-kc_has_reversers	= true		-- Aircraft has reversers
-kc_ab_engm_norm		= 1			-- Airbus engine mode norm
-kc_ab_engm_strt		= 2			-- Airbus engine mode start
-kc_ab_engm_crnk		= 0			-- Airbus engine mode crank
-kc_has_rated_to		= false		-- Aircraft has rated thrust setting for T/O
 kc_TakeoffThrust 	= "TOGA|FLEX|D-TO"
-kc_has_proplever	= false		-- Aircraft has prop lever
-kc_prop_lvr_min		= 125		-- Prop lever Minimum
-kc_prop_lvr_feather	= 105		-- Prop lever feather
-kc_prop_lvr_max		= 178		-- Prop lever maximum
-kc_has_mixlever		= false		-- Airctaft has mixture lever
-kc_mixture_off		= 0
-kc_mixture_min		= 0.4
-kc_mixture_rich		= 1
-kc_n2_after_start	= 40
-kc_has_ignition		= true		-- has ignition switch
-kc_needs_throttle_idle = true	-- Aircraft needs idle throttle on start
 
 -- === Fuel
-kc_NumTanks			= -1		-- Number of tanks from acf
-kc_MaxFuel 			= -1		-- Maximum Fuel Capacity from ACF
--- Max Fuel per tank
-kc_MFL				= {[0]=-1,[1]=-1,[2]=-1,[3]=-1,[4]=-1,[5]=-1,[6]=-1,[7]=-1,[8]=-1}
-kc_FuelTankLeftInd	= 0
-kc_FuelTankRghtInd	= 1
-kc_FuelTankCntrInd  = 2
-kc_FFPH 			= -1		-- Fuel Flow per hour from acf
-kc_has_fuel_pumps   = true		-- Aircraft has switchable fuel pumps
-kc_has_fuel_xfeed	= true		-- Aircraft has fuel crossfeed
 kc_fuel_ld_button	= true		-- Load the aircraft fuel from kpxbrief
-kc_has_fuel_select	= false		-- Aircraft has fuel tank selector
 
 -- === Hydraulics
-kc_has_hyd_elec_pmps= true		-- Aircraft has electric hydraulic pumps
-kc_has_hyd_eng_pmps = true		-- Aircraft has engine hydraulic pumps
-kc_has_ptu			= false		-- Aircraft has power transfer unit
 
 -- === Air supply
 kc_LandingPacks 	= "OFF|ON"
-kc_TakeoffPacks 	= "ON|AUTO|OFF"
+kc_TakeoffPacks 	= "OFF|ON"
 kc_TakeoffBleeds 	= "OFF|ON"
-kc_has_press_cab	= true		-- Aircraft has pressurized cabine
-kc_has_iso_valvle	= true		-- Aircraft has switchable isolation valve
-kc_has_engine_bleed = true		-- Aircraft has engine bleeds
-kc_has_oxygen		= true		-- Aircraft has oxygen supply
-kc_has_recirc		= false		-- Aircraft has recirc system
-kc_has_trim_air		= false		-- Aircraft has trim air
 
 -- === Anti Ice
 kc_TakeoffAntiice 	= "OFF|ENGINE|ENGINE & WING"
 kc_LandingAntiice 	= "OFF|ENGINE|ENGINE & WING"
-kc_has_window_heat	= true		-- Aircraft has dedicated window heat
-kc_has_wing_antiice	= true		-- Aircraft has anti ice measures for wings
-kc_has_eng_antiice	= true		-- Aircraft has engine antiice measures
-kc_has_pitot_heat	= true		-- Aircraft has pitot heat
 
 -- === Lights
-kc_NumLandingLts	= 2			-- Number of landing light switches
-kc_has_beacon		= true		-- Aircraft has beacon
-kc_has_strb_as_bcn	= false		-- Aircraft uses strobe lights for beacon 
-kc_has_taxi_light	= true		-- Aircraft has taxi light
-kc_has_ll_as_taxi	= false		-- Aircraft uses landing lights to taxi
-kc_has_wing_lights	= true		-- Aircraft has wing Lights
-kc_has_wheel_lights	= false		-- Aircraft has wheel Lights
-kc_has_pos_lights	= true		-- Aircraft has switchable position Lights
-kc_has_strobe_lights= true		-- Aircraft has strobe lights
-kc_has_rwy_lights	= true		-- Aircraft has rwy turnoff lights
-kc_has_logo_lights	= true		-- Aircraft has logo lights
-kc_has_dome_lights	= true		-- Aircraft has dome/cockpit lights
-kc_has_instr_lights	= true		-- Aircraft has instrument Lights
-kc_has_panel_lights = true		-- Aircraft has panel lights
-kc_has_seatbelt_sgn	= true		-- Aircraft has seatbelt signs
-kc_has_nosmoke_sgn	= true		-- Aircraft has no smoking signs
-kc_has_emer_lights	= false		-- Aircraft has emergency lights
+-- kc_NumLandingLts	= 2			-- Number of landing light switches
+-- kc_has_beacon		= true		-- Aircraft has beacon
+-- kc_has_strb_as_bcn	= false		-- Aircraft uses strobe lights for beacon 
+-- kc_has_taxi_light	= true		-- Aircraft has taxi light
+-- kc_has_ll_as_taxi	= false		-- Aircraft uses landing lights to taxi
+-- kc_has_wing_lights	= true		-- Aircraft has wing Lights
+-- kc_has_wheel_lights	= false		-- Aircraft has wheel Lights
+-- kc_has_pos_lights	= true		-- Aircraft has switchable position Lights
+-- kc_has_strobe_lights= true		-- Aircraft has strobe lights
+-- kc_has_rwy_lights	= true		-- Aircraft has rwy turnoff lights
+-- kc_has_logo_lights	= true		-- Aircraft has logo lights
+-- kc_has_dome_lights	= true		-- Aircraft has dome/cockpit lights
+-- kc_has_instr_lights	= true		-- Aircraft has instrument Lights
+-- kc_has_panel_lights = true		-- Aircraft has panel lights
+-- kc_has_seatbelt_sgn	= true		-- Aircraft has seatbelt signs
+-- kc_has_nosmoke_sgn	= true		-- Aircraft has no smoking signs
+-- kc_has_emer_lights	= false		-- Aircraft has emergency lights
 
 -- === Payload & weights
 kc_MaxRamp			= -1		-- Max Ramp weight
@@ -154,8 +112,8 @@ kc_has_vsp_sel		= true		-- Aircraft has vertical speed selector
 kc_has_yawdamper	= true		-- Aircraft has switchable yaw damper
 kc_has_ils			= true		-- Aircraft has ILS receiver
 kc_has_rnav_cap		= true		-- Aircraft has rnav capability
-kc_has_vnav			= true		-- Aircraft has VNAV
-kc_has_lnav			= true		-- Aircraft has LNAV
+kc_has_vnav			= false		-- Aircraft has VNAV
+kc_has_lnav			= false		-- Aircraft has LNAV
 kc_has_flch_ias		= true		-- Aircraft has FLCH/IAS mode
 kc_has_altsel_mode	= false		-- Aircraft needs atlsel to be selected
 kc_has_radar_alt	= true		-- Aircraft has radar altitude
@@ -373,20 +331,13 @@ function kc_get_zfw()
 	return kc_get_gross_weight()-kc_get_total_fuel()
 end
 
--- get number of tanks
-function kc_get_nr_tanks()
-	if kc_NumTanks == -1 then
-		kc_NumTanks = get("sim/aircraft/overflow/acf_num_tanks")
-	end
-	return kc_NumTanks
-end
 
 -- get number of engines
 function kc_get_nr_engines()
-	if kc_NumEngines == -1 then
-		kc_NumEngines = get("sim/aircraft/engine/acf_num_engines")
+	if kc_num_engines == -1 then
+		kc_num_engines = get("sim/aircraft/engine/acf_num_engines")
 	end
-	return kc_NumEngines
+	return kc_num_engines
 end
 
 -- get number of batteries

@@ -79,6 +79,12 @@ kc_phase_go_around		= 20
 
 activeSOP = SOP:new("Default Aircraft SOP")
 
+local testProc = Procedure:new("TEST","","")
+testProc:setFlightPhase(kc_phase_prel_preflight)
+testProc:addItem(ProcedureItem:new("APU Bleed","ON",FlowItem.actorFO,0,
+	function () return sysAir.apuBleedSwitch:getStatus() > 0 end,
+	function () sysAir.apuBleedSwitch:actuate(1) end))
+
 -- *optional activities if system available
 -- ================== SAFETY & POWER ON ==================
 -- PARKING BRAKE..................................ON (F/O)
@@ -150,17 +156,19 @@ if kc_has_wipers then
 		function () sysGeneral.wiperGroup:actuate(0) end))
 end
 electricalPowerUpProc:addItem(ProcedureItem:new("BATTERY & ELECTRIC SYSTEM","ON/SET",FlowItem.actorFO,0,
-	function () return sysElectric.batterySwitch:getStatus() > 0 end,
-	function () kc_macro_elec_system(kc_phase_turnaround) end))
+	function () return sysElectric.btGroup:getStatus() > 0 end,
+	function () kc_macro_elec_system(kc_phase_turnaround) sysElectric.btGroup:actuate(1) end))
 	
 -- If GPU available and power up with GPU selected
 if kc_has_gpu then
 	electricalPowerUpProc:addItem(ProcedureItem:new("EXTERNAL POWER","CONNECT",FlowItem.actorFO,1,
 		function () return sysElectric.gpuConnect:getStatus() > 0 end,
 		function () sysElectric.gpuConnect:actuate(1) end))	
-	electricalPowerUpProc:addItem(ProcedureItem:new("EXTERNAL POWER","ON",FlowItem.actorFO,0,
-		function () return sysElectric.gpuOnBus:getStatus() > 0 end,
-		function () sysElectric.gpuGenBusGroup:actuate(1) end))
+	if kc_has_gpu_gens then 
+		electricalPowerUpProc:addItem(ProcedureItem:new("EXTERNAL POWER","ON",FlowItem.actorFO,0,
+			function () return sysElectric.gpuGenBusGroup:getStatus() > 0 end,
+			function () sysElectric.gpuGenBusGroup:actuate(1) end))
+	end
 end
 
 -- If APU available & APU power up selected
@@ -309,13 +317,13 @@ if kc_has_apu == true then
 			end))
 end
 beforeStart:addItem(ProcedureItem:new("ANTI-ICE SETTINGS","AS REQUIRED",FlowItem.actorFO,0,
-	function () return sysAir.engBleedGroup:getStatus() > 0 end,
+	function () return true end,
 	function () kc_macro_aice(kc_phase_before_start) end))
 if kc_has_engine_bleed then
 	beforeStart:addItem(ProcedureItem:new("ENGINE BLEED SWITCHES","ON",FlowItem.actorFO,0,
 		function () return sysAir.engBleedGroup:getStatus() > 0 end,
 		function () 
-			kc_procvar_set("apuonline",true)
+			if kc_has_apu then kc_procvar_set("apuonline",true) end
 			kc_macro_air(kc_phase_before_start) 
 		end))
 end
@@ -375,7 +383,7 @@ if kc_has_apu == true then
 		function () return sysAir.apuBleedSwitch:getStatus() > 0 end,
 		function () sysAir.apuBleedSwitch:actuate(1) end))
 end
-if kc_has_gpu == true and kc_has_apu == true then
+if kc_has_gpu and kc_has_apu and kc_has_gpu_gens then
 	prePushStartProc:addItem(IndirectProcedureItem:new("EXTERNAL POWER","OFF",FlowItem.actorFO,2,"extpwrstartoff",
 		function () return sysElectric.gpuGenBusGroup:getStatus() == 0 end,
 		function () sysElectric.gpuGenBusGroup:actuate(0) end))
@@ -410,7 +418,7 @@ if kc_has_gpu == true and kc_remove_gpu_after == false then
 	prePushStartProc:addItem(ProcedureItem:new("EXT PWR","OFF/DISCONNECT",FlowItem.actorFO,0,
 		function () return sysElectric.gpuConnect:getStatus() == 0 end,
 		function () 
-			sysElectric.gpuGenBusGroup:actuate(0)
+			if kc_has_gpu_gens then sysElectric.gpuGenBusGroup:actuate(0) end
 			sysElectric.gpuConnect:actuate(0)
 		end))	
 end
@@ -731,7 +739,7 @@ if kc_has_gpu then
 	afterStartProc:addItem(ProcedureItem:new("EXT PWR","OFF/DISCONNECT",FlowItem.actorFO,0,
 		function () return sysElectric.gpuConnect:getStatus() == 0 end,
 		function () 
-			sysElectric.gpuGenBusGroup:actuate(0)
+			if kc_has_gpu_gens then sysElectric.gpuGenBusGroup:actuate(0) end
 			sysElectric.gpuConnect:actuate(0)
 		end))	
 end
@@ -1040,8 +1048,8 @@ climbCheck:addItem(ProcedureItem:new("PACKS / BLEEDS","ON",FlowItem.actorFO,0,
 	end))
 if kc_has_oxygen then 
 	climbCheck:addItem(ProcedureItem:new("OXYGEN SUPPLY","ON",FlowItem.actorFO,0,
-		function () return sysAir.oxygenMaster:getStatus() > 0 end,
-		function () sysAir.oxygenMaster:actuate(1) end))
+		function () return sysAir.oxygenSwitch:getStatus() > 0 end,
+		function () sysAir.oxygenSwitch:actuate(1) end))
 end
 if kc_has_eng_antiice or kc_has_wing_antiice then
 	climbCheck:addItem(HoldProcedureItem:new("ANTI-ICE","OFF",FlowItem.actorCPT))
@@ -1053,8 +1061,8 @@ if kc_has_eng_antiice then
 end
 if kc_has_wing_antiice then
 	climbCheck:addItem(ProcedureItem:new("WING ANTI-ICE","OFF",FlowItem.actorFO,0,
-		function () return sysAice.wingAntiIce:getStatus() == 0 end,
-		function () sysAice.wingAntiIce:actuate(0) end))
+		function () return sysAice.wingAiceGroup:getStatus() == 0 end,
+		function () sysAice.wingAiceGroup:actuate(0) end))
 end
 
 -- =====================================================================================================================
@@ -1157,8 +1165,10 @@ if kc_is_airbus == false and kc_has_ils then
 		function() return math.ceil(sysMCP.crs2Selector:getStatus()) == activeBriefings:get("approach:nav2Course") end,
 		function() sysMCP.crs2Selector:setValue(activeBriefings:get("approach:nav2Course")) end))
 end
-landingProc:addItem(ProcedureItem:new("AIR CONDITIONING PACK SWITCHES","AS REQUIRED",FlowItem.actorPM,0,true,
-		function () kc_macro_air(kc_phase_approach) end))
+if kc_has_packs then
+	landingProc:addItem(ProcedureItem:new("AIR CONDITIONING PACK SWITCHES","AS REQUIRED",FlowItem.actorPM,0,true,
+			function () kc_macro_air(kc_phase_approach) end))
+end
 landingProc:addItem(ProcedureItem:new("LANDING LIGHTS","ON",FlowItem.actorPF,0,
 	function () return sysLights.landLightGroup:getStatus() > 0 end,
 	function () 
@@ -1357,8 +1367,8 @@ afterLandingProc:addItem(ProcedureItem:new("MCP","SET",FlowItem.actorFO,0,
 	function () kc_macro_mcp(kc_phase_afterland) end))
 if kc_has_oxygen then 
 	afterLandingProc:addItem(ProcedureItem:new("OXYGEN SUPPLY","OFF",FlowItem.actorFO,0,
-		function () return sysAir.oxygenMaster:getStatus() == 0 end,
-		function () sysAir.oxygenMaster:actuate(0) end))
+		function () return sysAir.oxygenSwitch:getStatus() == 0 end,
+		function () sysAir.oxygenSwitch:actuate(0) end))
 end
 if kc_has_apu == true then
 	afterLandingProc:addItem(ProcedureItem:new("APU START","PERFORM",FlowItem.actorFO,0,
@@ -1430,7 +1440,7 @@ if kc_has_gpu then
 		function () return sysElectric.gpuOnBus:getStatus() == 1 end,
 		function () 
 			sysElectric.gpuConnect:actuate(1)
-			sysElectric.gpuGenBusGroup:actuate(1)
+			if kc_has_gpu_gens then sysElectric.gpuGenBusGroup:actuate(1) end
 			kc_procvar_set("callouts",false)	-- stop callouts
 		end,
 		function () return activeBriefings:get("approach:powerAtGate") > 1 end))
@@ -1562,6 +1572,7 @@ proc_ind_shutdownProc 		= 19
 proc_ind_turnAroundState	= 20
 proc_ind_coldAndDarkState	= 21
 
+-- activeSOP:addProcedure(testProc)
 activeSOP:addProcedure(electricalPowerUpProc)
 activeSOP:addProcedure(beforeStart)
 activeSOP:addProcedure(prePushStartProc)

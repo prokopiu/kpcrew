@@ -22,30 +22,30 @@ else
 end
 
 -- === Electric system
-kc_has_apu			= true		-- Aircraft has an APU
-kc_has_gpu			= true		-- Aircraft has GPU connection
-kc_has_inv_ess_bus	= true		-- Aircraft has inverters and essential busses
-kc_has_bus_ties		= true		-- Aircraft has bus ties for AC & DC
-kc_has_avionics_sw  = false		-- Aircraft has Avionics switch
-kc_remove_gpu_after	= true		-- remove GPU after start
-kc_has_standby_pwr	= true		-- Aircraft has standby power
+-- kc_has_apu			= true		-- Aircraft has an APU
+-- kc_has_gpu			= true		-- Aircraft has GPU connection
+-- kc_has_inv_ess_bus	= true		-- Aircraft has inverters and essential busses
+-- kc_has_bus_ties		= true		-- Aircraft has bus ties for AC & DC
+-- kc_has_avionics_sw  = false		-- Aircraft has Avionics switch
+-- kc_remove_gpu_after	= true		-- remove GPU after start
+-- kc_has_standby_pwr	= true		-- Aircraft has standby power
 
 -- === Controls
-kc_has_speedbrake	= true		-- Aircraft has an air brake to extend
-kc_has_aileron_trim	= true		-- Aircraft has aileron trim
-kc_has_rudder_trim	= true		-- Aircraft has rudder trim
-kc_spdbrk_can_arm	= true		-- Aircraft's speedbrake can be armed
-kc_spdbrk_arm_pos	= 0.0889
-kc_spdbrk_arm_to	= false		-- Speedbrake to be armed for takeoff (e.g. Airbus)
-kc_full_rgt_rudder	= 14.9		-- Threshold where the rudder is almost fully to the right
-kc_NumFlapsTO		= 5
-kc_TakeoffFlaps 	= "UP|1|5|10|15| | "
-kc_TakeoffFlapsInd 	= "0|1|3|4|5|2|2"
-kc_NumFlapsLDG		= 3
-kc_LandingFlaps 	= "25|30|40| | | | "
-kc_LandingFlapsInd 	= "6|7|8|8|8|8|8"
-kc_gear_ext_index	= 3			-- When to extend gear in flaps extend
-kc_announce_flaps	= true 
+-- kc_has_speedbrake	= true		-- Aircraft has an air brake to extend
+-- kc_has_aileron_trim	= true		-- Aircraft has aileron trim
+-- kc_has_rudder_trim	= true		-- Aircraft has rudder trim
+-- kc_spdbrk_can_arm	= true		-- Aircraft's speedbrake can be armed
+-- kc_spdbrk_arm_pos	= 0.0889
+-- kc_spdbrk_arm_to	= false		-- Speedbrake to be armed for takeoff (e.g. Airbus)
+-- kc_full_rgt_rudder	= 14.9		-- Threshold where the rudder is almost fully to the right
+-- kc_NumFlapsTO		= 5
+-- kc_TakeoffFlaps 	= "UP|1|5|10|15| | "
+-- kc_TakeoffFlapsInd 	= "0|1|3|4|5|2|2"
+-- kc_NumFlapsLDG		= 3
+-- kc_LandingFlaps 	= "25|30|40| | | | "
+-- kc_LandingFlapsInd 	= "6|7|8|8|8|8|8"
+-- kc_gear_ext_index	= 3			-- When to extend gear in flaps extend
+-- kc_announce_flaps	= true 
 
 -- === engines
 kc_StartSequence 	= "2 THEN 1|1 THEN 2"
@@ -65,22 +65,22 @@ kc_fuel_ld_button	= false		-- Load the aircraft fuel from kpxbrief
 kc_has_fuel_select	= false		-- Aircraft has fuel tank selector
 
 -- === Hydraulics
-kc_has_hyd_elec_pmps= true		-- Aircraft has electric hydraulic pumps
-kc_has_hyd_eng_pmps = true		-- Aircraft has engine hydraulic pumps
-kc_has_ptu			= false		-- Aircraft has power transfer unit
+-- kc_has_hyd_elec_pmps= true		-- Aircraft has electric hydraulic pumps
+-- kc_has_hyd_eng_pmps = true		-- Aircraft has engine hydraulic pumps
+-- kc_has_ptu			= false		-- Aircraft has power transfer unit
 
 -- === Air supply
-kc_has_iso_valvle	= true		-- Aircraft has switchable isolation valve
-kc_has_engine_bleed = true		-- Aircraft has engine bleeds
-kc_has_oxygen		= true		-- Aircraft has oxygen supply
-kc_has_recirc		= true		-- Aircraft has recirc system
-kc_has_trim_air		= true		-- Aircraft has trim air
+-- kc_has_iso_valvle	= true		-- Aircraft has switchable isolation valve
+-- kc_has_engine_bleed = true		-- Aircraft has engine bleeds
+-- kc_has_oxygen		= true		-- Aircraft has oxygen supply
+-- kc_has_recirc		= true		-- Aircraft has recirc system
+-- kc_has_trim_air		= true		-- Aircraft has trim air
 
 -- === Anti Ice
-kc_has_window_heat	= true		-- Aircraft has dedicated window heat
-kc_has_wing_antiice	= true		-- Aircraft has anti ice measures for wings
-kc_has_eng_antiice	= true		-- Aircraft has engine antiice measures
-kc_has_pitot_heat	= true		-- Aircraft has pitot heat
+-- kc_has_window_heat	= true		-- Aircraft has dedicated window heat
+-- kc_has_wing_antiice	= true		-- Aircraft has anti ice measures for wings
+-- kc_has_eng_antiice	= true		-- Aircraft has engine antiice measures
+-- kc_has_pitot_heat	= true		-- Aircraft has pitot heat
 
 -- === Lights
 kc_NumLandingLts	= 4			-- Number of landing light switches

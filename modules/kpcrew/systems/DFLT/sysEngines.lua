@@ -5,42 +5,50 @@
 -- @author Kosta Prokopiu
 -- @copyright 2025 Kosta Prokopiu
 
--- System Elements
--- sysEngines.engStart1Switch - Starter Switches
--- sysEngines.engStart2Switch
--- sysEngines.engStart3Switch	
--- sysEngines.engStart4Switch
--- sysEngines.engStarterGroup
--- sysEngines.engineStarterAnc - 1 if a starter is running
--- sysEngines.engIgnition1	- Ignition Switches
--- sysEngines.engIgnition2
--- sysEngines.engIgnition3
--- sysEngines.engIgnition4
--- sysEngines.engIgnitionGroup
--- sysEngines.reverser1 - activate reversers for engines
--- sysEngines.reverser2
--- sysEngines.reverser3
--- sysEngines.reverser4
--- sysEngines.reverserGroup
--- sysEngines.magnetoOff - Magneto positions
--- sysEngines.magnetoL
--- sysEngines.magnetoR
--- sysEngines.magnetoBoth
--- sysEngines.magnetoStartOn
--- sysEngines.magnetoStartStop
--- sysEngines.throttlePos
--- sysEngines.mixtureLever
--- sysEngines.propLever
--- sysEngines.engineFireAnc
--- sysEngines.OilPressureAnc
--- sysEngines.oilqty1
--- sysEngines.oilqty2
--- sysEngines.oilqty3
--- sysEngines.oilqty4
--- sysEngines.reverseAnc
--- Macro: kc_bck_start_engine 
--- Macro: kc_macro_stop_engine 
--- Macro: kc_macro_set_eng_mode
+--[[
+System Elements
+sysEngines.engStarterGroup
+	sysEngines.engStartSwitch1
+	sysEngines.engStartSwitch2
+	sysEngines.engStartSwitch3 	
+	sysEngines.engStartSwitch4
+sysEngines.engineStarterAnc - 1 if a starter is running
+
+sysEngines.engIgnitionGroup - Ignition Switches
+	sysEngines.engIgnition1	
+	sysEngines.engIgnition2
+	sysEngines.engIgnition3
+	sysEngines.engIgnition4
+
+sysEngines.reverserGroup  - activate reversers for engines
+	sysEngines.reverser1
+	sysEngines.reverser2
+	sysEngines.reverser3
+	sysEngines.reverser4
+sysEngines.reverseAnc
+
+
+sysEngines.magnetoGroup 
+sysEngines.magneto1 
+sysEngines.magneto2
+sysEngines.magneto3
+sysEngines.magneto4
+
+sysEngines.throttlePos
+sysEngines.mixtureLever
+sysEngines.propLever
+sysEngines.engineFireAnc
+sysEngines.OilPressureAnc
+
+sysEngines.oilqty1
+sysEngines.oilqty2
+sysEngines.oilqty3
+sysEngines.oilqty4
+
+Macro: kc_bck_start_engine 
+Macro: kc_macro_stop_engine 
+Macro: kc_macro_set_eng_mode
+]]
 
 local sysEngines = {
 	magneto_off = 0,
@@ -51,23 +59,8 @@ local sysEngines = {
 	magneto_stopstart = 5
 }
 
-logMsg("DFLT sysEngines")
-
-local TwoStateDrefSwitch 	= require "kpcrew.systems.TwoStateDrefSwitch"
-local TwoStateCmdSwitch	 	= require "kpcrew.systems.TwoStateCmdSwitch"
-local TwoStateCustomSwitch 	= require "kpcrew.systems.TwoStateCustomSwitch"
-local SwitchGroup  			= require "kpcrew.systems.SwitchGroup"
-local SimpleAnnunciator 	= require "kpcrew.systems.SimpleAnnunciator"
-local CustomAnnunciator 	= require "kpcrew.systems.CustomAnnunciator"
-local TwoStateToggleSwitch	= require "kpcrew.systems.TwoStateToggleSwitch"
-local MultiStateCmdSwitch 	= require "kpcrew.systems.MultiStateCmdSwitch"
-local InopSwitch 			= require "kpcrew.systems.InopSwitch"
-local KeepPressedSwitchCmd	= require "kpcrew.systems.KeepPressedSwitchCmd"
-
 --------- Switch datarefs common
 local drefReverserState		= "sim/cockpit2/annunciators/reverser_on"
-local drefEngineStarter 	= "sim/flightmodel2/engines/starter_is_running"
-local drefIgnition			= "sim/cockpit2/engine/actuators/auto_ignite_on"
 local drefEngineOil 		= "sim/cockpit/warnings/annunciators/oil_pressure_low"
 local drefEngineFire 		= "sim/cockpit2/annunciators/engine_fires"
 
@@ -76,7 +69,7 @@ local drefThrottlePos		= "sim/cockpit2/engine/actuators/throttle_ratio_all"
 local drefMixturePos		= "sim/cockpit2/engine/actuators/mixture_ratio_all"
 local drefPropPos			= "sim/cockpit2/engine/actuators/prop_rotation_speed_rad_sec_all"
 local drefOilQty			= "sim/cockpit2/engine/indicators/oil_quantity_ratio"
-local drefReverserAnn		= "sim/cockpit/warnings/annunciators/reverse"
+-- local drefReverserAnn		= "sim/cockpit/warnings/annunciators/reverse"
 
 --------- Switch commands common
 local cmdReverser1			= "sim/engines/thrust_reverse_hold_1"
@@ -89,123 +82,112 @@ local cmdMagneto1Right		= "sim/magnetos/magnetos_right_1"
 local cmdMagneto1Both		= "sim/magnetos/magnetos_both_1"
 local cmdMagneto1Start		= "sim/starters/engage_start_run_1"
 local cmdMagneto1Stop		= "sim/starters/engage_start_run_1"
-local cmdEgine1Starter		= "sim/starters/engage_start_run_1"
-local cmdEgine2Starter		= "sim/starters/engage_start_run_2"
-local cmdEgine3Starter		= "sim/starters/engage_start_run_3"
-local cmdEgine4Starter		= "sim/starters/engage_start_run_4"
+
+local TwoStateDrefSwitch 	= require "kpcrew.systems.TwoStateDrefSwitch"
+local TwoStateCmdSwitch	 	= require "kpcrew.systems.TwoStateCmdSwitch"
+local TwoStateCustomSwitch 	= require "kpcrew.systems.TwoStateCustomSwitch"
+local SwitchGroup  			= require "kpcrew.systems.SwitchGroup"
+local SimpleAnnunciator 	= require "kpcrew.systems.SimpleAnnunciator"
+local CustomAnnunciator 	= require "kpcrew.systems.CustomAnnunciator"
+local TwoStateToggleSwitch	= require "kpcrew.systems.TwoStateToggleSwitch"
+local MultiStateCmdSwitch 	= require "kpcrew.systems.MultiStateCmdSwitch"
+local InopSwitch 			= require "kpcrew.systems.InopSwitch"
+local KeepPressedSwitchCmd	= require "kpcrew.systems.KeepPressedSwitchCmd"
+
+logMsg("DFLT sysEngines")
+
+local def = require("kpcrew.systems." .. kc_acf_icao ..".sysEnginesDefinitions")
 
 ----------- Switches
 
 -- Starter Switches for up to 4 engines
-sysEngines.engStart1Switch	= TwoStateCustomSwitch:new("starter1","",0,
-function () kc_procvar_set("engstart1",true) end,
-function () kc_procvar_set("engstart1",false) end,
-function () end,
-function () return get(drefEngineStarter,0) end)
-
-sysEngines.engStart2Switch	= TwoStateCustomSwitch:new("starter2","",0,
-function () kc_procvar_set("engstart2",true) end,
-function () kc_procvar_set("engstart2",false) end,
-function () end,
-function () return get(drefEngineStarter,1) end)
-
-sysEngines.engStart3Switch	= TwoStateCustomSwitch:new("starter3","",0,
-function () kc_procvar_set("engstart3",true) end,
-function () kc_procvar_set("engstart3",false) end,
-function () end,
-function () return get(drefEngineStarter,2) end)
-
-sysEngines.engStart4Switch	= TwoStateCustomSwitch:new("starter4","",0,
-function () kc_procvar_set("engstart4",true) end,
-function () kc_procvar_set("engstart4",false) end,
-function () end,
-function () return get(drefEngineStarter,3) end)
-
 sysEngines.engStarterGroup 	= SwitchGroup:new("engstarters")
-sysEngines.engStarterGroup:addSwitch(sysEngines.engStart1Switch)
-sysEngines.engStarterGroup:addSwitch(sysEngines.engStart2Switch)
-sysEngines.engStarterGroup:addSwitch(sysEngines.engStart3Switch)
-sysEngines.engStarterGroup:addSwitch(sysEngines.engStart4Switch)
+sysEngines.engStartSwitch1	= kc_setup_element(def.engStartSwitch1)
+sysEngines.engStarterGroup:addSwitch(sysEngines.engStartSwitch1)
+if kc_num_engines > 1 then
+	sysEngines.engStartSwitch2	= kc_setup_element(def.engStartSwitch2)
+	sysEngines.engStarterGroup:addSwitch(sysEngines.engStartSwitch2)
+end
+if kc_num_engines > 2 then
+	sysEngines.engStartSwitch3	= kc_setup_element(def.engStartSwitch3)
+	sysEngines.engStarterGroup:addSwitch(sysEngines.engStartSwitch3)
+end
+if kc_num_engines > 3 then
+	sysEngines.engStartSwitch4	= kc_setup_element(def.engStartSwitch4)
+	sysEngines.engStarterGroup:addSwitch(sysEngines.engStartSwitch4)
+end
 
 -- ** ENGINE STARTER annunciator
-sysEngines.engineStarterAnc = CustomAnnunciator:new("enginestarter",
-function ()
-	if get(drefEngineStarter,0) > 0 or get(drefEngineStarter,1) > 0 or get(drefEngineStarter,2) > 0 or get(drefEngineStarter,3) > 0 then
-		return 1
-	else
-		return 0
-	end
-end)
+sysEngines.engineStarterAnc = kc_setup_element(def.engineStarterAnc)
 
 -- ENGINE IGNITION
-sysEngines.engIgnition1	= TwoStateDrefSwitch:new("ignition1",drefIgnition,-1)
-sysEngines.engIgnition2	= TwoStateDrefSwitch:new("ignition2",drefIgnition,1)
-sysEngines.engIgnition3	= TwoStateDrefSwitch:new("ignition3",drefIgnition,2)
-sysEngines.engIgnition4	= TwoStateDrefSwitch:new("ignition4",drefIgnition,3)
-sysEngines.engIgnitionGroup 	= SwitchGroup:new("ignitions")
-sysEngines.engIgnitionGroup:addSwitch(sysEngines.engIgnition1)
-sysEngines.engIgnitionGroup:addSwitch(sysEngines.engIgnition2)
-sysEngines.engIgnitionGroup:addSwitch(sysEngines.engIgnition3)
-sysEngines.engIgnitionGroup:addSwitch(sysEngines.engIgnition4)
+if kc_has_ignition then
+	sysEngines.engIgnitionGroup = SwitchGroup:new("ignition switches")
+	sysEngines.engIgnition1		= kc_setup_element(def.engIgnition1)
+	sysEngines.engIgnitionGroup:addSwitch(sysEngines.engIgnition1)
+	if kc_num_ignition > 1 then
+		sysEngines.engIgnition2	= kc_setup_element(def.engIgnition2)
+		sysEngines.engIgnitionGroup:addSwitch(sysEngines.engIgnition2)
+	end
+	if kc_num_ignition > 2 then
+		sysEngines.engIgnition3		= kc_setup_element(def.engIgnition3)
+		sysEngines.engIgnitionGroup:addSwitch(sysEngines.engIgnition3)
+	end
+	if kc_num_ignition > 3 then
+		sysEngines.engIgnition4		= kc_setup_element(def.engIgnition4)
+		sysEngines.engIgnitionGroup:addSwitch(sysEngines.engIgnition4)
+	end
+else
+	sysEngines.engIgnitionGroup = SwitchGroup:new("ignition switches")
+	sysEngines.engIgnition1		= kc_setup_element({etype=kc_swtype_inop, name="Ignition 1"})
+	sysEngines.engIgnitionGroup:addSwitch(sysEngines.engIgnition1)
+end
 
 -- REVERSERS
-sysEngines.reverser1 		= TwoStateCustomSwitch:new("reverse1",drefReverserState,-1,
-	function () command_begin(cmdReverser1) end,
-	function () command_end(cmdReverser1) end,
-	function () end	
-)
-sysEngines.reverser2 		= TwoStateCustomSwitch:new("reverse2",drefReverserState,1,
-	function () command_begin(cmdReverser2) end,
-	function () command_end(cmdReverser2) end,
-	function () end	
-)
-sysEngines.reverser3 		= TwoStateCustomSwitch:new("reverse3",drefReverserState,2,
-	function () command_begin(cmdReverser3)	end,
-	function () command_end(cmdReverser3) end,
-	function () end	
-)
-sysEngines.reverser4 		= TwoStateCustomSwitch:new("reverse4",drefReverserState,3,
-	function () command_begin(cmdReverser4) end,
-	function () command_end(cmdReverser4) end,
-	function () end	
-)
-sysEngines.reverserGroup 	= SwitchGroup:new("reversers")
-sysEngines.reverserGroup:addSwitch(sysEngines.reverser1)
-sysEngines.reverserGroup:addSwitch(sysEngines.reverser2)
-sysEngines.reverserGroup:addSwitch(sysEngines.reverser3)
-sysEngines.reverserGroup:addSwitch(sysEngines.reverser4)
+if kc_has_reversers then
+	sysEngines.reverserGroup 	= SwitchGroup:new("reversers")
+	sysEngines.reverser1 		= kc_setup_element(def.reverser1)
+	sysEngines.reverserGroup:addSwitch(sysEngines.reverser1)
+	if kc_num_reversers > 1 then
+		sysEngines.reverser2 	= kc_setup_element(def.reverser2)
+		sysEngines.reverserGroup:addSwitch(sysEngines.reverser2)
+	end
+	if kc_num_reversers > 2 then
+		sysEngines.reverser3 	= kc_setup_element(def.reverser3)
+		sysEngines.reverserGroup:addSwitch(sysEngines.reverser3)
+	end
+	if kc_num_reversers > 3 then
+		sysEngines.reverser4 	= kc_setup_element(def.reverser4)
+		sysEngines.reverserGroup:addSwitch(sysEngines.reverser4)
+	end
+else
+	sysEngines.reverserGroup 	= SwitchGroup:new("reversers")
+	sysEngines.reverser1 		= kc_setup_element({etype=kc_swtype_inop, name="Reverser 1"})
+	sysEngines.reverserGroup:addSwitch(sysEngines.reverser1)
+end
 
 -- ** Magnetos set individual positions
-sysEngines.magnetoOff		= TwoStateCustomSwitch:new("magnetoOff","",0,
-	function () command_once(cmdMagneto1Off) end,
-	function () end,
-	function () end	
-)
-sysEngines.magnetoL		= TwoStateCustomSwitch:new("magnetoL","",0,
-	function () command_once(cmdMagneto1Left) end,
-	function () end,
-	function () end	
-)
-sysEngines.magnetoR		= TwoStateCustomSwitch:new("magnetoR","",0,
-	function () command_once(cmdMagneto1Right) end,
-	function () end,
-	function () end	
-)
-sysEngines.magnetoBoth		= TwoStateCustomSwitch:new("magnetoBoth","",0,
-	function () command_once(cmdMagneto1Both) end,
-	function () end,
-	function () end	
-)
-sysEngines.magnetoStartOn		= TwoStateCustomSwitch:new("magnetoStart","",0,
-	function () command_begin(cmdMagneto1Start) end,
-	function () end,
-	function () end	
-)
-sysEngines.magnetoStartStop		= TwoStateCustomSwitch:new("magnetoStop","",0,
-	function () command_end(cmdMagneto1Stop) end,
-	function () end,
-	function () end	
-)
+if kc_has_magneto_sw then
+	sysEngines.magnetoGroup = SwitchGroup:new("Magnetos")
+	sysEngines.magneto1		= kc_setup_element(def.magneto1)
+	sysEngines.magnetoGroup:addSwitch(sysEngines.magneto1)
+	if kc_num_magneto_sw > 1 then
+		sysEngines.magneto2		= kc_setup_element(def.magneto2)
+		sysEngines.magnetoGroup:addSwitch(sysEngines.magneto2)
+	end
+	if kc_num_magneto_sw > 2 then
+		sysEngines.magneto3		= kc_setup_element(def.magneto3)
+		sysEngines.magnetoGroup:addSwitch(sysEngines.magneto3)
+	end
+	if kc_num_magneto_sw > 3 then
+		sysEngines.magneto4		= kc_setup_element(def.magneto4)
+		sysEngines.magnetoGroup:addSwitch(sysEngines.magneto4)
+	end
+else
+	sysEngines.magnetoGroup = SwitchGroup:new("Magnetos")
+	sysEngines.magneto1		= kc_setup_element({etype=kc_swtype_inop, name="Magneto 1"})
+	sysEngines.magnetoGroup:addSwitch(sysEngines.magneto1)
+end
 
 -- Throttle position 0-1
 sysEngines.throttlePos			= TwoStateDrefSwitch:new("throttlepos",drefThrottlePos,0)
@@ -250,7 +232,7 @@ sysEngines.oilqty4 = SimpleAnnunciator:new("oilqty4",drefOilQty,3)
 -- ** Reverse Thrust
 sysEngines.reverseAnc 		= CustomAnnunciator:new("enginestarter",
 function ()
-	if get(drefReverserAnn) > 0 then
+	if get("sim/cockpit2/annunciators/reverser_on") > 0 then
 		return 1
 	else
 		return 0

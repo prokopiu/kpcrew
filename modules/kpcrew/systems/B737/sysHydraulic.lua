@@ -32,42 +32,6 @@ sysHydraulic = require("kpcrew.systems.DFLT.sysHydraulic")
 
 logMsg("B737 sysHydraulic")
 
---------- Switch datarefs common
-local drefElecHydPump1		= "laminar/B738/toggle_switch/electric_hydro_pumps1_pos"
-local drefElecHydPump2		= "laminar/B738/toggle_switch/electric_hydro_pumps2_pos"
-local drefEngHydPump1		= "laminar/B738/toggle_switch/hydro_pumps1_pos"
-local drefEngHydPump2		= "laminar/B738/toggle_switch/hydro_pumps2_pos"
-
---------- Annunciator datarefs common
-local drefHydPressure1 		= "sim/cockpit2/hydraulics/indicators/hydraulic_pressure_1"
-local drefHydPressure2 		= "sim/cockpit2/hydraulics/indicators/hydraulic_pressure_2"
-
---------- Switch commands common
-local cmdElecHydPmp1Tgl		= "laminar/B738/toggle_switch/electric_hydro_pumps1"
-local cmdElecHydPmp2Tgl		= "laminar/B738/toggle_switch/electric_hydro_pumps2"
-local cmdEngHydPmp1Tgl		= "laminar/B738/toggle_switch/hydro_pumps1"
-local cmdEngHydPmp2Tgl		= "laminar/B738/toggle_switch/hydro_pumps2"
-
------------ Switches
-
-sysHydraulic.elecHydPump1 	= TwoStateToggleSwitch:new("",drefElecHydPump1,0,cmdElecHydPmp1Tgl)
-sysHydraulic.elecHydPump2 	= TwoStateToggleSwitch:new("",drefElecHydPump2,0,cmdElecHydPmp2Tgl)
-sysHydraulic.elecHydPumpGroup = SwitchGroup:new("elechydpumps")
-sysHydraulic.elecHydPumpGroup:addSwitch(sysHydraulic.elecHydPump1)
-sysHydraulic.elecHydPumpGroup:addSwitch(sysHydraulic.elecHydPump2)
-
-sysHydraulic.engHydPump1 	= TwoStateToggleSwitch:new("",drefEngHydPump1,0,cmdEngHydPmp1Tgl)
-sysHydraulic.engHydPump2 	= TwoStateToggleSwitch:new("",drefEngHydPump2,0,cmdEngHydPmp2Tgl)
-sysHydraulic.engHydPumpGroup = SwitchGroup:new("enghydpumps")
-sysHydraulic.engHydPumpGroup:addSwitch(sysHydraulic.engHydPump1)
-sysHydraulic.engHydPumpGroup:addSwitch(sysHydraulic.engHydPump2)
-
-sysHydraulic.hydPumpGroup 	= SwitchGroup:new("hydpumps")
-sysHydraulic.hydPumpGroup:addSwitch(sysHydraulic.engHydPump1)
-sysHydraulic.hydPumpGroup:addSwitch(sysHydraulic.engHydPump2)
-sysHydraulic.hydPumpGroup:addSwitch(sysHydraulic.elecHydPump1)
-sysHydraulic.hydPumpGroup:addSwitch(sysHydraulic.elecHydPump2)
-
 --------- Macros
 
 -- ====================================== Hydraulic system flight phase 

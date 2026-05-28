@@ -6,6 +6,7 @@
 -- @copyright 2025 Kosta Prokopiu
 
 -- System Elements
+-- antiskid
 -- sysGeneral.Autobrake
 -- sysGeneral.GearSwitch
 -- sysGeneral.chrono		
@@ -55,6 +56,9 @@
 -- Macro: kc_macro_set_groundobjects
 -- Macro: kc_macro_set_autobrake
 -- Macro: kc_macro_set_irs
+
+kc_has_seatbelt_sgn	= true		-- Aircraft has seatbelt signs
+kc_has_nosmoke_sgn	= true		-- Aircraft has no smoking signs
 
 local sysGeneral = {
 }
@@ -294,19 +298,7 @@ sysGeneral.doorACargo 		= TwoStateCustomSwitch:new("dooracargo",drefSlider,5,
 		end
 	end)
 sysGeneral.cockpitDoor 		= InopSwitch:new("cockpitdoor")
-sysGeneral.stairsL1 		= TwoStateCustomSwitch:new("stairs1","laminar/B738/airstairs_hide",0,
-	function() 
-		if get("laminar/B738/airstairs_hide") == 1 then
-			command_once("laminar/B738/airstairs_toggle")
-		end
-	end,
-	function() 
-		if get("laminar/B738/airstairs_hide") == 0 then
-			command_once("laminar/B738/airstairs_toggle")
-		end
-	end,
-	function() command_once("laminar/B738/airstairs_toggle") end,
-	function() return 1 - get("laminar/B738/airstairs_hide") end)
+sysGeneral.stairsL1 		= InopSwitch:new("stairs1")
 
 sysGeneral.doorGroup 		= SwitchGroup:new("doors")
 sysGeneral.doorGroup:addSwitch(sysGeneral.doorL1)

@@ -1,0 +1,7 @@
+aircraft:efis_mins_dh=true
+aircraft:mcp_def_spd=250
+aircraft:mcp_def_hdg=1
+aircraft:mcp_def_alt=10000
+aircraft:powerup_apu=true
+aircraft:efis_mtr=false
+aircraft:efis_fpv=false

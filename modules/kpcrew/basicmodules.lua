@@ -30,6 +30,10 @@ function kc_get_matching_icao_code()
 	elseif PLANE_ICAO == "EPIC" then
 		icao = "EPIC"
 
+	-- Vskylabs C510
+	elseif PLANE_ICAO == "C510" then
+		icao = "C510"
+
 	-- Aeroworx DC-3 Freeware
 	elseif PLANE_ICAO == "DC3" then
 		icao = "ADC3"
@@ -168,7 +172,14 @@ function kc_get_matching_icao_code()
 	-- Aerobask Phenom 300
 	elseif PLANE_ICAO == "E55P" then
 		icao = "E55P"
+	
+	-- Riviere Dash-8
+	-- DHC8A Dash 8-Q100
+	elseif PLANE_ICAO == "DH8AA" then
+		icao = "DHC8"
+		
 	end
+	
 
 	return icao
 end

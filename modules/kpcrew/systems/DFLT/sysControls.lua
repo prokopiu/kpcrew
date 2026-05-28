@@ -14,9 +14,10 @@
 -- sysControls.aileronReset
 -- sysControls.rudderTrimSwitch
 -- sysControls.rudderReset
--- sysControls.Speedbrake
 -- sysControls.rudderDeflection
--- sysControls.yawDamper
+-- sysControls.Speedbrake
+
+
 -- Macro: kc_macro_set_flap
 -- Macro: kc_macro_arm_speedbrake
 
@@ -51,99 +52,67 @@ local MultiStateCmdSwitch 	= require "kpcrew.systems.MultiStateCmdSwitch"
 local InopSwitch 			= require "kpcrew.systems.InopSwitch"
 local KeepPressedSwitchCmd	= require "kpcrew.systems.KeepPressedSwitchCmd"
 
---------- Switch datarefs common
-local drefFlapRatio			= "sim/cockpit2/controls/flap_ratio"
-local drefPitchTrim			= "sim/cockpit2/controls/elevator_trim"
-local drefAileronTrim		= "sim/cockpit2/controls/aileron_trim"
-local drefRudderTrim		= "sim/cockpit2/controls/rudder_trim"
-local drefSpdBrakeRatio		= "sim/cockpit2/controls/speedbrake_ratio"
-local drefAutoBrakePos		= "sim/cockpit2/switches/auto_brake_level"
-
---------- Annunciator datarefs common
-local drefRudderPos			= "sim/flightmodel2/wing/rudder1_deg"
-
---------- Switch commands common
-local cmdFlapDown			= "sim/flight_controls/flaps_down"
-local cmdFlapUp				= "sim/flight_controls/flaps_up"
-local cmdPitchTrimDown		= "sim/flight_controls/pitch_trim_down"
-local cmdPitchTrimUp		= "sim/flight_controls/pitch_trim_up"
-local cmdAileronTrimRight	= "sim/flight_controls/aileron_trim_right"
-local cmdAileronTrimLeft	= "sim/flight_controls/aileron_trim_left"
-local cmdAileronTrimReset	= "sim/flight_controls/aileron_trim_center"
-local cmdRudderTrimRight	= "sim/flight_controls/rudder_trim_right"
-local cmdRudderTrimLeft		= "sim/flight_controls/rudder_trim_left"
-local cmdRudderTrimReset	= "sim/flight_controls/rudder_trim_center"
-
---------- Switches
+local def = require("kpcrew.systems." .. kc_acf_icao ..".sysControlsDefinitions")
 
 -- ** Flaps 
-sysControls.flapsSwitch 	= TwoStateCustomSwitch:new("flaps",drefFlapRatio,0,
-	function () command_once(cmdFlapDown) end,
-	function () command_once(cmdFlapUp) end,nil,
-	function () return get(drefFlapRatio) end
-)
+if kc_has_flaps then
+	sysControls.flapsSwitch 	= kc_setup_element(def.flapsSwitch)
+else
+	sysControls.flapsSwitch		= kc_setup_element({etype=kc_swtype_inop, name="Flaps Lever/Switch"})
+end
 
 -- ** Pitch Trim
-sysControls.pitchTrimSwitch = TwoStateCustomSwitch:new("pitchtrim",drefPitchTrim,0,
-	function () command_once(cmdPitchTrimDown)	end,
-	function () command_once(cmdPitchTrimUp) end,nil,
-	function () return get(drefPitchTrim) end
-)
-
--- repeating for hardware when dataref is not usable
-sysControls.pitchTrimDownRepeat = TwoStateCustomSwitch:new("pitchtrim",drefPitchTrim,0,
-	function () command_begin(cmdPitchTrimDown) end,
-	function () command_end(cmdPitchTrimDown) end,nil,
-	function () return get(drefPitchTrim) end
-)
-sysControls.pitchTrimUpRepeat = TwoStateCustomSwitch:new("pitchtrim",drefPitchTrim,0,
-	function () command_begin(cmdPitchTrimUp) end,
-	function () command_end(cmdPitchTrimUp) end,nil,
-	function () return get(drefPitchTrim) end
-)
+-- **Trim repeating commands for hardware when dataref is not usable
+if kc_has_pitch_trim then
+	sysControls.pitchTrimSwitch 	= kc_setup_element(def.pitchTrimSwitch)
+	sysControls.pitchTrimDownRepeat = kc_setup_element(def.pitchTrimDownRepeat)
+	sysControls.pitchTrimUpRepeat 	= kc_setup_element(def.pitchTrimUpRepeat)
+else
+	sysControls.pitchTrimSwitch		= kc_setup_element({etype=kc_swtype_inop, name="Pitch/Elevator Trim"})
+	sysControls.pitchTrimDownRepeat	= kc_setup_element({etype=kc_swtype_inop, name="Pitch trim down repeat"})
+	sysControls.pitchTrimUpRepeat	= kc_setup_element({etype=kc_swtype_inop, name="Pitch trim up repeat"})
+end
 
 -- ** Aileron Trim
-sysControls.aileronTrimSwitch = TwoStateCustomSwitch:new("ailerontrim",drefAileronTrim,0,
-	function () command_once(cmdAileronTrimRight) end,
-	function () command_once(cmdAileronTrimLeft) end,nil,
-	function () return get(drefAileronTrim) end
-)
 -- ** Aileron Trim Reset
-sysControls.aileronReset 	= TwoStateToggleSwitch:new("aileronreset",drefAileronTrim,0,
-	cmdAileronTrimReset)
+if kc_has_aileron_trim then
+	sysControls.aileronTrimSwitch 	= kc_setup_element(def.aileronTrimSwitch)
+	sysControls.aileronReset 		= kc_setup_element(def.aileronReset)
+else
+	sysControls.aileronTrimSwitch 	= kc_setup_element({etype=kc_swtype_inop, name="Aileron trim"})
+	sysControls.aileronReset 		= kc_setup_element({etype=kc_swtype_inop, name="Aileron reset"})
+end
 
 -- ** Rudder Trim
-sysControls.rudderTrimSwitch = TwoStateCustomSwitch:new("ruddertrim",drefRudderTrim,0,
-	function () command_once(cmdRudderTrimRight) end,
-	function () command_once(cmdRudderTrimLeft) end,nil,
-	function () return get(drefRudderTrim) end
-)
-
 -- ** Rudder Trim Reset
-sysControls.rudderReset	= TwoStateToggleSwitch:new("rudderreset",drefRudderTrim,0,
-	cmdRudderTrimReset)
+-- ** Rudder deflection used for flight controls check
+if kc_has_rudder_trim then
+	sysControls.rudderTrimSwitch 	= kc_setup_element(def.rudderTrimSwitch)
+	sysControls.rudderReset			= kc_setup_element(def.rudderReset)
+	sysControls.rudderDeflection	= kc_setup_element(def.rudderDeflection)
+else
+	sysControls.rudderTrimSwitch 	= kc_setup_element({etype=kc_swtype_inop, name="Rudder trim"})
+	sysControls.rudderReset			= kc_setup_element({etype=kc_swtype_inop, name="Rudder reset"})
+	sysControls.rudderDeflection	= kc_setup_element({etype=kc_swtype_inop, name="Rudder deflection"})
+end
 
 -- Speedbrake lever
-sysControls.Speedbrake	= TwoStateDrefSwitch:new("speedbrake",drefSpdBrakeRatio,0)
-
---------- Annunciators
-
--- rudder deflection used for flight controls check
-sysControls.rudderDeflection	= SimpleAnnunciator:new("rudderdeflection",drefRudderPos,0)
+if kc_has_speedbrake then
+	sysControls.Speedbrake			= kc_setup_element(def.Speedbrake)
+else
+	sysControls.Speedbrake		 	= kc_setup_element({etype=kc_swtype_inop, name="Speedbrake"})
+end
 
 --------- Macros
 
 -- Macro: set flaps based on index
 function kc_macro_set_flap(flapindex)
-
 	for i = 1, kc_get_nr_flapdetents() do
 		command_once("sim/flight_controls/flaps_up")
 	end 
-	
 	for i = 1, flapindex do
 		command_once("sim/flight_controls/flaps_down")
 	end
-
 end
 
 -- Macro: Arm Speedbrake
