@@ -23,6 +23,40 @@ local drefPanelLights 		= "sim/cockpit2/switches/panel_brightness_ratio"
 
 sysLights = require("kpcrew.systems.DFLT.sysLights")
 
-logMsg("TMPL sysLights")
+logMsg("E1FF sysLights")
+
+-- **Landing Lights, single onoff command driven
+sysLights.llLeftSwitch 		= TwoStateDrefSwitch:new("llleft",drefLandingLights,1)
+sysLights.llRightSwitch 	= TwoStateDrefSwitch:new("llright",drefLandingLights,2)
+sysLights.ll3rdSwitch 		= TwoStateDrefSwitch:new("ll3rd",drefLandingLights,-1)
+sysLights.ll4thSwitch 		= InopSwitch:new("ll4th")
+sysLights.landLightGroup 	= SwitchGroup:new("landinglights")
+sysLights.landLightGroup:addSwitch(sysLights.llLeftSwitch)
+sysLights.landLightGroup:addSwitch(sysLights.llRightSwitch)
+sysLights.landLightGroup:addSwitch(sysLights.ll3rdSwitch)
+sysLights.landLightGroup:addSwitch(sysLights.ll4thSwitch)
+-- annunciator to mark any landing lights on
+sysLights.landingAnc 		= CustomAnnunciator:new("landinglights",
+function () 
+	if get(drefLandingLights,0) > 0 or get(drefLandingLights,1) > 0  or get(drefLandingLights,2) > 0  then
+		return 1
+	else
+		return 0
+	end
+end)
+
+-- **RWY Turnoff Lights
+sysLights.rwyLeftSwitch 	= TwoStateDrefSwitch:new("rwyleft",drefGenericLights,12)
+sysLights.rwyLightGroup 	= SwitchGroup:new("runwaylights")
+sysLights.rwyLightGroup:addSwitch(sysLights.rwyLeftSwitch)
+-- runway turnoff lights
+sysLights.runwayAnc 		= CustomAnnunciator:new("runwaylights",
+function () 
+	if get(drefGenericLights,12) > 0  then
+		return 1
+	else
+		return 0
+	end
+end)
 
 return sysLights

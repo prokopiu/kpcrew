@@ -1,7 +1,7 @@
 -- SF50 airplane 
 -- Radio functionality
 
--- @classmod sysRadios
+-- @classmod sysRadio
 -- @author Kosta Prokopiu
 -- @copyright 2025 Kosta Prokopiu
 

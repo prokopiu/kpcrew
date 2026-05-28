@@ -53,10 +53,8 @@ sysAir.recircFanRight 		= TwoStateToggleSwitch:new("recirc2","laminar/B738/air/r
 	"laminar/B738/toggle_switch/r_recirc_fan")
 
 -- PACK switches
-sysAir.packLeftSwitch 		= MultiStateCmdSwitch:new("pack1","laminar/B738/air/l_pack_pos",0,
-	"laminar/B738/toggle_switch/l_pack_dn","laminar/B738/toggle_switch/l_pack_up",0,2,false)
-sysAir.packRightSwitch 		= MultiStateCmdSwitch:new("pack2","laminar/B738/air/r_pack_pos",0,
-	"laminar/B738/toggle_switch/r_pack_dn","laminar/B738/toggle_switch/r_pack_up",0,2,false)
+sysAir.packLeftSwitch 		= TwoStateDrefSwitch:new("pack1","laminar/B738/air/l_pack_pos",0)
+sysAir.packRightSwitch 		= TwoStateDrefSwitch:new("pack2","laminar/B738/air/r_pack_pos",0)
 sysAir.packSwitchGroup 		= SwitchGroup:new("PackBleeds")
 sysAir.packSwitchGroup:addSwitch(sysAir.packLeftSwitch)
 sysAir.packSwitchGroup:addSwitch(sysAir.packRightSwitch)

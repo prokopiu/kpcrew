@@ -1,9 +1,9 @@
--- Rotate MD88 Airplane
+-- TMPL airplane 
 -- FMC related functionality
 
 -- @classmod sysFMC
 -- @author Kosta Prokopiu
--- @copyright 2024 Kosta Prokopiu
+-- @copyright 2025 Kosta Prokopiu
 
 local TwoStateDrefSwitch 	= require "kpcrew.systems.TwoStateDrefSwitch"
 local TwoStateCmdSwitch	 	= require "kpcrew.systems.TwoStateCmdSwitch"
@@ -17,5 +17,7 @@ local InopSwitch 			= require "kpcrew.systems.InopSwitch"
 local KeepPressedSwitchCmd	= require "kpcrew.systems.KeepPressedSwitchCmd"
 
 sysFMC = require("kpcrew.systems.DFLT.sysFMC")
+
+logMsg("TMPL sysFMC")
 
 return sysFMC

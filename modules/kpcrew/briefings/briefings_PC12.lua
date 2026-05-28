@@ -12,6 +12,8 @@ kc_is_turboprop		= true		-- Aircraft is turbo prop
 
 -- === Electric system
 kc_has_apu			= false		-- Aircraft has an APU
+kc_NumGenerators	= 2			-- Number of generators from acf
+kc_NumBatteries		= 2			-- Number of batteries from acf
 
 -- === Controls
 kc_has_speedbrake	= false		-- Aircraft has an air brake to extend

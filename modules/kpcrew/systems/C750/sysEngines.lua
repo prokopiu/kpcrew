@@ -18,6 +18,8 @@ local KeepPressedSwitchCmd	= require "kpcrew.systems.KeepPressedSwitchCmd"
 
 sysEngines = require("kpcrew.systems.DFLT.sysEngines")
 
+logMsg("C750 sysEngines")
+
 -- Starter Switches
 sysEngines.engStart1Switch	= TwoStateCmdSwitch:new("starter1","laminar/CitX/engine/starter_left",0,
 	"laminar/CitX/engine/cmd_starter_left","laminar/CitX/engine/cmd_starter_stop","nocommand")
@@ -27,7 +29,7 @@ sysEngines.engStarterGroup 	= SwitchGroup:new("engstarters")
 sysEngines.engStarterGroup:addSwitch(sysEngines.engStart1Switch)
 sysEngines.engStarterGroup:addSwitch(sysEngines.engStart2Switch)
 
-sysEngines.igniter1 		= TwoStateCustomSwitch:new("igniter1","laminar/CitX/engine/ignition_switch_left",0,
+sysEngines.engIgnition1 		= TwoStateCustomSwitch:new("igniter1","laminar/CitX/engine/ignition_switch_left",0,
 	function () 
 		command_once("laminar/CitX/engine/cmd_ignition_switch_left_up")
 		command_once("laminar/CitX/engine/cmd_ignition_switch_left_up")
@@ -44,7 +46,7 @@ sysEngines.igniter1 		= TwoStateCustomSwitch:new("igniter1","laminar/CitX/engine
 		command_once("laminar/CitX/engine/cmd_ignition_switch_left_dwn")
 	end	
 )
-sysEngines.igniter2 		= TwoStateCustomSwitch:new("igniter1","laminar/CitX/engine/ignition_switch_right",0,
+sysEngines.engIgnition2 		= TwoStateCustomSwitch:new("igniter1","laminar/CitX/engine/ignition_switch_right",0,
 	function () 
 		command_once("laminar/CitX/engine/cmd_ignition_switch_right_up")
 		command_once("laminar/CitX/engine/cmd_ignition_switch_right_up")
@@ -62,7 +64,7 @@ sysEngines.igniter2 		= TwoStateCustomSwitch:new("igniter1","laminar/CitX/engine
 	end	
 )
 sysEngines.igniterGroup = SwitchGroup:new("igniters")
-sysEngines.igniterGroup:addSwitch(sysEngines.igniter1)
-sysEngines.igniterGroup:addSwitch(sysEngines.igniter2)
+sysEngines.igniterGroup:addSwitch(sysEngines.engIgnition1)
+sysEngines.igniterGroup:addSwitch(sysEngines.engIgnition2)
 
 return sysEngines

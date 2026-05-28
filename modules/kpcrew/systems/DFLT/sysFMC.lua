@@ -3,7 +3,8 @@
 
 -- @classmod sysFMC
 -- @author Kosta Prokopiu
--- @copyright 2022 Kosta Prokopiu
+-- @copyright 2025 Kosta Prokopiu
+
 local sysFMC = {
 }
 
@@ -18,16 +19,6 @@ local CustomAnnunciator 	= require "kpcrew.systems.CustomAnnunciator"
 local TwoStateToggleSwitch	= require "kpcrew.systems.TwoStateToggleSwitch"
 local MultiStateCmdSwitch 	= require "kpcrew.systems.MultiStateCmdSwitch"
 local InopSwitch 			= require "kpcrew.systems.InopSwitch"
-
-
--- Intertial reference System
-sysFMC.irs1		= InopSwitch:new("irs1")
-sysFMC.irs2		= InopSwitch:new("irs1")
-sysFMC.irs3		= InopSwitch:new("irs1")
-sysFMC.irsGroup = SwitchGroup:new("irsgroup")
-sysFMC.irsGroup:addSwitch(sysFMC.irs1)
-sysFMC.irsGroup:addSwitch(sysFMC.irs2)
-sysFMC.irsGroup:addSwitch(sysFMC.irs3)
 
 
 return sysFMC

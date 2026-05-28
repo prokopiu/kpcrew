@@ -1,140 +1,43 @@
 --[[
 	*** KPCREW 2.3
-	Virtual copilot for X-PLane 11/12
+	Virtual copilot for X-PLane 12
 	Kosta Prokopiu, July 2023
-	Changed March 2025
+	Changed August 2025
 --]]
 
 require "kpcrew.genutils"
 require "kpcrew.systems.activities"
+require "kpcrew.basicmodules"
 
 local Flow = require "kpcrew.Flow"
 local FlowItem = require "kpcrew.FlowItem"
 
-kc_VERSION = "2.3-alpha10"
+kc_VERSION = "2.3-alpha11"
 kc_simversion = get("sim/version/xplane_internal_version")
 
 logMsg ( "FWL: ** Starting KPCrew version " .. kc_VERSION .. " on XP " .. kc_simversion .. " **" )
 
 if kc_simversion > 120000 then
-require "kpcrew.metargen"
+	require "kpcrew.metargen"
 end 
 
 -- ====== Global variables =======
 kc_acf_icao = "DFLT" -- active addon aircraft ICAO code (DFLT when nothing found)
 
 -- ====== Select the addon modules based on ICAO code
-if PLANE_ICAO == "B738" then
-	if PLANE_TAILNUMBER ~= "ZB738" then
-		kc_acf_icao = "B737" 
-	else
-		kc_acf_icao = "B738" -- Zibo Mod
-		-- change the icao if you want the abbreviated DFLT SOP
-		-- kc_acf_icao = "B737"
-	end
-
--- Epic Victory Aerobask
--- elseif PLANE_ICAO == "EVIC" then
-	-- kc_acf_icao = "EVIC"
-
--- Epic E1000 Aerobask
--- elseif PLANE_ICAO == "EPIC" then
-	-- kc_acf_icao = "EPIC"
-
--- Thranda PC12
--- elseif PLANE_ICAO == "PC12" then
-	-- kc_acf_icao = "PC12"
-	
--- FF A350
--- elseif PLANE_ICAO == "A359" then
-	-- kc_acf_icao = "A359"
-
--- Laminar SF50
--- elseif PLANE_ICAO == "SF50" then
-	-- kc_acf_icao = "SF50"
-	
--- XP12 Citation X
-elseif PLANE_ICAO == "C750" and PLANE_TAILNUMBER == "N750XP" then
-	kc_acf_icao = "C750"
-	
--- XP12 A330-300 Laminar
-elseif PLANE_ICAO == "A333" then
-	kc_acf_icao = "A33L"
-	
--- Inibuilds A300
--- elseif PLANE_ICAO == "A306" then
-	-- kc_acf_icao = "A306"
-
--- FF 7x7
--- elseif PLANE_ICAO == "B762" or PLANE_ICAO == "B763" or PLANE_ICAO == "B764" then
-	-- kc_acf_icao = "B7x7"
-	
--- Rotate MD-11
--- elseif PLANE_ICAO == "MD11" then
-	-- kc_acf_icao = "MD11"
-	
--- FJsim 737	
--- elseif PLANE_ICAO == "B732" then
-	-- kc_acf_icao = "B732"
-
--- IXEG 737
--- elseif PLANE_ICAO == "B733" then
-	-- kc_acf_icao = "B733"
-	
--- X-CRAFTS E-JET FAMILIY XP12 (E1XX)
--- E-JET FAM 170  170/170
--- E-JET FAM 175  175/175
--- E-JET FAM 190  190/190
--- E-JET FAM 195  195/195
--- elseif PLANE_ICAO == "E170" and PLANE_TAILNUMBER == "E170" then
-	-- kc_acf_icao = "E1XX"
--- elseif PLANE_ICAO == "E175" and PLANE_TAILNUMBER == "E175" then
-	-- kc_acf_icao = "E1XX"
--- elseif PLANE_ICAO == "E190" and PLANE_TAILNUMBER == "E190" then
-	-- kc_acf_icao = "E1XX"
--- elseif PLANE_ICAO == "E195" and PLANE_TAILNUMBER == "E195" then
-	-- kc_acf_icao = "E1XX"
-	
--- X-CRAFTS FREE E-JETS XP12 (E1FF)
--- Free 175       170/175
--- Free 195       190/195
-elseif PLANE_ICAO == "E170" and PLANE_TAILNUMBER == "E175" then
-	kc_acf_icao = "E1FF"
-elseif PLANE_ICAO == "E190" and PLANE_TAILNUMBER == "E195" then
-	kc_acf_icao = "E1FF"
-	
--- ToLiss Airbusses
-elseif PLANE_ICAO == "A319" and PLANE_TAILNUMBER == "C-GTLS" then
-	kc_acf_icao = "A3TL"
-elseif PLANE_ICAO == "A20N" and PLANE_TAILNUMBER == "C-GTLT" then
-	kc_acf_icao = "A3TL"
-elseif PLANE_ICAO == "A321" then
-	kc_acf_icao = "A3TL"
--- elseif PLANE_ICAO == "A339" then
-	-- kc_acf_icao = "A3TL"
--- elseif PLANE_ICAO == "A346" then
-	-- kc_acf_icao = "A3TL"
-	
--- Laminar MD-82
-elseif PLANE_ICAO == "MD82" and PLANE_TAILNUMBER == "N552AA" then
-	kc_acf_icao = "MD82"
-	
--- RotateSim MD-88
--- elseif PLANE_ICAO == "MD88" then
-	-- kc_acf_icao = "MD88"
-	
--- Aerobask Phenom 300
--- elseif PLANE_ICAO == "E55P" then
-	-- kc_acf_icao = "E55P"
-end
+kc_acf_icao = kc_get_matching_icao_code()
+logMsg("ICAO: "..kc_acf_icao)
 
 -- Aircraft Specific SOP/Checklist/Procedure Definitions
 kcPreferenceSet 		= require("kpcrew.preferences.PreferenceSet")
 kcPreferenceGroup 		= require("kpcrew.preferences.PreferenceGroup")
 kcPreference 			= require("kpcrew.preferences.Preference")
 kc_global_procvars 		= kcPreferenceGroup:new("procvars","Procedure Variables")
-
 kcLoadedPrefs 			= require("kpcrew.preferences.defaultPrefs")
+if kc_file_exists(SCRIPT_DIRECTORY .. "..\\Modules\\kpcrew_prefs\\" .. kc_acf_icao .. ".preferences") then
+	getActivePrefs():load()
+end
+
 kcLoadedVars 			= require("kpcrew.preferences.backgroundVars")
 kcLoadedSOP 			= require("kpcrew.sops.SOP_" .. kc_acf_icao)
 kcLoadedBrief			= require("kpcrew.briefings.defaultBriefings")
@@ -300,8 +203,10 @@ kc_mstr_button_text = "== FLOW =="
 
 -- ===== Control bar to open windows (preliminary)
 kc_ctrl_wnd_state = 0
+-- kc_key_repeat_cnt = 0
 
 function kc_master_button()
+
 	if getActivePrefs():get("general:assistance") == 1 and kc_ctrl_wnd_state == 0 then
 		kc_ctrl_wnd_state = 1
 		local xpos = kc_scrn_width - 705
@@ -375,6 +280,7 @@ function kc_init_ctrl_window()
 end
 
 function kc_prev_button()
+	
 	-- unassisted always navigate flows
 	if getActivePrefs():get("general:assistance") == 1 then
 		if getActiveSOP():getActiveFlowIndex() > 1 then
@@ -392,7 +298,10 @@ function kc_prev_button()
 	end
 end
 
+
+
 function kc_next_button()
+		
 	-- unassisted always navigate flows
 	if getActivePrefs():get("general:assistance") == 1 then
 		getActiveSOP():setNextFlowActive()
@@ -432,107 +341,100 @@ function kc_ctrl_builder()
 	imgui.SetCursorPosY(10)
 	imgui.SetCursorPosX(7)
 	imgui.PushStyleColor(imgui.constant.Col.Text,color_white)
-	imgui.SetWindowFontScale(1.05)
+		imgui.SetWindowFontScale(1.05)
 
-	if kc_ctrl_wnd_state == 0 then
-		imgui.Button("<", 15, 25)
-		if imgui.IsItemActive() then
-			kc_ctrl_wnd_state = 1
-			local xpos = kc_scrn_width - 705
-			float_wnd_set_geometry(kc_ctrl_wnd, xpos, 46, kc_scrn_width, 1)
+		if kc_ctrl_wnd_state == 0 then
+			imgui.Button("<", 15, 25)
+			if imgui.IsItemActive() then
+				kc_ctrl_wnd_state = 1
+				local xpos = kc_scrn_width - 705
+				float_wnd_set_geometry(kc_ctrl_wnd, xpos, 46, kc_scrn_width, 1)
+			end
+			imgui.SameLine()
+		end
+		if imgui.Button("SOP", 30, 25) then
+			kc_wnd_sop_action = 1
 		end
 		imgui.SameLine()
-	end
-	if imgui.Button("SOP", 30, 25) then
-		kc_wnd_sop_action = 1
-	end
-    imgui.SameLine()
-	if imgui.Button("FLOW", 35, 25) then
-		kc_wnd_flow_action = 1
-		if kc_mstr_button_state == kc_mstr_state_new_flow then
-			kc_mstr_button_state = kc_mstr_state_flow_open
-		end
-	end
-    imgui.SameLine()
-	if imgui.Button("<-", 25, 25) then
-		kc_prev_button()
-	end
-	-- ACTION/DISPLAY BUTTON
-	imgui.SameLine()
-	if getActiveSOP():getActiveFlow():getState() == Flow.FINISH then
-		kc_mstr_button_state = kc_mstr_state_finished
-	elseif getActiveSOP():getActiveFlow():getState() == Flow.START then
-		kc_mstr_button_state = kc_mstr_state_active
-	elseif getActiveSOP():getActiveFlow():getState() == Flow.RUN then
-		kc_mstr_button_state = kc_mstr_state_active
-	elseif getActiveSOP():getActiveFlow():getState() == Flow.PAUSE then
-		kc_mstr_button_state = kc_mstr_state_waiting
-	elseif getActiveSOP():getActiveFlow():getState() == Flow.HALT then
-		kc_mstr_button_state = kc_mstr_state_stop
-	elseif getActiveSOP():getActiveFlow():getState() == Flow.NEW then
-		kc_mstr_button_state = kc_mstr_state_new_flow
-	end
-
-	imgui.PushStyleColor(imgui.constant.Col.Button, kc_mstr_button_state_cols[kc_mstr_button_state+1] )
-	imgui.PushStyleColor(imgui.constant.Col.ButtonActive, kc_mstr_button_state_cols[kc_mstr_button_state+1])
-	imgui.PushStyleColor(imgui.constant.Col.ButtonHovered, kc_mstr_button_state_cols[kc_mstr_button_state+1])
-	imgui.PushStyleColor(imgui.constant.Col.Text, color_white)
-
-		if getActiveSOP():getActiveFlow():getState() ~= Flow.RUN and 
-		   getActiveSOP():getActiveFlow():getState() ~= Flow.PAUSE and 
-		   getActiveSOP():getActiveFlow():getState() ~= Flow.HALT and 
-		   getActiveSOP():getActiveFlow():getState() ~= Flow.WAIT then
-			kc_mstr_button_text = getActiveSOP():getActiveFlow():getHeadline()
-		else
-			kc_mstr_button_text = getActiveSOP():getActiveFlow():getActiveItem():getLine(getActiveSOP():getActiveFlow():getLineLength())
-		end
-		if imgui.Button(kc_mstr_button_text, 415, 25) then
-			kc_master_button()
-		end
-
-	imgui.PopStyleColor()
-	imgui.PopStyleColor()
-	imgui.PopStyleColor()
-	imgui.PopStyleColor()
-
-    imgui.SameLine()
-	imgui.SetCursorPosY(10)
-	if imgui.Button("->", 25, 25) then
-		kc_next_button()
-	end
-    imgui.SameLine()
-	imgui.PushStyleColor(imgui.constant.Col.Button, 0xFF00007F)
-	if imgui.Button("RESET", 47, 25) then
-		getActiveSOP():getActiveFlow():reset()
-	end
-	imgui.PopStyleColor()
-    -- imgui.SameLine()
-	-- if imgui.Button("BRIEF", 45, 25) then
-		-- kb_show_only_once = 0
-		-- kb_hide_only_once = 0
-		-- kb_brief_toggle_wnd()
-		-- command_once("kpbrief/window/open")
-	-- end
-    imgui.SameLine()
-	if imgui.Button("PREF", 35, 25) then
-		kc_wnd_pref_action = 1
-	end
-    imgui.SameLine()
-	if kc_ctrl_wnd_state == 1 then
-		if imgui.Button(">", 15, 25) then
-			kc_ctrl_wnd_state = 0
-			local xpos = kc_scrn_width - 25
-			if kc_ctrl_wnd_off == true then
-				xpos = kc_scrn_width
+		if imgui.Button("FLOW", 35, 25) then
+			kc_wnd_flow_action = 1
+			if kc_mstr_button_state == kc_mstr_state_new_flow then
+				kc_mstr_button_state = kc_mstr_state_flow_open
 			end
+		end
+		imgui.SameLine()
+		if imgui.Button("<-", 25, 25) then
+			kc_prev_button()
+		end
+		-- ACTION/DISPLAY BUTTON
+		imgui.SameLine()
+		if getActiveSOP():getActiveFlow():getState() == Flow.FINISH then
+			kc_mstr_button_state = kc_mstr_state_finished
+		elseif getActiveSOP():getActiveFlow():getState() == Flow.START then
+			kc_mstr_button_state = kc_mstr_state_active
+		elseif getActiveSOP():getActiveFlow():getState() == Flow.RUN then
+			kc_mstr_button_state = kc_mstr_state_active
+		elseif getActiveSOP():getActiveFlow():getState() == Flow.PAUSE then
+			kc_mstr_button_state = kc_mstr_state_waiting
+		elseif getActiveSOP():getActiveFlow():getState() == Flow.HALT then
+			kc_mstr_button_state = kc_mstr_state_stop
+		elseif getActiveSOP():getActiveFlow():getState() == Flow.NEW then
+			kc_mstr_button_state = kc_mstr_state_new_flow
+		end
+
+		imgui.PushStyleColor(imgui.constant.Col.Button, kc_mstr_button_state_cols[kc_mstr_button_state+1] )
+			imgui.PushStyleColor(imgui.constant.Col.ButtonActive, kc_mstr_button_state_cols[kc_mstr_button_state+1])
+				imgui.PushStyleColor(imgui.constant.Col.ButtonHovered, kc_mstr_button_state_cols[kc_mstr_button_state+1])
+					imgui.PushStyleColor(imgui.constant.Col.Text, color_white)
+
+						if getActiveSOP():getActiveFlow():getState() ~= Flow.RUN and 
+						   getActiveSOP():getActiveFlow():getState() ~= Flow.PAUSE and 
+						   getActiveSOP():getActiveFlow():getState() ~= Flow.HALT and 
+						   getActiveSOP():getActiveFlow():getState() ~= Flow.WAIT then
+							kc_mstr_button_text = getActiveSOP():getActiveFlow():getHeadline()
+						else
+							kc_mstr_button_text = getActiveSOP():getActiveFlow():getActiveItem():getLine(getActiveSOP():getActiveFlow():getLineLength())
+						end
+						if imgui.Button(kc_mstr_button_text, 415, 25) then
+							kc_master_button()
+						end
+
+					imgui.PopStyleColor()
+				imgui.PopStyleColor()
+			imgui.PopStyleColor()
+		imgui.PopStyleColor()
+
+		imgui.SameLine()
+		imgui.SetCursorPosY(10)
+		if imgui.Button("->", 25, 25) then
+			kc_next_button()
+		end
+		imgui.SameLine()
+		imgui.PushStyleColor(imgui.constant.Col.Button, 0xFF00007F)
+			if imgui.Button("RESET", 47, 25) then
+				getActiveSOP():getActiveFlow():reset()
+			end
+		imgui.PopStyleColor()
+		imgui.SameLine()
+		if imgui.Button("PREF", 35, 25) then
+			kc_wnd_pref_action = 1
+		end
+		imgui.SameLine()
+		if kc_ctrl_wnd_state == 1 then
+			if imgui.Button(">", 15, 25) then
+				kc_ctrl_wnd_state = 0
+				local xpos = kc_scrn_width - 25
+				if kc_ctrl_wnd_off == true then
+					xpos = kc_scrn_width
+				end
+				float_wnd_set_geometry(kc_ctrl_wnd, xpos, 46, kc_scrn_width, 1)
+			end
+		end
+
+		if kc_ctrl_wnd_off == true then
+			xpos = kc_scrn_width
 			float_wnd_set_geometry(kc_ctrl_wnd, xpos, 46, kc_scrn_width, 1)
 		end
-	end
-
-	if kc_ctrl_wnd_off == true then
-		xpos = kc_scrn_width
-		float_wnd_set_geometry(kc_ctrl_wnd, xpos, 46, kc_scrn_width, 1)
-	end
 
 	imgui.PopStyleColor()
 end
@@ -587,7 +489,6 @@ function kc_toggle_pref_window()
 	if kc_show_pref then
 		if kc_show_pref_once == 0 then
 			kc_init_pref_window(getActivePrefs())
-			-- kc_init_pref_window(getBckVars())
 			kc_show_pref_once = 1
 			kc_hide_pref_once = 0
 		end
@@ -600,57 +501,10 @@ function kc_toggle_pref_window()
 	end
 end
 
-if kc_file_exists(SCRIPT_DIRECTORY .. "..\\Modules\\kpcrew_prefs\\" .. kc_acf_icao .. ".preferences") then
-	getActivePrefs():load()
-end
-
--- ===== Briefings window =====
--- kc_show_brief_once = 0
--- kc_hide_brief_once = 0
--- kc_brief_wnd = nil
-
--- function kc_init_brief_window(briefing)
-	-- local height = briefing:getWndHeight()
-	-- local width = briefing:getWndWidth()
-	-- kc_brief_wnd = float_wnd_create(width, height, 1, true)
-	-- float_wnd_set_title(kc_brief_wnd, briefing:getName())
-	-- float_wnd_set_imgui_builder(kc_brief_wnd, "kc_brief_builder")
-	-- float_wnd_set_position(kc_brief_wnd, briefing:getWndXPos(), briefing:getWndYPos())
--- end
-
--- function kc_brief_builder()
-	-- getActiveBriefings():render()
--- end
-
--- function kc_hide_brief_wnd()
-	-- if kc_brief_wnd then 
-		-- float_wnd_destroy(kc_brief_wnd)
-	-- end
--- end
-
--- function kc_toggle_brief_window()
-	-- kc_show_brief = not kc_show_brief
-	-- if kc_show_brief then
-		-- if kc_show_brief_once == 0 then
-			-- kc_init_brief_window(getActiveBriefings())
-			-- kc_show_brief_once = 1
-			-- kc_hide_brief_once = 0
-		-- end
-	-- else
-		-- if kc_hide_brief_once == 0 then
-			-- kc_hide_brief_wnd()
-			-- kc_show_brief_once = 0
-			-- kc_hide_brief_once = 1
-		-- end
-	-- end
--- end
-
 -- ===== Background  Window control - direct window commands do not work as expected =====
 kc_wnd_sop_action = 0
 kc_wnd_flow_action = 0
 kc_wnd_pref_action = 0
--- kc_wnd_brief_action = 0
-
 
 function bckWindowOpen()
 	if kc_wnd_sop_action == 1 then
@@ -663,16 +517,11 @@ function bckWindowOpen()
 			kc_init_flow_window(getActiveSOP():getActiveFlow())
 			kc_show_flow_once = 1
 		end
-		-- kc_toggle_flow_window()
 	end
 	if kc_wnd_pref_action == 1 then
 		kc_wnd_pref_action = 0
 		kc_toggle_pref_window()
 	end
-	-- if kc_wnd_brief_action == 1 then
-		-- kc_wnd_brief_action = 0
-		-- kc_toggle_brief_window()
-	-- end
 end
 
 if kc_file_exists(SCRIPT_DIRECTORY .. "..\\Modules\\kpcrew_prefs\\briefings.preferences") then
@@ -688,13 +537,11 @@ kc_bgr_executor = kcFlowExecutor:new(getActiveSOP():getBackgroundFlow(),true)
 do_often("kc_flow_executor:execute()")
 do_often("kc_bgr_executor:execute()")
 
-add_macro("KPCrew Debug Procvars", "kc_init_pref_window(getBckVars())")
 create_command("kp/crew/master", "KPCrew Masterbutton","kc_master_button()","","")
 create_command("kp/crew/next", "KPCrew Nextbutton","kc_next_button()","","")
 create_command("kp/crew/prev", "KPCrew Prevbutton","kc_prev_button()","","")
 create_command("kp/crew/flowwindow", "KPCrew Toggle Flow Window","kc_wnd_flow_action=1","","")
 create_command("kp/crew/sopwindow", "KPCrew Toggle SOP Window","kc_wnd_sop_action=1","","")
 create_command("kp/crew/openmaster", "KPCrew Open Master Window","kc_ctrl_wnd_state = 1 kc_ctrl_wnd_off=false local xpos = kc_scrn_width - 705 float_wnd_set_geometry(kc_ctrl_wnd, xpos, 46, kc_scrn_width, 1)","","")
--- create_command("kp/crew/briefwindow", "KPCrew Toggle Briefing Window","kb_brief_toggle_wnd()","","")
 
 add_macro("KPCrew Toggle Control Window", "kc_ctrl_wnd_state = 1 kc_ctrl_wnd_off=false local xpos = kc_scrn_width - 705 float_wnd_set_geometry(kc_ctrl_wnd, xpos, 46, kc_scrn_width, 1)")

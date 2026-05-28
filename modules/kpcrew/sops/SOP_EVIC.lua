@@ -54,13 +54,44 @@ activeSOP:getFlow(5):addItem(ProcedureItem:new("AUTO FUEL SELECT","ON",FlowItem.
 		end))
 activeSOP:getFlow(5):addItem(HoldProcedureItem:new("AIRCONDITIONING","SET",FlowItem.actorCPT))
 
-activeSOP:getFlow(18):addItem(ProcedureItem:new("AUTO FUEL SELECT","OFF",FlowItem.actorCPT,0,
+activeSOP:getFlow(6):addItem(ProcedureItem:new("TRIM MASTER","ON",FlowItem.actorCPT,0,
+		function () return get("aerobask/lt_trim") == 1 end,
+		function () 
+			if get("aerobask/lt_trim") == 0 then
+				command_once("aerobask/trim_toggle")
+			end
+		end))
+activeSOP:getFlow(6):addItem(ProcedureItem:new("A/P MASTER","ON",FlowItem.actorCPT,0,
+		function () return get("aerobask/lt_otto") == 1 end,
+		function () 
+			if get("aerobask/lt_otto") == 0 then
+				command_once("aerobask/otto_pwr_toggle")
+			end
+		end))
+
+
+activeSOP:getFlow(proc_ind_shutdownProc):addItem(ProcedureItem:new("AUTO FUEL SELECT","OFF",FlowItem.actorCPT,0,
 		function () return get("aerobask/lt_fuel_auto") == 0 end,
 		function () 
 			if get("aerobask/lt_fuel_auto") == 1 then
 				command_once("aerobask/fuel_auto_toggle")
 			end
 		end))
-activeSOP:getFlow(18):addItem(HoldProcedureItem:new("AIRCONDITIONING","OFF",FlowItem.actorCPT))
+activeSOP:getFlow(19):addItem(HoldProcedureItem:new("AIRCONDITIONING","OFF",FlowItem.actorCPT))
+
+activeSOP:getFlow(19):addItem(ProcedureItem:new("TRIM MASTER","OFF",FlowItem.actorCPT,0,
+		function () return get("aerobask/lt_trim") == 0 end,
+		function () 
+			if get("aerobask/lt_trim") == 1 then
+				command_once("aerobask/trim_toggle")
+			end
+		end))
+activeSOP:getFlow(19):addItem(ProcedureItem:new("A/P MASTER","OFF",FlowItem.actorCPT,0,
+		function () return get("aerobask/lt_otto") == 0 end,
+		function () 
+			if get("aerobask/lt_otto") == 1 then
+				command_once("aerobask/otto_pwr_toggle")
+			end
+		end))
 		
 return SOP_EVIC

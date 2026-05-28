@@ -41,10 +41,8 @@ sysFMC 						= require("kpcrew.systems." .. kc_acf_icao .. ".sysFMC")
 sysRadios					= require("kpcrew.systems." .. kc_acf_icao .. ".sysRadios")	
 sysMacros					= require("kpcrew.systems." .. kc_acf_icao .. ".sysMacros")	
 
-SOP_E1FF = require("kpcrew.sops.SOP_DFLT")
+SOP_SF50 = require("kpcrew.sops.SOP_DFLT")
 
 activeSOP:setName("LAMINAR SF50 SOP")
-
--- activeSOP:getFlow(1):addItem(HoldProcedureItem:new("KPCREW DEPARTURE BRIEF","PERFORM",FlowItem.actorCPT))
 
 return SOP_SF50

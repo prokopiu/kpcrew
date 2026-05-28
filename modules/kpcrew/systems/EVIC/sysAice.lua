@@ -1,12 +1,9 @@
--- TMPL airplane 
+-- EVIC airplane 
 -- Anti Ice functionality
 
 -- @classmod sysAice
 -- @author Kosta Prokopiu
 -- @copyright 2025 Kosta Prokopiu
-
-local sysAice = {
-}
 
 local TwoStateDrefSwitch 	= require "kpcrew.systems.TwoStateDrefSwitch"
 local TwoStateCmdSwitch	 	= require "kpcrew.systems.TwoStateCmdSwitch"
@@ -21,6 +18,12 @@ local KeepPressedSwitchCmd	= require "kpcrew.systems.KeepPressedSwitchCmd"
 
 sysAice = require("kpcrew.systems.DFLT.sysAice")
 
-logMsg("TMPL sysAice")
+logMsg("EVIC sysAice")
+
+-- Window Heat
+sysAice.windowHeat1 		= TwoStateToggleSwitch:new("winheat1","sim/cockpit2/ice/ice_window_heat_on",-1,
+	"sim/ice/window_heat_tog")
+sysAice.windowHeatGroup 	= SwitchGroup:new("windowheat")
+sysAice.windowHeatGroup:addSwitch(sysAice.windowHeat1)
 
 return sysAice

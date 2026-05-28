@@ -5,6 +5,27 @@
 -- @author Kosta Prokopiu
 -- @copyright 2025 Kosta Prokopiu
 
+--[[
+System Elements
+sysAice.engAntiIceGroup
+		sysAice.engAntiIce1 
+		sysAice.engAntiIce2 
+		sysAice.engAntiIce3 
+		sysAice.engAntiIce4
+sysAice.wingAiceGroup
+		sysAice.wingAntiIce1
+		sysAice.wingAntiIce2
+sysAice.windowHeatGroup
+		sysAice.windowHeat1
+		sysAice.windowHeat2
+		sysAice.windowHeat3
+		sysAice.windowHeat4
+sysAice.probeHeatGroup
+		sysAice.probeHeatSwitch1
+		sysAice.probeHeatSwitch2
+-- sysAice.antiiceAnc
+]]
+
 local sysAice = {
 }
 
@@ -20,59 +41,189 @@ local TwoStateToggleSwitch	= require "kpcrew.systems.TwoStateToggleSwitch"
 local MultiStateCmdSwitch 	= require "kpcrew.systems.MultiStateCmdSwitch"
 local InopSwitch 			= require "kpcrew.systems.InopSwitch"
 
-local drefAiceWing 			= "sim/cockpit/switches/anti_ice_surf_heat"
-local drefAiceEng 			= "sim/cockpit/switches/anti_ice_inlet_heat"
+local def = require("kpcrew.systems." .. kc_acf_icao ..".sysAiceDefinitions")
 
--- Window Heat
-sysAice.windowHeat1 		= TwoStateCmdSwitch:new("winheat1","sim/cockpit2/ice/ice_window_heat_on_window",-1,
-	"sim/ice/window_heat_on","sim/ice/window_heat_off","sim/ice/window_heat_tog")
-sysAice.windowHeat2 		= TwoStateCmdSwitch:new("winheat2","sim/cockpit2/ice/ice_window_heat_on_window",1,
-	"sim/ice/window2_heat_on","sim/ice/window2_heat_off","sim/ice/window2_heat_tog")
-sysAice.windowHeat3 		= TwoStateCmdSwitch:new("winheat3","sim/cockpit2/ice/ice_window_heat_on_window",2,
-	"sim/ice/window3_heat_on","sim/ice/window3_heat_off","sim/ice/window3_heat_tog")
-sysAice.windowHeat4 		= TwoStateCmdSwitch:new("winheat4","sim/cockpit2/ice/ice_window_heat_on_window",3,
-	"sim/ice/window4_heat_on","sim/ice/window4_heat_off","sim/ice/window4_heat_tog")
-sysAice.windowHeatGroup 	= SwitchGroup:new("windowheat")
-sysAice.windowHeatGroup:addSwitch(sysAice.windowHeat1)
-sysAice.windowHeatGroup:addSwitch(sysAice.windowHeat2)
-sysAice.windowHeatGroup:addSwitch(sysAice.windowHeat3)
-sysAice.windowHeatGroup:addSwitch(sysAice.windowHeat4)
+----------- Switches
 
--- Probe heat
-sysAice.probeHeatASwitch 	= TwoStateCmdSwitch:new("probeheat1","sim/cockpit/switches/pitot_heat_on",0,
-	"sim/ice/pitot_heat0_on","sim/ice/pitot_heat0_off","sim/ice/pitot_heat0_tog")
-sysAice.probeHeatBSwitch 	= TwoStateCmdSwitch:new("probeheat2","sim/cockpit/switches/pitot_heat_on2",0,
-	"sim/ice/pitot_heat1_on","sim/ice/pitot_heat1_off","sim/ice/pitot_heat1_tog")
-sysAice.probeHeatGroup 		= SwitchGroup:new("probeHeat")
-sysAice.probeHeatGroup:addSwitch(sysAice.probeHeatASwitch)
-sysAice.probeHeatGroup:addSwitch(sysAice.probeHeatBSwitch)
+-- === ENG anti ice
+if kc_has_eng_antiice then
+	sysAice.engAntiIceGroup = SwitchGroup:new("Engine Aice Switches")
+	sysAice.engAntiIce1 	= kc_setup_element(def.engAntiIce1)
+	sysAice.engAntiIceGroup:addSwitch(sysAice.engAntiIce1)
+	if kc_num_eng_antiice > 1 then
+		sysAice.engAntiIce2 = kc_setup_element(def.engAntiIce2)
+		sysAice.engAntiIceGroup:addSwitch(sysAice.engAntiIce2)
+	end
+	if kc_num_eng_antiice > 2 then
+		sysAice.engAntiIce3 = kc_setup_element(def.engAntiIce3)
+		sysAice.engAntiIceGroup:addSwitch(sysAice.engAntiIce3)
+	end
+	if kc_num_eng_antiice > 3 then
+		sysAice.engAntiIce4 = kc_setup_element(def.engAntiIce4)
+		sysAice.engAntiIceGroup:addSwitch(sysAice.engAntiIce4)
+	end
+else
+	sysAice.engAntiIceGroup = SwitchGroup:new("Engine Aice Switches")
+	sysAice.engAntiIce1 	= kc_setup_element({etype=kc_swtype_inop, name="Engine antiice"})
+	sysAice.engAntiIceGroup:addSwitch(sysAice.engAntiIce1)
+end
 
--- Wing anti ice
-sysAice.wingAntiIce 		= TwoStateDrefSwitch:new("wingaice","sim/cockpit/switches/anti_ice_surf_heat_left",0)
-sysAice.wingAntiIce2 		= TwoStateDrefSwitch:new("wingaice2","sim/cockpit/switches/anti_ice_surf_heat_right",0)
-sysAice.wingAiceGroup 		= SwitchGroup:new("wingaice")
-sysAice.wingAiceGroup:addSwitch(sysAice.wingAntiIce)
-sysAice.wingAiceGroup:addSwitch(sysAice.wingAntiIce2)
+-- === Wing anti ice
+if kc_has_wing_antiice then
+	sysAice.wingAiceGroup 		= SwitchGroup:new("Wing Aice")
+	sysAice.wingAntiIce1 		= kc_setup_element(def.wingAntiIce1)
+	sysAice.wingAiceGroup:addSwitch(sysAice.wingAntiIce1)
+	if kc_num_wing_antiice > 1 then
+		sysAice.wingAntiIce2 	= kc_setup_element(def.wingAntiIce2)
+		sysAice.wingAiceGroup:addSwitch(sysAice.wingAntiIce2)
+	end
+else
+	sysAice.wingAiceGroup 		= SwitchGroup:new("Wing Aice")
+	sysAice.wingAntiIce1 		= kc_setup_element({etype=kc_swtype_inop, name="Wing antiice"})
+	sysAice.wingAiceGroup:addSwitch(sysAice.wingAntiIce1)
+end
 
--- ENG anti ice
-sysAice.engAntiIce1 		= TwoStateDrefSwitch:new("eng1aice","sim/cockpit/switches/anti_ice_inlet_heat_per_engine",-1)
-sysAice.engAntiIce2 		= TwoStateDrefSwitch:new("eng2aice","sim/cockpit/switches/anti_ice_inlet_heat_per_engine",1)
-sysAice.engAntiIce3 		= TwoStateDrefSwitch:new("eng3aice","sim/cockpit/switches/anti_ice_inlet_heat_per_engine",2)
-sysAice.engAntiIce4 		= TwoStateDrefSwitch:new("eng4aice","sim/cockpit/switches/anti_ice_inlet_heat_per_engine",3)
-sysAice.engAntiIceGroup 	= SwitchGroup:new("engantiice")
-sysAice.engAntiIceGroup:addSwitch(sysAice.engAntiIce1)
-sysAice.engAntiIceGroup:addSwitch(sysAice.engAntiIce2)
-sysAice.engAntiIceGroup:addSwitch(sysAice.engAntiIce3)
-sysAice.engAntiIceGroup:addSwitch(sysAice.engAntiIce4)
+-- === Window Heat
+if kc_has_window_heat then
+	sysAice.windowHeatGroup 	= SwitchGroup:new("Window Heat")
+	sysAice.windowHeat1 		= kc_setup_element(def.windowHeat1)
+	sysAice.windowHeatGroup:addSwitch(sysAice.windowHeat1)
+	if kc_num_window_heat > 1 then
+		sysAice.windowHeat2 	= kc_setup_element(def.windowHeat2)
+		sysAice.windowHeatGroup:addSwitch(sysAice.windowHeat2)
+	end
+	if kc_num_window_heat > 2 then
+		sysAice.windowHeat3 	= kc_setup_element(def.windowHeat3)
+		sysAice.windowHeatGroup:addSwitch(sysAice.windowHeat3)
+	end
+	if kc_num_window_heat > 3 then
+		sysAice.windowHeat4 		= kc_setup_element(def.windowHeat4)
+		sysAice.windowHeatGroup:addSwitch(sysAice.windowHeat4)
+	end
+else
+	sysAice.windowHeatGroup 	= SwitchGroup:new("Window Heat")
+	sysAice.windowHeat1 		= kc_setup_element({etype=kc_swtype_inop, name="Window heat"})
+	sysAice.windowHeatGroup:addSwitch(sysAice.windowHeat1)
+end
+
+-- === Probe/Pitot heat
+if kc_has_pitot_heat then
+	sysAice.probeHeatGroup 		= SwitchGroup:new("probeHeat")
+	sysAice.probeHeatSwitch1 	= kc_setup_element(def.probeHeatSwitch1)
+	sysAice.probeHeatGroup:addSwitch(sysAice.probeHeatSwitch1)
+	if kc_num_pitot_heat > 1 then
+		sysAice.probeHeatSwitch2= kc_setup_element(def.probeHeatSwitch2)
+		sysAice.probeHeatGroup:addSwitch(sysAice.probeHeatSwitch2)
+	end
+else
+	sysAice.probeHeatGroup 		= SwitchGroup:new("probeHeat")
+	sysAice.probeHeatSwitch1 	= kc_setup_element({etype=kc_swtype_inop, name="Probe heat"})
+	sysAice.probeHeatGroup:addSwitch(sysAice.probeHeatSwitch1)
+end
+
+----------- Annunciators
 
 -- ** ANTI ICE annunciator
-sysAice.antiiceAnc 			= CustomAnnunciator:new("antiice",
-function ()
-	if sysAice.wingAiceGroup:getStatus() > 0 or sysAice.engAntiIceGroup:getStatus() > 0  then
-		return 1
-	else
-		return 0
+sysAice.antiiceAnc 			= kc_setup_element(def.antiiceAnc)
+
+--------- Macros
+
+-- Macro: set aice systems per flight phase
+function kc_macro_aice(flightphase)
+	logMsg("Anti-Ice flight phase: " .. kcSopFlightPhase[flightphase])
+
+	if flightphase == kc_phase_colddark then 
+		if kc_has_eng_antiice then sysAice.engAntiIceGroup:actuate(0) end
+		if kc_has_wing_antiice then sysAice.wingAiceGroup:actuate(0) end
+		if kc_has_window_heat then sysAice.windowHeatGroup:actuate(0) end		
+		if kc_has_pitot_heat then sysAice.probeHeatGroup:actuate(0) end
+	elseif flightphase == kc_phase_turnaround then
+		if kc_has_eng_antiice then sysAice.engAntiIceGroup:actuate(0) end
+		if kc_has_wing_antiice then sysAice.wingAiceGroup:actuate(0) end
+		if kc_has_window_heat then 
+			if kc_is_airbus == false then 
+				sysAice.windowHeatGroup:actuate(1) 
+			else
+				sysAice.windowHeatGroup:actuate(0) 
+			end
+		end		
+		if kc_has_pitot_heat then sysAice.probeHeatGroup:actuate(0) end
+	elseif flightphase == kc_phase_prel_preflight then
+	elseif flightphase == kc_phase_preflight then
+	elseif flightphase == kc_phase_before_start then
+		if kc_has_eng_antiice then sysAice.engAntiIceGroup:actuate(0) end
+		if kc_has_wing_antiice then sysAice.wingAiceGroup:actuate(0) end
+		if kc_has_window_heat then 
+			if kc_is_airbus == false then 
+				sysAice.windowHeatGroup:actuate(1) 
+			else
+				sysAice.windowHeatGroup:actuate(0) 
+			end
+		end		
+		if kc_has_pitot_heat then sysAice.probeHeatGroup:actuate(1) end
+	elseif flightphase == kc_phase_after_start then
+		if kc_has_eng_antiice then 
+			if activeBriefings:get("takeoff:antiice") == 1 then
+				sysAice.engAntiIceGroup:actuate(0) 
+			else
+				sysAice.engAntiIceGroup:actuate(1) 
+			end
+		end
+		if kc_has_wing_antiice then
+			if activeBriefings:get("takeoff:antiice") == 3 then
+				sysAice.wingAiceGroup:actuate(1)
+			else
+				sysAice.wingAiceGroup:actuate(0)
+			end
+		end
+		if kc_has_window_heat  then
+			if kc_is_airbus then	
+				sysAice.windowHeatGroup:actuate(0)
+			else
+				sysAice.windowHeatGroup:actuate(1)
+			end
+		end
+		if kc_has_pitot_heat then sysAice.probeHeatGroup:actuate(1) end
+	elseif flightphase == kc_phase_taxi_rwy then
+	elseif flightphase == kc_phase_before_takeoff then
+	elseif flightphase == kc_phase_takeoff then
+	elseif flightphase == kc_phase_climb then
+	elseif flightphase == kc_phase_descent then
+		if kc_has_eng_antiice then 
+			if activeBriefings:get("approach:antiice") == 1 then
+				sysAice.engAntiIceGroup:actuate(0) 
+			else
+				sysAice.engAntiIceGroup:actuate(1) 
+			end
+		end
+		if kc_has_wing_antiice then
+			if activeBriefings:get("approach:antiice") == 3 then
+				sysAice.wingAiceGroup:actuate(1)
+			else
+				sysAice.wingAiceGroup:actuate(0)
+			end
+		end
+		if kc_has_window_heat  then
+			if kc_is_airbus then	
+				sysAice.windowHeatGroup:actuate(0)
+			else
+				sysAice.windowHeatGroup:actuate(1)
+			end
+		end
+		if kc_has_pitot_heat then sysAice.probeHeatGroup:actuate(1) end
+	elseif flightphase == kc_phase_arrival then
+	elseif flightphase == kc_phase_approach then
+	elseif flightphase == kc_phase_landing then
+	elseif flightphase == kc_phase_taxi_stand then
+	elseif flightphase == kc_phase_afterland then
+		if kc_has_eng_antiice then sysAice.engAntiIceGroup:actuate(0) end
+		if kc_has_wing_antiice then sysAice.wingAiceGroup:actuate(0) end
+		if kc_has_window_heat then sysAice.windowHeatGroup:actuate(0) end		
+		if kc_has_pitot_heat then sysAice.probeHeatGroup:actuate(0) end
+	elseif flightphase == kc_phase_shutdown then
+	else 
+		logMsg("Invalid flightphase")
 	end
-end)
+end
 
 return sysAice

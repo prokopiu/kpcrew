@@ -53,7 +53,7 @@ end
 
 -- regular background executor function
 function kcFlowExecutor:execute()
-	set("sim/private/controls/shadow/cockpit_near_adjust",1)
+	set("sim/private/controls/shadow/cockpit_near_adjust",1.2)
 	-- retrieve current state of flow and to be executed step
 	if self.bgr == true then
 		self.flow = getActiveSOP():getBackgroundFlow()

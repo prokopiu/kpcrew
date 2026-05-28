@@ -103,6 +103,7 @@ function kc_bck_start_engine(trigger)
 	end
 end
 
+-- set the flaps
 function kc_macro_set_flap(flapindex)
 
 	command_once("sim/flight_controls/flaps_up")

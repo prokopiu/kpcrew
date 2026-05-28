@@ -145,9 +145,42 @@ activeSOP:getFlow(proc_ind_beforeTakeoff):addItem(ProcedureItem:new("ENG IGN SEL
 activeSOP:getFlow(proc_ind_beforeTakeoff):addItem(ProcedureItem:new("GALLEY POWER","OFF",FlowItem.actorFO,0,
 	function () return sysElectric.galleyPower:getStatus() == 0 end,
 	function () sysElectric.galleyPower:actuate(0) end))
+activeSOP:getFlow(proc_ind_beforeTakeoff):addItem(ProcedureItem:new("A/T","EPR LIM",FlowItem.actorFO,0,
+	function () return true end,
+	function () command_once("laminar/md82cmd/autopilot/EPR_lim") end))
+activeSOP:getFlow(proc_ind_beforeTakeoff):addItem(ProcedureItem:new("THRUST RATING","SET",FlowItem.actorFO,0,
+	function () return true end,
+	function () 
+		if activeBriefings:get("takeoff:thrust") == 1 then
+			command_once("laminar/md82cmd/autopilot/EPR_TO") 
+		elseif activeBriefings:get("takeoff:thrust") == 2 then
+			command_once("laminar/md82cmd/autopilot/EPR_TOFLEX")
+			set("laminar/md82/autopilot/EPR_assumed_temp",activeBriefings:get("takeoff:flextemp"))
+		elseif activeBriefings:get("takeoff:thrust") == 3 then
+			command_once("laminar/md82cmd/autopilot/EPR_GA")
+		end
+		set("sim/cockpit/switches/HSI_selector",2)
+	end))
 
+-- === Gear Up
+
+-- === Flaps up
+activeSOP:getFlow(proc_ind_flapsUp):addItem(ProcedureItem:new("THRUST SETTING","CLIMB",FlowItem.actorFO,0,
+	function () return true end,
+	function () command_once("laminar/md82cmd/autopilot/EPR_CL") end))
+
+-- === after takeoff
+activeSOP:getFlow(proc_ind_afterTakeoff):addItem(ProcedureItem:new("THRUST SETTING","SPD SEL",FlowItem.actorFO,0,
+	function () return true end,
+	function () 
+		if get("sim/cockpit2/autopilot/altitude_mode") ~= 5 then
+			command_once("sim/autopilot/speed_hold")
+		end
+		sysMCP.iasSelector:setValue(activeBriefings:get("takeoff:clmbspd"))
+	end))
 
 -- ==========
+
 activeSOP:getFlow(proc_ind_climbCheck):addItem(ProcedureItem:new("GALLEY POWER","ON",FlowItem.actorFO,0,
 	function () return sysElectric.galleyPower:getStatus() == 1 end,
 	function () sysElectric.galleyPower:actuate(1) end))
@@ -171,5 +204,11 @@ activeSOP:getFlow(proc_ind_landing):addItem(ProcedureItem:new("SPEED BUGS","SET"
 activeSOP:getFlow(proc_ind_landing):addItem(ProcedureItem:new("YAW DAMPER","ON",FlowItem.actorPF,0,
 	function () return sysControls.yawDamper:getStatus() == 1 end,
 	function () sysControls.yawDamper:actuate(1) end))
-	
+activeSOP:getFlow(proc_ind_landing):addItem(ProcedureItem:new("THRUST SETTING","GA",FlowItem.actorFO,0,
+	function () return true end,
+	function () command_once("laminar/md82cmd/autopilot/EPR_GA") end))
+activeSOP:getFlow(proc_ind_landing):addItem(ProcedureItem:new("MODE","GPS",FlowItem.actorFO,0,
+	function () return true end,
+	function () set("sim/cockpit/switches/HSI_selector",1) end))
+
 return SOP_MD82

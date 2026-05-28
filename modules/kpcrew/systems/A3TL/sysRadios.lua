@@ -29,4 +29,19 @@ sysRadios.alt				= 2
 sysRadios.ta				= 3
 sysRadios.tara				= 4
 
+function kc_macro_set_xpdrmode(mode)
+	sysRadios.xpdrSwitch:setValue(mode)
+end
+
+function kc_macro_set_xpdrcode(xpdrcode)
+	local digit1 = math.floor(xpdrcode/1000)
+	local digit2 = math.floor((xpdrcode-digit1*1000)/100)
+	local digit3 = math.floor((xpdrcode-digit1*1000-digit2*100)/10)
+	local digit4 = math.floor((xpdrcode-digit1*1000-digit2*100-digit3*10))
+	set("AirbusFBW/XPDR1",digit4)
+	set("AirbusFBW/XPDR2",digit3)
+	set("AirbusFBW/XPDR3",digit2)
+	set("AirbusFBW/XPDR4",digit1)
+end
+
 return sysRadios

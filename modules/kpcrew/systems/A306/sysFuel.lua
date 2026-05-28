@@ -1,11 +1,9 @@
--- DFLT airplane 
+-- A306 airplane 
 -- Fuel related functionality
 
 -- @classmod sysFuel
 -- @author Kosta Prokopiu
--- @copyright 2022 Kosta Prokopiu
-local sysFuel = {
-}
+-- @copyright 2025 Kosta Prokopiu
 
 local TwoStateDrefSwitch 	= require "kpcrew.systems.TwoStateDrefSwitch"
 local TwoStateCmdSwitch	 	= require "kpcrew.systems.TwoStateCmdSwitch"
@@ -16,36 +14,40 @@ local CustomAnnunciator 	= require "kpcrew.systems.CustomAnnunciator"
 local TwoStateToggleSwitch	= require "kpcrew.systems.TwoStateToggleSwitch"
 local MultiStateCmdSwitch 	= require "kpcrew.systems.MultiStateCmdSwitch"
 local InopSwitch 			= require "kpcrew.systems.InopSwitch"
-
+local KeepPressedSwitchCmd	= require "kpcrew.systems.KeepPressedSwitchCmd"
 local drefFuelPressLow 		= "sim/cockpit2/annunciators/fuel_pressure_low"
 
----------- Switches
+sysFuel = require("kpcrew.systems.DFLT.sysFuel")
+
+logMsg("A306 sysFuel")
 
 -- Fuel pumps
-sysFuel.fuelPumpLeftAft 	= TwoStateCmdSwitch:new ("fuelpumpleftaft","sim/cockpit2/fuel/fuel_tank_pump_on",1,
-	"sim/fuel/fuel_pump_1_on","sim/fuel/fuel_pump_1_off","sim/fuel/fuel_pump_1_tog")
-sysFuel.fuelPumpRightAft 	= TwoStateCmdSwitch:new("fuelpumprightaft","sim/cockpit2/fuel/fuel_tank_pump_on",2,
-	"sim/fuel/fuel_pump_3_on","sim/fuel/fuel_pump_3_off","sim/fuel/fuel_pump_3_tog")
-sysFuel.fuelPumpCtrLeft 	= TwoStateCmdSwitch:new ("fuelpumpctrleft","sim/cockpit2/fuel/fuel_tank_pump_on",0,
-	"sim/fuel/fuel_pump_5_on","sim/fuel/fuel_pump_5_off","sim/fuel/fuel_pump_5_tog")
-sysFuel.fuelPumpGroup 		= SwitchGroup:new("fuelpumpgroup")
-sysFuel.fuelPumpGroup:addSwitch(sysFuel.fuelPumpLeftAft)
-sysFuel.fuelPumpGroup:addSwitch(sysFuel.fuelPumpRightAft)
-sysFuel.fuelPumpGroup:addSwitch(sysFuel.fuelPumpCtrLeft)
+sysFuel.fuelPumpLeftAft 	= TwoStateDrefSwitch:new("fuelpumpleftaft",	"A300/FUEL/outer_tank_pump1_left",	0)
+sysFuel.fuelPumpRightAft 	= TwoStateDrefSwitch:new("fuelpumprightaft","A300/FUEL/outer_tank_pump2_right",	0)
+sysFuel.fuelPump3		 	= TwoStateDrefSwitch:new("fuelpump3",		"A300/FUEL/outer_tank_pump2_left",	0)
+sysFuel.fuelPump4		 	= TwoStateDrefSwitch:new("fuelpump4",		"A300/FUEL/outer_tank_pump1_right",	0)
+sysFuel.fuelPump5		 	= TwoStateDrefSwitch:new("fuelpump5",		"A300/FUEL/inner_tank_pump1_left",	0)
+sysFuel.fuelPump6		 	= TwoStateDrefSwitch:new("fuelpump6",		"A300/FUEL/inner_tank_pump2_left",	0)
+sysFuel.fuelPump7		 	= TwoStateDrefSwitch:new("fuelpump7",		"A300/FUEL/inner_tank_pump1_right",	0)
+sysFuel.fuelPump8		 	= TwoStateDrefSwitch:new("fuelpump8",		"A300/FUEL/inner_tank_pump2_right",	0)
+sysFuel.fuelPump9		 	= TwoStateDrefSwitch:new("fuelpumpc1",		"A300/FUEL/center_tank_pump1",		0)
+sysFuel.fuelPump10		 	= TwoStateDrefSwitch:new("fuelpumpc2",		"A300/FUEL/center_tank_pump2",		0)
+sysFuel.fuelPump11		 	= TwoStateDrefSwitch:new("fuelpump11",		"A300/FUEL/trim_tank_pump1",		0)
+sysFuel.fuelPump12		 	= TwoStateDrefSwitch:new("fuelpump12",		"A300/FUEL/trim_tank_pump2",		0)
+sysFuel.allFuelPumpGroup 		= SwitchGroup:new("fuelpumpgroup")
+sysFuel.allFuelPumpGroup:addSwitch(sysFuel.fuelPumpLeftAft)
+sysFuel.allFuelPumpGroup:addSwitch(sysFuel.fuelPumpRightAft)
+sysFuel.allFuelPumpGroup:addSwitch(sysFuel.fuelPump3)
+sysFuel.allFuelPumpGroup:addSwitch(sysFuel.fuelPump4)
+sysFuel.allFuelPumpGroup:addSwitch(sysFuel.fuelPump5)
+sysFuel.allFuelPumpGroup:addSwitch(sysFuel.fuelPump6)
+sysFuel.allFuelPumpGroup:addSwitch(sysFuel.fuelPump7)
+sysFuel.allFuelPumpGroup:addSwitch(sysFuel.fuelPump8)
+sysFuel.allFuelPumpGroup:addSwitch(sysFuel.fuelPump9)
+sysFuel.allFuelPumpGroup:addSwitch(sysFuel.fuelPump10)
+sysFuel.allFuelPumpGroup:addSwitch(sysFuel.fuelPump11)
+sysFuel.allFuelPumpGroup:addSwitch(sysFuel.fuelPump12)
 
-sysFuel.crossFeed = TwoStateCmdSwitch:new("crossfeed","sim/cockpit2/fuel/auto_crossfeed",0,
-	"sim/fuel/auto_crossfeed_on_open","sim/fuel/auto_crossfeed_off")
-
------------- Annunciators
-
--- FUEL PRESSURE LOW annunciator
-sysFuel.fuelLowAnc = CustomAnnunciator:new("fuellow",
-function ()
-	if get(drefFuelPressLow,0) > 0 or get(drefFuelPressLow,1) > 0 or get(drefFuelPressLow,2) > 0 or get(drefFuelPressLow,3) > 0 then
-		return 1
-	else
-		return 0
-	end
-end)
-
+sysFuel.fuelCrossFeed = TwoStateDrefSwitch:new("crossfeed","A300/FUEL/xfeed_on",0)
+	
 return sysFuel

@@ -78,7 +78,7 @@ sysMCP.togaCopilotSwitch 	= TwoStateToggleSwitch:new("togacopilot","laminar/B738
 	"laminar/B738/autopilot/right_toga_press")
 
 -- ATHR
-sysMCP.athrSwitch 			= TwoStateToggleSwitch:new("athr","laminar/B738/autopilot/autothrottle_status1",0,
+sysMCP.athrSwitch 			= TwoStateToggleSwitch:new("athr","laminar/B738/autopilot/autothrottle_arm_pos",0,
 	"laminar/B738/autopilot/autothrottle_arm_toggle")
 
 -- CRS 1&2
@@ -173,8 +173,8 @@ sysMCP.cwsbSwitch 			= TwoStateToggleSwitch:new("cwsb","laminar/B738/autopilot/c
 -- A/P DISENGAGE
 sysMCP.discAPSwitch 		= TwoStateToggleSwitch:new("apdisc","laminar/B738/autopilot/disconnect_pos",0,
 	"laminar/B738/autopilot/disconnect_toggle")
-sysMCP.apDiscYoke 			= TwoStateToggleSwitch:new("apdisc","laminar/B738/autopilot/disconnect_pos",0,
-	"laminar/B738/autopilot/disconnect_toggle")
+sysMCP.apDiscYoke 			= TwoStateToggleSwitch:new("apdisc","laminar/B738/autopilot/cmd_a_status",0,
+	"laminar/B738/autopilot/capt_disco_press")
 
 -- NAVIGATION SWITCHES
 sysMCP.vhfNavSwitch 		= MultiStateCmdSwitch:new("vhfnav","laminar/B738/toggle_switch/vhf_nav_source",0,

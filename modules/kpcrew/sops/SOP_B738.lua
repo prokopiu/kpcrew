@@ -1872,31 +1872,32 @@ takeoffProc:addItem(ProcedureItem:new("EXTERNAL LIGHTS","SET",FlowItem.actorFO,0
 	function () 
 		kc_macro_lights_for_takeoff() 
 		activeBckVars:set("general:timesOUT",kc_dispTimeHHMM(get("sim/time/zulu_time_sec")))
-	end))
-takeoffProc:addItem(ProcedureItem:new("A/P MODES","%s|kc_pref_split(kc_TakeoffApModes)[activeBriefings:get(\"takeoff:apMode\")]",FlowItem.actorPF,0,
-	function () 
-		if activeBriefings:get("takeoff:apMode") == 1 then
-			return sysMCP.lnavSwitch:getStatus() == 1 and sysMCP.vnavSwitch:getStatus() == 1 
-		elseif activeBriefings:get("takeoff:apMode") == 2 then
-			return sysMCP.hdgselSwitch:getStatus() == 1 and sysMCP.lvlchgSwitch:getStatus() == 1 
-		else
-			return true
-		end
-	end, 
-	function () 
-		if activeBriefings:get("takeoff:apMode") == 1 then
-			sysMCP.lnavSwitch:actuate(1) 
-			sysMCP.vnavSwitch:actuate(1) 
-		elseif activeBriefings:get("takeoff:apMode") == 2 then
-			sysMCP.hdgselSwitch:actuate(1)
-			sysMCP.lvlchgSwitch:actuate(1)
-		else
-		end
-		kc_macro_doors_all_closed()
 		kc_procvar_set("above10k",true) -- background 10.000 ft activities
 		kc_procvar_set("attransalt",true) -- background transition altitude activities
 		kc_procvar_set("aftertakeoff",true) -- fo cleans up when flaps are in
 	end))
+-- takeoffProc:addItem(ProcedureItem:new("A/P MODES","%s|kc_pref_split(kc_TakeoffApModes)[activeBriefings:get(\"takeoff:apMode\")]",FlowItem.actorPF,0,
+	-- function () 
+		-- if activeBriefings:get("takeoff:apMode") == 1 then
+			-- return sysMCP.lnavSwitch:getStatus() == 1 and sysMCP.vnavSwitch:getStatus() == 1 
+		-- elseif activeBriefings:get("takeoff:apMode") == 2 then
+			-- return sysMCP.hdgselSwitch:getStatus() == 1 and sysMCP.lvlchgSwitch:getStatus() == 1 
+		-- else
+			-- return true
+		-- end
+	-- end, 
+	-- function () 
+		-- if activeBriefings:get("takeoff:apMode") == 1 then
+			-- sysMCP.lnavSwitch:actuate(1) 
+			-- sysMCP.vnavSwitch:actuate(1) 
+		-- elseif activeBriefings:get("takeoff:apMode") == 2 then
+			-- sysMCP.hdgselSwitch:actuate(1)
+			-- sysMCP.lvlchgSwitch:actuate(1)
+		-- else
+		-- end
+		-- kc_macro_doors_all_closed()
+
+	-- end))
 takeoffProc:addItem(IndirectProcedureItem:new("THRUST SETTING","40% N1",FlowItem.actorPNF,0,"to40percent",
 	function () return get("laminar/B738/engine/indicators/N1_percent_1") > 40 end))
 takeoffProc:addItem(ProcedureItem:new("SET TAKEOFF THRUST","T/O MODE",FlowItem.actorPF,0,

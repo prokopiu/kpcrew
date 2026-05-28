@@ -33,9 +33,11 @@ function kc_bck_start_engine(trigger)
 		command_once("sim/engines/mixture_max")
 		if trigger == "engstart1" then
 			command_begin("sim/starters/engage_start_run_1")
+			kc_speakNoText(0,"Starting Engine 1")
 		end
 		if trigger == "engstart2" then
 			command_begin("sim/starters/engage_start_run_2")
+			kc_speakNoText(0,"Starting Engine 2")
 		end
 	else
 		if kc_procvar_get(delayvar) <= 0 then

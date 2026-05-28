@@ -1,42 +1,131 @@
--- DFLT airplane 
+-- B742 airplane 
 -- Hydraulic system functionality
 
-local sysHydraulic = {
-}
+-- @classmod sysHydraulic
+-- @author Kosta Prokopiu
+-- @copyright 2025 Kosta Prokopiu
 
-local TwoStateDrefSwitch = require "kpcrew.systems.TwoStateDrefSwitch"
-local TwoStateCmdSwitch = require "kpcrew.systems.TwoStateCmdSwitch"
-local TwoStateCustomSwitch = require "kpcrew.systems.TwoStateCustomSwitch"
-local SwitchGroup  = require "kpcrew.systems.SwitchGroup"
-local SimpleAnnunciator = require "kpcrew.systems.SimpleAnnunciator"
-local CustomAnnunciator = require "kpcrew.systems.CustomAnnunciator"
-local TwoStateToggleSwitch = require "kpcrew.systems.TwoStateToggleSwitch"
-local MultiStateCmdSwitch = require "kpcrew.systems.MultiStateCmdSwitch"
-local InopSwitch = require "kpcrew.systems.InopSwitch"
+-- System Elements overwritten
+-- sysHydraulic.elecHydPumpGroup
+-- sysHydraulic.engHydPumpGroup
+-- sysHydraulic.engHydPump1
+-- sysHydraulic.engHydPump2
+-- sysHydraulic.engHydPump3
+-- sysHydraulic.engHydPump4
+-- Macro: kc_macro_hyd
 
-local drefHydPressure1 = "sim/cockpit2/hydraulics/indicators/hydraulic_pressure_1"
-local drefHydPressure2 = "sim/cockpit2/hydraulics/indicators/hydraulic_pressure_2"
+local TwoStateDrefSwitch 	= require "kpcrew.systems.TwoStateDrefSwitch"
+local TwoStateCmdSwitch	 	= require "kpcrew.systems.TwoStateCmdSwitch"
+local TwoStateCustomSwitch 	= require "kpcrew.systems.TwoStateCustomSwitch"
+local SwitchGroup  			= require "kpcrew.systems.SwitchGroup"
+local SimpleAnnunciator 	= require "kpcrew.systems.SimpleAnnunciator"
+local CustomAnnunciator 	= require "kpcrew.systems.CustomAnnunciator"
+local TwoStateToggleSwitch	= require "kpcrew.systems.TwoStateToggleSwitch"
+local MultiStateCmdSwitch 	= require "kpcrew.systems.MultiStateCmdSwitch"
+local InopSwitch 			= require "kpcrew.systems.InopSwitch"
+local KeepPressedSwitchCmd	= require "kpcrew.systems.KeepPressedSwitchCmd"
 
--- hydraulic demand pumps
-sysHydraulic.demandPump1Switch = MultiStateCmdSwitch:new("demand1","laminar/B747/hydraulics/dem_mode_1",0,"laminar/B747/hydraulics/sel_dial/dmd_pump_01_dn","laminar/B747/hydraulics/sel_dial/dmd_pump_01_up")
-sysHydraulic.demandPump2Switch = MultiStateCmdSwitch:new("demand2","laminar/B747/hydraulics/dem_mode_2",0,"laminar/B747/hydraulics/sel_dial/dmd_pump_02_dn","laminar/B747/hydraulics/sel_dial/dmd_pump_02_up")
-sysHydraulic.demandPump3Switch = MultiStateCmdSwitch:new("demand3","laminar/B747/hydraulics/dem_mode_3",0,"laminar/B747/hydraulics/sel_dial/dmd_pump_03_dn","laminar/B747/hydraulics/sel_dial/dmd_pump_03_up")
-sysHydraulic.demandPump4Switch = MultiStateCmdSwitch:new("demand4","laminar/B747/hydraulics/dem_mode_4",0,"laminar/B747/hydraulics/sel_dial/dmd_pump_04_dn","laminar/B747/hydraulics/sel_dial/dmd_pump_04_up")
-sysHydraulic.demandPumpGroup = SwitchGroup:new("demandpumps")
-sysHydraulic.demandPumpGroup:addSwitch(sysHydraulic.demandPump1Switch)
-sysHydraulic.demandPumpGroup:addSwitch(sysHydraulic.demandPump2Switch)
-sysHydraulic.demandPumpGroup:addSwitch(sysHydraulic.demandPump3Switch)
-sysHydraulic.demandPumpGroup:addSwitch(sysHydraulic.demandPump4Switch)
+sysHydraulic = require("kpcrew.systems.DFLT.sysHydraulic")
 
+logMsg("B742 sysHydraulic")
 
--- LOW HYDRAULIC annunciator
-sysHydraulic.hydraulicLowAnc = CustomAnnunciator:new("hydrauliclow",
-function ()
-	if get(drefHydPressure1,0) == 1 or get(drefHydPressure2,0) == 1 then
-		return 1
+--------- Switch datarefs common
+local drefElecHydPump		= "B742/HYD/elec_pump_sys4_sw"
+local drefElecHydPumpCap	= "B742/HYD/elec_pump_sys4_cap"
+local drefEngHydPump1		= "B742/HYD/eng_pump_sw"
+
+----------- Switches
+
+-- --- HYD Electric Pump
+sysHydraulic.elecHydPumpGroup = TwoStateCustomSwitch:new("elechydpump",drefElecHydPump,0,
+	function ()
+		set(drefElecHydPump,1)
+		set(drefElecHydPumpCap,1)
+	end,
+	function ()
+		set(drefElecHydPump,0)
+		set(drefElecHydPumpCap,0)
+	end,
+	function ()
+		if get(drefElecHydPump) == 0 then
+			set(drefElecHydPump,1)
+			set(drefElecHydPumpCap,1)
+		else
+			set(drefElecHydPump,0)
+			set(drefElecHydPumpCap,0)
+		end
+	end,
+	function () return get(drefElecHydPump) end)
+
+-- ----- HYD Engine Pumps
+sysHydraulic.engHydPumpGroup = SwitchGroup:new("enghydpumps")
+sysHydraulic.engHydPump1	= TwoStateDrefSwitch:new("enghydpump1",drefEngHydPump1,-1)
+sysHydraulic.engHydPumpGroup:addSwitch(sysHydraulic.engHydPump1)
+sysHydraulic.engHydPump2	= TwoStateDrefSwitch:new("enghydpump2",drefEngHydPump1,1)
+sysHydraulic.engHydPumpGroup:addSwitch(sysHydraulic.engHydPump2)
+sysHydraulic.engHydPump3	= TwoStateDrefSwitch:new("enghydpump3",drefEngHydPump1,2)
+sysHydraulic.engHydPumpGroup:addSwitch(sysHydraulic.engHydPump3)
+sysHydraulic.engHydPump4	= TwoStateDrefSwitch:new("enghydpump4",drefEngHydPump1,3)
+sysHydraulic.engHydPumpGroup:addSwitch(sysHydraulic.engHydPump4)
+
+--------- Macros
+
+-- ====================================== Hydraulic system flight phase 
+function kc_macro_hyd(flightphase)
+	logMsg("Hydraulic flight phase: " .. kcSopFlightPhase[flightphase])
+
+	if flightphase == kc_phase_colddark then
+		sysHydraulic.elecHydPumpGroup:actuate(0)
+		sysHydraulic.engHydPumpGroup:actuate(0)
+		set_array("B742/HYD/air_pump_sw",0,0)
+		set_array("B742/HYD/air_pump_sw",1,0)
+		set_array("B742/HYD/air_pump_sw",2,0)
+		set_array("B742/HYD/air_pump_sw",3,0)
+	elseif flightphase == kc_phase_turnaround then
+		sysHydraulic.elecHydPumpGroup:actuate(1)
+		sysHydraulic.engHydPumpGroup:actuate(1)
+		set_array("B742/HYD/air_pump_sw",0,0)
+		set_array("B742/HYD/air_pump_sw",1,0)
+		set_array("B742/HYD/air_pump_sw",2,0)
+		set_array("B742/HYD/air_pump_sw",3,0)
+	elseif flightphase == kc_phase_before_start then
+		sysHydraulic.elecHydPumpGroup:actuate(1)
+		sysHydraulic.engHydPumpGroup:actuate(1)
+		set_array("B742/HYD/air_pump_sw",0,0)
+		set_array("B742/HYD/air_pump_sw",1,0)
+		set_array("B742/HYD/air_pump_sw",2,0)
+		set_array("B742/HYD/air_pump_sw",3,0)
+	elseif flightphase == kc_phase_after_start then
+		sysHydraulic.elecHydPumpGroup:actuate(0)
+		sysHydraulic.engHydPumpGroup:actuate(1)
+		set_array("B742/HYD/air_pump_sw",0,1)
+		set_array("B742/HYD/air_pump_sw",1,1)
+		set_array("B742/HYD/air_pump_sw",2,1)
+		set_array("B742/HYD/air_pump_sw",3,1)
+	elseif flightphase == kc_phase_climb then
+		sysHydraulic.elecHydPumpGroup:actuate(0)
+		sysHydraulic.engHydPumpGroup:actuate(1)
+		set_array("B742/HYD/air_pump_sw",0,1)
+		set_array("B742/HYD/air_pump_sw",1,1)
+		set_array("B742/HYD/air_pump_sw",2,1)
+		set_array("B742/HYD/air_pump_sw",3,1)
+	elseif flightphase == kc_phase_landing then
+		sysHydraulic.elecHydPumpGroup:actuate(0)
+		sysHydraulic.engHydPumpGroup:actuate(1)
+		set_array("B742/HYD/air_pump_sw",0,1)
+		set_array("B742/HYD/air_pump_sw",1,1)
+		set_array("B742/HYD/air_pump_sw",2,1)
+		set_array("B742/HYD/air_pump_sw",3,1)
+	elseif flightphase == kc_phase_shutdown then
+		sysHydraulic.elecHydPumpGroup:actuate(0)
+		sysHydraulic.engHydPumpGroup:actuate(1)
+		set_array("B742/HYD/air_pump_sw",0,0)
+		set_array("B742/HYD/air_pump_sw",1,0)
+		set_array("B742/HYD/air_pump_sw",2,0)
+		set_array("B742/HYD/air_pump_sw",3,0)
 	else
-		return 0
-	end
-end)
+		logMsg("Invalid flightphase")
+	end	
+end
 
 return sysHydraulic

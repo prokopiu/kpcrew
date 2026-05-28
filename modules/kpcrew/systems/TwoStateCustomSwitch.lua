@@ -4,7 +4,7 @@
 -- @author Kosta Prokopiu
 -- @copyright 2022 Kosta Prokopiu
 local khTwoStateCustomSwitch = {
-	defaultDelay = 3 
+	defaultDelay = 4 
 }
 
 local Switch = require "kpcrew.systems.Switch"
@@ -17,8 +17,10 @@ local Switch = require "kpcrew.systems.Switch"
 -- @tparam string funcOff function to turn off
 -- @tparam string funcToggle function to toggle
 -- @tparam string funcStatus function to return status value
+-- @tparam string funcStep function to step through like MultiState
+-- @tparam string funcSet function to set values directly
 -- @treturn Switch the created base element
-function khTwoStateCustomSwitch:new(name, statusDref, statusDrefIdx, funcOn, funcOff, funcToggle, funcStatus)
+function khTwoStateCustomSwitch:new(name, statusDref, statusDrefIdx, funcOn, funcOff, funcToggle, funcStatus, funcStep, funcSet)
 
     khTwoStateCustomSwitch.__index = khTwoStateCustomSwitch
     setmetatable(khTwoStateCustomSwitch, {
@@ -32,6 +34,8 @@ function khTwoStateCustomSwitch:new(name, statusDref, statusDrefIdx, funcOn, fun
 	obj.funcOff = funcOff
 	obj.funcToggle = funcToggle
 	obj.funcStatus = funcStatus
+	obj.funcStep = funcStep
+	obj.funcSet = funcSet
 	obj.delay = self.defaultDelay
 	
     return obj
@@ -76,6 +80,25 @@ function khTwoStateCustomSwitch:actuate(action)
 			else
 				self.funcOn()
 			end
+		end
+	end
+end
+
+function khTwoStateCustomSwitch:setValue(value)
+	if type(self.funcSet) == 'function' then
+		value = self.funcSet(value)
+	else
+		-- if index = 0 then it is a single dataref, set with simple set
+		if self.statusDrefIdx == 0 then
+			set(self.statusDref, value)
+		end
+		-- if the index is -1 then pull as array element index [0]
+		-- otherwise pull as array element with given index
+		if self.statusDrefIdx == -1 then
+			set_array(self.statusDref,0,value)
+		end
+		if self.statusDrefIdx > 0 then
+			set_array(self.statusDref,self.statusDrefIdx,value)
 		end
 	end
 end

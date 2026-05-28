@@ -1,4 +1,4 @@
--- TMPL airplane 
+-- PC12 airplane 
 -- Macros
 
 -- @classmod sysMacros
@@ -10,15 +10,16 @@ local sysMacros = {
 
 sysMacros = require("kpcrew.systems.DFLT.sysMacros")
 
-logMsg("TMPL sysMacros")
+logMsg("PC12 sysMacros")
 
--- c&d setup
-function kc_macro_state_cold_and_dark()
-	logMsg("MD82 kc_macro_state_cold_and_dark")
+-- custom cold & dark activities
+function kc_macro_custom_cold_dark()
+
 end
 
-function kc_macro_state_turnaround()
-	logMsg("MD82 kc_macro_state_turnaround")
+-- custom turnaround items
+function kc_macro_custom_turnaround()
+
 end
 
 return sysMacros

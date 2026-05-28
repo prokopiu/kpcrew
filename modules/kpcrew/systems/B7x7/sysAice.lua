@@ -1,11 +1,9 @@
--- DFLT airplane 
+-- B7x7 FF B757 B767 airplane 
 -- Anti Ice functionality
 
 -- @classmod sysAice
 -- @author Kosta Prokopiu
--- @copyright 2022 Kosta Prokopiu
-local sysAice = {
-}
+-- @copyright 2025 Kosta Prokopiu
 
 local TwoStateDrefSwitch 	= require "kpcrew.systems.TwoStateDrefSwitch"
 local TwoStateCmdSwitch	 	= require "kpcrew.systems.TwoStateCmdSwitch"
@@ -16,60 +14,187 @@ local CustomAnnunciator 	= require "kpcrew.systems.CustomAnnunciator"
 local TwoStateToggleSwitch	= require "kpcrew.systems.TwoStateToggleSwitch"
 local MultiStateCmdSwitch 	= require "kpcrew.systems.MultiStateCmdSwitch"
 local InopSwitch 			= require "kpcrew.systems.InopSwitch"
+local KeepPressedSwitchCmd	= require "kpcrew.systems.KeepPressedSwitchCmd"
 
-local drefAiceWing 			= "sim/cockpit/switches/anti_ice_surf_heat"
-local drefAiceEng 			= "sim/cockpit/switches/anti_ice_inlet_heat"
+sysAice = require("kpcrew.systems.DFLT.sysAice")
+
+logMsg("B7x7 sysAice")
+
+-- ENG anti ice
+sysAice.engAntiIce1 		= TwoStateCustomSwitch:new("eng1aice","anim/41/button",0,
+	function () 
+		set("anim/41/button/anim",1)
+		set("anim/41/button",1)		
+	end,
+	function () 
+		set("anim/41/button/anim",0)
+		set("anim/41/button",0)		
+	end,
+	function () 
+		if get("anim/41/button") == 0 then
+			set("anim/41/button/anim",1)
+			set("anim/41/button",1)
+		else
+			set("anim/41/button/anim",0)
+			set("anim/41/button",0)	
+		end
+	end,
+	function () return get("anim/41/button") end,null,
+	function (value)
+		set("anim/41/button/anim",value)
+		set("anim/41/button",value)
+	end)
+sysAice.engAntiIce2 		= TwoStateCustomSwitch:new("eng2aice","anim/42/button",0,
+	function () 
+		set("anim/42/button/anim",1)
+		set("anim/42/button",1)		
+	end,
+	function () 
+		set("anim/42/button/anim",0)
+		set("anim/42/button",0)		
+	end,
+	function () 
+		if get("anim/42/button") == 0 then
+			set("anim/42/button/anim",1)
+			set("anim/42/button",1)
+		else
+			set("anim/42/button/anim",0)
+			set("anim/42/button",0)	
+		end
+	end,
+	function () return get("anim/42/button") end,null,
+	function (value)
+		set("anim/42/button/anim",value)
+		set("anim/42/button",value)
+	end)
+sysAice.engAntiIceGroup 	= SwitchGroup:new("engantiice")
+sysAice.engAntiIceGroup:addSwitch(sysAice.engAntiIce1)
+sysAice.engAntiIceGroup:addSwitch(sysAice.engAntiIce2)
+
+-- Wing anti ice
+sysAice.wingAntiIce 		= TwoStateCustomSwitch:new("wingaice","anim/40/button",0,
+	function () 
+		set("anim/40/button/anim",1)
+		set("anim/40/button",1)		
+	end,
+	function () 
+		set("anim/40/button/anim",0)
+		set("anim/40/button",0)		
+	end,
+	function () 
+		if get("anim/40/button") == 0 then
+			set("anim/40/button/anim",1)
+			set("anim/40/button",1)
+		else
+			set("anim/40/button/anim",0)
+			set("anim/40/button",0)	
+		end
+	end,
+	function () return get("anim/40/button") end,null,
+	function (value)
+		set("anim/40/button/anim",value)
+		set("anim/40/button",value)
+	end)
+sysAice.wingAiceGroup 		= SwitchGroup:new("wingaice")
+sysAice.wingAiceGroup:addSwitch(sysAice.wingAntiIce)
 
 -- Window Heat
-sysAice.windowHeat1 		= TwoStateCmdSwitch:new("winheat1","sim/cockpit2/ice/ice_window_heat_on_window",-1,
-	"sim/ice/window_heat_on","sim/ice/window_heat_off","sim/ice/window_heat_tog")
-sysAice.windowHeat2 		= TwoStateCmdSwitch:new("winheat2","sim/cockpit2/ice/ice_window_heat_on_window",1,
-	"sim/ice/window2_heat_on","sim/ice/window2_heat_off","sim/ice/window2_heat_tog")
-sysAice.windowHeat3 		= TwoStateCmdSwitch:new("winheat3","sim/cockpit2/ice/ice_window_heat_on_window",2,
-	"sim/ice/window3_heat_on","sim/ice/window3_heat_off","sim/ice/window3_heat_tog")
-sysAice.windowHeat4 		= TwoStateCmdSwitch:new("winheat4","sim/cockpit2/ice/ice_window_heat_on_window",3,
-	"sim/ice/window4_heat_on","sim/ice/window4_heat_off","sim/ice/window4_heat_tog")
+sysAice.windowHeat1 		= TwoStateCustomSwitch:new("winheat1","anim/47/button",0,
+	function () 
+		set("anim/47/button/anim",1)
+		set("anim/47/button",1)		
+	end,
+	function () 
+		set("anim/47/button/anim",0)
+		set("anim/47/button",0)		
+	end,
+	function () 
+		if get("anim/47/button") == 0 then
+			set("anim/47/button/anim",1)
+			set("anim/47/button",1)
+		else
+			set("anim/47/button/anim",0)
+			set("anim/47/button",0)	
+		end
+	end,
+	function () return get("anim/47/button") end,null,
+	function (value)
+		set("anim/47/button/anim",value)
+		set("anim/47/button",value)
+	end)
+sysAice.windowHeat2 		= TwoStateCustomSwitch:new("winheat2","anim/48/button",0,
+	function () 
+		set("anim/48/button/anim",1)
+		set("anim/48/button",1)		
+	end,
+	function () 
+		set("anim/48/button/anim",0)
+		set("anim/48/button",0)		
+	end,
+	function () 
+		if get("anim/48/button") == 0 then
+			set("anim/48/button/anim",1)
+			set("anim/48/button",1)
+		else
+			set("anim/48/button/anim",0)
+			set("anim/48/button",0)	
+		end
+	end,
+	function () return get("anim/48/button") end,null,
+	function (value)
+		set("anim/48/button/anim",value)
+		set("anim/48/button",value)
+	end)
+sysAice.windowHeat3 		= TwoStateCustomSwitch:new("winheat3","anim/49/button",0,
+	function () 
+		set("anim/49/button/anim",1)
+		set("anim/49/button",1)		
+	end,
+	function () 
+		set("anim/49/button/anim",0)
+		set("anim/49/button",0)		
+	end,
+	function () 
+		if get("anim/49/button") == 0 then
+			set("anim/49/button/anim",1)
+			set("anim/49/button",1)
+		else
+			set("anim/49/button/anim",0)
+			set("anim/49/button",0)	
+		end
+	end,
+	function () return get("anim/49/button") end,null,
+	function (value)
+		set("anim/49/button/anim",value)
+		set("anim/49/button",value)
+	end)
+sysAice.windowHeat4 		= TwoStateCustomSwitch:new("winheat4","anim/50/button",0,
+	function () 
+		set("anim/50/button/anim",1)
+		set("anim/50/button",1)		
+	end,
+	function () 
+		set("anim/50/button/anim",0)
+		set("anim/50/button",0)		
+	end,
+	function () 
+		if get("anim/50/button") == 0 then
+			set("anim/50/button/anim",1)
+			set("anim/50/button",1)
+		else
+			set("anim/50/button/anim",0)
+			set("anim/50/button",0)	
+		end
+	end,
+	function () return get("anim/50/button") end,null,
+	function (value)
+		set("anim/50/button/anim",value)
+		set("anim/50/button",value)
+	end)
 sysAice.windowHeatGroup 	= SwitchGroup:new("windowheat")
 sysAice.windowHeatGroup:addSwitch(sysAice.windowHeat1)
 sysAice.windowHeatGroup:addSwitch(sysAice.windowHeat2)
 sysAice.windowHeatGroup:addSwitch(sysAice.windowHeat3)
 sysAice.windowHeatGroup:addSwitch(sysAice.windowHeat4)
-
--- Probe heat
-sysAice.probeHeatASwitch 	= TwoStateCmdSwitch:new("probeheat1","sim/cockpit/switches/pitot_heat_on",0,
-	"sim/ice/pitot_heat0_on","sim/ice/pitot_heat0_off","sim/ice/pitot_heat0_tog")
-sysAice.probeHeatBSwitch 	= TwoStateCmdSwitch:new("probeheat2","sim/cockpit/switches/pitot_heat_on2",0,
-	"sim/ice/pitot_heat1_on","sim/ice/pitot_heat1_off","sim/ice/pitot_heat1_tog")
-sysAice.probeHeatGroup 		= SwitchGroup:new("probeHeat")
-sysAice.probeHeatGroup:addSwitch(sysAice.probeHeatASwitch)
-sysAice.probeHeatGroup:addSwitch(sysAice.probeHeatBSwitch)
-
--- Wing anti ice
-sysAice.wingAntiIce 		= TwoStateDrefSwitch:new("wingaice","sim/cockpit/switches/anti_ice_surf_heat_left",0)
-sysAice.wingAntiIce2 		= TwoStateDrefSwitch:new("wingaice2","sim/cockpit/switches/anti_ice_surf_heat_right",0)
-sysAice.wingAiceGroup 		= SwitchGroup:new("wingaice")
-sysAice.wingAiceGroup:addSwitch(sysAice.wingAntiIce)
-sysAice.wingAiceGroup:addSwitch(sysAice.wingAntiIce2)
-
--- ENG anti ice
-sysAice.engAntiIce1 		= TwoStateDrefSwitch:new("eng1aice","sim/cockpit/switches/anti_ice_inlet_heat_per_engine",-1)
-sysAice.engAntiIce2 		= TwoStateDrefSwitch:new("eng2aice","sim/cockpit/switches/anti_ice_inlet_heat_per_engine",1)
-sysAice.engAntiIce3 		= TwoStateDrefSwitch:new("eng3aice","sim/cockpit/switches/anti_ice_inlet_heat_per_engine",2)
-sysAice.engAntiIce4 		= TwoStateDrefSwitch:new("eng4aice","sim/cockpit/switches/anti_ice_inlet_heat_per_engine",3)
-sysAice.engAntiIceGroup 	= SwitchGroup:new("engantiice")
-sysAice.engAntiIceGroup:addSwitch(sysAice.engAntiIce1)
-sysAice.engAntiIceGroup:addSwitch(sysAice.engAntiIce2)
-sysAice.engAntiIceGroup:addSwitch(sysAice.engAntiIce3)
-sysAice.engAntiIceGroup:addSwitch(sysAice.engAntiIce4)
-
--- ** ANTI ICE annunciator
-sysAice.antiiceAnc 			= CustomAnnunciator:new("antiice",
-function ()
-	if sysAice.wingAiceGroup:getStatus() > 0 or sysAice.engAntiIceGroup:getStatus() > 0  then
-		return 1
-	else
-		return 0
-	end
-end)
 
 return sysAice

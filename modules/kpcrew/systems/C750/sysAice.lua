@@ -3,7 +3,7 @@
 
 -- @classmod sysAice
 -- @author Kosta Prokopiu
--- @copyright 2024 Kosta Prokopiu
+-- @copyright 2025 Kosta Prokopiu
 
 local TwoStateDrefSwitch 	= require "kpcrew.systems.TwoStateDrefSwitch"
 local TwoStateCmdSwitch	 	= require "kpcrew.systems.TwoStateCmdSwitch"
@@ -17,6 +17,8 @@ local InopSwitch 			= require "kpcrew.systems.InopSwitch"
 local KeepPressedSwitchCmd	= require "kpcrew.systems.KeepPressedSwitchCmd"
 
 sysAice = require("kpcrew.systems.DFLT.sysAice")
+
+logMsg("C750 sysAice")
 
 -- Window Heat
 sysAice.windowHeat1 		= TwoStateCmdSwitch:new("winheat1","laminar/CitX/ice/windshield_left",0,
@@ -50,15 +52,9 @@ sysAice.engAntiIce1 		= TwoStateToggleSwitch:new("eng1aice","laminar/CitX/ice/en
 	"laminar/CitX/ice/cmd_engine_left_toggle")
 sysAice.engAntiIce2 		= TwoStateToggleSwitch:new("eng2aice","laminar/CitX/ice/engine_right",0,
 	"laminar/CitX/ice/cmd_engine_right_toggle")
--- sysAice.engAntiIce3 		= InopSwitch:new("eng3aice")
--- sysAice.engAntiIce4 		= InopSwitch:new("eng4aice")
 sysAice.engAntiIceGroup 	= SwitchGroup:new("engantiice")
 sysAice.engAntiIceGroup:addSwitch(sysAice.engAntiIce1)
 sysAice.engAntiIceGroup:addSwitch(sysAice.engAntiIce2)
--- sysAice.engAntiIceGroup:addSwitch(sysAice.engAntiIce3)
--- sysAice.engAntiIceGroup:addSwitch(sysAice.engAntiIce4)
-
--- ==== Annunciators
 
 -- ** ANTI ICE annunciator
 sysAice.antiiceAnc 			= CustomAnnunciator:new("antiice",

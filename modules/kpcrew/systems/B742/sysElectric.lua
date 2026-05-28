@@ -1,125 +1,265 @@
--- B744 airplane 
+-- B742 airplane 
 -- Electric system functionality
 
-local TwoStateDrefSwitch = require "kpcrew.systems.TwoStateDrefSwitch"
-local TwoStateCmdSwitch = require "kpcrew.systems.TwoStateCmdSwitch"
-local TwoStateCustomSwitch = require "kpcrew.systems.TwoStateCustomSwitch"
-local SwitchGroup  = require "kpcrew.systems.SwitchGroup"
-local SimpleAnnunciator = require "kpcrew.systems.SimpleAnnunciator"
-local CustomAnnunciator = require "kpcrew.systems.CustomAnnunciator"
-local TwoStateToggleSwitch = require "kpcrew.systems.TwoStateToggleSwitch"
-local MultiStateCmdSwitch = require "kpcrew.systems.MultiStateCmdSwitch"
-local InopSwitch = require "kpcrew.systems.InopSwitch"
+-- @classmod sysElectric
+-- @author Kosta Prokopiu
+-- @copyright 2025 Kosta Prokopiu
 
-local sysElectric = {
-	acPwrMin = 0,
-	acPwrMax = 6,
-	
-	acPwrSTBY = 0,
-	acPwrGRD = 1,
-	acPwrGEN1 = 2,
-	acPwrAPU = 3,
-	acPwrGEN2 = 4,
-	acPwrINV = 5,
-	acPwrTEST = 6,
-	
-	dcPwrMin = 0,
-	dcPwrMax = 6,
-	
-	dcPwrSTBY = 0,
-	dcPwrBBUS = 1,
-	dcPwrBAT = 2,
-	dcPwrTR1 = 3,
-	dcPwrTR2 = 4,
-	dcPwrTR3 = 5,
-	dcPwrTEST = 6
-}
+-- System Elements overwritten
+-- sysElectric.batteryGroup 	
+-- sysElectric.batterySwitch 
+-- sysElectric.stbyPowerSwitch
+-- sysElectric.gen1Switch
+-- sysElectric.gen2Switch
+-- sysElectric.gen3Switch
+-- sysElectric.gen4Switch	
+-- sysElectric.gpuGenBusGroup
+-- sysElectric.gpuConnect
+-- sysElectric.gpuGenBus1
+-- sysElectric.gpuGenBus2
+-- sysElectric.gpuOnBus
+-- sysElectric.apuGenBusGroup
+-- sysElectric.apuMaster	 
+-- sysElectric.apuStartSwitch
+-- sysElectric.apuGenBus1 	
+-- sysElectric.apuGenBus2 	
+-- sysElectric.apuGenBus3 + 	
+-- sysElectric.apuGenBus4 +	
+-- sysElectric.apuRunningAnc
+-- Macro: kc_macro_elec_system
+-- Macro: kc_bck_apustart
+-- Macro: kc_bck_apuonline
+-- Macro: kc_macro_apustop
 
-------------- Switches
+local TwoStateDrefSwitch 	= require "kpcrew.systems.TwoStateDrefSwitch"
+local TwoStateCmdSwitch	 	= require "kpcrew.systems.TwoStateCmdSwitch"
+local TwoStateCustomSwitch 	= require "kpcrew.systems.TwoStateCustomSwitch"
+local SwitchGroup  			= require "kpcrew.systems.SwitchGroup"
+local SimpleAnnunciator 	= require "kpcrew.systems.SimpleAnnunciator"
+local CustomAnnunciator 	= require "kpcrew.systems.CustomAnnunciator"
+local TwoStateToggleSwitch	= require "kpcrew.systems.TwoStateToggleSwitch"
+local MultiStateCmdSwitch 	= require "kpcrew.systems.MultiStateCmdSwitch"
+local InopSwitch 			= require "kpcrew.systems.InopSwitch"
+local KeepPressedSwitchCmd	= require "kpcrew.systems.KeepPressedSwitchCmd"
 
--- DC and AC PWR knobs
-sysElectric.dcPowerSwitch = MultiStateCmdSwitch:new("dcpower","laminar/B738/knob/dc_power",0,"laminar/B738/knob/dc_power_dn","laminar/B738/knob/dc_power_up")
-sysElectric.acPowerSwitch = MultiStateCmdSwitch:new("acpower","laminar/B738/knob/ac_power",0,"laminar/B738/knob/ac_power_dn","laminar/B738/knob/ac_power_up")
+sysElectric = require("kpcrew.systems.DFLT.sysElectric")
 
--- BATTERY Switch
-sysElectric.batterySwitch = TwoStateToggleSwitch:new("bat","sim/cockpit/electrical/battery_array_on",0,"laminar/B747/button_switch/elec_battery")
-sysElectric.batteryCover = TwoStateToggleSwitch:new("batcover","laminar/B747/button_switch_cover/position",9,"laminar/B747/button_switch_cover09")
+logMsg("B742 sysElectric")
 
--- Cabin Util Power Boeing
-sysElectric.cabUtilPwr = TwoStateToggleSwitch:new("cabutil","laminar/B738/toggle_switch/cab_util_pos",0,"laminar/B738/autopilot/cab_util_toggle")
-sysElectric.ifePwr = TwoStateToggleSwitch:new("ifepwr","laminar/B738/toggle_switch/ife_pass_seat_pos",0,"laminar/B738/autopilot/ife_pass_seat_toggle")
+--------- Switch datarefs common
+local drefBattery1			= "B742/ELEC/battery_sw"
+local drefBattery1Cap		= "B742/ELEC/battery_cap"
+local drefStbyPower			= "B742/ELEC/standby_power_sw"
+local drefGenerator1		= "B742/ELEC/bus_gen_close_sw"
+local drefGPUOn				= "B742/GHD/GPU"
+local drefGPUGenerator1		= "B742/AUX_PWR/EXT_PWR_1_sw"
+local drefGPUGenerator2		= "B742/AUX_PWR/EXT_PWR_2_sw"
+local drefAPUStarter		= "B742/APU/APU_start_sw"
+local drefAPUMaster			= "B742/APU/APU_start_sw"
+local drefAPUGenerator1		= "B742/AUX_PWR/APU_GEN1_close_sw"
+local drefAPUGenerator2		= "B742/AUX_PWR/APU_GEN2_close_sw"
+local drefAPUGenerator3		= "B742/AUX_PWR/APU_GEN1_trip_sw"
+local drefAPUGenerator4		= "B742/AUX_PWR/APU_GEN2_trip_sw"
 
--- Standby Power
-sysElectric.stbyPowerSwitch = MultiStateCmdSwitch:new("","laminar/B747/electrical/standby_power/sel_dial_pos",0,"laminar/B747/electrical/standby_power/sel_dial_dn","laminar/B747/electrical/standby_power/sel_dial_up")
+--------- Annunciator datarefs common
+local drefGPUPowerOnBus1	= "B742/FE_lamps/AUX_power_on_bus_1"
+local drefGPUPowerOnBus2	= "B742/FE_lamps/AUX_power_on_bus_2"
+local drefAPUN1				= "sim/cockpit/engine/APU_N1"
 
--- Ground Power
-sysElectric.extGen1Switch = TwoStateToggleSwitch:new("","laminar/B747/elec_ext_pwr_1/switch_mode",0,"laminar/B747/button_switch/elec_ext_pwr_1")
-sysElectric.extGen2Switch = TwoStateToggleSwitch:new("","laminar/B747/elec_ext_pwr_1/switch_mode",0,"laminar/B747/button_switch/elec_ext_pwr_2")
+--------- Switch commands common
 
--- APU Bus Switches
-sysElectric.apuBus1 = TwoStateToggleSwitch:new("","laminar/B747/electrical/apu_pwr1_on",0,"laminar/B747/button_switch/elec_apu_gen_1")
-sysElectric.apuBus2 = TwoStateToggleSwitch:new("","laminar/B747/electrical/apu_pwr2_on",0,"laminar/B747/button_switch/elec_apu_gen_2")
+----------- Switches
 
--- GEN drive shaft
-sysElectric.genDrive1Switch = TwoStateCmdSwitch:new("","laminar/B738/one_way_switch/drive_disconnect1_pos",0,"laminar/B738/one_way_switch/drive_disconnect1","laminar/B738/one_way_switch/drive_disconnect1_off")
-sysElectric.genDrive2Switch = TwoStateCmdSwitch:new("","laminar/B738/one_way_switch/drive_disconnect2_pos",0,"laminar/B738/one_way_switch/drive_disconnect2","laminar/B738/one_way_switch/drive_disconnect2_off")
-sysElectric.genDriveSwitches = SwitchGroup:new("genDriveSwitches")
-sysElectric.genDriveSwitches:addSwitch(sysElectric.genDrive1Switch)
-sysElectric.genDriveSwitches:addSwitch(sysElectric.genDrive2Switch)
+-- ** BATTERY Switch
+sysElectric.batteryGroup 	= SwitchGroup:new("battery switches")
+sysElectric.batterySwitch 	= TwoStateCustomSwitch:new("battery1",drefBattery1,0,
+	function ()
+		set(drefBattery1,1)
+		set(drefBattery1Cap,0)
+	end,
+	function ()
+		set(drefBattery1,0)
+		set(drefBattery1Cap,1)
+	end,
+	function ()
+		if get(drefBattery1) == 0 then
+			set(drefBattery1,1)
+			set(drefBattery1Cap,0)
+		else
+			set(drefBattery1,0)
+			set(drefBattery1Cap,1)
+		end
+	end,
+	function () return get(drefBattery1) end)
+sysElectric.batteryGroup:addSwitch(batterySwitch)
 
-sysElectric.genDrive1Cover = TwoStateToggleSwitch:new("","laminar/B738/button_switch/cover_position",4,"laminar/B738/button_switch_cover04")
-sysElectric.genDrive2Cover = TwoStateToggleSwitch:new("","laminar/B738/button_switch/cover_position",5,"laminar/B738/button_switch_cover05")
-sysElectric.genDriveCovers = SwitchGroup:new("genDriveCovers")
-sysElectric.genDriveCovers:addSwitch(sysElectric.genDrive1Cover)
-sysElectric.genDriveCovers:addSwitch(sysElectric.genDrive2Cover)
+-- Standby power
+sysElectric.stbyPowerSwitch = TwoStateDrefSwitch:new("stbySwitch",drefStbyPower,0)
 
--- BUS TRANSFER
-sysElectric.busTransSwitch = TwoStateCmdSwitch:new("","sim/cockpit2/electrical/cross_tie",0,"sim/electrical/cross_tie_on","sim/electrical/cross_tie_off")
-sysElectric.busTransCover = TwoStateToggleSwitch:new("","laminar/B738/button_switch/cover_position",6,"laminar/B738/button_switch_cover06")
-
--- GEN Switches
-sysElectric.gen1Switch = MultiStateCmdSwitch:new("","laminar/B738/electrical/gen1_pos",0,"laminar/B738/toggle_switch/gen1_dn","laminar/B738/toggle_switch/gen1_up")
-sysElectric.gen2Switch = MultiStateCmdSwitch:new("","laminar/B738/electrical/gen2_pos",0,"laminar/B738/toggle_switch/gen2_dn","laminar/B738/toggle_switch/gen2_up")
-
-sysElectric.genSwitchGroup = SwitchGroup:new("genswitches")
+-- ---- Engine Generators
+sysElectric.genSwitchGroup 	= SwitchGroup:new("generators")
+sysElectric.gen1Switch 		= TwoStateCustomSwitch:new("gen1",drefGenerator1,-1,
+	function () set_array(drefGenerator1,0,1) end,
+	function () set_array(drefGenerator1,0,-1) end,
+	function () end,
+	function () if get(drefGenerator1,0) == 1 then return 1 else return 0 end end)
 sysElectric.genSwitchGroup:addSwitch(sysElectric.gen1Switch)
+sysElectric.gen2Switch 		= TwoStateCustomSwitch:new("gen2",drefGenerator1,1,
+	function () set_array(drefGenerator1,1,1) end,
+	function () set_array(drefGenerator1,1,-1) end,
+	function () end,
+	function () if get(drefGenerator1,1) == 1 then return 1 else return 0 end end)
 sysElectric.genSwitchGroup:addSwitch(sysElectric.gen2Switch)
+sysElectric.gen3Switch 		= TwoStateCustomSwitch:new("gen3",drefGenerator1,2,
+	function () set_array(drefGenerator1,2,1) end,
+	function () set_array(drefGenerator1,2,-1) end,
+	function () end,
+	function () if get(drefGenerator1,2) == 1 then return 1 else return 0 end end)
+sysElectric.genSwitchGroup:addSwitch(sysElectric.gen3Switch)
+sysElectric.gen4Switch 		= TwoStateCustomSwitch:new("gen4",drefGenerator1,3,
+	function () set_array(drefGenerator1,3,1) end,
+	function () set_array(drefGenerator1,3,-1) end,
+	function () end,
+	function () if get(drefGenerator1,3) == 1 then return 1 else return 0 end end)
+sysElectric.genSwitchGroup:addSwitch(sysElectric.gen4Switch)
 
-sysElectric.apuStartSwitch = MultiStateCmdSwitch:new("","laminar/B747/electrical/apu/sel_dial_pos",0,"laminar/B747/electrical/apu/sel_dial_dn","laminar/B747/electrical/apu/sel_dial_up")
+sysElectric.gpuConnect 		= TwoStateCustomSwitch:new("GPU",drefGPUOn,0,
+	function () end,
+	function () end,
+	function () end,
+	function () if get(drefGPUOn) == 0 then return 1 else return 0 end end)	
 
--- ======== Annunciators
+-- ----- GPU	
+sysElectric.gpuGenBusGroup	= SwitchGroup:new("gpubussgroup")
+sysElectric.gpuGenBus1 		= TwoStateDrefSwitch:new("gpubus1",drefGPUGenerator1,0)
+sysElectric.gpuGenBus2 		= TwoStateDrefSwitch:new("gpubus2",drefGPUGenerator2,0)
+sysElectric.gpuGenBusGroup:addSwitch(sysElectric.gpuGenBus1)
+sysElectric.gpuGenBusGroup:addSwitch(sysElectric.gpuGenBus2)
+sysElectric.gpuOnBus = CustomAnnunciator:new("GPUOnBus",
+	function () 
+		if get(drefGPUPowerOnBus1) > 0 or get(drefGPUPowerOnBus2) > 0 then
+			return 1
+		else
+			return 0
+		end
+	end)
 
--- LOW VOLTAGE annunciator
-sysElectric.lowVoltageAnc = SimpleAnnunciator:new("lowvoltage","sim/cockpit2/annunciators/low_voltage",0)
+-- ----- APU
+sysElectric.apuGenBusGroup	= SwitchGroup:new("apubussgroup")
+sysElectric.apuMaster	 	= TwoStateDrefSwitch:new("apuswitch",drefAPUMaster,0)
+sysElectric.apuStartSwitch 	= TwoStateDrefSwitch:new("apuswitch",drefAPUStarter,0)
+sysElectric.apuGenBus1 		= TwoStateDrefSwitch:new("apubus1",drefAPUGenerator1,0)
+sysElectric.apuGenBus2 		= TwoStateDrefSwitch:new("apubus2",drefAPUGenerator2,0)
+sysElectric.apuGenBus3 		= TwoStateDrefSwitch:new("apubus1",drefAPUGenerator3,0)
+sysElectric.apuGenBus4 		= TwoStateDrefSwitch:new("apubus2",drefAPUGenerator4,0)
+sysElectric.apuGenBusGroup:addSwitch(sysElectric.apuGenBus3)
+sysElectric.apuGenBusGroup:addSwitch(sysElectric.apuGenBus4)
+sysElectric.apuGenBusGroup:addSwitch(sysElectric.apuGenBus1)
+sysElectric.apuGenBusGroup:addSwitch(sysElectric.apuGenBus2)
 
 -- APU RUNNING annunciator
-sysElectric.apuRunningAnc = CustomAnnunciator:new("apurunning",
-	function (self) if get("laminar/B747/electrical/apu_pwr1_avail") > 0 or 
-	get("laminar/B747/electrical/apu_pwr2_avail") > 0 then return 1 else return 0 end end)
+sysElectric.apuRunningAnc 	= CustomAnnunciator:new("apurunning",
+	function () if get(drefAPUN1) > 98 then return 1 else return 0 end end)
+
+--------- Macros
+
+-- Macro Electric system flight phase 
+function kc_macro_elec_system(flightphase)
+	logMsg("Electric flight phase: " .. kcSopFlightPhase[flightphase])
 	
--- GPU AVAILABLE annunciator (EXT PWR)
-sysElectric.gpuAvailAnc = CustomAnnunciator:new("gpuavail",
-	function (self) if get("laminar/B747/electrical/ext_pwr1_avail") > 0 or 
-	get("laminar/B747/electrical/ext_pwr2_avail") > 0 then return 1 else return 0 end end)
+	if flightphase == kc_phase_colddark then
+		set_array("B742/FE/galley_pwr_sw",0,0)
+		set_array("B742/FE/galley_pwr_sw",1,0)
+		set_array("B742/FE/galley_pwr_sw",2,0)
+		set_array("B742/FE/galley_pwr_sw",3,0)
+		
+		set_array("B742/FUEL/fuel_heat_sw",0,0)
+		set_array("B742/FUEL/fuel_heat_sw",1,0)
+		set_array("B742/FUEL/fuel_heat_sw",2,0)
+		set_array("B742/FUEL/fuel_heat_sw",3,0)
+		
+		sysElectric.batterySwitch:actuate(0) 
+		sysElectric.stbyPowerSwitch:actuate(0)
+		sysElectric.genSwitchGroup:actuate(0)
+		sysElectric.gpuGenBusGroup:actuate(0)
+		sysElectric.apuGenBusGroup:actuate(0)
+		sysElectric.apuStartSwitch:actuate(0)
+		
+		set("B742/FUEL/scavenge_pump_sw",0)
+	elseif flightphase == kc_phase_turnaround then
+		set_array("B742/FE/galley_pwr_sw",0,1)
+		set_array("B742/FE/galley_pwr_sw",1,1)
+		set_array("B742/FE/galley_pwr_sw",2,1)
+		set_array("B742/FE/galley_pwr_sw",3,1)
 
-sysElectric.gpuOnBus = SimpleAnnunciator:new("gpubus","laminar/B747/elec_ext_pwr_1/switch_mode",0)
+		set_array("B742/FUEL/fuel_heat_sw",0,0)
+		set_array("B742/FUEL/fuel_heat_sw",1,0)
+		set_array("B742/FUEL/fuel_heat_sw",2,0)
+		set_array("B742/FUEL/fuel_heat_sw",3,0)
+		
+		sysElectric.batterySwitch:actuate(1) 
+		sysElectric.stbyPowerSwitch:actuate(1)
+		
+		set("B742/FUEL/scavenge_pump_sw",0)
+	elseif flightphase == kc_phase_before_start then
+		set_array("B742/FE/galley_pwr_sw",0,0)
+		set_array("B742/FE/galley_pwr_sw",1,0)
+		set_array("B742/FE/galley_pwr_sw",2,0)
+		set_array("B742/FE/galley_pwr_sw",3,0)
+	elseif flightphase == kc_phase_after_start then
+		sysElectric.genSwitchGroup:actuate(1)
+		set_array("B742/FE/galley_pwr_sw",0,1)
+		set_array("B742/FE/galley_pwr_sw",1,1)
+		set_array("B742/FE/galley_pwr_sw",2,1)
+		set_array("B742/FE/galley_pwr_sw",3,1)
+		set("B742/AUX_PWR/APU_split_sys_sw",1)
+	elseif flightphase == kc_phase_shutdown then
+		sysElectric.genSwitchGroup:actuate(0)
+	else
+		logMsg("Invalid flightphase")
+	end	
+end
 
--- APU GEN BUS OFF
-sysElectric.apuOnBus = CustomAnnunciator:new("apubus",function (self) 
-if get("laminar/B747/electrical/apu_pwr1_on") > 0 or get("laminar/B747/electrical/apu_pwr2_on") > 0 then return 1 else return 0 end end)
+-- APU start background
+function kc_bck_apustart(trigger)
+	local delayvar = trigger .. "delay"
+	if kc_procvar_exists(delayvar) == false then
+		kc_procvar_initialize_count(delayvar,-1)
+	end
+	if kc_procvar_get(delayvar) == -1 then
+		kc_procvar_set(delayvar,30)
+		sysElectric.apuGenBus2:actuate(1)
+		sysElectric.apuGenBus3:actuate(1)
+		sysElectric.apuGenBus4:actuate(1)
+		sysElectric.apuStartSwitch:setValue(2)
+	else
+		if kc_procvar_get(delayvar) <= 0 then
+			sysElectric.apuStartSwitch:setValue(1)
+			kc_procvar_set(trigger,false)
+			kc_procvar_set(delayvar,-1)
+		else
+			kc_procvar_set(delayvar,kc_procvar_get(delayvar)-1)
+		end
+	end
+end
 
-sysElectric.transferBus1 = SimpleAnnunciator:new("trbus1","laminar/B738/annunciator/trans_bus_off1",0)
-sysElectric.transferBus2 = SimpleAnnunciator:new("trbus2","laminar/B738/annunciator/trans_bus_off2",0)
+-- bring apu gen & bleed online
+function kc_bck_apuonline(trigger)
+	if get("sim/cockpit2/electrical/APU_N1_percent") == 100 then
+		sysElectric.apuStartSwitch:setValue(1)
+		sysElectric.apuGenBus2:actuate(0)
+		sysElectric.apuGenBus3:actuate(0)
+		sysElectric.apuGenBus4:actuate(0)
+		sysElectric.apuGenBus1:actuate(1)
+		sysAir.apuBleedSwitch:actuate(1)
+		kc_procvar_set(trigger,false)
+	end
+end
 
-sysElectric.sourceOff1 = SimpleAnnunciator:new("srcoff1","laminar/B738/annunciator/source_off1",0)
-sysElectric.sourceOff2 = SimpleAnnunciator:new("srcoff2","laminar/B738/annunciator/source_off2",0)
-
-sysElectric.stbyPwrOff = SimpleAnnunciator:new("","laminar/B738/annunciator/standby_pwr_off",0)
-
-sysElectric.gen1off = SimpleAnnunciator:new("","sim/cockpit2/annunciators/generator_off",0)
-sysElectric.gen2off = SimpleAnnunciator:new("","sim/cockpit2/annunciators/generator_off",1)
-
-sysElectric.batt1Volt = SimpleAnnunciator:new("bat1volt","sim/cockpit2/electrical/battery_voltage_actual_volts",0)
-sysElectric.batt2Volt = SimpleAnnunciator:new("bat2volt","sim/cockpit2/electrical/battery_voltage_actual_volts",1)
-
+-- APU start background
+function kc_macro_apustop()
+	sysElectric.apuGenBusGroup:actuate(0)
+	sysAir.apuBleedSwitch:actuate(0)
+	sysElectric.apuMaster:setValue(0)
+end
 return sysElectric

@@ -15,7 +15,6 @@ local TwoStateToggleSwitch	= require "kpcrew.systems.TwoStateToggleSwitch"
 local MultiStateCmdSwitch 	= require "kpcrew.systems.MultiStateCmdSwitch"
 local InopSwitch 			= require "kpcrew.systems.InopSwitch"
 local KeepPressedSwitchCmd	= require "kpcrew.systems.KeepPressedSwitchCmd"
-local drefFuelPressLow 		= "sim/cockpit2/annunciators/fuel_pressure_low"
 
 sysFuel = require("kpcrew.systems.DFLT.sysFuel")
 

@@ -5,6 +5,22 @@
 -- @author Kosta Prokopiu
 -- @copyright 2025 Kosta Prokopiu
 
+-- System Elements
+-- sysControls.flapsSwitch
+-- sysControls.pitchTrimSwitch
+-- sysControls.pitchTrimDownRepeat
+-- sysControls.pitchTrimUpRepeat
+-- sysControls.aileronTrimSwitch
+-- sysControls.aileronReset
+-- sysControls.rudderTrimSwitch
+-- sysControls.rudderReset
+-- sysControls.rudderDeflection
+-- sysControls.Speedbrake
+
+
+-- Macro: kc_macro_set_flap
+-- Macro: kc_macro_arm_speedbrake
+
 local sysControls = {
 	autobrk_off = 1,
 	
@@ -34,101 +50,74 @@ local CustomAnnunciator 	= require "kpcrew.systems.CustomAnnunciator"
 local TwoStateToggleSwitch	= require "kpcrew.systems.TwoStateToggleSwitch"
 local MultiStateCmdSwitch 	= require "kpcrew.systems.MultiStateCmdSwitch"
 local InopSwitch 			= require "kpcrew.systems.InopSwitch"
+local KeepPressedSwitchCmd	= require "kpcrew.systems.KeepPressedSwitchCmd"
 
---------- Switches
+local def = require("kpcrew.systems." .. kc_acf_icao ..".sysControlsDefinitions")
 
 -- ** Flaps 
-sysControls.flapsSwitch 	= TwoStateCustomSwitch:new("flaps","sim/cockpit2/controls/flap_ratio",0,
-	function () 
-		command_once("sim/flight_controls/flaps_down")
-	end,
-	function () 
-		command_once("sim/flight_controls/flaps_up")
-	end,nil,
-	function () 
-		return get("sim/cockpit2/controls/flap_ratio")
-	end
-)
+if kc_has_flaps then
+	sysControls.flapsSwitch 	= kc_setup_element(def.flapsSwitch)
+else
+	sysControls.flapsSwitch		= kc_setup_element({etype=kc_swtype_inop, name="Flaps Lever/Switch"})
+end
 
 -- ** Pitch Trim
-sysControls.pitchTrimSwitch = TwoStateCustomSwitch:new("pitchtrim","sim/cockpit2/controls/elevator_trim",0,
-	function () 
-		command_once("sim/flight_controls/pitch_trim_down")
-	end,
-	function () 
-		command_once("sim/flight_controls/pitch_trim_up")
-	end,nil,
-	function () 
-		return get("sim/cockpit2/controls/elevator_trim")
-	end
-)
-sysControls.pitchTrimDownRepeat = TwoStateCustomSwitch:new("pitchtrim","sim/cockpit2/controls/elevator_trim",0,
-	function () 
-		command_begin("sim/flight_controls/pitch_trim_down")
-	end,
-	function () 
-		command_end("sim/flight_controls/pitch_trim_down")
-	end,nil,
-	function () 
-		return get("sim/cockpit2/controls/elevator_trim")
-	end
-)
-
-sysControls.pitchTrimUpRepeat = TwoStateCustomSwitch:new("pitchtrim","sim/cockpit2/controls/elevator_trim",0,
-	function () 
-		command_begin("sim/flight_controls/pitch_trim_up")
-	end,
-	function () 
-		command_end("sim/flight_controls/pitch_trim_up")
-	end,nil,
-	function () 
-		return get("sim/cockpit2/controls/elevator_trim")
-	end
-)
+-- **Trim repeating commands for hardware when dataref is not usable
+if kc_has_pitch_trim then
+	sysControls.pitchTrimSwitch 	= kc_setup_element(def.pitchTrimSwitch)
+	sysControls.pitchTrimDownRepeat = kc_setup_element(def.pitchTrimDownRepeat)
+	sysControls.pitchTrimUpRepeat 	= kc_setup_element(def.pitchTrimUpRepeat)
+else
+	sysControls.pitchTrimSwitch		= kc_setup_element({etype=kc_swtype_inop, name="Pitch/Elevator Trim"})
+	sysControls.pitchTrimDownRepeat	= kc_setup_element({etype=kc_swtype_inop, name="Pitch trim down repeat"})
+	sysControls.pitchTrimUpRepeat	= kc_setup_element({etype=kc_swtype_inop, name="Pitch trim up repeat"})
+end
 
 -- ** Aileron Trim
-sysControls.aileronTrimSwitch = TwoStateCustomSwitch:new("ailerontrim","sim/cockpit2/controls/aileron_trim",0,
-	function () 
-		command_once("sim/flight_controls/aileron_trim_right")
-	end,
-	function () 
-		command_once("sim/flight_controls/aileron_trim_left")
-	end,nil,
-	function () 
-		return get("sim/cockpit2/controls/aileron_trim")
-	end
-)
-
-sysControls.aileronReset 	= TwoStateToggleSwitch:new("aileronreset","sim/cockpit2/controls/aileron_trim",0,
-	"sim/flight_controls/aileron_trim_center")
+-- ** Aileron Trim Reset
+if kc_has_aileron_trim then
+	sysControls.aileronTrimSwitch 	= kc_setup_element(def.aileronTrimSwitch)
+	sysControls.aileronReset 		= kc_setup_element(def.aileronReset)
+else
+	sysControls.aileronTrimSwitch 	= kc_setup_element({etype=kc_swtype_inop, name="Aileron trim"})
+	sysControls.aileronReset 		= kc_setup_element({etype=kc_swtype_inop, name="Aileron reset"})
+end
 
 -- ** Rudder Trim
-sysControls.rudderTrimSwitch = TwoStateCustomSwitch:new("ruddertrim","sim/cockpit2/controls/rudder_trim",0,
-	function () 
-		command_once("sim/flight_controls/rudder_trim_right")
-	end,
-	function () 
-		command_once("sim/flight_controls/rudder_trim_left")
-	end,nil,
-	function () 
-		return get("sim/cockpit2/controls/rudder_trim")
-	end
-)
-
-sysControls.rudderReset	= TwoStateToggleSwitch:new("rudderreset","sim/cockpit2/controls/rudder_trim",0,
-	"sim/flight_controls/rudder_trim_center")
-
--- YAW Damper
-sysControls.yawDamper	= TwoStateDrefSwitch:new("yawdamper","sim/cockpit2/switches/yaw_damper_on",0)
+-- ** Rudder Trim Reset
+-- ** Rudder deflection used for flight controls check
+if kc_has_rudder_trim then
+	sysControls.rudderTrimSwitch 	= kc_setup_element(def.rudderTrimSwitch)
+	sysControls.rudderReset			= kc_setup_element(def.rudderReset)
+	sysControls.rudderDeflection	= kc_setup_element(def.rudderDeflection)
+else
+	sysControls.rudderTrimSwitch 	= kc_setup_element({etype=kc_swtype_inop, name="Rudder trim"})
+	sysControls.rudderReset			= kc_setup_element({etype=kc_swtype_inop, name="Rudder reset"})
+	sysControls.rudderDeflection	= kc_setup_element({etype=kc_swtype_inop, name="Rudder deflection"})
+end
 
 -- Speedbrake lever
-sysControls.Speedbrake	= TwoStateDrefSwitch:new("speedbrake","sim/cockpit2/controls/speedbrake_ratio",0)
+if kc_has_speedbrake then
+	sysControls.Speedbrake			= kc_setup_element(def.Speedbrake)
+else
+	sysControls.Speedbrake		 	= kc_setup_element({etype=kc_swtype_inop, name="Speedbrake"})
+end
 
--- Autobrake
-sysControls.Autobrake	= TwoStateDrefSwitch:new("autobrake","sim/cockpit2/switches/auto_brake_level",0)
+--------- Macros
 
---------- Annunciators
+-- Macro: set flaps based on index
+function kc_macro_set_flap(flapindex)
+	for i = 1, kc_get_nr_flapdetents() do
+		command_once("sim/flight_controls/flaps_up")
+	end 
+	for i = 1, flapindex do
+		command_once("sim/flight_controls/flaps_down")
+	end
+end
 
-sysControls.rudderDeflection	= SimpleAnnunciator:new("rudderdeflection","sim/flightmodel2/wing/rudder1_deg",0)
+-- Macro: Arm Speedbrake
+function kc_macro_arm_speedbrake()
+	sysControls.Speedbrake:setValue(kc_spdbrk_arm_pos)
+end
 
 return sysControls

@@ -1,11 +1,9 @@
--- DFLT  airplane 
+-- A306 airplane 
 -- Electric system functionality
 
 -- @classmod sysElectric
 -- @author Kosta Prokopiu
--- @copyright 2022 Kosta Prokopiu
-local sysElectric = {
-}
+-- @copyright 2025 Kosta Prokopiu
 
 local TwoStateDrefSwitch 	= require "kpcrew.systems.TwoStateDrefSwitch"
 local TwoStateCmdSwitch	 	= require "kpcrew.systems.TwoStateCmdSwitch"
@@ -18,37 +16,53 @@ local MultiStateCmdSwitch 	= require "kpcrew.systems.MultiStateCmdSwitch"
 local InopSwitch 			= require "kpcrew.systems.InopSwitch"
 local KeepPressedSwitchCmd	= require "kpcrew.systems.KeepPressedSwitchCmd"
 
---------- Switches
+sysElectric = require("kpcrew.systems.DFLT.sysElectric")
+
+logMsg("A306 sysElectric")
 
 -- ** BATTERY Switch
-sysElectric.batterySwitch 	= TwoStateCmdSwitch:new("battery1","sim/cockpit/electrical/battery_array_on",-1,"sim/electrical/battery_1_on","sim/electrical/battery_1_off","sim/electrical/battery_1_toggle")
-sysElectric.battery2Switch 	= TwoStateCmdSwitch:new("battery2","sim/cockpit/electrical/battery_array_on",1,"sim/electrical/battery_2_on","sim/electrical/battery_2_off","sim/electrical/battery_2_toggle")
+sysElectric.batteryGroup 	= SwitchGroup:new("battery switches")
+sysElectric.batterySwitch 	= TwoStateDrefSwitch:new("battery1","sim/cockpit/electrical/battery_array_on",-1)
+sysElectric.battery2Switch 	= TwoStateDrefSwitch:new("battery2","sim/cockpit/electrical/battery_array_on",1)
+sysElectric.battery3Switch 	= TwoStateDrefSwitch:new("battery3","sim/cockpit/electrical/battery_array_on",2)
+sysElectric.batteryGroup:addSwitch(batterySwitch)
+sysElectric.batteryGroup:addSwitch(battery2Switch)
+sysElectric.batteryGroup:addSwitch(battery3Switch)
 
--- Ground Power
-sysElectric.gpuSwitch 		= TwoStateCmdSwitch:new("GPU","sim/cockpit/electrical/gpu_on",0,"sim/electrical/GPU_on","sim/electrical/GPU_off","sim/electrical/GPU_toggle")
+-- ----- GPU
+sysElectric.gpuGenBusGroup	= SwitchGroup:new("gpubussgroup")
+-- de-/activate GPU
+sysElectric.gpuConnect 		= TwoStateDrefSwitch:new("GPU","A300/GND/gpu_enabled",0)	
+sysElectric.gpuGenBus1 		= TwoStateDrefSwitch:new("gpubus1","sim/cockpit/electrical/gpu_on",0)
+sysElectric.gpuGenBusGroup:addSwitch(sysElectric.gpuGenBus1)
 
--- APU Bus Switches
-sysElectric.apuGenBus1 		= InopSwitch:new("apubus1")
-
--- GEN Switches
-sysElectric.gen1Switch 		= InopSwitch:new("gen1")
-sysElectric.gen2Switch 		= InopSwitch:new("gen2")
-sysElectric.genSwitchGroup 	= SwitchGroup:new("genswitches")
-sysElectric.genSwitchGroup:addSwitch(sysElectric.gen1Switch)
-sysElectric.genSwitchGroup:addSwitch(sysElectric.gen2Switch)
-
--- APU Starter
-sysElectric.apuStartSwitch 	= KeepPressedSwitchCmd:new("apu","sim/cockpit2/electrical/APU_running",0,"sim/electrical/APU_start")
-
---------- Annunciators
-
--- LOW VOLTAGE annunciator
-sysElectric.lowVoltageAnc 	= SimpleAnnunciator:new("lowvoltage","sim/cockpit2/annunciators/low_voltage",0)
+-- ----- APU
+sysElectric.apuGenBusGroup	= SwitchGroup:new("apubussgroup")
+sysElectric.apuMaster	 	= TwoStateToggleSwitch:new("apuswitch","A300/APU/master_switch_button",0,
+	"A300/apu_msw_switch")
+sysElectric.apuStartSwitch 	= TwoStateToggleSwitch:new("apuswitch","A300/APU/start_button",0,
+	"A300/apu_start_button")
+sysElectric.apuGenBus1 		= TwoStateDrefSwitch:new("apubus1","sim/cockpit/electrical/generator_apu_on",0)
+sysElectric.apuGenBusGroup:addSwitch(sysElectric.apuGenBus1)
 
 -- APU RUNNING annunciator
-sysElectric.apuRunningAnc 	= SimpleAnnunciator:new("apurunning","sim/cockpit2/electrical/APU_running",0)
+sysElectric.apuRunningAnc 	= CustomAnnunciator:new("apurunning",
+	function () 
+		if get("sim/cockpit/engine/APU_N1") > 98 then
+			return 1
+		else
+			return 0
+		end
+	end)
+	
+-- ---- Engine Generators
+sysElectric.genSwitchGroup 	= SwitchGroup:new("generators")
+sysElectric.gen1Switch 		= TwoStateToggleSwitch:new("gen1","A300/elec/engine_gen_on",-1,
+	"A300/eng1_gen_toggle")
+sysElectric.genSwitchGroup:addSwitch(sysElectric.gen1Switch)
+sysElectric.gen2Switch 	= TwoStateToggleSwitch:new("gen2","A300/elec/engine_gen_on",1,
+	"A300/eng2_gen_toggle")
+sysElectric.genSwitchGroup:addSwitch(sysElectric.gen2Switch)
 
-sysElectric.apuGenBusOff = SimpleAnnunciator:new("","sim/cockpit/electrical/generator_apu_on",0)
-sysElectric.gpuOnBus = SimpleAnnunciator:new("","sim/cockpit/electrical/gpu_on",0)
 
 return sysElectric

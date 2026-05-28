@@ -18,6 +18,8 @@ local KeepPressedSwitchCmd	= require "kpcrew.systems.KeepPressedSwitchCmd"
 
 sysHydraulic = require("kpcrew.systems.DFLT.sysHydraulic")
 
+logMsg("C750 sysHydraulic")
+
 local drefHydPressure1 		= "sim/cockpit2/annunciators/hydraulic_pressure"
 
 -- HYD Electric Pumps

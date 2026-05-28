@@ -1,9 +1,9 @@
--- Rotate MD88 airplane 
+-- MD88 airplane 
 -- Flight Controls functionality
 
 -- @classmod sysControls
 -- @author Kosta Prokopiu
--- @copyright 2024 Kosta Prokopiu
+-- @copyright 2025 Kosta Prokopiu
 
 local TwoStateDrefSwitch 	= require "kpcrew.systems.TwoStateDrefSwitch"
 local TwoStateCmdSwitch	 	= require "kpcrew.systems.TwoStateCmdSwitch"
@@ -16,21 +16,12 @@ local MultiStateCmdSwitch 	= require "kpcrew.systems.MultiStateCmdSwitch"
 local InopSwitch 			= require "kpcrew.systems.InopSwitch"
 local KeepPressedSwitchCmd	= require "kpcrew.systems.KeepPressedSwitchCmd"
 
-local sysControls = {
-	trimCenter 	= 2,
-	trimLeft 	= 1,
-	trimRight 	= 0,
-	
-	flapsUp 	= 0,
-	flapsDown 	= 1,
-	
-	trimUp 		= 0,
-	trimDown 	= 1,
-
-	flaps_pos = {[0] =   0, [1] = 0.125, [2] = 0.25, [3] = 0.375, [4] = 0.5, [5] = 0.625, [6] = 0.75, [7] = 0.875, [8] = 1},
-	flaps_spd = {[0] = 999, [1] =   999, [2] =  999, [3] =   999, [4] = 999, [5] =   999, [6] =  999, [7] =   999, [8] = 999}
-}
-
 sysControls = require("kpcrew.systems.DFLT.sysControls")
+
+logMsg("MD88 sysControls")
+
+sysControls.flaps_pos = {[0] =   0, [1] = 0.125, [2] = 0.25, [3] = 0.375, [4] = 0.5, [5] = 0.625, [6] = 0.75, [7] = 0.875, [8] = 1}
+sysControls.flaps_spd = {[0] = 999, [1] =   999, [2] =  999, [3] =   999, [4] = 999, [5] =   999, [6] =  999, [7] =   999, [8] = 999}
+sysControls.flaps_name= {[0] = "UP", [1] =  "50%", [2] = "100%", [3] =   "35", [4] = "35",   [5] =   "35", [6] =  "35", [7] =   "35", [8] = "35"}
 
 return sysControls

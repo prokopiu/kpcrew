@@ -1,9 +1,9 @@
--- Rotate MD88 airplane 
+-- TMPL airplane 
 -- Air and Pneumatics functionality
 
 -- @classmod sysAir
 -- @author Kosta Prokopiu
--- @copyright 2024 Kosta Prokopiu
+-- @copyright 2025 Kosta Prokopiu
 
 local sysAir = {
 }
@@ -21,14 +21,6 @@ local KeepPressedSwitchCmd	= require "kpcrew.systems.KeepPressedSwitchCmd"
 
 sysAir = require("kpcrew.systems.DFLT.sysAir")
 
--- APU Bleed
-sysAir.apuBleedSwitch 		= TwoStateDrefSwitch:new("apubleed","Rotate/md80/air/APU_bleed_air_switch",0)
-
--- BLEED AIR
-sysAir.bleedEng1Switch 		= TwoStateDrefSwitch:new("bleed1","Rotate/md80/air/xfeed_valve_left",0)
-sysAir.bleedEng2Switch 		= TwoStateDrefSwitch:new("bleed2","Rotate/md80/air/xfeed_valve_right",0)
-sysAir.engBleedGroup 		= SwitchGroup:new("EngBleeds")
-sysAir.engBleedGroup:addSwitch(sysAir.bleedEng1Switch)
-sysAir.engBleedGroup:addSwitch(sysAir.bleedEng2Switch)
+logMsg("TMPL sysAir")
 
 return sysAir

@@ -12,7 +12,7 @@ color_bright_green 	= 0xFF00FF00
 color_dark_green 	= 0xFF002f00
 color_white 		= 0xFFFFFFFF
 color_light_blue 	= 0xFFFFFF00
-color_orange 		= 0xFF003FBF
+color_orange 		= 0xFF1b9af8
 color_grey 			= 0xFFC0C0C0
 color_dark_grey 	= 0xFF606060
 color_left_display 	= 0xFFA0AFFF
@@ -36,6 +36,17 @@ color_mstr_flow_open = 0xFF404040
 WX_Cloudcover_list = {"","FEW","SCT","BKN","OVC",""}
 WX_Precipitation_list = {"NONE","DRIZZLE","LIGHT RAIN","RAIN","HEAVY RAIN","SNOW"}
 WX_Cloud_list = {"NO","FEW","SCATTERED","BROKEN","OVERCAST"}
+
+local TwoStateDrefSwitch 	= require "kpcrew.systems.TwoStateDrefSwitch"
+local TwoStateCmdSwitch	 	= require "kpcrew.systems.TwoStateCmdSwitch"
+local TwoStateCustomSwitch 	= require "kpcrew.systems.TwoStateCustomSwitch"
+local SwitchGroup  			= require "kpcrew.systems.SwitchGroup"
+local SimpleAnnunciator 	= require "kpcrew.systems.SimpleAnnunciator"
+local CustomAnnunciator 	= require "kpcrew.systems.CustomAnnunciator"
+local TwoStateToggleSwitch	= require "kpcrew.systems.TwoStateToggleSwitch"
+local MultiStateCmdSwitch 	= require "kpcrew.systems.MultiStateCmdSwitch"
+local InopSwitch 			= require "kpcrew.systems.InopSwitch"
+local KeepPressedSwitchCmd	= require "kpcrew.systems.KeepPressedSwitchCmd"
 
 -- speak text but don't show in sim, speakMode is used to prevent repetitive playing
 -- speakmode 1 will talk and show, 0 will only speak
@@ -537,7 +548,7 @@ end
 function kc_is_daylight()
 	local lightthreshold = 0
 	if kc_simversion > 120000 then
-		lightthreshold = 0.4
+		lightthreshold = 0.1
 	else
 		lightthreshold = 0.1
 	end
@@ -573,280 +584,284 @@ end
 
 -- render a toggle button with green/grey status (label) for MCP
 function kc_imgui_toggle_button_mcp(label,system,ypos,width,height)
-    -- imgui.SameLine()
-	-- imgui.SetCursorPosY(ypos)
 	imgui.PushStyleColor(imgui.constant.Col.Button, color_mcp_button)
-	imgui.PushStyleColor(imgui.constant.Col.ButtonActive, color_mcp_active)
-	imgui.PushStyleColor(imgui.constant.Col.ButtonHovered, color_mcp_hover)
-	imgui.PushStyleColor(imgui.constant.Col.Text,color_mcp_text)
-	if system:getStatus() ~= 0 then 
-		imgui.PushStyleColor(imgui.constant.Col.Text,color_mcp_on)
-	else
-		imgui.PushStyleColor(imgui.constant.Col.Text,color_mcp_off)
-	end
-	if imgui.Button(label, width, height) then
-		system:actuate(modeToggle)
-	end
-	imgui.PopStyleColor()
-	imgui.PopStyleColor()
-	imgui.PopStyleColor()
-	imgui.PopStyleColor()
+		imgui.PushStyleColor(imgui.constant.Col.ButtonActive, color_mcp_active)
+			imgui.PushStyleColor(imgui.constant.Col.ButtonHovered, color_mcp_hover)
+				imgui.PushStyleColor(imgui.constant.Col.Text,color_mcp_text)
+					if system:getStatus() ~= 0 then 
+						imgui.PushStyleColor(imgui.constant.Col.Text,color_mcp_on)
+					else
+						imgui.PushStyleColor(imgui.constant.Col.Text,color_mcp_off)
+					end
+						if imgui.Button(label, width, height) then
+							system:actuate(modeToggle)
+						end
+					imgui.PopStyleColor()
+				imgui.PopStyleColor()
+			imgui.PopStyleColor()
+		imgui.PopStyleColor()
 	imgui.PopStyleColor()
 end
 
 -- render a rotary with + and - clickspots and value display for mcp
 function kc_imgui_rotary_mcp(label,system,ypos,id)
-    -- imgui.SameLine()
-	-- imgui.SetCursorPosY(ypos)
 	imgui.PushStyleColor(imgui.constant.Col.Button, color_mcp_button)
-	imgui.PushStyleColor(imgui.constant.Col.ButtonActive, color_mcp_active)
-	imgui.PushStyleColor(imgui.constant.Col.ButtonHovered, color_mcp_hover)
-	imgui.PushStyleColor(imgui.constant.Col.Text,color_mcp_text)
-
-    imgui.PushID(id)
-	imgui.Button("-", 15, 25)
-	if imgui.IsItemActive() then
-		system:step(slowDown)
-	end
-	imgui.PopID()
-	
-	imgui.SameLine()
-	-- imgui.SetCursorPosY(ypos + 2)
-	imgui.TextUnformatted(string.format(label,system:getStatus()))
-
-	imgui.SameLine()
-	-- imgui.SetCursorPosY(ypos)
-	
-    imgui.PushID(id)
-	imgui.Button("+", 15, 25)
-	if imgui.IsItemActive() then
-		system:step(slowUp)
-	end
-	imgui.PopID()
-
-	imgui.PopStyleColor()
-	imgui.PopStyleColor()
-	imgui.PopStyleColor()
+		imgui.PushStyleColor(imgui.constant.Col.ButtonActive, color_mcp_active)
+			imgui.PushStyleColor(imgui.constant.Col.ButtonHovered, color_mcp_hover)
+				imgui.PushStyleColor(imgui.constant.Col.Text,color_mcp_text)
+					imgui.PushID(id)
+						imgui.Button("-", 15, 25)
+						if imgui.IsItemActive() then
+							system:step(slowDown)
+						end
+					imgui.PopID()
+					imgui.SameLine()
+					imgui.TextUnformatted(string.format(label,system:getStatus()))
+					imgui.SameLine()
+					imgui.PushID(id)
+						imgui.Button("+", 15, 25)
+							if imgui.IsItemActive() then
+								system:step(slowUp)
+							end
+					imgui.PopID()
+				imgui.PopStyleColor()
+			imgui.PopStyleColor()
+		imgui.PopStyleColor()
 	imgui.PopStyleColor()
 end
 
 -- render a value as input field
-function kc_imgui_number_mcp(label,system,ypos,id,width)
+function kc_imgui_number_mcp(label,system,id,width,nchars)
 	imgui.PushStyleColor(imgui.constant.Col.Button, color_mcp_button)
-	imgui.PushStyleColor(imgui.constant.Col.ButtonActive, color_mcp_active)
-	imgui.PushStyleColor(imgui.constant.Col.ButtonHovered, color_mcp_hover)
-	imgui.PushStyleColor(imgui.constant.Col.Text,color_mcp_text)
-
-	imgui.TextUnformatted("XPDR:")
-	imgui.SameLine()
-	imgui.PushItemWidth(38);
-	imgui.PushID("XPDRCODE:")
-		imgui.PushStyleColor(imgui.constant.Col.Text,color_bright_green)
-		local changed, textin = imgui.InputText("", system:getStatus(), 255)
-		if changed then
-			system:setValue(textin)
-		end
-	imgui.PopStyleColor()
-	imgui.PopID()
-
-	imgui.PopStyleColor()
-	imgui.PopStyleColor()
-	imgui.PopStyleColor()
+		imgui.PushStyleColor(imgui.constant.Col.ButtonActive, color_mcp_active)
+			imgui.PushStyleColor(imgui.constant.Col.ButtonHovered, color_mcp_hover)
+				imgui.PushStyleColor(imgui.constant.Col.Text,color_mcp_text)
+					imgui.TextUnformatted(label)
+					imgui.SameLine()
+					imgui.PushItemWidth(width);
+						imgui.PushID(id)
+							imgui.PushStyleColor(imgui.constant.Col.Text,color_bright_green)
+								local changed, textin = imgui.InputText("", system:getStatus(), nchars)
+								if changed then
+									system:setValue(textin)
+								end
+							imgui.PopStyleColor()
+						imgui.PopID()
+					imgui.PopItemWidth()
+				imgui.PopStyleColor()
+			imgui.PopStyleColor()
+		imgui.PopStyleColor()
 	imgui.PopStyleColor()
 end
 
 function kc_imgui_selector_mcp(label,system,ypos,sarray,id)
-    -- imgui.SameLine()
-	-- imgui.SetCursorPosY(ypos)
 	imgui.PushStyleColor(imgui.constant.Col.Button, color_mcp_button)
-	imgui.PushStyleColor(imgui.constant.Col.ButtonActive, color_mcp_active)
-	imgui.PushStyleColor(imgui.constant.Col.ButtonHovered, color_mcp_hover)
-	imgui.PushStyleColor(imgui.constant.Col.Text,color_mcp_text)
-
-    imgui.PushID(id)
-	imgui.Button("-", 15, 25)
-	if imgui.IsItemActive() then
-		system:step(slowDown)
-	end
-	imgui.PopID()
-	
-	imgui.SameLine()
-	-- imgui.SetCursorPosY(ypos + 2)
-	imgui.TextUnformatted(string.format(label,sarray[system:getStatus()]))
-
-	imgui.SameLine()
-	-- imgui.SetCursorPosY(ypos)
-	
-    imgui.PushID(id)
-	imgui.Button("+", 15, 25)
-	if imgui.IsItemActive() then
-		system:step(slowUp)
-	end
-	imgui.PopID()
-
-	imgui.PopStyleColor()
-	imgui.PopStyleColor()
-	imgui.PopStyleColor()
+		imgui.PushStyleColor(imgui.constant.Col.ButtonActive, color_mcp_active)
+			imgui.PushStyleColor(imgui.constant.Col.ButtonHovered, color_mcp_hover)
+				imgui.PushStyleColor(imgui.constant.Col.Text,color_mcp_text)
+					imgui.PushID(id)
+						imgui.Button("-", 15, 25)
+							if imgui.IsItemActive() then
+								system:step(slowDown)
+							end
+					imgui.PopID()
+					imgui.SameLine()
+					imgui.TextUnformatted(string.format(label,sarray[system:getStatus()]))
+					imgui.SameLine()
+					imgui.PushID(id)
+						imgui.Button("+", 15, 25)
+							if imgui.IsItemActive() then
+								system:step(slowUp)
+							end
+					imgui.PopID()
+				imgui.PopStyleColor()
+			imgui.PopStyleColor()
+		imgui.PopStyleColor()
 	imgui.PopStyleColor()
 end
 
 
 -- enter any value
 function kc_imgui_value(label,system,ypos)
-    -- imgui.SameLine()
-	-- imgui.SetCursorPosY(ypos)
 	imgui.PushStyleColor(imgui.constant.Col.Text,color_mcp_text)
-
-	-- imgui.SetCursorPosY(ypos + 2)
-	imgui.TextUnformatted(string.format(label,system:getStatus()))
-
-	-- imgui.SetCursorPosY(ypos)
-	
+		imgui.TextUnformatted(string.format(label,system:getStatus()))
 	imgui.PopStyleColor()
 end
 
 -- render a label /also used as separator stroke)
 function kc_imgui_label_mcp(label,ypos)
-    -- imgui.SameLine()
-	-- imgui.SetCursorPosY(ypos+2)
 	imgui.PushStyleColor(imgui.constant.Col.Text,color_mcp_text)
-	imgui.TextUnformatted(label)
+		imgui.TextUnformatted(label)
 	imgui.PopStyleColor()
-	-- imgui.SetCursorPosY(ypos)
 end
 
 -- render a simple button without status light
 function kc_imgui_simple_button_mcp(label,system,ypos,width,height)
 	imgui.PushStyleColor(imgui.constant.Col.Button, color_mcp_button)
-	imgui.PushStyleColor(imgui.constant.Col.ButtonActive, color_mcp_active)
-	imgui.PushStyleColor(imgui.constant.Col.ButtonHovered, color_mcp_hover)
-	imgui.PushStyleColor(imgui.constant.Col.Text,color_mcp_text)
-	if imgui.Button(label, width, height) then
-		system:actuate(modeToggle)
-	end
-	imgui.PopStyleColor()
-	imgui.PopStyleColor()
-	imgui.PopStyleColor()
+		imgui.PushStyleColor(imgui.constant.Col.ButtonActive, color_mcp_active)
+			imgui.PushStyleColor(imgui.constant.Col.ButtonHovered, color_mcp_hover)
+				imgui.PushStyleColor(imgui.constant.Col.Text,color_mcp_text)
+					if imgui.Button(label, width, height) then
+						system:actuate(modeToggle)
+					end
+				imgui.PopStyleColor()
+			imgui.PopStyleColor()
+		imgui.PopStyleColor()
 	imgui.PopStyleColor()
 end
 
 function kc_imgui_cmd_button(label,command,ypos,width,height)
 	imgui.PushStyleColor(imgui.constant.Col.Button, color_mcp_button)
-	imgui.PushStyleColor(imgui.constant.Col.ButtonActive, color_mcp_active)
-	imgui.PushStyleColor(imgui.constant.Col.ButtonHovered, color_mcp_hover)
-	imgui.PushStyleColor(imgui.constant.Col.Text,color_mcp_text)
-	if imgui.Button(label, width, height) then
-		command_once(command)
-	end
+		imgui.PushStyleColor(imgui.constant.Col.ButtonActive, color_mcp_active)
+			imgui.PushStyleColor(imgui.constant.Col.ButtonHovered, color_mcp_hover)
+				imgui.PushStyleColor(imgui.constant.Col.Text,color_mcp_text)
+					if imgui.Button(label, width, height) then
+						command_once(command)
+					end
+				imgui.PopStyleColor()
+			imgui.PopStyleColor()
+		imgui.PopStyleColor()
 	imgui.PopStyleColor()
-	imgui.PopStyleColor()
-	imgui.PopStyleColor()
+end
+
+function kc_imgui_script_button(label,command,ypos,width,height)
+	imgui.PushStyleColor(imgui.constant.Col.Button, color_mcp_button)
+		imgui.PushStyleColor(imgui.constant.Col.ButtonActive, color_mcp_active)
+			imgui.PushStyleColor(imgui.constant.Col.ButtonHovered, color_mcp_hover)
+				imgui.PushStyleColor(imgui.constant.Col.Text,color_mcp_text)
+					if imgui.Button(label, width, height) then
+						local f = loadstring(command)
+						f()
+					end
+				imgui.PopStyleColor()
+			imgui.PopStyleColor()
+		imgui.PopStyleColor()
 	imgui.PopStyleColor()
 end
 
 function kc_imgui_simple_actuator(label,system,action,ypos,width,height)
-    -- imgui.SameLine()
-	-- imgui.SetCursorPosY(ypos)
 	imgui.PushStyleColor(imgui.constant.Col.Button, color_mcp_button)
-	imgui.PushStyleColor(imgui.constant.Col.ButtonActive, color_mcp_active)
-	imgui.PushStyleColor(imgui.constant.Col.ButtonHovered, color_mcp_hover)
-	imgui.PushStyleColor(imgui.constant.Col.Text,color_mcp_text)
-	if imgui.Button(label, width, height) then
-		system:step(action)
-	end
-	imgui.PopStyleColor()
-	imgui.PopStyleColor()
-	imgui.PopStyleColor()
+		imgui.PushStyleColor(imgui.constant.Col.ButtonActive, color_mcp_active)
+			imgui.PushStyleColor(imgui.constant.Col.ButtonHovered, color_mcp_hover)
+				imgui.PushStyleColor(imgui.constant.Col.Text,color_mcp_text)
+					if imgui.Button(label, width, height) then
+						system:step(action)
+					end
+				imgui.PopStyleColor()
+			imgui.PopStyleColor()
+		imgui.PopStyleColor()
 	imgui.PopStyleColor()
 end
 
 -- render a radio 1=com, 2=nav, 3=adf
 function kc_imgui_radio(radio,label,course,fine,standby,active,flip,ypos,id)
-
-    -- imgui.SameLine()
-	-- imgui.SetCursorPosY(ypos)
 	imgui.PushStyleColor(imgui.constant.Col.Button, color_mcp_button)
-	imgui.PushStyleColor(imgui.constant.Col.ButtonActive, color_mcp_active)
-	imgui.PushStyleColor(imgui.constant.Col.ButtonHovered, color_mcp_hover)
-	imgui.PushStyleColor(imgui.constant.Col.Text,color_mcp_text)
+		imgui.PushStyleColor(imgui.constant.Col.ButtonActive, color_mcp_active)
+			imgui.PushStyleColor(imgui.constant.Col.ButtonHovered, color_mcp_hover)
+				imgui.PushStyleColor(imgui.constant.Col.Text,color_mcp_text)
+					imgui.TextUnformatted(label)
+					if radio == 1 then
+						imgui.SameLine()
+						imgui.PushID(id)
+							imgui.PushItemWidth(56*kb_font_scale);
+								imgui.PushStyleColor(imgui.constant.Col.Text, color_orange)
+									local changed, textin = imgui.InputText("", string.format("%06.3f",fine:getStatus()/1000), 8)
+									if changed then
+										fine:setValue(textin*1000)
+									end
+								imgui.PopStyleColor()
+							imgui.PopItemWidth()
+						imgui.PopID()
+					end
+					if radio == 2 then
+						imgui.SameLine()
+						imgui.PushID(id)
+							imgui.PushItemWidth(56*kb_font_scale);
+								imgui.PushStyleColor(imgui.constant.Col.Text, color_orange)
+									local changed, textin = imgui.InputText("", string.format(" %05.2f",fine:getStatus()/100), 8)
+									if changed then
+										fine:setValue(textin*100)
+									end
+								imgui.PopStyleColor()
+							imgui.PopItemWidth()
+						imgui.PopID()
+					end
+					if radio == 3 then
+						imgui.SameLine()
+						imgui.PushID(id)
+							imgui.PushItemWidth(56*kb_font_scale);
+								imgui.PushStyleColor(imgui.constant.Col.Text, color_orange)
+									local changed, textin = imgui.InputText("", string.format("   %04.0f",fine:getStatus()), 8)
+									if changed then
+										fine:setValue(textin)
+									end
+								imgui.PopStyleColor()
+							imgui.PopItemWidth()
+						imgui.PopID()
+					end
 
-    imgui.PushID(id)
-	imgui.Button("--", 20, 25)
-	if imgui.IsItemActive() then
-		course:step(slowDown)
-	end
-	imgui.PopID()
-	
-	imgui.SameLine()
-    imgui.PushID(id)
-	imgui.Button("-", 20, 25)
-	if imgui.IsItemActive() then
-		fine:step(slowDown)
-	end
-	imgui.PopID()
-	
-	if radio == 1 then
-		imgui.SameLine()
-		imgui.PushStyleColor(imgui.constant.Col.Text,color_bright_green)
-		imgui.Button(string.format("%06.3f",active:getStatus()/1000), 55, 25)
-		if imgui.IsItemActive() then
-			flip:actuate(2)
-		end
+					if radio == 1 then
+						imgui.SameLine()
+						imgui.PushStyleColor(imgui.constant.Col.Text,color_bright_green)
+							imgui.Button(string.format("%06.3f",active:getStatus()/1000), 56, 19)
+								if imgui.IsItemActive() then
+									flip:actuate(2)
+								end
+						imgui.PopStyleColor()
+					end
+					if radio == 2 then
+						imgui.SameLine()
+						imgui.PushStyleColor(imgui.constant.Col.Text,color_bright_green)
+							imgui.Button(string.format("%05.2f",active:getStatus()/100), 56, 19)
+								if imgui.IsItemActive() then
+									flip:actuate(2)
+								end
+						imgui.PopStyleColor()
+					end
+					if radio == 3 then
+						imgui.SameLine()
+						imgui.PushStyleColor(imgui.constant.Col.Text,color_bright_green)
+							imgui.Button(string.format("%04.0f",active:getStatus()), 56, 19)
+								if imgui.IsItemActive() then
+									flip:actuate(2)
+								end
+						imgui.PopStyleColor()
+					end
+				imgui.PopStyleColor()
+			imgui.PopStyleColor()
 		imgui.PopStyleColor()
-	end
-	if radio == 2 then
-		imgui.SameLine()
-		imgui.PushStyleColor(imgui.constant.Col.Text,color_bright_green)
-		imgui.Button(string.format("%05.2f",active:getStatus()/100), 55, 25)
-		if imgui.IsItemActive() then
-			flip:actuate(2)
-		end
-		imgui.PopStyleColor()
-	end
-	if radio == 3 then
-		imgui.SameLine()
-		imgui.PushStyleColor(imgui.constant.Col.Text,color_bright_green)
-		imgui.Button(string.format("%03.0f",active:getStatus()), 55, 25)
-		if imgui.IsItemActive() then
-			flip:actuate(2)
-		end
-		imgui.PopStyleColor()
-	end
-	
-	imgui.SameLine()
-    imgui.PushID(id)
-	imgui.Button("+", 20, 25)
-	if imgui.IsItemActive() then
-		fine:step(slowUp)
-	end
-	imgui.PopID()
-
-	imgui.SameLine()
-    imgui.PushID(id)
-	imgui.Button("++", 20, 25)
-	if imgui.IsItemActive() then
-		course:step(slowUp)
-	end
-	imgui.PopID()
-
-	if radio == 1 then
-		imgui.SameLine()
-		imgui.TextUnformatted(string.format(label .. "%06.3f",standby:getStatus()/1000))
-	end
-	if radio == 2 then
-		imgui.SameLine()
-		imgui.TextUnformatted(string.format(label .. "%05.2f",standby:getStatus()/100))
-	end
-	if radio == 3 then
-		imgui.SameLine()
-		imgui.TextUnformatted(string.format(label .. "%03.0f",standby:getStatus()))
-	end
-
-	imgui.PopStyleColor()
-	imgui.PopStyleColor()
-	imgui.PopStyleColor()
 	imgui.PopStyleColor()
 end
+
+-- render a stored COM Frequency
+function kc_imgui_stored_com(station,label,fine,flip,ypos,id)
+	imgui.PushStyleColor(imgui.constant.Col.Button, color_mcp_button)
+		imgui.PushStyleColor(imgui.constant.Col.ButtonActive, color_mcp_active)
+			imgui.PushStyleColor(imgui.constant.Col.ButtonHovered, color_mcp_hover)
+				imgui.PushStyleColor(imgui.constant.Col.Text,color_mcp_text)
+					imgui.PushStyleColor(imgui.constant.Col.Text,color_bright_green)
+						imgui.Button(label, 56, 19)
+						if imgui.IsItemActive() then
+							flip:setValue(activeBriefings:get(station)*1000)
+						end
+					imgui.PopStyleColor()
+					imgui.SameLine()
+					imgui.PushID(id)
+						imgui.PushItemWidth(56*kb_font_scale);
+							imgui.PushStyleColor(imgui.constant.Col.Text, color_orange)
+								local changed, textin = imgui.InputText("", activeBriefings:get(station), 8)
+								if changed then
+									activeBriefings:set(station,textin)
+								end
+							imgui.PopStyleColor()
+						imgui.PopItemWidth()
+					imgui.PopID()
+				imgui.PopStyleColor()
+			imgui.PopStyleColor()
+		imgui.PopStyleColor()
+	imgui.PopStyleColor()
+end
+
 
 function kc_imgui_com_radio(label,course,fine,standby,active,flip,ypos,id)
 	kc_imgui_radio(1,label,course,fine,standby,active,flip,ypos,id)
@@ -947,6 +962,16 @@ function kc_procvar_initialize_count(procvarid, value)
 	end
 end
 
+-- initialize a string procvar
+function kc_procvar_initialize_string(procvarid, value)
+	local procvar = getBckVars():find("procvars:" .. procvarid)
+	if procvar == nil then 
+		kc_global_procvars:add(kcPreference:new(procvarid,value,kcPreference.typeText,procvarid .. "|"))
+	else
+		kc_procvar_set(procvarid,value)
+	end
+end
+
 -- get boolean procvar
 function kc_procvar_get(procvarid)
 	local procvar = getBckVars():find("procvars:".. procvarid)
@@ -990,4 +1015,32 @@ function kb_get_latest_filename(folder)
     local filename = pipe:read()
     pipe:close()
     return filename
+end
+
+function kc_pull_baro_from_metar(metartext)
+	local q_value = string.match(metartext, "Q%d+")
+	local a_value = string.match(metartext, "A%d+")
+	if q_value ~= nil then return string.sub(q_value, 2) end
+	return string.sub(a_value, 2)
+end
+
+-- generically set up a system element (switch) for more generic setup
+function kc_setup_element(eDef)
+	if eDef.etype == kc_swtype_2StateCmd then
+		return TwoStateCmdSwitch:new(eDef.name,eDef.drefName,eDef.drefIndex,eDef.cmd1,eDef.cmd2,eDef.cmd3)
+	elseif eDef.etype == kc_swtype_toggleCmd then
+		return TwoStateToggleSwitch:new(eDef.name,eDef.drefName,eDef.drefIndex,eDef.cmd1)
+	elseif eDef.etype == kc_swtype_multistate then
+		return MultiStateCmdSwitch:new(eDef.name,eDef.drefName,eDef.drefIndex,eDef.cmd1,eDef.cmd2,eDef.msMin,eDef.msMax,eDef.msRead,eDef.msDiff)
+	elseif eDef.etype == kc_swtype_dref then
+		return TwoStateDrefSwitch:new(eDef.name,eDef.drefName,eDef.drefIndex)
+	elseif eDef.etype == kc_swtype_inop then 
+		return InopSwitch:new(eDef.name)
+	elseif eDef.etype == kc_swtype_customCmd then 
+		return TwoStateCustomSwitch:new(eDef.name,eDef.drefName,eDef.drefIndex,eDef.funcOn,eDef.funcOff,eDef.funcTgl,eDef.funcStat,eDef.funcStep,eDef.funcSet)
+	elseif eDef.etype == kc_swtype_annunciator then 
+		return SimpleAnnunciator:new(eDef.name,eDef.drefName,eDef.drefIndex)
+	elseif eDef.etype == kc_swtype_customAnn then 
+		return CustomAnnunciator:new(eDef.name,eDef.funcOn)
+	end
 end

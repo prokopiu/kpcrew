@@ -24,17 +24,24 @@ kc_remove_gpu_after	= true		-- remove GPU after start
 -- === Controls
 kc_spdbrk_can_arm	= true		-- Aircraft's speedbrake can be armed
 kc_spdbrk_arm_pos	= -0.5
+kc_spdbrk_arm_to	= true		-- Speedbrake to be armed for takeoff (e.g. Airbus)
 kc_full_rgt_rudder	= 14.9		-- Threshold where the rudder is almost fully to the right
 kc_NumFlapsTO		= 3
-kc_TakeoffFlaps 	= "0|1+F|2"
-kc_TakeoffFlapsInd 	= "0|1|2"
+kc_TakeoffFlaps 	= "0|1|2|3| | | "
+kc_TakeoffFlapsInd 	= "0|1|2|3|2|2|2"
 kc_NumFlapsLDG		= 2
-kc_LandingFlaps 	= "3|FULL"
-kc_LandingFlapsInd 	= "3|4"
+kc_LandingFlaps 	= "3|FULL| | | | | "
+kc_LandingFlapsInd 	= "3|4|4|4|4|4|4"
 
 -- === engines
 kc_n2_after_start	= 50
-
+if PLANE_ICAO == "A346" then
+	kc_StartSequence 	= "4 TO 1|1 TO 4"
+	kc_StartBackground	= { [1] = {"4", "3", "2", "1"}, [2] = {"1", "2", "3", "4"} }
+else
+	kc_StartSequence 	= "2 THEN 1|1 THEN 2"
+	kc_StartBackground	= { [1] = {"2", "1"}, [2] = {"1", "2"} }
+end 
 -- === Fuel
 kc_has_fuel_pumps   = true		-- Aircraft has switchable fuel pumps
 kc_has_fuel_xfeed	= true		-- Aircraft has fuel crossfeed
@@ -45,17 +52,12 @@ kc_has_hyd_elec_pmps= true		-- Aircraft has electric hydraulic pumps
 kc_has_hyd_eng_pmps = true		-- Aircraft has engine hydraulic pumps
 
 -- === Air supply
-kc_LandingPacks 	= "OFF|ON"
-kc_TakeoffPacks 	= "ON|AUTO|OFF"
-kc_TakeoffBleeds 	= "OFF|ON"
 kc_has_press_cab	= true		-- Aircraft has pressurized cabine
 kc_has_iso_valvle	= true		-- Aircraft has switchable isolation valve
 kc_has_engine_bleed = true		-- Aircraft has engine bleeds
 kc_has_oxygen		= true		-- Aircraft has oxygen supply
 
 -- === Anti Ice
-kc_TakeoffAntiice 	= "NOT REQUIRED|ENGINE ONLY|ENGINE AND WING"
-kc_LandingAntiice 	= "NOT REQUIRED|ENGINE ONLY|ENGINE AND WING"
 kc_has_window_heat	= true		-- Aircraft has dedicated window heat
 kc_has_wing_antiice	= true		-- Aircraft has anti ice measures for wings
 kc_has_eng_antiice	= true		-- Aircraft has engine antiice measures
@@ -92,6 +94,10 @@ kc_pld_ld_button	= true		-- Load the aircraft payload from kpxbrief
 -- === MCP & autopilot
 kc_has_irs			= true		-- Aircraft has IRS that must be aligned
 kc_NumIRS			= 3			-- Number of IRS systems
+kc_irs_off			= 0
+kc_irs_align		= 1
+kc_irs_nav			= 1
+kc_irs_att			= 2
 kc_has_yawdamper	= false		-- Aircraft has switchable yaw damper
 kc_has_ils			= true		-- Aircraft has ILS receiver
 kc_has_rnav_cap		= true		-- Aircraft has rnav capability
@@ -101,6 +107,8 @@ kc_has_flch_ias		= true		-- Aircraft has FLCH/IAS mode
 kc_has_altsel_mode	= false		-- Aircraft needs atlsel to be selected
 kc_has_radar_alt	= true		-- Aircraft has radar altitude
 kc_has_dh_minimum	= true		-- Aircraft has decicion height
+kc_has_meter_pfd	= true		-- Aircraft can show meters in PFD
+kc_has_mach_switch	= true		-- Aircraft can switch between ias mach
 
 -- === other options
 kc_has_ground_obj	= true		-- Aircraft has its own ground objects (chocks etc)
@@ -108,10 +116,17 @@ kc_has_toc			= true		-- Airctaft has a takeof config check button
 kc_has_chrono		= true		-- Aircraft has a chrono stopwatch
 
 kc_has_autobrake	= true		-- Aircraft has autobrake
-kc_LandingAutoBrake = "OFF|LO|MED|MAX"
-kc_LandingAutoBrInd = "0|1|2|3"
-kc_AutoBrakeOff		= 0
-kc_AutoBrakeRTO		= 3
+if PLANE_ICAO == "A346" then
+	kc_LandingAutoBrake = "OFF|LO|2|3|4|HI"
+	kc_LandingAutoBrInd = "0|1|2|3|4|5"
+	kc_AutoBrakeOff		= 0
+	kc_AutoBrakeRTO		= 6
+else
+	kc_LandingAutoBrake = "OFF|LO|MED|MAX"
+	kc_LandingAutoBrInd = "0|1|2|3"
+	kc_AutoBrakeOff		= 0
+	kc_AutoBrakeRTO		= 3
+end
 
 -- === Operating speeds
 

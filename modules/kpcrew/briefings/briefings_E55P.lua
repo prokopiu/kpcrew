@@ -18,11 +18,11 @@ kc_remove_gpu_after	= true		-- remove GPU after start
 kc_spdbrk_can_arm	= false		-- Aircraft's speedbrake can be armed
 kc_full_rgt_rudder	= 14.9		-- Threshold where the rudder is almost fully to the right
 kc_NumFlapsTO		= 3
-kc_TakeoffFlaps 	= "0|1|2"
-kc_TakeoffFlapsInd 	= "0|1|2"
+kc_TakeoffFlaps 	= "0|1|2| | | | | "
+kc_TakeoffFlapsInd 	= "0|1|2|2|2|2|2|2"
 kc_NumFlapsLDG		= 2
-kc_LandingFlaps 	= "3|FULL"
-kc_LandingFlapsInd 	= "3|4"
+kc_LandingFlaps 	= "3|FULL| | | | | "
+kc_LandingFlapsInd 	= "3|   4|4|4|4|4|4"
 kc_gear_ext_index	= 2			-- When to extend gear in flaps extend
 
 -- === engines
@@ -56,6 +56,7 @@ kc_has_emer_lights	= true		-- Aircraft has emergency lights
 
 -- === Payload & weights
 kc_pld_ld_button	= true		-- Load the aircraft payload from kpxbrief	
+kc_MaxPayload 		= 900		-- Maximum Payload to be set
 
 -- === MCP & autopilot
 kc_TakeoffApModes 	= "HDG/FLCH|"
@@ -63,6 +64,8 @@ kc_apptypes 		= "ILS CAT 1|VOR|NDB|RNAV|VISUAL|TOUCH AND GO|CIRCLING"
 kc_has_autothrottle = false		-- Aircraft has autothrottle
 kc_has_radar_alt	= false		-- Aircraft has radar altitude
 kc_has_dh_minimum	= false		-- Aircraft has decicion height
+kc_has_vnav			= false		-- Aircraft has VNAV
+kc_has_lnav			= false		-- Aircraft has LNAV
 
 -- === other options
 kc_has_wipers		= false		-- Aircraft has wipers
@@ -70,8 +73,8 @@ kc_has_clock		= true		-- Aircraft has a clock stopwatch
 kc_et_timer_on		= -1
 kc_et_timer_off		= 0
 kc_has_cockpit_door	= false		-- Aircraft has cockpit door
-kc_has_oxygen		= false		-- Aircraft has oxygen supply
-kc_has_toc			= false		-- Airctaft has a takeof config check button
+kc_has_oxygen		= true		-- Aircraft has oxygen supply
+kc_has_toc			= true		-- Airctaft has a takeof config check button
 
 kc_has_autobrake	= false		-- Aircraft has autobrake
 
